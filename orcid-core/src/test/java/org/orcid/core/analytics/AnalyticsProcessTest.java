@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.analytics.client.AnalyticsClient;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -570,6 +572,66 @@ public class AnalyticsProcessTest {
         assertEquals("POST", data.getMethod());
         assertEquals("xml", data.getContentType()); // default content type
     }
+    
+    @Test
+    public void testAnalyticsProcessForGetRequestWithRdfXmlContentTypeHeader() throws InterruptedException {
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("1234-4321-1234-4321"))).thenReturn(getProfileEntity());
+
+        ContainerRequest request = getGetRequestWithRdfXmlAcceptHeader();
+        ContainerResponse response = getResponse(request);
+
+        AnalyticsProcess process = new AnalyticsProcess();
+        process.setRequest(request);
+        process.setResponse(response);
+        process.setAnalyticsClient(analyticsClient);
+        process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
+        process.setProfileEntityCacheManager(profileEntityCacheManager);
+        process.setPublicApi(true);
+        process.setIp("37.14.150.83");
+        process.setScheme("https");
+
+        Thread t = new Thread(process);
+        t.start();
+        t.join();
+
+        ArgumentCaptor<AnalyticsData> captor = ArgumentCaptor.forClass(AnalyticsData.class);
+        Mockito.verify(analyticsClient).sendAnalyticsData(captor.capture());
+
+        AnalyticsData data = captor.getValue();
+        assertNotNull(data);
+        assertEquals("GET", data.getMethod());
+        assertEquals(OrcidApiConstants.APPLICATION_RDFXML, data.getContentType()); // default content type
+    }
+    
+    @Test
+    public void testAnalyticsProcessForGetRequestWithJsonLdContentTypeHeader() throws InterruptedException {
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("1234-4321-1234-4321"))).thenReturn(getProfileEntity());
+
+        ContainerRequest request = getGetRequestWithJsonLdAcceptHeader();
+        ContainerResponse response = getResponse(request);
+
+        AnalyticsProcess process = new AnalyticsProcess();
+        process.setRequest(request);
+        process.setResponse(response);
+        process.setAnalyticsClient(analyticsClient);
+        process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
+        process.setProfileEntityCacheManager(profileEntityCacheManager);
+        process.setPublicApi(true);
+        process.setIp("37.14.150.83");
+        process.setScheme("https");
+
+        Thread t = new Thread(process);
+        t.start();
+        t.join();
+
+        ArgumentCaptor<AnalyticsData> captor = ArgumentCaptor.forClass(AnalyticsData.class);
+        Mockito.verify(analyticsClient).sendAnalyticsData(captor.capture());
+
+        AnalyticsData data = captor.getValue();
+        assertNotNull(data);
+        assertEquals("GET", data.getMethod());
+        assertEquals(OrcidApiConstants.JSON_LD, data.getContentType()); // default content type
+    }
 
     private ClientDetailsEntity getMemberClient() {
         ClientDetailsEntity client = new ClientDetailsEntity();
@@ -647,7 +709,7 @@ public class AnalyticsProcessTest {
     
     private ContainerRequest getGetRequestWithXmlContentTypeHeader() {
         InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.ACCEPT, "application/xml");
+        headers.add(HttpHeaders.ACCEPT, OrcidApiConstants.VND_ORCID_XML);
         headers.add(HttpHeaders.CONTENT_TYPE, "blah");
         return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
                 URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
@@ -655,7 +717,7 @@ public class AnalyticsProcessTest {
     
     private ContainerRequest getGetRequestWithJsonContentTypeHeader() {
         InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
+        headers.add(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.ORCID_JSON);
         headers.add(HttpHeaders.USER_AGENT, "blah");
         return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
                 URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
@@ -663,8 +725,8 @@ public class AnalyticsProcessTest {
     
     private ContainerRequest getPostRequestWithXmlContentTypeHeader() {
         InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");
-        headers.add(HttpHeaders.ACCEPT, "application/json");
+        headers.add(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.ORCID_XML);
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         headers.add(HttpHeaders.USER_AGENT, "blah");
         return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
                 URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
@@ -673,7 +735,7 @@ public class AnalyticsProcessTest {
     private ContainerRequest getPostRequestWithJsonContentTypeHeader() {
         InBoundHeaders headers = new InBoundHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
-        headers.add(HttpHeaders.ACCEPT, "application/xml");
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
         headers.add(HttpHeaders.USER_AGENT, "blah");
         return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
                 URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
@@ -690,8 +752,26 @@ public class AnalyticsProcessTest {
     
     private ContainerRequest getGetRequestWithUnknownAcceptHeader() {
         InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
+        headers.add(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.VND_ORCID_JSON);
         headers.add(HttpHeaders.ACCEPT, "something/weird");
+        headers.add(HttpHeaders.USER_AGENT, "blah");
+        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
+                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+    }
+    
+    private ContainerRequest getGetRequestWithRdfXmlAcceptHeader() {
+        InBoundHeaders headers = new InBoundHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.JSON_LD);
+        headers.add(HttpHeaders.ACCEPT, OrcidApiConstants.APPLICATION_RDFXML);
+        headers.add(HttpHeaders.USER_AGENT, "blah");
+        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
+                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+    }
+    
+    private ContainerRequest getGetRequestWithJsonLdAcceptHeader() {
+        InBoundHeaders headers = new InBoundHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
+        headers.add(HttpHeaders.ACCEPT, OrcidApiConstants.JSON_LD);
         headers.add(HttpHeaders.USER_AGENT, "blah");
         return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
                 URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
