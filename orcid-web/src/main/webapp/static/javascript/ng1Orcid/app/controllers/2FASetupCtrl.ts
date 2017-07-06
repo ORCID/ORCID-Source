@@ -1,9 +1,11 @@
+declare var getBaseUri: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
 // This is the Angular 1 part of the module
 
-export const 2FASetupCtrl = angular.module('orcidApp').controller(
+export const _2FASetupCtrl = angular.module('orcidApp').controller(
     '2FASetupCtrl', 
     [
         '$compile', 
@@ -20,8 +22,8 @@ export const 2FASetupCtrl = angular.module('orcidApp').controller(
             $scope.copyRecoveryCodes = function() {
                 var recoveryCodesString = getRecoveryCodesString();
                 
-                if (window.clipboardData) { // for IE
-                    window.clipboardData.setData("Text", recoveryCodesString);        
+                if ( (<any>window).clipboardData ) { // for IE
+                    (<any>window).clipboardData.setData("Text", recoveryCodesString);        
                 } else {
                     var temp = $('<div />');
                     temp.text(recoveryCodesString);
@@ -149,4 +151,4 @@ export const 2FASetupCtrl = angular.module('orcidApp').controller(
 
 // This is the Angular 2 part of the module
 @NgModule({})
-export class 2FASetupCtrlNg2Module {}
+export class _2FASetupCtrlNg2Module {}

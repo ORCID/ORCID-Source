@@ -1,3 +1,6 @@
+declare var getBaseUri: any;
+declare var trimAjaxFormText: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 

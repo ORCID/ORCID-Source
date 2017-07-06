@@ -1,3 +1,13 @@
+declare var $: any;
+declare var basePath: any;
+declare var baseUrl: any;
+declare var colorbox: any;
+declare var getBaseUri: any;
+declare var trimAjaxFormText: any;
+declare var om: any;
+declare var orcidGA: any;
+declare var orcidVar: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 

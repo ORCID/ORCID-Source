@@ -1,9 +1,11 @@
+declare var getBaseUri: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
 // This is the Angular 1 part of the module
 
-export const 2FAStateCtrl = angular.module('orcidApp').controller(
+export const _2FAStateCtrl = angular.module('orcidApp').controller(
     '2FAStateCtrl', 
     [
         '$compile', 
@@ -53,4 +55,4 @@ export const 2FAStateCtrl = angular.module('orcidApp').controller(
 
 // This is the Angular 2 part of the module
 @NgModule({})
-export class 2FAStateCtrlNg2Module {}
+export class _2FAStateCtrlNg2Module {}
