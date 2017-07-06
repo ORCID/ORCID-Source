@@ -18,6 +18,7 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -47,8 +48,11 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class ResearcherUrlDaoTest extends DBUnitTest {
 
-    @Resource
-    private ResearcherUrlDao researcherUrlDao;
+    private static String USER_ORCID = "0000-0000-0000-0003";
+    private static String OTHER_USER_ORCID = "0000-0000-0000-0001";
+    
+    @Resource(name = "researcherUrlDao")
+    private ResearcherUrlDao dao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -61,16 +65,11 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
-    @Before
-    public void beforeRunning() {
-        assertNotNull(researcherUrlDao);
-    }
-
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindResearcherUrls() {
-        List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443", 0L);
+        List<ResearcherUrlEntity> researcherUrls = dao.getResearcherUrls("4444-4444-4444-4443", 0L);
         assertNotNull(researcherUrls);
         assertEquals(6, researcherUrls.size());
     }
@@ -79,12 +78,12 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindResearcherUrl() {
-        ResearcherUrlEntity researcherUrl = researcherUrlDao.getResearcherUrl("4444-4444-4444-4441", 1L);
+        ResearcherUrlEntity researcherUrl = dao.getResearcherUrl("4444-4444-4444-4441", 1L);
         assertNotNull(researcherUrl);
         assertEquals("444_1", researcherUrl.getUrlName());
         
         try {
-            researcherUrl = researcherUrlDao.getResearcherUrl("4444-4444-4444-5555", 1L);
+            researcherUrl = dao.getResearcherUrl("4444-4444-4444-5555", 1L);
             fail();
         } catch(NoResultException e) {
             
@@ -96,7 +95,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddResearcherUrl() {
-        assertEquals(6, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443", 0L).size());
+        assertEquals(6, dao.getResearcherUrls("4444-4444-4444-4443", 0L).size());
         ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
         newRUrl.setDateCreated(new Date());
         newRUrl.setLastModified(new Date());
@@ -105,10 +104,10 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         newRUrl.setUrlName("test");
         newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
         newRUrl.setVisibility(Visibility.PUBLIC);
-        newRUrl = researcherUrlDao.merge(newRUrl);
+        newRUrl = dao.merge(newRUrl);
         assertNotNull(newRUrl);
-        assertEquals(7, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443", 0L).size());
-        for(ResearcherUrlEntity rUrl : researcherUrlDao.getResearcherUrls("4444-4444-4444-4443", 0L)) {
+        assertEquals(7, dao.getResearcherUrls("4444-4444-4444-4443", 0L).size());
+        for(ResearcherUrlEntity rUrl : dao.getResearcherUrls("4444-4444-4444-4443", 0L)) {
             if("www.4443.com".equals(rUrl.getUrl())) {
                 assertEquals("APP-5555555555555555", rUrl.getElementSourceId());
             }
@@ -119,11 +118,11 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testDeleteResearcherUrl() {
-        List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443", 0L);
+        List<ResearcherUrlEntity> researcherUrls = dao.getResearcherUrls("4444-4444-4444-4443", 0L);
         assertNotNull(researcherUrls);
         assertEquals(6, researcherUrls.size());
-        researcherUrlDao.deleteResearcherUrl("4444-4444-4444-4443", researcherUrls.get(0).getId());
-        researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443", 0L);
+        dao.deleteResearcherUrl("4444-4444-4444-4443", researcherUrls.get(0).getId());
+        researcherUrls = dao.getResearcherUrls("4444-4444-4444-4443", 0L);
         assertNotNull(researcherUrls);
         assertEquals(5, researcherUrls.size());
     }
@@ -141,11 +140,30 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
             newRUrl.setUrlName("test");
             newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
             newRUrl.setVisibility(Visibility.PUBLIC);
-            newRUrl = researcherUrlDao.merge(newRUrl);
+            newRUrl = dao.merge(newRUrl);
             assertNotNull(newRUrl);
             fail();
         } catch (PersistenceException e) {
 
         }
+    }
+    
+    @Test
+    public void removeAllTest() {
+        long initialNumber = dao.countAll();
+        long elementThatBelogsToUser = dao.getResearcherUrls(USER_ORCID, 0L).size();
+        long otherUserElements = dao.getResearcherUrls(OTHER_USER_ORCID, 0L).size();
+        assertEquals(5, elementThatBelogsToUser);
+        assertTrue(elementThatBelogsToUser < initialNumber);
+        assertEquals(3, otherUserElements);
+        //Remove all elements that belongs to USER_ORCID
+        dao.removeAllResearcherUrls(USER_ORCID);
+        
+        long finalNumberOfElements = dao.countAll();
+        long finalNumberOfOtherUserElements = dao.getResearcherUrls(OTHER_USER_ORCID, 0L).size();
+        long finalNumberOfElementsThatBelogsToUser = dao.getResearcherUrls(USER_ORCID, 0L).size();
+        assertEquals(0, finalNumberOfElementsThatBelogsToUser);
+        assertEquals(otherUserElements, finalNumberOfOtherUserElements);
+        assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
 }
