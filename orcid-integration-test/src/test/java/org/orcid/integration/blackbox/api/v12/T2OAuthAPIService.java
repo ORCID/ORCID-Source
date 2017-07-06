@@ -349,4 +349,44 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @Consumes(value = { MediaType.WILDCARD })
     @Path(WEBHOOKS_PATH)
     T unregisterWebhook(String orcid, String webhookUri, String token);
+    
+    /**
+     * Send a GET request to an invalid endpoint /{orcid}/invalid
+     * 
+     * @param orcid
+     *          the ORCID that corresponds to the user's record
+     * @param token
+     *          the access token        
+     */
+    T getInvalidEndpoint(String orcid, String token);
+    
+    /**
+     * Send a PUT request to an invalid endpoint /{orcid}/invalid
+     * 
+     * @param orcid
+     *          the ORCID that corresponds to the user's record
+     * @param token
+     *          the access token        
+     */
+    T putInvalidEndpoint(String orcid, String token);
+    
+    /**
+     * Send a POST request to an invalid endpoint /{orcid}/invalid
+     * 
+     * @param orcid
+     *          the ORCID that corresponds to the user's record
+     * @param token
+     *          the access token        
+     */
+    T postInvalidEndpoint(String orcid, String token);
+    
+    /**
+     * Send a DELETE request to an invalid endpoint /{orcid}/invalid
+     * 
+     * @param orcid
+     *          the ORCID that corresponds to the user's record
+     * @param token
+     *          the access token        
+     */
+    T deleteInvalidEndpoint(String orcid, String token);
 }

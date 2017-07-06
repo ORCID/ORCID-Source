@@ -84,7 +84,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     private String nonExistingUser = "0000-0000-0000-000X";
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
     private String deprecatedUserOrcid = "0000-0000-0000-0004";
-    private String lockedUserOrcid = "0000-0000-0000-0005";
+    private String lockedUserOrcid = "0000-0000-0000-0006";
     private String userWithNoBio = "1000-0000-0000-0001";
 
     @BeforeClass

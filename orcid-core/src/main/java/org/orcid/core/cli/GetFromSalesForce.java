@@ -16,10 +16,14 @@
  */
 package org.orcid.core.cli;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -40,8 +44,10 @@ public class GetFromSalesForce {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GetFromSalesForce.class);
 
-    @Option(name = "-q", usage = "SOQL query (not url encoded)", required = true)
+    @Option(name = "-q", usage = "SOQL query (not url encoded)")
     private String query;
+    @Option(name = "-f", usage = "File containting SOQL query (not url encoded)")
+    private File queryFile;
     @Option(name = "-h", usage = "The hostname of the SalesForce API", required = true)
     private String hostName;
     @Option(name = "-a", usage = "The access token to use", required = true)
@@ -68,7 +74,10 @@ public class GetFromSalesForce {
         System.exit(0);
     }
 
-    private void validateArgs(CmdLineParser parser) throws CmdLineException {
+    private void validateArgs(CmdLineParser parser) {
+        if (StringUtils.isBlank(query) && queryFile == null) {
+            throw new RuntimeException("At least one of -q or -f must be secified");
+        }
     }
 
     public void execute() throws IOException {
@@ -80,6 +89,13 @@ public class GetFromSalesForce {
     private void init() {
         client = Client.create();
         client.addFilter(new LoggingFilter());
+        if (StringUtils.isBlank(query)) {
+            try {
+                query = IOUtils.toString(new FileReader(queryFile));
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading query file", e);
+            }
+        }
     }
 
     private WebResource createQueryResource(String query) {

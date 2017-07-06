@@ -324,6 +324,13 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 	
+	<!-- Client Managers -->
+	<bean id="clientManager" class="org.orcid.core.manager.impl.ClientManagerImpl" />
+	
+	<bean id="clientManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ClientManagerReadOnlyImpl">
+		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
+	</bean>
+	
 	<!-- Other Read Only Managers -->
 	<bean id="workEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl">
 		<property name="workDao" ref="workDao" />

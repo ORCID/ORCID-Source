@@ -130,5 +130,5 @@
     <client_secret client_details_id="APP-5555555555555556" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     
     <client_redirect_uri client_details_id="APP-5555555555555555" redirect_uri="http://www.APP-5555555555555555.com/redirect/oauth" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="APP-5555555555555555" redirect_uri="http://www.APP-5555555555555555.com/redirect/oauth/institutional_sign_in" predefined_client_redirect_scope="/authorize" redirect_uri_type="institutional-sign-in"/>
+    <client_redirect_uri client_details_id="APP-5555555555555555" redirect_uri="http://www.APP-5555555555555555.com/redirect/oauth/institutional_sign_in" predefined_client_redirect_scope="/authenticate" redirect_uri_type="institutional-sign-in"/>
 </dataset>

@@ -35,9 +35,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.SqlResultSetMappings;
-import javax.persistence.SqlResultSetMapping;
-import javax.persistence.ColumnResult;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.notification_v2.NotificationType;
@@ -49,20 +46,37 @@ import org.orcid.jaxb.model.notification_v2.NotificationType;
 @Table(name = "notification")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "notification_type")
-@SqlResultSetMappings({ @SqlResultSetMapping(name = "distinctOrcidMapping", columns = { @ColumnResult(name = "orcid") }) })
 // @formatter:off
-@NamedNativeQueries({ @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND, query = "SELECT DISTINCT n.orcid orcid FROM notification n"
-        + " JOIN profile p ON p.orcid = n.orcid AND p.claimed AND profile_deactivation_date IS NULL AND NOT p.record_locked"
-        + " LEFT JOIN (SELECT orcid, MAX(sent_date) AS max_sent_date FROM notification GROUP BY orcid) l ON l.orcid = n.orcid"
-        + " WHERE n.sent_date IS NULL"
-        + " AND"
-        + " (unix_timestamp(:effectiveNow) > (unix_timestamp(l.max_sent_date) + (p.send_email_frequency_days * 24 * 60 * 60))"
-        + " OR (l.max_sent_date IS NULL AND unix_timestamp(:effectiveNow) > (unix_timestamp(COALESCE(p.completed_date, p.date_created)) + (p.send_email_frequency_days * 24 * 60 * 60))))", resultSetMapping = "distinctOrcidMapping") })
+@NamedNativeQueries({ @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS, 
+        query = "SELECT DISTINCT(n.orcid), p.send_email_frequency_days, COALESCE(p.completed_date, p.date_created) " + 
+                " FROM notification n, profile p " +
+                " WHERE n.sent_date IS NULL " +
+                " AND n.orcid = p.orcid " +
+                " AND p.send_email_frequency_days < :never " +
+                " AND p.claimed = true " +
+                " AND p.profile_deactivation_date IS NULL " +
+                " AND p.primary_record IS NULL " +
+                " AND NOT p.record_locked ORDER BY n.orcid;"),
+    @NamedNativeQuery(name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
+        query = "SELECT * FROM notification " + 
+        " WHERE id IN " +
+        " ( " +
+        "       SELECT n.id FROM notification n, (SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid) x " +
+        "       WHERE n.orcid=:orcid  " +
+        "       AND ( " +
+        "       (n.sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(x.max_sent_date) + (:record_email_frequency * 24 * 60 * 60))) " +
+        "       OR " +
+        "       (x.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (:record_email_frequency * 24 * 60 * 60))) " +
+        "       ) " + 
+        " );", resultClass = NotificationEntity.class
+    )})
 // @formatter:on
 abstract public class NotificationEntity extends SourceAwareEntity<Long> implements ProfileAware {
 
-    public static final String FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND = "findOrcidsWithNotificationsToSend";
-
+    public static final String FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS = "findOrcidsWithUnsentNotifications";
+    
+    public static final String FIND_NOTIFICATIONS_TO_SEND_BY_ORCID = "findNotificationsToSendByOrcid";
+    
     private static final long serialVersionUID = 1L;
 
     private Long id;

@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 
-public class Text implements ErrorsInterface, Required, Serializable {
+public class Text implements ErrorsInterface, Required, Serializable, Comparable<Text> {
     
     private static final long serialVersionUID = 1L;
 
@@ -126,5 +126,26 @@ public class Text implements ErrorsInterface, Required, Serializable {
         } else if (!value.equals(other.value))
             return false;
         return true;
+    }
+
+    @Override
+    public int compareTo(Text other) {
+        if(other == null) {
+            return 1;
+        }
+        
+        if(PojoUtil.isEmpty(this)) {
+            if(!PojoUtil.isEmpty(other)) {
+                return -1;
+            }
+        } else {
+            if(PojoUtil.isEmpty(other)) {
+                return 1;
+            } else {
+                return value.compareTo(other.getValue());
+            }
+        }
+        
+        return 0;
     }            
 }
