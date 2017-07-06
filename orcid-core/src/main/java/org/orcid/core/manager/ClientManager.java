@@ -14,25 +14,15 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter;
-
-import java.util.Collection;
-import java.util.Set;
+package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.client_v2.Client;
-import org.orcid.jaxb.model.client_v2.ClientSummary;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
-public interface JpaJaxbClientAdapter {
+public interface ClientManager {
 
-    Client toClient(ClientDetailsEntity entity);
+    Client create(Client newClient);
+
+    Client edit(Client existingClient);
     
-    ClientSummary toClientSummary(ClientDetailsEntity entity);
-    
-    Set<Client> toClientList(Collection<ClientDetailsEntity> entities);
-    
-    ClientDetailsEntity toEntity(Client client);
-    
-    ClientDetailsEntity toEntity(Client client, ClientDetailsEntity existing);
-    
+    Boolean resetClientSecret(String clientId);
 }

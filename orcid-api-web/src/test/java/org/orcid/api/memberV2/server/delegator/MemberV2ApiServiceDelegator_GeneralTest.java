@@ -39,7 +39,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
-import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.locale.LocaleManagerImpl;
@@ -49,6 +48,7 @@ import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.core.manager.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
@@ -809,10 +809,10 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
     public void testViewClient() {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof Client);
+        assertTrue(response.getEntity() instanceof ClientSummary);
 
-        Client client = (Client) response.getEntity();
-        assertEquals("Source Client 2", client.getName());
-        assertEquals("A test source client", client.getDescription());
+        ClientSummary clientSummary = (ClientSummary) response.getEntity();
+        assertEquals("Source Client 2", clientSummary.getName());
+        assertEquals("A test source client", clientSummary.getDescription());
     }
 }

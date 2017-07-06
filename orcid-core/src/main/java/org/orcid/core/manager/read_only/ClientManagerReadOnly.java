@@ -14,25 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter;
+package org.orcid.core.manager.read_only;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
-public interface JpaJaxbClientAdapter {
+public interface ClientManagerReadOnly {
+    Client get(String clientId);
 
-    Client toClient(ClientDetailsEntity entity);
-    
-    ClientSummary toClientSummary(ClientDetailsEntity entity);
-    
-    Set<Client> toClientList(Collection<ClientDetailsEntity> entities);
-    
-    ClientDetailsEntity toEntity(Client client);
-    
-    ClientDetailsEntity toEntity(Client client, ClientDetailsEntity existing);
-    
+    Set<Client> getClients(String memberId, Long memberLastModified);
+
+    ClientSummary getSummary(String clientId);
 }
