@@ -74,4 +74,13 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @return true if an external identifier was deleted           
      */
     boolean removeExternalIdentifier(String orcid, Long id);
+    
+    /**
+     * Removes all external identifiers that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all external identifiers will be
+     *            removed.
+     */
+    void removeAllExternalIdentifiers(String orcid);
 }

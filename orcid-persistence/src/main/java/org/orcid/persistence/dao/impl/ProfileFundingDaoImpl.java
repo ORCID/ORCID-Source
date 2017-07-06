@@ -256,4 +256,12 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
+    
+    @Override
+    @Transactional
+    public void removeAllFunding(String orcid) {
+        Query query = entityManager.createQuery("delete from ProfileFundingEntity where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
 }

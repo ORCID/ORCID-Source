@@ -37,4 +37,13 @@ public interface AddressDao extends GenericDao<AddressEntity, Long> {
     
     boolean deleteAddress(String orcid, Long putCode);
     
+    /**
+     * Removes all address that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all address will be
+     *            removed.
+     */
+    void removeAllAddress(String orcid);
+    
 }

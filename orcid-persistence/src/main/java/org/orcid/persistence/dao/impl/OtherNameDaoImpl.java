@@ -107,4 +107,12 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         query.setParameter("id", putCode);
         return (OtherNameEntity) query.getSingleResult();
     }
+
+    @Override
+    @Transactional
+    public void removeAllOtherNames(String orcid) {
+        Query query = entityManager.createQuery("delete from OtherNameEntity where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
 }

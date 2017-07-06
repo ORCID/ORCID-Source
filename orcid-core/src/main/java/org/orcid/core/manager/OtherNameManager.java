@@ -28,4 +28,13 @@ public interface OtherNameManager extends OtherNameManagerReadOnly {
     OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest);
     
     OtherNames updateOtherNames(String orcid, OtherNames otherNames);
+    
+    /**
+     * Removes all other names that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all other names will be
+     *            removed.
+     */
+    void removeAllOtherNames(String orcid);
 }

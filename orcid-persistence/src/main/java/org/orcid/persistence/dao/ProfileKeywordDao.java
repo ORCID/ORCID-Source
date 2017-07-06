@@ -51,4 +51,13 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
     boolean deleteProfileKeyword(ProfileKeywordEntity entity);
     
     ProfileKeywordEntity getProfileKeyword(String orcid, Long putCode);
+    
+    /**
+     * Removes all keywords that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all keywords will be
+     *            removed.
+     */
+    void removeAllKeywords(String orcid);
 }

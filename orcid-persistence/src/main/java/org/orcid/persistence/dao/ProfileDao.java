@@ -175,4 +175,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void enable2FA(String orcid);
     
     void update2FASecret(String orcid, String secret);
+    
+    boolean deactivate(String orcid);
 }

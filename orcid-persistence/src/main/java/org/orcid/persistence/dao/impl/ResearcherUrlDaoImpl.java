@@ -107,4 +107,12 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    @Override
+    @Transactional
+    public void removeAllResearcherUrls(String orcid) {
+        Query query = entityManager.createQuery("delete from ResearcherUrlEntity where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
 }

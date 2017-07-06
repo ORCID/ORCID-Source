@@ -220,4 +220,9 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
             entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         }
     }
+
+    @Override
+    public void removeAllOtherNames(String orcid) {
+        otherNameDao.removeAllOtherNames(orcid);
+    }
 }

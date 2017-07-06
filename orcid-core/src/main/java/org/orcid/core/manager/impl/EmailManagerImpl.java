@@ -184,4 +184,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     public void update(EmailEntity emailEntity) {
         emailDao.merge(emailEntity);
     }
+
+    @Override
+    public boolean hideAllEmails(String orcid) {
+        return emailDao.hideAllEmails(orcid);
+    }
 }
