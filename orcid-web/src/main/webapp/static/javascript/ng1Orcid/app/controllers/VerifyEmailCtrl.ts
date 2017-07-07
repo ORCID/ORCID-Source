@@ -51,6 +51,7 @@ export const VerifyEmailCtrl = angular.module('orcidApp').controller(
                         var primeVerified = false;
 
                         $scope.verifiedModalEnabled = configuration.showModalManualEditVerificationEnabled;
+                        console.log('$scope.verifiedModalEnabled', $scope.verifiedModalEnabled);
                         $scope.emailsPojo = data;
                         $scope.$apply();
 
@@ -62,8 +63,9 @@ export const VerifyEmailCtrl = angular.module('orcidApp').controller(
                                 }
                             };
                         };
+                        console.log('primeVerified', primeVerified)
 
-                        if ( primeVerified 
+                        if ( primeVerified == false 
                             && getBaseUri().indexOf("sandbox") == -1 
                         ) {
                             colorboxHtml = $compile($('#verify-email-modal').html())($scope);
