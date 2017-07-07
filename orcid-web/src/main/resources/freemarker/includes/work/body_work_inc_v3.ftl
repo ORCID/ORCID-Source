@@ -153,13 +153,13 @@
                                     </ul>                                   
                                  </li>
                                  <li ng-if="work.url.value" class="url-popover url-work">
-                                    <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
+                                    <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
                                     <div class="popover-pos">                                   
                                         <div class="popover-help-container">
                                            <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
                                                 <div class="arrow"></div>
                                                 <div class="popover-content">
-                                                    <a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
+                                                    <a href="{{work.url.value}}" target="work.url.value">{{work.url.value}}</a>
                                                 </div>                
                                             </div>                              
                                         </div>

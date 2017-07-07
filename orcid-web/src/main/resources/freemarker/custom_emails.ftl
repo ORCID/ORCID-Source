@@ -192,7 +192,7 @@
 				<div class="col-md-12 col-sm-12 col-xs-12">					
 					<p>	
 						<@orcid.msg 'custom_email.template.description.learn_more.1'/>
-						<a href="<@orcid.msg 'custom_email.template.description.learn_more.link.url'/>" target="_blank"><@orcid.msg 'custom_email.template.description.learn_more.link.text'/></a>
+						<a href="<@orcid.msg 'custom_email.template.description.learn_more.link.url'/>" target="custom_email.template.description.learn_more.link.text"><@orcid.msg 'custom_email.template.description.learn_more.link.text'/></a>
 						<@orcid.msg 'custom_email.template.description.learn_more.2'/>
 					</p>							
 				</div>

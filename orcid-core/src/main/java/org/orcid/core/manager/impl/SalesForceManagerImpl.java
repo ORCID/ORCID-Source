@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -65,6 +67,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private static final String OPPORTUNITY_INITIAL_STAGE_NAME = "Invoice Paid";
 
     private static final String OPPORTUNITY_NAME = "Opportunity from registry";
+
+    private static final Pattern SUBDOMAIN_PATTERN = Pattern.compile("^www\\.");
 
     @Resource(name = "salesForceMembersListCache")
     private SelfPopulatingCache salesForceMembersListCache;
@@ -185,7 +189,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public String createMember(Member member) {
         Opportunity opportunity = new Opportunity();
-        Optional<Member> firstExistingMember = salesForceDao.retrieveMembersByWebsite(member.getWebsiteUrl().toString()).stream().findFirst();
+        URL websiteUrl = member.getWebsiteUrl();
+        Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
         String accountId = null;
         if (firstExistingMember.isPresent()) {
             accountId = firstExistingMember.get().getId();
@@ -205,6 +210,75 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         createOpportunity(opportunity);
         evictAll();
         return accountId;
+    }
+
+    private Optional<Member> findBestWebsiteMatch(URL webSiteUrl) {
+        String host = webSiteUrl.getHost();
+        String hostWithoutSubdomain = SUBDOMAIN_PATTERN.matcher(host).replaceFirst("");
+        return findBestWebsiteMatch(webSiteUrl, salesForceDao.retrieveMembersByWebsite(hostWithoutSubdomain));
+    }
+
+    @Override
+    public Optional<Member> findBestWebsiteMatch(URL webSiteUrl, Collection<Member> possibleMatches) {
+        // Check exact match
+        Optional<Member> match = findExactMatch(webSiteUrl, possibleMatches);
+        if (match.isPresent()) {
+            return match;
+        }
+        // Check without protocol
+        match = findMatchWithoutProtocol(webSiteUrl, possibleMatches);
+        if (match.isPresent()) {
+            return match;
+        }
+        // Check just the host
+        match = findMatchWithJustHost(webSiteUrl, possibleMatches);
+        if (match.isPresent()) {
+            return match;
+        }
+        // Check same IP address, by using URL.equals(URL) method.
+        match = findMatchUsingIp(webSiteUrl, possibleMatches);
+        if (match.isPresent()) {
+            return match;
+        }
+        return Optional.<Member> empty();
+    }
+
+    private Optional<Member> findExactMatch(URL webSiteUrl, Collection<Member> possibleMatches) {
+        Optional<Member> match = possibleMatches.stream().filter(m -> {
+            return webSiteUrl.toString().equals(m.getWebsiteUrl().toString());
+        }).findFirst();
+        return match;
+    }
+
+    private Optional<Member> findMatchWithoutProtocol(URL webSiteUrl, Collection<Member> possibleMatches) {
+        Optional<Member> match;
+        match = possibleMatches.stream().filter(m -> {
+            String effectiveUrl = buildUrlWithoutProtocol(webSiteUrl);
+            URL memberUrl = m.getWebsiteUrl();
+            String effectiveMemberUrl = buildUrlWithoutProtocol(memberUrl);
+            return effectiveUrl.toString().equals(effectiveMemberUrl.toString());
+        }).findFirst();
+        return match;
+    }
+
+    private String buildUrlWithoutProtocol(URL webSiteUrl) {
+        return webSiteUrl.getHost() + '/' + StringUtils.defaultString(webSiteUrl.getPath()) + '?' + StringUtils.defaultString(webSiteUrl.getQuery());
+    }
+
+    private Optional<Member> findMatchWithJustHost(URL webSiteUrl, Collection<Member> possibleMatches) {
+        Optional<Member> match;
+        match = possibleMatches.stream().filter(m -> {
+            return webSiteUrl.getHost().equals(m.getWebsiteUrl().getHost());
+        }).findFirst();
+        return match;
+    }
+
+    private Optional<Member> findMatchUsingIp(URL webSiteUrl, Collection<Member> possibleMatches) {
+        Optional<Member> match;
+        match = possibleMatches.stream().filter(m -> {
+            return webSiteUrl.equals(m.getWebsiteUrl());
+        }).findFirst();
+        return match;
     }
 
     private String calculateCloseDate() {
@@ -288,17 +362,28 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
         contactRole.setAccountId(contact.getAccountId());
         salesForceDao.createContactRole(contactRole);
+        if (salesForceConnectionDao.findByOrcidAndAccountId(contact.getOrcid(), accountId) == null) {
+            salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
+        }
         // Need to make more granular!
         evictAll();
     }
 
     @Override
     public void removeContact(Contact contact) {
+        removeContactRole(contact);
+        removeContactAccess(contact);
+    }
+
+    private void removeContactAccess(Contact contact) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
-        contactRoles.forEach(r -> salesForceDao.removeContactRole(r.getId()));
-        // Need to make more granular!
-        evictAll();
+        String contactOrcid = contact.getOrcid();
+        if (contactOrcid != null) {
+            SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(contactOrcid, accountId);
+            if (connection != null) {
+                salesForceConnectionDao.remove(connection);
+            }
+        }
     }
 
     @Override
@@ -327,14 +412,27 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void updateContacts(Collection<Contact> contacts) {
-        // Need to remove roles with validation rules in SF first
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        // Need to remove roles with validation rules in SF first
         existingContacts.stream().filter(c -> {
             return ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType()) || ContactRoleType.AGREEMENT_SIGNATORY.equals(c.getRole().getRoleType())
                     || c.getRole().isVotingContact();
         }).forEach(c -> removeContactRole(c));
         contacts.stream().forEach(c -> updateContact(c));
+        // Update access control list for self-service
+        updateAccessControl(contacts, accountId);
+    }
+
+    private void updateAccessControl(Collection<Contact> contacts, String accountId) {
+        List<SalesForceConnectionEntity> existingConnections = salesForceConnectionDao.findByAccountId(accountId);
+        List<String> contactOrcids = contacts.stream().map(c -> c.getOrcid()).collect(Collectors.toList());
+        // Remove any connections no longer in the contacts list
+        existingConnections.stream().filter(c -> !contactOrcids.contains(c.getOrcid())).forEach(c -> salesForceConnectionDao.remove(c));
+        // Give access to any contacts that do not already have access
+        List<String> existingConnectionsOrcids = existingConnections.stream().map(c -> c.getOrcid()).collect(Collectors.toList());
+        contacts.stream().filter(c -> c.getOrcid() != null && !existingConnectionsOrcids.contains(c.getOrcid()))
+                .forEach(c -> salesForceConnectionDao.persist(new SalesForceConnectionEntity(c.getOrcid(), c.getEmail(), accountId)));
     }
 
     @Override

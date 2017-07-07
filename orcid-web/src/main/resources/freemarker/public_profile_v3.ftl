@@ -99,7 +99,7 @@
 								</ul>
 				                <div id="public-researcher-urls-div" class="public-content">
 				                    <#list publicResearcherUrls.researcherUrls as url>
-				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow">
+				                        <a href="<@orcid.absUrl url.url/>" target="url.urlName" rel="me nofollow">
 				                        	<#if (url.urlName)! != "">
 				                        		${url.urlName}
 				                        	<#else>
@@ -214,7 +214,7 @@
 				                		<#assign i = 1>
 				                		<#list publicGroupedResearcherUrls[url] as researcherUrl>				                							                		
 				                			<#if (i == 1)>
-				                				  <a href="<@orcid.absUrl researcherUrl.url/>" target="_blank" rel="me nofollow"><#if (researcherUrl.urlName)! != "">${researcherUrl.urlName}<#else>${researcherUrl.url.value}</#if></a><#if url_has_next><br/></#if>
+				                				  <a href="<@orcid.absUrl researcherUrl.url/>" target="researcherUrl.urlName" rel="me nofollow"><#if (researcherUrl.urlName)! != "">${researcherUrl.urlName}<#else>${researcherUrl.url.value}</#if></a><#if url_has_next><br/></#if>
 											</#if>			
 											<#if (i == 1)>								
 					                			<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>
@@ -293,7 +293,7 @@
 										<#list publicGroupedPersonExternalIdentifiers[external] as externalIdentifier>
 											<#if (i == 1)>
   												<#if (externalIdentifier.url.value)??>
-													<a href="${externalIdentifier.url.value}" target="_blank">${(externalIdentifier.type)!}: ${(externalIdentifier.value)!}</a><#if external_has_next><br/><span ng-if="showSources['external-identifiers'] == false || showSources['external-identifiers'] == null"></span></#if>
+													<a href="${externalIdentifier.url.value}" target="externalIdentifier.value">${(externalIdentifier.type)!}: ${(externalIdentifier.value)!}</a><#if external_has_next><br/><span ng-if="showSources['external-identifiers'] == false || showSources['external-identifiers'] == null"></span></#if>
     											<#else>
           											${(externalIdentifier.type)!}: ${(externalIdentifier.value)!}<#if external_has_next><br/></#if>
       											</#if>																	

@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +82,8 @@ public interface NotificationManager {
     public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults);
 
     public List<Notification> findNotificationAlertsByOrcid(String orcid);
+    
+    public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate);
     
     /**
      * Filters the list of notification alerts by archiving any that have

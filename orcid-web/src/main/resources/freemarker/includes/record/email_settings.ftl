@@ -36,7 +36,7 @@
                 <p><@orcid.msg 'workspace.you_need_to_verify' /></p>
                 <p><@orcid.msg 'workspace.ensure_future_access2' /><br />
                 <p><strong>{{emailSrvc.getEmailPrimary().value}}</strong></p>
-                <p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="_blank" href="${knowledgeBaseUri}/articles/149457"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support' />"><@orcid.msg 'workspace.link.email.support' /></a>.</p>
+                <p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="articles.149457" href="${knowledgeBaseUri}/articles/149457"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="workspace.link.email.support" href="mailto:<@orcid.msg 'workspace.link.email.support' />"><@orcid.msg 'workspace.link.email.support' /></a>.</p>
                 <div class="topBuffer">
                     <a ng-click="closeUnverifiedEmailSetPrimaryBox()"><@orcid.msg 'freemarker.btnclose' /></a>
                 </div>
@@ -150,7 +150,7 @@
                 <div class="col-md-12">
                     <p style="line-height: 12px;">
                         <small class="italic">
-                        ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
+                        ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="manage.verificationEmail.2">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
                         </small>
                     </p>
                 </div>              
@@ -177,7 +177,7 @@
                     <strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
                 </div>              
                 <div class="control-group">
-                    <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
+                    <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="manage.send_email_to_primary_2">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
                     <form class="form-inline">
                         <div class="form-group">                            
                             <div class="input-group">                               

@@ -156,7 +156,7 @@ public class SelfServiceController extends BaseController {
     @RequestMapping(value = "/remove-contact.json", method = RequestMethod.POST)
     public @ResponseBody Contact removeContact(@RequestBody Contact contact) {
         checkFullAccess(contact.getAccountId());
-        salesForceManager.removeContactRole(contact);
+        salesForceManager.removeContact(contact);
         return contact;
     }
 

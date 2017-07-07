@@ -26,7 +26,7 @@
                     ${springMacroRequestContext.getMessage("2FA.details")}
                     <br />
                     <a href="${knowledgeBaseUri}/articles/580410"
-                        target="_blank">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
+                        target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                 </p>
                 <ol id="2FASetupSteps">
                     <li>${springMacroRequestContext.getMessage("2FA.setup.step1")}</li>
@@ -51,8 +51,7 @@
                 <p>
                     ${springMacroRequestContext.getMessage("2FA.recoveryCodes.details")}
                     <br />
-                    <a href="${knowledgeBaseUri}/articles/580410"
-                        target="_blank">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
+                    <a href="${knowledgeBaseUri}/articles/580410" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                 </p>
                 <div id="recoveryCodes">
                     <p ng-repeat="recoveryCode in recoveryCodes" ng-bind-html="recoveryCode"></p>

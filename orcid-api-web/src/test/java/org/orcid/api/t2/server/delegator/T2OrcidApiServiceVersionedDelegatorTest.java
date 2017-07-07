@@ -26,12 +26,15 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
@@ -47,9 +50,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
+import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -79,10 +89,14 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -99,6 +113,9 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml", 
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml");
 
+    private static final String ORCID = "0000-0000-0000-0000";
+    private static final String CLIENT_ID = "APP-0000000000000001";
+    
     @Resource(name = "t2OrcidApiServiceDelegatorV1_2")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV2_1;
 
@@ -114,6 +131,15 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Mock
     private UriInfo mockedUriInfo;
 
+    @Value("${org.orcid.core.claimWaitPeriodDays:10}")
+    private int claimWaitPeriodDays;
+    
+    @Mock
+    protected ProfileEntityCacheManager profileEntityCacheManagerMock;
+
+    @Mock
+    protected SourceManager sourceManagerMock;
+    
     private Unmarshaller unmarshaller;
 
     @BeforeClass
@@ -142,6 +168,15 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         removeDBUnitData(DATA_FILES);
     }
 
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "profileEntityCacheManager", profileEntityCacheManagerMock);
+        TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "sourceManager", sourceManagerMock);
+        SourceEntity source = new SourceEntity();
+        source.setSourceClient(new ClientDetailsEntity(CLIENT_ID));
+        when(sourceManagerMock.retrieveSourceEntity()).thenReturn(source);        
+    }
+    
     @Test
     public void testFindWorksDetails() {
         setUpSecurityContext();
@@ -581,4 +616,86 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         orcidActivities.setAffiliations(affiliations);
         return orcidMessage;
     }
+    
+    @Test(expected = NoResultException.class)
+    public void checkProfile_InvalidOrcidTest() {
+        initMocks();
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenThrow(NoResultException.class);
+        ((T2OrcidApiServiceVersionedDelegatorImpl) t2OrcidApiServiceDelegatorLatest).checkRecordStatus(ORCID);
+    }
+    
+    @Test(expected = OrcidDeprecatedException.class)
+    public void checkProfile_DeprecatedTest() {
+        initMocks();
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(true);
+        entity.setPrimaryRecord(new ProfileEntity());
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
+        ((T2OrcidApiServiceVersionedDelegatorImpl) t2OrcidApiServiceDelegatorLatest).checkRecordStatus(ORCID);
+    }
+    
+    @Test(expected = OrcidNotClaimedException.class)
+    public void checkProfile_NotClaimed_NotOldEnough_NotSourceTest() {
+        initMocks();
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(false);
+        entity.setSubmissionDate(new Date());
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
+        ((T2OrcidApiServiceVersionedDelegatorImpl) t2OrcidApiServiceDelegatorLatest).checkRecordStatus(ORCID);
+    }        
+    
+    @Test(expected = LockedException.class)
+    public void checkProfile_LockedTest() {
+        initMocks();
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(true);
+        entity.setRecordLocked(true);
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
+        ((T2OrcidApiServiceVersionedDelegatorImpl) t2OrcidApiServiceDelegatorLatest).checkRecordStatus(ORCID);
+    }
+        
+    @Test(expected = DeactivatedException.class)
+    public void checkProfile_DeactivatedTest() {
+        initMocks();
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(true);
+        entity.setDeactivationDate(new Date());
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
+        ((T2OrcidApiServiceVersionedDelegatorImpl) t2OrcidApiServiceDelegatorLatest).checkRecordStatus(ORCID);
+    }
+    
+    @Test
+    public void checkProfile_OkTest() {
+        initMocks();
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(true);
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
+        ((T2OrcidApiServiceVersionedDelegatorImpl) t2OrcidApiServiceDelegatorLatest).checkRecordStatus(ORCID);
+    }
+     
+    @Test
+    public void checkProfile_NotClaimed_NotOldEnough_SourceTest() {
+        initMocks();
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(false);
+        entity.setSubmissionDate(new Date());
+        SourceEntity source = new SourceEntity();
+        source.setSourceClient(new ClientDetailsEntity(CLIENT_ID));
+        entity.setSource(source);
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
+        ((T2OrcidApiServiceVersionedDelegatorImpl) t2OrcidApiServiceDelegatorLatest).checkRecordStatus(ORCID);
+    }  
+    
+    @Test
+    public void checkProfile_NotClaimed_OldEnoughTest() {
+        initMocks();
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(false);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -(claimWaitPeriodDays + 1));
+        entity.setSubmissionDate(cal.getTime());
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
+        ((T2OrcidApiServiceVersionedDelegatorImpl) t2OrcidApiServiceDelegatorLatest).checkRecordStatus(ORCID);
+    }  
 }

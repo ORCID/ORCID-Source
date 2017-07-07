@@ -112,7 +112,7 @@ public class AdminControllerTest extends BaseControllerTest {
     OrcidClientGroupManager orcidClientGroupManager;
 
     @Resource
-    GroupAdministratorController groupAdministratorController;
+    ClientsController groupAdministratorController;
 
     @Resource
     private RecordNameManager recordNameManager;

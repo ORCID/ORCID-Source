@@ -17,25 +17,34 @@
 package org.orcid.core.analytics;
 
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.analytics.client.AnalyticsClient;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.http.HttpMethod;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
 
-    private static final String PUBLIC_API_USER = "Public API user";
+    private static final String UNKNOWN_CLIENT = "Unknown";
 
     private static final String PUBLIC_API = "Public API";
 
     private static final String MEMBER_API = "Member API";
-    
+
     private static final String PROFILE_NOT_FOUND = "not-found";
+
+    private static final String DEFAULT_CONTENT_TYPE = "default";
+
+    private static final String XML_CONTENT_TYPE = "xml";
+
+    private static final String JSON_CONTENT_TYPE = "json";
 
     private ContainerRequest request;
 
@@ -52,7 +61,7 @@ public class AnalyticsProcess implements Runnable {
     public boolean publicApi;
 
     private String ip;
-    
+
     private String scheme;
 
     @Override
@@ -92,7 +101,7 @@ public class AnalyticsProcess implements Runnable {
     public void setIp(String ip) {
         this.ip = ip;
     }
-    
+
     public void setScheme(String scheme) {
         this.scheme = scheme;
     }
@@ -109,14 +118,45 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setUrl(url);
         analyticsData.setClientDetailsString(getClientDetailsString());
         analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip);
-        analyticsData.setContentType(request.getHeaderValue(HttpHeaders.CONTENT_TYPE));
+        analyticsData.setMethod(request.getMethod());
+        analyticsData.setContentType(getContentType());
         analyticsData.setUserAgent(request.getHeaderValue(HttpHeaders.USER_AGENT));
         analyticsData.setResponseCode(response.getStatus());
         analyticsData.setIpAddress(ip);
         analyticsData.setCategory(parser.getCategory());
         analyticsData.setApiVersion(getApiString(parser.getApiVersion()));
-        analyticsData.setMethod(request.getMethod());
         return analyticsData;
+    }
+
+    private String getContentType() {
+        if (HttpMethod.GET.name().equals(request.getMethod())) {
+            String accept = request.getHeaderValue(HttpHeaders.ACCEPT);
+            if (accept != null && !accept.isEmpty()) {
+                return getSimplifiedContentType(accept);
+            }
+        }
+
+        // If accept header not set for GETs content type will be used - see
+        // AcceptFilter.
+        // For other methods content type will be used anyway
+        String contentType = request.getHeaderValue(HttpHeaders.CONTENT_TYPE);
+        if (contentType != null && !contentType.isEmpty()) {
+            return getSimplifiedContentType(contentType);
+        }
+
+        return DEFAULT_CONTENT_TYPE;
+    }
+
+    private String getSimplifiedContentType(String contentType) {
+        if (OrcidApiConstants.VND_ORCID_XML.equals(contentType) || OrcidApiConstants.ORCID_XML.equals(contentType) || MediaType.APPLICATION_XML.equals(contentType)) {
+            return XML_CONTENT_TYPE;
+        }
+
+        if (OrcidApiConstants.VND_ORCID_JSON.equals(contentType) || OrcidApiConstants.ORCID_JSON.equals(contentType) || MediaType.APPLICATION_JSON.equals(contentType)) {
+            return JSON_CONTENT_TYPE;
+        }
+
+        return contentType;
     }
 
     private String correctScheme(String url) {
@@ -130,7 +170,7 @@ public class AnalyticsProcess implements Runnable {
             delimiter = ":";
             delimiterIndex = ip.lastIndexOf(":");
         }
-        
+
         if (delimiterIndex != -1) {
             return ip.substring(0, delimiterIndex) + delimiter + "0";
         } else {
@@ -172,7 +212,7 @@ public class AnalyticsProcess implements Runnable {
             clientDetails.append(clientDetailsId);
             return clientDetails.toString();
         } else {
-            return PUBLIC_API_USER;
+            return UNKNOWN_CLIENT;
         }
     }
 

@@ -255,7 +255,7 @@
                             <p>
                                 ${springMacroRequestContext.getMessage("deactivate_orcid.once")} <a
                                     href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
-                                    target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a>
+                                    target="deactivate_orcid.close_an">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a>
                             </p>
                             
                             <h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
@@ -263,7 +263,7 @@
                                 ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")}&nbsp;<strong>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}</strong>
                                 <a
 	                                    href="${knowledgeBaseUri}/articles/580410"
-	                                    target="_blank" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a> 
+	                                    target="deprecate_orcid.learn_more_link" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
                             </p>
                             
                                                             
@@ -294,7 +294,7 @@
                             <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have_more")}<br />
                                 <a
                                     href="${knowledgeBaseUri}/articles/580410"
-                                    target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
+                                    target="deprecate_orcid.learn_more_link">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
                             </p>
                             <div>
                                 <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
@@ -334,7 +334,7 @@
                                 ${springMacroRequestContext.getMessage("2FA.details")}
                                 <br />
                                 <a href="${knowledgeBaseUri}/articles/580410"
-                                    target="_blank">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
+                                    target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                             </p>
                         
                             <div ng-show="showEnabled2FA" ng-cloak>
@@ -393,7 +393,7 @@
         <p>
             ${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br />
             <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedOrganizations.url")}"
-                target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+                target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
         <div ng-controller="revokeApplicationFormCtrl" >
         	<div ng-show="applicationSummaryList.length > 0" ng-cloak>
@@ -409,7 +409,7 @@
 		            <tbody>
 		                <tr data-ng-repeat="applicationSummary in applicationSummaryList">
 		                	<td class="revokeApplicationName">{{applicationSummary.name}}<br />
-		                        <a data-ng-hide="applicationSummary.websiteValue == null" href="{{getApplicationUrlLink(applicationSummary)}}" target="_blank">{{applicationSummary.websiteValue}}</a>
+		                        <a data-ng-hide="applicationSummary.websiteValue == null" href="{{getApplicationUrlLink(applicationSummary)}}" target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
 		                    </td>
 		                    <td width="35%">{{applicationSummary.approvalDate}}</td>
 		                    <td width="5%">
@@ -442,7 +442,7 @@
         <p>
             ${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
             <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedIndividual.url")}"
-                target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+                target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
         <div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
             <div class="ng-hide" ng-show="showInitLoader == true;">
@@ -462,8 +462,8 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="delegationDetails in delegation | orderBy:sort.column:sort.descending">
-                        <td width="40%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="_blank">{{delegationDetails.receiverName.value}}</a></td>
-                        <td width="30%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="_blank">{{delegationDetails.receiverOrcid.value}}</a></td>
+                        <td width="40%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                        <td width="30%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
                         <td width="20%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
                         <td width="10%" class="tooltip-container">
                             <a
@@ -503,8 +503,8 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat='result in results' class="new-search-result">
-                                <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
-                                <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
+                                <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="DisplayName" ng-bind="getDisplayName(result)"></a></td>
+                                <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="orcid-identifier">{{result['orcid-profile']['orcid-identifier'].path}}</td>
                                 <td width="10%">
                                     <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
                                         <span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
@@ -536,7 +536,7 @@
             	<@orcid.msg 'manage_signin_subtitle' />
             	<br>
             	<a href="${knowledgeBaseUri}/articles/892920"
-            target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+            target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
             </p>
             <div>
                 <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts">

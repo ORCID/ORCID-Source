@@ -52,7 +52,7 @@
                     <div class="member" ng-repeat="member in membersListSrvc.consortiaList | filter:{ country: by_country} | filter: {researchCommunity: by_researchCommunity} | startsWithLetter : activeLetter | orderBy : 'publicDisplayName' ">
                         <hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
-	                        	<h2 ng-cloak><a href="{{member.websiteUrl}}" target="_blank">{{member.publicDisplayName}}</a></h2>	                        
+	                        	<h2 ng-cloak><a href="{{member.websiteUrl}}" target="member.publicDisplayName">{{member.publicDisplayName}}</a></h2>
 	                        	<p ng-cloak><span ng-if="membersListSrvc.communityTypes[member.researchCommunity]">{{membersListSrvc.communityTypes[member.researchCommunity]}}</span><span ng-if="membersListSrvc.communityTypes[member.researchCommunity]&&member.country"> | </span>{{member.country}}</p>
 	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">

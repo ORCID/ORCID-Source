@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +40,7 @@ import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
+import org.orcid.core.salesforce.model.Member;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
@@ -217,6 +221,32 @@ public class SalesForceManagerImplTest {
         verify(salesForceDao, times(1)).createContactRole(argThat(a -> {            
             return "id3".equals(a.getContactId()) && ContactRoleType.OTHER_CONTACT.equals(a.getRoleType()) && "account1Id".equals(a.getAccountId());
         }));
+    }
+
+    @Test
+    public void testFindBestWebsiteMatch() throws MalformedURLException {
+        List<Member> members = new ArrayList<>();
+        members.add(createMember("1", "Account 1", "Account 1 Display", "https://account.com"));
+        members.add(createMember("2", "Account 2", "Account 2 Display", "http://www.account.com"));
+        members.add(createMember("3", "Account 3", "Account 3 Display", "https://account.com/abc"));
+        members.add(createMember("4", "Account 4", "Account 4 Display", "http://www.else.co.uk"));
+
+        assertEquals("1", salesForceManager.findBestWebsiteMatch(new URL("https://account.com"), members).get().getId());
+        assertEquals("1", salesForceManager.findBestWebsiteMatch(new URL("http://account.com"), members).get().getId());
+        assertEquals("1", salesForceManager.findBestWebsiteMatch(new URL("http://account.com/123?abc"), members).get().getId());
+        assertEquals("2", salesForceManager.findBestWebsiteMatch(new URL("http://www.account.com"), members).get().getId());
+        assertEquals("2", salesForceManager.findBestWebsiteMatch(new URL("https://www.account.com"), members).get().getId());
+        assertEquals("3", salesForceManager.findBestWebsiteMatch(new URL("https://account.com/abc"), members).get().getId());
+        assertEquals("4", salesForceManager.findBestWebsiteMatch(new URL("http://else.co.uk"), members).get().getId());
+    }
+
+    private Member createMember(String accountId, String name, String publicDisplayName, String website) throws MalformedURLException {
+        Member member = new Member();
+        member.setId(accountId);
+        member.setName(name);
+        member.setPublicDisplayName(publicDisplayName);
+        member.setWebsiteUrl(new URL(website));
+        return member;
     }
 
 }

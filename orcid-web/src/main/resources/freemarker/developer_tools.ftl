@@ -59,7 +59,7 @@
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
 								<h3><@orcid.msg 'developer_tools.client_types.description.differences' /></h3>
-								<p><a href="https://orcid.org/about/membership/comparison" target="_blank"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
+								<p><a href="https://orcid.org/about/membership/comparison" target="developer_tools.client_types.description.differences.link"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
 							</div>
 						</div>																
 						<div class="row">
@@ -69,7 +69,7 @@
 									<#if !hasVerifiedEmail>
 										<li><a href ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.link' /></a> <@orcid.msg 'developer_tools.public_member.verify.description' /></li>
 									</#if>
-									<li><a href="${knowledgeBaseUri}/articles/343182" target="_blank"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+									<li><a href="${knowledgeBaseUri}/articles/343182" target="developer_tools.public_member.read_more"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
 								</ul>
 							</div>
 						</div>													
@@ -116,7 +116,7 @@
 						<div class="row">
 							<!-- Website -->
 							<div class="col-md-12 col-sm-12 col-xs-12 dt-website">
-								<p><a href="{{getClientUrl(userCredentials)}}" target="_blank">{{userCredentials.clientWebsite.value}}</a></p>														
+								<p><a href="{{getClientUrl(userCredentials)}}" target="userCredentials.clientWebsite.value">{{userCredentials.clientWebsite.value}}</a></p>
 							</div>							
 						</div>
 						<div class="row">
@@ -199,7 +199,7 @@
 												<strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong>								
 											</div>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<a href="{{playgroundExample}}" target="_blank">
+												<a href="{{playgroundExample}}" target="'manage.developer_tools.view.example.google">
 													<span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
 													<span ng-show="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
 												</a>
@@ -436,14 +436,14 @@
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<h3><@orcid.msg 'developer_tools.client_types.description.differences' /></h3>
-							<p><a href="https://orcid.org/about/membership/comparison" target="_blank"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
+							<p><a href="https://orcid.org/about/membership/comparison" target="developer_tools.client_types.description.differences.link"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
 						</div>
 					</div>																
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">								
 							<h3><@orcid.msg 'developer_tools.public_member.additional_resources' /></h3>																	
 							<ul class="dotted">
-								<li><a href="http://members.orcid.org/api/introduction-orcid-public-api" target="_blank"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+								<li><a href="http://members.orcid.org/api/introduction-orcid-public-api" target="developer_tools.public_member.read_more"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
 							</ul>
 						</div>
 					</div>
