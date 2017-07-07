@@ -191,10 +191,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 // If it was successfully deprecated
                 if (wasDeprecated) {
                     LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
-
                     clearRecord(deprecatedOrcid);
-
-                    // Move all emails to the primary email
+                    // Move all email's to the primary record
                     Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid, System.currentTimeMillis());
                     if (deprecatedAccountEmails != null) {
                         // For each email in the deprecated profile
@@ -219,7 +217,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
                 LOGGER.info("About to deactivate record {}", orcid);
-                if(profileDao.deactivate(orcid)) {
+                if (profileDao.deactivate(orcid)) {
                     clearRecord(orcid);
                     emailManager.hideAllEmails(orcid);
                     notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
@@ -228,7 +226,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 }
                 return false;
             }
-        });                
+        });
     }
     
     /**
