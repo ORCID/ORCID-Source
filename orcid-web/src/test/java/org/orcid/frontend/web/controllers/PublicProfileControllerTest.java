@@ -78,7 +78,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
     private String userOrcid = "0000-0000-0000-0003";    
     private String deprecatedUserOrcid = "0000-0000-0000-0004";
-    private String lockedUserOrcid = "0000-0000-0000-0005";    
+    private String lockedUserOrcid = "0000-0000-0000-0006";    
     
     @Resource
     PublicProfileController publicProfileController;

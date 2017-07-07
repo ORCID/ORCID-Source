@@ -95,7 +95,11 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
         member.setName(getName().getValue());
         member.setPublicDisplayName(getName().getValue());
         try {
-            member.setWebsiteUrl(new URL(getWebsite().getValue()));
+            String websiteValue = getWebsite().getValue();
+            if (!websiteValue.startsWith("http")) {
+                websiteValue = "http://" + websiteValue;
+            }
+            member.setWebsiteUrl(new URL(websiteValue));
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error parsing website", e);
         }

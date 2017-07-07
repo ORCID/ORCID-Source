@@ -23,9 +23,14 @@
 
 package org.orcid.jaxb.model.clientgroup;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.message.ScopePathType;
 
 /**
  * <p>
@@ -82,6 +87,52 @@ public enum ClientType {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+    
+    public static Set<String> getScopes(ClientType clientType) {
+        switch (clientType) {
+        case PREMIUM_CREATOR:
+            return premiumCreatorScopes();
+        case CREATOR:
+            return creatorScopes();
+        case PREMIUM_UPDATER:
+            return premiumUpdaterScopes();
+        case UPDATER:
+            return updaterScopes();
+        default:
+            throw new IllegalArgumentException("Unsupported client type: " + clientType);
+        }
+    }
+
+    public static Set<String> premiumCreatorScopes() {
+        Set<String> creatorScopes = creatorScopes();
+        addPremiumOnlyScopes(creatorScopes);
+        return creatorScopes;
+    }
+
+    public static Set<String> creatorScopes() {
+        return ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings();
+    }
+
+    public static Set<String> premiumUpdaterScopes() {
+        Set<String> updaterScopes = updaterScopes();
+        addPremiumOnlyScopes(updaterScopes);
+        return updaterScopes;
+    }
+
+    public static Set<String> updaterScopes() {
+        return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED,
+                ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
+                ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
+                ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
+                ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED,
+                ScopePathType.READ_LIMITED, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_UPDATE,
+                ScopePathType.PEER_REVIEW_READ_LIMITED, ScopePathType.GROUP_ID_RECORD_READ, ScopePathType.GROUP_ID_RECORD_UPDATE));
+    }
+
+    private static void addPremiumOnlyScopes(Set<String> scopes) {
+        scopes.add(ScopePathType.WEBHOOK.value());
+        // scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
     }
 
 }

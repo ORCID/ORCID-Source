@@ -51,4 +51,12 @@ public class SalesForceConnectionDaoImpl extends GenericDaoImpl<SalesForceConnec
         return results.isEmpty() ? null : results.get(0);
     }
 
+    @Override
+    public List<SalesForceConnectionEntity> findByAccountId(String accountId) {
+        TypedQuery<SalesForceConnectionEntity> query = entityManager.createQuery("from SalesForceConnectionEntity where salesForceAccountId = :salesForceAccountId",
+                SalesForceConnectionEntity.class);
+        query.setParameter("salesForceAccountId", accountId);
+        return query.getResultList();
+    }
+
 }

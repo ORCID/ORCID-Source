@@ -147,6 +147,77 @@
          notification_intro="This is the intro"
      />
      
+     <notification
+         id="11"
+         orcid="0000-0000-0000-0001"
+         date_created="2014-07-17 13:27:14.00"
+         notification_type="PERMISSION"
+         subject="Your ORCID record was updated (Super Institution 1)"
+         body_text="Your ORCID record was updated by Super Institution 1.\n\nBest regards,\n\nORCID"
+         body_html="Your ORCID record was updated by Super Institution 1.\n\n&lt;em>Best&lt;/em> regards,\n\nORCID"
+         source_id="4444-4444-4444-4446"
+         client_source_id="4444-4444-4444-4445"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
+     <notification
+         id="12"
+         orcid="0000-0000-0000-0001"
+         date_created="2014-07-17 13:27:14.00"         
+         notification_type="PERMISSION"
+         subject="Your ORCID record was updated (Super Institution 2)"
+         body_text="Your ORCID record was updated by Super Institution 2.\n\nBest regards,\n\nORCID"
+         body_html="Your ORCID record was updated by Super Institution 2.\n\n&lt;em>Best&lt;/em> regards,\n\nORCID"
+         source_id="4444-4444-4444-4446"
+         client_source_id="4444-4444-4444-4445"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
+     <notification
+         id="13"
+         orcid="0000-0000-0000-0002"
+         date_created="2014-07-17 13:27:14.00"
+         notification_type="PERMISSION"
+         subject="Your ORCID record was updated (Super Institution 2)"
+         body_text="Your ORCID record was updated by Super Institution 2.\n\nBest regards,\n\nORCID"
+         body_html="Your ORCID record was updated by Super Institution 2.\n\n&lt;em>Best&lt;/em> regards,\n\nORCID"
+         source_id="4444-4444-4444-4446"
+         client_source_id="4444-4444-4444-4445"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
+     <notification
+         id="14"
+         orcid="0000-0000-0000-0002"
+         date_created="2014-07-17 13:27:14.00"
+         notification_type="PERMISSION"
+         subject="Your ORCID record was updated (Super Institution 2)"
+         body_text="Your ORCID record was updated by Super Institution 2.\n\nBest regards,\n\nORCID"
+         body_html="Your ORCID record was updated by Super Institution 2.\n\n&lt;em>Best&lt;/em> regards,\n\nORCID"
+         source_id="4444-4444-4444-4446"
+         client_source_id="4444-4444-4444-4445"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+         sent_date="2017-01-01 00:00:00.00"
+     />
+     
+     <notification
+         id="15"
+         orcid="0000-0000-0000-0003"
+         date_created="2014-07-17 13:27:14.00"
+         notification_type="PERMISSION"
+         subject="Your ORCID record was updated (Super Institution 2)"
+         body_text="Your ORCID record was updated by Super Institution 2.\n\nBest regards,\n\nORCID"
+         body_html="Your ORCID record was updated by Super Institution 2.\n\n&lt;em>Best&lt;/em> regards,\n\nORCID"
+         source_id="4444-4444-4444-4446"
+         client_source_id="4444-4444-4444-4445"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
      <notification_item
          id="1"
          notification_id="5"

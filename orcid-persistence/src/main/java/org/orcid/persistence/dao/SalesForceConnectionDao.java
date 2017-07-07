@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.List;
+
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 
 /**
@@ -26,5 +28,7 @@ public interface SalesForceConnectionDao extends GenericDao<SalesForceConnection
     SalesForceConnectionEntity findByOrcidAndAccountId(String orcid, String accountId);
 
     SalesForceConnectionEntity findByOrcid(String orcid);
+
+    List<SalesForceConnectionEntity> findByAccountId(String accountId);
 
 }

@@ -53,6 +53,7 @@ import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
@@ -378,5 +379,25 @@ public class MemberV2ApiClientImpl {
     public ClientResponse viewRecord(String orcid, String accessToken) {
         URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH).build(orcid);
         return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
+    }
+        
+    public ClientResponse viewInvalidEndpoint(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse postInvalidEndpoint(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_XML, new Record(), accessToken);        
+    }
+    
+    public ClientResponse putInvalidEndpoint(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, new Record(), accessToken);        
+    }
+    
+    public ClientResponse deleteInvalidEndpoint(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
     }
 }

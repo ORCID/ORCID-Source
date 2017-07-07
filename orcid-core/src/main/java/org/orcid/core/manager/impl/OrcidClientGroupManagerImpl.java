@@ -269,7 +269,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Set<ClientDetailsEntity> clients = groupProfileEntity.getClients();
         ClientType clientType = this.getClientType(groupProfileEntity.getGroupType());
         for (ClientDetailsEntity client : clients) {
-            Set<String> newSetOfScopes = this.createScopes(clientType);
+            Set<String> newSetOfScopes = ClientType.getScopes(clientType);
             Set<ClientScopeEntity> existingScopes = client.getClientScopes();
             Iterator<ClientScopeEntity> scopesIterator = existingScopes.iterator();
             while (scopesIterator.hasNext()) {
@@ -636,60 +636,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         String idp = orcidClient.getIdp();
         Boolean allowAutoDeprecate = orcidClient.getAllowAutoDeprecate();
 
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, idp, website, clientType, createScopes(clientType),
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, idp, website, clientType, ClientType.getScopes(clientType),
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, allowAutoDeprecate);
         return clientDetails;
-    }
-
-    private Set<String> createScopes(ClientType clientType) {
-        switch (clientType) {
-        case PREMIUM_CREATOR:
-            return premiumCreatorScopes();
-        case CREATOR:
-            return creatorScopes();
-        case PREMIUM_UPDATER:
-            return premiumUpdaterScopes();
-        case UPDATER:
-            return updaterScopes();
-        default:
-            throw new IllegalArgumentException("Unsupported client type: " + clientType);
-        }
-    }
-
-    @Override
-    public Set<String> premiumCreatorScopes() {
-        Set<String> creatorScopes = creatorScopes();
-        addPremiumOnlyScopes(creatorScopes);
-        return creatorScopes;
-    }
-
-    @Override
-    public Set<String> creatorScopes() {
-        return ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings();
-    }
-
-    @Override
-    public Set<String> premiumUpdaterScopes() {
-        Set<String> updaterScopes = updaterScopes();
-        addPremiumOnlyScopes(updaterScopes);
-        return updaterScopes;
-    }
-
-    @Override
-    public Set<String> updaterScopes() {
-        return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED,
-                ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
-                ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
-                ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
-                ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED,
-                ScopePathType.READ_LIMITED, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_UPDATE,
-                ScopePathType.PEER_REVIEW_READ_LIMITED, ScopePathType.GROUP_ID_RECORD_READ, ScopePathType.GROUP_ID_RECORD_UPDATE));
-    }
-
-    private void addPremiumOnlyScopes(Set<String> scopes) {
-        scopes.add(ScopePathType.WEBHOOK.value());
-        // scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
-    }
+    }    
 
     /**
      * Deletes a group

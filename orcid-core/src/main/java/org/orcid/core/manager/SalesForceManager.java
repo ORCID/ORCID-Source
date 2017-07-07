@@ -16,8 +16,10 @@
  */
 package org.orcid.core.manager;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
@@ -49,7 +51,7 @@ public interface SalesForceManager {
     void enableAccess(String accountId, List<Contact> contactsList);
 
     String retrieveAccountIdByOrcid(String orcid);
-    
+
     /**
      * 
      * @return the accountId of the member
@@ -57,23 +59,25 @@ public interface SalesForceManager {
     String createMember(Member member);
 
     void updateMember(Member member);
-    
+
+    Optional<Member> findBestWebsiteMatch(URL webSiteUrl, Collection<Member> possibleMatches);
+
     /**
      * 
      * @return the id of the opportunity
      */
     String createOpportunity(Opportunity opportunity);
-    
+
     void flagOpportunityAsClosed(String opportunityId);
 
     void createContact(Contact contact);
 
     void updateContact(Contact contact);
-    
+
     void updateContacts(Collection<Contact> contacts);
 
     void removeContact(Contact contact);
-    
+
     void removeContactRole(Contact contact);
 
     /**

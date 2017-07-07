@@ -23,6 +23,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -83,19 +84,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
                 Long.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult().intValue();
-    }
-
-    @Override
-    public List<String> findOrcidsWithNotificationsToSend() {
-        return findOrcidsWithNotificationsToSend(new Date());
-    }
-
-    @Override
-    public List<String> findOrcidsWithNotificationsToSend(Date effectiveNow) {
-        TypedQuery<String> query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND, String.class);
-        query.setParameter("effectiveNow", effectiveNow);
-        return query.getResultList();
-    }
+    }    
 
     @Override
     public NotificationEntity findByOricdAndId(String orcid, Long id) {
@@ -163,6 +152,24 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("orcid", orcid);
         query.setParameter("client", client);
         query.setParameter("notificationType", NotificationType.PERMISSION);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Object[]> findRecordsWithUnsentNotifications() {
+        Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS);
+        query.setParameter("never", Float.valueOf(SendEmailFrequency.NEVER.value()));
+        return query.getResultList();
+    }
+
+    @Override
+    public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
+        TypedQuery<NotificationEntity> query = entityManager.createNamedQuery(NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID, NotificationEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("effective_date", effectiveDate);
+        query.setParameter("record_email_frequency", emailFrequency);
+        query.setParameter("record_active_date", recordActiveDate);
         return query.getResultList();
     }
 

@@ -110,7 +110,8 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(PutCodeRequiredException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9031));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotificationException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9032));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotClaimedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9036)); 
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidElementCantBeDeletedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9040)); 
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidElementCantBeDeletedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9040));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DeactivatedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9044));
     }
     
     public static Pair<Status, Integer> getHttpStatusAndErrorCode(Throwable t) {
