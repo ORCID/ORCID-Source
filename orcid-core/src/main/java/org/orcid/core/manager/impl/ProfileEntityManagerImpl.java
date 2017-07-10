@@ -59,22 +59,19 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.CreditName;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
-import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
@@ -84,7 +81,10 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -130,9 +130,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private EmailManager emailManager;
 
     @Resource
-    private OrgAffiliationRelationDao orgAffiliationRelationDao;
-
-    @Resource
     private OtherNameManager otherNamesManager;
 
     @Resource
@@ -158,6 +155,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource
     private RecordNameManager recordNameManager;
+    
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -183,108 +183,52 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return name.getPath();
     }
 
-    /**
-     * Deprecates a profile
-     * 
-     * @param deprecatedProfile
-     *            The profile that want to be deprecated
-     * @param primaryProfile
-     *            The primary profile for the deprecated profile
-     * @return true if the account was successfully deprecated, false otherwise
-     */
     @Override
-    @Transactional
     public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
-        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedOrcid, primaryOrcid);
-        // If it was successfully deprecated
-        if (wasDeprecated) {
-            LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
-            ProfileEntity deprecated = profileDao.find(deprecatedOrcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
+                boolean wasDeprecated = profileDao.deprecateProfile(deprecatedOrcid, primaryOrcid);
+                // If it was successfully deprecated
+                if (wasDeprecated) {
+                    LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
+                    clearRecord(deprecatedOrcid);
+                    // Move all email's to the primary record
+                    Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid, System.currentTimeMillis());
+                    if (deprecatedAccountEmails != null) {
+                        // For each email in the deprecated profile
+                        for (Email email : deprecatedAccountEmails.getEmails()) {
+                            // Delete each email from the deprecated
+                            // profile
+                            LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] { email.getEmail(), deprecatedOrcid, primaryOrcid });
+                            emailManager.moveEmailToOtherAccount(email.getEmail(), deprecatedOrcid, primaryOrcid);
+                        }
+                    }
 
-            // Remove works
-            workManager.removeAllWorks(deprecatedOrcid);
-
-            // Remove funding
-            if (deprecated.getProfileFunding() != null) {
-                for (ProfileFundingEntity funding : deprecated.getProfileFunding()) {
-                    fundingManager.removeProfileFunding(funding.getProfile().getId(), funding.getId());
+                    profileDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
+                    return true;
                 }
+                return false;
             }
-
-            // Remove affiliations
-            if (deprecated.getOrgAffiliationRelations() != null) {
-                for (OrgAffiliationRelationEntity affiliation : deprecated.getOrgAffiliationRelations()) {
-                    orgAffiliationRelationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
-                }
-            }
-
-            // Remove external identifiers
-            if (deprecated.getExternalIdentifiers() != null) {
-                for (ExternalIdentifierEntity externalIdentifier : deprecated.getExternalIdentifiers()) {
-                    externalIdentifierManager.deleteExternalIdentifier(deprecated.getId(), externalIdentifier.getId(), false);
-                }
-            }
-
-            // Remove researcher urls
-            if (deprecated.getResearcherUrls() != null) {
-                for (ResearcherUrlEntity rUrl : deprecated.getResearcherUrls()) {
-                    researcherUrlManager.deleteResearcherUrl(deprecatedOrcid, rUrl.getId(), false);
-                }
-            }
-
-            // Remove other names
-            if (deprecated.getOtherNames() != null) {
-                for (OtherNameEntity otherName : deprecated.getOtherNames()) {
-                    otherNamesManager.deleteOtherName(deprecatedOrcid, otherName.getId(), false);
-                }
-            }
-
-            // Remove keywords
-            if (deprecated.getKeywords() != null) {
-                for (ProfileKeywordEntity keyword : deprecated.getKeywords()) {
-                    profileKeywordManager.deleteKeyword(deprecatedOrcid, keyword.getId(), false);
-                }
-            }
-
-            // Remove biography
-            if (biographyManager.exists(deprecatedOrcid)) {
-                Biography deprecatedBio = new Biography();
-                deprecatedBio.setContent(null);
-                deprecatedBio.setVisibility(Visibility.PRIVATE);
-                biographyManager.updateBiography(deprecatedOrcid, deprecatedBio);
-            }
-
-            // Set the deactivated names
-            if (recordNameManager.exists(deprecatedOrcid)) {
-                Name name = new Name();
-                name.setCreditName(new CreditName());
-                name.setGivenNames(new GivenNames("Given Names Deactivated"));
-                name.setFamilyName(new FamilyName("Family Name Deactivated"));
-                name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
-                name.setPath(deprecatedOrcid);
-                recordNameManager.updateRecordName(deprecatedOrcid, name);
-            }
-
-            userConnectionDao.deleteByOrcid(deprecatedOrcid);
-
-            // Move all emails to the primary email
-            Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
-            if (deprecatedAccountEmails != null) {
-                // For each email in the deprecated profile
-                for (EmailEntity email : deprecatedAccountEmails) {
-                    // Delete each email from the deprecated
-                    // profile
-                    LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] { email.getId(), deprecatedOrcid, primaryOrcid });
-                    emailManager.moveEmailToOtherAccount(email.getId(), deprecatedOrcid, primaryOrcid);
-                }
-            }
-
-            return true;
-        }
-
-        return false;
+        });
     }
 
+    @Override
+    public boolean deactivateRecord(String orcid) {
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
+                LOGGER.info("About to deactivate record {}", orcid);
+                if (profileDao.deactivate(orcid)) {
+                    clearRecord(orcid);
+                    emailManager.hideAllEmails(orcid);
+                    notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
+                    LOGGER.info("Record {} successfully deactivated", orcid);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+    
     /**
      * Enable developer tools
      * 
@@ -561,93 +505,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profileDao.merge(profile);
         profileDao.flush();
         return true;
-    }
-
-    @Override
-    @Transactional
-    public boolean deactivateRecord(String orcid) {
-        // Clear the record
-        ProfileEntity toClear = profileDao.find(orcid);
-        toClear.setLastModified(new Date());
-        toClear.setDeactivationDate(new Date());
-        toClear.setActivitiesVisibilityDefault(Visibility.PRIVATE);
-        toClear.setIndexingStatus(IndexingStatus.REINDEX);
-
-        // Remove works
-        workManager.removeAllWorks(orcid);
-
-        // Remove funding
-        if (toClear.getProfileFunding() != null) {
-            toClear.getProfileFunding().clear();
-        }
-
-        // Remove affiliations
-        if (toClear.getOrgAffiliationRelations() != null) {
-            toClear.getOrgAffiliationRelations().clear();
-        }
-
-        // Remove peer reviews
-        if (toClear.getPeerReviews() != null) {
-            toClear.getPeerReviews().clear();
-        }
-        
-        // Remove external identifiers
-        if (toClear.getExternalIdentifiers() != null) {
-            toClear.getExternalIdentifiers().clear();
-        }
-
-        // Remove researcher urls
-        if (toClear.getResearcherUrls() != null) {
-            toClear.getResearcherUrls().clear();
-        }
-
-        // Remove other names
-        if (toClear.getOtherNames() != null) {
-            toClear.getOtherNames().clear();
-        }
-
-        // Remove keywords
-        if (toClear.getKeywords() != null) {
-            toClear.getKeywords().clear();
-        }
-
-        // Remove address
-        if (toClear.getAddresses() != null) {
-            toClear.getAddresses().clear();
-        }
-
-        BiographyEntity bioEntity = toClear.getBiographyEntity();
-        if (bioEntity != null) {
-            bioEntity.setBiography("");
-            bioEntity.setVisibility(Visibility.PRIVATE);
-        }
-
-        // Set the deactivated names
-        RecordNameEntity recordName = toClear.getRecordNameEntity();
-        if (recordName != null) {
-            recordName.setCreditName(null);
-            recordName.setGivenNames("Given Names Deactivated");
-            recordName.setFamilyName("Family Name Deactivated");
-            recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
-        }
-
-        Set<EmailEntity> emails = toClear.getEmails();
-        if (emails != null) {
-            // For each email in the deprecated profile
-            for (EmailEntity email : emails) {
-                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
-            }
-        }
-
-        profileDao.merge(toClear);
-        profileDao.flush();
-
-        // Delete all connections
-        userConnectionDao.deleteByOrcid(orcid);
-
-        notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
-        return true;
-    }
+    }    
 
     @Override
     @Transactional
@@ -759,5 +617,62 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public void update2FASecret(String orcid, String secret) {
         profileDao.update2FASecret(orcid, secret);
+    }
+    
+    /**
+     * Clears all record info but the email addresses, that stay unmodified
+     * */
+    private void clearRecord(String orcid) {
+        // Remove works
+        workManager.removeAllWorks(orcid);
+
+        // Remove funding
+        fundingManager.removeAllFunding(orcid);
+        
+        // Remove affiliations
+        affiliationsManager.removeAllAffiliations(orcid);
+        
+        // Remove peer reviews
+        peerReviewManager.removeAllPeerReviews(orcid);
+        
+        // Remove addresses
+        addressManager.removeAllAddress(orcid);
+        
+        // Remove external identifiers
+        externalIdentifierManager.removeAllExternalIdentifiers(orcid);
+        
+        // Remove researcher urls
+        researcherUrlManager.removeAllResearcherUrls(orcid);
+        
+        // Remove other names
+        otherNamesManager.removeAllOtherNames(orcid);
+        
+        // Remove keywords
+        profileKeywordManager.removeAllKeywords(orcid);
+        
+        // Remove biography
+        if (biographyManager.exists(orcid)) {
+            Biography deprecatedBio = new Biography();
+            deprecatedBio.setContent(null);
+            deprecatedBio.setVisibility(Visibility.PRIVATE);
+            biographyManager.updateBiography(orcid, deprecatedBio);
+        }
+        
+        // Set the deactivated names
+        if (recordNameManager.exists(orcid)) {
+            Name name = new Name();
+            name.setCreditName(new CreditName());
+            name.setGivenNames(new GivenNames("Given Names Deactivated"));
+            name.setFamilyName(new FamilyName("Family Name Deactivated"));
+            name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+            name.setPath(orcid);
+            recordNameManager.updateRecordName(orcid, name);
+        }
+        
+        // 
+        userConnectionDao.deleteByOrcid(orcid);
+        
+        // Change default visibility to private
+        profileDao.updateDefaultVisibility(orcid, Visibility.PRIVATE);
     }
 }

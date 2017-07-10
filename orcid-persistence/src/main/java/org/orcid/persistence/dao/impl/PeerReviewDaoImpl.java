@@ -98,4 +98,12 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
+    
+    @Override
+    @Transactional
+    public void removeAllPeerReviews(String orcid){
+        Query query = entityManager.createQuery("delete from PeerReviewEntity where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
 }

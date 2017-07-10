@@ -101,5 +101,14 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      *          The funding id                 
      * @return true if the funding was deleted, false otherwise
      * */
-    boolean checkSourceAndDelete(String orcid, Long fundingId);           
+    boolean checkSourceAndDelete(String orcid, Long fundingId);        
+    
+    /**
+     * Removes all funding that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all funding will be
+     *            removed.
+     */
+    void removeAllFunding(String orcid);
 }

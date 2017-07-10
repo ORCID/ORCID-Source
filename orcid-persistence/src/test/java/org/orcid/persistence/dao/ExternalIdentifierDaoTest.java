@@ -33,7 +33,6 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,8 +46,11 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class ExternalIdentifierDaoTest extends DBUnitTest {
 
-    @Resource
-    private ExternalIdentifierDao externalIdentifierDao;
+    private static String USER_ORCID = "0000-0000-0000-0003";
+    private static String OTHER_USER_ORCID = "0000-0000-0000-0001";
+    
+    @Resource(name = "externalIdentifierDao")
+    private ExternalIdentifierDao dao;
 
     @Resource
     private ProfileDao profileDao;
@@ -63,25 +65,19 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
-    @Before
-    public void beforeRunning() {
-        assertNotNull(externalIdentifierDao);
-    }
-
     @Test
     public void testRemoveExternalIdentifier() {
         Date now = new Date();
         Date justBeforeStart = new Date(now.getTime() - 1000);
-        assertFalse(externalIdentifierDao.removeExternalIdentifier("4444-4444-4444-4441", "d3clan"));
-        assertFalse(externalIdentifierDao.removeExternalIdentifier("4444-4444-4444-4443", "d3clan1"));
+        assertFalse(dao.removeExternalIdentifier("4444-4444-4444-4441", "d3clan"));
+        assertFalse(dao.removeExternalIdentifier("4444-4444-4444-4443", "d3clan1"));
         assertTrue("Profile last modified should be updated", justBeforeStart.before(profileDao.retrieveLastModifiedDate("4444-4444-4444-4443")));
-        assertTrue(externalIdentifierDao.removeExternalIdentifier("4444-4444-4444-4443", "d3clan"));
+        assertTrue(dao.removeExternalIdentifier("4444-4444-4444-4443", "d3clan"));
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetExternalIdentifiers() {
-        List<ExternalIdentifierEntity> extIds = externalIdentifierDao.getExternalIdentifiers("4444-4444-4444-4442", 0L);
+        List<ExternalIdentifierEntity> extIds = dao.getExternalIdentifiers("4444-4444-4444-4442", 0L);
         assertNotNull(extIds);
         assertEquals(4, extIds.size());
         for(ExternalIdentifierEntity extId : extIds) {
@@ -111,12 +107,12 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
     
     @Test
     public void testGetExternalIdentifiersUsingVisibility() {
-        List<ExternalIdentifierEntity> extIds = externalIdentifierDao.getExternalIdentifiers("4444-4444-4444-4442", Visibility.LIMITED);
+        List<ExternalIdentifierEntity> extIds = dao.getExternalIdentifiers("4444-4444-4444-4442", Visibility.LIMITED);
         assertNotNull(extIds);
         assertEquals(1, extIds.size());
         assertEquals(Long.valueOf(3), extIds.get(0).getId());
         
-        extIds = externalIdentifierDao.getExternalIdentifiers("4444-4444-4444-4442", Visibility.PUBLIC);
+        extIds = dao.getExternalIdentifiers("4444-4444-4444-4442", Visibility.PUBLIC);
         assertNotNull(extIds);
         assertEquals(1, extIds.size());
         assertEquals(Long.valueOf(2), extIds.get(0).getId());                
@@ -124,7 +120,7 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
     
     @Test
     public void testGetExternalIdentifier() {
-        ExternalIdentifierEntity extId = externalIdentifierDao.getExternalIdentifierEntity("4444-4444-4444-4442", 3L);
+        ExternalIdentifierEntity extId = dao.getExternalIdentifierEntity("4444-4444-4444-4442", 3L);
         assertNotNull(extId);
         assertNotNull(extId.getDateCreated());
         assertNotNull(extId.getLastModified());
@@ -140,17 +136,36 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
     @Test
     public void testGetExternalIdentifierThatDontBelongToThatUser() {
         try {
-            externalIdentifierDao.getExternalIdentifierEntity("4444-4444-4444-4441", 3L);
+            dao.getExternalIdentifierEntity("4444-4444-4444-4441", 3L);
             fail();
         } catch(NoResultException nre) {
             
         }
         
         try {
-            externalIdentifierDao.getExternalIdentifierEntity("4444-4444-4444-4400", 3L);
+            dao.getExternalIdentifierEntity("4444-4444-4444-4400", 3L);
             fail();
         } catch(NoResultException nre) {
             
         }
+    }
+    
+    @Test
+    public void removeAllTest() {
+        long initialNumber = dao.countAll();
+        long elementThatBelogsToUser = dao.getExternalIdentifiers(USER_ORCID, 0L).size();
+        long otherUserElements = dao.getExternalIdentifiers(OTHER_USER_ORCID, 0L).size();
+        assertEquals(5, elementThatBelogsToUser);
+        assertTrue(elementThatBelogsToUser < initialNumber);
+        assertEquals(3, otherUserElements);
+        //Remove all elements that belongs to USER_ORCID
+        dao.removeAllExternalIdentifiers(USER_ORCID);
+        
+        long finalNumberOfElements = dao.countAll();
+        long finalNumberOfOtherUserElements = dao.getExternalIdentifiers(OTHER_USER_ORCID, 0L).size();
+        long finalNumberOfElementsThatBelogsToUser = dao.getExternalIdentifiers(USER_ORCID, 0L).size();
+        assertEquals(0, finalNumberOfElementsThatBelogsToUser);
+        assertEquals(otherUserElements, finalNumberOfOtherUserElements);
+        assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
 }

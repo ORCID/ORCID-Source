@@ -278,4 +278,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     public boolean removeAffiliation(String userOrcid, Long affiliationId) {
         return orgAffiliationRelationDao.removeOrgAffiliationRelation(userOrcid, affiliationId);
     }        
+    
+    @Override
+    public void removeAllAffiliations(String orcid) {
+        orgAffiliationRelationDao.removeAllAffiliations(orcid);
+    }
 }

@@ -47,4 +47,13 @@ public interface ResearcherUrlManager extends ResearcherUrlManagerReadOnly {
     ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest);        
     
     ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
+    
+    /**
+     * Removes all researcher urls that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all researcher urls will be
+     *            removed.
+     */
+    void removeAllResearcherUrls(String orcid);
 }

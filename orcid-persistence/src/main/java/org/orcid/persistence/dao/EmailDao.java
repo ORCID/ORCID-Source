@@ -81,4 +81,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     boolean isPrimaryEmail(String orcid, String email);
     
     EmailEntity findPrimaryEmail(String orcid);
+    
+    boolean hideAllEmails(String orcid);
 }

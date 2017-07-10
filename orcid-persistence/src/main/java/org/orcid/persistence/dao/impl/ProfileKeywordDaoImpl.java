@@ -106,4 +106,12 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    @Override
+    @Transactional
+    public void removeAllKeywords(String orcid) {
+        Query query = entityManager.createQuery("delete from ProfileKeywordEntity where profile_orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
 }
