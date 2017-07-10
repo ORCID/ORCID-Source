@@ -61,7 +61,7 @@ export const VerifyEmailCtrl = angular.module('orcidApp').controller(
                                     primeVerified = true;
                                 }
                             };
-                        };7
+                        };
 
                         if ( primeVerified == false 
                             && getBaseUri().indexOf("sandbox") == -1 

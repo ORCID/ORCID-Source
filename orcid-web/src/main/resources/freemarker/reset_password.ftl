@@ -23,7 +23,7 @@
             <#if (tokenExpired)>
 		        <span class="orcid-error">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.resetAgain")}</span>
 		    </#if>
-            <p><small>${springMacroRequestContext.getMessage("reset_password.labelenteremailaddress")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
+            <p><small>${springMacroRequestContext.getMessage("reset_password.enterEmail")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
         	<form id="password-reset-form" name="emailAddressForm">
         		<fieldset>
         			<span class="orcid-error"
@@ -35,11 +35,11 @@
 			        	<strong><span ng-bind="requestResetPassword.successMessage" /></strong>
 			        </div>
         			<div class="control-group">
-            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label>
+            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label>
                			<div class="controls">                    	
                				<input id="email" type="text" ng-model="requestResetPassword.email" />
                			</div>
-               			<button class="btn btn-primary topBuffer" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.labelSendInstructions")}</button>
+               			<button class="btn btn-primary topBuffer" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.sendResetLink")}</button>
         			</div>
         		</fieldset>
         	</form>

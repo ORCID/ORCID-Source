@@ -40,15 +40,10 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
 	int getUnreadCount(String orcid);
 
-	List<String> findOrcidsWithNotificationsToSend();
-
-	/**
-	 * @param effectiveNow
-	 *            Normally this would be the current date and time, but it is
-	 *            useful to be able to pass in a different value for testing.
-	 */
-	List<String> findOrcidsWithNotificationsToSend(Date effectiveNow);
-
+	List<Object[]> findRecordsWithUnsentNotifications();
+	
+	List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate);
+	
 	NotificationEntity findByOricdAndId(String orcid, Long id);
 
 	void flagAsSent(Collection<Long> ids);

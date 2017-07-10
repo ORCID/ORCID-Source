@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<#if RequestParameters['print']??>
+
 	<div class="print-orcid-record" ng-controller="PrintRecordCtrl">
 		<#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated)>
 			<a id="printRecord" ng-click="printRecord('${baseUriHttp}/${(effectiveUserOrcid)!}/print')">
@@ -44,4 +44,4 @@
             </div>	
 		</#if>
     </div>
-</#if>
+

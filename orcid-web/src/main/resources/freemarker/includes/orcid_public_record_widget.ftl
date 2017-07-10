@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<#if RequestParameters['widget']??>
+
 	<div class="widget-container" ng-controller="widgetCtrl">
 		<div class="widget-header">
 			<a ng-click="toggleCopyWidget();showSampleWidget();"><span class="glyphicon glyphicon-phone"></span> <@orcid.msg 'orcid_widget.header'/></a>
@@ -42,4 +42,3 @@
 			<a ng-click="hideWidgetCode()"><@orcid.msg 'orcid_widget.hide_code'/></a>
 		</div>
 	</div>
-</#if>

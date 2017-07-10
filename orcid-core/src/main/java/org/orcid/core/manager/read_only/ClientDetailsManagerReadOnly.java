@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 
@@ -59,4 +60,5 @@ public interface ClientDetailsManagerReadOnly extends ClientDetailsService {
     boolean isLegacyClientId(String clientId);
 
     Client getClient(String clientId);
+    
 }

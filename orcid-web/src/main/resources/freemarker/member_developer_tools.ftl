@@ -32,14 +32,13 @@
 				</div>
 				
 				<div class="col-md-3 col-sm-2 col-xs-2">				
-					<@security.authorize access="hasAnyRole('ROLE_PREMIUM_INSTITUTION', 'ROLE_PREMIUM', 'ROLE_ADMIN')">						
-						<a href="" class="pull-right"><span id="label btn-primary cboxElement" ng-click="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>										
-					</@security.authorize>
-					<@security.authorize access="hasAnyRole('ROLE_BASIC_INSTITUTION', 'ROLE_BASIC')">
-						<#if (group)?? && (group.orcidClient)?? && !(group.orcidClient?has_content)> 							
-							<a href="" ng-hide="clients.length > 0"><span id="label btn-primary cboxElement" ng-click="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>				
-						</#if>
-					</@security.authorize>
+					<#if allow_more_clients?? && allow_more_clients>
+						<#if is_premium?? && is_premium>
+							<a href="" class="pull-right"><span id="label btn-primary cboxElement" ng-click="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
+						<#else>
+							<a href="" class="pull-right" ng-hide="clients.length > 0"><span id="label btn-primary cboxElement" ng-click="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
+						</#if>						
+					</#if>
 				</div>				
 			</div>
 			<div class="row">
@@ -61,7 +60,7 @@
 								<tbody>
 									<tr>
 										<td colspan="12" class="table-header-dt">
-											<@orcid.msg 'manage.developer_tools.group.group.id'/> ${(group.groupOrcid)!} (${(group.type)!})
+											<@orcid.msg 'manage.developer_tools.group.group.id'/> ${(member_id)!} (${(member_type)!})
 										</td>						
 									</tr>	
 									<tr ng-repeat="client in clients">

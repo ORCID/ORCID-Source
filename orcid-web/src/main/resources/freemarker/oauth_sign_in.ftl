@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div id="passwordField">
-                <label for="password"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
+                <label for="password"><@orcid.msg 'login.password'/></label>
                 <div class="relative">
                    <input type="password" id="password" name="password" value="" placeholder="<@orcid.msg 'login.password'/>" class="input-xlarge">
                 </div>

@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 
@@ -121,6 +122,10 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     
     public static String getUriAndTypeKey(RedirectUri rUri) {
         return rUri.getValue() + '-' + rUri.getType().value();
+    }
+    
+    public static String getUriAndTypeKey(ClientRedirectUri rUri) {
+        return rUri.getRedirectUri() + '-' + rUri.getRedirectUriType();
     }
         
     @Override
