@@ -131,4 +131,13 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     List<BigInteger> getFundingWithOldExtIds(long limit);
     
     boolean increaseDisplayIndexOnAllElements(String orcid);
+    
+    /**
+     * Removes all funding that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all funding will be
+     *            removed.
+     */
+    void removeAllFunding(String orcid);
 }

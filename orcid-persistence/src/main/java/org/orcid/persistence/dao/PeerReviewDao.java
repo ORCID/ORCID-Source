@@ -71,4 +71,13 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
     List<BigInteger> getPeerReviewWithOldExtIds(long limit);
     
     boolean increaseDisplayIndexOnAllElements(String orcid);
+    
+    /**
+     * Removes all peer reviews that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all peer reviews will be
+     *            removed.
+     */
+    void removeAllPeerReviews(String orcid);
 }

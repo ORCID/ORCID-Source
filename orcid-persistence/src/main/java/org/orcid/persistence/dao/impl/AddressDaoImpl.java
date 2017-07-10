@@ -79,5 +79,12 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
     }
-    
+
+    @Override
+    @Transactional
+    public void removeAllAddress(String orcid) {
+        Query query = entityManager.createQuery("delete from AddressEntity where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }    
 }

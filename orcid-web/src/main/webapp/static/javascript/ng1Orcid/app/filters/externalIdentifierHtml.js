@@ -42,7 +42,7 @@ angular.module('orcidApp').filter('externalIdentifierHtml', ['fundingSrvc', '$fi
             link = $filter('urlProtocol')(link);
             
             if(value != null) {
-                output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
+                output += "<a href='" + link + "' class='truncate-anchor' target='orcid.blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
             } else {
                 if(type != null) {
                     if (moreInfo == false || typeof moreInfo == 'undefined') {
@@ -50,11 +50,11 @@ angular.module('orcidApp').filter('externalIdentifierHtml', ['fundingSrvc', '$fi
                     }
                     
                     if(type.value == 'grant') {
-                        output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
+                        output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"orcid.blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
                     } else if(type.value == 'contract') {
-                        output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
+                        output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"orcid.blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
                     } else {
-                        output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
+                        output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"orcid.blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
                     }
                     
                 }               
@@ -69,7 +69,7 @@ angular.module('orcidApp').filter('externalIdentifierHtml', ['fundingSrvc', '$fi
                             <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
                                 <div class="arrow"></div>\
                                 <div class="popover-content">\
-                                    <a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
+                                    <a href="'+link+'" target="orcid.blank" class="ng-binding">'+link.escapeHtml()+'</a>\
                                 </div>\
                             </div>\
                         </div>\

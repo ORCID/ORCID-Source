@@ -63,7 +63,7 @@ export const VerifyEmailCtrl = angular.module('orcidApp').controller(
                             };
                         };
 
-                        if ( primeVerified 
+                        if ( primeVerified == false 
                             && getBaseUri().indexOf("sandbox") == -1 
                         ) {
                             colorboxHtml = $compile($('#verify-email-modal').html())($scope);
