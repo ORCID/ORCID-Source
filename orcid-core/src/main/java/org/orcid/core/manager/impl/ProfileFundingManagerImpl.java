@@ -295,5 +295,10 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         item.setItemType(ItemType.FUNDING);
         item.setPutCode(String.valueOf(profileFundingEntity.getId()));
         return item;
-    }        
+    }    
+        
+    @Override
+    public void removeAllFunding(String orcid) {
+        profileFundingDao.removeAllFunding(orcid);
+    }
 }

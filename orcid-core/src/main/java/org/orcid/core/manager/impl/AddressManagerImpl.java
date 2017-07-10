@@ -228,4 +228,9 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         }        
         return addresses;
     }
+
+    @Override
+    public void removeAllAddress(String orcid) {
+        addressDao.removeAllAddress(orcid);
+    }
 }

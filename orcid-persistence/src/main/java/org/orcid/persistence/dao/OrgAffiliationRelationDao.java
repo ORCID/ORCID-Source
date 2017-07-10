@@ -109,4 +109,13 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * @return the list of affiliations that belongs to the user
      * */
     List<OrgAffiliationRelationEntity> getByUser(String orcid);
+    
+    /**
+     * Removes all affiliations that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all funding will be
+     *            removed.
+     */
+    void removeAllAffiliations(String orcid);
 }

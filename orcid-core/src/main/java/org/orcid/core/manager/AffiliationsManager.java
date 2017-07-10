@@ -89,4 +89,13 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * @return true if the relationship was deleted
      */
     boolean removeAffiliation(String userOrcid, Long affiliationId);
+    
+    /**
+     * Removes all affiliations that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all affiliations will be
+     *            removed.
+     */
+    void removeAllAffiliations(String orcid);
 }

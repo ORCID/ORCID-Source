@@ -224,4 +224,9 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
             entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         }
     }
+
+    @Override
+    public void removeAllKeywords(String orcid) {
+        profileKeywordDao.removeAllKeywords(orcid);
+    }
 }

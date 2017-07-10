@@ -215,4 +215,9 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         return externalIdentifiers;
     }
 
+    @Override
+    public void removeAllExternalIdentifiers(String orcid) {
+        externalIdentifierDao.removeAllExternalIdentifiers(orcid);
+    }
+
 }

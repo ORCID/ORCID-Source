@@ -95,7 +95,7 @@
                 <span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
             </div>
             <div class="orcid-id-options">
-                <a href="${baseUriHttp}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/>\
+                <a href="${baseUriHttp}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/>
             </div>
         </div>
     </div>

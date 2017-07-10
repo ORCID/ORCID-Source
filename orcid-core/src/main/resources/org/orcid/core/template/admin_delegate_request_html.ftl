@@ -41,7 +41,7 @@
 		    	<@emailMacros.space /><@emailMacros.msg "email.admin_delegate_request.you_have.7" />
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.admin_delegate_request.you_have.8" /><br /><a href="${link}" target="_blank">${link}</a>
+		    	<@emailMacros.msg "email.admin_delegate_request.you_have.8" /><br /><a href="${link}" target="orcid.blank">${link}</a>
 		    </p>		     
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.admin_delegate_request.for_a_tutorial" />

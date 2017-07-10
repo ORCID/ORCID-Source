@@ -63,4 +63,13 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
      * @return true if the researcher url was updated
      * */
     public boolean updateResearcherUrl(long id, String newUrl);
+    
+    /**
+     * Removes all researcher urls that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all researcher urls will be
+     *            removed.
+     */
+    void removeAllResearcherUrls(String orcid);
 }

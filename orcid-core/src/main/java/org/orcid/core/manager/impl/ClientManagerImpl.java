@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
@@ -85,6 +86,9 @@ public class ClientManagerImpl implements ClientManager {
 
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     @Override
     @Transactional
@@ -171,6 +175,7 @@ public class ClientManagerImpl implements ClientManager {
     @Override
     public Boolean resetClientSecret(String clientId) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @SuppressWarnings("deprecation")
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
                 try {
@@ -181,9 +186,11 @@ public class ClientManagerImpl implements ClientManager {
                     // #2 Create the new client secret as primary
                     boolean result = clientSecretDao.createClientSecret(clientId, clientSecret);
                     // #3 if it was created, update the last modified for the
-                    // client details
-                    if (result)
+                    // client and for the member as well
+                    if (result) {
                         clientDetailsDao.updateLastModified(clientId);
+                        profileDao.updateLastModifiedDateWithoutResult(sourceManager.retrieveSourceOrcid());
+                    }
                     return result;
                 } catch (Exception e) {
                     LOGGER.error("Unable to reset client secret for client {}", clientId, e);

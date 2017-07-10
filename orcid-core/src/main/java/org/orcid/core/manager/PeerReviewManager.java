@@ -95,4 +95,13 @@ public interface PeerReviewManager extends PeerReviewManagerReadOnly {
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility);
+    
+    /**
+     * Removes all peer reviews that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all peer reviews will be
+     *            removed.
+     */
+    void removeAllPeerReviews(String orcid);
 }
