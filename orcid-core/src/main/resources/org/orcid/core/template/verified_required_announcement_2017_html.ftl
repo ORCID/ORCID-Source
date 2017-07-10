@@ -56,7 +56,7 @@
 				<br>
 				<br><@emailMacros.msg "email.service_announcement.2017.footer_2" />
 				<br>
-				<br><@emailMacros.msg "email.service_announcement.2017.footer_3" />&nbsp;<a href="${emailFrequencyUrl}" target="_blank"><@emailMacros.msg "email.service_announcement.2017.footer_3_unsubscribe_link_text" /></a>
+				<br><@emailMacros.msg "email.service_announcement.2017.footer_3" />&nbsp;<a href="${emailFrequencyUrl}" target="orcid.blank"><@emailMacros.msg "email.service_announcement.2017.footer_3_unsubscribe_link_text" /></a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<#include "email_footer_html.ftl"/>
