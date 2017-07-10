@@ -32,7 +32,7 @@ angular.module('orcidApp').filter('peerReviewExternalIdentifierHtml', function($
             
         if (link != null){
             link = $filter('urlProtocol')(link);
-            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
+            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"orcid.blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
         }else{
             if( id ) {
                 output += id.escapeHtml();        
@@ -50,7 +50,7 @@ angular.module('orcidApp').filter('peerReviewExternalIdentifierHtml', function($
                     <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
                         <div class="arrow"></div>\
                         <div class="popover-content">\
-                            <a href="'+link+'" target="_blank">'+link.escapeHtml()+'</a>\
+                            <a href="'+link+'" target="orcid.blank">'+link.escapeHtml()+'</a>\
                         </div>\
                     </div>\
                 </div>\
