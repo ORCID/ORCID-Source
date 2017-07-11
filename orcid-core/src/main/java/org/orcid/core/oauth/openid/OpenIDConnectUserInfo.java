@@ -27,26 +27,30 @@ public class OpenIDConnectUserInfo {
     
     public OpenIDConnectUserInfo(String orcid, Person person) {
         this.sub = orcid;
-        if (person.getName().getCreditName() != null){
-            this.name = person.getName().getCreditName().getContent();
-        }
-        if (person.getName().getFamilyName() != null){
-            this.family_name = person.getName().getFamilyName().getContent();
-        }
-        if (person.getName().getGivenNames() != null){
-            this.given_name = person.getName().getGivenNames().getContent();
+        if (person.getName() != null){
+            if (person.getName().getCreditName() != null){
+                this.name = person.getName().getCreditName().getContent();
+            }
+            if (person.getName().getFamilyName() != null){
+                this.family_name = person.getName().getFamilyName().getContent();
+            }
+            if (person.getName().getGivenNames() != null){
+                this.given_name = person.getName().getGivenNames().getContent();
+            }            
         }
     }
     public OpenIDConnectUserInfo(String orcid, PersonalDetails person) {
         this.sub = orcid;
-        if (person.getName().getCreditName() != null){
-            this.name = person.getName().getCreditName().getContent();
-        }
-        if (person.getName().getFamilyName() != null){
-            this.family_name = person.getName().getFamilyName().getContent();
-        }
-        if (person.getName().getGivenNames() != null){
-            this.given_name = person.getName().getGivenNames().getContent();
+        if (person.getName() != null){
+            if (person.getName().getCreditName() != null){
+                this.name = person.getName().getCreditName().getContent();
+            }
+            if (person.getName().getFamilyName() != null){
+                this.family_name = person.getName().getFamilyName().getContent();
+            }
+            if (person.getName().getGivenNames() != null){
+                this.given_name = person.getName().getGivenNames().getContent();
+            }            
         }
     }
     
