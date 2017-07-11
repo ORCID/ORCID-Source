@@ -50,6 +50,8 @@
 	        	<div class="alert alert-error readme">
 	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
 	        	</div>
+	        <#elseif (deactivated)??>
+	        	<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
 			</#if>	        	           
         </div>
     </div>
