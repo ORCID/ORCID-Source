@@ -70,12 +70,16 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
                 }
             });
 
-            $("#delegatorsSearch").bind( "typeahead:selected", function(obj, datum) {
-                if(!datum.noResults){
-                    $scope.selectDelegator(datum);
+            $("#delegatorsSearch").bind(
+                "typeahead:selected", 
+                function(datum) {
+                    if(!(<any>(datum)).noResults){
+                        $scope.selectDelegator(datum);
+                    }
+                    $scope.$apply();
+                    return true;
                 }
-                $scope.$apply();
-            });
+            );
 
             // init
             $scope.getDelegators();

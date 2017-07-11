@@ -80,8 +80,8 @@ export const SocialCtrl = angular.module('orcidApp').controller(
 
             $scope.revoke = function () {
                 var revokeSocialAccount = {
-                    idToManage: null;
-                    password: null;
+                    idToManage: null,
+                    password: null
                 };
                 revokeSocialAccount.idToManage = $scope.idToManage;
                 revokeSocialAccount.password = $scope.password;

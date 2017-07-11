@@ -1,3 +1,11 @@
+declare var $: any;
+declare var colorbox: any;
+declare var delegateEmail: any;
+declare var getBaseUri: any;
+declare var isEmail: any;
+declare var orcidVar: any;
+declare var orcidSearchUrlJs: any;
+
 // Controller for delegate permissions that have been granted BY the current
 // user
 import * as angular from 'angular';
@@ -28,7 +36,10 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.addDelegate = function() {
-                var addDelegate = {};
+                var addDelegate = {
+                    delegateToManage: null,
+                    password: null
+                };
                 addDelegate.delegateToManage = $scope.delegateToAdd;
                 addDelegate.password = $scope.password;
                 $.ajax({
@@ -54,7 +65,10 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.addDelegateByEmail = function(delegateEmail) {
-                var addDelegate = {};
+                var addDelegate = {
+                    delegateEmail: null,
+                    password: null
+                };
                 
                 $scope.errors = [];
                 
@@ -260,7 +274,10 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.revoke = function () {
-                var revokeDelegate = {};
+                var revokeDelegate = {
+                    delegateToManage: null,
+                    password: null
+                };
                 revokeDelegate.delegateToManage = $scope.delegateToRevoke;
                 revokeDelegate.password = $scope.password;
                 $.ajax({

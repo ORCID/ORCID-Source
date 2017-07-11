@@ -109,11 +109,10 @@ export const profileDeactivationAndReactivationCtrl = angular.module('orcidApp')
             $scope.showConfirmModal = function() {
                 $.colorbox({
                     html : $compile($('#confirm-deactivation-modal').html())($scope),
-                        scrolling: true,
-                        onLoad: function() {
+                    scrolling: true,
+                    onLoad: function() {
                         $('#cboxClose').remove();
-                    },
-                    scrolling: true
+                    }
                 });
 
                 $.colorbox.resize({width:"525px" , height:"275px"});
@@ -123,11 +122,10 @@ export const profileDeactivationAndReactivationCtrl = angular.module('orcidApp')
                 $scope.successMessage = message;
                 $.colorbox({
                     html : $compile($('#success-modal').html())($scope),
-                        scrolling: true,
-                        onLoad: function() {
+                    scrolling: true,
+                    onLoad: function() {
                         $('#cboxClose').remove();
-                    },
-                    scrolling: true
+                    }
                 });
 
                 $.colorbox.resize({width:"425px" , height:"225px"});
