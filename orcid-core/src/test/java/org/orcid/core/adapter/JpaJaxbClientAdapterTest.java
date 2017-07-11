@@ -94,15 +94,7 @@ public class JpaJaxbClientAdapterTest {
     @Test
     public void toEntity_withExistingEntityTest() {
         Client client = getClient();
-        ClientDetailsEntity existingEntity = getClientDetailsEntity();
-        existingEntity.setAllowAutoDeprecate(false);
-        existingEntity.setAuthenticationProviderId("updated");
-        existingEntity.setClientDescription("updated");
-        existingEntity.setClientName("updated");
-        existingEntity.setClientRegisteredRedirectUris(null);
-        existingEntity.setClientWebsite("updated");
-        existingEntity.setEmailAccessReason("updated");
-        existingEntity.setPersistentTokensEnabled(false);
+        ClientDetailsEntity existingEntity = getClientDetailsEntity();        
         existingEntity = adapter.toEntity(client, existingEntity);
         assertEquals(getClientDetailsEntity(), existingEntity);
     }
@@ -110,14 +102,11 @@ public class JpaJaxbClientAdapterTest {
     private Client getClient() {
         Client client = new Client();
         client.setAllowAutoDeprecate(true);
-        client.setAuthenticationProviderId("authentication-provider-id");
         client.setClientType(ClientType.CREATOR);
         client.setDescription("description");
-        client.setEmailAccessReason("email-access-reason");
         client.setGroupProfileId("group-profile-id");
         client.setId("id");
         client.setName("client-name");
-        client.setPersistentTokensEnabled(true);
         client.setWebsite("client-website");
 
         Set<ClientRedirectUri> clientRedirectUris = new HashSet<ClientRedirectUri>();

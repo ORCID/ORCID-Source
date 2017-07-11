@@ -680,11 +680,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         clientClassMap.field("name", "clientName");
         clientClassMap.field("description", "clientDescription");        
         clientClassMap.field("website", "clientWebsite");        
-        clientClassMap.field("authenticationProviderId", "authenticationProviderId");
-        clientClassMap.field("emailAccessReason", "emailAccessReason");
+        clientClassMap.field("allowAutoDeprecate", "allowAutoDeprecate");
         
         clientClassMap.fieldBToA("clientId", "id");
-        clientClassMap.fieldBToA("clientType", "clientType");                
+        clientClassMap.fieldBToA("clientType", "clientType");        
         clientClassMap.fieldBToA("groupProfileId", "groupProfileId");                       
         
         clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
@@ -755,7 +754,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 }                
             }
         });                  
-        clientClassMap.byDefault();
         clientClassMap.register();                
         return mapperFactory.getMapperFacade();
     }

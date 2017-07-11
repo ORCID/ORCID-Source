@@ -82,4 +82,30 @@ public class ClientScopeEntity extends BaseEntity<ClientScopePk> {
     public void setClientDetailsEntity(ClientDetailsEntity clientDetailsEntity) {
         this.clientDetailsEntity = clientDetailsEntity;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((clientDetailsEntity == null) ? 0 : clientDetailsEntity.hashCode());
+        result = prime * result + ((scopeType == null) ? 0 : scopeType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ClientScopeEntity other = (ClientScopeEntity) obj;
+        if (scopeType == null) {
+            if (other.scopeType != null)
+                return false;
+        } else if (!scopeType.equals(other.scopeType))
+            return false;
+        return true;
+    }        
 }
