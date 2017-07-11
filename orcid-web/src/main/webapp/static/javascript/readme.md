@@ -8,11 +8,10 @@
 This setup will allow us to integrate libraries and other tools like scss, typescript, etc easily.
 
 ## Steps (assuming you already have your dev environment running)
-- Open your console.
-- Go to the folder "...\orcid-web\src\main\webapp\static\javascript\ng1Orcid\package.json"
-- If this is the **FIRST time** or a **NEW MODULE WAS ADDED** run the command "npm install". Otherwise, skip this step.
-- Run the command "webpack".
-- Start working, everything will be updated automatically, you are ready!
+For the new setup please follow this instructions:
+- [orcid-nodejs](https://github.com/ORCID/ORCID-Source/tree/master/orcid-nodejs)
+
+It will automatically install all the node modules needed for the app to run. Please be careful to read and follow all the instructions.
 
 ## Folder Structure
 
@@ -26,9 +25,9 @@ This setup will allow us to integrate libraries and other tools like scss, types
 #### app
 It will contain all the js functionality. Currently there are other js files with legacy functionality in the /static/javascript folder. The idea is to move this functionality here after the refactor is more stable.
 
-Currently only has angularOrcidOriginal.js. This file is where all the base code previously saved on "/static/javascript/angularOrcid.js" has been moved too.
+Currently has angularOrcidOriginal.js. This file is where all the base code previously saved on "/static/javascript/angularOrcid.js" has been moved too.
 
-Eventually you will find other subfolders: directives, controllers, services, filters, modules, etc.
+It has been updated to include the corresponding subfolders for controllers, services, filters and modules, most of the files has been migrated to TS.
 
 #### node_modules
 It has all the modules installed with "NPM". **Don't modify this**, it is generated automatically.

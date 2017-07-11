@@ -19,7 +19,7 @@
 
 
   <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/frameworks-e04a23d39bf81b7db3c635177756ef51bc171feb440be9e174933c6eb56382da.css" integrity="sha256-4Eoj05v4G32zxjUXd1bvUbwXH+tEC+nhdJM8brVjgto=" media="all" rel="stylesheet" />
-  <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/github-df2cdfc6957e3fbd42155d8b95bb109f6d4e35768227a2401b9b6ea5bfb88e83.css" integrity="sha256-3yzfxpV+P71CFV2LlbsQn21ONXaCJ6JAG5tupb+4joM=" media="all" rel="stylesheet" />
+  <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/github-caabe7e9677dbaa4c88db92fcc52ed61b0def1a9d2e3d3ab196c0a5c81d20d04.css" integrity="sha256-yqvn6Wd9uqTIjbkvzFLtYbDe8anS49OrGWwKXIHSDQQ=" media="all" rel="stylesheet" />
   
   
   
@@ -36,10 +36,10 @@
     <meta content="https://avatars2.githubusercontent.com/u/242337?v=3&amp;s=400" property="og:image" /><meta content="GitHub" property="og:site_name" /><meta content="object" property="og:type" /><meta content="jjlharrison/webfont-notosans" property="og:title" /><meta content="https://github.com/jjlharrison/webfont-notosans" property="og:url" /><meta content="webfont-notosans - Google&#39;s Noto Sans webfont." property="og:description" />
 
   <link rel="assets" href="https://assets-cdn.github.com/">
-  <link rel="web-socket" href="wss://live.github.com/_sockets/VjI6MTY0NTc4NTY0OjdhZTNmOTEzMjg3ZDFlODAzZTM4MmRmNDU0YjE0NmI5NjhjZTVkOTIxNmM3Yzg4YmM3YjFjZGIzYmUxNjliYzE=--b3ad4b74aacf98aa2df3c66d5026e6c1434b67ef">
+  <link rel="web-socket" href="wss://live.github.com/_sockets/VjI6MTgyODE0NDgyOmJlYjM2OTg0NDk1N2I2NDliOWUwZmE2ZGI4NTIyMmNkNTcyNGQyM2Y1YTlhN2Q1N2IwYmJkNzg5ODgzNjgzZTA=--498ca6f42dc5fd9139703c9187594037b74e771d">
   <meta name="pjax-timeout" content="1000">
   <link rel="sudo-modal" href="/sessions/sudo_modal">
-  <meta name="request-id" content="8C4E:CDA1:92295:F7F2D:595E7113" data-pjax-transient>
+  <meta name="request-id" content="DE1C:C12E:3109FD:5261EC:595FCC98" data-pjax-transient>
   
 
   <meta name="selected-link" value="repo_source" data-pjax-transient>
@@ -48,7 +48,7 @@
 <meta name="google-site-verification" content="ZzhVyEFwb7w3e0-uOTltm8Jsck2F5StVihD0exw2fsA">
     <meta name="google-analytics" content="UA-3769691-2">
 
-<meta content="collector.githubapp.com" name="octolytics-host" /><meta content="github" name="octolytics-app-id" /><meta content="https://collector.githubapp.com/github-external/browser_event" name="octolytics-event-url" /><meta content="8C4E:CDA1:92295:F7F2D:595E7113" name="octolytics-dimension-request_id" /><meta content="iad" name="octolytics-dimension-region_edge" /><meta content="iad" name="octolytics-dimension-region_render" /><meta content="4491021" name="octolytics-actor-id" /><meta content="mjcalvo21" name="octolytics-actor-login" /><meta content="2cb7a389a6604cba648d1055416c0e1878af9661aac2ba2dc97f396969ba64c9" name="octolytics-actor-hash" />
+<meta content="collector.githubapp.com" name="octolytics-host" /><meta content="github" name="octolytics-app-id" /><meta content="https://collector.githubapp.com/github-external/browser_event" name="octolytics-event-url" /><meta content="DE1C:C12E:3109FD:5261EC:595FCC98" name="octolytics-dimension-request_id" /><meta content="iad" name="octolytics-dimension-region_edge" /><meta content="iad" name="octolytics-dimension-region_render" /><meta content="4491021" name="octolytics-actor-id" /><meta content="mjcalvo21" name="octolytics-actor-login" /><meta content="2cb7a389a6604cba648d1055416c0e1878af9661aac2ba2dc97f396969ba64c9" name="octolytics-actor-hash" />
 <meta content="/&lt;user-name&gt;/&lt;repo-name&gt;/blob/show" data-pjax-transient="true" name="analytics-location" />
 
 
@@ -63,12 +63,12 @@
   <meta name="user-login" content="mjcalvo21">
 
       <meta name="expected-hostname" content="github.com">
-    <meta name="js-proxy-site-detection-payload" content="ZTBkZWE5ODM3NjlhNGYyY2M1MWM0OTQ3NzliNmIzMzU0MWI0NWZhZWQ5YTJhZWEwZjIxZDcyYjMzOTAyNjFkNHx7InJlbW90ZV9hZGRyZXNzIjoiMjAxLjIwNC4xNzguMjU1IiwicmVxdWVzdF9pZCI6IjhDNEU6Q0RBMTo5MjI5NTpGN0YyRDo1OTVFNzExMyIsInRpbWVzdGFtcCI6MTQ5OTM2MTU1NCwiaG9zdCI6ImdpdGh1Yi5jb20ifQ==">
+    <meta name="js-proxy-site-detection-payload" content="NjM0ZmJlYjlhODMyNGE4ZGMwMDgwOGRiNWViYWI4ZGViMWE1YmRjZDNhZTM1N2M3ZDBjYmRkZDdlNGEyMzQyOHx7InJlbW90ZV9hZGRyZXNzIjoiMjAxLjIwNC4xNzguMjU1IiwicmVxdWVzdF9pZCI6IkRFMUM6QzEyRTozMTA5RkQ6NTI2MUVDOjU5NUZDQzk4IiwidGltZXN0YW1wIjoxNDk5NDUwNTIyLCJob3N0IjoiZ2l0aHViLmNvbSJ9">
 
 
-  <meta name="html-safe-nonce" content="592f5daf0912ae8f370944a3fa327ec544d30922">
+  <meta name="html-safe-nonce" content="79e3d072aa4a86034a62a1d5b2667ec9a08ff0ee">
 
-  <meta http-equiv="x-pjax-version" content="978b41bacc54492b2d1e5a63ecef171b">
+  <meta http-equiv="x-pjax-version" content="f47291fda1809c6a5b3a2f5f4848063e">
   
 
       <link href="https://github.com/jjlharrison/webfont-notosans/commits/master.atom" rel="alternate" title="Recent Commits to webfont-notosans:master" type="application/atom+xml">
@@ -246,7 +246,7 @@
           Settings
         </a>
 
-        <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/logout" class="logout-form" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="gCsA05EvyviEV88x+b6CgMx195u2y/FC3jktawnyHyYyJGiiRBUMhpnrlxmkqjWfoD5b/8ShNyZgCxata2y7aw==" /></div>
+        <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/logout" class="logout-form" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="2NDrKyVx0tXENQbsExUrGYlMk8PYlENdMYvj3JijA16AjkqIdV/XT6wT9a5NzoOIstnIWPJ14XMBW5YN7/SjfQ==" /></div>
           <button type="submit" class="dropdown-item dropdown-signout" data-ga-click="Header, sign out, icon:logout">
             Sign out
           </button>
@@ -256,7 +256,7 @@
 </ul>
 
 
-    <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/logout" class="sr-only right-0" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="AtVxjF8ZBKxVrbk5jZsesYzgvjNoPTm1/2S4V8qHFfWw2hn9iiPC0kgR4RHQj6mu4KsSVxpX/9FBVoORqBmxuA==" /></div>
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/logout" class="sr-only right-0" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="SiM4Wr9Wp+cERApfYAfqesbbSabNIXWGNEclWXU6O+YSfZn573iifWxi+R0+3ELr/U4SPefA16gEl1CIAm2bxQ==" /></div>
       <button type="submit" class="dropdown-item dropdown-signout" data-ga-click="Header, sign out, icon:logout">
         Sign out
       </button>
@@ -288,7 +288,7 @@
 
         <ul class="pagehead-actions">
   <li>
-        <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/notifications/subscribe" class="js-social-container" data-autosubmit="true" data-remote="true" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="mjoem9Y73YhY8xgViZR/GIhije8CkNVs+PNiS3+QeJt4H7eOSe4ZzUHSK4bggAzT8mSPuCDL150+AZ1t1BG2NA==" /></div>      <input class="form-control" id="repository_id" name="repository_id" type="hidden" value="23782627" />
+        <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/notifications/subscribe" class="js-social-container" data-autosubmit="true" data-remote="true" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="u1k+GvIXRsoQb+LrJJuHzh/cuZTWXsmLW79X7f93lh33Yqem2fuy/DDOdFEI1VpYJ++MibLP0QX+9clZBiKvcg==" /></div>      <input class="form-control" id="repository_id" name="repository_id" type="hidden" value="23782627" />
 
         <div class="select-menu js-menu-container js-select-menu">
           <a href="/jjlharrison/webfont-notosans/subscription"
@@ -368,7 +368,7 @@
   <li>
     
   <div class="js-toggler-container js-social-container starring-container ">
-    <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/jjlharrison/webfont-notosans/unstar" class="starred" data-remote="true" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="FIutKhYkqyu+udHiwQlCAtF4tqgtwsYbNEOzEIeRX4bODiXmJaUZ3YyvPXCO6vPUlcib4gOAkOkfTB3BxchlwQ==" /></div>
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/jjlharrison/webfont-notosans/unstar" class="starred" data-remote="true" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="GAUWHvtPmynCAMOwikJwu3+VEJegFqf0V0a0PuuVByQPT+EZG+metvPXgvonOYB5JZtQDryi+ctUpVhNzlGG1w==" /></div>
       <button
         type="submit"
         class="btn btn-sm btn-with-count js-toggler-target"
@@ -382,7 +382,7 @@
           3
         </a>
 </form>
-    <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/jjlharrison/webfont-notosans/star" class="unstarred" data-remote="true" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="xfG8np68NraMayV/BuXsY/m+HGDPL6SxbP/aFpU1j2Kc7XmCty2cYvJTZoiIPj7YaxBkh1ars3nHo1obAhwu7Q==" /></div>
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/jjlharrison/webfont-notosans/star" class="unstarred" data-remote="true" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="OO6GzNGuXi8jg68nvCZplw+t2+md4ABy1UO/rjumaB1Hbl67OZyYwzAhhNTlr/vxOdOw0R3nYWiL8ZpyURy/7w==" /></div>
       <button
         type="submit"
         class="btn btn-sm btn-with-count js-toggler-target"
@@ -598,16 +598,39 @@
   </div>
 
 
-  <include-fragment class="commit-tease" src="/jjlharrison/webfont-notosans/contributors/master/regular/NotoSans-Regular-webfont.ttf">
-    <div>
-      Fetching contributors&hellip;
-    </div>
+  
+  <div class="commit-tease">
+      <span class="float-right">
+        <a class="commit-tease-sha" href="/jjlharrison/webfont-notosans/commit/7cbef9cbac67f4d91f7c363320275128558d8c2b" data-pjax>
+          7cbef9c
+        </a>
+        <relative-time datetime="2014-09-08T07:46:29Z">Sep 8, 2014</relative-time>
+      </span>
+      <div>
+        <img alt="@jjlharrison" class="avatar" height="20" src="https://avatars1.githubusercontent.com/u/242337?v=3&amp;s=40" width="20" />
+        <a href="/jjlharrison" class="user-mention" rel="author">jjlharrison</a>
+          <a href="/jjlharrison/webfont-notosans/commit/7cbef9cbac67f4d91f7c363320275128558d8c2b" class="message" data-pjax="true" title="Add font, README, and bower.json.">Add font, README, and bower.json.</a>
+      </div>
 
     <div class="commit-tease-contributors">
-      <img alt="" class="loader-loading float-left" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32-EAF2F5.gif" width="16" />
-      <span class="loader-error">Cannot retrieve contributors at this time</span>
+      <button type="button" class="btn-link muted-link contributors-toggle" data-facebox="#blob_contributors_box">
+        <strong>1</strong>
+         contributor
+      </button>
+      
     </div>
-</include-fragment>
+
+    <div id="blob_contributors_box" style="display:none">
+      <h2 class="facebox-header" data-facebox-id="facebox-header">Users who have contributed to this file</h2>
+      <ul class="facebox-user-list" data-facebox-id="facebox-description">
+          <li class="facebox-user-list-item">
+            <img alt="@jjlharrison" height="24" src="https://avatars3.githubusercontent.com/u/242337?v=3&amp;s=48" width="24" />
+            <a href="/jjlharrison">jjlharrison</a>
+          </li>
+      </ul>
+    </div>
+  </div>
+
   <div class="file">
     <div class="file-header">
   <div class="file-actions">
@@ -617,8 +640,14 @@
       <a href="/jjlharrison/webfont-notosans/commits/master/regular/NotoSans-Regular-webfont.ttf" class="btn btn-sm BtnGroup-item" rel="nofollow">History</a>
     </div>
 
+        <a class="btn-octicon tooltipped tooltipped-nw"
+           href="https://desktop.github.com"
+           aria-label="Open this file in GitHub Desktop"
+           data-ga-click="Repository, open with desktop, type:windows">
+            <svg aria-hidden="true" class="octicon octicon-device-desktop" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M15 2H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h5.34c-.25.61-.86 1.39-2.34 2h8c-1.48-.61-2.09-1.39-2.34-2H15c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm0 9H1V3h14v8z"/></svg>
+        </a>
 
-        <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/jjlharrison/webfont-notosans/delete/master/regular/NotoSans-Regular-webfont.ttf" class="inline-form" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="st4kw4IsG1355BV03a3kroAEcCQrZozw5EukJvHGihjXqqp94fsA6bNHv0CdrVoVi7vprwhoUWM8RON13qZoCg==" /></div>
+        <!-- '"` --><!-- </textarea></xmp> --></option></form><form accept-charset="UTF-8" action="/jjlharrison/webfont-notosans/delete/master/regular/NotoSans-Regular-webfont.ttf" class="inline-form" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="/AYtlxab+DXCepmHkPW7gtSj+Jvt/rUU2IMNZ7qu08NxMgy9pQkd0hkSr/Uc4Unv/WkPMgFn2Iw4R7owlrllzQ==" /></div>
           <button class="btn-octicon btn-octicon-danger tooltipped tooltipped-nw" type="submit"
             aria-label="Fork this project and delete the file" data-disable-with>
             <svg aria-hidden="true" class="octicon octicon-trashcan" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path fill-rule="evenodd" d="M11 2H9c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1H2c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1v9c0 .55.45 1 1 1h7c.55 0 1-.45 1-1V5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H3V5h1v8h1V5h1v8h1V5h1v8h1V5h1v9zm1-10H2V3h9v1z"/></svg>
@@ -675,7 +704,7 @@
       <svg aria-hidden="true" class="octicon octicon-mark-github" height="24" version="1.1" viewBox="0 0 16 16" width="24"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
 </a>
     <ul class="site-footer-links">
-      <li>&copy; 2017 <span title="0.19675s from unicorn-1430720357-5lp56">GitHub</span>, Inc.</li>
+      <li>&copy; 2017 <span title="0.18507s from unicorn-2111953166-k2b3p">GitHub</span>, Inc.</li>
         <li><a href="https://github.com/site/terms" data-ga-click="Footer, go to terms, text:terms">Terms</a></li>
         <li><a href="https://github.com/site/privacy" data-ga-click="Footer, go to privacy, text:privacy">Privacy</a></li>
         <li><a href="https://github.com/security" data-ga-click="Footer, go to security, text:security">Security</a></li>
@@ -699,7 +728,7 @@
     
     <script crossorigin="anonymous" integrity="sha256-4hJql+6bW6S9r9DUL0kQ3LKLnx3wupYfjaWFDfvkA9s=" src="https://assets-cdn.github.com/assets/frameworks-e2126a97ee9b5ba4bdafd0d42f4910dcb28b9f1df0ba961f8da5850dfbe403db.js"></script>
     
-    <script async="async" crossorigin="anonymous" integrity="sha256-EwSjchy8VcnU5iaBtbpZzbcWSRqe4nGo2+z+guPYT0w=" src="https://assets-cdn.github.com/assets/github-1304a3721cbc55c9d4e62681b5ba59cdb716491a9ee271a8dbecfe82e3d84f4c.js"></script>
+    <script async="async" crossorigin="anonymous" integrity="sha256-TstlREw0oxrDeWBzMC73xglD1MqOvDethQLfReEvvZE=" src="https://assets-cdn.github.com/assets/github-4ecb65444c34a31ac3796073302ef7c60943d4ca8ebc37ad8502df45e12fbd91.js"></script>
     
     
     
