@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
@@ -297,7 +298,11 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
 
     private void checkProfileStatus(String orcid) {
-        orcidSecurityManager.checkProfile(orcid);
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch(DeactivatedException e) {
+            // Ignore the DeactivatedException since we should be able to return the empty element
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
