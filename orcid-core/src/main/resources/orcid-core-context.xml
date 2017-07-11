@@ -815,7 +815,7 @@
         <property name="maxElementsOnDisk" value="6000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnWrite" value="true" />
     </bean>
     
     <bean id="publicWorkLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -827,7 +827,7 @@
         <property name="maxElementsOnDisk" value="6000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnWrite" value="true" />
     </bean>
 
     <bean id="minimizedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -839,7 +839,7 @@
         <property name="maxElementsOnDisk" value="150000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnWrite" value="true" />
     </bean>
     
     <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -851,7 +851,7 @@
         <property name="maxElementsOnDisk" value="150000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnWrite" value="true" />
     </bean>
     
     <bean id="salesForceMembersListCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
