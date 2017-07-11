@@ -193,5 +193,15 @@
 		family_name="Family Name Deactivated"
 		visibility="PRIVATE"	
 		/>
-									
+	
+	<record_name
+		id="16" 
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="0000-0000-0000-0007"
+		credit_name=""
+		given_names="Given Names Deactivated"
+		family_name="Family Name Deactivated"
+		visibility="PRIVATE"	
+		/>								
 </dataset>
