@@ -137,22 +137,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
 
         clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, null, CLIENT_WEBSITE, ClientType.CREATOR, clientScopes,
                 clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities, true);
-    }
-
-    @Test(expected = NoResultException.class)
-    public void testGetClientNonExistent() {
-        clientDetailsManager.getClient("some-nonexistent-client");
-        fail();
-    }
-
-    @Test
-    public void testGetClient() {
-        Client client = clientDetailsManager.getClient("APP-6666666666666666");
-        assertNotNull(client);
-        assertEquals("Source Client 2", client.getName());
-        assertEquals("A test source client", client.getDescription());
-
-    }
+    }    
 
     @Test
     public void testAddScopesToClient() {
