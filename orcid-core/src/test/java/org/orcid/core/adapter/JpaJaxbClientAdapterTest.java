@@ -17,8 +17,11 @@
 package org.orcid.core.adapter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -83,12 +86,24 @@ public class JpaJaxbClientAdapterTest {
         Client client = getClient();
         ClientDetailsEntity entity = adapter.toEntity(client);
         ClientDetailsEntity toCompare = getClientDetailsEntity();
-        // Remove non relevant elements
-        toCompare.setClientAuthorizedGrantTypes(null);
-        toCompare.setClientGrantedAuthorities(null);
-        toCompare.setClientResourceIds(null);
-        toCompare.setClientScopes(null);
-        assertEquals(toCompare, entity);
+        assertEquals(toCompare.getClientDescription(), entity.getClientDescription());
+        assertEquals(toCompare.getClientId(), entity.getClientId());
+        assertEquals(toCompare.getClientName(), entity.getClientName());
+        assertEquals(toCompare.getClientRegisteredRedirectUris(), entity.getClientRegisteredRedirectUris());        
+        assertEquals(toCompare.getClientWebsite(), entity.getClientWebsite());
+        assertEquals(toCompare.isAllowAutoDeprecate(), entity.isAllowAutoDeprecate());
+        
+        assertFalse(entity.isPersistentTokensEnabled());
+        assertNull(entity.getClientType());
+        assertNull(entity.getAuthenticationProviderId());
+        assertNull(entity.getEmailAccessReason());
+        assertNull(entity.getGroupProfileId());
+        assertNull(entity.getClientSecrets());
+        assertEquals(Collections.EMPTY_SET, entity.getClientAuthorizedGrantTypes());
+        assertEquals(Collections.EMPTY_SET, entity.getClientResourceIds());
+        assertEquals(Collections.EMPTY_SET, entity.getClientScopes());
+        assertEquals(Collections.EMPTY_SET, entity.getCustomEmails());
+        assertEquals(Collections.EMPTY_LIST, entity.getClientGrantedAuthorities());
     }
 
     @Test
