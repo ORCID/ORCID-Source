@@ -41,7 +41,6 @@ export const internalConsortiumCtrl = angular.module('orcidApp').controller(
             $scope.confirmUpdateConsortium = function() {
                 $.colorbox({
                     html : $compile($('#confirm-modal-consortium').html())($scope),
-                        //scrolling: true,
                         onLoad: function() {
                         $('#cboxClose').remove();
                     },
