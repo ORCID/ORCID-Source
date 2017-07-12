@@ -38,9 +38,6 @@ import javax.persistence.Transient;
 @IdClass(ClientGrantedAuthorityPk.class)
 public class ClientGrantedAuthorityEntity extends BaseEntity<ClientGrantedAuthorityPk> implements GrantedAuthority {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private String authority;
     private ClientDetailsEntity clientDetailsEntity;

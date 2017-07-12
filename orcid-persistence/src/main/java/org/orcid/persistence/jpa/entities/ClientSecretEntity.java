@@ -133,7 +133,6 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((clientDetailsEntity == null) ? 0 : clientDetailsEntity.hashCode());
         result = prime * result + ((clientSecret == null) ? 0 : clientSecret.hashCode());
         result = prime * result + ((decryptedClientSecret == null) ? 0 : decryptedClientSecret.hashCode());
         result = prime * result + (primary ? 1231 : 1237);

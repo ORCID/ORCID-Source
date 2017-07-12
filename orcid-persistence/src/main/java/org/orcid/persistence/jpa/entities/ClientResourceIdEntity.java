@@ -37,9 +37,6 @@ import javax.persistence.Transient;
 @IdClass(ClientResourceIdPk.class)
 public class ClientResourceIdEntity extends BaseEntity<ClientResourceIdPk> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private String resourceId;
     private ClientDetailsEntity clientDetailsEntity;
@@ -80,7 +77,6 @@ public class ClientResourceIdEntity extends BaseEntity<ClientResourceIdPk> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((clientDetailsEntity == null) ? 0 : clientDetailsEntity.hashCode());
         result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
         return result;
     }
