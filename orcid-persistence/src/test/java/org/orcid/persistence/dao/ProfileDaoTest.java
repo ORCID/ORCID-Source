@@ -119,9 +119,9 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindAll() {
         List<ProfileEntity> all = profileDao.getAll();
         assertNotNull(all);
-        assertEquals(21, all.size());
+        assertEquals(22, all.size());
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(21), count);
+        assertEquals(Long.valueOf(22), count);
     }
 
     @Test
@@ -143,7 +143,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(22), count);
+        assertEquals(Long.valueOf(23), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -169,7 +169,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(22), count);
+        assertEquals(Long.valueOf(23), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -197,7 +197,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), retrievedProfile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(22), count);
+        assertEquals(Long.valueOf(23), count);
     }
 
     @Test
@@ -319,7 +319,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNull(profile);
 
         List<ProfileEntity> all = profileDao.getAll();
-        assertEquals(19, all.size());
+        assertEquals(20, all.size());
     }
 
     @Test
@@ -339,7 +339,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4446", results.get(1).getLeft());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
-        assertEquals(19, results.size());
+        assertEquals(20, results.size());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3);
         assertEquals(3, results.size());
@@ -406,12 +406,12 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(21), confirmedProfileCount);
+        assertEquals(Long.valueOf(22), confirmedProfileCount);
         ProfileEntity profileEntity = profileDao.find(orcid);
         profileEntity.setCompletedDate(null);
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(20), confirmedProfileCount);
+        assertEquals(Long.valueOf(21), confirmedProfileCount);
     }
 
     @Test
