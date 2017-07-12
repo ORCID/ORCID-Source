@@ -261,13 +261,11 @@ public class ClientManagerTest extends BaseTest {
     
     @Test
     public void resetClientSecret() {
-        // Create a new client
-        String seed = RandomStringUtils.randomAlphanumeric(15);
-        Client client = getClient(seed, MEMBER_ID);
-        assertFalse(client.getId().startsWith("APP-"));
-        client = clientManager.create(client);
-        assertTrue(client.getId().startsWith("APP-"));
-        String clientId = client.getId();
+        String clientId = "APP-5555555555555556";
+        // Get an existing client
+        Client client = clientManagerReadOnly.get(clientId);
+        assertNotNull(client);
+        assertNotNull(client.getDecryptedSecret());
         assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
         assertTrue(client.getDecryptedSecret().length() > 1);
         String secret1 = client.getDecryptedSecret();
