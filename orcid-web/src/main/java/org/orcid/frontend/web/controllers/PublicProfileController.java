@@ -33,6 +33,7 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -179,7 +180,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
 
     @RequestMapping(value = {"/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print"})
-    public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
+    public ModelAndView publicPreview(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
             @PathVariable("orcid") String orcid) {
                
@@ -188,6 +189,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
         } catch(Exception e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
             return new ModelAndView("error-404");
         }    
         
