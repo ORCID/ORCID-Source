@@ -6,10 +6,6 @@ declare var om: any;
 declare var orcidGA: any;
 declare var orcidVar: any;
 
-interface Event {
-    altkey: any;
-}
-
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -506,7 +502,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
             
             window.onkeydown = function(e) {
-                e = e || window.event;
                 if (e.keyCode == 13) {      
                 	if (location.pathname.indexOf('/oauth/signin') !== -1){ 
                         if ($scope.showRegisterForm == true){
