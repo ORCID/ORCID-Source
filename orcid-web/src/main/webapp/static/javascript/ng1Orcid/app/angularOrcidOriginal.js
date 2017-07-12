@@ -92,6 +92,8 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
         }).fail(function(){
             // something bad is happening!
             console.log("error doing search");
+            $('#ajax-loader-search').hide();
+            $('#search-error-alert').fadeIn(1200);
         });
     };
 
