@@ -202,6 +202,12 @@ Please notice that you should update the path on "*keystoreFile*" and "*truststo
 
 When this it is done, restart the server.
 
+### Configure frontend (Angular2)
+
+Follow next instructions in order to generate the core javascript file.
+
+See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-Source/blob/master/orcid-nodejs/readme.md)
+
 ### Testing your set up
 
 * Right click on "Apache Tomcat Server"

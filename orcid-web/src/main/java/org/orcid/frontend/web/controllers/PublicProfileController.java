@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -37,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.helper.StringUtil;
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
@@ -57,13 +56,11 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Affiliation;
@@ -196,7 +193,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             // Check if the profile is deprecated, non claimed or locked
             orcidSecurityManager.checkProfile(orcid);
-        } catch (OrcidDeprecatedException | OrcidNotClaimedException | LockedException e) {
+        } catch (OrcidDeprecatedException | OrcidNotClaimedException | LockedException | DeactivatedException e) {
             ModelAndView mav = new ModelAndView("public_profile_unavailable");
             mav.addObject("effectiveUserOrcid", orcid);
             String displayName = "";
@@ -222,9 +219,13 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("primaryRecord", profile.getPrimaryRecord().getId());
             } else if (e instanceof OrcidNotClaimedException) {
                 displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
-            } else {
+            } else if (e instanceof LockedException) {
                 mav.addObject("locked", true);
                 mav.addObject("isPublicProfile", true);
+                displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
+                        + localeManager.resolveMessage("public_profile.deactivated.family_name");
+            } else {
+                mav.addObject("deactivated", true);                
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
             }
