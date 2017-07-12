@@ -27,9 +27,6 @@
  * 4 - Angular Controllers
 *******************************************************************************/
 
-
-alert('It works');
-
 angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.hasErrors = false;
     $scope.results = new Array();
