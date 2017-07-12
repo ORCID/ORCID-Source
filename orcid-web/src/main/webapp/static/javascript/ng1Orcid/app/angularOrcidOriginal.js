@@ -2110,7 +2110,7 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
     };
 
     $scope.addRedirectURI = function() {
-        $scope.userCredentials.redirectUris.push({value: '',type: 'default'});
+        $scope.userCredentials.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
         $scope.hideGoogleUri = false;
         $scope.hideSwaggerUri = false;
         $scope.hideSwaggerMemberUri = false;
