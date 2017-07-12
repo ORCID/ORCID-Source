@@ -49,7 +49,7 @@ import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record_v2.Work;
@@ -86,6 +86,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     private String deprecatedUserOrcid = "0000-0000-0000-0004";
     private String lockedUserOrcid = "0000-0000-0000-0006";
     private String userWithNoBio = "1000-0000-0000-0001";
+    private String deactivatedUserOrcid = "0000-0000-0000-0007";
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -809,9 +810,9 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testViewClient() {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof Client);
+        assertTrue(response.getEntity() instanceof ClientSummary);
 
-        Client client = (Client) response.getEntity();
+        ClientSummary client = (ClientSummary) response.getEntity();
         assertEquals("Source Client 2", client.getName());
         assertEquals("A test source client", client.getDescription());
     }
@@ -842,4 +843,27 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         profileDao.merge(profileEntity);
         profileDao.flush();
     }
+    
+    /**
+     * Deactivated elements should not throw exception
+     * */
+    @Test
+    public void testViewDeactivatedRecordDontThrowError() {
+        serviceDelegator.viewActivities(deactivatedUserOrcid);
+        serviceDelegator.viewRecord(deactivatedUserOrcid);        
+        serviceDelegator.viewPerson(deactivatedUserOrcid);
+        serviceDelegator.viewAddresses(deactivatedUserOrcid);
+        serviceDelegator.viewEducations(deactivatedUserOrcid);
+        serviceDelegator.viewEmails(deactivatedUserOrcid);
+        serviceDelegator.viewEmployments(deactivatedUserOrcid);
+        serviceDelegator.viewExternalIdentifiers(deactivatedUserOrcid);
+        serviceDelegator.viewFundings(deactivatedUserOrcid);
+        serviceDelegator.viewKeywords(deactivatedUserOrcid);
+        serviceDelegator.viewOtherNames(deactivatedUserOrcid);
+        serviceDelegator.viewPeerReviews(deactivatedUserOrcid);
+        serviceDelegator.viewPersonalDetails(deactivatedUserOrcid);
+        serviceDelegator.viewResearcherUrls(deactivatedUserOrcid);
+        serviceDelegator.viewWorks(deactivatedUserOrcid);
+    }
+
 }

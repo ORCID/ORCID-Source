@@ -53,7 +53,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.core.manager.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
@@ -1234,9 +1234,9 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testViewClient() {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof Client);
+        assertTrue(response.getEntity() instanceof ClientSummary);
 
-        Client client = (Client) response.getEntity();
+        ClientSummary client = (ClientSummary) response.getEntity();
         assertEquals("Source Client 2", client.getName());
         assertEquals("A test source client", client.getDescription());
     }

@@ -129,4 +129,38 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
         return clientSecret.compareTo(other.getClientSecret());
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((clientSecret == null) ? 0 : clientSecret.hashCode());
+        result = prime * result + ((decryptedClientSecret == null) ? 0 : decryptedClientSecret.hashCode());
+        result = prime * result + (primary ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ClientSecretEntity other = (ClientSecretEntity) obj;
+        if (clientSecret == null) {
+            if (other.clientSecret != null)
+                return false;
+        } else if (!clientSecret.equals(other.clientSecret))
+            return false;
+        if (decryptedClientSecret == null) {
+            if (other.decryptedClientSecret != null)
+                return false;
+        } else if (!decryptedClientSecret.equals(other.decryptedClientSecret))
+            return false;
+        if (primary != other.primary)
+            return false;
+        return true;
+    }        
+
 }
