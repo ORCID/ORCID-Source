@@ -1,3 +1,15 @@
+declare var $: any;
+declare var addShibbolethGa: any;
+declare var colorbox: any;
+declare var getBaseUri: any;
+declare var om: any;
+declare var orcidGA: any;
+declare var orcidVar: any;
+
+interface Event {
+    altkey: any;
+}
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 

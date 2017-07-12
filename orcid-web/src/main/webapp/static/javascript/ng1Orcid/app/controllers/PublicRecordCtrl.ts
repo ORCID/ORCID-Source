@@ -1,3 +1,5 @@
+declare var printWindow: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
