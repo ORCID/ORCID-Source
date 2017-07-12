@@ -18,7 +18,9 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
@@ -32,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
@@ -41,6 +44,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -65,6 +69,9 @@ public class ClientManagerTest extends BaseTest {
     @Resource
     private ClientManager clientManager;
 
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
+    
     @Resource
     private ClientDetailsDao clientDetailsDao;
     
@@ -108,13 +115,11 @@ public class ClientManagerTest extends BaseTest {
         assertEquals(MEMBER_ID, newEntity.getGroupProfileId());
                 
         assertNotNull(newEntity.getAccessTokenValiditySeconds());
-        assertTrue(newEntity.isAllowAutoDeprecate());
-        assertEquals("authentication-provider-id " + seed, newEntity.getAuthenticationProviderId());
+        assertTrue(newEntity.isAllowAutoDeprecate());        
         assertEquals("description " + seed, newEntity.getClientDescription());        
         assertEquals("client-name " + seed, newEntity.getClientName());
         assertEquals(ClientType.PREMIUM_CREATOR, newEntity.getClientType());
         assertEquals("client-website " + seed, newEntity.getClientWebsite());        
-        assertEquals("email-access-reason " + seed, newEntity.getEmailAccessReason());                
         
         assertNotNull(newEntity.getClientRegisteredRedirectUris());   
         assertEquals(3, newEntity.getClientRegisteredRedirectUris().size());
@@ -192,15 +197,13 @@ public class ClientManagerTest extends BaseTest {
         
         //Verify new data is there
         ClientDetailsEntity entityClient = clientDetailsDao.find(client.getId());
-        assertEquals(MEMBER_ID, entityClient.getGroupProfileId());
-        assertEquals("updated-authentication-provider-id", entityClient.getAuthenticationProviderId());
-        assertEquals("updated-desciption", entityClient.getClientDescription());
-        assertEquals("updated-email-access-reason", entityClient.getEmailAccessReason());
+        assertEquals(MEMBER_ID, entityClient.getGroupProfileId());        
+        assertEquals("updated-desciption", entityClient.getClientDescription());        
         assertEquals("updated-client-name", entityClient.getClientName());
         assertEquals("updated-website", entityClient.getClientWebsite());
         assertEquals(initialClientSecret, encryptionManager.decryptForInternalUse(entityClient.getClientSecretForJpa()));
         assertFalse(entityClient.isAllowAutoDeprecate());
-        assertFalse(entityClient.isPersistentTokensEnabled());
+        assertTrue(entityClient.isPersistentTokensEnabled());
         
         //Verify config data doesn't changed
         validateClientConfigSettings(entityClient, editTime);
@@ -215,8 +218,85 @@ public class ClientManagerTest extends BaseTest {
     }
 
     @Test
-    public void resetClientSecret() {
+    @Transactional
+    public void editClientDontOverwriteConfigValuesTest() {
+        // Create a new client
+        String seed = RandomStringUtils.randomAlphanumeric(15);
+        Client client = getClient(seed, MEMBER_ID);
+        assertFalse(client.getId().startsWith("APP-"));
+        client = clientManager.create(client);
+        assertTrue(client.getId().startsWith("APP-"));
+        assertEquals(ClientType.PREMIUM_CREATOR, client.getClientType());
         
+        ClientDetailsEntity newEntity = clientDetailsDao.find(client.getId());
+        assertNull(newEntity.getAuthenticationProviderId());
+        assertNull(newEntity.getEmailAccessReason());
+        newEntity.setAuthenticationProviderId("my-authentication-provider-id");
+        newEntity.setEmailAccessReason("my-email-access-reason");
+        newEntity.setPersistentTokensEnabled(true);
+        clientDetailsDao.merge(newEntity);
+        
+        client.setName("Updated name");
+        // Try to disable the persistent tokens
+        client.setPersistentTokensEnabled(false);
+        client.setAuthenticationProviderId("another-authentication-provider-id");
+        client.setClientType(ClientType.PUBLIC_CLIENT);
+        client.setDescription("Updated description");
+        client.setEmailAccessReason("another-email-access-reason");
+        client.setWebsite("http://updated.com");
+        clientManager.edit(client);
+        
+        ClientDetailsEntity updatedEntity = clientDetailsDao.find(client.getId());
+        // Check config options where not overwritten 
+        assertEquals(client.getId(), updatedEntity.getId());
+        assertEquals("my-authentication-provider-id", updatedEntity.getAuthenticationProviderId());
+        assertEquals("my-email-access-reason", updatedEntity.getEmailAccessReason());
+        assertTrue(updatedEntity.isPersistentTokensEnabled());
+        assertEquals(ClientType.PREMIUM_CREATOR, updatedEntity.getClientType());
+        // Check updated fields where persisted
+        assertEquals("Updated name", updatedEntity.getClientName());
+        assertEquals("Updated description", updatedEntity.getClientDescription());
+        assertEquals("http://updated.com", updatedEntity.getClientWebsite());
+    }
+    
+    @Test
+    public void resetClientSecret() {
+        // Create a new client
+        String seed = RandomStringUtils.randomAlphanumeric(15);
+        Client client = getClient(seed, MEMBER_ID);
+        assertFalse(client.getId().startsWith("APP-"));
+        client = clientManager.create(client);
+        assertTrue(client.getId().startsWith("APP-"));
+        String clientId = client.getId();
+        assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
+        assertTrue(client.getDecryptedSecret().length() > 1);
+        String secret1 = client.getDecryptedSecret();
+        
+        // Reset it one time
+        clientManager.resetClientSecret(clientId);
+        client = clientManagerReadOnly.get(clientId);
+        assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
+        assertTrue(client.getDecryptedSecret().length() > 1);
+        assertNotEquals(secret1, client.getDecryptedSecret());
+        String secret2 = client.getDecryptedSecret();
+        
+        // Reset it the second time
+        clientManager.resetClientSecret(clientId);
+        client = clientManagerReadOnly.get(clientId);
+        assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
+        assertTrue(client.getDecryptedSecret().length() > 1);
+        assertNotEquals(secret1, client.getDecryptedSecret());
+        assertNotEquals(secret2, client.getDecryptedSecret());  
+        String secret3 = client.getDecryptedSecret();
+        
+        // Update the client and fetch secret again to confirm it doesn't changed
+        client.setName("Updated name");
+        clientManager.edit(client);
+        client = clientManagerReadOnly.get(clientId);
+        assertEquals("Updated name", client.getName());
+        assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
+        assertTrue(client.getDecryptedSecret().length() > 1);
+        assertEquals(secret3, client.getDecryptedSecret());
     }
 
     private void validateClientConfigSettings(ClientDetailsEntity entity, Date lastTimeEntityWasModified) {
