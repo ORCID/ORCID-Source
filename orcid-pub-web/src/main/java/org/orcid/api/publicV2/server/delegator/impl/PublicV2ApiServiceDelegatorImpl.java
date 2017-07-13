@@ -35,7 +35,6 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.RecordManager;
@@ -43,6 +42,7 @@ import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
@@ -60,7 +60,7 @@ import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
@@ -197,11 +197,11 @@ public class PublicV2ApiServiceDelegatorImpl
     private LocaleManager localeManager;
 
     @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
     private OpenIDConnectKeyService openIDConnectKeyService;
-
+    
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
+    
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -659,7 +659,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewClient(String clientId) {
-        Client client = clientDetailsManager.getClient(clientId);
+        ClientSummary client = clientManagerReadOnly.getSummary(clientId);
         return Response.ok(client).build();
     }
 

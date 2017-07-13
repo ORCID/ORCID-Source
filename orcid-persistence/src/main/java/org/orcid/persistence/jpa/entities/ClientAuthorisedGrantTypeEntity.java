@@ -37,9 +37,6 @@ import javax.persistence.Transient;
 @IdClass(ClientAuthorisedGrantTypePk.class)
 public class ClientAuthorisedGrantTypeEntity extends BaseEntity<ClientAuthorisedGrantTypePk> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private String grantType;
     private ClientDetailsEntity clientDetailsEntity;
@@ -74,6 +71,31 @@ public class ClientAuthorisedGrantTypeEntity extends BaseEntity<ClientAuthorised
 
     public void setClientDetailsEntity(ClientDetailsEntity clientDetailsEntity) {
         this.clientDetailsEntity = clientDetailsEntity;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((grantType == null) ? 0 : grantType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ClientAuthorisedGrantTypeEntity other = (ClientAuthorisedGrantTypeEntity) obj;
+        if (grantType == null) {
+            if (other.grantType != null)
+                return false;
+        } else if (!grantType.equals(other.grantType))
+            return false;
+        return true;
     }
 
 }
