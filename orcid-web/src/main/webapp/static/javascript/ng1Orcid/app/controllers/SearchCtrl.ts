@@ -1,3 +1,4 @@
+declare var $: any;
 declare var orcidSearchUrlJs;
 
 import * as angular from 'angular';
@@ -79,6 +80,7 @@ export const SearchCtrl = angular.module('orcidApp').controller(
                         if(resultsContainer['orcid-search-result']){
                             $scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
                         }
+
                         if(!$scope.numFound){
                             $('#no-results-alert').fadeIn(1200);
                         }
@@ -122,6 +124,9 @@ export const SearchCtrl = angular.module('orcidApp').controller(
                 }).fail(function(){
                     // something bad is happening!
                     console.log("error doing search");
+                    $('#ajax-loader-search').hide();
+                    $('#search-error-alert').fadeIn(1200);
+
                 });
             };
 
