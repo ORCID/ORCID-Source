@@ -7,34 +7,23 @@ import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
 // This is the Angular 1 part of the module
+
+
 export const internalConsortiumCtrl = angular.module('orcidApp').controller(
-    'internalConsortiumCtrl',
-    [
-        '$compile', 
+    'internalConsortiumCtrl',[
         '$scope', 
-        function manageConsortiumCtrl(
-            $compile,
-            $scope
-        ) {    
-            $scope.consortium = null;
+        '$compile', 
+        function (
+            $scope, 
+            $compile
+        ){    
             $scope.showFindModal = false;
+            $scope.consortium = null;
 
-            $scope.closeModal = function() {
-                $.colorbox.close();
+            $scope.toggleFindConsortiumModal = function() {
+                $scope.showFindModal = !$scope.showFindModal;
             };
-
-            $scope.confirmUpdateConsortium = function() {
-                $.colorbox({
-                    html : $compile($('#confirm-modal-consortium').html())($scope),
-                    scrolling: true,
-                    onLoad: function() {
-                        $('#cboxClose').remove();
-                    }
-                });
-
-                $.colorbox.resize({width:"450px" , height:"175px"});
-            };
-
+            
             $scope.findConsortium = function() {
                 $.ajax({
                     url: getBaseUri()+'/manage-members/find-consortium.json?id=' + encodeURIComponent($scope.salesForceId),
@@ -50,8 +39,17 @@ export const internalConsortiumCtrl = angular.module('orcidApp').controller(
                 });
             };
 
-            $scope.toggleFindConsortiumModal = function() {
-                $scope.showFindModal = !$scope.showFindModal;
+            $scope.confirmUpdateConsortium = function() {
+                $.colorbox({
+                    html : $compile($('#confirm-modal-consortium').html())($scope),
+                        onLoad: function() {
+                        $('#cboxClose').remove();
+                    },
+                    scrolling: true
+                });
+
+                $.colorbox.resize({width:"450px" , height:"175px"});
+
             };
             
             $scope.updateConsortium = function() {
@@ -77,6 +75,11 @@ export const internalConsortiumCtrl = angular.module('orcidApp').controller(
                     console.log("Error updating the consortium");
                 });
             };
+
+            
+            $scope.closeModal = function() {
+                $.colorbox.close();
+            };           
         }
     ]
 );
