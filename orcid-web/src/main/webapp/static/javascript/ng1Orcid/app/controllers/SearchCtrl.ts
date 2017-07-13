@@ -37,7 +37,6 @@ export const SearchCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.getFirstResults = function(){
-                console.log('first results');
                 $('#no-results-alert').hide();
                 $scope.results = new Array();
                 $scope.numFound = 0;
@@ -61,7 +60,6 @@ export const SearchCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.getResults = function(){
-                console.log('get results');
                 $.ajax({
                     url: orcidSearchUrlJs.buildUrl($scope.input),
                     dataType: 'json',
@@ -128,6 +126,7 @@ export const SearchCtrl = angular.module('orcidApp').controller(
                     console.log("error doing search");
                     $('#ajax-loader-search').hide();
                     $('#search-error-alert').fadeIn(1200);
+
                 });
             };
 
