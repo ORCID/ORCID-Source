@@ -4229,7 +4229,7 @@ this.w3cLatexCharMap = {
         //escape all reserved chars except double quotes
         //per https://lucene.apache.org/solr/guide/6_6/the-standard-query-parser.html#TheStandardQueryParser-EscapingSpecialCharacters
         var escapedText = inputText.replace(/([!^&*()+=\[\]\\/{}|:?~])/g, "\\$1");
-        return escapedText;
+        return escapedText.toLowerCase();
     }
 
     function buildAdvancedSearchUrl(input) {
@@ -4237,7 +4237,7 @@ this.w3cLatexCharMap = {
         var doneSomething = false;
         if (hasValue(input.givenNames)) {
             escapedGivenNames = escapeReservedChar(input.givenNames);
-            query += 'given-names:' + escapedGivenNames.toLowerCase();
+            query += 'given-names:' + escapedGivenNames;
             doneSomething = true;
         }
         if (hasValue(input.familyName)) {
@@ -4245,18 +4245,18 @@ this.w3cLatexCharMap = {
                 query += ' AND ';
             }
             escapedFamilyName = escapeReservedChar(input.familyName);
-            query += 'family-name:' + input.familyName.toLowerCase();
+            query += 'family-name:' + input.familyName;
             doneSomething = true;
         }
         if (hasValue(input.searchOtherNames) && hasValue(input.givenNames)) {
-            query += ' OR other-names:' + escapedGivenNames.toLowerCase();
+            query += ' OR other-names:' + escapedGivenNames;
         }
         if (hasValue(input.keyword)) {
             if (doneSomething) {
                 query += ' AND ';
             }
             escapedKeyword = escapeReservedChar(input.keyword);
-            query += 'keyword:' + escapedKeyword.toLowerCase();
+            query += 'keyword:' + escapedKeyword;
             doneSomething = true;
         }
         if (hasValue(input.affiliationOrg)) {
@@ -4268,7 +4268,7 @@ this.w3cLatexCharMap = {
                 query += 'ringgold-org-id:' + input.affiliationOrg;
             } else {
                 escapedAffiliationOrg = escapeReservedChar(input.affiliationOrg);
-                query += 'affiliation-org-name:' + escapedAffiliationOrg.toLowerCase();
+                query += 'affiliation-org-name:' + escapedAffiliationOrg;
             }
             doneSomething = true;
         }
