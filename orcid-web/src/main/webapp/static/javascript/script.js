@@ -4245,7 +4245,7 @@ this.w3cLatexCharMap = {
                 query += ' AND ';
             }
             escapedFamilyName = escapeReservedChar(input.familyName);
-            query += 'family-name:' + input.familyName;
+            query += 'family-name:' + escapedFamilyName;
             doneSomething = true;
         }
         if (hasValue(input.searchOtherNames) && hasValue(input.givenNames)) {
