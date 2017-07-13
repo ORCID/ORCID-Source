@@ -8,17 +8,17 @@ import {NgModule} from '@angular/core';
 export const SwitchUserCtrl = angular.module('orcidApp').controller(
     'SwitchUserCtrl',
     [
-    	'$compile', 
+        '$compile', 
+        '$document', 
         '$scope', 
-        '$document',
         function (
-            $compile,
-            $scope,
-            $document
-        ){        
+            $compile, 
+            $document,
+            $scope
+        ){
             $scope.isDroppedDown = false;
             $scope.searchResultsCache = new Object();
-                             
+
             $scope.getDelegates = function() {
                 $.ajax({
                     url: getBaseUri() + '/delegators/delegators-and-me.json',
@@ -41,29 +41,30 @@ export const SwitchUserCtrl = angular.module('orcidApp').controller(
                 $scope.isDroppedDown = true;
                 event.stopPropagation();
             };
-				
+
             $scope.search = function() {
-			    if($scope.searchResultsCache[$scope.searchTerm] === undefined) {
-				    if($scope.searchTerm === ''){
-				        $scope.getDelegates();
-				        $scope.searchResultsCache[$scope.searchTerm] = $scope.delegators;
-				    } else {
-				        $.ajax({
-				            url: getBaseUri() + '/delegators/search/' + encodeURIComponent($scope.searchTerm) + '?limit=10',
-				            dataType: 'json',
-				            success: function(data) {
-				                $scope.delegators = data;
-				                $scope.searchResultsCache[$scope.searchTerm] = $scope.delegators;
-				                $scope.$apply();
-				            }
-				        }).fail(function() {
-				            // something bad is happening!
-				            console.log("error searching for delegates");
-				        });
-				    }
-				} else {
-				    $scope.delegators = $scope.searchResultsCache[$scope.searchTerm];
-				}
+                if($scope.searchResultsCache[$scope.searchTerm] === undefined) {
+                    if($scope.searchTerm === ''){
+                        $scope.getDelegates();
+                        $scope.searchResultsCache[$scope.searchTerm] = $scope.delegators;
+                    }
+                    else {
+                        $.ajax({
+                            url: getBaseUri() + '/delegators/search/' + encodeURIComponent($scope.searchTerm) + '?limit=10',
+                            dataType: 'json',
+                            success: function(data) {
+                                $scope.delegators = data;
+                                $scope.searchResultsCache[$scope.searchTerm] = $scope.delegators;
+                                $scope.$apply();
+                            }
+                        }).fail(function() {
+                            // something bad is happening!
+                            console.log("error searching for delegates");
+                        });
+                    }
+                } else {
+                    $scope.delegators = $scope.searchResultsCache[$scope.searchTerm];
+                }
             };
 
             $scope.switchUser = function(targetOrcid){
@@ -76,7 +77,8 @@ export const SwitchUserCtrl = angular.module('orcidApp').controller(
                 });
             };
 
-            $document.bind('click',
+            $document.bind(
+                'click',
                 function(event){
                     if(event.target.id !== "delegators-search"){
                         $scope.isDroppedDown = false;
@@ -85,13 +87,13 @@ export const SwitchUserCtrl = angular.module('orcidApp').controller(
                     }
                 }
             );
-			
+
             // init
-            $scope.getDelegates();        
+            $scope.getDelegates();
         }
     ]
 );
 
 // This is the Angular 2 part of the module
 @NgModule({})
-export class SwitchUserNg2Module {}
+export class SwitchUserCtrlNg2Module {}

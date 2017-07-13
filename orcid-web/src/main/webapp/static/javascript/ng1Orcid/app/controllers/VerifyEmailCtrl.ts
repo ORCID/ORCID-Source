@@ -51,7 +51,6 @@ export const VerifyEmailCtrl = angular.module('orcidApp').controller(
                         var primeVerified = false;
 
                         $scope.verifiedModalEnabled = configuration.showModalManualEditVerificationEnabled;
-                        console.log('$scope.verifiedModalEnabled', $scope.verifiedModalEnabled);
                         $scope.emailsPojo = data;
                         $scope.$apply();
 
@@ -63,7 +62,6 @@ export const VerifyEmailCtrl = angular.module('orcidApp').controller(
                                 }
                             };
                         };
-                        console.log('primeVerified', primeVerified)
 
                         if ( primeVerified == false 
                             && getBaseUri().indexOf("sandbox") == -1 
@@ -116,7 +114,7 @@ export const VerifyEmailCtrl = angular.module('orcidApp').controller(
                     transition: 'fade',
                     close: '',
                     scrolling: false
-                            });
+                });
                 $.colorbox.resize({height:"200px", width:"500px"});
             };
 
