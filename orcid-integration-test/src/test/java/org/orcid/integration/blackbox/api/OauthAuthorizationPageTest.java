@@ -169,9 +169,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     }
 
     @Test
-    public void dontSkipAuthorizationScreenIfShortTokenAlreadyExists() throws InterruptedException, JSONException {
-        // clean up any token lying around
-        BBBUtil.revokeApplicationsAccess(webDriver);
+    public void dontSkipAuthorizationScreenIfShortTokenAlreadyExists() throws InterruptedException, JSONException {        
         // get the authorization code
         signout();
         String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), false, webDriver);
