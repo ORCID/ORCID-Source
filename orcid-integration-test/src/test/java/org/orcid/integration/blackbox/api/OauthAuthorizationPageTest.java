@@ -169,16 +169,17 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     }
 
     @Test
-    public void dontSkipAuthorizationScreenIfShortTokenAlreadyExists() throws InterruptedException, JSONException {        
+    public void dontSkipAuthorizationScreenIfShortTokenAlreadyExists() throws InterruptedException, JSONException {
+        
         // get the authorization code
         signout();
-        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), false, webDriver);
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.AFFILIATIONS_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password(), false, webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.getContent(), this.getClient1RedirectUri(),
+        ClientResponse tokenResponse = getClientResponse(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.AFFILIATIONS_UPDATE.getContent(), this.getClient1RedirectUri(),
                 authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
@@ -197,7 +198,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
         //Then ask for the same permission
         String url =String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
-                ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.getContent(), this.getClient1RedirectUri());
+                ScopePathType.AFFILIATIONS_UPDATE.getContent(), this.getClient1RedirectUri());
         webDriver.get(url);
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
