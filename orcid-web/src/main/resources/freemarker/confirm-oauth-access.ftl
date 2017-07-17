@@ -18,13 +18,15 @@
 -->
 <@base>
 <!-- colorbox-content -->
-<div class="container top-green-border confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">     
+<div class="container confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">     
     <!-- /Freemarker and GA variables -->
     <@security.authorize access="hasRole('ROLE_USER')">
         <div class="row top-header">
             <div class="col-md-4 col-sm-12 col-xs-12">
                 <div class="logo">
-                    <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+                    <h1><a href="${aboutUri}" alt="ORCID logo">
+                        <img src="${staticCdn}/img/orcid-logo.svg" width="200" alt="ORCID logo">
+                    </a></h1>
                 </div>      
             </div>
             
