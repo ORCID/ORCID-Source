@@ -78,6 +78,11 @@ public class PublicV1ApiClientImpl {
         return getClientReponse(searchUri, token);
     }
 
+    public ClientResponse viewInvalidEndpoint(String orcid) {
+        URI searchUri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return getClientReponse(searchUri, null);
+    }
+    
     private ClientResponse getClientReponse(URI uri, String token) {
         return getClientReponse(uri, token, VND_ORCID_XML);
     }

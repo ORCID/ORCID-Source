@@ -189,4 +189,12 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
+    
+    @Override
+    @Transactional
+    public void removeAllAffiliations(String orcid) {
+        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
 }

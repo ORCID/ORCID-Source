@@ -49,7 +49,7 @@ public interface WorkManager extends WorkManagerReadOnly {
     boolean removeWorks(String clientOrcid, List<Long> workIds);
     
     /**
-     * Removes all works for an record. Careful!
+     * Removes all works that belongs to a given record. Careful!
      * 
      * @param orcid
      *            The ORCID iD of the record from which all works will be

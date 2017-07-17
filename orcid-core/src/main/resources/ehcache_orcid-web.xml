@@ -391,5 +391,9 @@
 	<cache name="invalid-record-data-change-page-asc" maxElementsInMemory="200" eternal="false"
 		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
 		<persistence strategy="localTempSwap" />
-	</cache>							
+	</cache>			
+	<cache name="clients-per-member" maxElementsInMemory="500" eternal="false"
+		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
+		<persistence strategy="localTempSwap" />
+	</cache>				
 </ehcache>

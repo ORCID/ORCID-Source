@@ -52,7 +52,7 @@ public class HashOrcidIds {
             for (String orcid : orcids) {
                 try {
                     String hash = encryptionManager.sha256Hash(orcid);
-                    profileDao.updateHashedOrcid(orcid, hash);
+                    profileDao.hashOrcidIds(orcid, hash);
                     doneCount++;
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);

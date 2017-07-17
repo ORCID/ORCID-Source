@@ -433,26 +433,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        ClientDetailsEntity that = (ClientDetailsEntity) o;
-
-        if (!clientId.equals(that.clientId))
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return clientId.hashCode();
-    }
-
-    @Override
     @Transient
     public Integer getRefreshTokenValiditySeconds() {
         // Not currently required
@@ -482,11 +462,138 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     }
 
     @Column(name = "allow_auto_deprecate")
-    public Boolean getAllowAutoDeprecate() {
+    public boolean isAllowAutoDeprecate() {
         return allowAutoDeprecate;
     }
 
     public void setAllowAutoDeprecate(boolean allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
-    }          
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + accessTokenValiditySeconds;
+        result = prime * result + (allowAutoDeprecate ? 1231 : 1237);
+        result = prime * result + ((authenticationProviderId == null) ? 0 : authenticationProviderId.hashCode());
+        result = prime * result + ((clientAuthorizedGrantTypes == null) ? 0 : clientAuthorizedGrantTypes.hashCode());
+        result = prime * result + ((clientDescription == null) ? 0 : clientDescription.hashCode());
+        result = prime * result + ((clientGrantedAuthorities == null) ? 0 : clientGrantedAuthorities.hashCode());
+        result = prime * result + ((clientId == null) ? 0 : clientId.hashCode());
+        result = prime * result + ((clientName == null) ? 0 : clientName.hashCode());
+        result = prime * result + ((clientRegisteredRedirectUris == null) ? 0 : clientRegisteredRedirectUris.hashCode());
+        result = prime * result + ((clientResourceIds == null) ? 0 : clientResourceIds.hashCode());
+        result = prime * result + ((clientScopes == null) ? 0 : clientScopes.hashCode());
+        result = prime * result + ((clientSecret == null) ? 0 : clientSecret.hashCode());
+        result = prime * result + ((clientSecrets == null) ? 0 : clientSecrets.hashCode());
+        result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
+        result = prime * result + ((clientWebsite == null) ? 0 : clientWebsite.hashCode());
+        result = prime * result + ((customEmails == null) ? 0 : customEmails.hashCode());
+        result = prime * result + ((decryptedClientSecret == null) ? 0 : decryptedClientSecret.hashCode());
+        result = prime * result + ((emailAccessReason == null) ? 0 : emailAccessReason.hashCode());
+        result = prime * result + ((groupProfileId == null) ? 0 : groupProfileId.hashCode());
+        result = prime * result + (persistentTokensEnabled ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ClientDetailsEntity other = (ClientDetailsEntity) obj;
+        if (accessTokenValiditySeconds != other.accessTokenValiditySeconds)
+            return false;
+        if (allowAutoDeprecate != other.allowAutoDeprecate)
+            return false;
+        if (authenticationProviderId == null) {
+            if (other.authenticationProviderId != null)
+                return false;
+        } else if (!authenticationProviderId.equals(other.authenticationProviderId))
+            return false;
+        if (clientAuthorizedGrantTypes == null) {
+            if (other.clientAuthorizedGrantTypes != null)
+                return false;
+        } else if (!clientAuthorizedGrantTypes.equals(other.clientAuthorizedGrantTypes))
+            return false;
+        if (clientDescription == null) {
+            if (other.clientDescription != null)
+                return false;
+        } else if (!clientDescription.equals(other.clientDescription))
+            return false;
+        if (clientGrantedAuthorities == null) {
+            if (other.clientGrantedAuthorities != null)
+                return false;
+        } else if (!clientGrantedAuthorities.equals(other.clientGrantedAuthorities))
+            return false;
+        if (clientId == null) {
+            if (other.clientId != null)
+                return false;
+        } else if (!clientId.equals(other.clientId))
+            return false;
+        if (clientName == null) {
+            if (other.clientName != null)
+                return false;
+        } else if (!clientName.equals(other.clientName))
+            return false;
+        if (clientRegisteredRedirectUris == null) {
+            if (other.clientRegisteredRedirectUris != null)
+                return false;
+        } else if (!clientRegisteredRedirectUris.equals(other.clientRegisteredRedirectUris))
+            return false;
+        if (clientResourceIds == null) {
+            if (other.clientResourceIds != null)
+                return false;
+        } else if (!clientResourceIds.equals(other.clientResourceIds))
+            return false;
+        if (clientScopes == null) {
+            if (other.clientScopes != null)
+                return false;
+        } else if (!clientScopes.equals(other.clientScopes))
+            return false;
+        if (clientSecret == null) {
+            if (other.clientSecret != null)
+                return false;
+        } else if (!clientSecret.equals(other.clientSecret))
+            return false;
+        if (clientSecrets == null) {
+            if (other.clientSecrets != null)
+                return false;
+        } else if (!clientSecrets.equals(other.clientSecrets))
+            return false;
+        if (clientType != other.clientType)
+            return false;
+        if (clientWebsite == null) {
+            if (other.clientWebsite != null)
+                return false;
+        } else if (!clientWebsite.equals(other.clientWebsite))
+            return false;
+        if (customEmails == null) {
+            if (other.customEmails != null)
+                return false;
+        } else if (!customEmails.equals(other.customEmails))
+            return false;
+        if (decryptedClientSecret == null) {
+            if (other.decryptedClientSecret != null)
+                return false;
+        } else if (!decryptedClientSecret.equals(other.decryptedClientSecret))
+            return false;
+        if (emailAccessReason == null) {
+            if (other.emailAccessReason != null)
+                return false;
+        } else if (!emailAccessReason.equals(other.emailAccessReason))
+            return false;
+        if (groupProfileId == null) {
+            if (other.groupProfileId != null)
+                return false;
+        } else if (!groupProfileId.equals(other.groupProfileId))
+            return false;
+        if (persistentTokensEnabled != other.persistentTokensEnabled)
+            return false;
+        return true;
+    }                  
 }

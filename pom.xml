@@ -235,6 +235,7 @@ the software.
                         	<exclude>**/.externalToolBuilders/**</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
                         	<exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
+                            <exclude>**/src/main/webapp/static/css/noto-sans-googlefonts.css</exclude>
                         	<exclude>**/src/main/webapp/static/twitter-bootstrap/**</exclude>
                         	<exclude>**/src/main/webapp/static/html/respond-proxy.html</exclude>
                             <exclude>**/src/main/java/org/orcid/core/cli/TransformFundRefDataIntoCSV.java</exclude>
@@ -824,8 +825,8 @@ the software.
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-core</artifactId>
-                <version>2.6.5</version>
+                <artifactId>ehcache</artifactId>
+                <version>2.10.4</version>
             </dependency>
 
             <!-- SOLR -->

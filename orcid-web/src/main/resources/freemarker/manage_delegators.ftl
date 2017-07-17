@@ -29,7 +29,7 @@
 			<@orcid.msg 'manage_delegators.description' />
 		</p>
 		<p>
-			<strong></strong><a href="<@orcid.msg 'manage_delegators.learn_more.link.url' />" target="_blank"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></strong>&nbsp;<@orcid.msg 'manage_delegators.learn_more.text' />
+			<strong></strong><a href="<@orcid.msg 'manage_delegators.learn_more.link.url' />" target="manage_delegators.learn_more.link.text"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></strong>&nbsp;<@orcid.msg 'manage_delegators.learn_more.text' />
 		</p>
 		<div ng-controller="DelegatorsCtrl" id="DelegatorsCtrl" data-search-query-url="${searchBaseUrl}">
 		    <p><@orcid.msg 'manage_delegators.search'/></p>
@@ -49,8 +49,8 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="delegationDetails in delegators.delegationDetails | orderBy:sort.column:sort.descending">
-						<td width="35%"><a href="<@orcid.rootPath '/switch-user?username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
-						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
+						<td width="35%"><a href="<@orcid.rootPath '/switch-user?username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}" target="delegationDetails.delegateSummary.creditName.content">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
+						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="delegationDetails.delegateSummary.orcidIdentifier.path">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
 						<td width="15%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
 						<td width="15%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date:'yyyy-MM-dd'}}</td>
 					</tr>

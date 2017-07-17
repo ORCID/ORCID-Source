@@ -29,7 +29,7 @@
 	    	</div>
         	<div class="row" ng-show="membersListSrvc.currentMemberDetails">
         		<div class="col-md-12 col-sm-12 col-xs-12">
-		            <h1 ng-cloak><a href="{{membersListSrvc.currentMemberDetails.member.websiteUrl}}" target="_blank">{{membersListSrvc.currentMemberDetails.member.publicDisplayName}}</a></h1>
+		            <h1 ng-cloak><a href="{{membersListSrvc.currentMemberDetails.member.websiteUrl}}" target="membersListSrvc.currentMemberDetails.member.publicDisplayName">{{membersListSrvc.currentMemberDetails.member.publicDisplayName}}</a></h1>
                     <p ng-cloak><span ng-if="membersListSrvc.communityTypes[membersListSrvc.currentMemberDetails.member.researchCommunity]">{{membersListSrvc.communityTypes[membersListSrvc.currentMemberDetails.member.researchCommunity]}}</span><span ng-if="membersListSrvc.communityTypes[membersListSrvc.currentMemberDetails.member.researchCommunity]&&membersListSrvc.currentMemberDetails.member.country"> | </span>{{membersListSrvc.currentMemberDetails.member.country}}</p>
 		        </div>
 		        <div class="col-md-10 col-sm-10 col-xs-12">		       
@@ -65,7 +65,7 @@
 	                        <li ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
 	                        </li>
 	                        <li ng-if="integration.resourceUrl" >
-	                            <a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
+	                            <a href="{{integration.resourceUrl}}" target="Learn more about this integration">Learn more about this integration</a>
 	                        </li>
 	                    </ul>
 	                </div>

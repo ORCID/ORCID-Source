@@ -35,6 +35,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
+
 /**
  * <p>
  * Java class for scope-path-type.
@@ -383,10 +385,6 @@ public enum ScopePathType implements Serializable {
 
     public static Set<String> getScopesAsStrings(ScopePathType... scopes) {
         return getScopesAsStrings(Arrays.asList(scopes));
-    }
-
-    public static void main(String[] a) {
-        System.out.println(ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings());
-    }
+    }               
 
 }

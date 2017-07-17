@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
@@ -78,7 +79,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
     private String userOrcid = "0000-0000-0000-0003";    
     private String deprecatedUserOrcid = "0000-0000-0000-0004";
-    private String lockedUserOrcid = "0000-0000-0000-0005";    
+    private String lockedUserOrcid = "0000-0000-0000-0006";    
     
     @Resource
     PublicProfileController publicProfileController;
@@ -96,6 +97,9 @@ public class PublicProfileControllerTest extends DBUnitTest {
     //private HttpServletRequest request;
     private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     
+    @Mock
+    //private HttpServletRequest request;
+    private HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
     
     @Before
     public void before() {
@@ -118,7 +122,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewValidUser() {
-        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, userOrcid);
+        ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, userOrcid);
         assertEquals("public_profile_v3", mav.getViewName());
         Map<String, Object> model = mav.getModel();
         assertNotNull(model);
@@ -223,7 +227,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     @Test
     public void testViewLockedUser() {
         String displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name");
-        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, lockedUserOrcid);
+        ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, lockedUserOrcid);
         Map<String, Object> model = mav.getModel();
         assertUnavailableProfileBasicData(mav, lockedUserOrcid, displayName);    
         assertTrue(model.containsKey("locked"));
@@ -232,7 +236,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     @Test
     public void testViewDeprecatedUser() {
-        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, deprecatedUserOrcid);
+        ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, deprecatedUserOrcid);
         Map<String, Object> model = mav.getModel();
         assertUnavailableProfileBasicData(mav, deprecatedUserOrcid, null);
         assertTrue(model.containsKey("deprecated"));
@@ -248,7 +252,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         profileDao.merge(profile);
         profileDao.flush();
         String displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
-        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, unclaimedUserOrcid);
+        ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, unclaimedUserOrcid);
         assertUnavailableProfileBasicData(mav, unclaimedUserOrcid, displayName);        
     }
     
@@ -259,7 +263,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         profileEntity.setSubmissionDate(DateUtils.addDays(new Date(), -10));
         profileDao.merge(profileEntity);
         profileDao.flush();
-        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, unclaimedUserOrcid);        
+        ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, unclaimedUserOrcid);        
         assertEquals("public_profile_v3", mav.getViewName());
         Map<String, Object> model = mav.getModel();
         assertNotNull(model);

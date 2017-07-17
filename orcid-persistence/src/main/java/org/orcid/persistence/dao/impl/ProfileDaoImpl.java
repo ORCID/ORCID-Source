@@ -791,7 +791,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateHashedOrcid(String orcid, String hashedOrcid) {
+    public void hashOrcidIds(String orcid, String hashedOrcid) {
         Query query = entityManager.createNativeQuery("update profile set hashed_orcid = :hashedOrcid where orcid = :orcid");
         query.setParameter("hashedOrcid", hashedOrcid);
         query.setParameter("orcid", orcid);
@@ -829,5 +829,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", orcid);
         query.setParameter("secret", secret);
         query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public boolean deactivate(String orcid) {
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), profile_deactivation_date = now(), indexing_status = 'REINDEX' where orcid = :orcid");
+        query.setParameter("orcid", orcid);        
+        return query.executeUpdate() > 0;
     }
 }

@@ -38,6 +38,16 @@ public class SalesForceConnectionEntity extends BaseEntity<Long> {
     private String email;
     private String salesForceAccountId;
 
+    public SalesForceConnectionEntity() {
+        super();
+    }
+
+    public SalesForceConnectionEntity(String orcid, String email, String salesForceAccountId) {
+        this.orcid = orcid;
+        this.email = email;
+        this.salesForceAccountId = salesForceAccountId;
+    }
+
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "salesforce_connection_seq")

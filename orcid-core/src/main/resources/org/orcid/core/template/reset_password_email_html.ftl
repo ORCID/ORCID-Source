@@ -31,11 +31,17 @@
 		      <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		    	<@emailMacros.msg "email.reset_password.sorry" /> <a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a>
+		    </p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.reset_password.to_reset" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 			    <a href="${passwordResetUrl}">${passwordResetUrl}</a>
- 		    </p>
+ 		    </p> 		    
+ 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">		  
+				<@emailMacros.msg "email.reset_password.note" />
+		    </p> 		     		    
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">		  
 				<@emailMacros.msg "email.reset_password.after" />
 		    </p>

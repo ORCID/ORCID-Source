@@ -32,6 +32,10 @@ public class OrcidNotClaimedException extends ApplicationException {
         super();
     }
 
+    public OrcidNotClaimedException(String message) {
+        super(message);
+    }
+    
     public OrcidNotClaimedException(Map<String, String> params) {
         super(params);
     }

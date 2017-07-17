@@ -231,4 +231,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
         return item;
     }
+
+    @Override
+    public void removeAllPeerReviews(String orcid) {
+        peerReviewDao.removeAllPeerReviews(orcid);
+    }
 }

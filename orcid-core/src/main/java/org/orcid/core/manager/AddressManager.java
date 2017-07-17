@@ -33,4 +33,13 @@ public interface AddressManager extends AddressManagerReadOnly {
     boolean deleteAddress(String orcid, Long putCode);
     
     Addresses updateAddresses(String orcid, Addresses addresses);
+    
+    /**
+     * Removes all address that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all address will be
+     *            removed.
+     */
+    void removeAllAddress(String orcid);
 }

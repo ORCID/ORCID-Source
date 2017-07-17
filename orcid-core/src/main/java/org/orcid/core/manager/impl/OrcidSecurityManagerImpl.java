@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -46,10 +47,10 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_v2.Filterable;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
 import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
@@ -169,7 +170,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
      *             in the case the account is locked
      */
     @Override
-    public void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
+    public void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException, DeactivatedException {
         ProfileEntity profile = null;
 
         try {
@@ -190,7 +191,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new OrcidDeprecatedException(params);
         }
 
-        // Check if the profile is not claimed and not old enough
+        // Check if the user record is not claimed and not old enough
         if ((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
             // Let the creator access the profile even if it is not claimed and
             // not old enough
@@ -206,11 +207,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
 
-        // Check if the record is locked
+        // Check if the user record is locked
         if (!profile.isAccountNonLocked()) {
             LockedException lockedException = new LockedException();
             lockedException.setOrcid(profile.getId());
             throw lockedException;
+        }
+        
+        // Check if the user record is deactivated
+        if (profile.getDeactivationDate() != null) {
+            DeactivatedException exception = new DeactivatedException();
+            exception.setOrcid(orcid);
+            throw exception;
         }
     }
 

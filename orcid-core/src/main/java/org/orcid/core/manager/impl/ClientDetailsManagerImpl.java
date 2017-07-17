@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
+import org.orcid.persistence.dao.ClientScopeDao;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -78,6 +79,9 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private ClientScopeDao clientScopeDao;
     
     /**
      * Creates a new client without any knowledge of the client id or secret.
@@ -271,16 +275,24 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
                 String clientId = clientDetails.getClientId();
                 LOGGER.info("Deleting non primary keys for client: {}", clientId);
                 Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
+                boolean anyRemoved = false;
                 for (ClientSecretEntity clientSecret : clientSecrets) {
                     if (!clientSecret.isPrimary()) {
                         Date dateRevoked = clientSecret.getLastModified();
                         Date timeToDeleteMe = DateUtils.addHours(dateRevoked, 24);
-                        // If the key have been revokend more than 24 hours ago
+                        // If the key have been revoked more than 24 hours ago
                         if (timeToDeleteMe.before(currentDate)) {
                             LOGGER.info("Deleting key for client {}", clientId);
-                            clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
+                            boolean removed = clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
+                            if(removed) {
+                                anyRemoved = true;
+                            }
                         }
                     }
+                }
+                // Update the last modified on the client record
+                if(anyRemoved) {
+                    this.updateLastModified(clientId);
                 }
             }
         }
@@ -369,5 +381,14 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             LOGGER.warn("There is no client with the IdP: " + idp);
         }
         return null;
+    }
+
+    @Override
+    public void addScopesToClient(Set<String> scopes, ClientDetailsEntity clientDetails) {
+        for (String scope : scopes) {
+            if (!clientDetails.getScope().contains(scope)) {
+                clientScopeDao.insertClientScope(clientDetails.getId(), scope);
+            }
+        }
     }
 }

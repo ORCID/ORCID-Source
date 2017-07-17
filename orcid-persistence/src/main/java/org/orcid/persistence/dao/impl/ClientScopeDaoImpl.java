@@ -44,5 +44,14 @@ public class ClientScopeDaoImpl extends GenericDaoImpl<ClientScopeEntity, Client
         deleteQuery.setParameter("scopeType", scopeType);
         return deleteQuery.executeUpdate() > 0;
     }
+    
+    @Override
+    @Transactional
+    public void insertClientScope(String clientDetailsId, String scope) {
+        Query insertQuery = entityManager.createNativeQuery("INSERT INTO client_scope (date_created, last_modified, client_details_id, scope_type) VALUES (now(), now(), :clientDetailsId, :scope)");
+        insertQuery.setParameter("clientDetailsId", clientDetailsId);
+        insertQuery.setParameter("scope", scope);
+        insertQuery.executeUpdate();
+    }
 
 }

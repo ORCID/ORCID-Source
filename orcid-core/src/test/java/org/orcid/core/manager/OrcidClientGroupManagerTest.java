@@ -511,7 +511,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertNotNull(createdGroup);
         assertEquals(MemberType.PREMIUM, createdGroup.getType());
         
-        Set<String> premiumScopes = orcidClientGroupManager.premiumUpdaterScopes();
+        Set<String> premiumScopes = ClientType.premiumUpdaterScopes();
         
         //Get existing clients
         List<ClientDetailsEntity> clients = clientDetailsManager.findByGroupId(createdGroup.getGroupOrcid());
@@ -532,7 +532,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
             }
         });        
         
-        Set<String> premiumInstitutionScopes = orcidClientGroupManager.premiumCreatorScopes();
+        Set<String> premiumInstitutionScopes = ClientType.premiumCreatorScopes();
         
         clients = clientDetailsManager.findByGroupId(createdGroup.getGroupOrcid());
         assertEquals(2, clients.size());

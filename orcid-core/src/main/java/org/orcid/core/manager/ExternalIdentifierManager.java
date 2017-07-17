@@ -49,4 +49,13 @@ public interface ExternalIdentifierManager extends ExternalIdentifierManagerRead
     boolean deleteExternalIdentifier(String orcid, Long id, boolean checkSource);
     
     PersonExternalIdentifiers updateExternalIdentifiers(String orcid, PersonExternalIdentifiers externalIdentifiers);
+    
+    /**
+     * Removes all external identifiers that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all external identifiers will be
+     *            removed.
+     */
+    void removeAllExternalIdentifiers(String orcid);
 }

@@ -28,4 +28,13 @@ public interface ProfileKeywordManager extends ProfileKeywordManagerReadOnly {
     Keyword updateKeyword(String orcid, Long putCode, Keyword keyword, boolean isApiRequest);
 
     Keywords updateKeywords(String orcid, Keywords keywords);
+    
+    /**
+     * Removes all keywords that belongs to a given record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all keywords will be
+     *            removed.
+     */
+    void removeAllKeywords(String orcid);
 }

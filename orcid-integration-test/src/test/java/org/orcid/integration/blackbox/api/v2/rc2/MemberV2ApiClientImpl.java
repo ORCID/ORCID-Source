@@ -17,25 +17,25 @@
 package org.orcid.integration.blackbox.api.v2.rc2;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
+import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
+import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
+import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
+import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
+import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
+import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
+import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
-import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
-import static org.orcid.core.api.OrcidApiConstants.EMAIL;
-import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
-import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
-import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
-import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
-import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
-import static org.orcid.core.api.OrcidApiConstants.PERSON;
-import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,6 +54,7 @@ import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_v2.Record;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;

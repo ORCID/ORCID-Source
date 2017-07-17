@@ -21,6 +21,9 @@
 	<div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
 		<div ng-controller="ResetPasswordCtrl" ng-init="getResetPasswordForm()">
 			<form id="reg-form-password" autocomplete="off">
+				<div class="control-group">
+					<p><small>${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.label")}</small></p>
+				</div>
 				<span class="orcid-error" ng-show="resetPasswordForm.errors.length > 0">
 					<div ng-repeat='error in resetPasswordForm.errors' ng-bind-html="error"></div>
 				</span>   

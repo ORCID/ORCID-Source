@@ -75,7 +75,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     OrcidClientGroupManager orcidClientGroupManager;
 
     @Resource
-    GroupAdministratorController groupAdministratorController;
+    ClientsController groupAdministratorController;
 
     @Resource
     ClientDetailsDao clientDetailsDao;

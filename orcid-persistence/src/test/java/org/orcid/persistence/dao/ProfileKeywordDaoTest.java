@@ -26,7 +26,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,15 +39,12 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class ProfileKeywordDaoTest extends DBUnitTest {
 
-    @Resource
-    private ProfileKeywordDao profileKeywordDao;
+    private static String USER_ORCID = "0000-0000-0000-0003";
+    private static String OTHER_USER_ORCID = "0000-0000-0000-0001";
+    
+    @Resource(name = "profileKeywordDao")
+    private ProfileKeywordDao dao;
 
-    @Resource
-    private OtherNameDao otherNameDao;
-    
-    @Resource
-    private ProfileDao profileDao;
-    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml"));
@@ -59,24 +55,19 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
-    @Before
-    public void beforeRunning() {
-        assertNotNull(profileKeywordDao);
-    }
-
     @Test    
     public void testfindProfileKeywords() {
-        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors("4444-4444-4444-4441", 0L);
+        List<ProfileKeywordEntity> keywords = dao.getProfileKeywors("4444-4444-4444-4441", 0L);
         assertNotNull(keywords);
         assertEquals(2, keywords.size());
     }
 
     @Test    
     public void testAddProfileKeyword() {
-        assertEquals(4, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
-        boolean result = profileKeywordDao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        assertEquals(4, dao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
+        boolean result = dao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         assertTrue(result);    
-        assertEquals(5, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
+        assertEquals(5, dao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
         
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setKeywordName("this is my keyword");
@@ -84,14 +75,33 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         entity.setSourceId("4444-4444-4444-4443");
         entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);        
         
-        profileKeywordDao.persist(entity);        
-        assertEquals(6, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
+        dao.persist(entity);        
+        assertEquals(6, dao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
     }
         
     @Test
     public void testDeleteProfileKeyword() {
-        assertEquals(1, profileKeywordDao.getProfileKeywors("4444-4444-4444-4442", 0L).size());
-        profileKeywordDao.deleteProfileKeyword("4444-4444-4444-4442", "My keyword");
-        assertEquals(0, profileKeywordDao.getProfileKeywors("4444-4444-4444-4442", 0L).size());
+        assertEquals(1, dao.getProfileKeywors("4444-4444-4444-4442", 0L).size());
+        dao.deleteProfileKeyword("4444-4444-4444-4442", "My keyword");
+        assertEquals(0, dao.getProfileKeywors("4444-4444-4444-4442", 0L).size());
+    }
+    
+    @Test
+    public void removeAllTest() {
+        long initialNumber = dao.countAll();
+        long elementThatBelogsToUser = dao.getProfileKeywors(USER_ORCID, 0L).size();
+        long otherUserElements = dao.getProfileKeywors(OTHER_USER_ORCID, 0L).size();
+        assertEquals(5, elementThatBelogsToUser);
+        assertTrue(elementThatBelogsToUser < initialNumber);
+        assertEquals(3, otherUserElements);
+        //Remove all elements that belongs to USER_ORCID
+        dao.removeAllKeywords(USER_ORCID);
+        
+        long finalNumberOfElements = dao.countAll();
+        long finalNumberOfOtherUserElements = dao.getProfileKeywors(OTHER_USER_ORCID, 0L).size();
+        long finalNumberOfElementsThatBelogsToUser = dao.getProfileKeywors(USER_ORCID, 0L).size();
+        assertEquals(0, finalNumberOfElementsThatBelogsToUser);
+        assertEquals(otherUserElements, finalNumberOfOtherUserElements);
+        assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
 }

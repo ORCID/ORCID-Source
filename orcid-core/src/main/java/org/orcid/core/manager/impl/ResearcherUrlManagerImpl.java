@@ -241,5 +241,10 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
         } else if (incomingWorkVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         }
+    }
+
+    @Override
+    public void removeAllResearcherUrls(String orcid) {
+        researcherUrlDao.removeAllResearcherUrls(orcid);
     }        
 }

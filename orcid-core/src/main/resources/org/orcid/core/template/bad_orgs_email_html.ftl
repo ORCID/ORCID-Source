@@ -28,7 +28,7 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		    <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">Dear ${emailName},</span>
-		    <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">We are writing to let you know about a bug that we identified recently, which may have affected the display of one or more of the organization names in your ORCID record (<a href="${baseUriHttp}/${orcidId}" target="_blank">${baseUriHttp}/${orcidId}</a>).  As a result, your record may currently include incorrect information about the following organization(s):</p>
+		    <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">We are writing to let you know about a bug that we identified recently, which may have affected the display of one or more of the organization names in your ORCID record (<a href="${baseUriHttp}/${orcidId}" target="orcid.blank">${baseUriHttp}/${orcidId}</a>).  As a result, your record may currently include incorrect information about the following organization(s):</p>
 		    <ul style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666">
 		    <#list orgDescriptions as orgDescription>
                 <li>${orgDescription}</li>

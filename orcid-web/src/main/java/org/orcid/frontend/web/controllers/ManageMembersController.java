@@ -33,7 +33,7 @@ import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.pojo.ajaxForm.Client;
-import org.orcid.pojo.ajaxForm.ConsortiumForm;
+import org.orcid.pojo.ajaxForm.MemberDetailsForm;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -62,7 +62,7 @@ public class ManageMembersController extends BaseController {
     ClientDetailsManager clientDetailsManager;
 
     @Resource
-    private GroupAdministratorController groupAdministratorController;
+    private ClientsController groupAdministratorController;
     
     @Resource
     private SalesForceManager salesForceManager;
@@ -228,9 +228,9 @@ public class ManageMembersController extends BaseController {
     }
     
     @RequestMapping(value = "/find-consortium.json", method = RequestMethod.GET)
-    public @ResponseBody ConsortiumForm findConsortium(@RequestParam("id") String id) {
+    public @ResponseBody MemberDetailsForm findConsortium(@RequestParam("id") String id) {
         MemberDetails memberDetails = salesForceManager.retrieveDetails(id);
-        ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
+        MemberDetailsForm consortiumForm = MemberDetailsForm.fromMemberDetails(memberDetails);
         List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(id);
         salesForceManager.addOrcidsToContacts(contactsList);
         consortiumForm.setContactsList(contactsList);
@@ -239,7 +239,7 @@ public class ManageMembersController extends BaseController {
     }
     
     @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
-    public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
+    public @ResponseBody MemberDetailsForm updateConsortium(@RequestBody MemberDetailsForm consortium) {
         consortium.setErrors(new ArrayList<String>());
         salesForceManager.enableAccess(consortium.getAccountId(), consortium.getContactsList());
         return consortium;
@@ -264,6 +264,9 @@ public class ManageMembersController extends BaseController {
         Map<String, String> groupTypesMap = new TreeMap<String, String>();
 
         for (MemberType groupType : groupTypes) {
+            if( MemberType.BASIC_INSTITUTION.equals(groupType) || MemberType.PREMIUM_INSTITUTION.equals(groupType) ){
+                continue;
+            }
             String key = groupType.value();
             String value = key.replace('-', ' ');
             groupTypesMap.put(key, value);

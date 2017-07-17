@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import javax.persistence.NoResultException;
 
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
@@ -47,7 +48,7 @@ public interface OrcidSecurityManager {
 
     String getClientIdFromAPIRequest();
 
-    void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException;
+    void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException, DeactivatedException;
 
     void checkSource(SourceAwareEntity<?> existingEntity);
 

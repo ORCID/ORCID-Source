@@ -57,6 +57,7 @@ import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
@@ -72,7 +73,7 @@ import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -232,6 +233,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+    
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
 
     private long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
@@ -273,10 +277,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response viewWork(String orcid, Long putCode) {
         Work w = workManagerReadOnly.getWork(orcid, putCode, getLastModifiedTime(orcid));
         orcidSecurityManager.checkAndFilter(orcid, w, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        contributorUtils.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
-        sourceUtils.setSourceName(w);
-        contributorUtils.filterContributorPrivateData(w);
+        sourceUtils.setSourceName(w);        
         return Response.ok(w).build();
     }
 
@@ -365,6 +369,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, f, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(f, orcid);
+        ActivityUtils.cleanEmptyFields(f);
         sourceUtils.setSourceName(f);
         contributorUtils.filterContributorPrivateData(f);
         return Response.ok(f).build();
@@ -1093,6 +1098,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes, profileEntity.getLastModified().getTime());
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        contributorUtils.filterContributorPrivateData(workBulk);        
         ActivityUtils.cleanEmptyFields(workBulk);
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();
@@ -1120,7 +1126,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewClient(String clientId) {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
-        Client client = clientDetailsManagerReadOnly.getClient(clientId);
+        ClientSummary client = clientManagerReadOnly.getSummary(clientId);
         return Response.ok(client).build();
     }
     

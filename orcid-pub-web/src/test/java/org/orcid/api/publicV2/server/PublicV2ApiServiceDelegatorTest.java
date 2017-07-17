@@ -53,7 +53,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.core.manager.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
@@ -156,6 +156,12 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
         assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+        assertNotNull(work.getWorkContributors());
+        assertNotNull(work.getWorkContributors().getContributor());
+        assertEquals(1, work.getWorkContributors().getContributor().size());
+        assertNotNull(work.getWorkContributors().getContributor().get(0).getContributorOrcid());
+        assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertNull(work.getWorkContributors().getContributor().get(0).getCreditName());
     }
 
     @Test
@@ -186,9 +192,26 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
         assertEquals(3, workBulk.getBulk().size());
-        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);        
         assertTrue(workBulk.getBulk().get(1) instanceof OrcidError);
         assertTrue(workBulk.getBulk().get(2) instanceof OrcidError);
+        Work work = (Work) workBulk.getBulk().get(0);
+        assertNotNull(work);
+        assertNotNull(work.getLastModifiedDate());
+        assertNotNull(work.getLastModifiedDate().getValue());
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("PUBLIC", work.getWorkTitle().getTitle().getContent());
+        assertEquals(Long.valueOf(11), work.getPutCode());
+        assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
+        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
+        assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+        assertNotNull(work.getWorkContributors());
+        assertNotNull(work.getWorkContributors().getContributor());
+        assertEquals(1, work.getWorkContributors().getContributor().size());
+        assertNotNull(work.getWorkContributors().getContributor().get(0).getContributorOrcid());
+        assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertNull(work.getWorkContributors().getContributor().get(0).getCreditName());
     }
 
     @Test
@@ -206,6 +229,9 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("PUBLIC", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
         assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
+        assertNotNull(funding.getContributors().getContributor().get(0).getContributorOrcid());
+        assertEquals("0000-0000-0000-0000", funding.getContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertNull(funding.getContributors().getContributor().get(0).getCreditName());        
     }
 
     @Test
@@ -1208,9 +1234,9 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testViewClient() {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof Client);
+        assertTrue(response.getEntity() instanceof ClientSummary);
 
-        Client client = (Client) response.getEntity();
+        ClientSummary client = (ClientSummary) response.getEntity();
         assertEquals("Source Client 2", client.getName());
         assertEquals("A test source client", client.getDescription());
     }

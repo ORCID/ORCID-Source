@@ -21,9 +21,11 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -73,6 +75,16 @@ public class ContributorUtils {
         }
     }
 
+    public void filterContributorPrivateData(WorkBulk works) {
+        if(works != null) {
+            for(BulkElement element : works.getBulk()) {
+                if(Work.class.isAssignableFrom(element.getClass())) {
+                    filterContributorPrivateData((Work) element);
+                }
+            }
+        }
+    }
+    
     public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
         this.profileEntityCacheManager = profileEntityCacheManager;
     }

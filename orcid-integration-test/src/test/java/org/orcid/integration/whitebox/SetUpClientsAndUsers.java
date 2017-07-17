@@ -326,24 +326,46 @@ public class SetUpClientsAndUsers {
 
         // Create public client
         Map<String, String> publicClientParams = getParams(publicClientId);
+        ClientType clientType = ClientType.PREMIUM_CREATOR;   
+        if(publicClientParams.containsKey(CLIENT_TYPE)) {
+            clientType = ClientType.fromValue(publicClientParams.get(CLIENT_TYPE));
+        }
+        
         ClientDetailsEntity publicClient = clientDetailsManager.findByClientId(publicClientId);
         if (publicClient == null) {
-            createClient(publicClientParams);
-        } 
+            createClient(publicClientParams, clientType);
+        } else {
+            clientDetailsManager.addScopesToClient(getScopes(publicClientParams, clientType), publicClient);
+        }
 
         // Create client 1
         Map<String, String> client1Params = getParams(client1ClientId);
+        clientType = ClientType.PREMIUM_CREATOR;   
+        if(client1Params.containsKey(CLIENT_TYPE)) {
+            clientType = ClientType.fromValue(client1Params.get(CLIENT_TYPE));
+        }
+        
         ClientDetailsEntity client1 = clientDetailsManager.findByClientId(client1ClientId);
         if (client1 == null) {
-            createClient(client1Params);
-        } 
+            createClient(client1Params, clientType);
+        } else {
+            clientDetailsManager.addScopesToClient(getScopes(client1Params, clientType), client1);
+            
+        }
 
         // Create client 2
         Map<String, String> client2Params = getParams(client2ClientId);
+        clientType = ClientType.PREMIUM_CREATOR;   
+        if(client2Params.containsKey(CLIENT_TYPE)) {
+            clientType = ClientType.fromValue(client2Params.get(CLIENT_TYPE));
+        }
+        
         ClientDetailsEntity client2 = clientDetailsManager.findByClientId(client2ClientId);
         if (client2 == null) {
-            createClient(client2Params);            
-        } 
+            createClient(client2Params, clientType);            
+        } else {
+            clientDetailsManager.addScopesToClient(getScopes(client2Params, clientType), client2);
+        }
         
         //Ensure persistent tokens is disabled for client # 2
         clientDetailsDao.changePersistenceTokensProperty(client2ClientId, false);  
@@ -635,19 +657,13 @@ public class SetUpClientsAndUsers {
         return false;
     }
 
-    private void createClient(Map<String, String> params) {
+    private void createClient(Map<String, String> params, ClientType clientType) {
         Set<String> clientResourceIds = new HashSet<String>();
         clientResourceIds.add("orcid");
         Set<String> clientAuthorizedGrantTypes = new HashSet<String>();
         clientAuthorizedGrantTypes.add("client_credentials");
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
-        
-        ClientType clientType = ClientType.PREMIUM_CREATOR;        
-        
-        if(params.containsKey(CLIENT_TYPE)) {
-            clientType = ClientType.fromValue(params.get(CLIENT_TYPE));
-        }
         
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
         RedirectUri redirectUri = new RedirectUri(params.get(REDIRECT_URI));
@@ -670,12 +686,18 @@ public class SetUpClientsAndUsers {
         String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
         String memberId = params.get(MEMBER_ID);
         
+        Set<String> scopes = getScopes(params, clientType);
+            
+        clientDetailsManager.populateClientDetailsEntity(clientId, memberId, name, description, null, website, clientSecret, clientType, scopes,
+                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, true);
+    }
+
+    private Set<String> getScopes(Map<String, String> params, ClientType clientType) {
         Set<String> scopes = null;
-        
         if(clientType.equals(ClientType.PUBLIC_CLIENT)) {
             scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value()));
         } else {
-            scopes = orcidClientGroupManager.premiumCreatorScopes();
+            scopes = ClientType.premiumCreatorScopes();
             if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
                 scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
             }
@@ -690,9 +712,7 @@ public class SetUpClientsAndUsers {
             //Add openid scope
             scopes.add(ScopePathType.OPENID.value());
         }
-            
-        clientDetailsManager.populateClientDetailsEntity(clientId, memberId, name, description, null, website, clientSecret, clientType, scopes,
-                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, true);
+        return scopes;
     }
     
     @Test

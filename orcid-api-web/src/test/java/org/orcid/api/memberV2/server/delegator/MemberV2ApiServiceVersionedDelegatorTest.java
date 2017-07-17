@@ -42,6 +42,7 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
 import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceVersionedDelegatorImpl;
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
@@ -49,7 +50,7 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
@@ -98,7 +99,8 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     private String nonExistingUser = "0000-0000-0000-000X";
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
     private String deprecatedUserOrcid = "0000-0000-0000-0004";
-    private String lockedUserOrcid = "0000-0000-0000-0005";
+    private String lockedUserOrcid = "0000-0000-0000-0006";
+    private String deactivatedUserOrcid = "0000-0000-0000-0007";
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -1538,11 +1540,11 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testViewClient() {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof Client);
+        assertTrue(response.getEntity() instanceof ClientSummary);
 
-        Client client = (Client) response.getEntity();
-        assertEquals("Source Client 2", client.getName());
-        assertEquals("A test source client", client.getDescription());
+        ClientSummary clientSummary = (ClientSummary) response.getEntity();
+        assertEquals("Source Client 2", clientSummary.getName());
+        assertEquals("A test source client", clientSummary.getDescription());
     }
     
     @Test
@@ -1690,6 +1692,203 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         if(person.getResearcherUrls() != null) {
             person.getResearcherUrls().getResearcherUrls().forEach(e -> assertSourceElement(e, true));
         }
+    }
+    
+    /**
+     * Deactivated elements tests
+     * */
+    @Test
+    public void testViewDeactivatedRecordDontThrowError() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);                
+        serviceDelegator.viewActivities(deactivatedUserOrcid);
+        serviceDelegator.viewRecord(deactivatedUserOrcid);        
+        serviceDelegator.viewPerson(deactivatedUserOrcid);
+        serviceDelegator.viewAddresses(deactivatedUserOrcid);
+        serviceDelegator.viewEducations(deactivatedUserOrcid);
+        serviceDelegator.viewEmails(deactivatedUserOrcid);
+        serviceDelegator.viewEmployments(deactivatedUserOrcid);
+        serviceDelegator.viewExternalIdentifiers(deactivatedUserOrcid);
+        serviceDelegator.viewFundings(deactivatedUserOrcid);
+        serviceDelegator.viewKeywords(deactivatedUserOrcid);
+        serviceDelegator.viewOtherNames(deactivatedUserOrcid);
+        serviceDelegator.viewPeerReviews(deactivatedUserOrcid);
+        serviceDelegator.viewPersonalDetails(deactivatedUserOrcid);
+        serviceDelegator.viewResearcherUrls(deactivatedUserOrcid);
+        serviceDelegator.viewWorks(deactivatedUserOrcid);
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateWork() {
+        serviceDelegator.createWork(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateWork() {
+        serviceDelegator.updateWork(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteWork() {
+        serviceDelegator.deleteWork(deactivatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateFunding() {
+        serviceDelegator.createFunding(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateFunding() {
+        serviceDelegator.updateFunding(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteFunding() {
+        serviceDelegator.deleteFunding(deactivatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateEducation() {
+        serviceDelegator.createEducation(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateEducation() {
+        serviceDelegator.updateEducation(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateEmployment() {
+        serviceDelegator.createEmployment(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateEmployment() {
+        serviceDelegator.updateEmployment(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteAffiliation() {
+        serviceDelegator.deleteAffiliation(deactivatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreatePeerReview() {
+        serviceDelegator.createPeerReview(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdatePeerReview() {
+        serviceDelegator.updatePeerReview(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeletePeerReview() {
+        serviceDelegator.deletePeerReview(deactivatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateResearcherUrl() {
+        serviceDelegator.updateResearcherUrl(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateResearcherUrl() {
+        serviceDelegator.createResearcherUrl(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteResearcherUrl() {
+        serviceDelegator.deleteResearcherUrl(deactivatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateOtherName() {
+        serviceDelegator.createOtherName(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateOtherName() {
+        serviceDelegator.updateOtherName(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteOtherName() {
+        serviceDelegator.deleteOtherName(deactivatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateExternalIdentifier() {
+        serviceDelegator.updateExternalIdentifier(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateExternalIdentifier() {
+        serviceDelegator.createExternalIdentifier(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteExternalIdentifier() {
+        serviceDelegator.deleteExternalIdentifier(deactivatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateKeyword() {
+        serviceDelegator.createKeyword(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateKeyword() {
+        serviceDelegator.updateKeyword(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteKeyword() {
+        serviceDelegator.deleteKeyword(deactivatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateAddress() {
+        serviceDelegator.createAddress(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateAddress() {
+        serviceDelegator.updateAddress(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteAddress() {
+        serviceDelegator.deleteAddress(deactivatedUserOrcid, 0L);
+        fail();
     }
     
     private void assertSourceElement(SourceAware element, boolean isHttps) {

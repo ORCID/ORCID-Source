@@ -506,9 +506,22 @@
                     </h1>
                     <p><@orcid.msg 'public-layout.logo.tagline'/></p>
                 </div>
-                <p class="see-more">${liveIds} <@orcid.msg
-                    'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
-                    title=""><@orcid.msg 'public-layout.see_more'/></a>
+            </#if>
+            <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
+                <h1>
+                    <a href="${aboutUri}"><img
+                        src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>
+                </h1>
+                <p><@orcid.msg 'public-layout.logo.tagline'/></p>
+            </div>
+            <p class="see-more">${liveIds} <@orcid.msg
+                'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
+                title=""><@orcid.msg 'public-layout.see_more'/></a>
+            </p>
+            <@orcid.checkFeatureStatus featureName='SURVEY'>
+                <p class="see-more">
+                  <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="public-layout.survey_please_take" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
+                  <@orcid.msg 'public-layout.survey_to_tell_us'/>
                 </p>
                 <@orcid.checkFeatureStatus featureName='SURVEY'>
                     <p class="see-more">
@@ -545,10 +558,10 @@
                         </p>
                         <nav>
                             <ul class="inline-list">
-                                <li><a class="social-button" href="https://www.facebook.com/orcid.org" target="_blank"><span class="social social-facebook"></span></a></li>
-                                <li><a class="social-button" href="https://twitter.com/orcid_org" target="_blank"><span class="social social-twitter"></span></a></li>
-                                <li><a class="social-button" href="http://orcid.org/blog/feed" target="_blank"><span class="social social-rss"></span></a></li>
-                                <li><a class="social-button" href="https://github.com/ORCID" target="_blank"><span class="social social-github"></span></a></li>
+                                <li><a class="social-button" href="https://www.facebook.com/orcid.org" target="social-facebook"><span class="social social-facebook"></span></a></li>
+                                <li><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter"><span class="social social-twitter"></span></a></li>
+                                <li><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss"><span class="social social-rss"></span></a></li>
+                                <li><a class="social-button" href="https://github.com/ORCID" target="social-github"><span class="social social-github"></span></a></li>
                             </ul>
                         </nav>
                     </div>
@@ -566,7 +579,6 @@
                         </nav>
                     </div>
                 </div>
-            </div>
         </footer>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='NEW_FOOTER' enabled=false>

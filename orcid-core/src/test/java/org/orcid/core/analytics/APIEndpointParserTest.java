@@ -98,6 +98,16 @@ public class APIEndpointParserTest {
         assertEquals("1234-4321-1234-4321", parser.getOrcidId());
     }    
     
+    @Test
+    public void testViewOrcidWorksOldVersion() {
+        ContainerRequest request = getRequest("http://api.qa.orcid.org/orcid-api-web/v1.2/1234-4321-1234-4321/orcid-works");
+        APIEndpointParser parser = new APIEndpointParser(request);
+        assertNotNull(parser.getApiVersion());
+        assertEquals("v1.2", parser.getApiVersion());
+        assertEquals("orcid-works", parser.getCategory());
+        assertEquals("1234-4321-1234-4321", parser.getOrcidId());
+    }
+    
     private ContainerRequest getRequest(String url) {
         InBoundHeaders headers = new InBoundHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");

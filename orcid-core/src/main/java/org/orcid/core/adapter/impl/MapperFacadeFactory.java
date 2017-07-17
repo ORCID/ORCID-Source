@@ -18,6 +18,11 @@ package org.orcid.core.adapter.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
@@ -29,11 +34,14 @@ import org.orcid.core.adapter.impl.jsonidentifiers.SingleWorkExternalIdentifierF
 import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIDsConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Source;
@@ -41,6 +49,7 @@ import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceName;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
@@ -71,6 +80,8 @@ import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -134,6 +145,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private IdentityProviderManager identityProviderManager;
 
+    @Resource
+    private EncryptionManager encryptionManager;
+    
     @Override
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
@@ -656,11 +670,91 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getClientMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);        
+        clientSummaryClassMap.field("name", "clientName");
+        clientSummaryClassMap.field("description", "clientDescription");
+        clientSummaryClassMap.byDefault();
+        clientSummaryClassMap.register();        
+                
         ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);        
         clientClassMap.field("name", "clientName");
-        clientClassMap.field("description", "clientDescription");
-        clientClassMap.byDefault();
-        clientClassMap.register();        
+        clientClassMap.field("description", "clientDescription");        
+        clientClassMap.field("website", "clientWebsite");        
+        clientClassMap.field("allowAutoDeprecate", "allowAutoDeprecate");
+        
+        clientClassMap.fieldBToA("clientId", "id");
+        clientClassMap.fieldBToA("clientType", "clientType");        
+        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");                       
+        
+        clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
+            /**
+             * On the way in, from Client to ClientDetailsEntity, we need to care about mapping the redirect uri's, since all config features will not change from UI requests             
+             * */
+            @Override
+            public void mapAtoB(Client a, ClientDetailsEntity b, MappingContext context) {
+                Map<String, ClientRedirectUriEntity> existingRedirectUriEntitiesMap = new HashMap<String, ClientRedirectUriEntity>();
+                if(b.getClientRegisteredRedirectUris() != null && !b.getClientRegisteredRedirectUris().isEmpty()) {
+                    existingRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(b.getClientRegisteredRedirectUris());
+                }                        
+                if(b.getClientRegisteredRedirectUris() != null) {
+                    b.getClientRegisteredRedirectUris().clear();
+                } else {
+                    b.setClientRegisteredRedirectUris(new TreeSet<ClientRedirectUriEntity>());
+                }
+                
+                if(a.getClientRedirectUris() != null) {
+                    for(ClientRedirectUri cru : a.getClientRedirectUris()) {
+                        String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(cru);
+                        if (existingRedirectUriEntitiesMap.containsKey(rUriKey)) {
+                            ClientRedirectUriEntity existingEntity = existingRedirectUriEntitiesMap.get(rUriKey);
+                            existingEntity.setLastModified(new Date());
+                            existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
+                            existingEntity.setUriActType(cru.getUriActType());
+                            existingEntity.setUriGeoArea(cru.getUriGeoArea());
+                            b.getClientRegisteredRedirectUris().add(existingEntity);
+                        } else {
+                            ClientRedirectUriEntity newEntity = new ClientRedirectUriEntity();
+                            newEntity.setClientDetailsEntity(b);
+                            newEntity.setDateCreated(new Date());
+                            newEntity.setLastModified(new Date());
+                            newEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
+                            newEntity.setRedirectUri(cru.getRedirectUri());
+                            newEntity.setRedirectUriType(cru.getRedirectUriType());
+                            newEntity.setUriActType(cru.getUriActType());
+                            newEntity.setUriGeoArea(cru.getUriGeoArea());
+                            b.getClientRegisteredRedirectUris().add(newEntity);
+                        }
+                    }
+                }
+            }
+
+            /**
+             * On the way out, from ClientDetailsEntity to Client, we just need to care about mapping the redirect uri's and the primary client secret since all config features will not be visible on the UI
+             * */
+            @Override
+            public void mapBtoA(ClientDetailsEntity b, Client a, MappingContext context) {
+                if(b.getClientSecrets() != null) {
+                    for(ClientSecretEntity entity : b.getClientSecrets()) {
+                        if(entity.isPrimary()) {
+                            a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getClientSecret()));
+                        }
+                    }
+                }
+                if(b.getRegisteredRedirectUri() != null) {
+                    a.setClientRedirectUris(new HashSet<ClientRedirectUri>());
+                    for(ClientRedirectUriEntity entity : b.getClientRegisteredRedirectUris()) {
+                        ClientRedirectUri element = new ClientRedirectUri();                        
+                        element.setRedirectUri(entity.getRedirectUri());
+                        element.setRedirectUriType(entity.getRedirectUriType());
+                        element.setUriActType(entity.getUriActType());
+                        element.setUriGeoArea(entity.getUriGeoArea());
+                        element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(entity.getPredefinedClientScope()));
+                        a.getClientRedirectUris().add(element);
+                    }
+                }                
+            }
+        });                  
+        clientClassMap.register();                
         return mapperFactory.getMapperFacade();
     }
 

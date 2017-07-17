@@ -42,7 +42,7 @@ angular.module('orcidApp').filter('workExternalIdentifierHtml', function($filter
         }
         if (link != null) {         
             link = $filter('urlProtocol')(link);            
-            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"orcid.blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
         } else {
             if( id ){
                 output += id.escapeHtml();        
@@ -56,7 +56,7 @@ angular.module('orcidApp').filter('workExternalIdentifierHtml', function($filter
                     <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
                         <div class="arrow"></div>\
                         <div class="popover-content">\
-                            <a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
+                            <a href="'+link+'" target="orcid.blank" class="ng-binding">'+link.escapeHtml()+'</a>\
                         </div>\
                     </div>\
                 </div>\

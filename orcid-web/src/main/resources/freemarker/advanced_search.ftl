@@ -120,7 +120,7 @@
 							            <div id="search-help-affiliation" class="popover bottom">
 							              <div class="arrow"></div>
 							              <div class="popover-content">
-							                <p>${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation1")} <a href="https://www.ringgold.com/" target="_blank" rel="noopener noreferrer">${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation2")}</a> ${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation3")}</p>
+							                <p>${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation1")} <a href="https://www.ringgold.com/" target="orcid_bio_search.popover_help.affiliation2" rel="noopener noreferrer">${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation2")}</a> ${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation3")}</p>
 							              </div>
 							            </div>
 							         </div>

@@ -1280,4 +1280,9 @@ public class NotificationManagerImpl implements NotificationManager {
         return LocaleUtils.toLocale("en");
     }
 
+    @Override
+    public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
+        return notificationAdapter.toNotification(notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, emailFrequencyDays, recordActiveDate));
+    }
+
 }
