@@ -275,16 +275,24 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
                 String clientId = clientDetails.getClientId();
                 LOGGER.info("Deleting non primary keys for client: {}", clientId);
                 Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
+                boolean anyRemoved = false;
                 for (ClientSecretEntity clientSecret : clientSecrets) {
                     if (!clientSecret.isPrimary()) {
                         Date dateRevoked = clientSecret.getLastModified();
                         Date timeToDeleteMe = DateUtils.addHours(dateRevoked, 24);
-                        // If the key have been revokend more than 24 hours ago
+                        // If the key have been revoked more than 24 hours ago
                         if (timeToDeleteMe.before(currentDate)) {
                             LOGGER.info("Deleting key for client {}", clientId);
-                            clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
+                            boolean removed = clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
+                            if(removed) {
+                                anyRemoved = true;
+                            }
                         }
                     }
+                }
+                // Update the last modified on the client record
+                if(anyRemoved) {
+                    this.updateLastModified(clientId);
                 }
             }
         }
