@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.orcid.core.manager.impl.LockerObjectsManager;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
