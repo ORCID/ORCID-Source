@@ -37,8 +37,10 @@
 <!--<#if devSandboxUrl != ''>
     <div class="dev-watermark"></div>
 </#if>-->
+
+<!--OAUTH SCREEN HEADER-->
 <#if (RequestParameters['oauth'])??>
-    <div class="container top-green-border oneStepWidth">
+    <div class="container">
         <div class="row top-header">
             <div class="logo centered topBuffer">
                 <a href="https://orcid.org" alt="ORCID logo">
@@ -48,8 +50,10 @@
         </div> 
         <div id="main" role="main">
 </#if>
+
+<!--NON-OAUTH HEADER-->
 <!--hide header if oauth login-->
-    <#if !(RequestParameters['oauth'])??>
+<#if !(RequestParameters['oauth'])??>
 <div class="container">
         <div class="header center" ng-controller="headerCtrl">
             <div class="row">
@@ -499,14 +503,6 @@
                         <#--<#if isProxy><#include "/common/change_proxy.ftl" /></#if>-->
                     </div>
                 </#if>
-                <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
-                    <h1>
-                        <a href="${aboutUri}"><img
-                            src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>
-                    </h1>
-                    <p><@orcid.msg 'public-layout.logo.tagline'/></p>
-                </div>
-            </#if>
             <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
                 <h1>
                     <a href="${aboutUri}"><img
@@ -514,21 +510,12 @@
                 </h1>
                 <p><@orcid.msg 'public-layout.logo.tagline'/></p>
             </div>
-            <p class="see-more">${liveIds} <@orcid.msg
-                'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
-                title=""><@orcid.msg 'public-layout.see_more'/></a>
-            </p>
             <@orcid.checkFeatureStatus featureName='SURVEY'>
                 <p class="see-more">
-                  <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="public-layout.survey_please_take" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
+                  <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="_blank" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
                   <@orcid.msg 'public-layout.survey_to_tell_us'/>
                 </p>
-                <@orcid.checkFeatureStatus featureName='SURVEY'>
-                    <p class="see-more">
-                      <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="_blank" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
-                      <@orcid.msg 'public-layout.survey_to_tell_us'/>
-                    </p>
-                </@orcid.checkFeatureStatus>
+            </@orcid.checkFeatureStatus>
                 <!--
                 <#if inDelegationMode>
                     <div class="delegation-label">
