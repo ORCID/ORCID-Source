@@ -1,4 +1,3 @@
-/*
 declare var getBaseUri: any;
 declare var logAjaxError: any;
 
@@ -138,4 +137,3 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
 // This is the Angular 2 part of the module
 @NgModule({})
 export class BiographyCtrlNg2Module {}
-*/
