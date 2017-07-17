@@ -7,29 +7,30 @@ import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
 // This is the Angular 1 part of the module
+
+
 export const internalConsortiumCtrl = angular.module('orcidApp').controller(
-    'internalConsortiumCtrl',
-    [
+    'internalConsortiumCtrl',[
         '$compile', 
         '$scope', 
-        function manageConsortiumCtrl(
+        function (
             $compile,
             $scope
-        ) {    
+        ){    
             $scope.consortium = null;
             $scope.showFindModal = false;
 
             $scope.closeModal = function() {
                 $.colorbox.close();
-            };
+            }; 
 
             $scope.confirmUpdateConsortium = function() {
                 $.colorbox({
                     html : $compile($('#confirm-modal-consortium').html())($scope),
-                    scrolling: true,
-                    onLoad: function() {
+                        onLoad: function() {
                         $('#cboxClose').remove();
-                    }
+                    },
+                    scrolling: true
                 });
 
                 $.colorbox.resize({width:"450px" , height:"175px"});
