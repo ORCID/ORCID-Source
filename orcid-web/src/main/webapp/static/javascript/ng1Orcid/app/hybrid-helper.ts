@@ -1,3 +1,4 @@
+/*
 import { downgradeComponent, downgradeInjectable } from '@angular/upgrade/static';
 import { FactoryProvider } from '@angular/core';
 
@@ -12,7 +13,7 @@ export interface IHybridHelper {
     buildProviderForUpgrade(ng1Name: string, ng2Name?: string): FactoryProvider
 }
 
-export const HybridHelper: IHybridHelper {
+export const HybridHelper = IHybridHelper {
 
     downgradeComponent: (moduleName: string, componentName: string, componentClass: any, options?: IComponentUpgradeOptions): IHybridHelper => {
         options = options || {};
@@ -47,3 +48,4 @@ export const HybridHelper: IHybridHelper {
 function buildFactoryForUpgradeProvider(ng1Name: string): Function {
     return (injector: any) => injector.get(ng1Name);
 }
+*/

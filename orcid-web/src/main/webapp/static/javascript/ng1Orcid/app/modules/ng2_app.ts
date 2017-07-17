@@ -4,7 +4,7 @@ import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from "@angular/platform-browser";
 import { UpgradeModule } from '@angular/upgrade/static';
 
-import { BiographyCtrlNg2Module } from './biography/biography.module.ts';
+import { BiographyCtrlNg2Module } from './biography/biography.component.ts';
 
 
 @Component({
