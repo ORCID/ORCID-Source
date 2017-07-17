@@ -41,14 +41,14 @@
 <!--OAUTH SCREEN HEADER-->
 <#if (RequestParameters['oauth'])??>
     <div class="container">
-        <div class="row top-header">
-            <div class="logo centered topBuffer">
-                <a href="https://orcid.org" alt="ORCID logo">
-                    <img src="${staticCdn}/img/orcid-logo.svg" width="200" alt="ORCID logo">
-                </a>
-            </div>       
-        </div> 
         <div id="main" role="main">
+            <div class="row top-header">
+                <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
+                    <a href="https://orcid.org" alt="ORCID logo">
+                        <img src="${staticCdn}/img/orcid-logo.svg" width="200" alt="ORCID logo">
+                    </a>
+                </div>       
+            </div> 
 </#if>
 
 <!--NON-OAUTH HEADER-->
@@ -502,7 +502,7 @@
                         </ul>
                         <#--<#if isProxy><#include "/common/change_proxy.ftl" /></#if>-->
                     </div>
-                </#if>
+                </#if><!--drupal menu-->
             <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
                 <h1>
                     <a href="${aboutUri}"><img

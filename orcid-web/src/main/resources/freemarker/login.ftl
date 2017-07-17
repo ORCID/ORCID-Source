@@ -199,11 +199,11 @@
 			</div>
 		</@orcid.checkFeatureStatus>
 		<@orcid.checkFeatureStatus 'OAUTH_2SCREENS'>
-			<div class="col-md-offset-3" ng-controller="OauthAuthorizationController">
+			<div class="col-md-6 col-md-offset-3" ng-controller="OauthAuthorizationController">
 				<div class="login">			
-					<p class="title col-md-9" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" id="switch-to-register-form" ng-click="switchForm()">Register now</a></p>
-					<p class="title col-md-12" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
-					<div class="col-md-9" ng-show="!showRegisterForm">
+					<p class="title" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" id="switch-to-register-form" ng-click="switchForm()">Register now</a></p>
+					<p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
+					<div ng-show="!showRegisterForm">
 						<div class="personal-login" ng-cloak>
 							<#if shibbolethEnabled>
 								<div class="btn-group btn-group-justified" role="group">
@@ -360,13 +360,13 @@
 						</div><!--institution login-->
 					</div><!--ng show !registion form-->
 				   	<!-- REGISTRATION FORM-->
-					<div class="personal-account-login col-md-12" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm()" ng-cloak>
-						<div id="register" class="oauth-registration col-">
+					<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm()" ng-cloak>
+						<div id="register" class="oauth-registration">
 							<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
 							<!-- First name -->
 							<div class="form-group clear-fix">
-								<label for="givelNames" class="col-sm-6 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
-								<div class="col-sm-9 col-xs-9-fix bottomBuffer">
+								<label for="givelNames" class="control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
+								<div class="bottomBuffer">
 									<input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="" ng-model="registrationForm.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>                         
 									<span class="required" ng-class="isValidClass(registrationForm.givenNames)">*</span>            
 									<div class="popover-help-container">
@@ -388,8 +388,8 @@
 							</div>
 							<!-- Last name -->
 							<div class="form-group clear-fix">
-								<label class="col-sm-6 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
-								<div class="col-sm-9 col-xs-9-fix bottomBuffer">
+								<label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
+								<div class="bottomBuffer">
 									<input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class=""  ng-model="registrationForm.familyNames.value" ng-model-onblur/>
 									<span class="orcid-error" ng-show="registrationForm.familyNames.errors.length > 0">
 										<div ng-repeat='error in registrationForm.familyNames.errors' ng-bind-html="error"></div>
@@ -398,8 +398,8 @@
 							</div>
 							<!-- Email -->                  
 							<div class="form-group clear-fix">
-								<label class="col-sm-6 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
-								<div class="col-sm-9 col-xs-9-fix bottomBuffer">
+								<label class="control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
+								<div class="bottomBuffer">
 									<input id="register-form-email" name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
 									<span class="required" ng-class="isValidClass(registrationForm.email)">*</span> <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0 && !showDeactivatedError && !showReactivationSent">
 										<div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
@@ -414,8 +414,8 @@
 							</div>
 							<!--Re-enter email-->
 							<div class="form-group clear-fix">
-								<label class="col-sm-6 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
-								<div class="col-sm-9 col-xs-9-fix bottomBuffer">
+								<label class="control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
+								<div class="bottomBuffer">
 									<input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
 									<span class="required" ng-class="isValidClass(registrationForm.emailConfirm)">*</span>                  
 									<span class="orcid-error" ng-show="registrationForm.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
@@ -425,8 +425,8 @@
 							</div>
 							<!--Password-->
 							<div class="form-group clear-fix">
-								<label class="col-sm-6 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
-								<div class="col-sm-9 col-xs-9-fix bottomBuffer">
+								<label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
+								<div class="bottomBuffer">
 									<input id="register-form-password" type="password" name="password" tabindex="5" class="" ng-model="registrationForm.password.value" ng-change="serverValidate('Password')"/>
 									<span class="required" ng-class="isValidClass(registrationForm.password)">*</span>
 									<@orcid.passwordHelpPopup />
@@ -437,8 +437,8 @@
 							</div>
 							<!--Confirm password-->
 							<div class="form-group clear-fix">
-								<label class="col-sm-6 col-xs-3-fix control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
-								<div class="col-sm-9 col-xs-9-fix bottomBuffer">
+								<label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
+								<div class="bottomBuffer">
 									<input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" ng-model="registrationForm.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
 									<span class="required" ng-class="isValidClass(registrationForm.passwordConfirm)">*</span>                 
 									<span class="orcid-error" ng-show="registrationForm.passwordConfirm.errors.length > 0">
