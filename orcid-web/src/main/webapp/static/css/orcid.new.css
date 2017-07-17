@@ -1043,8 +1043,22 @@ select {
     display: none;
 }
 
+#login-buttons {
+    margin: 0 2em;
+}
+
+#login-buttons button{
+    width: 100%
+}
+
 #login-buttons .oauth-deny-button {
     margin-right: 15px;
+}
+
+#login-buttons .oauth-deny-link {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
 }
 
 
