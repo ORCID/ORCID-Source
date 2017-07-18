@@ -9,11 +9,14 @@ import * as ngCookies from 'angular-cookies'
 import * as ngSanitize from 'angular-sanitize'
 import * as uibootstraptypeahead from 'angular-ui-bootstrap'
 
+import 'angular-route'
+
 //import { BiographyCtrl } from './biography/biography.component.ts';
 
 export const orcidApp = angular.module(
     'orcidApp', 
     [
+    	//'ngRoute',
         ngCookies,
         ngSanitize, 
         vcRecaptcha,
@@ -21,3 +24,9 @@ export const orcidApp = angular.module(
         //BiographyCtrl.name
     ]
 );
+/*
+//For future routing
+orcidApp.config(($locationProvider) => {
+	$locationProvider.html5Mode(true)
+});
+*/

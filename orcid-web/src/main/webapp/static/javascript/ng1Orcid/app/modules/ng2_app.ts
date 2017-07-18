@@ -1,14 +1,34 @@
 import 'reflect-metadata';
 
-import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from "@angular/platform-browser";
+import { Component, NgModule } from '@angular/core';
+import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
-//import { BiographyCtrlNg2Module } from './biography/biography.component.ts';
+import { BiographyCtrlNg2Module } from './biography/biography.component.ts';
 
+// This URL handling strategy is custom and application-specific.
+// Using it we can tell the Angular 2 router to handle only URL starting with settings.
+export class Ng1Ng2UrlHandlingStrategy implements UrlHandlingStrategy {
+    shouldProcessUrl(url) { 
+        return url.toString().startsWith("/settings"); 
+    }
+    extract(url) { 
+        return url; 
+    }
+    merge(url, whole) { 
+        return url; 
+    }
+}
 
 @Component({
     selector: 'root-cmp',
+    /*
+    template: `
+        <router-outlet></router-outlet>
+        <div class="ng-view"></div>
+    `,
+    */
     template: '<div class="ng-view"></div>'
 }) 
 export class RootCmp {
@@ -16,48 +36,22 @@ export class RootCmp {
 
 @NgModule({
     imports: [
+        BiographyCtrlNg2Module,
         BrowserModule,
         UpgradeModule,
-
-        //BiographyCtrlNg2Module
+        // We don't need to provide any routes.
+        // The router will collect all routes from all the registered modules.
+        //RouterModule.forRoot([])
     ],
-    //bootstrap: []
-    bootstrap: [RootCmp],
-    declarations: [RootCmp]
-})
-export class AppModule {
-    constructor(public upgrade: UpgradeModule){}
-    
-    /*ngDoBootstrap() {
-
-    }*/
-    
-}
-
-/*
-import 'reflect-metadata';
-
-import { NgModule, Component } from '@angular/core';
-import { BrowserModule } from "@angular/platform-browser";
-import { UpgradeModule } from '@angular/upgrade/static';
-
-
-@Component({
-    selector: 'root-cmp',
-    template: '<div class="ng-view"></div>'
-}) 
-export class RootCmp {
-}
-
-@NgModule({
-    imports: [
-        BrowserModule,
-        UpgradeModule,
+    providers: [
+        { 
+            provide: UrlHandlingStrategy, 
+            useClass: Ng1Ng2UrlHandlingStrategy 
+        }
     ],
     bootstrap: [RootCmp],
     declarations: [RootCmp]
 })
 export class Ng2AppModule {
-    constructor(public upgrade: UpgradeModule){}
+    constructor( public upgrade: UpgradeModule ){}
 }
-*/
