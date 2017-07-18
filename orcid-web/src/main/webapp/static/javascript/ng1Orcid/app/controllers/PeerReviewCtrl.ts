@@ -101,7 +101,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
 
             $scope.bindTypeaheadForOrgs = function () {
                 var numOfResults = 100;
-                $("#organizationName").typeahead({
+                (<any>$("#organizationName")).typeahead({
                     name: 'organizationName',
                     limit: numOfResults,
                     remote: {
@@ -353,7 +353,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
             };
             
             $scope.unbindTypeaheadForOrgs = function () {
-                $('#organizationName').typeahead('destroy');
+                (<any>$('#organizationName')).typeahead('destroy');
             };
 
             $scope.userIsSource = function(peerReview) {
