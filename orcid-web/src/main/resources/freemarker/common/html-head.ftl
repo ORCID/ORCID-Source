@@ -79,9 +79,9 @@
       </#if>
     </script>
 
-	<script type="text/javascript" src="${staticCdn}/javascript/orcid_ga.js?v=${ver}"></script>
-
-    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css?v=${ver}"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
+	<#include "/macros/orcid_ga.ftl">
+    
+	<link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css?v=${ver}"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
     <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>    
