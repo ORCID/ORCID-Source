@@ -4,7 +4,7 @@ import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from "@angular/platform-browser";
 import { UpgradeModule } from '@angular/upgrade/static';
 
-import { BiographyCtrlNg2Module } from './biography/biography.component.ts';
+//import { BiographyCtrlNg2Module } from './biography/biography.component.ts';
 
 
 @Component({
@@ -19,16 +19,19 @@ export class RootCmp {
         BrowserModule,
         UpgradeModule,
 
-        BiographyCtrlNg2Module
+        //BiographyCtrlNg2Module
     ],
-    bootstrap: []
-    //bootstrap: [RootCmp],
-    //declarations: [RootCmp]
+    //bootstrap: []
+    bootstrap: [RootCmp],
+    declarations: [RootCmp]
 })
 export class AppModule {
-    ngDoBootstrap() {
+    constructor(public upgrade: UpgradeModule){}
+    
+    /*ngDoBootstrap() {
 
-    }
+    }*/
+    
 }
 
 /*
