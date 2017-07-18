@@ -148,7 +148,10 @@ public class MemberDetailsForm implements ErrorsInterface, Serializable {
         Member member = memberDetails.getMember();
         form.setAccountId(member.getId());
         form.setName(Text.valueOf(member.getPublicDisplayName()));
-        form.setWebsite(Text.valueOf(member.getWebsiteUrl().toString()));
+        URL websiteUrl = member.getWebsiteUrl();
+        if (websiteUrl != null) {
+            form.setWebsite(Text.valueOf(websiteUrl.toString()));
+        }
         form.setEmail(Text.valueOf(member.getPublicDisplayEmail()));
         form.setDescription(Text.valueOf(member.getDescription()));
         CommunityType researchCommunity = member.getResearchCommunity();
@@ -166,10 +169,17 @@ public class MemberDetailsForm implements ErrorsInterface, Serializable {
         memberDetails.setMember(member);
         member.setId(getAccountId());
         member.setPublicDisplayName(getName().getValue());
-        try {
-            member.setWebsiteUrl(new URL(getWebsite().getValue()));
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Error parsing website", e);
+        Text website = getWebsite();
+        if (website != null) {
+            try {
+                String websiteValue = website.getValue();
+                if (!websiteValue.startsWith("http")) {
+                    websiteValue = "http://" + websiteValue;
+                }
+                member.setWebsiteUrl(new URL(websiteValue));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Error parsing website", e);
+            }
         }
         member.setPublicDisplayEmail(getEmail().getValue());
         member.setDescription(getDescription().getValue());
