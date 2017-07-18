@@ -7374,6 +7374,11 @@ ul.comma li:last-child:after {
     font-size: 27px;
 }
 
+.self-service hr {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
 .self-service .input-md  {
     width: 160px;
 }
@@ -7387,7 +7392,6 @@ ul.comma li:last-child:after {
     padding: 3px 4px;
     vertical-align: top;
     font-size: 12px;
-    width: 25%;
 }
 
 .self-service #communities{
