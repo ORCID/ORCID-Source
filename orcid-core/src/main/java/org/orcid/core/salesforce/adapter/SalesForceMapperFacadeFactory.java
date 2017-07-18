@@ -138,7 +138,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("role.votingContact", "Voting_Contact__c");
         classMap.field("email", "Email");
         classMap.fieldAToB("firstName", "FirstName");
-        classMap.fieldAToB("lastName", "LastName");        
+        classMap.fieldAToB("lastName", "LastName");
         classMap.fieldAToB("accountId", "AccountId");
         classMap.fieldBToA("Member_Org_Role__c", "role.roleType");
         classMap.fieldBToA("Contact__r.FirstName", "firstName");
@@ -215,9 +215,12 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
     private class ReverseURLConverter extends CustomConverter<Object, URL> {
         @Override
         public URL convert(Object source, Type<? extends URL> destinationType) {
+            if (JSONObject.NULL.equals(source)) {
+                return null;
+            }
             String s = source.toString();
             if (!s.startsWith("http")) {
-                s += "http://";
+                s = "http://" + s;
             }
             try {
                 return new URL(s);

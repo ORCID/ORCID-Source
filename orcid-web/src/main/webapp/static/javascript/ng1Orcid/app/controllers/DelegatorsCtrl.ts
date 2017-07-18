@@ -1,3 +1,4 @@
+declare var $: any;
 declare var getBaseUri: any;
 declare var logAjaxError: any;
 declare var om: any;
@@ -51,7 +52,7 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
                 descending: false
             };
 
-            $("#delegatorsSearch").typeahead({
+            (<any>$("#delegatorsSearch")).typeahead({
                 name: 'delegatorsSearch',
                 remote: {
                     url: getBaseUri()+'/delegators/search-for-data/%QUERY?limit=' + 10

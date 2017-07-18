@@ -1043,8 +1043,22 @@ select {
     display: none;
 }
 
+#login-buttons {
+    margin: 0 2em;
+}
+
+#login-buttons button{
+    width: 100%
+}
+
 #login-buttons .oauth-deny-button {
     margin-right: 15px;
+}
+
+#login-buttons .oauth-deny-link {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
 }
 
 
@@ -5937,8 +5951,12 @@ ul.oauth-scopes li {
     margin-right: 10px;
 }
 
+.oauth-registration div.col-sm-3,
+.oauth-registration div.col-sm-12,
+.oauth-registration .form-group div.col-sm-6,
 .oauth-registration .form-group div.col-sm-9,
-.oauth-registration .form-group label.col-sm-3 {
+.oauth-registration .form-group label.col-sm-3,
+.oauth-registration .form-group label.col-sm-6 {
     padding: 0;
 }
 
