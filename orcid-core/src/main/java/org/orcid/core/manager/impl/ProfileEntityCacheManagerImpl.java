@@ -31,14 +31,10 @@ import net.sf.ehcache.Element;
 
 public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager {
 
-    LockerObjectsManager pubLocks = new LockerObjectsManager();
-
     @Resource(name = "profileEntityCache")
     private Cache profileCache;
     
     private ProfileEntityManagerReadOnly profileEntityManager;
-
-    LockerObjectsManager lockers = new LockerObjectsManager();
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -51,26 +47,31 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     public ProfileEntity retrieve(String orcid) throws IllegalArgumentException {
         Object key = new OrcidCacheKey(orcid, releaseName);
         Date dbDate = profileEntityManager.getLastModifiedDate(orcid);
-        ProfileEntity profile = toProfileEntity(profileCache.get(key));
+        ProfileEntity profile = null;
+        try {
+            profileCache.acquireReadLockOnKey(key);
+            profile = toProfileEntity(profileCache.get(key));
+        } finally {
+            profileCache.releaseReadLockOnKey(key);
+        }
         if (needsFresh(dbDate, profile))
             try {
-                synchronized (lockers.obtainLock(orcid)) {
-                    profile = toProfileEntity(profileCache.get(key));
-                    if (needsFresh(dbDate, profile)) {
-                        profile = profileEntityManager.findByOrcid(orcid);
-                        if(profile == null)
-                            throw new IllegalArgumentException("Invalid orcid " + orcid);                         
-                        if(profile.getGivenPermissionBy() != null) {
-                            profile.getGivenPermissionBy().size();
-                        }                        
-                        if(profile.getGivenPermissionTo() != null) {
-                            profile.getGivenPermissionTo().size();
-                        }                        
-                        profileCache.put(new Element(key, profile));
+                profileCache.acquireWriteLockOnKey(key);
+                profile = toProfileEntity(profileCache.get(key));
+                if (needsFresh(dbDate, profile)) {
+                    profile = profileEntityManager.findByOrcid(orcid);
+                    if (profile == null)
+                        throw new IllegalArgumentException("Invalid orcid " + orcid);
+                    if (profile.getGivenPermissionBy() != null) {
+                        profile.getGivenPermissionBy().size();
                     }
-                }
+                    if (profile.getGivenPermissionTo() != null) {
+                        profile.getGivenPermissionTo().size();
+                    }
+                    profileCache.put(new Element(key, profile));
+                }                
             } finally {
-                lockers.releaseLock(orcid);
+                profileCache.releaseWriteLockOnKey(key);
             }
         return profile;
     }
@@ -81,11 +82,10 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     }
     public void put(String orcid, ProfileEntity profile) {
         try {
-            synchronized (lockers.obtainLock(orcid)) {
-                profileCache.put(new Element(new OrcidCacheKey(orcid, releaseName), profile));
-            }
+            profileCache.acquireWriteLockOnKey(orcid);
+            profileCache.put(new Element(new OrcidCacheKey(orcid, releaseName), profile));
         } finally {
-            lockers.releaseLock(orcid);
+            profileCache.releaseWriteLockOnKey(orcid);
         }
     }
 
