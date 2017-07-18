@@ -55,11 +55,11 @@
                 </div>          
                 <div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
                     <div class="row">
-                        <div class="col-md-12">
-                            <button id="authorize" class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()">
+                        <div>
+                            <button id="authorize" class="btn btn-primary topBuffer bottomBuffer" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()">
                                 <@orcid.msg 'confirm-oauth-access.Authorize' />
                             </button>
-                            <a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()">
+                            <a class="oauth-deny-link topBuffer" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()">
                                 <@orcid.msg 'confirm-oauth-access.Deny' />
                             </a>
                         </div>                  
