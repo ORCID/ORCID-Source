@@ -17,8 +17,6 @@
 package org.orcid.core.manager;
 
 import java.util.List;
-import java.util.Locale;
-
 import org.orcid.pojo.OrgDisambiguated;
 
 /**
