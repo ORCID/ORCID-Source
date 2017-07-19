@@ -47,8 +47,6 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     @Resource(name = "sourceNameCache")
     private Cache sourceNameCache;
 
-    LockerObjectsManager lockers = new LockerObjectsManager();
-
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private RecordNameDao recordNameDao;
@@ -65,28 +63,33 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
 
     @Override
     public String retrieve(String sourceId) throws IllegalArgumentException {
-        String cacheKey = getCacheKey(sourceId);
-        String sourceName = getSourceNameFromCache(sourceNameCache.get(cacheKey));
+        String key = getCacheKey(sourceId);
+        String sourceName = null;
+        try {
+            sourceNameCache.acquireReadLockOnKey(key);
+            sourceName = getSourceNameFromCache(sourceNameCache.get(key));
+        } finally {
+            sourceNameCache.releaseReadLockOnKey(key);
+        }
 
         if (sourceName == null) {
             try {
-                synchronized (lockers.obtainLock(sourceId)) {
-                    sourceName = getSourceNameFromCache(sourceNameCache.get(cacheKey));
+                sourceNameCache.acquireWriteLockOnKey(key);
+                sourceName = getSourceNameFromCache(sourceNameCache.get(key));
+                if (sourceName == null) {
+                    LOGGER.debug("Fetching source name for: " + sourceId);
+                    sourceName = getProfileSourceNameFromRequest(sourceId);
                     if (sourceName == null) {
-                        LOGGER.debug("Fetching source name for: " + sourceId);
-                        sourceName = getProfileSourceNameFromRequest(sourceId);
-                        if (sourceName == null) {
-                            sourceName = getClientSourceName(sourceId);
-                            if (sourceName != null) {
-                                sourceNameCache.put(new Element(cacheKey, sourceName));
-                            } else {
-                                sourceName = getProfileSourceNameFromDb(sourceId);
-                            }
+                        sourceName = getClientSourceName(sourceId);
+                        if (sourceName != null) {
+                            sourceNameCache.put(new Element(key, sourceName));
+                        } else {
+                            sourceName = getProfileSourceNameFromDb(sourceId);
                         }
                     }
                 }
             } finally {
-                lockers.releaseLock(sourceId);
+                sourceNameCache.releaseWriteLockOnKey(key);
             }
         }
         // If source name is empty, it means the name is not public, so, return
