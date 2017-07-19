@@ -188,7 +188,7 @@
                         </form>
                     </div>
                     <div class="bottomBuffer" ng-show="!memberDetails.allowedFullAccess">
-                        <p>Only contacts listed above are allowed to add new contacts</p>
+                        <p class="italic topBuffer"><@spring.message "manage_consortium.contacts_only_contacts_listed_above"/></p>
                     </div>
                 <div id="invalid-email-alert" class="orcid-hide orcid-error"><@spring.message "Email.resetPasswordForm.invalidEmail"/></div>
                 </div>
