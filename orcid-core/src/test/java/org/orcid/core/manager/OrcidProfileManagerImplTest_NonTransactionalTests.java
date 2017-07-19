@@ -33,21 +33,21 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 /**
  * @author Will Simpson
  */
-public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProfileManagerBaseTest {   
+public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProfileManagerBaseTest {
 
     private static final String TEST_ORCID = "0000-0000-0000-0001";
-    
+
     @After
-    public void after(){
+    public void after() {
         orcidProfileManager.deleteProfile(TEST_ORCID);
     }
-    
-    @Test      
+
+    @Test
     public void testUpdateProfileButRemoveWorkExternalIdentifier() {
         OrcidProfile profile1 = createBasicProfile();
-        //Change the orcid identifier
+        // Change the orcid identifier
         profile1.setOrcidIdentifier(TEST_ORCID);
-        //Change the email address
+        // Change the email address
         profile1.getOrcidBio().getContactDetails().retrievePrimaryEmail().setValue(TEST_ORCID + "@test.com");
         profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
 
@@ -72,14 +72,14 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
         assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertEquals(2, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers().getWorkExternalIdentifier().size());
     }
-    
-    @Test    
+
+    @Test
     public void testUpdateProfileButRemoveWorkContributor() {
-        OrcidProfile profile1 = createBasicProfile();        
-        //Change the orcid identifier
+        OrcidProfile profile1 = createBasicProfile();
+        // Change the orcid identifier
         profile1.setOrcidIdentifier(TEST_ORCID);
-        
-        //Change the email address
+
+        // Change the email address
         profile1.getOrcidBio().getContactDetails().retrievePrimaryEmail().setValue(TEST_ORCID + "@test.com");
         profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
 
@@ -92,7 +92,7 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
             }
         }
 
-        profile1 = orcidProfileManager.updateOrcidProfile(profile1);
+        orcidProfileManager.updateOrcidProfile(profile1);
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
 
@@ -102,5 +102,5 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
         assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
         assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertEquals(1, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkContributors().getContributor().size());
-    }        
+    }
 }
