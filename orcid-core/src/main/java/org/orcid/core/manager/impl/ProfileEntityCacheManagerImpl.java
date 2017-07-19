@@ -77,19 +77,6 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     }
 
     @Override
-    public void put(ProfileEntity profileEntity) {
-        put(profileEntity.getId(), profileEntity);
-    }
-    public void put(String orcid, ProfileEntity profile) {
-        try {
-            profileCache.acquireWriteLockOnKey(orcid);
-            profileCache.put(new Element(new OrcidCacheKey(orcid, releaseName), profile));
-        } finally {
-            profileCache.releaseWriteLockOnKey(orcid);
-        }
-    }
-
-    @Override
     public void removeAll() {
         profileCache.removeAll();
     }

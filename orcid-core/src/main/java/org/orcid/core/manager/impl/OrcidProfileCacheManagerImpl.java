@@ -170,11 +170,12 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
     }
 
     public void put(String orcid, OrcidProfile orcidProfile) {
+        Object key = new OrcidCacheKey(orcid, releaseName);
         try {
-            profileCache.acquireWriteLockOnKey(orcid);
-            profileCache.put(new Element(new OrcidCacheKey(orcid, releaseName), orcidProfile));            
+            profileCache.acquireWriteLockOnKey(key);
+            profileCache.put(new Element(key, orcidProfile));            
         } finally {
-            profileCache.releaseWriteLockOnKey(orcid);
+            profileCache.releaseWriteLockOnKey(key);
         }
     }
 
