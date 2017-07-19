@@ -107,14 +107,37 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Voting contact</th><th>Role</th><th>&nbsp;</th>
+                                <th><@spring.message "manage_consortium.contacts_contact"/></th>
+                                <th><@spring.message "manage_consortium.contacts_voting_contact"/>
+                                    <div class="popover-help-container">
+                                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                        <div id="voting-contact-help" class="popover bottom">
+                                          <div class="arrow"></div>
+                                          <div class="popover-content">
+                                            <p><@orcid.msg 'manage_consortium.contacts_voting_contact.help'/></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                </th>
+                                <th><@spring.message "manage_consortium.contacts_role"/>
+                                    <div class="popover-help-container">
+                                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                        <div id="contact-role-help" class="popover bottom">
+                                          <div class="arrow"></div>
+                                          <div class="popover-content">
+                                            <p><@spring.message 'manage_consortium.contacts_role.help'/></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                </th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="contact in contacts.contactsList">
                                 <td><b>{{contact.name}}</b><br>
                                 {{contact.email}}<br>
-                                <a href="{{buildOrcidUri(contact.orcid)}}">{{buildOrcidUri(contact.orcid)}}</a>
+                                <a href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
                                 </td>
                                 <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!memberDetails.allowedFullAccess"></input></td>
                                 <td>
@@ -164,6 +187,9 @@
                             <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
                         </form>
                     </div>
+                    <div class="bottomBuffer" ng-show="!memberDetails.allowedFullAccess">
+                        <p>Only contacts listed above are allowed to add new contacts</p>
+                    </div>
                 <div id="invalid-email-alert" class="orcid-hide orcid-error"><@spring.message "Email.resetPasswordForm.invalidEmail"/></div>
                 </div>
             </div>
@@ -171,7 +197,7 @@
                 <h2><@spring.message "manage_consortium.submembers_heading"/></h2>
                 <p><@spring.message "manage_consortium.submembers_text"/></p>
                 <hr></hr>
-            	<div ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountName'">
+            	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountName'">
 					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountName}}</a></span>
 					<span class="tooltip-container pull-right">
 						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)" ng-show="memberDetails.allowedFullAccess"

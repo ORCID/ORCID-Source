@@ -7383,14 +7383,18 @@ ul.comma li:last-child:after {
     width: 160px;
 }
 
+.self-service select{
+    margin: 0;
+}
+
 .self-service table{
-    margin-bottom: 20px;
+    width: 100%;
 }
 
 .self-service td,
 .self-service th {
     padding: 8px 20px 8px 0;
-    vertical-align: top;
+    //vertical-align: top;
     font-size: 12px;
     line-height: normal;
 }
