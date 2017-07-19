@@ -537,7 +537,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD + PUTCODE)
     @ApiOperation(value = "Fetch a Group", response = GroupIdRecord.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
     public Response viewGroupIdRecord(@PathParam("putCode") String putCode) {
         return serviceDelegator.viewGroupIdRecord(getPutCode(putCode));
     }
@@ -547,7 +547,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD)
     @ApiOperation(value = "Create a Group", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Group created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Group resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Group representation", response = String.class) })
@@ -560,7 +560,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD + PUTCODE)
     @ApiOperation(value = "Update a Group", response = GroupIdRecord.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
     public Response updateGroupIdRecord(@PathParam("putCode") String putCode, GroupIdRecord groupIdRecord) {
         return serviceDelegator.updateGroupIdRecord(groupIdRecord, getPutCode(putCode));
@@ -570,7 +570,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD + PUTCODE)
     @ApiOperation(value = "Delete a Group", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 204, message = "Group deleted") })
     public Response deleteGroupIdRecord(@PathParam("putCode") String putCode) {
         return serviceDelegator.deleteGroupIdRecord(getPutCode(putCode));
@@ -580,7 +580,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD)
     @ApiOperation(value = "Fetch Groups", response = GroupIdRecords.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
     public Response viewGroupIdRecords(@QueryParam("page-size") @DefaultValue("100") String pageSize, @QueryParam("page") @DefaultValue("1") String page,
             @QueryParam("name") String name) {
         if (name != null) {
@@ -914,10 +914,22 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     }
     
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(SEARCH_PATH)
+    @ApiOperation(value = "Search records", authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
+    public Response searchByQueryXML(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
+        Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
+        return xmlQueryResults;
+    }
+    
+    @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SEARCH_PATH)
     @ApiOperation(value = "Search records", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
     public Response searchByQueryJSON(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
@@ -926,22 +938,10 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     }
 
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(SEARCH_PATH)
-    @ApiOperation(value = "Search records", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
-    public Response searchByQueryXML(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
-        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
-        Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
-        return xmlQueryResults;
-    }
-
-    @GET
     @Path(CLIENT_PATH)
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Fetch client details", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewClient(@PathParam("client_id") String clientId) {
         return serviceDelegator.viewClient(clientId);
