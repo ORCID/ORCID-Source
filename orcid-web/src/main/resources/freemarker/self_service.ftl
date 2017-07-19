@@ -107,7 +107,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Voting contact</th><th>Role</th>
+                                <th>Name</th><th>Voting contact</th><th>Role</th><th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>

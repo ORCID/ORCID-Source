@@ -7389,9 +7389,18 @@ ul.comma li:last-child:after {
 
 .self-service td,
 .self-service th {
-    padding: 3px 4px;
+    padding: 8px 20px 8px 0;
     vertical-align: top;
     font-size: 12px;
+    line-height: normal;
+}
+
+.self-service td.tooltip-container {
+    font-size: 14px;
+}
+
+.self-service tr {
+    border-bottom: 1px solid #eee;
 }
 
 .self-service #communities{
