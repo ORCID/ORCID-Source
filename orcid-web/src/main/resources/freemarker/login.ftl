@@ -211,7 +211,7 @@
 									<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
 								</div>
 							</#if>	
-							<div ng-show="personalLogin == true" ng-init="loadAndInitLoginForm()" ng-cloak>
+							<div ng-show="personalLogin == true">
 								<div class="login-box">
 									<!-- ORCID ACCOUNT LOGIN -->
 									<div class="personal-account-login">
@@ -219,7 +219,7 @@
 										<form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
 										    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 										    <div class="form-group">
-										        <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>				  						<input type="text" id="userId" name="userId" ng-model="authorizationForm.userName.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">
+										        <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>				  					<input type="text" id="userId" name="userId" ng-model="authorizationForm.userName.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">
 										    </div>
 										    <div class="form-group">
 										        <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>					

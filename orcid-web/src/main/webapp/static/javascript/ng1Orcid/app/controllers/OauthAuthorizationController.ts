@@ -434,9 +434,9 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
 
             $scope.showToLoginForm = function() {
-                console.log($scope.authorizationForm);
-                console.log($scope.registrationForm);
-                $scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
+                if (typeof($scope.authorizationForm.userName) != 'undefined'){
+                    $scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
+                }
                 $scope.showRegisterForm = false;
             };
 
