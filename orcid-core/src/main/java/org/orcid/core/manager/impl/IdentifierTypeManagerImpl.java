@@ -16,12 +16,10 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,7 +46,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
 import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.Lists;
 
 /**
  * Manages the map of external identifier types.

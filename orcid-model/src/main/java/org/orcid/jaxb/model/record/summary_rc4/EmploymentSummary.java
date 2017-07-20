@@ -32,7 +32,6 @@ import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Organization;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.record_rc4.Activity;
 import org.orcid.jaxb.model.record_rc4.SourceAware;
 

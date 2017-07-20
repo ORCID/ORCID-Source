@@ -41,8 +41,6 @@ import org.orcid.jaxb.model.common_v2.OrganizationHolder;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * <p>
  * Java class for anonymous complex type.
