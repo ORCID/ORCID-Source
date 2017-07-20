@@ -40,6 +40,9 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     @Resource(name = "clientDetailsEntityCache")
     private Cache clientDetailsCache;        
     
+    @Resource(name = "clientDetailsEntityIdPCache")
+    private Cache clientDetailsIdPCache;        
+
     private String releaseName = ReleaseNameUtils.getReleaseName();
         
     @Override
@@ -76,23 +79,23 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         Date dbDate = retrieveLastModifiedDateByIdP(idp);
         ClientDetailsEntity clientDetails = null; 
         try {
-            clientDetailsCache.acquireReadLockOnKey(key);
+            clientDetailsIdPCache.acquireReadLockOnKey(key);
             clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
         } finally {
-            clientDetailsCache.releaseReadLockOnKey(key);
+            clientDetailsIdPCache.releaseReadLockOnKey(key);
         }
         if (needsFresh(dbDate, clientDetails)) {
             try {
-                clientDetailsCache.acquireWriteLockOnKey(key);
+                clientDetailsIdPCache.acquireWriteLockOnKey(key);
                 clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
                 if (needsFresh(dbDate, clientDetails)) {
                     clientDetails = clientDetailsManager.findByIdP(idp);
                     if (clientDetails == null)
                         throw new IllegalArgumentException("Invalid idp " + idp);
-                    clientDetailsCache.put(new Element(key, clientDetails));
+                    clientDetailsIdPCache.put(new Element(key, clientDetails));
                 }
             } finally {
-                clientDetailsCache.acquireWriteLockOnKey(key);
+                clientDetailsIdPCache.acquireWriteLockOnKey(key);
             }
         }
         return clientDetails;
