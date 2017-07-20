@@ -5,7 +5,7 @@ import { Component, NgModule } from '@angular/core';
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
-import { BiographyNg2Module } from './biography/biography.component.ts';
+import { BiographyNg2Module } from './biography/biography.ts';
 
 // This URL handling strategy is custom and application-specific.
 // Using it we can tell the Angular 2 router to handle only URL starting with settings.
@@ -24,6 +24,7 @@ export class Ng1Ng2UrlHandlingStrategy implements UrlHandlingStrategy {
 @Component({
     selector: 'root-cmp',
     /*
+    //We dont have routing yet, so router-outlet is not needed
     template: `
         <router-outlet></router-outlet>
         <div class="ng-view"></div>

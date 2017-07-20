@@ -11,7 +11,7 @@ import * as uibootstraptypeahead from 'angular-ui-bootstrap'
 
 import 'angular-route'
 
-import { BiographyModule } from './biography/biography.component.ts';
+import { BiographyModule } from './biography/biography.ts';
 
 export const orcidApp = angular.module(
     'orcidApp', 
