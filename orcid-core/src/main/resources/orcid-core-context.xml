@@ -740,7 +740,7 @@
 		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
 		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
-		<property name="maxElementsOnDisk" value="0" />
+		<property name="maxElementsOnDisk" value="${org.orcid.core.profileCache.maxElementsOnDisk:50000}" />
 		<property name="strategy" value="NONE" />
 	</bean>
 		
@@ -750,7 +750,7 @@
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="86400" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxElementsOnDisk" value="250000" />
+        <property name="maxElementsOnDisk" value="10000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
     
@@ -760,7 +760,7 @@
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="86400" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxElementsOnDisk" value="500000" />
+        <property name="maxElementsOnDisk" value="10000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
 
@@ -770,7 +770,7 @@
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="86400" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxElementsOnDisk" value="500000" />
+        <property name="maxElementsOnDisk" value="10000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
 
