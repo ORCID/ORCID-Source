@@ -105,12 +105,13 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     }
 
     public void put(String clientId, ClientDetailsEntity client) {
+        Object key = new ClientIdCacheKey(clientId, releaseName);
         try {
-            clientDetailsCache.acquireWriteLockOnKey(clientId);
-                clientDetailsCache.put(new Element(new ClientIdCacheKey(clientId, releaseName), client));
+            clientDetailsCache.acquireWriteLockOnKey(key);
+                clientDetailsCache.put(new Element(key, client));
           
         } finally {
-            clientDetailsCache.releaseWriteLockOnKey(clientId);
+            clientDetailsCache.releaseWriteLockOnKey(key);
         }
     }
     
