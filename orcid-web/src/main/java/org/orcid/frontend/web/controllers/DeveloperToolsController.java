@@ -110,7 +110,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     SSOCredentials generateSSOCredentialsJson(@RequestBody SSOCredentials ssoCredentials) {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
-        if (!hasErrors) {            
+        if (!hasErrors) { 
+            //XXX
+            
             OrcidProfile profile = getEffectiveProfile();
             String orcid = profile.getOrcidIdentifier().getPath();
             Set<String> redirectUriStrings = new HashSet<String>();
