@@ -9,16 +9,26 @@ import * as ngCookies from 'angular-cookies'
 import * as ngSanitize from 'angular-sanitize'
 import * as uibootstraptypeahead from 'angular-ui-bootstrap'
 
-//import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts' 
+import 'angular-route'
+
+import { BiographyModule } from './biography/biography.ts';
+import { WidgetModule } from './widget/widget.ts'
 
 export const orcidApp = angular.module(
     'orcidApp', 
     [
+    	//'ngRoute',
         ngCookies,
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
-        //'EmailFrequencyCtrl'
-        //EmailFrequencyModule.name
+        BiographyModule.name,
+        WidgetModule.name
     ]
 );
+/*
+//For future routing
+orcidApp.config(($locationProvider) => {
+	$locationProvider.html5Mode(true)
+});
+*/
