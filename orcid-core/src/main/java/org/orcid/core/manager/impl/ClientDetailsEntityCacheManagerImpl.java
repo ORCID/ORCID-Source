@@ -87,7 +87,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         if (needsFresh(dbDate, clientDetails)) {
             try {
                 clientDetailsIdPCache.acquireWriteLockOnKey(key);
-                clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+                clientDetails = toClientDetailsEntity(clientDetailsIdPCache.get(key));
                 if (needsFresh(dbDate, clientDetails)) {
                     clientDetails = clientDetailsManager.findByIdP(idp);
                     if (clientDetails == null)
