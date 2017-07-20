@@ -29,10 +29,10 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -45,7 +45,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,42 +67,31 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @Resource
     private ClientDetailsManager clientDetailsManager;
     
+    @Resource
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
     
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
         ModelAndView mav = new ModelAndView("developer_tools");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
-        mav.addObject("profile", profile);
-        try {
-            if (!profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled().isValue()) {                
-                if (OrcidType.USER.equals(profile.getType())) {
-                    mav.addObject("error", getMessage("manage.developer_tools.user.error.enable_developer_tools"));
-                } else {
-                    mav.addObject("error", getMessage("manage.developer_tools.user.error.invalid_user_type"));
-                }
+        String userOrcid = getCurrentUserOrcid();
+        ProfileEntity entity = profileEntityCacheManager.retrieve(userOrcid);
+        if (!entity.getEnableDeveloperTools()) {
+            if (OrcidType.USER.equals(entity.getOrcidType())) {
+                mav.addObject("error", getMessage("manage.developer_tools.user.error.enable_developer_tools"));
+            } else {    
+                mav.addObject("error", getMessage("manage.developer_tools.user.error.invalid_user_type"));
             }
-        } catch (NullPointerException npe) {
-
         }
+        
+        mav.addObject("hasVerifiedEmail", emailManagerReadOnly.haveAnyEmailVerified(userOrcid, entity.getLastModified().getTime()));
         return mav;
-    }
-
-    @RequestMapping(value = "/get-empty-redirect-uri.json", method = RequestMethod.GET)
-    public @ResponseBody
-    RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
-        RedirectUri result = new RedirectUri();
-        result.setValue(new Text());
-        result.setActType(Text.valueOf(""));
-        result.setGeoArea(Text.valueOf(""));
-        result.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
-        return result;
-    }
+    }    
 
     @RequestMapping(value = "/get-empty-sso-credential.json", method = RequestMethod.GET)
-    public @ResponseBody
-    SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
+    public @ResponseBody SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
         SSOCredentials emptyObject = new SSOCredentials();
         emptyObject.setClientSecret(Text.valueOf(StringUtils.EMPTY));
 
@@ -377,12 +365,5 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             orcidSSOManager.revokeSSOAccess(profile.getOrcidIdentifier().getPath());
         }
         return updated;
-    }
-    
-    @ModelAttribute("hasVerifiedEmail")
-    public boolean hasVerifiedEmail() {
-        OrcidProfile profile = getEffectiveProfile();
-        if (profile == null  || profile.getOrcidBio() == null || profile.getOrcidBio().getContactDetails() == null) return false;
-        return profile.getOrcidBio().getContactDetails().anyEmailVerified();
-    } 
+    }        
 }

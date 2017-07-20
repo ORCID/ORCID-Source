@@ -85,10 +85,10 @@ public class EmailManagerTest extends BaseTest {
     
     @Test
     public void haveAnyEmailVerifiedTest() {
-        assertTrue(emailManager.haveAnyEmailVerified("0000-0000-0000-0003"));
-        assertTrue(emailManager.haveAnyEmailVerified("4444-4444-4444-4442"));
-        assertFalse(emailManager.haveAnyEmailVerified("0000-0000-0000-0001"));
-        assertFalse(emailManager.haveAnyEmailVerified("4444-4444-4444-4445"));
+        assertTrue(emailManager.haveAnyEmailVerified("0000-0000-0000-0003", 0L));
+        assertTrue(emailManager.haveAnyEmailVerified("4444-4444-4444-4442", 0L));
+        assertFalse(emailManager.haveAnyEmailVerified("0000-0000-0000-0001", 0L));
+        assertFalse(emailManager.haveAnyEmailVerified("4444-4444-4444-4445", 0L));
     }
     
     @Test
