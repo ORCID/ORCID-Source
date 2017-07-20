@@ -580,8 +580,8 @@ $(function() {
                                                             showLoginDeactivatedError();
                                                             return;
                                                     } else if (data.unclaimed) {
-                                                        var resendClaimUrl = window.location
-                                                                + "/../resend-claim";
+                                                        var resendClaimUrl = baseUrl
+                                                                + "resend-claim";
                                                         var userId = $(
                                                                 '#userId')
                                                                 .val();
