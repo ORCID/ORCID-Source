@@ -1,7 +1,9 @@
+declare var $scope: any;
 declare var getBaseUri: any;
 declare var logAjaxError: any;
 
 import * as angular from 'angular';
+import { NgModule } from '@angular/core';
 
 export class BiographyCtrl {
     biographyForm: any;
@@ -12,6 +14,14 @@ export class BiographyCtrl {
     lengthError: any;
     showEdit: any;
     showElement: any;
+
+    static $inject = [
+        '$compile',
+        '$rootScope',
+        '$scope',
+        'emailSrvc',
+        'initialConfigService',
+    ];
 
     constructor(
         $compile, 
@@ -30,6 +40,7 @@ export class BiographyCtrl {
         this.showEdit = false;
         this.showElement = {};
         
+        /*
         console.log('emailSrvc', emailSrvc);
         this.emailSrvc.getEmails(
             function(data) {
@@ -43,7 +54,7 @@ export class BiographyCtrl {
                     this.emailVerified = true;
                 }
             }
-        );
+        );*/
 
         this.getBiographyForm();
     }
@@ -60,7 +71,7 @@ export class BiographyCtrl {
     };
 
     cancel(): void {
-        //this.getBiographyForm();
+        this.getBiographyForm();
         console.log('cancel');
         this.showEdit = false;
     };
@@ -85,12 +96,13 @@ export class BiographyCtrl {
     };
 
     getBiographyForm(): void {
+        console.log('getBiographyForm');
         $.ajax({
             url: getBaseUri() + '/account/biographyForm.json',
             dataType: 'json',
             success: function(data) {
                 this.biographyForm = data;
-                //this.$apply();
+                //$scope.$apply();
             }
         }).fail(function(e){
             // something bad is happening!
@@ -118,7 +130,7 @@ export class BiographyCtrl {
                 if(data.errors.length == 0){
                     this.close();
                 }
-                //this.$apply();
+                //$scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!

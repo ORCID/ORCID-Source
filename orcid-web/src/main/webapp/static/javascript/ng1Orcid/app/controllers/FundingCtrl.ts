@@ -21,8 +21,8 @@ export const FundingCtrl = angular.module('orcidApp').controller(
     [
         '$compile', 
         '$filter', 
-        '$scope', 
         '$rootScope', 
+        '$scope', 
         'commonSrvc', 
         'emailSrvc', 
         'fundingSrvc', 
@@ -32,8 +32,8 @@ export const FundingCtrl = angular.module('orcidApp').controller(
         function (
             $compile, 
             $filter, 
-            $scope, 
             $rootScope, 
+            $scope, 
             commonSrvc, 
             emailSrvc, 
             fundingSrvc, 
@@ -77,9 +77,6 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                 }
             );
             /////////////////////// End of verified email logic for work
-
-            //init
-            fundingSrvc.getFundings('fundings/fundingIds.json');
 
             //Resizing window after error message is shown
             $scope.$watch(
@@ -599,6 +596,9 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                 }
                 return false;
             };
+
+            //init
+            fundingSrvc.getFundings('fundings/fundingIds.json');
 
         }
     ]
