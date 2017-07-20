@@ -1043,8 +1043,22 @@ select {
     display: none;
 }
 
+#login-buttons {
+    margin: 0 2em;
+}
+
+#login-buttons button{
+    width: 100%
+}
+
 #login-buttons .oauth-deny-button {
     margin-right: 15px;
+}
+
+#login-buttons .oauth-deny-link {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
 }
 
 
@@ -5937,8 +5951,12 @@ ul.oauth-scopes li {
     margin-right: 10px;
 }
 
+.oauth-registration div.col-sm-3,
+.oauth-registration div.col-sm-12,
+.oauth-registration .form-group div.col-sm-6,
 .oauth-registration .form-group div.col-sm-9,
-.oauth-registration .form-group label.col-sm-3 {
+.oauth-registration .form-group label.col-sm-3,
+.oauth-registration .form-group label.col-sm-6 {
     padding: 0;
 }
 
@@ -7374,20 +7392,37 @@ ul.comma li:last-child:after {
     font-size: 27px;
 }
 
+.self-service hr {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
 .self-service .input-md  {
     width: 160px;
 }
 
+.self-service select{
+    margin: 0;
+}
+
 .self-service table{
-    margin-bottom: 20px;
+    width: 100%;
 }
 
 .self-service td,
 .self-service th {
-    padding: 3px 4px;
-    vertical-align: top;
+    padding: 8px 20px 8px 0;
+    //vertical-align: top;
     font-size: 12px;
-    width: 25%;
+    line-height: normal;
+}
+
+.self-service td.tooltip-container {
+    font-size: 14px;
+}
+
+.self-service tr {
+    border-bottom: 1px solid #eee;
 }
 
 .self-service #communities{

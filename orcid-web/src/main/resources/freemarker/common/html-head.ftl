@@ -79,7 +79,9 @@
       </#if>
     </script>
 
-    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css?v=${ver}"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
+	<#include "/macros/orcid_ga.ftl">
+    
+	<link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css?v=${ver}"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
     <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>    
@@ -126,5 +128,5 @@
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />  
-    <link rel="stylesheet" href="${staticLoc}/css/noto-font.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/noto-font.css?v=${ver}"/>	    
 </head>

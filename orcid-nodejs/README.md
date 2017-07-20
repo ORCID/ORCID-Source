@@ -11,7 +11,7 @@ Simply download code via git clone then start tomcat with your orcid-web modules
 Open a terminal at your root project and run
 
     mvn -f orcid-nodejs/pom.xml \
-    -Dnodejs.workingDirectory=/Users/jperez/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid \
+    -Dnodejs.workingDirectory='${project.parent.basedir}/orcid-web/src/main/webapp/static/javascript/ng1Orcid' \
     -DwebpackConfig=localhost \
     clean install
 

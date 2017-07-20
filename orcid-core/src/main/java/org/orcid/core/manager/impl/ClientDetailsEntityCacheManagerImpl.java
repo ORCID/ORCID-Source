@@ -41,27 +41,30 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     private Cache clientDetailsCache;        
     
     private String releaseName = ReleaseNameUtils.getReleaseName();
-    
-    LockerObjectsManager lockers = new LockerObjectsManager();
-    
+        
     @Override
     public ClientDetailsEntity retrieve(String clientId) throws IllegalArgumentException {
         Object key = new ClientIdCacheKey(clientId, releaseName);
-        Date dbDate = retrieveLastModifiedDate(clientId);
-        ClientDetailsEntity clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+        Date dbDate = retrieveLastModifiedDate(clientId);;
+        ClientDetailsEntity clientDetails = null;
+        try {
+            clientDetailsCache.acquireReadLockOnKey(key);
+            clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+        } finally {
+            clientDetailsCache.releaseReadLockOnKey(key);
+        }
         if (needsFresh(dbDate, clientDetails)) {
             try {
-                synchronized (lockers.obtainLock(clientId)) {
-                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
-                    if (needsFresh(dbDate, clientDetails)) {
-                        clientDetails = clientDetailsManager.findByClientId(clientId);
-                        if(clientDetails == null)
-                            throw new IllegalArgumentException("Invalid client id " + clientId);
-                        clientDetailsCache.put(new Element(key, clientDetails));
-                    }
+                clientDetailsCache.acquireWriteLockOnKey(key);
+                clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+                if (needsFresh(dbDate, clientDetails)) {
+                    clientDetails = clientDetailsManager.findByClientId(clientId);
+                    if (clientDetails == null)
+                        throw new IllegalArgumentException("Invalid client id " + clientId);
+                    clientDetailsCache.put(new Element(key, clientDetails));
                 }
             } finally {
-                lockers.releaseLock(clientId);
+                clientDetailsCache.releaseWriteLockOnKey(key);
             }
         }
         return clientDetails;
@@ -71,20 +74,25 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     public ClientDetailsEntity retrieveByIdP(String idp) throws IllegalArgumentException {
         Object key = new ClientIdCacheKey("IdP+" + idp, releaseName);
         Date dbDate = retrieveLastModifiedDateByIdP(idp);
-        ClientDetailsEntity clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+        ClientDetailsEntity clientDetails = null; 
+        try {
+            clientDetailsCache.acquireReadLockOnKey(key);
+            clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+        } finally {
+            clientDetailsCache.releaseReadLockOnKey(key);
+        }
         if (needsFresh(dbDate, clientDetails)) {
             try {
-                synchronized (lockers.obtainLock(idp)) {
-                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
-                    if (needsFresh(dbDate, clientDetails)) {
-                        clientDetails = clientDetailsManager.findByIdP(idp);
-                        if(clientDetails == null)
-                            throw new IllegalArgumentException("Invalid idp " + idp);
-                        clientDetailsCache.put(new Element(key, clientDetails));
-                    }
+                clientDetailsCache.acquireWriteLockOnKey(key);
+                clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+                if (needsFresh(dbDate, clientDetails)) {
+                    clientDetails = clientDetailsManager.findByIdP(idp);
+                    if (clientDetails == null)
+                        throw new IllegalArgumentException("Invalid idp " + idp);
+                    clientDetailsCache.put(new Element(key, clientDetails));
                 }
             } finally {
-                lockers.releaseLock(idp);
+                clientDetailsCache.acquireWriteLockOnKey(key);
             }
         }
         return clientDetails;
@@ -98,11 +106,11 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
 
     public void put(String clientId, ClientDetailsEntity client) {
         try {
-            synchronized (lockers.obtainLock(clientId)) {
+            clientDetailsCache.acquireWriteLockOnKey(clientId);
                 clientDetailsCache.put(new Element(new ClientIdCacheKey(clientId, releaseName), client));
-            }
+          
         } finally {
-            lockers.releaseLock(clientId);
+            clientDetailsCache.releaseWriteLockOnKey(clientId);
         }
     }
     
