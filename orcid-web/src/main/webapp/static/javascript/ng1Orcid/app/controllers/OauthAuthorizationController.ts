@@ -387,6 +387,12 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 $scope.recaptchaWidgetId = widgetId;        
             };
 
+            $scope.showDeactivationError = function() {
+                $scope.showDeactivatedError = true;
+                $scope.showReactivationSent = false;
+                $scope.$apply();
+            };
+
             $scope.showDuplicatesColorBox = function () {
                 $.colorbox({
                     html : $compile($('#duplicates').html())($scope),
