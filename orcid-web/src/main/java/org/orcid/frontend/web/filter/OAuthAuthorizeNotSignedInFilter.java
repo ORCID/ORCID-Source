@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.context.SecurityContext;
@@ -66,7 +67,7 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
                 if (session != null)
                     new HttpSessionRequestCache().saveRequest(request, response);
                 
-                if(!PojoUtil.isEmpty(queryString) && queryString.contains(OrcidOauth2Constants.OAUTH_2SCREENS)) {
+                if(Features.OAUTH_2SCREENS.isActive() || (!PojoUtil.isEmpty(queryString) && queryString.contains(OrcidOauth2Constants.OAUTH_2SCREENS))) {
                     response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);
                 } else {
                     response.sendRedirect(orcidUrlManager.getBaseUrl() + "/oauth/signin?" + queryString);
