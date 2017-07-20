@@ -19,7 +19,7 @@
 
 	<div class="widget-container" ng-controller="widgetCtrl">
 		<div class="widget-header">
-			<a ng-click="toggleCopyWidget();showSampleWidget();"><span class="glyphicon glyphicon-phone"></span> <@orcid.msg 'orcid_widget.header'/></a>
+			<a ng-click="ctrl.toggleCopyWidget();ctrl.showSampleWidget();"><span class="glyphicon glyphicon-phone"></span> <@orcid.msg 'orcid_widget.header'/></a>
 			<div class="popover-help-container">
    	     		<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
    	     		<div id="widget-help" class="popover bottom">
@@ -32,7 +32,7 @@
 		</div>
 		<div ng-show="showCode" ng-cloak class="widget-code-container">
 			<p class="widget-instructions"><@orcid.msg 'orcid_widget.copy_message'/></p>
-			<textarea id="widget-code-nd" name="widget-code" class="form-control widget-code" ng-model="widgetURLND" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
+			<textarea id="widget-code-nd" name="widget-code" class="form-control widget-code" ng-model="ctrl.widgetURLND" ng-click="ctrl.inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
 			<p class="bold"><@orcid.msg 'orcid_widget.widget_preview'/></p>
 			<div class="orcid-summary-widget">
                 <a id="widget-sample" href="${baseUri}/${(effectiveUserOrcid)!}" target="effectiveUserOrcid"  rel="noopener noreferrer" style="vertical-align:top;">

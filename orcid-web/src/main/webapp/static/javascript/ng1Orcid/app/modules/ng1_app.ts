@@ -12,6 +12,7 @@ import * as uibootstraptypeahead from 'angular-ui-bootstrap'
 import 'angular-route'
 
 import { BiographyModule } from './biography/biography.ts';
+import { WidgetModule } from './widget/widget.ts'
 
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -21,7 +22,8 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
-        BiographyModule.name
+        BiographyModule.name,
+        WidgetModule.name
     ]
 );
 /*

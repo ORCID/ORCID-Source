@@ -6,6 +6,7 @@ import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
 import { BiographyNg2Module } from './biography/biography.ts';
+import { WidgetNg2Module } from './widget/widget.ts';
 
 // This URL handling strategy is custom and application-specific.
 // Using it we can tell the Angular 2 router to handle only URL starting with settings.
@@ -37,9 +38,10 @@ export class RootCmp {
 
 @NgModule({
     imports: [
-        BiographyNg2Module,
         BrowserModule,
         UpgradeModule,
+        BiographyNg2Module,
+        WidgetNg2Module
         // We don't need to provide any routes.
         // The router will collect all routes from all the registered modules.
         //RouterModule.forRoot([])
