@@ -95,7 +95,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
                     clientDetailsIdPCache.put(new Element(key, clientDetails));
                 }
             } finally {
-                clientDetailsIdPCache.acquireWriteLockOnKey(key);
+                clientDetailsIdPCache.releaseWriteLockOnKey(key);
             }
         }
         return clientDetails;
