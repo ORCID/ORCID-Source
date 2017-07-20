@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<education:education
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.1.xsd ">	
+	<education:department-name>Department</education:department-name>
+	<education:role-title>Degree</education:role-title>
+	<common:start-date>
+		<common:year>1997</common:year>
+		<common:month>08</common:month>
+		<common:day>20</common:day>
+	</common:start-date>
+	<common:end-date>
+		<common:year>1999</common:year>
+		<common:month>05</common:month>
+		<common:day>01</common:day>
+	</common:end-date>
+	<education:organization>
+		<common:name>Massachusetts Institute of Technology</common:name>
+		<common:address>
+			<common:city>Cambridge</common:city>
+			<common:region>MA</common:region>
+			<common:country>US</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>2167</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</education:organization>	   	
+</education:education>

@@ -72,7 +72,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
-import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.common_rc3.Contributor;
 import org.orcid.jaxb.model.common_rc3.Visibility;

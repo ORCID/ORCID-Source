@@ -166,6 +166,11 @@
     </bean>   
     
     <!-- Notifications -->
+    <bean id="notificationsClient_v3_0_dev1" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v3.0_dev1"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <bean id="notificationsClient_v2_1" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v2.1"/>
         <constructor-arg ref="jerseyClient"/>

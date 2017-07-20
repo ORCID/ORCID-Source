@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
@@ -57,7 +58,7 @@ import org.orcid.jaxb.model.v3.dev1.record.WorkType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "publicationDate" })
+@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "publicationDate", "journalTitle" })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
 public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
 
@@ -85,6 +86,9 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     protected Visibility visibility;
     @XmlAttribute(name = "display-index")
     protected String displayIndex;
+    
+    @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")
+    protected Title journalTitle;
 
     public WorkTitle getTitle() {
         return title;
@@ -190,6 +194,27 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     public void setDisplayIndex(String displayIndex) {
         this.displayIndex = displayIndex;
     }
+    
+    /**
+     * Gets the value of the journalTitle property.
+     * 
+     * @return possible object is {@link Title }
+     * 
+     */
+    public Title getJournalTitle() {
+        return journalTitle;
+    }
+
+    /**
+     * Sets the value of the journalTitle property.
+     * 
+     * @param value
+     *            allowed object is {@link Title }
+     * 
+     */
+    public void setJournalTitle(Title value) {
+        this.journalTitle = value;
+    }
 
     @Override
     public int hashCode() {
@@ -203,6 +228,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((title == null) ? 0 : title.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
@@ -250,6 +276,11 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
             if (other.title != null)
                 return false;
         } else if (!title.equals(other.title))
+            return false;
+        if (journalTitle == null) {
+            if (other.journalTitle != null)
+                return false;
+        } else if (!journalTitle.equals(other.journalTitle))
             return false;
         if (type != other.type)
             return false;
