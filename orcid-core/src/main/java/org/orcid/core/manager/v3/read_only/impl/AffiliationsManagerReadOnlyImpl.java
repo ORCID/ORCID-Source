@@ -36,10 +36,11 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.springframework.cache.annotation.Cacheable;
 
 public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadOnly {
-    @Resource
+    
+    @Resource(name = "jpaJaxbEducationAdapterV3")
     protected JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
 
-    @Resource
+    @Resource(name = "jpaJaxbEmploymentAdapterV3")
     protected JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
     
     protected OrgAffiliationRelationDao orgAffiliationRelationDao;    

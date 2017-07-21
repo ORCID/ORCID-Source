@@ -63,7 +63,7 @@ public class JpaJaxbNameAdapterTest extends MockSourceNameCache {
         assertEquals("Credit Name", entity.getCreditName());        
         assertEquals("Family Name", entity.getFamilyName());
         assertEquals("Given Names", entity.getGivenNames());
-        assertEquals(Visibility.PUBLIC, entity.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, entity.getVisibility());
         assertNotNull(entity.getProfile());
         assertEquals("0000-0000-0000-0000", entity.getProfile().getId());        
     }

@@ -46,7 +46,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     @Resource
     private SourceManager sourceManager;
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
     
     @Resource

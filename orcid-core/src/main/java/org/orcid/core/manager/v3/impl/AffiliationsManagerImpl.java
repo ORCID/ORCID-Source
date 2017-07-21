@@ -39,7 +39,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
-    @Resource
+    
+    @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
 
     @Resource
@@ -48,13 +49,13 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
-    @Resource 
+    @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
 
     /**

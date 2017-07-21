@@ -85,7 +85,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSecurityManagerTestBase {
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
 
     protected final String ORCID_1 = "0000-0000-0000-0001";
@@ -100,13 +100,13 @@ public class OrcidSecurityManagerTestBase {
     protected final String EXTID_3 = "extId3";
     protected final String EXTID_SHARED = "shared";
 
-    @Resource
+    @Resource(name = "workManagerReadOnlyV3")
     protected WorkManagerReadOnly workManagerReadOnly;
 
-    @Resource
+    @Resource(name = "profileFundingManagerReadOnlyV3")
     protected ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
 
-    @Resource
+    @Resource(name = "peerReviewManagerReadOnlyV3")
     protected PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
     @Mock

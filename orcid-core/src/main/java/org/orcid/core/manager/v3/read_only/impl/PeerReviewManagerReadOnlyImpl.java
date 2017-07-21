@@ -40,7 +40,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.springframework.cache.annotation.Cacheable;
 
 public class PeerReviewManagerReadOnlyImpl implements PeerReviewManagerReadOnly {
-    @Resource
+    @Resource(name = "jpaJaxbPeerReviewAdapterV3")
     protected JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
 
     protected PeerReviewDao peerReviewDao;
@@ -97,7 +97,7 @@ public class PeerReviewManagerReadOnlyImpl implements PeerReviewManagerReadOnly 
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         PeerReviews result = new PeerReviews();
         for (PeerReviewSummary peerReview : peerReviews) {
-            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
+            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {

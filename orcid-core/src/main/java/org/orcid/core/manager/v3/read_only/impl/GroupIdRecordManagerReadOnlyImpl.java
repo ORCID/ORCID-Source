@@ -33,7 +33,7 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 
 public class GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManagerReadOnly {
 
-    @Resource
+    @Resource(name = "jpaJaxbGroupIdRecordAdapterV3")
     protected JpaJaxbGroupIdRecordAdapter jpaJaxbGroupIdRecordAdapter;
 
     protected GroupIdRecordDao groupIdRecordDao;    

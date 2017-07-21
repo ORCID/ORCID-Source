@@ -58,22 +58,22 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     @Resource 
     private FundingSubTypeToIndexDao fundingSubTypeToIndexDaoReadOnly;
     
-    @Resource
+    @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
     
     @Resource
     private SourceManager sourceManager;
     
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
     
-    @Resource 
+    @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
     /**

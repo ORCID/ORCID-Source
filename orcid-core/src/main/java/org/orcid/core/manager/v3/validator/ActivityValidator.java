@@ -65,7 +65,7 @@ import org.orcid.utils.OrcidStringUtils;
 
 public class ActivityValidator {
 
-    @Resource
+    @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator externalIDValidator;
 
     public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {

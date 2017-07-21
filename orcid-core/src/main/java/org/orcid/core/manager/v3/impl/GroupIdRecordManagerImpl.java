@@ -41,10 +41,10 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @Resource
+    @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
 
     @Override

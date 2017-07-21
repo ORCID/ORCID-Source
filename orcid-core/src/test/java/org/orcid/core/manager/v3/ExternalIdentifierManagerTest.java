@@ -49,7 +49,7 @@ import org.orcid.test.TargetProxyHelper;
 
 public class ExternalIdentifierManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml");
+            "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml");
 
     private static final String CLIENT_1_ID = "APP-5555555555555555";
     private static final String CLIENT_2_ID = "APP-5555555555555556";
@@ -59,7 +59,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
 
-    @Resource
+    @Resource(name = "externalIdentifierManagerV3")
     private ExternalIdentifierManager externalIdentifierManager;
 
     @BeforeClass

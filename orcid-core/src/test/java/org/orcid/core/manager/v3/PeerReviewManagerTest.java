@@ -71,7 +71,7 @@ public class PeerReviewManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
     
-    @Resource 
+    @Resource(name = "peerReviewManagerV3")
     private PeerReviewManager peerReviewManager;
     
     @Resource

@@ -37,8 +37,9 @@ import org.orcid.jaxb.model.v3.dev1.record.FamilyName;
 import org.orcid.jaxb.model.v3.dev1.record.GivenNames;
 import org.orcid.jaxb.model.v3.dev1.record.Name;
 
-public class RecordNameManagerTest extends BaseTest {
-    @Resource
+public class RecordNameManagerV3Test extends BaseTest {
+    
+    @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
     
     @BeforeClass

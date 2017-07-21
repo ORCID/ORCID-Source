@@ -71,7 +71,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
     
-    @Resource 
+    @Resource(name = "profileFundingManagerV3")
     private ProfileFundingManager profileFundingManager;
     
     @Resource

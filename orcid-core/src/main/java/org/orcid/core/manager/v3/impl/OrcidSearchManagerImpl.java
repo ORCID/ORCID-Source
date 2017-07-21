@@ -57,7 +57,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     @Resource
     private SolrDao solrDao;
     
-    @Resource
+    @Resource(name = "recordManagerReadOnlyV3")
     private RecordManagerReadOnly recordManagerReadOnly;
 
     private static String SOLR = "SOLR";

@@ -61,7 +61,7 @@ public class AddressManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
     
-    @Resource 
+    @Resource(name = "addressManagerV3")
     private AddressManager addressManager;
     
     @BeforeClass

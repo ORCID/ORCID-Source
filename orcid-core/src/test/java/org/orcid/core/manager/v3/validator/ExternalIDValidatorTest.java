@@ -37,7 +37,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ExternalIDValidatorTest{
 
-    @Resource
+    @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator validator;
     
     @Before

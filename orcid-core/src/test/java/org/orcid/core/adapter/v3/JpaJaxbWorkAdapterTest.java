@@ -59,7 +59,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
 
-    @Resource
+    @Resource(name = "jpaJaxbWorkAdapterV3")
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
     @Resource
@@ -82,7 +82,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
-        assertEquals(Visibility.PRIVATE, workEntity.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, workEntity.getVisibility());
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
@@ -90,8 +90,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("common:translated-title", workEntity.getTranslatedTitle());
         assertEquals("en", workEntity.getTranslatedTitleLanguageCode());
         assertEquals("work:short-description", workEntity.getDescription());
-        assertEquals(CitationType.FORMATTED_UNSPECIFIED, workEntity.getCitationType());
-        assertEquals(WorkType.ARTISTIC_PERFORMANCE, workEntity.getWorkType());
+        assertEquals(org.orcid.jaxb.model.record_v2.CitationType.FORMATTED_UNSPECIFIED, workEntity.getCitationType());
+        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE, workEntity.getWorkType());
         PublicationDateEntity publicationDateEntity = workEntity.getPublicationDate();
         assertNotNull(publicationDateEntity);
         assertEquals(1848, publicationDateEntity.getYear().intValue());
@@ -105,7 +105,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:credit-name\"},\"contributorEmail\":{\"value\":\"work@contributor.email\"},\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}}]}",
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
-        assertEquals(Iso3166Country.AF, workEntity.getIso2Country());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF, workEntity.getIso2Country());
         
         // Source
         assertNull(workEntity.getSourceId());        
@@ -125,7 +125,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getCreatedDate().getValue()));
         assertNotNull(w.getLastModifiedDate());
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getLastModifiedDate().getValue()));
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.value(), w.getCountry().getValue().value());
+        assertEquals(Iso3166Country.CR.value(), w.getCountry().getValue().value());
         assertEquals("work:citation", w.getWorkCitation().getCitation());
         assertEquals("work:description", w.getShortDescription());
         assertEquals("work:journalTitle", w.getJournalTitle().getContent());
@@ -169,6 +169,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("123", workExtId.getValue());
         assertNotNull(workExtId.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId.getType());
+        assertEquals("work:journalTitle", ws.getJournalTitle().getContent());
     }
 
     private Work getWork(boolean full) throws JAXBException {

@@ -48,7 +48,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
 
-    @Resource
+    @Resource(name = "jpaJaxbEmailAdapterV3")
     private JpaJaxbEmailAdapter jpaJaxbEmailAdapter;
 
     @Test
@@ -60,7 +60,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         assertNotNull(entity.getDateCreated());
         assertNotNull(entity.getLastModified());
         assertEquals("user1@email.com", entity.getId());
-        assertEquals(Visibility.PUBLIC, entity.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, entity.getVisibility());
         
         // Source
         assertNull(entity.getSourceId());        

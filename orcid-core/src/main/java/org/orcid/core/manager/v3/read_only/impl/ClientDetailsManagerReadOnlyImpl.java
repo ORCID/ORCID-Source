@@ -41,7 +41,7 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerReadOnlyImpl.class);    
     
-    @Resource
+    @Resource(name = "jpaJaxbClientAdapterV3")
     protected JpaJaxbClientAdapter jpaJaxbClientAdapter;
     
     @Resource

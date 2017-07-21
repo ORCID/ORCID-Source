@@ -45,7 +45,7 @@ public class OrgManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/OrgsEntityData.xml");
 
-    @Resource
+    @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
 
     @BeforeClass
@@ -73,7 +73,7 @@ public class OrgManagerTest extends BaseTest {
         orgManager.writeAmbiguousOrgs(writer);
         String result = writer.toString();
 
-        String expected = IOUtils.toString(getClass().getResource("expected_ambiguous_orgs.csv"));
+        String expected = IOUtils.toString(getClass().getResource("/org/orcid/core/manager/expected_ambiguous_orgs.csv"));
         assertEquals(expected, result);
     }
 

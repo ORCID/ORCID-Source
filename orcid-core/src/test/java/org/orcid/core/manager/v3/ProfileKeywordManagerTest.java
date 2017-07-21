@@ -54,7 +54,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
 
-    @Resource
+    @Resource(name = "profileKeywordManagerV3")
     private ProfileKeywordManager profileKeywordManager;
 
     @BeforeClass

@@ -41,7 +41,7 @@ import org.springframework.cache.annotation.Cacheable;
  * 
  */
 public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements EmailManagerReadOnly {
-    @Resource
+    @Resource(name = "jpaJaxbEmailAdapterV3")
     protected JpaJaxbEmailAdapter jpaJaxbEmailAdapter;
     
     protected EmailDao emailDao;

@@ -55,7 +55,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
 
-    @Resource
+    @Resource(name = "researcherUrlManagerV3")
     private ResearcherUrlManager researcherUrlManager;
 
     @BeforeClass

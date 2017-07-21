@@ -50,10 +50,10 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
     @Resource
     private SourceManager sourceManager;
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
     @Resource

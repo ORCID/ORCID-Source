@@ -44,7 +44,7 @@ public class EmailManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
     
     @Resource

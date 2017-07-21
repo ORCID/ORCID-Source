@@ -33,13 +33,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.orcid.core.manager.BiographyManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.BiographyManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.common.Locale;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -74,19 +73,19 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
     @Resource(name = "profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
     
-    @Resource
+    @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
     
-    @Resource
+    @Resource(name = "biographyManagerV3")
     private BiographyManager biographyManager;
     
     @Resource

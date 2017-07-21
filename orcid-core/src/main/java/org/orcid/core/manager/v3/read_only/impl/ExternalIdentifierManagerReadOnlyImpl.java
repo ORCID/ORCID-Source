@@ -32,7 +32,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 public class ExternalIdentifierManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ExternalIdentifierManagerReadOnly {
     
-    @Resource
+    @Resource(name = "jpaJaxbExternalIdentifierAdapterV3")
     protected JpaJaxbExternalIdentifierAdapter jpaJaxbExternalIdentifierAdapter;
     
     protected ExternalIdentifierDao externalIdentifierDao;

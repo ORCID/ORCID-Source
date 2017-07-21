@@ -56,7 +56,7 @@ public class OrcidSecurityManagerTest {
     private static final String ORCID = "0000-0000-0000-0000";
     private static final String CLIENT_ID = "APP-0000000000000001";
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
 
     @Value("${org.orcid.core.claimWaitPeriodDays:10}")

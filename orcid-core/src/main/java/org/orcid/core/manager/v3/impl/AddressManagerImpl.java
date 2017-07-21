@@ -43,7 +43,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements AddressManager {
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
     
     @Resource

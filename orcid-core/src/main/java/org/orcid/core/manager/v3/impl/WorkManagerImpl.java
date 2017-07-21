@@ -63,19 +63,19 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource
     private SourceManager sourceManager;
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
-    @Resource 
+    @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator externalIDValidator;
 
-    @Resource 
+    @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
     
     @Resource

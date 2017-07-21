@@ -74,7 +74,7 @@ public class WorkManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
     
-    @Resource 
+    @Resource(name = "workManagerV3")
     private WorkManager workManager;
     
     @Resource

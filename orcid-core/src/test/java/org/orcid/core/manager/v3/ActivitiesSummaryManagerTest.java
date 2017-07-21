@@ -44,7 +44,7 @@ public class ActivitiesSummaryManagerTest extends DBUnitTest {
 
     private static final String ORCID = "0000-0000-0000-0003";
     
-    @Resource
+    @Resource(name = "activitiesSummaryManagerV3")
     private ActivitiesSummaryManager activitiesSummaryManager;
     
     @BeforeClass

@@ -46,7 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
 
-    @Resource
+    @Resource(name = "jpaJaxbResearcherUrlAdapterV3")
     private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
 
     @Test

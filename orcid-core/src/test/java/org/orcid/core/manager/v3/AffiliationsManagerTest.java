@@ -63,7 +63,7 @@ public class AffiliationsManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
     
-    @Resource 
+    @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
     
     @BeforeClass

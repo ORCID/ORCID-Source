@@ -156,7 +156,7 @@ public class NotificationManagerTest extends DBUnitTest {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
@@ -171,10 +171,10 @@ public class NotificationManagerTest extends DBUnitTest {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
-    @Resource
+    @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
     
     
@@ -262,7 +262,7 @@ public class NotificationManagerTest extends DBUnitTest {
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
             assertTrue(latestNotification.getId() > minNotificationId);
-            assertEquals(NotificationType.AMENDED, latestNotification.getNotificationType());
+            assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED, latestNotification.getNotificationType());
         }
     }
 

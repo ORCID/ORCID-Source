@@ -32,7 +32,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements OtherNameManagerReadOnly {
        
-    @Resource
+    @Resource(name = "jpaJaxbOtherNameAdapterV3")
     protected JpaJaxbOtherNameAdapter jpaJaxbOtherNameAdapter;
 
     protected OtherNameDao otherNameDao;

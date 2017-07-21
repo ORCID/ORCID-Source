@@ -541,7 +541,7 @@
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     
-    <bean id="personDetailsManagerReadOnlyV3" class="org.orcid.core.manager.read_only.v3.impl.PersonDetailsManagerReadOnlyImpl">
+    <bean id="personDetailsManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.PersonDetailsManagerReadOnlyImpl">
         <property name="addressManager" ref="addressManagerReadOnlyV3"/>
         <property name="externalIdentifierManager" ref="externalIdentifierManagerReadOnlyV3"/>
         <property name="profileKeywordManager" ref="profileKeywordManagerReadOnlyV3"/>
@@ -558,7 +558,7 @@
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />       
     </bean>
     
-    <bean id="profileEntityManagerReadOnlyV3" class="org.orcid.core.manager.read_only.v3.impl.ProfileEntityManagerReadOnlyImpl">
+    <bean id="profileEntityManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl">
         <property name="profileDao" ref="profileDaoReadOnly" />
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />       
     </bean>
@@ -841,6 +841,9 @@
     
     <bean id="activityValidator" class="org.orcid.core.manager.validator.ActivityValidator" />
     <bean id="externalIDValidator" class="org.orcid.core.manager.validator.ExternalIDValidator" />
+    
+    <bean id="activityValidatorV3" class="org.orcid.core.manager.v3.validator.ActivityValidator" />
+    <bean id="externalIDValidatorV3" class="org.orcid.core.manager.v3.validator.ExternalIDValidator" />
 
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />	
 	

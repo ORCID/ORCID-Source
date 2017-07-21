@@ -35,7 +35,7 @@ public class RecordNameManagerReadOnlyImpl implements RecordNameManagerReadOnly 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecordNameManagerReadOnlyImpl.class);
     
-    @Resource
+    @Resource(name = "jpaJaxbNameAdapterV3")
     protected JpaJaxbNameAdapter jpaJaxbNameAdapter;
     
     protected RecordNameDao recordNameDao;        

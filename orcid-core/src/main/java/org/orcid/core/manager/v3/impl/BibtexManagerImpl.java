@@ -50,13 +50,13 @@ public class BibtexManagerImpl implements BibtexManager{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BibtexManagerImpl.class);
     
-    @Resource
+    @Resource(name = "activitiesSummaryManagerV3")
     private ActivitiesSummaryManager activitiesManager;
     
-    @Resource
+    @Resource(name = "workManagerV3")
     private WorkManager workManager;
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
     @Resource 
@@ -72,7 +72,7 @@ public class BibtexManagerImpl implements BibtexManager{
                     CsvMapper mapper = new CsvMapper();
                     mapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
                     try {
-                        MappingIterator<String[]> it = mapper.reader(String[].class).readValues(getClass().getResourceAsStream("escape_bibtex.txt"));
+                        MappingIterator<String[]> it = mapper.reader(String[].class).readValues(getClass().getResourceAsStream("/org/orcid/core/manager/impl/escape_bibtex.txt"));
                         ImmutableMap.Builder<Character,String> builder = new ImmutableMap.Builder<Character,String>();
                         while (it.hasNext()){
                            String[] row = it.next();

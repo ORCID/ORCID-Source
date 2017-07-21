@@ -54,7 +54,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
 
-    @Resource
+    @Resource(name = "jpaJaxbEmploymentAdapterV3")
     private JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
 
     @Test
@@ -65,7 +65,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(oar);
         //General info
         assertEquals(Long.valueOf(0), oar.getId());
-        assertEquals(Visibility.PRIVATE.value(), oar.getVisibility().value());        
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.value(), oar.getVisibility().value());        
         assertEquals("employment:department-name", oar.getDepartment());
         assertEquals("employment:role-title", oar.getTitle());
         
@@ -105,7 +105,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(employment.getOrganization().getAddress());
         assertEquals("org:city", employment.getOrganization().getAddress().getCity());
         assertEquals("org:region", employment.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
+        assertEquals(Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
         assertNotNull(employment.getSource());        
         assertNotNull(employment.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", employment.getSource().retrieveSourcePath());

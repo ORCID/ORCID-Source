@@ -32,7 +32,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 public class ProfileKeywordManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileKeywordManagerReadOnly {
 
-    @Resource
+    @Resource(name = "jpaJaxbKeywordAdapterV3")
     protected JpaJaxbKeywordAdapter adapter;
 
     protected ProfileKeywordDao profileKeywordDao;        

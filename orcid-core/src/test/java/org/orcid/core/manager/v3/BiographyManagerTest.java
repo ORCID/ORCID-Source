@@ -35,7 +35,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
 
 public class BiographyManagerTest extends BaseTest {
-    @Resource
+    @Resource(name = "biographyManagerV3")
     private BiographyManager biographyManager;
     
     @BeforeClass

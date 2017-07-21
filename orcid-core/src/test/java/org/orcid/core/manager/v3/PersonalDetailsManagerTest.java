@@ -50,7 +50,7 @@ public class PersonalDetailsManagerTest extends BaseTest {
     private static final String ORCID2 = "0000-0000-0000-0002";
     private static final String ORCID3 = "0000-0000-0000-0003";
     
-    @Resource
+    @Resource(name = "personalDetailsManagerV3")
     PersonalDetailsManager personalDetailsManager;
     
     @BeforeClass

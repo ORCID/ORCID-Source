@@ -47,8 +47,8 @@ public class RecordManagerTest extends DBUnitTest {
     
     private static final String ORCID = "0000-0000-0000-0003";
     
-    @Resource
-    private RecordManager RecordManager;
+    @Resource(name = "recordManagerV3")
+    private RecordManager recordManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -63,7 +63,7 @@ public class RecordManagerTest extends DBUnitTest {
     
     @Test
     public void testGetRecord() {
-        Record record = RecordManager.getRecord(ORCID);
+        Record record = recordManager.getRecord(ORCID);
         assertNotNull(record);
         assertNotNull(record.getActivitiesSummary());
         assertNotNull(record.getPerson());
@@ -131,7 +131,7 @@ public class RecordManagerTest extends DBUnitTest {
     
     @Test
     public void testGetPublicRecord() {
-        Record record = RecordManager.getPublicRecord(ORCID);
+        Record record = recordManager.getPublicRecord(ORCID);
         assertNotNull(record);
         assertNotNull(record.getActivitiesSummary());
         assertNotNull(record.getPerson());

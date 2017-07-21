@@ -51,7 +51,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     public static final Integer MAX_BULK_PUT_CODES = 50;
 
-    @Resource
+    @Resource(name = "jpaJaxbWorkAdapterV3")
     protected JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
     @Resource
@@ -148,7 +148,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         Works result = new Works();
         // Group all works
         for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {

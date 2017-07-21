@@ -40,9 +40,9 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
-import org.orcid.jaxb.model.client_v2.Client;
-import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.jaxb.model.v3.dev1.client.Client;
+import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
 import org.orcid.jaxb.model.v3.dev1.client.ClientSummary;
 import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
@@ -141,7 +141,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
-    @Resource
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
@@ -321,7 +321,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getExternalIdentifierMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class, ExternalIdentifierEntity.class);        
-        addV2DateFields(externalIdentifierClassMap);        
+        addV3DateFields(externalIdentifierClassMap);        
         externalIdentifierClassMap.field("putCode", "id");
         externalIdentifierClassMap.field("type", "externalIdCommonName");
         externalIdentifierClassMap.field("value", "externalIdReference");
@@ -338,7 +338,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);        
-        addV2DateFields(researcherUrlClassMap);
+        addV3DateFields(researcherUrlClassMap);
         registerSourceConverters(mapperFactory, researcherUrlClassMap);
         researcherUrlClassMap.field("putCode", "id");
         researcherUrlClassMap.field("url.value", "url");
@@ -352,7 +352,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getOtherNameMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);        
-        addV2DateFields(otherNameClassMap);
+        addV3DateFields(otherNameClassMap);
         registerSourceConverters(mapperFactory, otherNameClassMap);
         otherNameClassMap.field("putCode", "id");
         otherNameClassMap.field("content", "displayName");
@@ -366,7 +366,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getKeywordMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);        
-        addV2DateFields(keywordClassMap);
+        addV3DateFields(keywordClassMap);
         registerSourceConverters(mapperFactory, keywordClassMap);
         keywordClassMap.field("putCode", "id");
         keywordClassMap.field("content", "keywordName");
@@ -379,7 +379,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getAddressMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);        
-        addV2DateFields(addressClassMap);
+        addV3DateFields(addressClassMap);
         registerSourceConverters(mapperFactory, addressClassMap);
         addressClassMap.field("putCode", "id");
         addressClassMap.field("country.value", "iso2Country");
@@ -397,7 +397,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         emailClassMap.field("email", "id");
         emailClassMap.field("primary", "primary");
         emailClassMap.field("verified", "verified");
-        addV2DateFields(emailClassMap);
+        addV3DateFields(emailClassMap);
         registerSourceConverters(mapperFactory, emailClassMap);
         emailClassMap.register();
         return mapperFactory.getMapperFacade();
@@ -413,7 +413,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
         workClassMap.byDefault();
         workClassMap.field("putCode", "id");
-        addV2DateFields(workClassMap);
+        addV3DateFields(workClassMap);
         registerSourceConverters(mapperFactory, workClassMap);
         workClassMap.field("journalTitle.content", "journalTitle");
         workClassMap.field("workTitle.title.content", "title");
@@ -446,7 +446,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.register();
 
         ClassMapBuilder<WorkSummary, MinimizedWorkEntity> workSummaryMinimizedClassMap = mapperFactory.classMap(WorkSummary.class, MinimizedWorkEntity.class);
-        addV2CommonFields(workSummaryMinimizedClassMap);
+        addV3CommonFields(workSummaryMinimizedClassMap);
         registerSourceConverters(mapperFactory, workSummaryMinimizedClassMap);
         workSummaryMinimizedClassMap.field("title.title.content", "title");
         workSummaryMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
@@ -490,7 +490,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
-        addV2CommonFields(fundingClassMap);
+        addV3CommonFields(fundingClassMap);
         registerSourceConverters(mapperFactory, fundingClassMap);
         fundingClassMap.field("type", "type");
         fundingClassMap.field("organizationDefinedType.content", "organizationDefinedType");
@@ -513,7 +513,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.register();
 
         ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
-        addV2CommonFields(fundingSummaryClassMap);
+        addV3CommonFields(fundingSummaryClassMap);
         registerSourceConverters(mapperFactory, fundingSummaryClassMap);
         fundingSummaryClassMap.field("type", "type");
         fundingSummaryClassMap.field("title.title.content", "title");
@@ -539,7 +539,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getEducationMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
-        addV2CommonFields(educationClassMap);
+        addV3CommonFields(educationClassMap);
         registerSourceConverters(mapperFactory, educationClassMap);                
         educationClassMap.fieldBToA("org.name", "organization.name");
         educationClassMap.fieldBToA("org.city", "organization.address.city");
@@ -554,7 +554,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> educationSummaryClassMap = mapperFactory.classMap(EducationSummary.class,
                 OrgAffiliationRelationEntity.class);
-        addV2CommonFields(educationSummaryClassMap);
+        addV3CommonFields(educationSummaryClassMap);
         registerSourceConverters(mapperFactory, educationSummaryClassMap);
         educationSummaryClassMap.fieldBToA("org.name", "organization.name");
         educationSummaryClassMap.fieldBToA("org.city", "organization.address.city");
@@ -575,7 +575,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getEmploymentMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
-        addV2CommonFields(classMap);
+        addV3CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);
         classMap.fieldBToA("org.name", "organization.name");
         classMap.fieldBToA("org.city", "organization.address.city");
@@ -590,7 +590,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ClassMapBuilder<EmploymentSummary, OrgAffiliationRelationEntity> employmentSummaryClassMap = mapperFactory.classMap(EmploymentSummary.class,
                 OrgAffiliationRelationEntity.class);
-        addV2CommonFields(employmentSummaryClassMap);
+        addV3CommonFields(employmentSummaryClassMap);
         registerSourceConverters(mapperFactory, employmentSummaryClassMap);
         employmentSummaryClassMap.fieldBToA("org.name", "organization.name");
         employmentSummaryClassMap.fieldBToA("org.city", "organization.address.city");
@@ -617,7 +617,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         //do same as work
         
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
-        addV2CommonFields(classMap);
+        addV3CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);
         classMap.field("url.value", "url");
         classMap.field("organization.name", "org.name");
@@ -639,7 +639,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
-        addV2CommonFields(peerReviewSummaryClassMap);
+        addV3CommonFields(peerReviewSummaryClassMap);
         registerSourceConverters(mapperFactory, peerReviewSummaryClassMap);
         peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         peerReviewSummaryClassMap.field("organization.name", "org.name");
@@ -660,7 +660,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ClassMapBuilder<GroupIdRecord, GroupIdRecordEntity> classMap = mapperFactory.classMap(GroupIdRecord.class, GroupIdRecordEntity.class);
-        addV2CommonFields(classMap);
+        addV3CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);
         classMap.field("name", "groupName");
         classMap.field("groupId", "groupId");
@@ -708,7 +708,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 
                 if(a.getClientRedirectUris() != null) {
                     for(ClientRedirectUri cru : a.getClientRedirectUris()) {
-                        String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(cru);
+                        String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(cru.getRedirectUri(), cru.getRedirectUriType());
                         if (existingRedirectUriEntitiesMap.containsKey(rUriKey)) {
                             ClientRedirectUriEntity existingEntity = existingRedirectUriEntitiesMap.get(rUriKey);
                             existingEntity.setLastModified(new Date());
@@ -766,7 +766,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getNameMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);        
-        addV2DateFields(nameClassMap);        
+        addV3DateFields(nameClassMap);        
         nameClassMap.field("creditName.content", "creditName");
         nameClassMap.field("givenNames.content", "givenNames");
         nameClassMap.field("familyName.content", "familyName");
@@ -793,13 +793,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         return builder.field("createdDate", "dateCreated").field("putCode", "id").byDefault();
     }
 
-    private void addV2CommonFields(ClassMapBuilder<?, ?> classMap) {
+    private void addV3CommonFields(ClassMapBuilder<?, ?> classMap) {
         classMap.byDefault();
         classMap.field("putCode", "id");
-        addV2DateFields(classMap);
+        addV3DateFields(classMap);
     }
 
-    private void addV2DateFields(ClassMapBuilder<?, ?> classMap) {
+    private void addV3DateFields(ClassMapBuilder<?, ?> classMap) {
         classMap.field("createdDate.value", "dateCreated");
         classMap.field("lastModifiedDate.value", "lastModified");
     }    

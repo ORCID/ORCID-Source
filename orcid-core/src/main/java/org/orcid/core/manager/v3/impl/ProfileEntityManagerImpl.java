@@ -94,52 +94,49 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
 
-    @Resource
+    @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
 
-    @Resource
+    @Resource(name = "profileFundingManagerV3")
     private ProfileFundingManager fundingManager;
 
-    @Resource
+    @Resource(name = "peerReviewManagerV3")
     private PeerReviewManager peerReviewManager;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Resource(name = "workManagerV3")
     private WorkManager workManager;
 
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
+    @Resource(name = "addressManagerV3")
     private AddressManager addressManager;
 
-    @Resource
+    @Resource(name = "externalIdentifierManagerV3")
     private ExternalIdentifierManager externalIdentifierManager;
 
-    @Resource
+    @Resource(name = "profileKeywordManagerV3")
     private ProfileKeywordManager profileKeywordManager;
 
-    @Resource
+    @Resource(name = "otherNameManagerV3")
     private OtherNameManager otherNameManager;
 
-    @Resource
+    @Resource(name = "researcherUrlManagerV3")
     private ResearcherUrlManager researcherUrlManager;
 
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
-    @Resource
-    private OtherNameManager otherNamesManager;
-
-    @Resource
+    @Resource(name = "biographyManagerV3")
     private BiographyManager biographyManager;
 
     @Resource
     private UserConnectionDao userConnectionDao;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
@@ -154,7 +151,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
+    @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
     
     @Resource
@@ -646,7 +643,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         researcherUrlManager.removeAllResearcherUrls(orcid);
         
         // Remove other names
-        otherNamesManager.removeAllOtherNames(orcid);
+        otherNameManager.removeAllOtherNames(orcid);
         
         // Remove keywords
         profileKeywordManager.removeAllKeywords(orcid);

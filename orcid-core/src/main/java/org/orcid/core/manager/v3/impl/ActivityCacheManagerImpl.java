@@ -40,16 +40,16 @@ import org.springframework.cache.annotation.Cacheable;
 
 public class ActivityCacheManagerImpl extends Object implements ActivityCacheManager {
     
-    @Resource
+    @Resource(name = "peerReviewManagerV3")
     private PeerReviewManager peerReviewManager;
     
-    @Resource
+    @Resource(name = "profileFundingManagerV3")
     private ProfileFundingManager profileFundingManager;
     
-    @Resource
+    @Resource(name = "workManagerV3")
     private WorkManager workManager;
     
-    @Resource
+    @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
 
     @Cacheable(value = "pub-min-works-maps", key = "#orcid.concat('-').concat(#lastModified)")

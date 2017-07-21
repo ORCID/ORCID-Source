@@ -55,7 +55,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
 
     private final String CLIENT_ID = "APP-5555555555555555";
     
-    @Resource
+    @Resource(name = "groupIdRecordManagerV3")
     private GroupIdRecordManager groupIdRecordManager;        
     
     @Mock

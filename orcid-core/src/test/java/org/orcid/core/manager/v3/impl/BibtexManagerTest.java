@@ -47,7 +47,7 @@ public class BibtexManagerTest extends BaseTest{
 
     private static final String ORCID = "0000-0000-0000-0003";
     
-    @Resource
+    @Resource(name = "bibtexManagerV3")
     private BibtexManager bibtexManager;
     
     @Mock

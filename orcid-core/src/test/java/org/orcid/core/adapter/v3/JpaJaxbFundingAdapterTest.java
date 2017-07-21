@@ -50,7 +50,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbFundingAdapterTest {
 
-    @Resource
+    @Resource(name = "jpaJaxbFundingAdapterV3")
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
     @Test

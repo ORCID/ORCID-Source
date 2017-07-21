@@ -127,6 +127,10 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     public static String getUriAndTypeKey(ClientRedirectUri rUri) {
         return rUri.getRedirectUri() + '-' + rUri.getRedirectUriType();
     }
+    
+    public static String getUriAndTypeKey(String redirectUri, String redirectUriType) {
+        return redirectUri + '-' + redirectUriType;
+    }
         
     @Override
     public int compareTo(ClientRedirectUriEntity o) {

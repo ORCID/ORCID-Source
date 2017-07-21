@@ -30,13 +30,12 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
 import org.orcid.jaxb.model.v3.dev1.record.Role;
+import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -54,7 +53,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
 
-    @Resource
+    @Resource(name = "jpaJaxbPeerReviewAdapterV3")
     private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
 
     @Test
@@ -85,7 +84,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("common:name", pe.getOrg().getName());
         assertEquals("common:city", pe.getOrg().getCity());
         assertEquals("common:region", pe.getOrg().getRegion());        
-        assertEquals(Iso3166Country.AF.value(), pe.getOrg().getCountry().value());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.value(), pe.getOrg().getCountry().value());
         assertEquals("common:disambiguated-organization-identifier", pe.getOrg().getOrgDisambiguated().getSourceId());
         assertEquals("common:disambiguation-source", pe.getOrg().getOrgDisambiguated().getSourceType()); 
         
@@ -96,7 +95,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("peer-review:subject-translated-name", pe.getSubjectTranslatedName());
         assertEquals("en", pe.getSubjectTranslatedNameLanguageCode());
         assertEquals("peer-review:subject-url", pe.getSubjectUrl());
-        assertEquals(WorkType.JOURNAL_ARTICLE, pe.getSubjectType());
+        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.JOURNAL_ARTICLE, pe.getSubjectType());
         
         //Check group id
         assertEquals("orcid-generated:12345", pe.getGroupId());
@@ -167,9 +166,9 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     private PeerReview getPeerReview(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/read_samples/peer-review-2.0.xml";
+        String name = "/record_3.0_dev1/samples/read_samples/peer-review-3.0_dev1.xml";
         if(full) {
-            name = "/record_2.0/samples/read_samples/peer-review-full-2.0.xml";
+            name = "/record_3.0_dev1/samples/read_samples/peer-review-full-3.0_dev1.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);

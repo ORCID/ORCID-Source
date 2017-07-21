@@ -57,7 +57,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbNotificationAdapterTest {
 
-    @Resource
+    @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter jpaJaxbNotificationAdapter;
 
     @Test
@@ -69,7 +69,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
         assertNotNull(notificationEntity);
-        assertEquals(NotificationType.CUSTOM, notificationEntity.getNotificationType());
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM, notificationEntity.getNotificationType());
         assertEquals("Test subject", notification.getSubject());
     }
 
@@ -125,7 +125,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAddItemsEntity addActivitiesEntity = (NotificationAddItemsEntity) notificationEntity;
         
         assertNotNull(notificationEntity);
-        assertEquals(NotificationType.PERMISSION, notificationEntity.getNotificationType());
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.PERMISSION, notificationEntity.getNotificationType());
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
         assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
         assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());
@@ -138,7 +138,7 @@ public class JpaJaxbNotificationAdapterTest {
         assertNotNull(activityEntities);
         assertEquals(1, activityEntities.size());
         NotificationItemEntity activityEntity = activityEntities.iterator().next();
-        assertEquals(ItemType.WORK, activityEntity.getItemType());
+        assertEquals(org.orcid.jaxb.model.notification.permission_v2.ItemType.WORK, activityEntity.getItemType());
         assertEquals("Latest Research Article", activityEntity.getItemName());
         assertEquals("DOI", activityEntity.getExternalIdType());
         assertEquals("1234/abc123", activityEntity.getExternalIdValue());        
@@ -170,7 +170,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAmendedEntity notificationAmendedEntity = (NotificationAmendedEntity) notificationEntity;
 
         assertNotNull(notificationEntity);
-        assertEquals(NotificationType.AMENDED, notificationEntity.getNotificationType());   
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED, notificationEntity.getNotificationType());   
         
         // Source
         assertNull(notificationAmendedEntity.getSourceId());        

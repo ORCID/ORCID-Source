@@ -30,7 +30,7 @@ import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermissi
 
 public class NotificationValidationManagerImpl implements NotificationValidationManager {
 
-    @Resource
+    @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator externalIDValidator;
     
     @Override

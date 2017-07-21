@@ -46,7 +46,7 @@ public class ProfileFundingManagerReadOnlyImpl implements ProfileFundingManagerR
     @Resource
     protected FundingSubTypeSolrDao fundingSubTypeSolrDao;
     
-    @Resource
+    @Resource(name = "jpaJaxbFundingAdapterV3")
     protected JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
         
     protected ProfileFundingDao profileFundingDao;            
@@ -155,7 +155,7 @@ public class ProfileFundingManagerReadOnlyImpl implements ProfileFundingManagerR
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         Fundings result = new Fundings();
         for (FundingSummary funding : fundings) {
-            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
+            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {

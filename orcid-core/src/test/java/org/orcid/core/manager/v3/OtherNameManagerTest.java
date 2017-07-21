@@ -54,7 +54,7 @@ public class OtherNameManagerTest extends BaseTest {
     @Mock
     private SourceManager sourceManager;
     
-    @Resource 
+    @Resource(name = "otherNameManagerV3")
     private OtherNameManager otherNameManager;
     
     @BeforeClass

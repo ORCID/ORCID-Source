@@ -84,7 +84,7 @@ import org.springframework.test.annotation.Rollback;
  */
 public class OrcidSearchManagerImplTest extends BaseTest {
 
-    @Resource
+    @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManagerImpl orcidSearchManager;
 
     @Mock

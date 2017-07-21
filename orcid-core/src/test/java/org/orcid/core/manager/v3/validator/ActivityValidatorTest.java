@@ -91,7 +91,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ActivityValidatorTest {
 
-    @Resource 
+    @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
     
     /**

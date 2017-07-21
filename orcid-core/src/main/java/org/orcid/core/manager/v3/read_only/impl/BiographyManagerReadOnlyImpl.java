@@ -67,7 +67,7 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
     @Cacheable(value = "public-biography", key = "#orcid.concat('-').concat(#lastModified)")
     public Biography getPublicBiography(String orcid, long lastModified) {
         Biography bio = getBiography(orcid, lastModified);
-        if(bio != null && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(bio.getVisibility())) {
+        if(bio != null && Visibility.PUBLIC.equals(bio.getVisibility())) {
             return bio;
         }
         return null;

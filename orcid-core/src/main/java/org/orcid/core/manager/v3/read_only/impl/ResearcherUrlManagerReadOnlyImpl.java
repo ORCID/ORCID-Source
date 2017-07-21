@@ -31,7 +31,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 public class ResearcherUrlManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ResearcherUrlManagerReadOnly {
 
-    @Resource
+    @Resource(name = "jpaJaxbResearcherUrlAdapterV3")
     protected JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
 
     protected ResearcherUrlDao researcherUrlDao;      

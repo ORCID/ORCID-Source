@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implements OtherNameManager {
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource

@@ -32,7 +32,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 public class ClientManagerReadOnlyImpl implements ClientManagerReadOnly {
 
-    @Resource
+    @Resource(name = "jpaJaxbClientAdapterV3")
     protected JpaJaxbClientAdapter jpaJaxbClientAdapter;
 
     private ClientDetailsDao clientDetailsDao;

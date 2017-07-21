@@ -44,7 +44,7 @@ public class PersonDetailsManagerTest extends DBUnitTest {
 
     private static final String ORCID = "0000-0000-0000-0003";
     
-    @Resource
+    @Resource(name = "personDetailsManagerV3")
     private PersonDetailsManager personDetailsManager;
 
     @BeforeClass

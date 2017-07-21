@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
@@ -55,7 +55,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Resource
     private ProfileDao profileDao;
     
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Override

@@ -48,10 +48,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @Resource
+    @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
 
     @Resource
@@ -60,16 +60,16 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
+    @Resource(name = "groupIdRecordManagerV3")
     private GroupIdRecordManager groupIdRecordManager;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
-    @Resource
+    @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator externalIDValidator;
     
-    @Resource 
+    @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
     
     @Resource
