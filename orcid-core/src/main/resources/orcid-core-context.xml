@@ -805,6 +805,16 @@
 		<property name="maxElementsOnDisk" value="0" />
 		<property name="strategy" value="NONE" />
 	</bean>
+
+	<bean id="clientDetailsEntityIdPCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="client-details-idp-entity" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.clientDetailsCache.maxElementsInMemory:10000}" />
+		<property name="timeToLiveSeconds" value="${org.orcid.core.clientDetailsCache.timeToLiveSeconds:600}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.clientDetailsCache.timeToIdleSeconds:600}" />
+		<property name="maxElementsOnDisk" value="0" />
+		<property name="strategy" value="NONE" />
+	</bean>
 	
 	<bean id="workLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="work-last-modified" />
