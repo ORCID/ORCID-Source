@@ -50,7 +50,7 @@ import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'widget-ng2',
-    templateUrl: './app/modules/widget/widget.component.html'
+    templateUrl: 'ng1Orcid/app/modules/widget/widget.component.html'
     /*`
         <p class="widgettest"><b>Text:</b> {{text}}</p>
     `*/
