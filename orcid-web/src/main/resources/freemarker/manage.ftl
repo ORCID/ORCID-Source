@@ -38,14 +38,14 @@
     </div>
 </#if>
 <div class="row">
-	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix lhs">
+    <div class="col-md-3 col-sm-12 col-xs-12 padding-fix lhs">
         <#include "admin_menu.ftl"/>
     </div>
     <!-- Right side -->
     <div class="col-md-9 col-sm-12 col-xs-12">
-    	<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
+        <h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
         <#assign open = "" />
-		<modal-unverified-email-set-primary></modal-unverified-email-set-primary>
+        <modal-unverified-email-set-primary></modal-unverified-email-set-primary>
         <table class="table table-bordered settings-table account-settings"
             ng-controller="EditTableCtrl" style="margin: 0px, padding:  0px;">
             <tbody>
@@ -55,24 +55,24 @@
                     <td><a href="" id="account-settings-toggle-email-edit" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a></td>
                 </tr>
                 <tr ng-include="'edit-emails'">
-                	<!-- Injecting Emails -->
+                    <!-- Injecting Emails -->
                 </tr>
                 
                 <tr>
-					<th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
+                    <th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
                     <td><a href="" id="" ng-click="toggleLanguageEdit()" ng-bind="languageToggleText"></a></td>
                 </tr>
                 
                 <tr ng-controller="languageCtrl" ng-show="showEditLanguage" ng-cloak>                                
-                	<td colspan="2">
-                		<p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
-                		<div class="row">
-                			<div class="col-md-12" ng-include="'edit-language'">
-                				
-                			</div>                			
-                			
-                		</div>                		
-                	</td>
+                    <td colspan="2">
+                        <p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
+                        <div class="row">
+                            <div class="col-md-12" ng-include="'edit-language'">
+                                
+                            </div>                          
+                            
+                        </div>                      
+                    </td>
                 </tr>
                 
                 <!-- Notifications -->
@@ -84,7 +84,7 @@
                 <tr ng-controller="NotificationPreferencesCtrl"
                     ng-show="showEditEmailPreferences" ng-cloak>
                     <td colspan="2">
-                    	<p>${springMacroRequestContext.getMessage("manage.notification_header")}</p>
+                        <p>${springMacroRequestContext.getMessage("manage.notification_header")}</p>
                         <div class="editTablePadCell35">                                
                             <label class="checkbox"> <input type="checkbox"
                                 id="sendOrcidChangeNotifcations"
@@ -111,13 +111,13 @@
                                 ng-model="prefsSrvc.prefs['send_orcid_news']"
                                 ng-change="prefsSrvc.updateNotificationPreferences()" />
                                 ${springMacroRequestContext.getMessage("change_notification_preferences.news")}
-                            <label>
+                            </label>
                         </div>
                         <p>
                             ${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation")}
                         </p>
                         <p>
-                        	${springMacroRequestContext.getMessage("change_notification_preferences.learn_more")}
+                            ${springMacroRequestContext.getMessage("change_notification_preferences.learn_more")}
                         </p>
                     </td>
                 </tr>
@@ -183,13 +183,13 @@
                         <div class="editTablePadCell35" id="privacy-settings">
                             ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
                             <@orcid.privacyToggle3
-						    angularModel="prefsSrvc.prefs['default_visibility']"
-						    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
-						    clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-						    publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
-						    limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
-						    privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
-						    elementId="workPrivHelp" />    
+                            angularModel="prefsSrvc.prefs['default_visibility']"
+                            questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+                            clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
+                            publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
+                            limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
+                            privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
+                            elementId="workPrivHelp" />    
                         </div>
                     </td>
                 </tr>
@@ -262,8 +262,8 @@
                             <p>
                                 ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")}&nbsp;<strong>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}</strong>
                                 <a
-	                                    href="${knowledgeBaseUri}/articles/580410"
-	                                    target="deprecate_orcid.learn_more_link" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
+                                        href="${knowledgeBaseUri}/articles/580410"
+                                        target="deprecate_orcid.learn_more_link" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
                             </p>
                             
                                                             
@@ -396,45 +396,45 @@
                 target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
         <div ng-controller="revokeApplicationFormCtrl" >
-        	<div ng-show="applicationSummaryList.length > 0" ng-cloak>
-		        <table class="table table-bordered settings-table normal-width">
-		            <thead>
-		                <tr>
-		                    <th width="35%">${springMacroRequestContext.getMessage("manage.trusted_organization")}</th>
-		                    <th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
-		                    <th width="35%">${springMacroRequestContext.getMessage("manage.thaccesstype")}</th>
-		                    <td width="5%"></td>
-		                </tr>
-		            </thead>
-		            <tbody>
-		                <tr data-ng-repeat="applicationSummary in applicationSummaryList">
-		                	<td class="revokeApplicationName">{{applicationSummary.name}}<br />
-		                        <a data-ng-hide="applicationSummary.websiteValue == null" href="{{getApplicationUrlLink(applicationSummary)}}" target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
-		                    </td>
-		                    <td width="35%">{{applicationSummary.approvalDate}}</td>
-		                    <td width="5%">
-		                        <div data-ng-show="applicationSummary.scopePaths">
-		                        	<span data-ng-repeat="(key, value) in applicationSummary.scopePaths">
-		                        	{{value}}
-		                    		</span>
-		                    	</div>
-		                    </td>
-		                    <td width="5%" class="tooltip-container">
-	            				<a id="revokeAppBtn" name="{{applicationSummary.orcidPath}}" ng-click="confirmRevoke(applicationSummary)"
-	            					class="glyphicon glyphicon-trash grey"
-	            					ng-hide="isPasswordConfirmationRequired">
-		            					<div class="popover popover-tooltip top">
-		    								<div class="arrow"></div>
-		    								<div class="popover-content">
-												<span><@spring.message "manage.revokeaccess"/></span>
-		    								</div>
-		   								</div>
-	            					</a>
-		    				</td>
-		                </tr>
-		            </tbody>
-		        </table>
-			</div>
+            <div ng-show="applicationSummaryList.length > 0" ng-cloak>
+                <table class="table table-bordered settings-table normal-width">
+                    <thead>
+                        <tr>
+                            <th width="35%">${springMacroRequestContext.getMessage("manage.trusted_organization")}</th>
+                            <th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
+                            <th width="35%">${springMacroRequestContext.getMessage("manage.thaccesstype")}</th>
+                            <td width="5%"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="applicationSummary in applicationSummaryList">
+                            <td class="revokeApplicationName">{{applicationSummary.name}}<br />
+                                <a data-ng-hide="applicationSummary.websiteValue == null" href="{{getApplicationUrlLink(applicationSummary)}}" target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
+                            </td>
+                            <td width="35%">{{applicationSummary.approvalDate}}</td>
+                            <td width="5%">
+                                <div data-ng-show="applicationSummary.scopePaths">
+                                    <span data-ng-repeat="(key, value) in applicationSummary.scopePaths">
+                                    {{value}}
+                                    </span>
+                                </div>
+                            </td>
+                            <td width="5%" class="tooltip-container">
+                                <a id="revokeAppBtn" name="{{applicationSummary.orcidPath}}" ng-click="confirmRevoke(applicationSummary)"
+                                    class="glyphicon glyphicon-trash grey"
+                                    ng-hide="isPasswordConfirmationRequired">
+                                        <div class="popover popover-tooltip top">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@spring.message "manage.revokeaccess"/></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <h1>
             ${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
@@ -470,12 +470,12 @@
                             ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
                             ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
                             class="glyphicon glyphicon-trash grey"">
-                           		<div class="popover popover-tooltip top">
-    								<div class="arrow"></div>
-    								<div class="popover-content">
-										<span><@spring.message "manage.revokeaccess"/></span>
-    								</div>
-   								</div>                            
+                                <div class="popover popover-tooltip top">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <span><@spring.message "manage.revokeaccess"/></span>
+                                    </div>
+                                </div>                            
                             </a>
                             <span ng-show="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
                         </td>
@@ -533,9 +533,9 @@
                 <@orcid.msg 'manage_signin_title' />
             </h1>
             <p>
-            	<@orcid.msg 'manage_signin_subtitle' />
-            	<br>
-            	<a href="${knowledgeBaseUri}/articles/892920"
+                <@orcid.msg 'manage_signin_subtitle' />
+                <br>
+                <a href="${knowledgeBaseUri}/articles/892920"
             target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
             </p>
             <div>
@@ -568,13 +568,13 @@
                 </#if>
             </div>
         </div>
-	</div>
+    </div>
 </div>
 
 <script type="text/ng-template" id="deactivate-account-modal">
     <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
     <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
-	</div>
+    </div>
 </script>
         
 <script type="text/ng-template" id="settings-verify-email-modal">
@@ -583,7 +583,7 @@
         <p><@orcid.msg 'workspace.check_your_email'/></p>
         <br />
         <button class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></button>
-	</div>
+    </div>
 </script>
 
 <script type="text/ng-template" id="delete-email-modal">
@@ -610,63 +610,63 @@
 <script type="text/ng-template" id="confirm-deprecate-account-modal">
     <div class="lightbox-container confirm-deprecate-account-modal">
        <div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">		
-				<h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>		 
-				<span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
-		        <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
-		        <span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span><br />
-		        <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
-		        <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
-		        <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
-		        <span ng-bind="deprecateProfilePojo.primaryOrcid"></span><br />
-		        <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
-		        <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
-			</div>			
-		</div>
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">
-				<div class="pull-left">
-	      			<button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
-				</div>
-			</div>
-		</div>
+            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">        
+                <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>      
+                <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
+                <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
+                <span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span><br />
+                <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
+                <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
+                <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
+                <span ng-bind="deprecateProfilePojo.primaryOrcid"></span><br />
+                <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
+                <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
+            </div>          
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="pull-left">
+                    <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 
 <script type="text/ng-template" id="deprecate-account-confirmation-modal">
-	<div class="lightbox-container deprecate-account-confirmation-modal">
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
-				<h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2>	
-       			<p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p>
-    		</div>
-    	</div>
-    	<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">
-				<div class="pull-left">
-	      			<a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
-				</div>
-			</div>
-		</div>
+    <div class="lightbox-container deprecate-account-confirmation-modal">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
+                <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2>    
+                <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="pull-left">
+                    <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
-    <div class="lightbox-container confirm-revoke-access-modal">		
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">		
-				<h2><@orcid.msg 'manage.application_access.revoke.confirm_title' /></h2>		 
-				<p><@orcid.msg 'manage.application_access.revoke.confirm_copy_1' /></p>				
-				<p><@orcid.msg 'manage.application_access.revoke.confirm_copy_2' /> {{applicationSummary.name}} (<@orcid.msg 'manage.application_access.revoke.access' /><span ng-repeat="(key, value) in applicationSummary.scopePaths">{{$last?value:value + ', '}}</span>)</p>
-			</div>			
-		</div>
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">
-				<div class="pull-right">
-	      			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.application_access.revoke.confirm_close' /></a>&nbsp;&nbsp<button class="btn btn-danger" ng-click="revokeAccess()" id="confirmRevokeAppBtn"><@orcid.msg 'manage.application_access.revoke.remove' /></button>
-				</div>
-			</div>
-		</div>
+    <div class="lightbox-container confirm-revoke-access-modal">        
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">        
+                <h2><@orcid.msg 'manage.application_access.revoke.confirm_title' /></h2>         
+                <p><@orcid.msg 'manage.application_access.revoke.confirm_copy_1' /></p>             
+                <p><@orcid.msg 'manage.application_access.revoke.confirm_copy_2' /> {{applicationSummary.name}} (<@orcid.msg 'manage.application_access.revoke.access' /><span ng-repeat="(key, value) in applicationSummary.scopePaths">{{$last?value:value + ', '}}</span>)</p>
+            </div>          
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="pull-right">
+                    <a href="" ng-click="closeModal()"><@orcid.msg 'manage.application_access.revoke.confirm_close' /></a>&nbsp;&nbsp<button class="btn btn-danger" ng-click="revokeAccess()" id="confirmRevokeAppBtn"><@orcid.msg 'manage.application_access.revoke.remove' /></button>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 
@@ -778,16 +778,16 @@
 
 <script type="text/ng-template" id="revoke-social-account-modal">
     <div class="lightbox-container revoke-social">
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">
-	        	<h3><@orcid.msg 'social.revoke'/></h3>
-        		<p><@orcid.msg 'social.revoke.body.1'/>{{socialAccount.idpName}}<@orcid.msg 'social.revoke.body.2'/>{{socialAccount.accountIdForDisplay}}<@orcid.msg 'social.revoke.body.3'/></p>
-        		<form ng-submit="revoke()">
-            		<button class="btn btn-danger"><@orcid.msg 'social.revoke.button'/></button>
-            		<a href="" ng-click="closeModal()"><@orcid.msg 'social.revoke.cancel'/></a>
-        		</form>
-			</div>
-		</div>        
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <h3><@orcid.msg 'social.revoke'/></h3>
+                <p><@orcid.msg 'social.revoke.body.1'/>{{socialAccount.idpName}}<@orcid.msg 'social.revoke.body.2'/>{{socialAccount.accountIdForDisplay}}<@orcid.msg 'social.revoke.body.3'/></p>
+                <form ng-submit="revoke()">
+                    <button class="btn btn-danger"><@orcid.msg 'social.revoke.button'/></button>
+                    <a href="" ng-click="closeModal()"><@orcid.msg 'social.revoke.cancel'/></a>
+                </form>
+            </div>
+        </div>        
     </div>
 </script>
 
