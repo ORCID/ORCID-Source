@@ -32,6 +32,7 @@ export class widgetCtrl {
     };
     
     toggleCopyWidget(): any{
+        console.log('toggleCopyWidget');
         this.showCode = !this.showCode;
     };
 
@@ -44,3 +45,16 @@ export const widgetCmp = {
     controller: widgetCtrl,
     controllerAs: 'ctrl'
 };
+
+import {Component, Input} from '@angular/core';
+
+@Component({
+    selector: 'widget-ng2',
+    templateUrl: './app/modules/widget/widget.component.html'
+    /*`
+        <p class="widgettest"><b>Text:</b> {{text}}</p>
+    `*/
+})
+export class widgetNg2Cmp {
+    @Input() text: string;
+}
