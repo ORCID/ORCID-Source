@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.EncryptionManager;

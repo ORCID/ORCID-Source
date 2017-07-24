@@ -37,7 +37,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.togglz.OrcidTogglzConfiguration;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
@@ -59,9 +58,6 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.togglz.core.context.FeatureContext;
-import org.togglz.core.repository.FeatureState;
-
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 

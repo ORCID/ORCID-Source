@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,14 +28,11 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.dao.ClientDetailsDao;

@@ -62,8 +62,6 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
-import org.orcid.core.oauth.OAuthError;
-import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.InitializingBean;

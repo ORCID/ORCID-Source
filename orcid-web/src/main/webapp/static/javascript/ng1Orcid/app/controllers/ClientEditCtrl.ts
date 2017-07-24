@@ -2,7 +2,6 @@ declare var $: any;
 declare var colorbox: any;
 declare var getBaseUri: any;
 declare var orcidVar: any;
-declare var selectedRedirectUriValue: any;
 
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
@@ -42,6 +41,7 @@ export const ClientEditCtrl = angular.module('orcidApp').controller(
             $scope.swaggerMemberUri = $scope.swaggerUri.replace("pub","api");
             $scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
             $scope.viewing = false;
+            $scope.selectedRedirectUriValue = null;
            
             // Submits the new client request
             $scope.addClient = function(){
@@ -472,9 +472,9 @@ export const ClientEditCtrl = angular.module('orcidApp').controller(
                 }
 
                 if($scope.selectedRedirectUri.length != 0) {
-                    selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
+                    $scope.selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
 
-                    if($scope.googleUri == selectedRedirectUriValue) {
+                    if($scope.googleUri == $scope.selectedRedirectUriValue) {
                         example = $scope.googleExampleLink;
                         example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
                         example = example.replace('[CLIENT_ID]', clientId);
@@ -482,16 +482,16 @@ export const ClientEditCtrl = angular.module('orcidApp').controller(
                         if(scope != '')
                             example = example.replace('[SCOPES]', scope);
                         $scope.playgroundExample = example.replace(/,/g,'%20');
-                    }else if($scope.swaggerUri == selectedRedirectUriValue) {
+                    }else if($scope.swaggerUri == $scope.selectedRedirectUriValue) {
                         $scope.playgroundExample = $scope.swaggerUri;
-                    }else if($scope.swaggerMemberUri == selectedRedirectUriValue) {
+                    }else if($scope.swaggerMemberUri == $scope.selectedRedirectUriValue) {
                         $scope.playgroundExample = $scope.swaggerMemberUri;
                     }
 
                     example = $scope.authorizeURLTemplate;
                     example = example.replace('[BASE_URI]', orcidVar.baseUri);
                     example = example.replace('[CLIENT_ID]', clientId);
-                    example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);
+                    example = example.replace('[REDIRECT_URI]', $scope.selectedRedirectUriValue);
                     if(scope != ''){
                         example = example.replace('[SCOPES]', scope);
                     }
@@ -504,7 +504,7 @@ export const ClientEditCtrl = angular.module('orcidApp').controller(
                     $scope.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
                         .replace('[CLIENT_SECRET]', selectedClientSecret)
                         .replace('[BASE_URI]', orcidVar.baseUri)
-                        .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+                        .replace('[REDIRECT_URI]', $scope.selectedRedirectUriValue);
                 }
             };
 

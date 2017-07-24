@@ -14,12 +14,14 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
     'OauthAuthorizationController',
     [
         '$compile', 
+        '$location',
         '$sce', 
         '$scope', 
         'commonSrvc', 
         'vcRecaptchaService', 
         function (
-            $compile, 
+            $compile,
+            $location, 
             $sce, 
             $scope, 
             commonSrvc, 
@@ -385,6 +387,12 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 $scope.recaptchaWidgetId = widgetId;        
             };
 
+            $scope.showDeactivationError = function() {
+                $scope.showDeactivatedError = true;
+                $scope.showReactivationSent = false;
+                $scope.$apply();
+            };
+
             $scope.showDuplicatesColorBox = function () {
                 $.colorbox({
                     html : $compile($('#duplicates').html())($scope),
@@ -432,7 +440,9 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
 
             $scope.showToLoginForm = function() {
-                $scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
+                if (typeof($scope.authorizationForm.userName) != 'undefined'){
+                    $scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
+                }
                 $scope.showRegisterForm = false;
             };
 
@@ -517,7 +527,12 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
 
             // Init
-            $scope.loadRequestInfoForm();          
+            var paramOauthRegex = /.*\?(.*\&)*(oauth){1}(=true){0,1}(?!=false)((\&){1}.+)*/g;
+            var paramOauth = paramOauthRegex.test( $location.absUrl() ); 
+            console.log ("paramOauth is: " + paramOauth);
+            if ( paramOauth == true ){
+                $scope.loadRequestInfoForm();  
+            }        
         }
     ]
 );
