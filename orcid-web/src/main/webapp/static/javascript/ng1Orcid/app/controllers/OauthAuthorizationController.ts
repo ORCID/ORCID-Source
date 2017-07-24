@@ -527,15 +527,13 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
 	                            $scope.loginAndAuthorize();                 
 	                        }               
 	                    } else{
-	                    	console.log(window.event)
-	                        $scope.authorize();
+	                    	$scope.authorize();
 	                    }
                     }
                 }
             };
 
             // Init
-            console.log("calling init" + orcidVar.originalOauth2Process)
             if(orcidVar.originalOauth2Process) {            	
             	$scope.loadRequestInfoForm();
             } 
@@ -601,18 +599,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 });
             }; 
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             $scope.oauth2ScreensPostRegisterConfirm = function() {
             	var baseUri = getBaseUri();
             	
@@ -649,15 +635,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     console.log("OauthAuthorizationController.postRegister() error");
                 });	
             };
-            
-            
-            
-            
-            
-            
-            
-            
-            
                                
         }
     ]

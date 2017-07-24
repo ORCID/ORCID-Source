@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.NotificationManager;
@@ -153,8 +154,8 @@ public class RegistrationController extends BaseController {
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
         reg.getTermsOfUse().setValue(false);   
         
-        String clientId = request.getParameter("client_id");
-        if(clientId != null) {
+        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        if(isOauth2ScreensRequest != null) {
             reg.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
         } else {
             reg.setCreationType(Text.valueOf(CreationMethod.DIRECT.value()));
