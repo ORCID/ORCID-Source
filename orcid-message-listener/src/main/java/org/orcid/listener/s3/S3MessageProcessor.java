@@ -19,7 +19,6 @@ package org.orcid.listener.s3;
 import java.util.function.Consumer;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -36,9 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.amazonaws.AmazonClientException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Core logic for listeners
@@ -87,7 +83,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 	    }
 	}
 
-	private void update_1_2_API(String orcid) {
+	private void update_1_2_API(String orcid) { 
 		if (is12IndexingEnabled) {
 			try {
 				OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(orcid);
@@ -108,7 +104,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 								((DeprecatedRecordException) e).getOrcidDeprecated());
 					}
 					recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-				} catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
+				} catch (Exception e1) {
 					LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
 					recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
 				}
@@ -144,7 +140,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 					}
 					exceptionHandler.handle20Exception(orcid, error);
 					recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-				} catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
+				} catch (Exception e1) {
 					LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
 					recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
 				}
