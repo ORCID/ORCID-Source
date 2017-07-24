@@ -53,6 +53,7 @@ import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@Deprecated
 public class OauthControllerBase extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthControllerBase.class);    
     protected Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");

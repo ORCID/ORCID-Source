@@ -77,6 +77,11 @@
       <#else>
         orcidVar.oauth2Screens = false;
       </#if>
+      <#if (originalOauth2Process)??>
+      	orcidVar.originalOauth2Process = true;
+      <#else>
+      	orcidVar.originalOauth2Process = false;
+      </#if>      
     </script>
 
 	<#include "/macros/orcid_ga.ftl">
