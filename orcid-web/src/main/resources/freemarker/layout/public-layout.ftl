@@ -45,7 +45,7 @@
             <div class="row top-header">
                 <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
                     <a href="https://orcid.org" alt="ORCID logo">
-                        <img src="${staticCdn}/img/orcid-logo.svg" width="200" alt="ORCID logo">
+                        <img src="${staticCdn}/img/orcid-logo.svg" width="200px" height="60px" alt="ORCID logo">
                     </a>
                 </div>       
             </div> 
