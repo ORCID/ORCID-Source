@@ -553,7 +553,7 @@
                         </nav>
                     </div>
                     <div class="col-md-10">
-                        <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0" src="${staticCdn}/img/cc-zero.svg" width="16"/></a> To the extent possible under law, the person who associated CC0 with this work has waived all copyright and related or neighboring rights to this work, unless otherwise indicated.</p>
+                        <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0" src="${staticCdn}/img/cc-zero.svg" height="16px" width="16px"/></a> To the extent possible under law, the person who associated CC0 with this work has waived all copyright and related or neighboring rights to this work, unless otherwise indicated.</p>
                         <nav>
                             <ul class="inline-list">
                                 <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
