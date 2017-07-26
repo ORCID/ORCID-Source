@@ -45,7 +45,7 @@
             <div class="row top-header">
                 <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
                     <a href="https://orcid.org" alt="ORCID logo">
-                        <img src="${staticCdn}/img/orcid-logo.svg" width="200" alt="ORCID logo">
+                        <img src="${staticCdn}/img/orcid-logo.svg" width="200px" height="60px" alt="ORCID logo">
                     </a>
                 </div>       
             </div> 
@@ -510,6 +510,10 @@
                 </h1>
                 <p><@orcid.msg 'public-layout.logo.tagline'/></p>
             </div>
+            <p class="see-more">${liveIds} <@orcid.msg
+                 'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
+                 title=""><@orcid.msg 'public-layout.see_more'/></a>
+            </p>
             <@orcid.checkFeatureStatus featureName='SURVEY'>
                 <p class="see-more">
                   <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="_blank" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
@@ -553,7 +557,7 @@
                         </nav>
                     </div>
                     <div class="col-md-10">
-                        <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0" src="${staticCdn}/img/cc-zero.svg" width="16"/></a> To the extent possible under law, the person who associated CC0 with this work has waived all copyright and related or neighboring rights to this work, unless otherwise indicated.</p>
+                        <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0" src="${staticCdn}/img/cc-zero.svg" height="16px" width="16px"/></a> To the extent possible under law, the person who associated CC0 with this work has waived all copyright and related or neighboring rights to this work, unless otherwise indicated.</p>
                         <nav>
                             <ul class="inline-list">
                                 <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>

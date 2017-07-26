@@ -3,8 +3,7 @@ declare var getBaseUri: any;
 declare var logAjaxError: any;
 declare var om: any;
 
-// Controller for delegate permissions that have been granted TO the current
-// user
+// Controller for delegate permissions that have been granted TO the current user
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 

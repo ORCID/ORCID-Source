@@ -740,7 +740,7 @@
 		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
 		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
-		<property name="maxElementsOnDisk" value="0" />
+		<property name="maxElementsOnDisk" value="${org.orcid.core.profileCache.maxElementsOnDisk:50000}" />
 		<property name="strategy" value="NONE" />
 	</bean>
 		
@@ -750,7 +750,7 @@
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="86400" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxElementsOnDisk" value="250000" />
+        <property name="maxElementsOnDisk" value="10000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
     
@@ -760,7 +760,7 @@
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="86400" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxElementsOnDisk" value="500000" />
+        <property name="maxElementsOnDisk" value="10000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
 
@@ -770,7 +770,7 @@
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="86400" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxElementsOnDisk" value="500000" />
+        <property name="maxElementsOnDisk" value="10000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
 
@@ -805,6 +805,16 @@
 		<property name="maxElementsOnDisk" value="0" />
 		<property name="strategy" value="NONE" />
 	</bean>
+
+	<bean id="clientDetailsEntityIdPCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="client-details-idp-entity" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.clientDetailsCache.maxElementsInMemory:10000}" />
+		<property name="timeToLiveSeconds" value="${org.orcid.core.clientDetailsCache.timeToLiveSeconds:600}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.clientDetailsCache.timeToIdleSeconds:600}" />
+		<property name="maxElementsOnDisk" value="0" />
+		<property name="strategy" value="NONE" />
+	</bean>
 	
 	<bean id="workLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="work-last-modified" />
@@ -815,7 +825,7 @@
         <property name="maxElementsOnDisk" value="6000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnWrite" value="true" />
     </bean>
     
     <bean id="publicWorkLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -827,7 +837,7 @@
         <property name="maxElementsOnDisk" value="6000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnWrite" value="true" />
     </bean>
 
     <bean id="minimizedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -839,7 +849,7 @@
         <property name="maxElementsOnDisk" value="150000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnWrite" value="true" />
     </bean>
     
     <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -851,7 +861,7 @@
         <property name="maxElementsOnDisk" value="150000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnWrite" value="true" />
     </bean>
     
     <bean id="salesForceMembersListCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">

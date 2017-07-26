@@ -19,7 +19,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
         'commonSrvc', 
         'vcRecaptchaService', 
         function (
-            $compile, 
+            $compile,
             $sce, 
             $scope, 
             commonSrvc, 
@@ -385,6 +385,12 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 $scope.recaptchaWidgetId = widgetId;        
             };
 
+            $scope.showDeactivationError = function() {
+                $scope.showDeactivatedError = true;
+                $scope.showReactivationSent = false;
+                $scope.$apply();
+            };
+
             $scope.showDuplicatesColorBox = function () {
                 $.colorbox({
                     html : $compile($('#duplicates').html())($scope),
@@ -432,7 +438,9 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
 
             $scope.showToLoginForm = function() {
-                $scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
+                if (typeof($scope.authorizationForm.userName) != 'undefined'){
+                    $scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
+                }
                 $scope.showRegisterForm = false;
             };
 
@@ -517,7 +525,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
 
             // Init
-            $scope.loadRequestInfoForm();          
+            $scope.loadRequestInfoForm();         
         }
     ]
 );

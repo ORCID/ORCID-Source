@@ -17,8 +17,6 @@
 package org.orcid.core.manager.validator;
 
 import java.util.List;
-import java.util.Optional;
-
 import javax.annotation.Resource;
 
 import org.apache.jena.ext.com.google.common.collect.Lists;

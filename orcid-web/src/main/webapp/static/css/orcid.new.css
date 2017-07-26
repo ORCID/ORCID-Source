@@ -8819,6 +8819,22 @@ ul.comma li:last-child:after {
     flex-wrap: wrap-reverse;
 } 
 */
+.lang-rl .container .header #form-search {
+    float: right;
+}
+
+.lang-rl .container .header .search form .bar {
+    float: right;
+}
+
+.lang-rl .full-name {
+    float: right;
+}
+
+.lang-rl .header .language-selector {
+    float: left;
+}
+
 .lang-rl .header .navigation > .menu {
     display: flex;
     flex-direction: column-reverse; 
@@ -8833,17 +8849,30 @@ ul.comma li:last-child:after {
     flex-wrap: wrap-reverse;
 }
 
+.lang-rl .header .search form #search-box {
+    float: right!important;
+}
+
 .lang-rl .lhs {
     float: right;
     padding-left: 20px!important;
 }
 
-.lang-rl .full-name {
-    float: right;
+.lang-rl .menu-container,
+.lang-rl .workspace-bar-menu {
+    float: left;
+}
+
+.lang-rl .notification-top-bar .inline-list.pull-right {
+    float: left!important;
 }
 
 .lang-rl .pull-left {
     float: right!important;
+}
+
+.lang-rl .sources-options {
+    float: left;
 }
 
 .lang-rl .table th, 
@@ -8851,11 +8880,20 @@ ul.comma li:last-child:after {
     text-align: right;
 }
 
+.lang-rl .workspace-body-list > li {
+    padding-left: 20px;
+}
+
 .lang-rl .workspace-profile .workspace-section .workspace-section-header .workspace-section-title {
     float: right;
 }
 
 .lang-rl .workspace-section-content {
+    float: right;
+}
+
+
+.lang-rl .workspace-title {
     float: right;
 }
 

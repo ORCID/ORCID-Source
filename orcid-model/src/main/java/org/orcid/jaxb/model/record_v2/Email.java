@@ -126,7 +126,7 @@ public class Email implements Filterable, Serializable, SourceAware {
         return verified;
     }
 
-    public void setVerified(boolean verified) {
+    public void setVerified(Boolean verified) {
         this.verified = verified;
     }
 
@@ -134,7 +134,7 @@ public class Email implements Filterable, Serializable, SourceAware {
         return current;
     }
 
-    public void setCurrent(boolean current) {
+    public void setCurrent(Boolean current) {
         this.current = current;
     }
 
@@ -142,7 +142,7 @@ public class Email implements Filterable, Serializable, SourceAware {
         return primary;
     }
 
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
 

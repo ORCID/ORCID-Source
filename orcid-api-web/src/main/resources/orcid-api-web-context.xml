@@ -214,7 +214,7 @@
     </bean>
     <bean id="memberV2ApiServiceImplV2_1" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_1">    	
         <property name="serviceDelegator" ref="memberV2ApiServiceDelegatorV2_1"/>
-        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorV2"/>
+        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorV2_1"/>
     </bean>        
         
 </beans>

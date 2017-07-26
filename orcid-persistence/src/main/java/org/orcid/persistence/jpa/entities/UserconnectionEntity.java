@@ -17,8 +17,6 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
