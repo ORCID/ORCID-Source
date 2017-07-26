@@ -81,7 +81,8 @@
       	orcidVar.originalOauth2Process = true;
       <#else>
       	orcidVar.originalOauth2Process = false;
-      </#if>      
+      </#if>     
+      orcidVar.oauthUserId = "${(oauth_userId?string)!}";
     </script>
 
 	<#include "/macros/orcid_ga.ftl">

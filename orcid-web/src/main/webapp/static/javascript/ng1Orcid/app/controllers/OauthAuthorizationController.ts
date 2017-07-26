@@ -534,6 +534,9 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
 
             // Init
+            console.log('Show login form? ' + orcidVar.showLogin);
+            console.log('User Id: ' + orcidVar.oauthUserId);
+            
             if(orcidVar.originalOauth2Process) {            	
             	$scope.loadRequestInfoForm();
             } 
