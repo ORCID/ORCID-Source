@@ -209,7 +209,7 @@ When this it is done, restart the server.
 
 Follow next instructions in order to generate the core javascript file.
 
-See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-Source/blob/master/orcid-nodejs/readme.md)
+See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-Source/blob/master/orcid-nodejs/README.md)
 
 ### Testing your set up
 
