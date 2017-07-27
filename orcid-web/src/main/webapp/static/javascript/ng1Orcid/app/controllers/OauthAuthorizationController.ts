@@ -531,15 +531,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
 	                    }
                     }
                 }
-            };
-
-            // Init
-            console.log('Show login form? ' + orcidVar.showLogin);
-            console.log('User Id: ' + orcidVar.oauthUserId);
-            
-            if(orcidVar.originalOauth2Process) {            	
-            	$scope.loadRequestInfoForm();
-            } 
+            }; 
             
             /////////////////////
             // Oauth 2 screens //
@@ -638,7 +630,21 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     console.log("OauthAuthorizationController.postRegister() error");
                 });	
             };
-                               
+
+            // Init
+            if(orcidVar.oauth2Screens) {
+                console.log('Show login form? ' + orcidVar.showLogin);
+                console.log('User Id: ' + orcidVar.oauthUserId);
+                $scope.showRegisterForm = !orcidVar.showLogin;
+                if(!$scope.showRegisterForm && orcidVar.oauthUserId){
+                    $scope.authorizationForm = {
+                        userName:  {value: orcidVar.oauthUserId}
+                    } 
+                }
+            }
+            if(orcidVar.originalOauth2Process) {                
+                $scope.loadRequestInfoForm();
+            }                     
         }
     ]
 );
