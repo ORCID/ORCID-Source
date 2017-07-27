@@ -90,21 +90,6 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return mav;
     }    
 
-    @RequestMapping(value = "/get-empty-sso-credential.json", method = RequestMethod.GET)
-    public @ResponseBody SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
-        SSOCredentials emptyObject = new SSOCredentials();
-        emptyObject.setClientSecret(Text.valueOf(StringUtils.EMPTY));
-
-        RedirectUri redirectUri = new RedirectUri();
-        redirectUri.setValue(new Text());
-        redirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
-
-        Set<RedirectUri> set = new HashSet<RedirectUri>();
-        set.add(redirectUri);
-        emptyObject.setRedirectUris(set);
-        return emptyObject;
-    }
-
     @RequestMapping(value = "/generate-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
     SSOCredentials generateSSOCredentialsJson(@RequestBody SSOCredentials ssoCredentials) {

@@ -99,14 +99,6 @@ public class ClientManagerImpl implements ClientManager {
     @Override
     @Transactional
     public Client createPublicClient(Client newClient) {
-        String userOrcid = sourceManager.retrieveSourceOrcid();
-        ClientDetailsEntity existingPublicClient = clientDetailsDao.getPublicClient(userOrcid);
-        
-        //Check if it already exists and return it
-        if(existingPublicClient != null) {
-            return jpaJaxbClientAdapter.toClient(existingPublicClient);
-        }
-        
         return create(newClient, true);
     }
     
@@ -124,7 +116,6 @@ public class ClientManagerImpl implements ClientManager {
             validateCreateClientRequest(memberId);
         }
         
-
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
         Date now = new Date();
         newEntity.setDateCreated(now);
@@ -165,7 +156,11 @@ public class ClientManagerImpl implements ClientManager {
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
         clientGrantedAuthorityEntity.setClientDetailsEntity(newEntity);
-        clientGrantedAuthorityEntity.setAuthority("ROLE_CLIENT");
+        if (publicClient) {
+            clientGrantedAuthorityEntity.setAuthority("ROLE_PUBLIC");
+        } else {
+            clientGrantedAuthorityEntity.setAuthority("ROLE_CLIENT");
+        }
         clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
         newEntity.setClientGrantedAuthorities(clientGrantedAuthorityEntities);
 
