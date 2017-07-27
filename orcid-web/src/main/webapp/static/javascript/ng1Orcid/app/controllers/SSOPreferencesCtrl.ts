@@ -55,19 +55,7 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
             
             
             
-            $scope.acceptTerms = function() {
-                $scope.mustAcceptTerms = false;
-                $scope.accepted = false;
-                $.colorbox({
-                    html : $compile($('#terms-and-conditions-modal').html())($scope),
-                    scrolling: true,
-                    onLoad: function() {
-                        $('#cboxClose').remove();
-                    }
-                });
-
-                $.colorbox.resize({width:"590px"});
-            };
+            
 
             $scope.addRedirectURI = function() {
                 $scope.userCredentials.redirectUris.push({value: '',type: 'default'});
@@ -227,28 +215,7 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                     // something bad is happening!
                     console.log("Error updating SSO credentials");
                 });
-            };
-
-            $scope.enableDeveloperTools = function() {
-                if($scope.accepted == true) {
-                    $scope.mustAcceptTerms = false;
-                    $.ajax({
-                        url: getBaseUri()+'/developer-tools/enable-developer-tools.json',
-                        contentType: 'application/json;charset=UTF-8',
-                        type: 'POST',
-                        success: function(data){
-                            if(data == true){
-                                window.location.href = getBaseUri()+'/developer-tools';
-                            };
-                        }
-                    }).fail(function(error) {
-                        // something bad is happening!
-                        console.log("Error enabling developer tools");
-                    });
-                } else {
-                    $scope.mustAcceptTerms = true;
-                }        
-            };
+            };            
 
             $scope.expand =  function(){
                 $scope.expanded = true;
@@ -393,22 +360,6 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                 });
             };
 			
-			$scope.verifyEmail = function() {
-                var funct = function() {
-                    $scope.verifyEmailObject = emailSrvc.primaryEmail;
-                    emailSrvc.verifyEmail(emailSrvc.primaryEmail,function(data) {
-                        $scope.verifyEmailSent = true;    
-                        $scope.$apply();                    
-                   });            
-                };
-                if (emailSrvc.primaryEmail == null){
-                    emailSrvc.getEmails(funct);
-                }
-                else {
-                   funct();
-                }
-            };
-			
 			///////
 			//DONE
 			///////
@@ -499,6 +450,57 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                 // filtered
                 $scope.nameToDisplay = $sce.trustAsHtml($scope.userCredentials.clientName.value);
                 $scope.descriptionToDisplay = $sce.trustAsHtml($scope.userCredentials.clientDescription.value);
+            };
+            
+            $scope.verifyEmail = function() {
+                var funct = function() {
+                    $scope.verifyEmailObject = emailSrvc.primaryEmail;
+                    emailSrvc.verifyEmail(emailSrvc.primaryEmail,function(data) {
+                        $scope.verifyEmailSent = true;    
+                        $scope.$apply();                    
+                   });            
+                };
+                if (emailSrvc.primaryEmail == null){
+                    emailSrvc.getEmails(funct);
+                }
+                else {
+                   funct();
+                }
+            };
+            
+            $scope.acceptTerms = function() {
+                $scope.mustAcceptTerms = false;
+                $scope.accepted = false;
+                $.colorbox({
+                    html : $compile($('#terms-and-conditions-modal').html())($scope),
+                    scrolling: true,
+                    onLoad: function() {
+                        $('#cboxClose').remove();
+                    }
+                });
+
+                $.colorbox.resize({width:"590px"});
+            };
+            
+            $scope.enableDeveloperTools = function() {
+                if($scope.accepted == true) {
+                    $scope.mustAcceptTerms = false;
+                    $.ajax({
+                        url: getBaseUri()+'/developer-tools/enable-developer-tools.json',
+                        contentType: 'application/json;charset=UTF-8',
+                        type: 'POST',
+                        success: function(data){
+                            if(data == true){
+                                window.location.href = getBaseUri()+'/developer-tools';
+                            };
+                        }
+                    }).fail(function(error) {
+                        // something bad is happening!
+                        console.log("Error enabling developer tools");
+                    });
+                } else {
+                    $scope.mustAcceptTerms = true;
+                }        
             };
             
             // init

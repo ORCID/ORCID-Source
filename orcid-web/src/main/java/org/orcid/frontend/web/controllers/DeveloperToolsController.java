@@ -26,18 +26,19 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ClientManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
@@ -73,23 +74,45 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
     
+    @Resource
+    private ClientManager clientManager;
+    
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
+    
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
         ModelAndView mav = new ModelAndView("developer_tools");
         String userOrcid = getCurrentUserOrcid();
         ProfileEntity entity = profileEntityCacheManager.retrieve(userOrcid);
-        if (!entity.getEnableDeveloperTools()) {
+        mav.addObject("developerToolsEnabled", entity.getEnableDeveloperTools());
+        if (!entity.getEnableDeveloperTools()) {            
             if (OrcidType.USER.equals(entity.getOrcidType())) {
                 mav.addObject("error", getMessage("manage.developer_tools.user.error.enable_developer_tools"));
-            } else {    
+            } else {
                 mav.addObject("error", getMessage("manage.developer_tools.user.error.invalid_user_type"));
             }
         }
-        
+
+        mav.addObject("hideRegistration", (sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin()));
         mav.addObject("hasVerifiedEmail", emailManagerReadOnly.haveAnyEmailVerified(userOrcid, entity.getLastModified().getTime()));
         return mav;
-    }    
+    }
 
+    @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.GET)
+    public @ResponseBody Client getSSOCredentialsJson() {
+        String userOrcid = getEffectiveUserOrcid();
+        ProfileEntity member = profileEntityCacheManager.retrieve(userOrcid);
+        Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();
+        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(userOrcid, lastModified);
+
+        if (existingClients.isEmpty()) {
+            return null;
+        }
+
+        return Client.fromModelObject(existingClients.stream().findFirst().get());
+    }
+    
     @RequestMapping(value = "/generate-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
     SSOCredentials generateSSOCredentialsJson(@RequestBody SSOCredentials ssoCredentials) {
@@ -189,19 +212,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         if(!groupProfile.getId().equals(getCurrentUserOrcid()))
             return false;               
         return orcidSSOManager.resetClientSecret(clientId);
-    }
-
-    @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.GET)
-    public @ResponseBody
-    SSOCredentials getSSOCredentialsJson() {
-        SSOCredentials credentials = new SSOCredentials();
-        String userOrcid = getEffectiveUserOrcid();
-        ClientDetailsEntity existingClientDetails = orcidSSOManager.getUserCredentials(userOrcid);
-        if (existingClientDetails != null)
-            credentials = SSOCredentials.toSSOCredentials(existingClientDetails);
-
-        return credentials;
-    }
+    }    
 
     @RequestMapping(value = "/revoke-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
