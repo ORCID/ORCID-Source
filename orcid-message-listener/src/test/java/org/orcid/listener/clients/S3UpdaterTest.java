@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
+
 import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
@@ -38,7 +40,6 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.amazonaws.AmazonClientException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
@@ -65,7 +66,7 @@ public class S3UpdaterTest {
     }
     
     @Test
-    public void updateS3_OrcidProfileTest() throws JAXBException, JsonProcessingException, AmazonClientException {        
+    public void updateS3_OrcidProfileTest() throws JAXBException, AmazonClientException, IOException {        
         String bucketPrefix = "bucket-production";
         String orcid = "0000-0000-0000-000X";
         OrcidMessage om = new OrcidMessage();
@@ -76,14 +77,14 @@ public class S3UpdaterTest {
         S3Updater s3 = new S3Updater(bucketPrefix);
         s3.setS3MessagingService(s3MessagingService);
         s3.updateS3(orcid, om);
-        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-1-2-json-x"), Matchers.eq(orcid + ".json"), Matchers.anyString());
-        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-1-2-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.anyString());
-        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-2-0-json-x"), Matchers.eq(orcid + ".xml"), Matchers.anyString());
-        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-2-0-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.anyString());
+        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-1-2-json-x"), Matchers.eq(orcid + ".json"), Matchers.any(), Matchers.any());
+        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-1-2-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
+        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-2-0-json-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
+        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-2-0-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
     }
     
     @Test
-    public void updateS3_RecordTest() throws JAXBException, JsonProcessingException, AmazonClientException {        
+    public void updateS3_RecordTest() throws JAXBException, AmazonClientException, IOException {        
         String bucketPrefix = "bucket-production";
         String orcid = "0000-0000-0000-000X";
         Record record = new Record();
@@ -92,9 +93,9 @@ public class S3UpdaterTest {
         S3Updater s3 = new S3Updater(bucketPrefix);
         s3.setS3MessagingService(s3MessagingService);
         s3.updateS3(orcid, record);
-        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-1-2-json-x"), Matchers.eq(orcid + ".json"), Matchers.anyString());
-        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-1-2-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.anyString());
-        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-2-0-json-x"), Matchers.eq(orcid + ".json"), Matchers.anyString());
-        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-2-0-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.anyString());
+        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-1-2-json-x"), Matchers.eq(orcid + ".json"), Matchers.any(), Matchers.any());
+        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-1-2-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
+        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-2-0-json-x"), Matchers.eq(orcid + ".json"), Matchers.any(), Matchers.any());
+        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-2-0-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
     }
 }
