@@ -76,7 +76,315 @@
 					</div>
 				</#if>										
 			<#else>		
-				Working on ...
+				<div class="sso-api">
+					<!-- Top content, instructions -->
+					<div class="row">				
+						<div class="col-md-10 col-sm-10 col-xs-8">					
+							<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>										
+						</div>					
+					</div>
+				
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">	
+							<p><i><@orcid.msg 'developer_tools.note' /> <a href="./my-orcid"><@orcid.msg 'developer_tools.note.link.text' /></a><@orcid.msg 'developer_tools.note.link.point' /></i></p>							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<p class="reset"><strong><@orcid.msg 'developer_tools.public_member.enabled' /></strong></p>
+							<p><@orcid.msg 'developer_tools.public_member.enabled.terms' /></p>							
+							<p class="developer-tools-instructions"></p>
+						</div>
+					</div>
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					<!-- App details -->
+					<div class="details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
+					
+						<!-- Name and Edit/Delete options -->
+						<div class="row">					
+							<div class="col-md-10 col-sm-10 col-xs-9">						
+								<h4 ng-bind-html="nameToDisplay"></h4>													
+							</div>
+							<div class="col-md-2 col-sm-2 col-xs-3">				
+								<ul class="sso-options-light pull-right">							
+									<li><a href ng-click="showEditLayout()" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>							
+								</ul>					
+							</div>				
+						</div>			
+						<div class="row">
+							<!-- Website -->
+							<div class="col-md-12 col-sm-12 col-xs-12 dt-website">
+								<p><a href="{{getClientUrl(userCredentials)}}" target="userCredentials.website.value">{{userCredentials.website.value}}</a></p>
+							</div>							
+						</div>
+						<div class="row">
+							<!-- Description -->
+							<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
+								<p ng-bind-html="descriptionToDisplay"></p>														
+							</div>							
+						</div>
+						<div class="slidebox" ng-show="expanded == true">
+							<div class="row">
+								<!-- SLIDE BOX  -->
+								<!-- Redirect URIS -->
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>																		
+									<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in userCredentials.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()" class="input-xlarge-full input-xlarge">
+									</select>														
+								</div>
+							</div>
+							<div class="row">						
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="grey-box">
+										<!-- Client details-->
+										<div class="row bottomBuffer">
+											<div class="col-md-3 col-sm-3 col-xs-12">
+												<strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong>									
+											</div>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												{{userCredentials.clientOrcid.value}}								
+											</div>
+										</div>
+										
+										<div class="row bottomBuffer">
+											<div class="col-md-3 col-sm-3 col-xs-12">
+												<strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong>								
+											</div>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												{{userCredentials.clientSecret.value}}							
+											</div>
+										</div>
+										 <!-- Authorize URl and Token URL -->
+										<div class="row bottomBuffer" ng-hide="playgroundExample != ''">
+											<div class="col-md-3 col-sm-3 col-xs-12">
+												<strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong>							
+											</div>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												<div class="row">
+									    			<div class="col-md-12 col-sm-12 col-xs-12">
+									    				{{authorizeUrlBase}}
+									    			</div>
+									    		</div>
+									    		<div class="row">									    			
+										    		<div class="col-md-5 col-sm-5 col-xs-12">
+										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>
+										  			</div>
+										  			<div class="col-md-7 col-sm-7 col-xs-12 no-wrap">
+										  				<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
+										  			</div>
+									    		</div>
+									    		<div class="row">
+									    			<div class="col-md-12 col-sm-12 col-xs-12">
+									    				<textarea class="input-xlarge-full authorizeURL" ng-model="authorizeURL" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>
+									    			</div>
+									    		</div>								
+											</div>
+										</div>
+										
+										<div class="row bottomBuffer" ng-hide="playgroundExample != ''">
+											<div class="col-md-3 col-sm-3 col-xs-12">
+												<strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong>								
+											</div>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+													{{tokenURL}}<br />
+											    	<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
+											    	<textarea class="input-xlarge-full authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>							
+											</div>
+										</div>
+										
+										<div class="row" ng-hide="playgroundExample == ''">
+											<div class="col-md-3 col-sm-3 col-xs-12">
+												<strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong>								
+											</div>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												<a href="{{playgroundExample}}" target="'manage.developer_tools.view.example.google">
+													<span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
+													<span ng-show="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
+												</a>
+											</div>
+										</div>												
+									</div>
+								</div>
+							</div>
+						</div>				
+					</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					<!-- Create form -->
+					<div class="create-client" ng-show="creating" ng-cloak>	
+						<!-- Name -->
+						<div class="row">					
+							<div class="col-md-10 col-sm-10 col-xs-12">
+									<span><strong><@orcid.msg 'manage.developer_tools.generate.name'/></strong></span>
+									<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="full-width-input" ng-model="userCredentials.displayName.value">
+									<span class="orcid-error" ng-show="userCredentials.displayName.errors.length > 0">
+										<div ng-repeat='error in userCredentials.displayName.errors' ng-bind-html="error"></div>
+									</span>
+							</div>	
+							<div class="col-md-2 col-sm-3"></div>											
+						</div>
+									
+						<!-- Website -->
+						<div class="row">					
+							<div class="col-md-10 col-sm-10 col-xs-12 dt-website">
+								<span><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
+								<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="full-width-input" ng-model="userCredentials.website.value">
+								<span class="orcid-error" ng-show="userCredentials.website.errors.length > 0">
+									<div ng-repeat='error in userCredentials.website.errors' ng-bind-html="error"></div>
+								</span>												
+							</div>			
+							<div class="col-md-2 col-sm-2"></div>									
+						</div>
+										
+						<!-- Description -->						
+						<div class="row">					
+							<div class="col-md-10 col-sm-10 col-xs-12 dt-description">						
+								<span><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
+								<textarea placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" ng-model="userCredentials.shortDescription.value"></textarea>						
+								<span class="orcid-error" ng-show="userCredentials.shortDescription.errors.length > 0">
+									<div ng-repeat='error in userCredentials.shortDescription.errors' ng-bind-html="error"></div>
+								</span>												
+							</div>			
+							<div class="col-md-2 col-sm-2"></div>									
+						</div>
+						
+						<!-- Redirect URIS -->
+						<div class="row">
+							<!-- SLIDE BOX  -->					
+							<div class="col-md-10 col-sm-10 col-xs-12">
+								<div class="redirectUris">
+									<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>						
+									<div ng-repeat="rUri in userCredentials.redirectUris">										
+										<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" ng-model="rUri.value.value">					
+										<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
+										<span class="orcid-error" ng-show="rUri.errors.length > 0">
+											<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
+										</span>	
+									</div>
+									<span class="orcid-error" ng-show="userCredentials.redirectUris.length == 0">
+										<div><@orcid.msg 'manage.developer_tools.at_least_one' /></div>
+									</span>
+								</div>
+							</div>	
+							<div class="col-md-2 col-sm-2"></div>					
+						</div>
+						
+						<!-- Options -->
+						<div class="row">
+							<div class="col-md-9 col-sm-9 col-xs-9 add-options">
+								<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+								<div class="add-options margin-bottom-box">								
+									<div>
+										<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
+										<ul class="pullleft-list">
+											<li ng-show="!hideGoogleUri" id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>
+											<li ng-show="!hideSwaggerUri" id="swagger-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('swagger')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>										
+										</ul>								
+									</div>
+								</div>						
+							</div>
+							<div class="col-md-3 col-sm-3 col-xs-3">				
+								<ul class="sso-options pull-right">									
+									<li><a href ng-click="submit()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>																								
+								</ul>					
+							</div>	
+						</div>				
+					</div>
+
+					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value" ng-cloak>
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="tab-container" ng-class="{'expanded' : expanded == true}">
+								<a class="tab" ng-click="expand()" ng-show="expanded == false"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
+								<a class="tab" ng-click="collapse()" ng-show="expanded == true"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
+							</div>
+						</div>			
+					</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<h3><@orcid.msg 'developer_tools.public_member.what_can_you_do' /></h3>
+							<p><@orcid.msg 'developer_tools.public_member.what_can_you_do.description' /></p>
+							<ul class="dotted">
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.1' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.2' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.3' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.4' /></li>
+							</ul>
+							<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<h3><@orcid.msg 'developer_tools.client_types.description.differences' /></h3>
+							<p><a href="https://orcid.org/about/membership/comparison" target="developer_tools.client_types.description.differences.link"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
+						</div>
+					</div>																
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">								
+							<h3><@orcid.msg 'developer_tools.public_member.additional_resources' /></h3>																	
+							<ul class="dotted">
+								<li><a href="http://members.orcid.org/api/introduction-orcid-public-api" target="developer_tools.public_member.read_more"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
 			</#if>
 		</div>				
 	</div>		

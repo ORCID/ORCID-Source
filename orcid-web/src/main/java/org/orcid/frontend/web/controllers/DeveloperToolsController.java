@@ -19,13 +19,12 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ClientManager;
@@ -34,9 +33,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -44,6 +42,8 @@ import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +56,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = { "/developer-tools" })
 @PreAuthorize("!@sourceManager.isInDelegationMode() OR @sourceManager.isDelegatedByAnAdmin()")
 public class DeveloperToolsController extends BaseWorkspaceController {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeveloperToolsController.class);
 
     private static int CLIENT_NAME_LENGTH = 255;
 
@@ -99,7 +101,22 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return mav;
     }
 
-    @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/client.json", method = RequestMethod.GET)
+    public @ResponseBody SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
+        SSOCredentials emptyObject = new SSOCredentials();
+        emptyObject.setClientSecret(Text.valueOf(StringUtils.EMPTY));
+
+        RedirectUri redirectUri = new RedirectUri();
+        redirectUri.setValue(new Text());
+        redirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
+
+        Set<RedirectUri> set = new HashSet<RedirectUri>();
+        set.add(redirectUri);
+        emptyObject.setRedirectUris(set);
+        return emptyObject;
+    }
+    
+    @RequestMapping(value = "/get-client.json", method = RequestMethod.GET)
     public @ResponseBody Client getSSOCredentialsJson() {
         String userOrcid = getEffectiveUserOrcid();
         ProfileEntity member = profileEntityCacheManager.retrieve(userOrcid);
@@ -113,187 +130,116 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return Client.fromModelObject(existingClients.stream().findFirst().get());
     }
     
-    @RequestMapping(value = "/generate-sso-credentials.json", method = RequestMethod.POST)
-    public @ResponseBody
-    SSOCredentials generateSSOCredentialsJson(@RequestBody SSOCredentials ssoCredentials) {
-        boolean hasErrors = validateSSOCredentials(ssoCredentials);
+    @RequestMapping(value = "/create-client.json", method = RequestMethod.POST)
+    public @ResponseBody Client generateSSOCredentialsJson(@RequestBody Client client) {
+        validateClient(client);
 
-        if (!hasErrors) { 
-            //XXX
-            
-            OrcidProfile profile = getEffectiveProfile();
-            String orcid = profile.getOrcidIdentifier().getPath();
-            Set<String> redirectUriStrings = new HashSet<String>();
-            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                redirectUriStrings.add(redirectUri.getValue().getValue());
+        if (client.getErrors().isEmpty()) {
+            org.orcid.jaxb.model.client_v2.Client clientToCreate = client.toModelObject();
+            try {
+                clientToCreate = clientManager.createPublicClient(clientToCreate);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
+                client.setErrors(new ArrayList<String>());
+                client.getErrors().add(errorDesciption);
+                return client;
             }
-            String clientName = ssoCredentials.getClientName().getValue();
-            String clientDescription = ssoCredentials.getClientDescription().getValue();
-            String clientWebsite = ssoCredentials.getClientWebsite().getValue();
-            ClientDetailsEntity clientDetails = orcidSSOManager.grantSSOAccess(orcid, clientName, clientDescription, clientWebsite, redirectUriStrings);
-            ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
-        } else {
-            List<String> errors = ssoCredentials.getErrors();
-            if (errors == null)
-                errors = new ArrayList<String>();
-
-            if (ssoCredentials.getClientName().getErrors() != null && !ssoCredentials.getClientName().getErrors().isEmpty())
-                errors.addAll(ssoCredentials.getClientName().getErrors());
-
-            if (ssoCredentials.getClientDescription().getErrors() != null && !ssoCredentials.getClientDescription().getErrors().isEmpty())
-                errors.addAll(ssoCredentials.getClientDescription().getErrors());
-
-            if (ssoCredentials.getClientWebsite().getErrors() != null && !ssoCredentials.getClientWebsite().getErrors().isEmpty())
-                errors.addAll(ssoCredentials.getClientWebsite().getErrors());
-
-            if (ssoCredentials.getRedirectUris() != null) {
-                for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                    if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
-                        errors.addAll(redirectUri.getErrors());
-                }
-            }
-            ssoCredentials.setErrors(errors);
+            client = Client.fromModelObject(clientToCreate);
         }
 
-        return ssoCredentials;
+        return client;
     }
 
     @RequestMapping(value = "/update-user-credentials.json", method = RequestMethod.POST)
-    public @ResponseBody
-    SSOCredentials updateUserCredentials(@RequestBody SSOCredentials ssoCredentials) {
-        boolean hasErrors = validateSSOCredentials(ssoCredentials);
+    public @ResponseBody Client updateUserCredentials(@RequestBody Client client) {
+        validateClient(client);
 
-        if (!hasErrors) {            
-            OrcidProfile profile = getEffectiveProfile();
-            String orcid = profile.getOrcidIdentifier().getPath();
-            Set<String> redirectUriStrings = new HashSet<String>();
-            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                redirectUriStrings.add(redirectUri.getValue().getValue());
+        if (client.getErrors().isEmpty()) {
+            org.orcid.jaxb.model.client_v2.Client clientToEdit = client.toModelObject();
+            try {
+                clientToEdit = clientManager.edit(clientToEdit);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
+                client.setErrors(new ArrayList<String>());
+                client.getErrors().add(errorDesciption);
+                return client;
             }
-            String clientName = ssoCredentials.getClientName().getValue();
-            String clientDescription = ssoCredentials.getClientDescription().getValue();
-            String clientWebsite = ssoCredentials.getClientWebsite().getValue();
-            ClientDetailsEntity clientDetails = orcidSSOManager.updateUserCredentials(orcid, clientName, clientDescription, clientWebsite, redirectUriStrings);
-            ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
-            ssoCredentials.setClientWebsite(Text.valueOf(clientWebsite));
-        } else {
-            List<String> errors = ssoCredentials.getErrors();
-            if (errors == null)
-                errors = new ArrayList<String>();
-
-            if (ssoCredentials.getClientName().getErrors() != null && !ssoCredentials.getClientName().getErrors().isEmpty())
-                errors.addAll(ssoCredentials.getClientName().getErrors());
-
-            if (ssoCredentials.getClientDescription().getErrors() != null && !ssoCredentials.getClientDescription().getErrors().isEmpty())
-                errors.addAll(ssoCredentials.getClientDescription().getErrors());
-
-            if (ssoCredentials.getClientWebsite().getErrors() != null && !ssoCredentials.getClientWebsite().getErrors().isEmpty())
-                errors.addAll(ssoCredentials.getClientWebsite().getErrors());
-
-            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
-                    errors.addAll(redirectUri.getErrors());
-            }
-            ssoCredentials.setErrors(errors);
-        }
-        return ssoCredentials;
+            client = Client.fromModelObject(clientToEdit);
+        } 
+        
+        return client;
     }
 
     @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
     public @ResponseBody
     boolean resetClientSecret(@RequestBody String clientId) {
-        //Verify this client belongs to the user
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-        if(clientDetails == null)
+        //Verify this client belongs to the member
+        org.orcid.jaxb.model.client_v2.Client client = clientManagerReadOnly.get(clientId);
+        if(client == null) {
             return false;
-        ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
-        if(groupProfile == null)
+        }
+        
+        if(!client.getGroupProfileId().equals(getCurrentUserOrcid())) {
             return false;
-        if(!groupProfile.getId().equals(getCurrentUserOrcid()))
-            return false;               
-        return orcidSSOManager.resetClientSecret(clientId);
+        }
+        
+        return clientManager.resetClientSecret(clientId);
     }    
-
-    @RequestMapping(value = "/revoke-sso-credentials.json", method = RequestMethod.POST)
-    public @ResponseBody
-    SSOCredentials revokeSSOCredentials(HttpServletRequest request) {
-        throw new NotImplementedException();
-    }
     
     /**
-     * Validates the ssoCredentials object
+     * Validates the Client object
      * 
      * @param ssoCredentials
      * @return true if any error is found in the ssoCredentials object
      * */
-    private boolean validateSSOCredentials(SSOCredentials ssoCredentials) {
-        boolean hasErrors = false;
-        Set<RedirectUri> redirectUris = ssoCredentials.getRedirectUris();
-        if (PojoUtil.isEmpty(ssoCredentials.getClientName())) {
-            if (ssoCredentials.getClientName() == null) {
-                ssoCredentials.setClientName(new Text());
-            }
-            ssoCredentials.getClientName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name_not_empty")));
-            hasErrors = true;
-        } else if (ssoCredentials.getClientName().getValue().length() > CLIENT_NAME_LENGTH) {
-            ssoCredentials.getClientName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name_too_long")));
-            hasErrors = true;
-        } else if(OrcidStringUtils.hasHtml(ssoCredentials.getClientName().getValue())){
-            ssoCredentials.getClientName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name.html")));
-            hasErrors = true;
-        } else {
-            ssoCredentials.getClientName().setErrors(new ArrayList<String>());
-        }
+    private void validateClient(Client client) {
+        client.getDisplayName().setErrors(new ArrayList<String>());
+        if (PojoUtil.isEmpty(client.getDisplayName())) {
+            client.getDisplayName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name_not_empty")));
+        } else if (client.getDisplayName().getValue().length() > CLIENT_NAME_LENGTH) {
+            client.getDisplayName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name_too_long")));
+        } else if(OrcidStringUtils.hasHtml(client.getDisplayName().getValue())){
+            client.getDisplayName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name.html")));
+        } 
 
-        if (PojoUtil.isEmpty(ssoCredentials.getClientDescription())) {
-            if (ssoCredentials.getClientDescription() == null) {
-                ssoCredentials.setClientDescription(new Text());
-            }
-            ssoCredentials.getClientDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description_not_empty")));
-            hasErrors = true;
-        } else if(OrcidStringUtils.hasHtml(ssoCredentials.getClientDescription().getValue())) {
-            ssoCredentials.getClientDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description.html")));
-            hasErrors = true;
-        } else {
-            ssoCredentials.getClientDescription().setErrors(new ArrayList<String>());
-        }
+        client.getShortDescription().setErrors(new ArrayList<String>());
+        if (PojoUtil.isEmpty(client.getShortDescription())) {
+            client.getShortDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description_not_empty")));
+        } else if(OrcidStringUtils.hasHtml(client.getShortDescription().getValue())) {
+            client.getShortDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description.html")));
+        } 
 
-        if (PojoUtil.isEmpty(ssoCredentials.getClientWebsite())) {
-            if (ssoCredentials.getClientWebsite() == null) {
-                ssoCredentials.setClientWebsite(new Text());
-            }
-            ssoCredentials.getClientWebsite().setErrors(Arrays.asList(getMessage("manage.developer_tools.website_not_empty")));
-            hasErrors = true;
+        client.getWebsite().setErrors(new ArrayList<String>());
+        if (PojoUtil.isEmpty(client.getWebsite())) {
+            client.getWebsite().setErrors(Arrays.asList(getMessage("manage.developer_tools.website_not_empty")));
         } else {
-            List<String> errors = new ArrayList<String>();
             String[] schemes = { "http", "https", "ftp" };
             UrlValidator urlValidator = new UrlValidator(schemes);
-            String websiteString = ssoCredentials.getClientWebsite().getValue();
+            String websiteString = client.getWebsite().getValue();
             if (!urlValidator.isValid(websiteString))
                 websiteString = "http://" + websiteString;
 
             // test validity again
             if (!urlValidator.isValid(websiteString)) {
-                errors.add(getMessage("manage.developer_tools.invalid_website"));
-            }
-            ssoCredentials.getClientWebsite().setErrors(errors);
+                client.getWebsite().getErrors().add(getMessage("manage.developer_tools.invalid_website"));
+            }          
         }
-
-        if (redirectUris == null || redirectUris.isEmpty()) {
-            List<String> errors = new ArrayList<String>();
-            errors.add(getMessage("manage.developer_tools.at_least_one"));
-            ssoCredentials.setErrors(errors);
-            hasErrors = true;
+        
+        if (client.getRedirectUris() == null){
+            client.setRedirectUris(new ArrayList<RedirectUri>());            
+        } 
+        
+        if(client.getRedirectUris().isEmpty()) {
+            client.getErrors().add(getMessage("manage.developer_tools.at_least_one"));
         } else {
-            for (RedirectUri redirectUri : redirectUris) {
-                List<String> errors = validateRedirectUri(redirectUri);
-                if (errors != null) {
-                    redirectUri.setErrors(errors);
-                    hasErrors = true;
+            for (RedirectUri rUri : client.getRedirectUris()) {
+                validateRedirectUri(rUri);
+                if (!rUri.getErrors().isEmpty()) {
                 }
             }
-        }
-        return hasErrors;
+        }                
     }
 
     /**
@@ -303,27 +249,24 @@ public class DeveloperToolsController extends BaseWorkspaceController {
      * @return null if there are no errors, an List of strings containing error
      *         messages if any error happens
      * */
-    private List<String> validateRedirectUri(RedirectUri redirectUri) {
-        List<String> errors = null;
+    private RedirectUri validateRedirectUri(RedirectUri redirectUri) {
         String[] schemes = { "http", "https" };
         UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.ALLOW_LOCAL_URLS);
+        redirectUri.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(redirectUri.getValue())) {
             try {
                 String redirectUriString = redirectUri.getValue().getValue();
                 if (!urlValidator.isValid(redirectUriString)) {
-                    errors = new ArrayList<String>();
-                    errors.add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                    redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
                 }
             } catch (NullPointerException npe) {
-                errors = new ArrayList<String>();
-                errors.add(getMessage("manage.developer_tools.empty_redirect_uri"));
+                redirectUri.getErrors().add(getMessage("manage.developer_tools.empty_redirect_uri"));
             }
         } else {
-            errors = new ArrayList<String>();
-            errors.add(getMessage("manage.developer_tools.empty_redirect_uri"));
+            redirectUri.getErrors().add(getMessage("manage.developer_tools.empty_redirect_uri"));
         }
 
-        return errors;
+        return redirectUri;
     }
 
     /**
@@ -334,34 +277,6 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/enable-developer-tools.json", method = RequestMethod.POST)
     public @ResponseBody
     boolean enableDeveloperTools(HttpServletRequest request) {
-        OrcidProfile profile = getEffectiveProfile();
-        boolean updated = true;
-        if (profile.getOrcidInternal() != null && profile.getOrcidInternal().getPreferences() != null
-                && profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled() != null
-                && !profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled().isValue()) {
-            updated = profileEntityManager.enableDeveloperTools(profile);
-        }
-        return updated;
+        return profileEntityManager.enableDeveloperTools(getCurrentUserOrcid());        
     }
-
-    /**
-     * Disable developer tools on the current profile
-     * 
-     * @return true if the developer tools were disabled on the profile
-     * */
-    @RequestMapping(value = "/disable-developer-tools.json", method = RequestMethod.POST)
-    public @ResponseBody
-    boolean disableDeveloperTools(HttpServletRequest request) {
-        OrcidProfile profile = getEffectiveProfile();
-        boolean updated = true;
-        if (profile.getOrcidInternal() != null && profile.getOrcidInternal().getPreferences() != null
-                && profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled() != null
-                && profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled().isValue()) {
-            // Disable the developer tools
-            updated = profileEntityManager.disableDeveloperTools(profile);
-            // Disable the sso access
-            orcidSSOManager.revokeSSOAccess(profile.getOrcidIdentifier().getPath());
-        }
-        return updated;
-    }        
 }

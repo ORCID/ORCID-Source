@@ -57,21 +57,7 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
             
             
 
-            $scope.addRedirectURI = function() {
-                $scope.userCredentials.redirectUris.push({value: '',type: 'default'});
-                $scope.hideGoogleUri = false;
-                $scope.hideSwaggerUri = false;
-                $scope.hideSwaggerMemberUri = false;
-                for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
-                    if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
-                        $scope.hideGoogleUri = true;
-                    }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
-                        $scope.hideSwaggerUri = true;
-                    }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
-                        $scope.hideSwaggerMemberUri = true;
-                    }
-                }
-            };
+            
 
             $scope.addTestRedirectUri = function(type) {
                 if(type == 'google'){
@@ -119,15 +105,6 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                 $scope.expanded = false;
             };
 
-            $scope.confirmDisableDeveloperTools = function() {
-                $.colorbox({
-                    html : $compile($('#confirm-disable-developer-tools').html())($scope),
-                        onLoad: function() {
-                        $('#cboxClose').remove();
-                    }
-                });
-            };
-
             $scope.confirmResetClientSecret = function() {
                 $scope.clientSecretToReset = $scope.userCredentials.clientSecret;
                 $.colorbox({
@@ -155,22 +132,6 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                         $scope.hideSwaggerMemberUri = true;
                     }
                 }
-            };
-
-            $scope.disableDeveloperTools = function() {
-                $.ajax({
-                    url: getBaseUri()+'/developer-tools/disable-developer-tools.json',
-                    contentType: 'application/json;charset=UTF-8',
-                    type: 'POST',
-                    success: function(data){
-                        if(data == true){
-                            window.location.href = getBaseUri()+'/account';
-                        };
-                    }
-                }).fail(function(error) {
-                    // something bad is happening!
-                    console.log("Error enabling developer tools");
-                });
             };
 
             $scope.editClientCredentials = function() {
@@ -220,23 +181,6 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
             $scope.expand =  function(){
                 $scope.expanded = true;
             };
-
-            $scope.getClientUrl = function(userCredentials) {
-                if(typeof userCredentials != undefined 
-                    && userCredentials != null 
-                    && userCredentials.clientWebsite != null 
-                    && userCredentials.clientWebsite.value != null) 
-                {
-                    if(userCredentials.clientWebsite.value.lastIndexOf('http://') === -1 && userCredentials.clientWebsite.value.lastIndexOf('https://') === -1) {
-                        return '//' + userCredentials.clientWebsite.value;
-                    } else {
-                        return userCredentials.clientWebsite.value;
-                    }
-                }
-                return '';
-            };
-
-            
 
             $scope.inputTextAreaSelectAll = function($event){
                 $event.target.select();
@@ -316,66 +260,28 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                 $('.edit-details .slidebox').slideDown();
             };
 
-            $scope.submit = function() {
-                $.ajax({
-                    url: getBaseUri()+'/developer-tools/generate-sso-credentials.json',
-                    contentType: 'application/json;charset=UTF-8',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: angular.toJson($scope.userCredentials),
-                    success: function(data){
-                        $scope.$apply(function(){
-                            $scope.playgroundExample = '';
-                            $scope.userCredentials = data;
-                            if(data.errors.length != 0){
-                                // SHOW ERROR
-                            } else {
-                                $scope.hideGoogleUri = false;
-                                $scope.hideSwaggerUri = false;
-                                $scope.hideSwaggerMemberUri = false;
-                                $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
-                                for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
-                                    if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
-                                        $scope.hideGoogleUri = true;
-                                    }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
-                                        $scope.hideSwaggerUri = true;
-                                    }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
-                                        $scope.hideSwaggerMemberUri = true;
-                                    }
-
-                                    if($scope.userCredentials.redirectUris[i].value.value < $scope.selectedRedirectUri.value.value) {
-                                        $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[i];
-                                    }
-                                }
-                                $scope.updateSelectedRedirectUri();
-                                $scope.setHtmlTrustedNameAndDescription();
-                                $scope.creating = false;
-                                $scope.noCredentialsYet = false;
-                            }
-                        });
-                    }
-                }).fail(function(error) {
-                    // something bad is happening!
-                    console.log("Error creating SSO credentials");
-                });
-            };
+            
+			
+			
 			
 			///////
 			//DONE
 			///////
 			$scope.getSSOCredentials = function() {
                 $.ajax({
-                    url: getBaseUri()+'/developer-tools/get-sso-credentials.json',
+                    url: getBaseUri()+'/developer-tools/get-client.json',
                     contentType: 'application/json;charset=UTF-8',
                     type: 'GET',
                     success: function(data){
                         $scope.$apply(function(){
                             if(data != null && data.clientSecret != null) {
-                                $scope.playgroundExample = '';
                                 $scope.userCredentials = data;
+                                $scope.playgroundExample = '';
+                                $scope.viewing = true;
                                 $scope.hideGoogleUri = false;
                                 $scope.hideSwaggerUri = false;
                                 $scope.hideSwaggerMemberUri = false;
+                                $scope.creating = false;
                                 $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
                                 for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
                                     if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
@@ -393,12 +299,7 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                                 $scope.updateSelectedRedirectUri();
                                 $scope.setHtmlTrustedNameAndDescription();
                             } else {
-                                $scope.noCredentialsYet = true;
-                                $scope.hideGoogleUri = false;
-                            	$scope.hideSwaggerUri = false;
-                            	$scope.hideSwaggerMemberUri = false;
-                            	$scope.creating = true;
-                            	$scope.userCredentials = {value: {value: ''},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ''}, geoArea: {value: ''}};                                
+                            	$scope.createCredentialsLayout();                                
                             }
                         });
                     }
@@ -448,8 +349,8 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
             $scope.setHtmlTrustedNameAndDescription = function() {
                 // Trust client name and description as html since it has been already
                 // filtered
-                $scope.nameToDisplay = $sce.trustAsHtml($scope.userCredentials.clientName.value);
-                $scope.descriptionToDisplay = $sce.trustAsHtml($scope.userCredentials.clientDescription.value);
+                $scope.nameToDisplay = $sce.trustAsHtml($scope.userCredentials.displayName.value);
+                $scope.descriptionToDisplay = $sce.trustAsHtml($scope.userCredentials.shortDescription.value);
             };
             
             $scope.verifyEmail = function() {
@@ -502,6 +403,103 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                     $scope.mustAcceptTerms = true;
                 }        
             };
+            
+            $scope.getClientUrl = function(userCredentials) {
+                if(typeof userCredentials != undefined 
+                    && userCredentials != null 
+                    && userCredentials.website != null 
+                    && userCredentials.website.value != null) 
+                {
+                    if(userCredentials.website.value.lastIndexOf('http://') === -1 && userCredentials.website.value.lastIndexOf('https://') === -1) {
+                        return '//' + userCredentials.website.value;
+                    } else {
+                        return userCredentials.website.value;
+                    }
+                }
+                return '';
+            };
+            
+            $scope.createCredentialsLayout = function(){
+            	 $.ajax({
+                     url: getBaseUri() + '/developer-tools/client.json',
+                     dataType: 'json',
+                     success: function(data) {
+                         $scope.$apply(function(){
+                             $scope.hideGoogleUri = false;
+                             $scope.hideSwaggerUri = false;
+                             $scope.hideSwaggerMemberUri = false;
+                             $scope.creating = true;
+                             $scope.noCredentialsYet = true;
+                             $scope.userCredentials = data;
+                         });
+                     }
+                 }).fail(function() {
+                     console.log("Error fetching client");
+                 });
+             };
+            
+            $scope.submit = function() {
+                $.ajax({
+                    url: getBaseUri()+'/developer-tools/create-client.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: angular.toJson($scope.userCredentials),
+                    success: function(data){
+                        $scope.$apply(function(){
+                            $scope.playgroundExample = '';
+                            $scope.userCredentials = data;
+                            if(data.errors.length != 0){
+                                // SHOW ERROR
+                                console.log(angular.toJson(data.errors));
+                            } else {
+                                $scope.hideGoogleUri = false;
+                                $scope.hideSwaggerUri = false;
+                                $scope.hideSwaggerMemberUri = false;
+                                $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
+                                for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+                                    if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+                                        $scope.hideGoogleUri = true;
+                                    }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
+                                        $scope.hideSwaggerUri = true;
+                                    }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
+                                        $scope.hideSwaggerMemberUri = true;
+                                    }
+
+                                    if($scope.userCredentials.redirectUris[i].value.value < $scope.selectedRedirectUri.value.value) {
+                                        $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[i];
+                                    }
+                                }
+                                $scope.updateSelectedRedirectUri();
+                                $scope.setHtmlTrustedNameAndDescription();
+                                $scope.creating = false;
+                                $scope.noCredentialsYet = false;
+                                $scope.viewing = true;
+                            }
+                        });
+                    }
+                }).fail(function(error) {
+                    // something bad is happening!
+                    console.log("Error creating SSO credentials");
+                });
+            };
+            
+            $scope.addRedirectURI = function() {
+                $scope.userCredentials.redirectUris.push({value: '',type: 'default'});
+                $scope.hideGoogleUri = false;
+                $scope.hideSwaggerUri = false;
+                $scope.hideSwaggerMemberUri = false;
+                for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+                    if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+                        $scope.hideGoogleUri = true;
+                    }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
+                        $scope.hideSwaggerUri = true;
+                    }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
+                        $scope.hideSwaggerMemberUri = true;
+                    }
+                }
+            };
+            
             
             // init
             $scope.getSSOCredentials();
