@@ -45,16 +45,14 @@ export const widgetCmp = {
     controller: widgetCtrl,
     controllerAs: 'ctrl'
 };
-
+/*
 import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'widget-ng2',
-    templateUrl: 'ng1Orcid/app/modules/widget/widget.component.html'
-    /*`
-        <p class="widgettest"><b>Text:</b> {{text}}</p>
-    `*/
+    template: ``
+    //templateUrl: './app/modules/widget/widget.component.html'
 })
 export class widgetNg2Cmp {
-    @Input() text: string;
 }
+*/
