@@ -37,6 +37,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
         'workspaceSrvc',     
         function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService, worksSrvc, workspaceSrvc ) {
 
+            var savingBibtex = false;
             var utilsService = utilsService;
 
             actBulkSrvc.initScope($scope);
@@ -70,7 +71,6 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.noLinkFlag = true;
             $scope.privacyHelp = {};
             $scope.scriptsLoaded = false;
-            $scope.savingBibtex = false;
             $scope.showBibtex = {};
             $scope.showBibtexExport = false;
             $scope.showBibtexImportWizard = false;
