@@ -1,4 +1,5 @@
 declare var getBaseUri: any;
+declare var scriptTmpl: any;
 declare var orcidVar: any;
 
 import * as angular from 'angular';
@@ -45,14 +46,16 @@ export const widgetCmp = {
     controller: widgetCtrl,
     controllerAs: 'ctrl'
 };
-/*
+//let testInject: any;
+//testInject = document.getElementById("widgetCtrlTest").textContent;
+//testInject = testInject.textContent;
+
 import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'widget-ng2',
-    template: ``
+    template: scriptTmpl("verify-email-modal-sent")
     //templateUrl: './app/modules/widget/widget.component.html'
 })
 export class widgetNg2Cmp {
 }
-*/

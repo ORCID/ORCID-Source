@@ -16,6 +16,13 @@
     =============================================================================
 
 -->
+    <script type="text/ng-template" id="widgetCtrlTest">
+        "<p>this is a test</p>"
+    </script>
+
+    ***
+    <widget-ng2></widget-ng2>
+    ---
 
     <div class="widget-container" ng-controller="widgetCtrl">
         <div class="widget-header">
