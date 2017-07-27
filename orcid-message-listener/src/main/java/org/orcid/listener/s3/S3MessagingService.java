@@ -16,6 +16,9 @@
  */
 package org.orcid.listener.s3;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
@@ -30,6 +33,8 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 @Component
 public class S3MessagingService {
@@ -70,9 +75,13 @@ public class S3MessagingService {
      * @return true if the element was correctly sent to the bucket
      * 
      **/
-    public boolean send(String bucketName, String elementName, String elementContent) {
+    public boolean send(String bucketName, String elementName, byte [] elementContent, String contentType) {
         try {
-            s3.putObject(bucketName, elementName, elementContent);
+            InputStream is = new ByteArrayInputStream(elementContent);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(contentType);
+            metadata.setContentLength(elementContent.length);
+            s3.putObject(new PutObjectRequest(bucketName, elementName, is, metadata));
             return true;
         } catch (AmazonServiceException ase) {
             LOG.error("AmazonServiceException while sending element '" + elementName + "' to bucket " + bucketName + " with error message '" + ase.getMessage()
@@ -81,7 +90,10 @@ public class S3MessagingService {
         } catch (AmazonClientException ace) {
             LOG.error("AmazonClientException while sending element '" + elementName + "' to bucket " + bucketName + " error message: " + ace.getMessage(), ace);
             throw ace;
-        }        
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            throw e;
+        }
     }
 
 }

@@ -42,6 +42,9 @@ psql -U postgres -d orcid -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orc
 
 psql -U postgres -c "CREATE DATABASE features;"
 psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE features to orcid;"
+
+psql -U postgres -c "CREATE DATABASE message_listener;"
+psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE message_listener to orcid;"
 ```
 
 * Verify user login and database exist
