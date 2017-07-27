@@ -133,7 +133,10 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                             });
                         });
                     } else {
-                        $scope.editWork = data;            
+                        $scope.editWork = data;
+                        if( $scope.editWork.workExternalIdentifiers.length == 0 ){
+                            $scope.addExternalIdentifier();
+                        }        
                         $scope.loadWorkTypes();
                         $scope.showAddWorkModal();
                     }
@@ -588,7 +591,9 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.openEditWork = function(putCode){
-                worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
+                worksSrvc.getEditable(putCode, function(data) {
+                    $scope.addWorkModal(data);
+                });
             };
 
             $scope.openFileDialog = function(){
