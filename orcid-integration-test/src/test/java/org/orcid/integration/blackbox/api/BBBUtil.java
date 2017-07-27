@@ -246,7 +246,8 @@ public class BBBUtil {
             @Override
             public Boolean apply(WebDriver driver) {
                 ((JavascriptExecutor) driver).executeScript(jQueryWaitScript);
-                Boolean jqueryDone = Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window._selenium_jquery_done;").toString());
+                Object obj = ((JavascriptExecutor) driver).executeScript("" + "return window._selenium_jquery_done;");
+                Boolean jqueryDone = (obj == null ? false : Boolean.valueOf(obj.toString()));
                 if (jqueryDone) {
                     new NgWebDriver((JavascriptExecutor) driver).waitForAngularRequestsToFinish();
                 }
