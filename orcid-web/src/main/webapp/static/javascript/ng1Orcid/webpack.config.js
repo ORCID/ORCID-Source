@@ -42,5 +42,5 @@ module.exports = {
             "@angular/upgrade/static": "@angular/upgrade/bundles/upgrade-static.umd.js"
         }
     },
-    watch: false
+    watch: true
 };
