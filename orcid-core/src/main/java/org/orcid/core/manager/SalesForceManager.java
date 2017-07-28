@@ -21,9 +21,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.read_only.ManagerReadOnlyBase;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactPermission;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
@@ -73,8 +75,6 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
 
     void createContact(Contact contact);
 
-    void updateContact(Contact contact);
-
     void updateContacts(Collection<Contact> contacts);
 
     void removeContact(Contact contact);
@@ -86,5 +86,12 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
      * 
      */
     void evictAll();
+
+    List<ContactPermission> calculateContactPermissions(Collection<Contact> contacts);
+
+    /**
+     * @throws OrcidUnauthorizedException
+     */
+    void checkContactUpdatePermissions(Collection<Contact> existingContacts, Collection<Contact> updatedContacts);
 
 }

@@ -27,6 +27,7 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactPermission;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
@@ -125,6 +126,7 @@ public class SelfServiceController extends BaseController {
         List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(accountId);
         salesForceManager.addOrcidsToContacts(contactsList);
         contactsForm.setContactsList(contactsList);
+        contactsForm.setPermissionsByContactRoleId(ContactPermission.mapByContactRoleId(salesForceManager.calculateContactPermissions(contactsList)));
         contactsForm.setRoleMap(generateSalesForceRoleMap());
         return contactsForm;
     }
@@ -157,13 +159,6 @@ public class SelfServiceController extends BaseController {
     public @ResponseBody Contact removeContact(@RequestBody Contact contact) {
         checkFullAccess(contact.getAccountId());
         salesForceManager.removeContact(contact);
-        return contact;
-    }
-
-    @RequestMapping(value = "/update-contact.json", method = RequestMethod.POST)
-    public @ResponseBody Contact updateContact(@RequestBody Contact contact) {
-        checkFullAccess(contact.getAccountId());
-        salesForceManager.updateContact(contact);
         return contact;
     }
 

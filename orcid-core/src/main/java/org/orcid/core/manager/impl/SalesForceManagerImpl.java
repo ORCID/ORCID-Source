@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SourceManager;
@@ -38,6 +40,7 @@ import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactPermission;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
@@ -349,9 +352,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             contact.setEmail(primaryEmail.getEmail());
         }
         List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);
-        Optional<Contact> existingContact = existingContacts.stream().filter(c -> 
-        {
-            if((contact.getOrcid() != null && contact.getOrcid().equals(c.getOrcid())) || (contact.getEmail() != null && contact.getEmail().equals(c.getEmail()))) {
+        Optional<Contact> existingContact = existingContacts.stream().filter(c -> {
+            if ((contact.getOrcid() != null && contact.getOrcid().equals(c.getOrcid())) || (contact.getEmail() != null && contact.getEmail().equals(c.getEmail()))) {
                 return true;
             }
             return false;
@@ -371,6 +373,11 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void removeContact(Contact contact) {
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        List<Contact> existingContacts = retrieveContactsByAccountId(accountId);
+        List<Contact> updatedList = new ArrayList<>(1);
+        updatedList.add(contact);
+        checkContactUpdatePermissions(existingContacts, updatedList);
         removeContactRole(contact);
         removeContactAccess(contact);
     }
@@ -395,8 +402,14 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         evictAll();
     }
 
-    @Override
-    public void updateContact(Contact contact) {
+    /**
+     * 
+     * This is a package private method because no user permissions are checked.
+     * 
+     * @see SalesForceManagerImpl#updateContacts(Collection), which does check
+     *      user permissions.
+     */
+    void updateContact(Contact contact) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         removeContactRole(contact);
         ContactRole contactRole = new ContactRole();
@@ -414,6 +427,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public void updateContacts(Collection<Contact> contacts) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        checkContactUpdatePermissions(existingContacts, contacts);
         // Need to remove roles with validation rules in SF first
         existingContacts.stream().filter(c -> {
             return ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType()) || ContactRoleType.AGREEMENT_SIGNATORY.equals(c.getRole().getRoleType())
@@ -458,6 +472,59 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             return subMembers;
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<ContactPermission> calculateContactPermissions(Collection<Contact> contacts) {
+        String currentUser = sourceManager.retrieveRealUserOrcid();
+        boolean isCurrentUserSuperContact = contacts.stream().anyMatch(c -> currentUser.equals(c.getOrcid()) && isSuperContact(c));
+        List<ContactPermission> permissions = new ArrayList<>();
+        for (Contact contact : contacts) {
+            ContactPermission permission = new ContactPermission();
+            permission.setContactRoleId(contact.getRole().getId());
+            if (isSuperContact(contact) || isVotingContact(contact)) {
+                permission.setAllowedEdit(isCurrentUserSuperContact);
+            } else {
+                permission.setAllowedEdit(true);
+            }
+            permissions.add(permission);
+        }
+        return permissions;
+    }
+
+    @Override
+    public void checkContactUpdatePermissions(Collection<Contact> existingContacts, Collection<Contact> updatedContacts) {
+        List<ContactPermission> permissions = calculateContactPermissions(existingContacts);
+        Map<String, ContactPermission> permissionsMap = ContactPermission.mapByContactRoleId(permissions);
+        Map<String, Contact> existingContactsMap = Contact.mapByContactRoleId(existingContacts);
+        for (Contact updatedContact : updatedContacts) {
+            String updatedContactRoleId = updatedContact.getRole().getId();
+            Contact existingContact = existingContactsMap.get(updatedContactRoleId);
+            if (existingContact == null) {
+                throw new IllegalStateException("Should be able to update a non-existent contact");
+            }
+            if (contactChanged(existingContact, updatedContact)) {
+                ContactPermission permission = permissionsMap.get(existingContact.getRole().getId());
+                if (permission == null) {
+                    throw new IllegalStateException("Can't find permissions for existing contact");
+                }
+                if (!permission.isAllowedEdit()) {
+                    throw new OrcidUnauthorizedException("Insufficient permissions to update contact");
+                }
+            }
+        }
+    }
+
+    private boolean contactChanged(Contact existingContact, Contact updatedContact) {
+        return !existingContact.getRole().getRoleType().equals(updatedContact.getRole().getRoleType());
+    }
+
+    private boolean isSuperContact(Contact c) {
+        return ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType()) || ContactRoleType.AGREEMENT_SIGNATORY.equals(c.getRole().getRoleType());
+    }
+
+    private boolean isVotingContact(Contact contact) {
+        return Boolean.TRUE.equals(contact.getRole().isVotingContact());
     }
 
 }
