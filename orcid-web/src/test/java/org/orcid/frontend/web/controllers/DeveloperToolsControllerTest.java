@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -279,15 +280,15 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertEquals(result.getErrors().size(), 0);
         Text clientSecret = result.getClientSecret();
 
-        assertTrue(developerToolsController.resetClientSecret(result.getClientOrcid().getValue()));
+        assertTrue(developerToolsController.resetClientSecret(result.getClientId().getValue()));
 
-        ClientDetailsEntity clientDetails = clientDetailsDao.findByClientId(result.getClientOrcid().getValue(), System.currentTimeMillis());
+        ClientDetailsEntity clientDetails = clientDetailsDao.findByClientId(result.getClientId().getValue(), System.currentTimeMillis());
 
-        assertEquals(result.getDisplayName().getValue(), clientDetails.getDisplayName());
-        assertEquals(result.getShortDescription().getValue(), clientDetails.getShortDescription());
-        assertEquals(result.getClientOrcid().getValue(), clientDetails.getClientId());
-        assertEquals(result.getClientWebsite().getValue(), clientDetails.getClientWebsite());
-        List<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
+        assertEquals(result.getDisplayName().getValue(), clientDetails.getClientName());
+        assertEquals(result.getShortDescription().getValue(), clientDetails.getClientDescription());
+        assertEquals(result.getClientId().getValue(), clientDetails.getClientId());
+        assertEquals(result.getWebsite().getValue(), clientDetails.getClientWebsite());
+        Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
         assertNotNull(clientSecrets);
         assertEquals(2, clientSecrets.size());
         for (ClientSecretEntity clientSecretEntity : clientSecrets) {
