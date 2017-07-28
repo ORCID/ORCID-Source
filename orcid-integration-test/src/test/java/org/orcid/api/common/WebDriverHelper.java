@@ -108,7 +108,7 @@ public class WebDriverHelper {
         return obtainFullAuthorizationCodeResponse(scopes, clientId, userId, password, longLife,null);
     }
     
-    public String obtainFullAuthorizationCodeResponse(String scopes, String clientId, String userId, String password, boolean longLife, Map<String,String> params) {
+    private String obtainFullAuthorizationCodeResponse(String scopes, String clientId, String userId, String password, boolean longLife, Map<String,String> params) {
         BBBUtil.logUserOut(webBaseUrl, webDriver);
         return OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopes, null, userId, password, longLife, params,webDriver);  
     }
