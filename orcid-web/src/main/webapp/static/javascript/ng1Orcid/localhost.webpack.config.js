@@ -11,8 +11,8 @@ module.exports = {
         ]
     },
     output: {
-        path: "__dirname",
-        filename: "../angular_orcid_generated.js"
+        path: '../.',
+        filename: "angular_orcid_generated.js"
     },/*
     Examples:
     output: {
