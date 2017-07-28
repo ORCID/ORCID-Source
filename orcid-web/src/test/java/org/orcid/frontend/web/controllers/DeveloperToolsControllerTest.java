@@ -24,10 +24,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -44,16 +43,15 @@ import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
-import org.orcid.pojo.ajaxForm.SSOCredentials;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -106,153 +104,149 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @Transactional("transactionManager")
     public void testCrossSiteScriptingOnClientName() throws Exception {
-        SSOCredentials ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("<script>alert('name')</script>"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a short description"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("<script>alert('name')</script>"));
+        client.setShortDescription(Text.valueOf("This is a short description"));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        SSOCredentials result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        Client result = developerToolsController.createClient(client);
         assertNotNull(result);
         assertEquals(1, result.getErrors().size());
         assertEquals(developerToolsController.getMessage("manage.developer_tools.name.html"), result.getErrors().get(0));
     }
 
     @Test
-    @Transactional("transactionManager")
     public void testCrossSiteScriptingOnClientDescription() throws Exception {
-        SSOCredentials ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a test to show that html is <script>alert('name')</script> throws an error"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a test to show that html is <script>alert('name')</script> throws an error"));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        SSOCredentials result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        Client result = developerToolsController.createClient(client);
         assertNotNull(result);
         assertEquals(1, result.getErrors().size());
         assertEquals(developerToolsController.getMessage("manage.developer_tools.description.html"), result.getErrors().get(0));
     }
 
-    @Test
-    @Transactional("transactionManager")
-    public void testSSOCredentialsValidation() throws Exception {
+    @Test    
+    public void testClientValidation() throws Exception {
         // Test empty title
-        SSOCredentials ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientDescription(Text.valueOf("This is a description"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
+        Client client = new Client();
+        client.setShortDescription(Text.valueOf("This is a description"));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        SSOCredentials result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        Client result = developerToolsController.createClient(client);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.name_not_empty"));
 
         // Test empty description
-        ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        redirectUris = new HashSet<RedirectUri>();
+        client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        redirectUris = new ArrayList<RedirectUri>();
         rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        result = developerToolsController.createClient(client);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.description_not_empty"));
 
         // Test empty website
-        ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a description"));
-        redirectUris = new HashSet<RedirectUri>();
+        client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a description"));
+        redirectUris = new ArrayList<RedirectUri>();
         rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        result = developerToolsController.createClient(client);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.website_not_empty"));
 
         // Test empty redirect uris
-        ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a description"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a description"));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        result = developerToolsController.createClient(client);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.at_least_one"));
     }
 
-    @Test
-    @Transactional("transactionManager")
-    public void testGenerateSSOCredentials() throws Exception {
-        SSOCredentials ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a test"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
+    @Test    
+    public void testGenerateClient() throws Exception {
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a test"));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        SSOCredentials result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        Client result = developerToolsController.createClient(client);
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
         assertNotNull(result.getClientSecret());
         assertFalse(PojoUtil.isEmpty(result.getClientSecret()));
-        assertFalse(PojoUtil.isEmpty(result.getClientOrcid()));
+        assertFalse(PojoUtil.isEmpty(result.getMemberId()));
+        assertEquals("4444-4444-4444-4442", result.getMemberId().getValue());
     }
 
     @Test
-    @Transactional("transactionManager")
-    public void testUpdateSSOCredentials() throws Exception {
-        SSOCredentials ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a test"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
+    public void testUpdateClient() throws Exception {
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a test"));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        SSOCredentials result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        Client result = developerToolsController.createClient(client);
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
         Text clientSecret = result.getClientSecret();
 
         // Update values
-        ssoCredentials.setClientName(Text.valueOf("Updated client name"));
-        ssoCredentials.setClientDescription(Text.valueOf("Updated client description"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://updated.com"));
+        client.setDisplayName(Text.valueOf("Updated client name"));
+        client.setShortDescription(Text.valueOf("Updated client description"));
+        client.setWebsite(Text.valueOf("http://updated.com"));
         RedirectUri rUri2 = new RedirectUri();
         rUri2.setType(Text.valueOf("default"));
         rUri2.setValue(Text.valueOf("http://test2.com"));
         redirectUris.add(rUri2);
-        ssoCredentials.setRedirectUris(redirectUris);
-        SSOCredentials updatedResult = developerToolsController.updateUserCredentials(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        Client updatedResult = developerToolsController.updateClient(client);
         assertNotNull(updatedResult);
         assertNotNull(updatedResult.getErrors());
         assertEquals(updatedResult.getErrors().size(), 0);
@@ -260,26 +254,26 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         Text updatedClientSecret = updatedResult.getClientSecret();
 
         assertEquals(updatedClientSecret.toString(), clientSecret.toString());
-        assertEquals(updatedResult.getClientName().getValue(), "Updated client name");
-        assertEquals(updatedResult.getClientDescription().getValue(), "Updated client description");
-        assertEquals(updatedResult.getClientWebsite().getValue(), "http://updated.com");
+        assertEquals(updatedResult.getDisplayName().getValue(), "Updated client name");
+        assertEquals(updatedResult.getShortDescription().getValue(), "Updated client description");
+        assertEquals(updatedResult.getWebsite().getValue(), "http://updated.com");
         assertNotNull(updatedResult.getRedirectUris());
         assertEquals(updatedResult.getRedirectUris().size(), 2);
     }
 
     @Test
     public void testResetClientSecret() throws Exception {
-        SSOCredentials ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a test"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a test"));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        SSOCredentials result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
+        client.setRedirectUris(redirectUris);
+        Client result = developerToolsController.createClient(client);
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
@@ -289,11 +283,11 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
 
         ClientDetailsEntity clientDetails = clientDetailsDao.findByClientId(result.getClientOrcid().getValue(), System.currentTimeMillis());
 
-        assertEquals(result.getClientName().getValue(), clientDetails.getClientName());
-        assertEquals(result.getClientDescription().getValue(), clientDetails.getClientDescription());
+        assertEquals(result.getDisplayName().getValue(), clientDetails.getDisplayName());
+        assertEquals(result.getShortDescription().getValue(), clientDetails.getShortDescription());
         assertEquals(result.getClientOrcid().getValue(), clientDetails.getClientId());
         assertEquals(result.getClientWebsite().getValue(), clientDetails.getClientWebsite());
-        Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
+        List<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
         assertNotNull(clientSecrets);
         assertEquals(2, clientSecrets.size());
         for (ClientSecretEntity clientSecretEntity : clientSecrets) {

@@ -18,7 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -26,9 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ClientManager;
-import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.read_only.ClientManagerReadOnly;
@@ -39,7 +37,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
-import org.orcid.pojo.ajaxForm.SSOCredentials;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
@@ -62,13 +59,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     private static int CLIENT_NAME_LENGTH = 255;
 
     @Resource
-    private OrcidSSOManager orcidSSOManager;
-
-    @Resource
     private ProfileEntityManager profileEntityManager;
-    
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
     
     @Resource
     private EmailManagerReadOnly emailManagerReadOnly;
@@ -102,22 +93,22 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)
-    public @ResponseBody SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
-        SSOCredentials emptyObject = new SSOCredentials();
+    public @ResponseBody Client getEmptyClient(HttpServletRequest request) {
+        Client emptyObject = new Client();
         emptyObject.setClientSecret(Text.valueOf(StringUtils.EMPTY));
 
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setValue(new Text());
         redirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
 
-        Set<RedirectUri> set = new HashSet<RedirectUri>();
+        List<RedirectUri> set = new ArrayList<RedirectUri>();
         set.add(redirectUri);
         emptyObject.setRedirectUris(set);
         return emptyObject;
     }
     
     @RequestMapping(value = "/get-client.json", method = RequestMethod.GET)
-    public @ResponseBody Client getSSOCredentialsJson() {
+    public @ResponseBody Client getClient() {
         String userOrcid = getEffectiveUserOrcid();
         ProfileEntity member = profileEntityCacheManager.retrieve(userOrcid);
         Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();
@@ -131,7 +122,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/create-client.json", method = RequestMethod.POST)
-    public @ResponseBody Client generateSSOCredentialsJson(@RequestBody Client client) {
+    public @ResponseBody Client createClient(@RequestBody Client client) {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
@@ -152,7 +143,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/update-user-credentials.json", method = RequestMethod.POST)
-    public @ResponseBody Client updateUserCredentials(@RequestBody Client client) {
+    public @ResponseBody Client updateClient(@RequestBody Client client) {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
@@ -173,8 +164,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
-    public @ResponseBody
-    boolean resetClientSecret(@RequestBody String clientId) {
+    public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
         //Verify this client belongs to the member
         org.orcid.jaxb.model.client_v2.Client client = clientManagerReadOnly.get(clientId);
         if(client == null) {
