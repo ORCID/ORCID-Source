@@ -9,8 +9,7 @@ After getting spring loaded working. You might need to disable auto reload to ke
 
 
 # Search finds the same file times
-Mark the modules in the parent folder derived 
-https://stackoverflow.com/questions/15064796/eclipse-file-search-finds-the-same-file-multiple-times
+Close the top level project. In the Navigator view right click on the maven parent "ORCID-Source" and click close.
 
 # Eclipse doesn't see file changes and I alwasy have to refresh
 Enable Refresh using native hooks or polling. File updates can lag 3 to 5 seconds.
