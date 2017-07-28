@@ -232,11 +232,11 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
-        Client result = developerToolsController.createClient(client);
-        assertNotNull(result);
-        assertNotNull(result.getErrors());
-        assertEquals(result.getErrors().size(), 0);
-        Text clientSecret = result.getClientSecret();
+        client = developerToolsController.createClient(client);
+        assertNotNull(client);
+        assertNotNull(client.getErrors());
+        assertEquals(client.getErrors().size(), 0);
+        Text clientSecret = client.getClientSecret();
 
         // Update values
         client.setDisplayName(Text.valueOf("Updated client name"));

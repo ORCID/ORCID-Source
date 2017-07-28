@@ -99,7 +99,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setValue(new Text());
-        redirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
+        redirectUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
 
         List<RedirectUri> set = new ArrayList<RedirectUri>();
         set.add(redirectUri);
@@ -185,7 +185,12 @@ public class DeveloperToolsController extends BaseWorkspaceController {
      * @return true if any error is found in the ssoCredentials object
      * */
     private void validateClient(Client client) {
-        client.getDisplayName().setErrors(new ArrayList<String>());
+        client.setErrors(new ArrayList<String>());
+        if(client.getDisplayName() == null) {
+            client.setDisplayName(new Text());
+        } else {
+            client.getDisplayName().setErrors(new ArrayList<String>());            
+        }
         if (PojoUtil.isEmpty(client.getDisplayName())) {
             client.getDisplayName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name_not_empty")));
         } else if (client.getDisplayName().getValue().length() > CLIENT_NAME_LENGTH) {
@@ -193,15 +198,25 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         } else if(OrcidStringUtils.hasHtml(client.getDisplayName().getValue())){
             client.getDisplayName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name.html")));
         } 
+        copyErrors(client.getDisplayName(), client);
 
-        client.getShortDescription().setErrors(new ArrayList<String>());
+        if(client.getShortDescription() == null) {
+            client.setShortDescription(new Text());
+        } else {
+            client.getShortDescription().setErrors(new ArrayList<String>());            
+        }
         if (PojoUtil.isEmpty(client.getShortDescription())) {
             client.getShortDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description_not_empty")));
         } else if(OrcidStringUtils.hasHtml(client.getShortDescription().getValue())) {
             client.getShortDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description.html")));
         } 
+        copyErrors(client.getShortDescription(), client);
 
-        client.getWebsite().setErrors(new ArrayList<String>());
+        if(client.getWebsite() == null) {
+            client.setWebsite(new Text());
+        } else {
+            client.getWebsite().setErrors(new ArrayList<String>());            
+        }
         if (PojoUtil.isEmpty(client.getWebsite())) {
             client.getWebsite().setErrors(Arrays.asList(getMessage("manage.developer_tools.website_not_empty")));
         } else {
@@ -216,6 +231,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
                 client.getWebsite().getErrors().add(getMessage("manage.developer_tools.invalid_website"));
             }          
         }
+        copyErrors(client.getWebsite(), client);
         
         if (client.getRedirectUris() == null){
             client.setRedirectUris(new ArrayList<RedirectUri>());            
@@ -226,8 +242,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         } else {
             for (RedirectUri rUri : client.getRedirectUris()) {
                 validateRedirectUri(rUri);
-                if (!rUri.getErrors().isEmpty()) {
-                }
+                copyErrors(rUri, client);
             }
         }                
     }
@@ -247,6 +262,10 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             try {
                 String redirectUriString = redirectUri.getValue().getValue();
                 if (!urlValidator.isValid(redirectUriString)) {
+                    redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                }
+                
+                if (!RedirectUriType.SSO_AUTHENTICATION.value().equals(redirectUri.getType().getValue()))  {
                     redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
                 }
             } catch (NullPointerException npe) {

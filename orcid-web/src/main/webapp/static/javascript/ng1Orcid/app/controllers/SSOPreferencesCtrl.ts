@@ -485,21 +485,8 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
             };
             
             $scope.addRedirectURI = function() {
-                $scope.userCredentials.redirectUris.push({value: '',type: 'default'});
-                $scope.hideGoogleUri = false;
-                $scope.hideSwaggerUri = false;
-                $scope.hideSwaggerMemberUri = false;
-                for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
-                    if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
-                        $scope.hideGoogleUri = true;
-                    }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
-                        $scope.hideSwaggerUri = true;
-                    }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
-                        $scope.hideSwaggerMemberUri = true;
-                    }
-                }
-            };
-            
+            	$scope.userCredentials.redirectUris.push({value: {value: ''}, type: {value: 'sso-authentication'}});                
+            };            
             
             // init
             $scope.getSSOCredentials();
