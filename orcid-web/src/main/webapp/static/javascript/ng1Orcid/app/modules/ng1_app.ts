@@ -3,6 +3,7 @@
  */
 //import 'reflect-metadata';
 
+import * as $ from 'jquery'
 import * as angular from 'angular'
 import * as vcRecaptcha from 'angular-recaptcha'
 import * as ngCookies from 'angular-cookies'
