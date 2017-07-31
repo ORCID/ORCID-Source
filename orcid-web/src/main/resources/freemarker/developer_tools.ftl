@@ -21,7 +21,7 @@
 		<div class="col-md-3 lhs col-sm-12 col-xs-12 padding-fix">
 			<#include "includes/id_banner.ftl"/>
 		</div>
-		<div class="col-md-9 col-sm-12 col-xs-12 developer-tools" ng-controller="SSOPreferencesCtrl">		
+		<div class="col-md-9 col-sm-12 col-xs-12 developer-tools" ng-controller="PublicClientCtrl">		
 			<#if developerToolsEnabled == false>
 				<h1 id="manage-developer-tools">
 					<span><@spring.message "manage.developer_tools.user.title"/></span>					
@@ -281,7 +281,7 @@
 						</div>				
 					</div>
 
-					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value" ng-cloak>
+					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="tab-container" ng-class="{'expanded' : expanded == true}">
 								<a class="tab" ng-click="expand()" ng-show="expanded == false"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>

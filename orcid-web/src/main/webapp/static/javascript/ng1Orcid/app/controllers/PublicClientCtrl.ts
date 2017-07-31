@@ -9,8 +9,8 @@ import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
 // This is the Angular 1 part of the module
-export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
-    'SSOPreferencesCtrl',
+export const PublicClientCtrl = angular.module('orcidApp').controller(
+    'PublicClientCtrl',
     [
         '$compile', 
         '$sce', 
@@ -49,16 +49,6 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
             $scope.descriptionToDisplay = '';
             $scope.verifyEmailSent=false;
             
-            
-            
-            
-            
-            
-            
-            
-
-            
-
             $scope.addTestRedirectUri = function(type) {
                 if(type == 'google'){
                     rUri = $scope.googleUri;
@@ -235,6 +225,7 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                         $scope.hideSwaggerMemberUri = true;
                     } 
                 }
+                $scope.viewing = false;                                
                 $scope.editing = true;
                 $('.developer-tools .slidebox').slideDown();
                 $('.tab-container .collapsed').css('display', 'none');
@@ -260,14 +251,7 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
                 $('.edit-details .slidebox').slideDown();
             };
 
-            
-			
-			
-			
-			///////
-			//DONE
-			///////
-			$scope.getSSOCredentials = function() {
+            $scope.getSSOCredentials = function() {
                 $.ajax({
                     url: getBaseUri()+'/developer-tools/get-client.json',
                     contentType: 'application/json;charset=UTF-8',
@@ -496,4 +480,4 @@ export const SSOPreferencesCtrl = angular.module('orcidApp').controller(
 
 // This is the Angular 2 part of the module
 @NgModule({})
-export class SSOPreferencesCtrlNg2Module {}
+export class PublicClientCtrlNg2Module {}
