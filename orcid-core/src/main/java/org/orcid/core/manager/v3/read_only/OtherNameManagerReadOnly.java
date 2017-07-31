@@ -20,11 +20,11 @@ import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
 
 public interface OtherNameManagerReadOnly {
-    OtherNames getOtherNames(String orcid, long lastModified);
+    OtherNames getOtherNames(String orcid);
     
-    OtherNames getPublicOtherNames(String orcid, long lastModified);
+    OtherNames getPublicOtherNames(String orcid);
     
-    OtherNames getMinimizedOtherNames(String orcid, long lastModified);
+    OtherNames getMinimizedOtherNames(String orcid);
     
     OtherName getOtherName(String orcid, Long putCode);
 }

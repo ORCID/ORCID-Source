@@ -106,24 +106,18 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     
     
     @Override
-    @Cacheable(value = "emails", key = "#orcid.concat('-').concat(#lastModified)")
-    public Emails getEmails(String orcid, long lastModified) {
-        return getEmails(orcid, null);
+    public Emails getEmails(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid, getLastModified(orcid));
+        return toEmails(entities);
     }
     
     @Override
-    @Cacheable(value = "public-emails", key = "#orcid.concat('-').concat(#lastModified)")
-    public Emails getPublicEmails(String orcid, long lastModified) {
-        return getEmails(orcid, Visibility.PUBLIC);
+    public Emails getPublicEmails(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
+        return toEmails(entities);
     }
     
-    private Emails getEmails(String orcid, Visibility visibility) {
-        List<EmailEntity> entities = new ArrayList<EmailEntity>();
-        if(visibility == null) {
-            entities = emailDao.findByOrcid(orcid);
-        } else {
-            entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
-        }
+    private Emails toEmails(List<EmailEntity> entities) {
         List<org.orcid.jaxb.model.record_v2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
         Emails emails = new Emails();
         emails.setEmails(emailList);        
@@ -132,7 +126,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     
     @Override
     public boolean haveAnyEmailVerified(String orcid) {
-        List<EmailEntity> entities = emailDao.findByOrcid(orcid);
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid, getLastModified(orcid));
         if(entities != null) {
             for(EmailEntity email : entities) {
                 if(email.getVerified()) {

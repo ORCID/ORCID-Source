@@ -357,7 +357,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     @Test
     public void testGetPublic() {
         String orcid = "0000-0000-0000-0003"; 
-        List<FundingSummary> elements = profileFundingManager.getFundingSummaryList(orcid, System.currentTimeMillis());
+        List<FundingSummary> elements = profileFundingManager.getFundingSummaryList(orcid);
         assertNotNull(elements);
         assertEquals(5, elements.size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;

@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.v3.dev1.record.Name;
 public interface RecordNameManagerReadOnly {
     boolean exists(String orcid);
     
-    Name getRecordName(String orcid, long lastModified);
+    Name getRecordName(String orcid);
 
     Name findByCreditName(String creditName);    
 }

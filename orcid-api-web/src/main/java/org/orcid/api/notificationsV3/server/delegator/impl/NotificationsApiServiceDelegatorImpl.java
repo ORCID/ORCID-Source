@@ -64,13 +64,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificationsApiServiceDelegatorImpl implements NotificationsApiServiceDelegator<NotificationPermission> {
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
-    @Resource
+    @Resource(name = "notificationValidationManagerV3")
     private NotificationValidationManager notificationValidationManager;
 
     @Resource

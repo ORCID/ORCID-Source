@@ -1965,7 +1965,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile = getFundingInsideOrcidProfile("f4", orcidId);
         orcidProfileManager.addFundings(profile);        
         
-        List<ProfileFundingEntity> all = profileFundingDao.getByUser(orcidId);
+        List<ProfileFundingEntity> all = profileFundingDao.getByUser(orcidId, System.currentTimeMillis());
         assertNotNull(all);
         Long displayIndex1 = null;
         Long displayIndex2 = null;

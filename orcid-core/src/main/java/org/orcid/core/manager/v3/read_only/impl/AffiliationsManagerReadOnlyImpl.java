@@ -25,17 +25,16 @@ import org.orcid.core.adapter.v3.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.v3.JpaJaxbEmploymentAdapter;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
-import org.springframework.cache.annotation.Cacheable;
 
-public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadOnly {
+public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements AffiliationsManagerReadOnly {
     
     @Resource(name = "jpaJaxbEducationAdapterV3")
     protected JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
@@ -125,9 +124,8 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
      * @return the list of employments that belongs to this user
      * */
     @Override
-    @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);
+    public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid) {
+        List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
         return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
     }
 
@@ -140,9 +138,8 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
      * @return the list of educations that belongs to this user
      * */
     @Override
-    @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);
+    public List<EducationSummary> getEducationSummaryList(String userOrcid) {
+        List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getEducationSummaries(userOrcid, getLastModified(userOrcid));
         return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
     }    
     

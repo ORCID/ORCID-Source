@@ -18,19 +18,14 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
@@ -289,8 +284,7 @@ public class WorksController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        long lastModifiedTime = profileEntityManager.getLastModified(getEffectiveUserOrcid());
-        Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId, lastModifiedTime);
+        Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId);
 
         if (work != null) {
             WorkForm workForm = WorkForm.valueOf(work);
@@ -647,7 +641,7 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     public WorkForm validateWorkId(WorkForm work) {
-        List<Work> works = workManager.findWorks(getEffectiveUserOrcid(), profileEntityManager.getLastModified(getEffectiveUserOrcid()));
+        List<Work> works = workManager.findWorks(getEffectiveUserOrcid());
         if (works == null || works.isEmpty()) {
             setError(work, "manual_work_form_contents.edit_work.invalid_id");
         } else if (PojoUtil.isEmpty(work.getPutCode())) {
@@ -686,7 +680,7 @@ public class WorksController extends BaseWorkspaceController {
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
         String orcid = getEffectiveUserOrcid();
-        List<Work> works = workManager.findWorks(orcid, profileEntityManager.getLastModified(orcid));
+        List<Work> works = workManager.findWorks(orcid);
         HashMap<Long, WorkForm> worksMap = new HashMap<Long, WorkForm>();
         List<String> workIds = new ArrayList<String>();
         if (works != null) {

@@ -74,4 +74,6 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      *            removed.
      */
     void removeAllOtherNames(String orcid);
+
+    List<OtherNameEntity> getPublicOtherNames(String orcid, long lastModified);
 }

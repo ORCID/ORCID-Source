@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.read_only.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,7 +27,6 @@ import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.springframework.cache.annotation.Cacheable;
 
 public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements OtherNameManagerReadOnly {
        
@@ -42,32 +40,20 @@ public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implem
     }
 
     @Override
-    @Cacheable(value = "other-names", key = "#orcid.concat('-').concat(#lastModified)")
-    public OtherNames getOtherNames(String orcid, long lastModified) {
-        return getOtherNames(orcid, null);
-    }
-    
-    @Override
-    @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
-    public OtherNames getPublicOtherNames(String orcid, long lastModified) {
-        return getOtherNames(orcid, Visibility.PUBLIC);        
-    }
-    
-    private OtherNames getOtherNames(String orcid, Visibility visibility) {
-        List<OtherNameEntity> otherNameEntityList = new ArrayList<OtherNameEntity>();
-        if(visibility == null) {
-            otherNameEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
-        } else {
-            otherNameEntityList = otherNameDao.getOtherNames(orcid, visibility);
-        }
-        
+    public OtherNames getOtherNames(String orcid) {
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
     }
     
     @Override
-    @Cacheable(value = "minimized-other-names", key = "#orcid.concat('-').concat(#lastModified)")
-    public OtherNames getMinimizedOtherNames(String orcid, long lastModified) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, lastModified);
+    public OtherNames getPublicOtherNames(String orcid) {
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
+        return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+    }
+  
+    @Override
+    public OtherNames getMinimizedOtherNames(String orcid) {
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         return jpaJaxbOtherNameAdapter.toMinimizedOtherNameList(otherNameEntityList);
     }
     

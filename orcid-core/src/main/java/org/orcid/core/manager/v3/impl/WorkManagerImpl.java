@@ -143,7 +143,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
                 long lastModifiedTime = getLastModified(orcid);
-                List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
+                List<Work> existingWorks = this.findWorks(orcid);       
                 if (existingWorks != null) {
                     for (Work existing : existingWorks) {
                         activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
@@ -273,8 +273,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      * */
     private Set<ExternalID> buildExistingExternalIdsSet(String orcid, String sourceId) {
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
-        long lastModifiedTime = getLastModified(orcid);
-        List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);    
+        List<Work> existingWorks = this.findWorks(orcid);    
         for(Work work : existingWorks) {
             //If it is the same source
             if(work.retrieveSourcePath().equals(sourceId)) {
@@ -316,8 +315,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         if (isApiRequest) {
             activityValidator.validateWork(work, sourceEntity, false, isApiRequest, Visibility.fromValue(workEntity.getVisibility().value()));                        
-            long lastModifiedTime = getLastModified(orcid);
-            List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
+            List<Work> existingWorks = this.findWorks(orcid);       
             
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version

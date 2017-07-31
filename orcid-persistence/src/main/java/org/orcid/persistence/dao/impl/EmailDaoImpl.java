@@ -24,6 +24,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -195,11 +196,18 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
-    public List<EmailEntity> findByOrcid(String orcid) {
+    @Cacheable(value = "emails", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<EmailEntity> findByOrcid(String orcid, long lastModified) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid", EmailEntity.class);
         query.setParameter("orcid", orcid);
         List<EmailEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
+    }
+    
+    @Override
+    @Cacheable(value = "public-emails", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<EmailEntity> findPublicEmails(String orcid, long lastModified) {
+        return findByOrcid(orcid, Visibility.PUBLIC);
     }
     
     @Override
@@ -213,7 +221,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
-    public boolean verifySetCurrentAndPrimary(String orcid, String email) {
+    public boolean updateVerifySetCurrentAndPrimary(String orcid, String email) {
         Query query = entityManager.createQuery("update EmailEntity set current = true, primary = true, verified = true where orcid = :orcid and email = :email");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);

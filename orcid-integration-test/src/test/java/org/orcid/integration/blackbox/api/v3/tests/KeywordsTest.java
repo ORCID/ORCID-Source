@@ -258,14 +258,14 @@ public class KeywordsTest extends BlackBoxBaseV3_0_dev1 {
 
         ClientResponse response = memberV3Dev1ApiClient.viewKeywords(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        org.orcid.jaxb.model.record_v2.Keywords keywordsV2_1 = response.getEntity(org.orcid.jaxb.model.record_v2.Keywords.class);
+        org.orcid.jaxb.model.v3.dev1.record.Keywords keywordsV2_1 = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.Keywords.class);
         assertNotNull(keywordsV2_1);
         assertNotNull(keywordsV2_1.getKeywords());
         // There should be at least two, one public and one limited
         boolean found1 = false;
         boolean found2 = false;
 
-        for (org.orcid.jaxb.model.record_v2.Keyword keyword : keywordsV2_1.getKeywords()) {
+        for (org.orcid.jaxb.model.v3.dev1.record.Keyword keyword : keywordsV2_1.getKeywords()) {
             assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, keyword.getVisibility());
             if (keyword.getContent().equals(keyword1)) {
                 found1 = true;

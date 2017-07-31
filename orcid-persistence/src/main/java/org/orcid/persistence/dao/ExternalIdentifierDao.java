@@ -83,4 +83,6 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      *            removed.
      */
     void removeAllExternalIdentifiers(String orcid);
+
+    List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified);
 }

@@ -24,7 +24,7 @@ import org.orcid.jaxb.model.client_v2.ClientSummary;
 public interface ClientManagerReadOnly {
     Client get(String clientId);
 
-    Set<Client> getClients(String memberId, Long memberLastModified);
+    Set<Client> getClients(String memberId);
 
     ClientSummary getSummary(String clientId);
 }

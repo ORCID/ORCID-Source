@@ -31,19 +31,18 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.GroupAble;
 import org.orcid.jaxb.model.v3.dev1.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.springframework.cache.annotation.Cacheable;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
 
@@ -76,9 +75,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      *            the Id of the user
      * @return the list of works associated to the specific user
      */
-    @Cacheable(value = "works", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<Work> findWorks(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModified);
+    public List<Work> findWorks(String orcid) {
+        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
@@ -89,9 +87,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      *            the Id of the user
      * @return the list of works associated to the specific user
      */
-    @Cacheable(value = "public-works", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<Work> findPublicWorks(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrievePublicMinimizedWorks(orcid, lastModified);
+    public List<Work> findPublicWorks(String orcid) {
+        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrievePublicMinimizedWorks(orcid, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
@@ -104,15 +101,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      *            The work id
      */
     @Override
-    @Cacheable(value = "single-work", key = "#orcid.concat('-').concat(#workId).concat('-').concat(#lastModified)")
-    public Work getWork(String orcid, Long workId, long lastModified) {
+    public Work getWork(String orcid, Long workId) {
         WorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWork(work);
     }
 
     @Override
-    @Cacheable(value = "single-work-summary", key = "#orcid.concat('-').concat(#workId).concat('-').concat(#lastModified)")
-    public WorkSummary getWorkSummary(String orcid, Long workId, long lastModified) {
+    public WorkSummary getWorkSummary(String orcid, Long workId) {
         WorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWorkSummary(work);
     }
@@ -126,9 +121,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      * @return the list of works that belongs to this user
      */
     @Override
-    @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModified);
+    public List<WorkSummary> getWorksSummaryList(String orcid) {
+        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
 
@@ -189,13 +183,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    public WorkBulk findWorkBulk(String orcid, String putCodesAsString, long profileLastModified) {
+    public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
         List<BulkElement> works = new ArrayList<>();
         String[] putCodes = getPutCodeArray(putCodesAsString);
         for (String putCode : putCodes) {
             try {
                 Long id = Long.valueOf(putCode);
-                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, profileLastModified);
+                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, getLastModified(orcid));
                 works.add(jpaJaxbWorkAdapter.toWork(workEntity));
             } catch (Exception e) {
                 works.add(orcidCoreExceptionMapper.getV3OrcidError(new PutCodeFormatException("'" + putCode + "' is not a valid put code")));

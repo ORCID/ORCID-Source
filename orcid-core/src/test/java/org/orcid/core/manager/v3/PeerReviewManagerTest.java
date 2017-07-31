@@ -320,7 +320,7 @@ public class PeerReviewManagerTest extends BaseTest {
     @Test
     public void testGetAll() {
         String orcid = "0000-0000-0000-0003";
-        List<PeerReview> elements = peerReviewManager.findPeerReviews(orcid, System.currentTimeMillis());
+        List<PeerReview> elements = peerReviewManager.findPeerReviews(orcid);
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
         for(PeerReview element : elements) {
             if(9 == element.getPutCode()) {
@@ -347,7 +347,7 @@ public class PeerReviewManagerTest extends BaseTest {
     @Test
     public void testGetAllSummaries() {
         String orcid = "0000-0000-0000-0003";
-        List<PeerReviewSummary> elements = peerReviewManager.getPeerReviewSummaryList(orcid, System.currentTimeMillis());
+        List<PeerReviewSummary> elements = peerReviewManager.getPeerReviewSummaryList(orcid);
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
         for(PeerReviewSummary element : elements) {
             if(9 == element.getPutCode()) {

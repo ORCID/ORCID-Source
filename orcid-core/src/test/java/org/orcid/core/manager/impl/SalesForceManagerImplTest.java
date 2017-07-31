@@ -144,7 +144,7 @@ public class SalesForceManagerImplTest {
         emails.getEmails().add(email);
         salesForceManager.setProfileLastModifiedAspect(profileLastModifiedAspect);
         when(profileLastModifiedAspect.retrieveLastModifiedDate("0000-0000-0000-0001")).thenReturn(null);
-        when(emailManager.getEmails("0000-0000-0000-0001", 0)).thenReturn(emails);
+        when(emailManager.getEmails("0000-0000-0000-0001")).thenReturn(emails);
     }
     
     private Contact createContact(String id, String accountId, String email, String orcid) {

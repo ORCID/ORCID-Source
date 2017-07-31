@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -54,6 +55,8 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     private RecordNameDao recordNameDao;
 
     private ClientDetailsDao clientDetailsDao;
+    
+    private ProfileEntityManager profileEntityManager;
 
     public void setRecordNameDao(RecordNameDao recordNameDao) {
         this.recordNameDao = recordNameDao;
@@ -61,6 +64,10 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
 
     public void setClientDetailsDao(ClientDetailsDao clientDetailsDao) {
         this.clientDetailsDao = clientDetailsDao;
+    }
+    
+    public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
+        this.profileEntityManager = profileEntityManager;
     }
 
     @Override
@@ -137,7 +144,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     private String getProfileSourceNameFromDb(String orcid) {
         RecordNameEntity recordName = null;
         try {
-            recordName = recordNameDao.getRecordName(orcid);
+            recordName = recordNameDao.getRecordName(orcid, profileEntityManager.getLastModified(orcid));
             if (recordName == null) {
                 throw new IllegalArgumentException("Unable to find source name for: " + orcid);
             }

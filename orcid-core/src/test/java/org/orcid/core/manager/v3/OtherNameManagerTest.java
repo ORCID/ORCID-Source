@@ -127,7 +127,7 @@ public class OtherNameManagerTest extends BaseTest {
     @Test
     public void getAllTest() {
         String orcid = "0000-0000-0000-0003";
-        OtherNames elements = otherNameManager.getOtherNames(orcid, System.currentTimeMillis());
+        OtherNames elements = otherNameManager.getOtherNames(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getOtherNames());
         assertEquals(5, elements.getOtherNames().size());
@@ -157,7 +157,7 @@ public class OtherNameManagerTest extends BaseTest {
     @Test
     public void getPublicTest() {
         String orcid = "0000-0000-0000-0003";        
-        OtherNames elements = otherNameManager.getPublicOtherNames(orcid, System.currentTimeMillis());
+        OtherNames elements = otherNameManager.getPublicOtherNames(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getOtherNames());
         assertEquals(1, elements.getOtherNames().size());

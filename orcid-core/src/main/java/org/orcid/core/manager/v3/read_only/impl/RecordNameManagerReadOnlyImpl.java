@@ -24,14 +24,13 @@ import org.orcid.jaxb.model.v3.dev1.record.Name;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public class RecordNameManagerReadOnlyImpl implements RecordNameManagerReadOnly {
+public class RecordNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements RecordNameManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecordNameManagerReadOnlyImpl.class);
     
@@ -45,10 +44,9 @@ public class RecordNameManagerReadOnlyImpl implements RecordNameManagerReadOnly 
     }
     
     @Override
-    @Cacheable(value = "record-name", key = "#orcid.concat('-').concat(#lastModified)")
-    public Name getRecordName(String orcid, long lastModified) {
+    public Name getRecordName(String orcid) {
         try {
-            return jpaJaxbNameAdapter.toName(recordNameDao.getRecordName(orcid));             
+            return jpaJaxbNameAdapter.toName(recordNameDao.getRecordName(orcid, getLastModified(orcid)));             
         } catch(Exception e) {
             LOGGER.error("Exception getting record name", e);
         }

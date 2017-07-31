@@ -131,7 +131,7 @@ public class AffiliationsManagerTest extends BaseTest {
     @Test
     public void testGetAllEducations() {
         String orcid = "0000-0000-0000-0003";
-        List<EducationSummary> elements = affiliationsManager.getEducationSummaryList(orcid, System.currentTimeMillis());
+        List<EducationSummary> elements = affiliationsManager.getEducationSummaryList(orcid);
         assertNotNull(elements);
         assertEquals(5, elements.size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false; 
@@ -160,7 +160,7 @@ public class AffiliationsManagerTest extends BaseTest {
     @Test
     public void testGetAllEmployments() {
         String orcid = "0000-0000-0000-0003";
-        List<EmploymentSummary> elements = affiliationsManager.getEmploymentSummaryList(orcid, System.currentTimeMillis());
+        List<EmploymentSummary> elements = affiliationsManager.getEmploymentSummaryList(orcid);
         assertNotNull(elements);
         assertEquals(5, elements.size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false; 

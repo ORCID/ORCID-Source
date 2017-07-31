@@ -32,7 +32,7 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * 		the Id of the user
      * @return the list of works associated to the specific user 
      * */
-    List<Work> findWorks(String orcid, long lastModified); 
+    List<Work> findWorks(String orcid); 
     
     /**
      * Find the public works for a specific user
@@ -41,7 +41,7 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * 		the Id of the user
      * @return the list of works associated to the specific user 
      * */
-    List<Work> findPublicWorks(String orcid, long lastModified);
+    List<Work> findPublicWorks(String orcid);
     
     /**
      * Get the given Work from the database
@@ -50,9 +50,9 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * @param workId
      *          The work id             
      * */
-    Work getWork(String orcid, Long workId, long lastModified);
+    Work getWork(String orcid, Long workId);
     
-    WorkSummary getWorkSummary(String orcid, Long workId, long lastModified);
+    WorkSummary getWorkSummary(String orcid, Long workId);
     
     /**
      * Get the list of works that belongs to a user
@@ -62,7 +62,7 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      *          Last modified date used to check the cache
      * @return the list of works that belongs to this user
      * */
-    List<WorkSummary> getWorksSummaryList(String orcid, long lastModified);
+    List<WorkSummary> getWorksSummaryList(String orcid);
     
     /**
      * Generate a grouped list of works with the given list of works
@@ -82,6 +82,6 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * @param ids of required works
      * @return WorkBulk element containing the specified works
      */
-    WorkBulk findWorkBulk(String orcid, String putCodesAsString, long profileLastModified);
+    WorkBulk findWorkBulk(String orcid, String putCodesAsString);
 
 }

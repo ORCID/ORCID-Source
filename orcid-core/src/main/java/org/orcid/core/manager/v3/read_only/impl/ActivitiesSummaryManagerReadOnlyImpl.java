@@ -72,11 +72,10 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
     }
 
     public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
-        long lastModifiedTime = getLastModified(orcid);
         ActivitiesSummary activities = new ActivitiesSummary();
 
         // Set educations
-        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, lastModifiedTime);
+        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid);
         Educations educations = new Educations();
         for (EducationSummary summary : educationsList) {
             if (justPublic) {
@@ -90,7 +89,7 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
         activities.setEducations(educations);
 
         // Set employments
-        List<EmploymentSummary> employmentList = affiliationsManager.getEmploymentSummaryList(orcid, lastModifiedTime);
+        List<EmploymentSummary> employmentList = affiliationsManager.getEmploymentSummaryList(orcid);
 
         Employments employments = new Employments();
         for (EmploymentSummary summary : employmentList) {
@@ -105,17 +104,17 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
         activities.setEmployments(employments);
 
         // Set fundings
-        List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
+        List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid);
         Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);        
         activities.setFundings(fundings);
 
         // Set peer reviews
-        List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
+        List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid);
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);        
         activities.setPeerReviews(peerReviews);
 
         // Set works
-        List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
+        List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid);
         Works works = workManager.groupWorks(workSummaries, justPublic);        
         activities.setWorks(works);
 

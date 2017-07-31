@@ -1152,8 +1152,7 @@ public class NotificationManagerImpl implements NotificationManager {
             notificationEntity.setAuthenticationProviderId(clientDetails.getAuthenticationProviderId());
             notificationDao.persist(notificationEntity);
         } else {
-            Emails emails = emailManager.getEmails(userOrcid,
-                    (profileEntity.getLastModified() == null ? System.currentTimeMillis() : profileEntity.getLastModified().getTime()));
+            Emails emails = emailManager.getEmails(userOrcid);
             String primaryEmail = null;
             if (emails == null || emails.getEmails() == null) {
                 throw new IllegalArgumentException("Unable to find primary email for: " + userOrcid);

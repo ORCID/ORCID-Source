@@ -58,7 +58,7 @@ public class BiographyManagerTest extends BaseTest {
         bio.setVisibility(Visibility.LIMITED);
         
         biographyManager.createBiography(orcid, bio);
-        Biography newBio = biographyManager.getBiography(orcid, 0);
+        Biography newBio = biographyManager.getBiography(orcid);
         assertNotNull(newBio);
         assertEquals("This is my biography", newBio.getContent());
         assertEquals(Visibility.LIMITED, newBio.getVisibility());
@@ -91,7 +91,7 @@ public class BiographyManagerTest extends BaseTest {
     @Test
     public void testGetBiography() {
         String orcid = "0000-0000-0000-0002";
-        Biography bio = biographyManager.getBiography(orcid, 0);
+        Biography bio = biographyManager.getBiography(orcid);
         assertNotNull(bio);
         assertEquals("Biography for 0000-0000-0000-0002", bio.getContent());
         assertEquals(Visibility.LIMITED, bio.getVisibility());
@@ -100,11 +100,11 @@ public class BiographyManagerTest extends BaseTest {
     @Test
     public void testGetPublicBiography() {
         String orcid = "0000-0000-0000-0002";
-        Biography bio = biographyManager.getPublicBiography(orcid, 0);
+        Biography bio = biographyManager.getPublicBiography(orcid);
         assertNull(bio);
         
         orcid = "0000-0000-0000-0003";
-        bio = biographyManager.getPublicBiography(orcid, 0);
+        bio = biographyManager.getPublicBiography(orcid);
         assertNotNull(bio);
         assertEquals("Biography for 0000-0000-0000-0003", bio.getContent());
         assertEquals(Visibility.PUBLIC, bio.getVisibility());
@@ -113,7 +113,7 @@ public class BiographyManagerTest extends BaseTest {
     @Test
     public void testUpdateBiography() {
         String orcid = "0000-0000-0000-0001";
-        Biography bio = biographyManager.getBiography(orcid, 0);
+        Biography bio = biographyManager.getBiography(orcid);
         assertNotNull(bio);
         assertEquals("Biography for 0000-0000-0000-0001", bio.getContent());
         assertEquals(Visibility.PRIVATE, bio.getVisibility());
@@ -123,7 +123,7 @@ public class BiographyManagerTest extends BaseTest {
         bio.setVisibility(Visibility.PUBLIC);
         biographyManager.updateBiography(orcid, bio);
         
-        Biography newBio = biographyManager.getBiography(orcid, 0);
+        Biography newBio = biographyManager.getBiography(orcid);
         assertNotNull(newBio);
         assertEquals("Updated bio " + now, newBio.getContent());
         assertEquals(Visibility.PUBLIC, newBio.getVisibility());

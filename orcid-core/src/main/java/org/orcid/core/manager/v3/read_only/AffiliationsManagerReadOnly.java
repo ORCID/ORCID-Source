@@ -70,21 +70,17 @@ public interface AffiliationsManagerReadOnly {
      * Get the list of employments that belongs to a user
      * 
      * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
      * @return the list of employments that belongs to this user
      * */
-    List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified);
+    List<EmploymentSummary> getEmploymentSummaryList(String userOrcid);
     
     /**
      * Get the list of educations that belongs to a user
      * 
      * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
      * @return the list of educations that belongs to this user
      * */
-    List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);  
+    List<EducationSummary> getEducationSummaryList(String userOrcid);  
     
     /**
      * Get the list of all affiliations that belongs to a user

@@ -109,85 +109,85 @@ public class PublicV3ApiServiceDelegatorImpl
         implements PublicV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> {
 
     // Activities managers
-    @Resource
+    @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
 
-    @Resource
+    @Resource(name = "profileFundingManagerReadOnlyV3")
     private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
 
-    @Resource
+    @Resource(name = "affiliationsManagerReadOnlyV3")
     private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
 
-    @Resource
+    @Resource(name = "peerReviewManagerReadOnlyV3")
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
-    @Resource
+    @Resource(name = "activitiesSummaryManagerReadOnlyV3")
     private ActivitiesSummaryManagerReadOnly activitiesSummaryManagerReadOnly;
 
     // Person managers
-    @Resource
+    @Resource(name = "researcherUrlManagerReadOnlyV3")
     private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;
 
-    @Resource
+    @Resource(name = "otherNameManagerReadOnlyV3")
     private OtherNameManagerReadOnly otherNameManagerReadOnly;
 
-    @Resource
+    @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
 
-    @Resource
+    @Resource(name = "externalIdentifierManagerReadOnlyV3")
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
 
-    @Resource
+    @Resource(name = "personalDetailsManagerReadOnlyV3")
     private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
 
-    @Resource
+    @Resource(name = "profileKeywordManagerReadOnlyV3")
     private ProfileKeywordManagerReadOnly profileKeywordManagerReadOnly;
 
-    @Resource
+    @Resource(name = "addressManagerReadOnlyV3")
     private AddressManagerReadOnly addressManagerReadOnly;
 
-    @Resource
+    @Resource(name = "biographyManagerReadOnlyV3")
     private BiographyManagerReadOnly biographyManagerReadOnly;
 
-    @Resource
+    @Resource(name = "personDetailsManagerReadOnlyV3")
     private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
 
     // Record manager
-    @Resource
+    @Resource(name = "profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
 
-    @Resource
+    @Resource(name = "recordManagerReadOnlyV3")
     private RecordManagerReadOnly recordManagerReadOnly;
 
     // Other managers
-    @Resource
+    @Resource(name = "groupIdRecordManagerReadOnlyV3")
     private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
 
-    @Resource
+    @Resource(name = "sourceUtilsReadOnlyV3")
     private SourceUtils sourceUtilsReadOnly;
 
-    @Resource
+    @Resource(name = "contributorUtilsV3")
     private ContributorUtils contributorUtilsReadOnly;
 
-    @Resource
+    @Resource(name = "recordManagerV3")
     private RecordManager recordManager;
 
-    @Resource
+    @Resource(name = "sourceUtilsV3")
     private SourceUtils sourceUtils;
 
-    @Resource
+    @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManager orcidSearchManager;
     
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @Resource
-    private PublicAPISecurityManagerV3 publicAPISecurityManagerV2;
+    @Resource(name = "publicAPISecurityManagerV3")
+    private PublicAPISecurityManagerV3 publicAPISecurityManagerV3;
 
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
@@ -195,10 +195,6 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
-
-    private long getLastModifiedTime(String orcid) {
-        return profileEntityManagerReadOnly.getLastModified(orcid);
-    }
 
     @Override
     public Response viewStatusText() {
@@ -218,7 +214,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid);
-        publicAPISecurityManagerV2.filter(as);
+        publicAPISecurityManagerV3.filter(as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(as);
@@ -228,9 +224,8 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        Work w = workManagerReadOnly.getWork(orcid, putCode, lastModifiedTime);
-        publicAPISecurityManagerV2.checkIsPublic(w);
+        Work w = workManagerReadOnly.getWork(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(w);
         contributorUtilsReadOnly.filterContributorPrivateData(w);        
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
@@ -240,10 +235,9 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorks(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid, lastModifiedTime);
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
-        publicAPISecurityManagerV2.filter(publicWorks);
+        publicAPISecurityManagerV3.filter(publicWorks);
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicWorks);
@@ -277,10 +271,9 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode, lastModifiedTime);
+        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode);
         ActivityUtils.cleanEmptyFields(ws);
-        publicAPISecurityManagerV2.checkIsPublic(ws);
+        publicAPISecurityManagerV3.checkIsPublic(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         sourceUtilsReadOnly.setSourceName(ws);
         return Response.ok(ws).build();
@@ -289,7 +282,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewFunding(String orcid, Long putCode) {
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(f);
+        publicAPISecurityManagerV3.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
         ActivityUtils.cleanEmptyFields(f);
         sourceUtilsReadOnly.setSourceName(f);
@@ -299,9 +292,9 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewFundings(String orcid) {
-        List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
-        publicAPISecurityManagerV2.filter(publicFundings);
+        publicAPISecurityManagerV3.filter(publicFundings);
         ActivityUtils.setPathToFundings(publicFundings, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicFundings);
         sourceUtilsReadOnly.setSourceName(publicFundings);
@@ -311,7 +304,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(fs);
+        publicAPISecurityManagerV3.checkIsPublic(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
         sourceUtilsReadOnly.setSourceName(fs);
         return Response.ok(fs).build();
@@ -320,7 +313,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewEducation(String orcid, Long putCode) {
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(e);
+        publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
@@ -328,7 +321,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEducations(String orcid) {
-        List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid);
         Educations publicEducations = new Educations();
         for (EducationSummary summary : educations) {
             if (Visibility.PUBLIC.equals(summary.getVisibility())) {
@@ -345,7 +338,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
         EducationSummary es = affiliationsManagerReadOnly.getEducationSummary(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(es);
+        publicAPISecurityManagerV3.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtilsReadOnly.setSourceName(es);
         return Response.ok(es).build();
@@ -354,7 +347,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(e);
+        publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
@@ -362,7 +355,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmployments(String orcid) {
-        List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
         Employments publicEmployments = new Employments();
         for (EmploymentSummary summary : employments) {
             if (Visibility.PUBLIC.equals(summary.getVisibility())) {
@@ -379,7 +372,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
         EmploymentSummary es = affiliationsManagerReadOnly.getEmploymentSummary(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(es);
+        publicAPISecurityManagerV3.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtilsReadOnly.setSourceName(es);
         return Response.ok(es).build();
@@ -388,7 +381,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(peerReview);
+        publicAPISecurityManagerV3.checkIsPublic(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
         sourceUtilsReadOnly.setSourceName(peerReview);
         return Response.ok(peerReview).build();
@@ -396,9 +389,9 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewPeerReviews(String orcid) {
-        List<PeerReviewSummary> peerReviews = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
+        List<PeerReviewSummary> peerReviews = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
-        publicAPISecurityManagerV2.filter(publicPeerReviews);
+        publicAPISecurityManagerV3.filter(publicPeerReviews);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicPeerReviews);
         sourceUtilsReadOnly.setSourceName(publicPeerReviews);
@@ -408,7 +401,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
         PeerReviewSummary summary = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(summary);
+        publicAPISecurityManagerV3.checkIsPublic(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
         sourceUtilsReadOnly.setSourceName(summary);
         return Response.ok(summary).build();
@@ -429,8 +422,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewResearcherUrls(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid, lastModifiedTime);
+        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(researcherUrls);
         sourceUtilsReadOnly.setSourceName(researcherUrls);
@@ -440,7 +432,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewResearcherUrl(String orcid, Long putCode) {
         ResearcherUrl researcherUrl = researcherUrlManagerReadOnly.getResearcherUrl(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(researcherUrl);
+        publicAPISecurityManagerV3.checkIsPublic(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         sourceUtilsReadOnly.setSourceName(researcherUrl);
         return Response.ok(researcherUrl).build();
@@ -448,9 +440,8 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmails(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        Emails emails = emailManagerReadOnly.getPublicEmails(orcid, lastModifiedTime);
-        publicAPISecurityManagerV2.filter(emails);
+        Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
+        publicAPISecurityManagerV3.filter(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtilsReadOnly.setSourceName(emails);
@@ -460,7 +451,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
-        publicAPISecurityManagerV2.filter(personalDetails);
+        publicAPISecurityManagerV3.filter(personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(personalDetails);
         sourceUtilsReadOnly.setSourceName(personalDetails);
@@ -469,9 +460,8 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewOtherNames(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid, lastModifiedTime);
-        publicAPISecurityManagerV2.filter(otherNames);
+        OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid);
+        publicAPISecurityManagerV3.filter(otherNames);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(otherNames);
         sourceUtilsReadOnly.setSourceName(otherNames);
@@ -481,7 +471,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManagerReadOnly.getOtherName(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(otherName);
+        publicAPISecurityManagerV3.checkIsPublic(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
         sourceUtilsReadOnly.setSourceName(otherName);
         return Response.ok(otherName).build();
@@ -489,9 +479,8 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewExternalIdentifiers(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid, lastModifiedTime);
-        publicAPISecurityManagerV2.filter(extIds);
+        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
+        publicAPISecurityManagerV3.filter(extIds);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(extIds);
         sourceUtilsReadOnly.setSourceName(extIds);
@@ -501,7 +490,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         PersonExternalIdentifier extId = externalIdentifierManagerReadOnly.getExternalIdentifier(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(extId);
+        publicAPISecurityManagerV3.checkIsPublic(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         sourceUtilsReadOnly.setSourceName(extId);
         return Response.ok(extId).build();
@@ -509,17 +498,16 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewBiography(String orcid) {
-        Biography bio = biographyManagerReadOnly.getBiography(orcid, getLastModifiedTime(orcid));
-        publicAPISecurityManagerV2.checkIsPublic(bio);
+        Biography bio = biographyManagerReadOnly.getBiography(orcid);
+        publicAPISecurityManagerV3.checkIsPublic(bio);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
     }
 
     @Override
     public Response viewKeywords(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
-        publicAPISecurityManagerV2.filter(keywords);
+        Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid);
+        publicAPISecurityManagerV3.filter(keywords);
         ElementUtils.setPathToKeywords(keywords, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(keywords);
         sourceUtilsReadOnly.setSourceName(keywords);
@@ -529,7 +517,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
         Keyword keyword = profileKeywordManagerReadOnly.getKeyword(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(keyword);
+        publicAPISecurityManagerV3.checkIsPublic(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
         sourceUtilsReadOnly.setSourceName(keyword);
         return Response.ok(keyword).build();
@@ -537,8 +525,8 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
-        publicAPISecurityManagerV2.filter(addresses);
+        Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid);
+        publicAPISecurityManagerV3.filter(addresses);
         ElementUtils.setPathToAddresses(addresses, orcid);
         // Set the latest last modified
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(addresses);
@@ -549,7 +537,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewAddress(String orcid, Long putCode) {
         Address address = addressManagerReadOnly.getAddress(orcid, putCode);
-        publicAPISecurityManagerV2.checkIsPublic(address);
+        publicAPISecurityManagerV3.checkIsPublic(address);
         ElementUtils.setPathToAddress(address, orcid);
         sourceUtilsReadOnly.setSourceName(address);
         return Response.ok(address).build();
@@ -558,7 +546,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
-        publicAPISecurityManagerV2.filter(person);
+        publicAPISecurityManagerV3.filter(person);
         ElementUtils.setPathToPerson(person, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtilsReadOnly.setSourceName(person);
@@ -568,7 +556,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewRecord(String orcid) {
         Record record = recordManagerReadOnly.getPublicRecord(orcid);
-        publicAPISecurityManagerV2.filter(record);
+        publicAPISecurityManagerV3.filter(record);
         if (record.getPerson() != null) {
             sourceUtilsReadOnly.setSourceName(record.getPerson());
         }
@@ -594,8 +582,8 @@ public class PublicV3ApiServiceDelegatorImpl
         if (profileEntity == null) {
             throw new OrcidNoResultException("No such profile: " + orcid);
         }
-        WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes, profileEntity.getLastModified().getTime());
-        publicAPISecurityManagerV2.filter(workBulk);
+        WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
+        publicAPISecurityManagerV3.filter(workBulk);
         contributorUtilsReadOnly.filterContributorPrivateData(workBulk);        
         ActivityUtils.cleanEmptyFields(workBulk);
         ActivityUtils.setPathToBulk(workBulk, orcid);

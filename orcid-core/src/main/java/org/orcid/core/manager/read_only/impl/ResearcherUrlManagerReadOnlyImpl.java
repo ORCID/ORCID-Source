@@ -27,7 +27,6 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.springframework.cache.annotation.Cacheable;
 
 public class ResearcherUrlManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ResearcherUrlManagerReadOnly {
 
@@ -47,9 +46,9 @@ public class ResearcherUrlManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
      * @return the list of public researcher urls associated with the orcid profile
      * */
     @Override
-    @Cacheable(value = "public-researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
-    public ResearcherUrls getPublicResearcherUrls(String orcid, long lastModified) {
-        return getResearcherUrls(orcid, Visibility.PUBLIC);
+    public ResearcherUrls getPublicResearcherUrls(String orcid) {
+        List<ResearcherUrlEntity> researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, Visibility.PUBLIC);
+        return jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
     }
     
     /**
@@ -59,28 +58,11 @@ public class ResearcherUrlManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
      * @return the list of researcher urls associated with the orcid profile
      * */
     @Override
-    @Cacheable(value = "researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
-    public ResearcherUrls getResearcherUrls(String orcid, long lastModified) {
-        return getResearcherUrls(orcid, null);
-    }
-    
-    /**
-     * Return the list of researcher urls associated to a specific profile
-     * 
-     * @param orcid
-     * @return the list of researcher urls associated with the orcid profile
-     * */
-    private ResearcherUrls getResearcherUrls(String orcid, Visibility visibility) {
-        List<ResearcherUrlEntity> researcherUrlEntities = null; 
-        if(visibility == null) {
-            researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
-        } else {
-            researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, visibility);
-        }       
-        
+    public ResearcherUrls getResearcherUrls(String orcid) {
+        List<ResearcherUrlEntity> researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         return jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
     }
-
+    
     @Override
     public ResearcherUrl getResearcherUrl(String orcid, long id) {
         ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, id);        

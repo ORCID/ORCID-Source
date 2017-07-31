@@ -61,19 +61,18 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
     @Override
     public PersonalDetails getPersonalDetails(String orcid) {
         Date lastModified = getLastModifiedDate(orcid);
-        long lastModifiedTime = lastModified.getTime();
         PersonalDetails personalDetails = new PersonalDetails();
-        Name name = recordNameManager.getRecordName(orcid, lastModifiedTime);
+        Name name = recordNameManager.getRecordName(orcid);
         if (name != null) {
             personalDetails.setName(name);
         }
 
-        Biography bio = biographyManager.getBiography(orcid, lastModifiedTime);
+        Biography bio = biographyManager.getBiography(orcid);
         if (bio != null) {
             personalDetails.setBiography(bio);
         }
 
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
         OtherNames filteredOtherNames = new OtherNames();
         personalDetails.setOtherNames(filteredOtherNames);
         if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
@@ -92,22 +91,21 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
     @Override
     public PersonalDetails getPublicPersonalDetails(String orcid) {
         Date lastModified = getLastModifiedDate(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         PersonalDetails personalDetails = new PersonalDetails();
 
-        Biography bio = biographyManager.getPublicBiography(orcid, lastModifiedTime);
+        Biography bio = biographyManager.getPublicBiography(orcid);
         if (bio != null) {
             personalDetails.setBiography(bio);
         }
 
-        Name name = recordNameManager.getRecordName(orcid, lastModifiedTime);
+        Name name = recordNameManager.getRecordName(orcid);
         if (name != null && !Visibility.PUBLIC.equals(name.getVisibility())) {
             personalDetails.setName(null);
         } else {
             personalDetails.setName(name);
         }
 
-        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
+        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid);
         OtherNames filteredOtherNames = new OtherNames();
         personalDetails.setOtherNames(filteredOtherNames);
         if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {

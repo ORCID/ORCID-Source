@@ -307,7 +307,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         // Fill biography elements
 
         // Fill country
-        Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);
+        Addresses publicAddresses = addressManager.getPublicAddresses(orcid);
         Map<String, String> countryNames = new HashMap<String, String>();
         if (publicAddresses != null && publicAddresses.getAddress() != null) {
             Address publicAddress = null;
@@ -327,17 +327,17 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         // Fill keywords
-        Keywords publicKeywords = keywordManager.getPublicKeywords(orcid, lastModifiedTime);
+        Keywords publicKeywords = keywordManager.getPublicKeywords(orcid);
         Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
         mav.addObject("publicGroupedKeywords", groupedKeywords);
 
         // Fill researcher urls
-        ResearcherUrls publicResearcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
+        ResearcherUrls publicResearcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid);
         Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
         mav.addObject("publicGroupedResearcherUrls", groupedResearcherUrls);
 
         // Fill emails
-        Emails publicEmails = emailManager.getPublicEmails(orcid, lastModifiedTime);
+        Emails publicEmails = emailManager.getPublicEmails(orcid);
         Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
         mav.addObject("publicGroupedEmails", groupedEmails);
 
@@ -351,7 +351,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
 
-        minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, lastModifiedTime);
+        minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid));
         if (minimizedWorksMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
@@ -603,7 +603,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
-        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, getLastModifiedTime(orcid));
+        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid));
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -646,7 +646,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid));       
+        Work workObj = workManager.getWork(orcid, workId);       
         if (workObj != null) {            
             validateVisibility(workObj.getVisibility());            
             sourceUtils.setSourceName(workObj);

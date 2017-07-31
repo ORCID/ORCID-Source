@@ -345,7 +345,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         contact.setAccountId(accountId);
         if (StringUtils.isBlank(contact.getEmail())) {
             String contactOrcid = contact.getOrcid();
-            Email primaryEmail = emailManager.getEmails(contactOrcid, getLastModified(contactOrcid)).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
+            Email primaryEmail = emailManager.getEmails(contactOrcid).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
             contact.setEmail(primaryEmail.getEmail());
         }
         List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);

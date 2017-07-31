@@ -56,7 +56,7 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      *            The owner of the peerReview
      * @return a list will all peer reviews associated with the given user 
      * */
-    List<PeerReviewEntity> getByUser(String userOrcid);
+    List<PeerReviewEntity> getByUser(String userOrcid, long lastModified);
     
     boolean updateToMaxDisplay(String orcid, Long peerReviewId);
     

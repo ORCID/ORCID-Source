@@ -64,7 +64,7 @@ public class RecordNameManagerV3Test extends BaseTest {
         name.setVisibility(Visibility.PRIVATE);
         String orcid = "0000-0000-0000-0005";
         recordNameManager.createRecordName(orcid, name);
-        Name newName = recordNameManager.getRecordName(orcid, 0);
+        Name newName = recordNameManager.getRecordName(orcid);
         assertNotNull(newName);
         assertEquals("Credit Name " + time, newName.getCreditName().getContent());
         assertEquals("Family Name " + time, newName.getFamilyName().getContent());
@@ -109,7 +109,7 @@ public class RecordNameManagerV3Test extends BaseTest {
     @Test
     public void testGetRecordName() {
         String orcid = "0000-0000-0000-0001";
-        Name name = recordNameManager.getRecordName(orcid, 0);
+        Name name = recordNameManager.getRecordName(orcid);
         assertNotNull(name);
         assertEquals("Leonardo", name.getGivenNames().getContent());
         assertEquals("da Vinci", name.getFamilyName().getContent());
@@ -120,7 +120,7 @@ public class RecordNameManagerV3Test extends BaseTest {
     @Test
     public void testUpdateRecordName() {
         String orcid = "0000-0000-0000-0002";
-        Name name = recordNameManager.getRecordName(orcid, 0);
+        Name name = recordNameManager.getRecordName(orcid);
         assertNotNull(name);
         assertEquals("Given Names", name.getGivenNames().getContent());
         assertEquals("Family Name", name.getFamilyName().getContent());
@@ -137,7 +137,7 @@ public class RecordNameManagerV3Test extends BaseTest {
         name.setVisibility(Visibility.PRIVATE);
         
         recordNameManager.updateRecordName(orcid, name);
-        Name updatedName = recordNameManager.getRecordName(orcid, 1);
+        Name updatedName = recordNameManager.getRecordName(orcid);
         assertNotNull(updatedName);
         assertEquals("Updated Given Names " + now, updatedName.getGivenNames().getContent());
         assertEquals("Updated Family Name " + now, updatedName.getFamilyName().getContent());

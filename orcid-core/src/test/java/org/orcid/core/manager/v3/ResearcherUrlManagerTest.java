@@ -128,7 +128,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
     @Test
     public void getAllTest() {
         String orcid = "0000-0000-0000-0003";
-        ResearcherUrls elements = researcherUrlManager.getResearcherUrls(orcid, System.currentTimeMillis());
+        ResearcherUrls elements = researcherUrlManager.getResearcherUrls(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getResearcherUrls());
         assertEquals(5, elements.getResearcherUrls().size());
@@ -158,7 +158,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
     @Test
     public void getPublicTest() {
         String orcid = "0000-0000-0000-0003";        
-        ResearcherUrls elements = researcherUrlManager.getPublicResearcherUrls(orcid, System.currentTimeMillis());
+        ResearcherUrls elements = researcherUrlManager.getPublicResearcherUrls(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getResearcherUrls());
         assertEquals(1, elements.getResearcherUrls().size());

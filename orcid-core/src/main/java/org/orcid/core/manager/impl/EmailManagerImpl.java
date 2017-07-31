@@ -102,7 +102,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             throw new IllegalArgumentException("orcid or email param is empty or null");
         }
 
-        return emailDao.verifySetCurrentAndPrimary(orcid, email);
+        return emailDao.updateVerifySetCurrentAndPrimary(orcid, email);
     }
 
     /***

@@ -303,7 +303,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
 
         ClientResponse getAllResponse = memberV3Dev1ApiClient.getResearcherUrls(getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
-        org.orcid.jaxb.model.record_v2.ResearcherUrls researcherUrls = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrls.class);
+        org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls researcherUrls = getAllResponse.getEntity(org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls.class);
         assertNotNull(researcherUrls);
         assertNotNull(researcherUrls.getResearcherUrls());
         assertEquals(1, researcherUrls.getResearcherUrls().size());
@@ -318,7 +318,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
 
         getAllResponse = memberV3Dev1ApiClient.getResearcherUrls(getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
-        researcherUrls = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrls.class);
+        researcherUrls = getAllResponse.getEntity(org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls.class);
         assertNotNull(researcherUrls);
         assertNotNull(researcherUrls.getResearcherUrls());
         assertTrue(researcherUrls.getResearcherUrls().isEmpty());

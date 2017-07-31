@@ -237,8 +237,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        Work w = workManagerReadOnly.getWork(orcid, putCode, lastModifiedTime);
+        Work w = workManagerReadOnly.getWork(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(w);
         contributorUtilsReadOnly.filterContributorPrivateData(w);        
         ActivityUtils.cleanEmptyFields(w);
@@ -249,8 +248,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorks(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid, lastModifiedTime);
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicAPISecurityManagerV2.filter(publicWorks);
         ActivityUtils.cleanEmptyFields(publicWorks);
@@ -286,8 +284,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode, lastModifiedTime);
+        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode);
         ActivityUtils.cleanEmptyFields(ws);
         publicAPISecurityManagerV2.checkIsPublic(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
@@ -308,7 +305,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewFundings(String orcid) {
-        List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
         publicAPISecurityManagerV2.filter(publicFundings);
         ActivityUtils.setPathToFundings(publicFundings, orcid);
@@ -337,7 +334,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEducations(String orcid) {
-        List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid);
         Educations publicEducations = new Educations();
         for (EducationSummary summary : educations) {
             if (Visibility.PUBLIC.equals(summary.getVisibility())) {
@@ -371,7 +368,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmployments(String orcid) {
-        List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
         Employments publicEmployments = new Employments();
         for (EmploymentSummary summary : employments) {
             if (Visibility.PUBLIC.equals(summary.getVisibility())) {
@@ -405,7 +402,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewPeerReviews(String orcid) {
-        List<PeerReviewSummary> peerReviews = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
+        List<PeerReviewSummary> peerReviews = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
         publicAPISecurityManagerV2.filter(publicPeerReviews);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
@@ -438,8 +435,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewResearcherUrls(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid, lastModifiedTime);
+        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(researcherUrls);
         sourceUtilsReadOnly.setSourceName(researcherUrls);
@@ -457,8 +453,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmails(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        Emails emails = emailManagerReadOnly.getPublicEmails(orcid, lastModifiedTime);
+        Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
         publicAPISecurityManagerV2.filter(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
@@ -478,8 +473,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewOtherNames(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid, lastModifiedTime);
+        OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid);
         publicAPISecurityManagerV2.filter(otherNames);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(otherNames);
@@ -518,7 +512,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewBiography(String orcid) {
-        Biography bio = biographyManagerReadOnly.getBiography(orcid, getLastModifiedTime(orcid));
+        Biography bio = biographyManagerReadOnly.getBiography(orcid);
         publicAPISecurityManagerV2.checkIsPublic(bio);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
@@ -526,8 +520,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewKeywords(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
+        Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid);
         publicAPISecurityManagerV2.filter(keywords);
         ElementUtils.setPathToKeywords(keywords, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(keywords);
@@ -546,7 +539,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
+        Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid);
         publicAPISecurityManagerV2.filter(addresses);
         ElementUtils.setPathToAddresses(addresses, orcid);
         // Set the latest last modified
@@ -603,7 +596,7 @@ public class PublicV2ApiServiceDelegatorImpl
         if (profileEntity == null) {
             throw new OrcidNoResultException("No such profile: " + orcid);
         }
-        WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes, profileEntity.getLastModified().getTime());
+        WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         publicAPISecurityManagerV2.filter(workBulk);
         contributorUtilsReadOnly.filterContributorPrivateData(workBulk);        
         ActivityUtils.cleanEmptyFields(workBulk);

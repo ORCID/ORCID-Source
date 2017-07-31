@@ -27,7 +27,7 @@ import org.orcid.persistence.jpa.entities.BiographyEntity;
 public interface BiographyDao extends GenericDao<BiographyEntity, Long> {
     boolean exists(String orcid);
     
-    BiographyEntity getBiography(String orcid);
+    BiographyEntity getBiography(String orcid, long lastModified);
 
     boolean updateBiography(String orcid, String biography, Visibility visibility);
 

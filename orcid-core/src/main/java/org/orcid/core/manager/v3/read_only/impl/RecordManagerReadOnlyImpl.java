@@ -155,7 +155,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         boolean verfiedEmail = false;
         boolean verfiedPrimaryEmail = false;
         
-        Emails emails = emailManager.getEmails(orcid, profile.getLastModified().getTime());
+        Emails emails = emailManager.getEmails(orcid);
         if (emails != null) {
             for (Email email : emails.getEmails()) {
                 if (email.isVerified()) {

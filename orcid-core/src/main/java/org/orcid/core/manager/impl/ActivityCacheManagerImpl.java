@@ -55,7 +55,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     @Cacheable(value = "pub-min-works-maps", key = "#orcid.concat('-').concat(#lastModified)")
     public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid, long lastModified) {
         LinkedHashMap<Long, WorkForm> workMap = new LinkedHashMap<>();
-        List<Work> works = workManager.findPublicWorks(orcid, lastModified);
+        List<Work> works = workManager.findPublicWorks(orcid);
         if (works != null)
             for (Work work : works)                
                 workMap.put(work.getPutCode(), WorkForm.valueOf(work));                          
@@ -64,7 +64,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     
     @Cacheable(value = "pub-peer-reviews-maps", key = "#orcid.concat('-').concat(#lastModified)")
     public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid, long lastModified) {
-        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, lastModified);
+        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid);
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         if (peerReviews != null) {
             if (!peerReviews.isEmpty()) {                
@@ -80,7 +80,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     
     @Cacheable(value = "pub-funding-maps", key = "#orcid.concat('-').concat(#lastModified)")
     public LinkedHashMap<Long, Funding> fundingMap(String orcid, long lastModified) {
-    	List<Funding> fundings = profileFundingManager.getFundingList(orcid, lastModified);
+    	List<Funding> fundings = profileFundingManager.getFundingList(orcid);
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
 		if (fundings != null) {
 			for (Funding funding : fundings) {

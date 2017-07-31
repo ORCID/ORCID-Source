@@ -74,7 +74,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
-        List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
+        List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywords(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
             if (isDuplicated(existing, keyword, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -117,7 +117,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
-        List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
+        List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywords(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
             if (isDuplicated(existing, keyword, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -143,7 +143,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     @Override
     @Transactional
     public Keywords updateKeywords(String orcid, Keywords keywords) {
-        List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));        
+        List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywords(orcid, getLastModified(orcid));        
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
             boolean deleteMe = true;

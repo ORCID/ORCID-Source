@@ -167,7 +167,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     @Test
     public void getAllTest() {
         String orcid = "0000-0000-0000-0003";
-        PersonExternalIdentifiers elements = externalIdentifierManager.getExternalIdentifiers(orcid, System.currentTimeMillis());
+        PersonExternalIdentifiers elements = externalIdentifierManager.getExternalIdentifiers(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getExternalIdentifiers());
         assertEquals(5, elements.getExternalIdentifiers().size());
@@ -197,7 +197,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     @Test
     public void getPublicTest() {
         String orcid = "0000-0000-0000-0003";        
-        PersonExternalIdentifiers elements = externalIdentifierManager.getPublicExternalIdentifiers(orcid, System.currentTimeMillis());
+        PersonExternalIdentifiers elements = externalIdentifierManager.getPublicExternalIdentifiers(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getExternalIdentifiers());
         assertEquals(1, elements.getExternalIdentifiers().size());

@@ -84,7 +84,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             // Validate it have at least one ext id
             activityValidator.validatePeerReview(peerReview, sourceEntity, true, isApiRequest, null);
 
-            List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
+            List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid, getLastModified(orcid));
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
@@ -143,7 +143,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         if (isApiRequest) {
             activityValidator.validatePeerReview(peerReview, sourceEntity, false, isApiRequest, originalVisibility);
             validateGroupId(peerReview);
-            List<PeerReview> existingReviews = this.findPeerReviews(orcid, System.currentTimeMillis());
+            List<PeerReview> existingReviews = this.findPeerReviews(orcid);
             for (PeerReview existing : existingReviews) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(peerReview.getPutCode())) {

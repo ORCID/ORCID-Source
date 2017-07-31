@@ -59,7 +59,7 @@ public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV
 
     @Override
     public void checkIsPublic(VisibilityType visibilityType) {
-        if (visibilityType != null && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
+        if (visibilityType != null && !org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }
@@ -74,7 +74,7 @@ public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV
             return;
         }
 
-        if (!org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if (!org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }
