@@ -31,7 +31,7 @@ public class ContactRole implements Serializable {
     private String id;
     private String accountId;
     private String contactId;
-    private Boolean isVotingContact = Boolean.FALSE;
+    private Boolean isVotingContact = false;
     private ContactRoleType roleType;
 
     public ContactRole() {

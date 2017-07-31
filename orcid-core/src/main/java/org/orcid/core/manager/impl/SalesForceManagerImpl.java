@@ -518,8 +518,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private boolean contactChanged(Contact existingContact, Contact updatedContact) {
         ContactRole existingRole = existingContact.getRole();
         ContactRole updatedRole = updatedContact.getRole();
-        return !existingRole.getRoleType().equals(updatedRole.getRoleType())
-                || !existingRole.isVotingContact().equals(updatedRole.isVotingContact());
+        return !existingRole.getRoleType().equals(updatedRole.getRoleType()) || !existingRole.isVotingContact().equals(updatedRole.isVotingContact());
     }
 
     private boolean isSuperContact(Contact c) {
