@@ -157,8 +157,6 @@ public class ClientsControllerTest extends BaseControllerTest {
         assertEquals(2, errors.size());
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.150")));
         assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
-
-        fail();
         
         // Test invalid redirect uris
         client = controller.getEmptyClient();
@@ -211,8 +209,6 @@ public class ClientsControllerTest extends BaseControllerTest {
         assertEquals(2, errors.size());
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.150")));
         assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
-
-        fail();
         
         // Test invalid redirect uris
         client = controller.getEmptyClient();
