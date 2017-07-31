@@ -39,21 +39,16 @@ export class widgetCtrl {
 }
 
 export const widgetCmp = {
-    /*
-    template : './widget.component.html',
-    */
     controller: widgetCtrl,
     controllerAs: 'ctrl'
 };
-//let testInject: any;
-//testInject = document.getElementById("widgetCtrlTest").textContent;
-//testInject = testInject.textContent;
 
 import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'widget-ng2',
-    template: scriptTmpl("widget-ng2-template")
+    //template: 'asdfgg'
+    template:  (scriptTmpl("widget-ng2-template")).toString()
 })
 export class widgetNg2Cmp {
 }
