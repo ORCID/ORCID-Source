@@ -21,9 +21,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 public interface ProfileEntityCacheManager {
 
     public ProfileEntity retrieve(String orcid) throws IllegalArgumentException;
-    
-    public void put(ProfileEntity profileEntity);
-    
+        
     public void removeAll();
     
     public void remove(String orcid);

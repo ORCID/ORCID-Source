@@ -47,6 +47,9 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
 
     @Resource
     private V2VersionConverterChain v2VersionConverterChain;
+    
+    @Resource
+    private V2VersionConverterChain v2_1VersionConverterChain;
 
     public String getExternalVersion() {
         return externalVersion;
@@ -64,13 +67,23 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotifications(String orcid) {        
-        return downgradeResponse(notificationsApiServiceDelegator.findPermissionNotifications(orcid));
+        Response response = notificationsApiServiceDelegator.findPermissionNotifications(orcid);
+        if(externalVersion.equals("2.1")) {
+            return upgradeResponse(response);
+        } else {
+            return downgradeResponse(response);
+        }
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotification(String orcid, Long id) {
-        return downgradeResponse(notificationsApiServiceDelegator.findPermissionNotification(orcid, id));
+        Response response = downgradeResponse(notificationsApiServiceDelegator.findPermissionNotification(orcid, id));
+        if(externalVersion.equals("2.1")) {
+            return upgradeResponse(response);
+        } else {
+            return downgradeResponse(response);
+        }
     }
 
     @Override
@@ -92,6 +105,16 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
             result = v2VersionConverterChain.downgrade(new V2Convertible(entity, MemberV2ApiServiceDelegator.LATEST_V2_VERSION), externalVersion);
         }
         return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
+    }
+    
+    private Response upgradeResponse(Response response) {
+        Object entity = response.getEntity();
+        V2Convertible result = null;
+        if (entity != null) {
+            result = v2_1VersionConverterChain.upgrade(new V2Convertible(entity, MemberV2ApiServiceDelegator.LATEST_V2_VERSION), externalVersion);
+            return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
+        }
+        return response;
     }
 
     private Object upgradeObject(Object entity) {

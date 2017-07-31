@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,14 +28,11 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -137,22 +132,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
 
         clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, null, CLIENT_WEBSITE, ClientType.CREATOR, clientScopes,
                 clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities, true);
-    }
-
-    @Test(expected = NoResultException.class)
-    public void testGetClientNonExistent() {
-        clientDetailsManager.getClient("some-nonexistent-client");
-        fail();
-    }
-
-    @Test
-    public void testGetClient() {
-        Client client = clientDetailsManager.getClient("APP-6666666666666666");
-        assertNotNull(client);
-        assertEquals("Source Client 2", client.getName());
-        assertEquals("A test source client", client.getDescription());
-
-    }
+    }    
 
     @Test
     public void testAddScopesToClient() {

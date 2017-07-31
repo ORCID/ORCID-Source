@@ -18,8 +18,8 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,20 +65,29 @@ public class ClientManagerReadOnlyTest {
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
 
-    @Mock
+    @Resource(name = "clientDetailsDao")
     private ClientDetailsDao dao;
+    
+    @Mock
+    private ClientDetailsDao daoMock;
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(clientManagerReadOnly, "clientDetailsDao", dao);
-        when(dao.getLastModified(anyString())).thenReturn(new Date());
+        TargetProxyHelper.injectIntoProxy(clientManagerReadOnly, "clientDetailsDao", daoMock);
+        when(daoMock.getLastModified(anyString())).thenReturn(new Date());
+    }
+    
+    @After
+    public void after() {
+        //Restore the original bean
+        TargetProxyHelper.injectIntoProxy(clientManagerReadOnly, "clientDetailsDao", dao);        
     }
 
     @Test
     public void getClientTest() {
         String seed = RandomStringUtils.randomAlphanumeric(30);
-        when(dao.findByClientId(anyString(), anyLong())).thenReturn(getClientDetailsEntity(seed));
+        when(daoMock.findByClientId(anyString(), anyLong())).thenReturn(getClientDetailsEntity(seed));
         Client client = clientManagerReadOnly.get(seed);
         assertEquals(getClient(seed), client);
     }
@@ -91,7 +101,7 @@ public class ClientManagerReadOnlyTest {
         clients.add(getClientDetailsEntity(seed1));
         clients.add(getClientDetailsEntity(seed2));
         clients.add(getClientDetailsEntity(seed3));
-        when(dao.findByGroupId(anyString())).thenReturn(clients);
+        when(daoMock.findByGroupId(anyString())).thenReturn(clients);
         Set<Client> results = clientManagerReadOnly.getClients("anything");
         assertEquals(3, results.size());
         for (Client client : results) {
@@ -110,7 +120,7 @@ public class ClientManagerReadOnlyTest {
     @Test
     public void getSummaryTest() {
         String seed = RandomStringUtils.randomAlphanumeric(30);
-        when(dao.findByClientId(anyString(), anyLong())).thenReturn(getClientDetailsEntity(seed));
+        when(daoMock.findByClientId(anyString(), anyLong())).thenReturn(getClientDetailsEntity(seed));
         ClientSummary summary = clientManagerReadOnly.getSummary(seed);
         assertEquals(getClientSummary(seed), summary);
     }
@@ -124,15 +134,12 @@ public class ClientManagerReadOnlyTest {
 
     private Client getClient(String randomString) {
         Client client = new Client();
-        client.setAllowAutoDeprecate(true);
-        client.setAuthenticationProviderId("authentication-provider-id " + randomString);
+        client.setAllowAutoDeprecate(true);        
         client.setClientType(ClientType.CREATOR);
-        client.setDescription("description " + randomString);
-        client.setEmailAccessReason("email-access-reason " + randomString);
+        client.setDescription("description " + randomString);        
         client.setGroupProfileId("group-profile-id " + randomString);
         client.setId(randomString);
-        client.setName("client-name " + randomString);
-        client.setPersistentTokensEnabled(true);
+        client.setName("client-name " + randomString);        
         client.setWebsite("client-website " + randomString);
 
         Set<ClientRedirectUri> clientRedirectUris = new HashSet<ClientRedirectUri>();

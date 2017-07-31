@@ -41,7 +41,6 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-
 import com.sun.jersey.spi.container.ContainerRequest;
 
 public class TokenTargetFilterTest {

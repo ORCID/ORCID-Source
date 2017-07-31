@@ -21,8 +21,8 @@ export const FundingCtrl = angular.module('orcidApp').controller(
     [
         '$compile', 
         '$filter', 
-        '$scope', 
         '$rootScope', 
+        '$scope', 
         'commonSrvc', 
         'emailSrvc', 
         'fundingSrvc', 
@@ -32,8 +32,8 @@ export const FundingCtrl = angular.module('orcidApp').controller(
         function (
             $compile, 
             $filter, 
-            $scope, 
             $rootScope, 
+            $scope, 
             commonSrvc, 
             emailSrvc, 
             fundingSrvc, 
@@ -77,9 +77,6 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                 }
             );
             /////////////////////// End of verified email logic for work
-
-            //init
-            fundingSrvc.getFundings('fundings/fundingIds.json');
 
             //Resizing window after error message is shown
             $scope.$watch(
@@ -130,7 +127,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
 
             $scope.bindTypeaheadForOrgs = function () {
                 var numOfResults = 100;
-                $("#fundingName").typeahead({
+                (<any>$("#fundingName")).typeahead({
                     name: 'fundingName',
                     limit: numOfResults,
                     remote: {
@@ -167,7 +164,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
 
             $scope.bindTypeaheadForSubTypes = function() {
                 var numOfResults = 20;
-                $("#organizationDefinedType").typeahead({
+                (<any>$("#organizationDefinedType")).typeahead({
                     name: 'organizationDefinedType',
                     limit: numOfResults,
                     remote: {
@@ -586,11 +583,11 @@ export const FundingCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.unbindTypeaheadForOrgs = function () {
-                $('#fundingName').typeahead('destroy');
+                (<any>$('#fundingName')).typeahead('destroy');
             };
 
             $scope.unbindTypeaheadForSubTypes = function () {
-                $('#organizationDefinedType').typeahead('destroy');
+                (<any>$('#organizationDefinedType')).typeahead('destroy');
             };
 
             $scope.userIsSource = function(funding) {
@@ -599,6 +596,9 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                 }
                 return false;
             };
+
+            //init
+            fundingSrvc.getFundings('fundings/fundingIds.json');
 
         }
     ]

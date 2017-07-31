@@ -278,78 +278,6 @@ var OrcidCookie = new function() {
     };
 };
 
-var OrcidGA = function() {
-    this.buildClientString = function(clientGroupName, clientName) {
-        return clientGroupName + ' - ' + clientName
-    };
-    this.gaPush = function(trackArray) {
-        /*
-         * window.ga is blocked by Ghostery and disconnect.me 
-         * window.gaGlobal is blocked by uBlock
-        */
-
-        if(window.ga && window.gaGlobal) {
-            if(typeof trackArray === 'function') {
-                ga(trackArray);
-            } else {
-                //Anonymize IP for each hit per
-                //https://developers.google.com/analytics/devguides/collection/analyticsjs/ip-anonymization
-                if(trackArray[5] == undefined) {
-                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], {'anonymizeIp': true});
-                } else {
-                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5], {'anonymizeIp': true});
-                }                
-                console.log("_gap.push for " + trackArray);
-            }
-            
-            setTimeout(function(){
-                if(!ga.create) {
-                    // if it's a function and _gap isn't available run (typically only
-                    // on dev)
-                    console.log("no _gap.push for " + trackArray);
-                    if (typeof trackArray === 'function')
-                        trackArray();
-                }
-            }, 200); 
-        } else {
-            console.log("no _gap.push for " + trackArray);
-            if (typeof trackArray === 'function')
-                trackArray();                      
-        }
-    };
-
-    // Delays are async functions used to make sure event track que has cleared
-    // See
-    // https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApi_gaq
-    //
-    // Additionally adding in delay:
-    // http://support.google.com/analytics/answer/1136920?hl=en
-    this.gaFormSumbitDelay = function($el) {
-        if (!$el instanceof jQuery) {
-            $el = $(el);
-        }
-        this.gaPush(function() {
-            console.log("_gap.push executing $el.submit()");
-            setTimeout(function() {
-                $el.submit();
-            }, 100);
-        });
-        return false;
-    };
-
-    this.windowLocationHrefDelay = function(url) {
-        this.gaPush(function() {
-            console.log("_gap.push has executing window.location.href " + url);
-            setTimeout(function() {
-                window.location.href = url;
-            }, 100);
-        });
-        return false;
-    };
-};
-
-var orcidGA = new OrcidGA();
-
 var OrcidMessage = function() {
     // nothing to init now
 };
@@ -652,8 +580,8 @@ $(function() {
                                                             showLoginDeactivatedError();
                                                             return;
                                                     } else if (data.unclaimed) {
-                                                        var resendClaimUrl = window.location
-                                                                + "/../resend-claim";
+                                                        var resendClaimUrl = baseUrl
+                                                                + "resend-claim";
                                                         var userId = $(
                                                                 '#userId')
                                                                 .val();
@@ -4225,28 +4153,38 @@ this.w3cLatexCharMap = {
         return typeof ref !== 'undefined' && ref !== null && ref !== '';
     }
 
+    function escapeReservedChar(inputText){
+        //escape all reserved chars except double quotes
+        //per https://lucene.apache.org/solr/guide/6_6/the-standard-query-parser.html#TheStandardQueryParser-EscapingSpecialCharacters
+        var escapedText = inputText.replace(/([!^&*()+=\[\]\\/{}|:?~])/g, "\\$1");
+        return escapedText.toLowerCase();
+    }
+
     function buildAdvancedSearchUrl(input) {
         var query = '';
         var doneSomething = false;
         if (hasValue(input.givenNames)) {
-            query += 'given-names:' + input.givenNames.toLowerCase();
+            escapedGivenNames = escapeReservedChar(input.givenNames);
+            query += 'given-names:' + escapedGivenNames;
             doneSomething = true;
         }
         if (hasValue(input.familyName)) {
             if (doneSomething) {
                 query += ' AND ';
             }
-            query += 'family-name:' + input.familyName.toLowerCase();
+            escapedFamilyName = escapeReservedChar(input.familyName);
+            query += 'family-name:' + escapedFamilyName;
             doneSomething = true;
         }
         if (hasValue(input.searchOtherNames) && hasValue(input.givenNames)) {
-            query += ' OR other-names:' + input.givenNames.toLowerCase();
+            query += ' OR other-names:' + escapedGivenNames;
         }
         if (hasValue(input.keyword)) {
             if (doneSomething) {
                 query += ' AND ';
             }
-            query += 'keyword:' + input.keyword.toLowerCase();
+            escapedKeyword = escapeReservedChar(input.keyword);
+            query += 'keyword:' + escapedKeyword;
             doneSomething = true;
         }
         if (hasValue(input.affiliationOrg)) {
@@ -4257,7 +4195,8 @@ this.w3cLatexCharMap = {
             if (input.affiliationOrg.match(/^[0-9]*$/)) {
                 query += 'ringgold-org-id:' + input.affiliationOrg;
             } else {
-                query += 'affiliation-org-name:' + input.affiliationOrg.toLowerCase();
+                escapedAffiliationOrg = escapeReservedChar(input.affiliationOrg);
+                query += 'affiliation-org-name:' + escapedAffiliationOrg;
             }
             doneSomething = true;
         }

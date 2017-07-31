@@ -25,12 +25,13 @@
             <h1 id="self-service-lead" ng-show="memberDetails.consortiumLead"><@spring.message "manage_consortium.manage_consortium"/></h1>
             <h1 id="self-service-lead" ng-show="!memberDetails.consortiumLead"><@spring.message "manage_consortium.manage_member"/></h1>
             <p><@spring.message "manage_consortium.manage_consortium_text_1"/>
-            	<a href="<@orcid.rootPath '/members'/>" target="manage_consortium.member_list_link"><@spring.message "manage_consortium.member_list_link"/></a>
             	<@spring.message "manage_consortium.manage_consortium_text_2"/>
             	<a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
             <div ng-show="memberDetails != null" ng-cloak>
                 <div class="topBuffer">
-                    <h3 class="topBuffer"><@spring.message "manage_consortium.public_display"/></h3>
+                    <h3 class="topBuffer" ng-show="memberDetails.consortiumLead"><@spring.message "manage_consortium.public_display"/></h3>
+                    <h3 class="topBuffer" ng-show="!memberDetails.consortiumLead"><@spring.message "self_serve.public_display_heading"/></h3>
+                    <p><@spring.message "self_serve.public_display_text"/> <a href="<@orcid.rootPath '/members'/>" target="manage_consortium.member_list_link"><@spring.message "manage_consortium.member_list_link"/></a></p>
                     <!-- Name -->
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
@@ -98,26 +99,46 @@
                 </div>
                 <!-- Contacts -->
                 <div>
-                    <h3>
-                        <@spring.message "manage_consortium.contacts_heading"/>
-                    </h3>
+                    <h3 ng-show="memberDetails.consortiumLead"><@spring.message "manage_consortium.contacts_heading"/></h3>
+                    <h3 ng-show="!memberDetails.consortiumLead"><@spring.message "self_serve.contacts_heading"/></h3>
                     <p>
                         <@spring.message "manage_consortium.contacts_text"/>
                     </p>
-                    <span class="orcid-error" ng-show="contacts.errors.length > 0">
-                        <div ng-repeat='error in contacts.errors' ng-bind-html="error"></div>
-                    </span>
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Email</th><th>ORCID iD</th><th>Voting contact</th><th>Role</th>
+                                <th><@spring.message "manage_consortium.contacts_contact"/></th>
+                                <th><@spring.message "manage_consortium.contacts_voting_contact"/>
+                                    <div class="popover-help-container">
+                                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                        <div id="voting-contact-help" class="popover bottom">
+                                          <div class="arrow"></div>
+                                          <div class="popover-content">
+                                            <p><@orcid.msg 'manage_consortium.contacts_voting_contact.help'/></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                </th>
+                                <th><@spring.message "manage_consortium.contacts_role"/>
+                                    <div class="popover-help-container">
+                                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                        <div id="contact-role-help" class="popover bottom">
+                                          <div class="arrow"></div>
+                                          <div class="popover-content">
+                                            <p><@spring.message 'manage_consortium.contacts_role.help'/></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                </th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="contact in contacts.contactsList">
-                                <td>{{contact.name}}</td>
-                                <td>{{contact.email}}</td>
-                                <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
+                                <td><b>{{contact.name}}</b><br>
+                                {{contact.email}}<br>
+                                <a href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
+                                </td>
                                 <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!memberDetails.allowedFullAccess"></input></td>
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
@@ -144,6 +165,9 @@
                             </tr>
                         </tbody>
                     </table>
+                    <span class="orcid-error" ng-show="contacts.errors.length > 0">
+                        <div ng-repeat='error in contacts.errors' ng-bind-html="error"></div>
+                    </span>
                     <!-- Buttons -->
 	                <div class="row" ng-show="memberDetails.allowedFullAccess">
 	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
@@ -153,9 +177,8 @@
 	                    </div>
 	                </div>
                     <div class="bottomBuffer" ng-show="memberDetails.allowedFullAccess">
-                    	<h3>
-                        	<@spring.message "manage_consortium.add_contacts_heading"/>
-                    	</h3>
+                        <h3 ng-show="memberDetails.consortiumLead"><@spring.message "manage_consortium.add_contacts_heading"/></h3>
+                        <h3 ng-show="!memberDetails.consortiumLead"><@spring.message "self_serve.add_contacts_heading"/></h3>
                     	<p>
                     		<@spring.message "manage_consortium.add_contacts_search_for"/>
                     	</p>
@@ -164,15 +187,19 @@
                             <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
                         </form>
                     </div>
+                    <div class="bottomBuffer" ng-show="!memberDetails.allowedFullAccess">
+                        <p class="italic topBuffer"><@spring.message "manage_consortium.contacts_only_contacts_listed_above"/></p>
+                    </div>
                 <div id="invalid-email-alert" class="orcid-hide orcid-error"><@spring.message "Email.resetPasswordForm.invalidEmail"/></div>
                 </div>
             </div>
             <div class="topBuffer" ng-show="memberDetails.consortiumLead">
-                <h2>Consortium Members</h2>
+                <h2><@spring.message "manage_consortium.submembers_heading"/></h2>
+                <p><@spring.message "manage_consortium.submembers_text"/></p>
                 <hr></hr>
-            	<div ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountName'">
+            	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountName'">
 					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountName}}</a></span>
-					<span class="tooltip-container">
+					<span class="tooltip-container pull-right">
 						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)" ng-show="memberDetails.allowedFullAccess"
 	                        class="glyphicon glyphicon-trash grey">
 	                        <div class="popover popover-tooltip top">
@@ -189,19 +216,29 @@
 					<p>This consortium does not have any members yet.</p>
 					<hr></hr>
                 </div>
-                <div ng-show="memberDetails.allowedFullAccess"
-	                <h3>New consortium member</h3>
-	                <form>
-	                    <label for="new-sub-member-name">Name</label><input id="new-sub-member-name" type="text" placeholder="Name" class="input-xlarge inline-input" ng-model="newSubMember.name"></input>
-	                    <label for="new-sub-member-website">Website</label><input id="new-sub-member-website" type="text" placeholder="Website" class="input-xlarge inline-input" ng-model="newSubMember.website"></input>
-	                    <!-- Buttons -->
-		                <div class="row">
-		                    <div class="controls col-md-12 col-sm-12 col-xs-12">
-		                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-		                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
-		                    </div>
-		                </div> 
-	                </form>
+                <div ng-show="memberDetails.allowedFullAccess">
+	                <h3><@spring.message "manage_consortium.add_submember_heading"/></h3>
+                    <!-- Name -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label for="new-sub-member-name"><@spring.message "manage_consortium.org_name"/></label>
+                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="full-width-input" ng-model="newSubMember.name"></input>
+                        </div>
+                    </div>
+                    <!-- website -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label for="new-sub-member-website"><@spring.message "manage_consortium.website"/></label>
+                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="full-width-input" ng-model="newSubMember.website"></input>
+                        </div>
+                    </div>
+                    <!-- Buttons -->
+	                <div class="row">
+	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
+	                    </div>
+	                </div> 
 	            </div>
 		    </div>
         </div>

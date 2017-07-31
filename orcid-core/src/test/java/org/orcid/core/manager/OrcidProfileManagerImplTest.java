@@ -52,7 +52,6 @@ import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.CreditName;
@@ -98,7 +97,6 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
-import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
@@ -290,64 +288,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertNull("There should be no activities", resultProfile.getOrcidActivities());
     }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testUpdateProfileButRemoveWorkExternalIdentifier() {
-        OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        List<WorkExternalIdentifier> workExternalIdentifiers = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers()
-                .getWorkExternalIdentifier();
-        assertEquals(3, workExternalIdentifiers.size());
-        Iterator<WorkExternalIdentifier> workExternalIdentifiersIterator = workExternalIdentifiers.iterator();
-        while (workExternalIdentifiersIterator.hasNext()) {
-            if (WorkExternalIdentifierType.PMID.equals(workExternalIdentifiersIterator.next().getWorkExternalIdentifierType())) {
-                workExternalIdentifiersIterator.remove();
-            }
-        }
-
-        profile1 = orcidProfileManager.updateOrcidProfile(profile1);
-
-        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-
-        assertNotNull(resultProfile);
-        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals(1, resultProfile.retrieveOrcidWorks().getOrcidWork().size());
-        assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
-        assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
-        assertEquals(2, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers().getWorkExternalIdentifier().size());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testUpdateProfileButRemoveWorkContributor() {
-        OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        List<Contributor> contributors = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkContributors().getContributor();
-        assertEquals(2, contributors.size());
-        Iterator<Contributor> contributorsIterator = contributors.iterator();
-        while (contributorsIterator.hasNext()) {
-            if (SequenceType.ADDITIONAL.equals(contributorsIterator.next().getContributorAttributes().getContributorSequence())) {
-                contributorsIterator.remove();
-            }
-        }
-
-        profile1 = orcidProfileManager.updateOrcidProfile(profile1);
-
-        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-
-        assertNotNull(resultProfile);
-        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals(1, resultProfile.retrieveOrcidWorks().getOrcidWork().size());
-        assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
-        assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
-        assertEquals(1, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkContributors().getContributor().size());
-    }
-
+    
     @Test
     @Transactional
     @Rollback(true)

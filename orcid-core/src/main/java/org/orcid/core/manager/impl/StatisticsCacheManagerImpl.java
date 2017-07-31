@@ -43,7 +43,8 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
     @Resource
     StatisticsManagerReadOnly statisticsManagerReadOnly;
 
-    LockerObjectsManager lockers = new LockerObjectsManager();
+    Object statisticsSummaryLocker = new Object();
+    Object statisticsTimelineLocker = new Object();
 
     @Resource(name = "statisticsCache")
     private Cache statisticsCache;
@@ -54,7 +55,7 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
     @Override
     public StatisticsSummary retrieve() {
         try {
-            synchronized (lockers.obtainLock("Statistics")) {
+            synchronized (statisticsSummaryLocker) {
                 if (statisticsCache.get(CACHE_STATISTICS_KEY) == null) {
                     setLatestStatisticsSummary();
                 }
@@ -64,8 +65,6 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
         } catch(Exception e) {
             LOG.error("Error fetching statistics in 'retrieve'", e);
             return null;
-        } finally {
-            lockers.releaseLock("Statistics");
         }
     }
 
@@ -76,7 +75,7 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
     @Override
     public StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum type) {
         try {
-            synchronized (lockers.obtainLock("statisticsTimeline")) {
+            synchronized (statisticsTimelineLocker) {
                 if (statisticsCache.get(CACHE_TIMELINE_KEY) == null) {
                     setLatestStatisticsTimeline();
                 }
@@ -87,8 +86,6 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
         } catch(Exception e) {
             LOG.error("Error fetching statistics in 'getStatisticsTimelineModel'", e);
             return null;
-        } finally {
-            lockers.releaseLock("statisticsTimeline");
         }
     }
 

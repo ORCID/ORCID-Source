@@ -171,21 +171,70 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     }
 
     @Column(name = "uri_act_type")
-	public String getUriActType() {
-		return uriActType;
-	}
+    public String getUriActType() {
+        return uriActType;
+    }
 
-	public void setUriActType(String uriActType) {
-		this.uriActType = uriActType;
-	}
+    public void setUriActType(String uriActType) {
+        this.uriActType = uriActType;
+    }
 
-	@Column(name = "uri_geo_area")
-	public String getUriGeoArea() {
-		return uriGeoArea;
-	}
+    @Column(name = "uri_geo_area")
+    public String getUriGeoArea() {
+        return uriGeoArea;
+    }
 
-	public void setUriGeoArea(String uriGeoArea) {
-		this.uriGeoArea = uriGeoArea;
-	}
+    public void setUriGeoArea(String uriGeoArea) {
+        this.uriGeoArea = uriGeoArea;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((predefinedClientScope == null) ? 0 : predefinedClientScope.hashCode());
+        result = prime * result + ((redirectUri == null) ? 0 : redirectUri.hashCode());
+        result = prime * result + ((redirectUriType == null) ? 0 : redirectUriType.hashCode());
+        result = prime * result + ((uriActType == null) ? 0 : uriActType.hashCode());
+        result = prime * result + ((uriGeoArea == null) ? 0 : uriGeoArea.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ClientRedirectUriEntity other = (ClientRedirectUriEntity) obj;
+        if (predefinedClientScope == null) {
+            if (other.predefinedClientScope != null)
+                return false;
+        } else if (!predefinedClientScope.equals(other.predefinedClientScope))
+            return false;
+        if (redirectUri == null) {
+            if (other.redirectUri != null)
+                return false;
+        } else if (!redirectUri.equals(other.redirectUri))
+            return false;
+        if (redirectUriType == null) {
+            if (other.redirectUriType != null)
+                return false;
+        } else if (!redirectUriType.equals(other.redirectUriType))
+            return false;
+        if (uriActType == null) {
+            if (other.uriActType != null)
+                return false;
+        } else if (!uriActType.equals(other.uriActType))
+            return false;
+        if (uriGeoArea == null) {
+            if (other.uriGeoArea != null)
+                return false;
+        } else if (!uriGeoArea.equals(other.uriGeoArea))
+            return false;
+        return true;
+    }
 
 }
