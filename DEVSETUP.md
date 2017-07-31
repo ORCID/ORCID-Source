@@ -209,7 +209,7 @@ When this it is done, restart the server.
 
 Follow next instructions in order to generate the core javascript file.
 
-See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-Source/blob/master/orcid-nodejs/readme.md)
+See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-Source/blob/master/orcid-nodejs/README.md)
 
 ### Testing your set up
 
@@ -253,3 +253,6 @@ See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integr
 
 ## Updating the frontend javascript files
 [Webpack setup](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/src/main/webapp/static/javascript)
+
+## Eclipse tips
+[ECLIPSE_TIPS.md](ECLIPSE_TIPS.md)
