@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
@@ -427,6 +428,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public void updateContacts(Collection<Contact> contacts) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        // Ensure contact ORCID iDs are correct by getting from registry DB.
+        addOrcidsToContacts(existingContacts);
         checkContactUpdatePermissions(existingContacts, contacts);
         // Need to remove roles with validation rules in SF first
         existingContacts.stream().filter(c -> {
@@ -518,7 +521,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private boolean contactChanged(Contact existingContact, Contact updatedContact) {
         ContactRole existingRole = existingContact.getRole();
         ContactRole updatedRole = updatedContact.getRole();
-        return !existingRole.getRoleType().equals(updatedRole.getRoleType()) || !existingRole.isVotingContact().equals(updatedRole.isVotingContact());
+        return !existingRole.getRoleType().equals(updatedRole.getRoleType()) || ObjectUtils.notEqual(existingRole.isVotingContact(), updatedRole.isVotingContact());
     }
 
     private boolean isSuperContact(Contact c) {
