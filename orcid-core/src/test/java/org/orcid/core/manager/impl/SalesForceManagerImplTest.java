@@ -300,7 +300,7 @@ public class SalesForceManagerImplTest {
         updatedContacts.add(createContactWithRole("contact2", "account1", "contact2@test.com", "0000-0000-0000-0002", "role2", ContactRoleType.AGREEMENT_SIGNATORY));
         updatedContacts.add(createContactWithRole("contact3", "account1", "contact3@test.com", "0000-0000-0000-0003", "role3", ContactRoleType.INVOICE_CONTACT));
         Contact updatedVotingContact = createContactWithRole("contact4", "account1", "contact4@test.com", "0000-0000-0000-0004", "role4", ContactRoleType.OTHER_CONTACT);
-        votingContact.getRole().setVotingContact(true);
+        updatedVotingContact.getRole().setVotingContact(true);
         updatedContacts.add(updatedVotingContact);
 
         when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0001");
@@ -321,8 +321,31 @@ public class SalesForceManagerImplTest {
         } catch (OrcidUnauthorizedException e) {
             preventedChange = true;
         }
-        if(!preventedChange){
+        if (!preventedChange) {
             fail("Should not be able to change main contact role when am not main/signatory contact");
+        }
+
+        // Set role back to what it was, but change voting contact.
+        updatedContact1.getRole().setRoleType(ContactRoleType.MAIN_CONTACT);
+        updatedContact1.getRole().setVotingContact(true);
+        updatedVotingContact.getRole().setVotingContact(false);
+
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0001");
+        try {
+            salesForceManager.checkContactUpdatePermissions(existingContacts, updatedContacts);
+        } catch (OrcidUnauthorizedException e) {
+            fail("Should be able to change voting contact when am main contact");
+        }
+
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0003");
+        preventedChange = false;
+        try {
+            salesForceManager.checkContactUpdatePermissions(existingContacts, updatedContacts);
+        } catch (OrcidUnauthorizedException e) {
+            preventedChange = true;
+        }
+        if (!preventedChange) {
+            fail("Should not be able to change voting contact when am not main/signatory contact");
         }
     }
 

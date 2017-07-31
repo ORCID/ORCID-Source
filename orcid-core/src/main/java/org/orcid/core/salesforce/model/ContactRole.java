@@ -31,7 +31,7 @@ public class ContactRole implements Serializable {
     private String id;
     private String accountId;
     private String contactId;
-    private Boolean isVotingContact;
+    private Boolean isVotingContact = Boolean.FALSE;
     private ContactRoleType roleType;
 
     public ContactRole() {
@@ -64,7 +64,7 @@ public class ContactRole implements Serializable {
     public void setContactId(String contactId) {
         this.contactId = contactId;
     }
-    
+
     public Boolean isVotingContact() {
         return isVotingContact;
     }
