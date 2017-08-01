@@ -21,11 +21,7 @@ WidgetModule.controller('widgetCtrl', widgetCtrl);
     {
     }
 )
-export class WidgetNg2Module {    
-constructor() {
-    console.log("Widget loaded 15");            
-  }  
-}
+export class WidgetNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
