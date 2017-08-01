@@ -32,6 +32,7 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             $scope.recatchaResponse = null;
             $scope.showDeactivatedError = false;
             $scope.showReactivationSent = false;
+            $scope.register = {};
             
             $scope.model = {
                 key: orcidVar.recaptchaKey
@@ -297,7 +298,13 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             
             $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
                 $scope.register.activitiesVisibilityDefault.visibility = priv;
-            };            
+            }; 
+
+            $scope.addEmailField = function () {
+                console.log($scope.register);
+                console.log($scope.register.emailAdditional);
+                //$scope.register.emailAdditional.push({email: ''});
+            }           
         }
     ]
 );
