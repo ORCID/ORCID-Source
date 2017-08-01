@@ -695,7 +695,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     numToSave = worksToSave.length;
                     angular.forEach( worksToSave, function( work, key ) {
                         worksSrvc.putWork(work,function(data) {
-                            index = $scope.worksFromBibtex.indexOf(work);
+                            var index = $scope.worksFromBibtex.indexOf(work);
                             $scope.worksFromBibtex.splice(index, 1);
                             $scope.$apply();
                             numToSave--;
