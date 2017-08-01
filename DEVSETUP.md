@@ -253,3 +253,6 @@ See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integr
 
 ## Updating the frontend javascript files
 [Webpack setup](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/src/main/webapp/static/javascript)
+
+## Eclipse tips
+[ECLIPSE_TIPS.md](ECLIPSE_TIPS.md)

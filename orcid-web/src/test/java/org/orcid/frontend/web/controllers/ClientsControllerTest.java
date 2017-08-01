@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,20 +145,27 @@ public class ClientsControllerTest extends BaseControllerTest {
         client.setDisplayName(Text.valueOf(_151chars));
         client.setShortDescription(Text.valueOf("description"));
         client.setWebsite(Text.valueOf("http://site.com"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        RedirectUri one = new RedirectUri();
+        one.setType(Text.valueOf("default"));
+        one.setValue(Text.valueOf("http://test.orcid.org"));
+        redirectUris.add(one);
+        client.setRedirectUris(redirectUris);
+               
         client = controller.createClient(client);
         List<String> errors = client.getErrors();
         assertEquals(2, errors.size());
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.150")));
         assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
-
+        
         // Test invalid redirect uris
         client = controller.getEmptyClient();
         client.setDisplayName(Text.valueOf("Name"));
         client.setShortDescription(Text.valueOf("Description"));
         client.setWebsite(Text.valueOf("http://mysite.com"));
 
-        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
-        RedirectUri one = new RedirectUri();
+        redirectUris = new ArrayList<RedirectUri>();
+        one = new RedirectUri();
         one.setType(Text.valueOf("default"));
         one.setValue(new Text());
         redirectUris.add(one);
@@ -189,20 +197,27 @@ public class ClientsControllerTest extends BaseControllerTest {
         client.setDisplayName(Text.valueOf(_151chars));
         client.setShortDescription(Text.valueOf("description"));
         client.setWebsite(Text.valueOf("http://site.com"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        RedirectUri one = new RedirectUri();
+        one.setType(Text.valueOf("default"));
+        one.setValue(Text.valueOf("http://test.orcid.org"));
+        redirectUris.add(one);
+        client.setRedirectUris(redirectUris);
+        
         client = controller.editClient(client);
         List<String> errors = client.getErrors();
         assertEquals(2, errors.size());
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.150")));
         assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
-
+        
         // Test invalid redirect uris
         client = controller.getEmptyClient();
         client.setDisplayName(Text.valueOf("Name"));
         client.setShortDescription(Text.valueOf("Description"));
         client.setWebsite(Text.valueOf("http://mysite.com"));
 
-        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
-        RedirectUri one = new RedirectUri();
+        redirectUris = new ArrayList<RedirectUri>();
+        one = new RedirectUri();
         one.setType(Text.valueOf("default"));
         one.setValue(new Text());
         redirectUris.add(one);

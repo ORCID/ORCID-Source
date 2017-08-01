@@ -13,19 +13,7 @@ module.exports = {
     output: {
         path: '../.',
         filename: "angular_orcid_generated.js"
-    },/*
-    Examples:
-    output: {
-        path: "/Users/tom/Documents/workspace-sts/.metadata/.plugins/org.eclipse.wst.server.core/tmp0",
-        filename: "angular_orcid_generated.js"
     },
-    
-    C:/Documents and Settings/%USER%/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/orcid-web/static/javascript
-    
-    ~/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript
-
-    /opt/apache-tomcat-8.0.21/webapps/orcid-web/static/javascript/ng1Orcid/
-    */
     plugins: [
     ],
     resolve: {
