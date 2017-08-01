@@ -27,7 +27,7 @@ export const WorkspaceSummaryCtrl = angular.module('orcidApp').controller(
             $scope.peerReviewSrvc = peerReviewSrvc;
             $scope.workspaceSrvc = workspaceSrvc;
             $scope.worksSrvc = worksSrvc;
-
+            
             $scope.showAddAlert = function () {
                 if (worksSrvc.loading == false 
                     && affiliationsSrvc.loading == false 
