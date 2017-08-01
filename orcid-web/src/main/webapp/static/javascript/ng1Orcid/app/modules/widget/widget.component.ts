@@ -5,6 +5,7 @@ declare var orcidVar: any;
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  
+import { Component, Input } from '@angular/core';
 import { NgModule } from '@angular/core';
 /*
 //Ng1 hybrid syntax
@@ -18,7 +19,6 @@ export const widgetCmp = {
 };
 */
 
-import {Component, Input} from '@angular/core';
 @Component({
     selector: 'widget-ng2',
     //template: 'asdfgg'
