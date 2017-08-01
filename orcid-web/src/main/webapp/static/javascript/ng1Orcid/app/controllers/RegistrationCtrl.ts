@@ -238,7 +238,7 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             $scope.serverValidate = function (field) {        
                 if (field === undefined) {
                     field = '';
-                } 
+                }
                 $.ajax({
                     url: getBaseUri() + '/register' + field + 'Validate.json',
                     type: 'POST',
@@ -303,7 +303,6 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             $scope.addEmailField = function () {
                 console.log($scope.register);
                 console.log($scope.register.emailAdditional);
-                //$scope.register.emailAdditional.push({email: ''});
             }           
         }
     ]

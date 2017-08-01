@@ -143,7 +143,7 @@ public class RegistrationController extends BaseController {
         Registration reg = new Registration();
 
         reg.getEmail().setRequired(true);
-        reg.getEmailAdditional().setRequired(true);
+        reg.getEmailAdditional().setRequired(false);
         reg.getEmailConfirm().setRequired(true);
         reg.getFamilyNames().setRequired(false);
         reg.getGivenNames().setRequired(true);
@@ -292,7 +292,9 @@ public class RegistrationController extends BaseController {
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
         regEmailValidate(request, reg, false, false);
-        regEmailAdditionalValidate(request, reg, false, false);
+        if(!PojoUtil.isEmpty(reg.getEmailAdditional())) {
+            regEmailAdditionalValidate(request, reg, false, false);
+        }
         registerTermsOfUseValidate(reg);
 
         copyErrors(reg.getEmailConfirm(), reg);
@@ -335,7 +337,11 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerEmailAdditionalValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailAdditionalValidate(HttpServletRequest request, @RequestBody Registration reg) {
-        return regEmailAdditionalValidate(request, reg, false, false);
+        if(PojoUtil.isEmpty(reg.getEmailAdditional())) {
+            return(reg);
+        } else {
+            return regEmailAdditionalValidate(request, reg, false, true);
+        }
     }
     
     public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
