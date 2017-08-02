@@ -498,7 +498,7 @@ public class SetUpClientsAndUsers {
         }        
         
         if(params.containsKey(DEVELOPER_TOOLS)) {
-            profileEntityManager.enableDeveloperTools(orcidProfile);
+            profileEntityManager.enableDeveloperTools(params.get(ORCID));
         }
     }
 
