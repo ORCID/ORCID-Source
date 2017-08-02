@@ -337,7 +337,7 @@ public class ActivityValidatorTest {
         ContributorOrcid contributorOrcid = new ContributorOrcid();
         contributorOrcid.setHost("http://test.orcid.org");
         contributorOrcid.setPath("0000-0000-0000-0000");
-        contributorOrcid.setUri("http://test.orcid.org/0000-0000-0000-0000");
+        contributorOrcid.setUri("https://test.orcid.org/0000-0000-0000-0000");
         
         Contributor contributor = new Contributor();
         contributor.setContributorAttributes(attributes);
@@ -440,7 +440,7 @@ public class ActivityValidatorTest {
         ContributorOrcid contributorOrcid = new ContributorOrcid();
         contributorOrcid.setHost("http://test.orcid.org");
         contributorOrcid.setPath("0000-0000-0000-0000");
-        contributorOrcid.setUri("http://test.orcid.org/0000-0000-0000-0000");
+        contributorOrcid.setUri("https://test.orcid.org/0000-0000-0000-0000");
         
         contributor.setContributorAttributes(attributes);
         contributor.setContributorOrcid(contributorOrcid);
