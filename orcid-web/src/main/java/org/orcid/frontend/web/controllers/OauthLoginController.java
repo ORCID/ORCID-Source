@@ -53,6 +53,7 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+@Deprecated
 @Controller("oauthLoginController")
 public class OauthLoginController extends OauthControllerBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);    
@@ -117,6 +118,7 @@ public class OauthLoginController extends OauthControllerBase {
         
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("showLogin", String.valueOf(showLogin));
+        mav.addObject("originalOauth2Process", true);
         mav.setViewName("oauth_login");
         return mav;
     }

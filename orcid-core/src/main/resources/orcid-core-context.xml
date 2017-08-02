@@ -746,8 +746,6 @@
 
 	<bean id="thirdPartyLinkManager" class="org.orcid.core.manager.impl.ThirdPartyLinkManagerImpl" />
 
-	<bean id="orcidSSOManager" class="org.orcid.core.manager.impl.OrcidSSOManagerImpl" />	
-
 	<bean id="passwordGenerationManager"
 		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">
 		<constructor-arg value="12"></constructor-arg>

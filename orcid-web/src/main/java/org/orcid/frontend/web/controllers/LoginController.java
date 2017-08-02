@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
@@ -51,6 +53,12 @@ public class LoginController extends OauthControllerBase {
     
     @Resource
     protected OrcidAuthorizationEndpoint authorizationEndpoint;
+    
+    @Resource
+    protected ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    protected EmailManagerReadOnly emailManagerReadOnly;
     
     @ModelAttribute("yesNo")
     public Map<String, String> retrieveYesNoMap() {
@@ -95,18 +103,18 @@ public class LoginController extends OauthControllerBase {
     private ModelAndView handleOauthSignIn(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String queryString = request.getQueryString();
         String redirectUri = null;
-        
+
         // Get and save the request information form
         RequestInfoForm requestInfoForm = generateRequestInfoForm(queryString);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
-        // Save a flag to indicate this is a request from the new 
+        // Save a flag to indicate this is a request from the new
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
-        
-       // Redirect URI
-       redirectUri = requestInfoForm.getRedirectUrl();
-       
+
+        // Redirect URI
+        redirectUri = requestInfoForm.getRedirectUrl();
+
         // Check that the client have the required permissions
         // Get client name
         String clientId = requestInfoForm.getClientId();
@@ -116,22 +124,44 @@ public class LoginController extends OauthControllerBase {
         }
         // Validate client details
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        try {            
+        try {
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch(LockedException e) {
-            String redirectUriWithParams = redirectUri + "?error=client_locked&error_description=" + e.getMessage();                        
+        } catch (LockedException e) {
+            String redirectUriWithParams = redirectUri + "?error=client_locked&error_description=" + e.getMessage();
             return new ModelAndView(new RedirectView(redirectUriWithParams));
         }
-        
+
         // validate client scopes
-        try {            
-            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);            
+        try {
+            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);
         } catch (InvalidScopeException e) {
-            String redirectUriWithParams = redirectUri + "?error=invalid_scope&error_description=" + e.getMessage(); 
+            String redirectUriWithParams = redirectUri + "?error=invalid_scope&error_description=" + e.getMessage();
             return new ModelAndView(new RedirectView(redirectUriWithParams));
-        }                 
-        
+        }
+
         ModelAndView mav = new ModelAndView("login");
+        // Check orcid and email params to decide if the login form should be
+        // displayed by default
+        boolean showLogin = false;
+        if (PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
+            showLogin = true;
+        } else if (!PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && profileEntityManager.orcidExists(requestInfoForm.getUserOrcid())) {
+            mav.addObject("oauth_userId", requestInfoForm.getUserOrcid());
+            showLogin = true;
+        } else if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
+            mav.addObject("oauth_userId", requestInfoForm.getUserEmail());
+            if(emailManagerReadOnly.emailExists(requestInfoForm.getUserEmail())) {
+                showLogin = true;
+            }            
+        }
+        // Check show_login param and change form 
+        // takes precendence over orcid and email params
+        if (queryString.toLowerCase().contains("show_login=true"))
+            showLogin = true;
+        else if (queryString.toLowerCase().contains("show_login=false"))
+            showLogin = false;
+
+        mav.addObject("showLogin", String.valueOf(showLogin));
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("oauth2Screens", true);
         return mav;
