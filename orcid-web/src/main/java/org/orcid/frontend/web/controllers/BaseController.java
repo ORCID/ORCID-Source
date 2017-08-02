@@ -44,6 +44,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
@@ -772,8 +773,18 @@ public class BaseController {
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
-        String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
-        return targetUrl != null ? targetUrl : getBaseUri() + "/my-orcid";
+        String targetUrl = null;
+        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+            // Just redirect to the authorization screen
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString;
+            request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        } else {
+            targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);            
+        }
+        
+        return targetUrl == null ? getBaseUri() + "/my-orcid" : targetUrl;
     }
 
     protected void passwordConfirmValidate(Text passwordConfirm, Text password) {

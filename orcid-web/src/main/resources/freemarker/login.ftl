@@ -360,7 +360,7 @@
 						</div><!--institution login-->
 					</div><!--ng show !registion form-->
 				   	<!-- REGISTRATION FORM-->
-					<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm()" ng-cloak>
+					<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="oauth2ScreensLoadRegistrationForm()" ng-cloak>
 						<div id="register" class="oauth-registration">
 							<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
 							<!-- First name -->
@@ -499,7 +499,7 @@
 							</div>
 							<!-- Buttons  -->
 							<div class="bottomBuffer col-xs-12 col-sm-3">
-								<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+								<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister()">
 									<@orcid.msg 'header.register' />
 								</button>   
 							</div><!--buttons-->
@@ -508,7 +508,52 @@
 			   		<!-- END -->
 			   	</div><!--login-->
 			</div><!--col-md-offset-3-->
-			<div class="col-md-3"></div>			
+			<div class="col-md-3"></div>
+			<script type="text/ng-template" id="duplicates">
+			    <div class="lightbox-container" id="duplicates-records">
+			        <div class="row margin-top-box">      
+			            <div class="col-md-6 col-sm-6 col-xs-12">
+			                <h4><@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
+			                    <@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@orcid.rootPath "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
+			                </h4>
+			            </div>
+			            <div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
+			                <button class="btn btn-primary" ng-click="oauth2ScreensPostRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+			            </div>
+			        </div>        
+			        <div class="row">
+			            <div class="col-sm-12">
+			                <div class="table-container">
+			                    <table class="table">
+			                        <thead>
+			                            <tr>                      
+			                                <th><@orcid.msg 'search_results.thORCIDID'/></th>
+			                                <th><@orcid.msg 'duplicate_researcher.thEmail'/></th>
+			                                <th><@orcid.msg 'duplicate_researcher.thgivennames'/></th>
+			                                <th><@orcid.msg 'duplicate_researcher.thFamilyName'/></th>
+			                                <th><@orcid.msg 'duplicate_researcher.thInstitution'/></th>                       
+			                            </tr>
+			                        </thead>
+			                        <tbody>
+			                            <tr ng-repeat='dup in duplicates'>
+			                                <td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" target="dup.orcid">{{dup.orcid}}</a></td>
+			                                <td>{{dup.email}}</td>
+			                                <td>{{dup.givenNames}}</td>
+			                                <td>{{dup.familyNames}}</td>
+			                                <td>{{dup.institution}}</td>
+			                            </tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			            </div>
+			        </div>  
+			        <div class="row margin-top-box">
+			            <div class="col-md-12 col-sm-12 col-xs-12 right">
+			                <button class="btn btn-primary" ng-click="oauth2ScreensPostRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+			            </div>
+			        </div>
+			    </div>
+			</script> 			
 		</@orcid.checkFeatureStatus>											
 	</div><!--row-->
 </@public>

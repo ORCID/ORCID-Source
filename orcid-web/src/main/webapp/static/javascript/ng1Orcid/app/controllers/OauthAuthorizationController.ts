@@ -59,7 +59,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 head.appendChild(script); // Inject the script
             }; 
 
-            $scope.authorize = function() {
+			$scope.authorize = function() {
                 $scope.authorizationForm.approved = true;
                 $scope.authorizeRequest();
             };
@@ -107,19 +107,27 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.registrationForm.familyNames.value + '&givenNames=' + $scope.registrationForm.givenNames.value,
                     dataType: 'json',
                     success: function(data) {
-                           $scope.duplicates = data;
+                    	$scope.duplicates = data;
                         $scope.$apply();
                         if ($scope.duplicates.length > 0 ) {
                             $scope.showDuplicatesColorBox();
                         } else {
-                            $scope.postRegisterConfirm();
+                        	if(orcidVar.originalOauth2Process) {
+            					$scope.postRegisterConfirm();
+            				} else {
+            					$scope.oauth2ScreensPostRegisterConfirm();
+            				}                         	
                         }
                     }
                 }).fail(function(){
                     // something bad is happening!
                     console.log("error fetching dupicateResearcher.json");
                     // continue to registration, as solr dup lookup failed.
-                    $scope.postRegisterConfirm();
+                    if(orcidVar.originalOauth2Process) {
+    					$scope.postRegisterConfirm();
+    				} else {
+    					$scope.oauth2ScreensPostRegisterConfirm();
+    				}
                 });
             };
 
@@ -255,7 +263,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             $.colorbox.close();
                         } else {
                             orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
-                            if(!orcidVar.oauth2Screens) {
+                            if(orcidVar.originalOauth2Process) {
                                 if($scope.registrationForm.approved) {
                                     for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
                                         orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
@@ -510,22 +518,131 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
             
             window.onkeydown = function(e) {
-                if (e.keyCode == 13) {      
-                	if (location.pathname.indexOf('/oauth/signin') !== -1){ 
-                        if ($scope.showRegisterForm == true){
-                            $scope.registerAndAuthorize();                  
-                        } else{
-                            $scope.loginAndAuthorize();                 
-                        }               
-                    } else{
-                    	console.log(window.event)
-                        $scope.authorize();
+                if (e.keyCode == 13) {     
+                	if(orcidVar.originalOauth2Process) { 
+	                	if (location.pathname.indexOf('/oauth/signin') !== -1){ 
+	                        if ($scope.showRegisterForm == true){
+	                            $scope.registerAndAuthorize();                  
+	                        } else{
+	                            $scope.loginAndAuthorize();                 
+	                        }               
+	                    } else{
+	                    	$scope.authorize();
+	                    }
                     }
                 }
+            }; 
+            
+            /////////////////////
+            // Oauth 2 screens //
+            /////////////////////
+            $scope.oauth2ScreensLoadRegistrationForm = function() {
+            	$.ajax({
+                    url: getBaseUri() + '/register.json',
+                    type: 'GET',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        $scope.registrationForm = data;                            
+                        
+                        $scope.$apply();
+                                        
+                        // special handling of deactivation error
+                        $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
+                            $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
+                            $scope.showReactivationSent = false;
+                        }); // initialize the watch
+                    }
+                }).fail(function() {
+                    console.log("An error occured initializing the registration form.");
+                });
+            };
+            
+            $scope.oauth2ScreensRegister = function() {
+                // Adding the response to the register object
+                $scope.registrationForm.grecaptcha.value = $scope.recatchaResponse; 
+                $scope.registrationForm.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
+                
+                $.ajax({
+                    url: getBaseUri() + '/register.json',
+                    type: 'POST',
+                    data:  angular.toJson($scope.registrationForm),
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function(data) {
+                    	$scope.registrationForm = data;
+                        if ($scope.registrationForm.errors == undefined 
+                            || $scope.registrationForm.errors.length == 0) {                            
+                            $scope.showProcessingColorBox();                            
+                            $scope.getDuplicates();
+                        } else {
+                            if($scope.registrationForm.email.errors.length > 0) {
+                                for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+                                    $scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
+                                }
+                            } else {
+                                $scope.emailTrustAsHtmlErrors = [];
+                            }
+                        }
+                        
+
+                        $scope.$apply();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("RegistrationCtrl.postRegister() error");
+                });
+            }; 
+            
+            $scope.oauth2ScreensPostRegisterConfirm = function() {
+            	var baseUri = getBaseUri();
+            	
+            	if($scope.registrationForm.linkType === 'shibboleth'){
+                    baseUri += '/shibboleth';
+                }
+            	
+            	var auth_scope_prefix = 'Authorize_';
+                if($scope.enablePersistentToken){
+                    auth_scope_prefix = 'AuthorizeP_';
+                }
+                $scope.showProcessingColorBox();
+                $scope.registrationForm.valNumClient = $scope.registrationForm.valNumServer / 2;
+                
+                $.ajax({
+                    url: baseUri + '/registerConfirm.json',
+                    type: 'POST',
+                    data:  angular.toJson($scope.registrationForm),
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data != null && data.errors != null && data.errors.length > 0) {
+                            //TODO: Display error in the page
+                            $scope.generalRegistrationError = data.errors[0];
+                            $scope.$apply();
+                            $.colorbox.close();
+                        } else {
+                            //TODO: Add GA code
+							orcidGA.windowLocationHrefDelay(data.url);
+                        }                           
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("OauthAuthorizationController.postRegister() error");
+                });	
             };
 
             // Init
-            $scope.loadRequestInfoForm();         
+            if(orcidVar.oauth2Screens) {
+                $scope.showRegisterForm = !orcidVar.showLogin;
+                if(!$scope.showRegisterForm && orcidVar.oauthUserId){
+                    $scope.authorizationForm = {
+                        userName:  {value: orcidVar.oauthUserId}
+                    } 
+                }
+            }
+            if(orcidVar.originalOauth2Process) {                
+                $scope.loadRequestInfoForm();
+            }                     
         }
     ]
 );
