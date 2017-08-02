@@ -18,7 +18,6 @@ package org.orcid.integration.blackbox.api.v3.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -55,7 +54,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
     @Resource(name = "publicV3_0_dev1ApiClient")
     private PublicV3ApiClientImpl publicV3ApiClientImpl;
 
-    private static org.orcid.jaxb.model.common_v2.Visibility currentDefaultVisibility = null;
+    private static org.orcid.jaxb.model.v3.dev1.common.Visibility currentDefaultVisibility = null;
     
     @BeforeClass
     public static void setup() {
@@ -64,7 +63,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         openEditAddressModal();
         deleteAddresses();
         createAddress(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         saveEditAddressModal();        
     }
 
@@ -75,10 +74,10 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         deleteAddresses();
         saveEditAddressModal();
         signout();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
     }
 
-    private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
+    private void changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
         if(!v.equals(currentDefaultVisibility)) {
             changeDefaultUserVisibility(webDriver, v);
             currentDefaultVisibility = v;
@@ -92,7 +91,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteAddress() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
 
@@ -194,7 +193,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO LIMITED
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
         saveEditAddressModal();
 
         ClientResponse response = memberV3Dev1ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
@@ -209,19 +208,19 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO PRIVATE
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE);
         saveEditAddressModal();
 
         response = memberV3Dev1ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         addresses = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.Addresses.class);
         assertNotNull(addresses);
-        assertNull(addresses.getAddress());
+        assertTrue(addresses.getAddress().isEmpty());
         
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         saveEditAddressModal();
     }
 
@@ -246,7 +245,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         assertTrue(found);
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         saveEditAddressModal();
     }
 

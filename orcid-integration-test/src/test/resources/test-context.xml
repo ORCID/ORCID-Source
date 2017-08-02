@@ -114,7 +114,7 @@
     </bean>
     
     <bean id="memberV3_0_dev1ApiClient" class="org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl">
-        <constructor-arg value="${org.orcid.api.baseUri}/v2.1"/>
+        <constructor-arg value="${org.orcid.api.baseUri}/v3.0_dev1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     

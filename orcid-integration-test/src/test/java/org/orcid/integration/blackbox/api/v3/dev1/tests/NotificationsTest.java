@@ -80,7 +80,7 @@ public class NotificationsTest {
 
     @Test
     public void createPermissionNotification() throws JSONException {
-        NotificationPermission notification = unmarshallFromPath("/notification_2.1/samples/notification-permission-2.1.xml");
+        NotificationPermission notification = unmarshallFromPath("/notification_3.0_dev1/samples/notification-permission-3.0_dev1.xml");
         notification.setPutCode(null);
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
 
@@ -89,12 +89,12 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         String locationPath = response.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.1/" + testUser1OrcidId + "/notification-permission/\\d+"));
+                locationPath.matches(".*/v3.0_dev1/" + testUser1OrcidId + "/notification-permission/\\d+"));
     }
 
     @Test
     public void flagAsArchived() throws JSONException {
-        NotificationPermission notification = unmarshallFromPath("/notification_2.1/samples/notification-permission-2.1.xml");
+        NotificationPermission notification = unmarshallFromPath("/notification_3.0_dev1/samples/notification-permission-3.0_dev1.xml");
         notification.setPutCode(null);
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
 
@@ -103,7 +103,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.1/" + testUser1OrcidId + "/notification-permission/\\d+"));
+                locationPath.matches(".*/v3.0_dev1/" + testUser1OrcidId + "/notification-permission/\\d+"));
         String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
         Long putCode = Long.valueOf(putCodeString);
 
@@ -124,7 +124,7 @@ public class NotificationsTest {
 
     @Test
     public void createPermissionNotificationWithTrailingSpaceInAuthorizationUrl() throws JSONException {
-        NotificationPermission notification = unmarshallFromPath("/notification_2.1/samples/notification-permission-2.1.xml");
+        NotificationPermission notification = unmarshallFromPath("/notification_3.0_dev1/samples/notification-permission-3.0_dev1.xml");
         notification.setPutCode(null);
         AuthorizationUrl authUrl = notification.getAuthorizationUrl();
         authUrl.setUri(authUrl.getUri() + "    ");
@@ -138,7 +138,7 @@ public class NotificationsTest {
     
     @Test
     public void createPermissionNotificationWithUnencodedSpaceInAuthorizationPath() throws JSONException {
-        NotificationPermission notification = unmarshallFromPath("/notification_2.1/samples/notification-permission-2.1.xml");
+        NotificationPermission notification = unmarshallFromPath("/notification_3.0_dev1/samples/notification-permission-3.0_dev1.xml");
         notification.setPutCode(null);
         AuthorizationUrl authUrl = notification.getAuthorizationUrl();
         authUrl.setUri(null);
@@ -153,7 +153,7 @@ public class NotificationsTest {
 
     @Test
     public void createPermissionNotificationWithBlankAuthorizationUri() throws JSONException {
-        NotificationPermission notification = unmarshallFromPath("/notification_2.1/samples/notification-permission-2.1.xml");
+        NotificationPermission notification = unmarshallFromPath("/notification_3.0_dev1/samples/notification-permission-3.0_dev1.xml");
         notification.setPutCode(null);
         AuthorizationUrl authUrl = notification.getAuthorizationUrl();
         authUrl.setUri("");
@@ -164,7 +164,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.1/" + testUser1OrcidId + "/notification-permission/\\d+"));
+                locationPath.matches(".*/v3.0_dev1/" + testUser1OrcidId + "/notification-permission/\\d+"));
         String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
         Long putCode = Long.valueOf(putCodeString);
 
@@ -179,7 +179,7 @@ public class NotificationsTest {
 
     @Test
     public void createPermissionNotificationWithAbsentAuthorizationUriElement() throws JSONException {
-        NotificationPermission notification = unmarshallFromPath("/notification_2.1/samples/notification-permission-2.1.xml");
+        NotificationPermission notification = unmarshallFromPath("/notification_3.0_dev1/samples/notification-permission-3.0_dev1.xml");
         notification.setPutCode(null);
         AuthorizationUrl authUrl = notification.getAuthorizationUrl();
         authUrl.setUri("");
@@ -190,7 +190,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.1/" + testUser1OrcidId + "/notification-permission/\\d+"));
+                locationPath.matches(".*/v3.0_dev1/" + testUser1OrcidId + "/notification-permission/\\d+"));
         String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
         Long putCode = Long.valueOf(putCodeString);
 
@@ -224,7 +224,7 @@ public class NotificationsTest {
     
     @Test
     public void createNotificationInvalidWorkIDType() throws JSONException {
-        NotificationPermission notification = unmarshallFromPath("/notification_2.1/samples/notification-permission-2.1.xml");
+        NotificationPermission notification = unmarshallFromPath("/notification_3.0_dev1/samples/notification-permission-3.0_dev1.xml");
         notification.setPutCode(null);
         notification.getItems().getItems().get(0).getExternalIdentifier().setType("invalid");
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);

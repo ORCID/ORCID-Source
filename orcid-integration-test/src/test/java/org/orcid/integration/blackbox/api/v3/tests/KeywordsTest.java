@@ -57,8 +57,8 @@ public class KeywordsTest extends BlackBoxBaseV3_0_dev1 {
     private static String keyword1 = "keyword-1-" + System.currentTimeMillis();
     private static String keyword2 = "keyword-2-" + System.currentTimeMillis();
 
-    private static org.orcid.jaxb.model.common_v2.Visibility currentDefaultVisibility = null;
-    private static org.orcid.jaxb.model.common_v2.Visibility currentKeywordsVisibility = null;
+    private static org.orcid.jaxb.model.v3.dev1.common.Visibility currentDefaultVisibility = null;
+    private static org.orcid.jaxb.model.v3.dev1.common.Visibility currentKeywordsVisibility = null;
 
     @BeforeClass
     public static void setup() {
@@ -67,19 +67,19 @@ public class KeywordsTest extends BlackBoxBaseV3_0_dev1 {
         deleteKeywords();
         createKeyword(keyword1);
         createKeyword(keyword2);
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         saveKeywordsModal(); 
-        currentKeywordsVisibility = org.orcid.jaxb.model.common_v2.Visibility.PUBLIC;
+        currentKeywordsVisibility = org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC;
     }
 
-    private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
+    private void changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
         if (!v.equals(currentDefaultVisibility)) {
             changeDefaultUserVisibility(webDriver, v, false);
             currentDefaultVisibility = v;
         }
     }
 
-    private static void changeCurrentKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
+    private static void changeCurrentKeywordsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
         if(!v.equals(currentKeywordsVisibility)) {
             showMyOrcidPage();
             openEditKeywordsModal();
@@ -92,8 +92,8 @@ public class KeywordsTest extends BlackBoxBaseV3_0_dev1 {
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testCreateGetUpdateAndDeleteKeyword() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
-        changeCurrentKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);        
+        changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        changeCurrentKeywordsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);        
 
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
@@ -215,7 +215,7 @@ public class KeywordsTest extends BlackBoxBaseV3_0_dev1 {
      */
     @Test
     public void testGetKeywordWithPublicAPI() throws InterruptedException, JSONException {
-        changeCurrentKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeCurrentKeywordsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
 
         
         ClientResponse response = publicV3ApiClientImpl.viewKeywordsXML(getUser1OrcidId());
@@ -251,7 +251,7 @@ public class KeywordsTest extends BlackBoxBaseV3_0_dev1 {
      */
     @Test
     public void testGetKeywordsWihtMembersAPI() throws InterruptedException, JSONException {        
-        changeCurrentKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);        
+        changeCurrentKeywordsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);        
 
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
@@ -266,7 +266,7 @@ public class KeywordsTest extends BlackBoxBaseV3_0_dev1 {
         boolean found2 = false;
 
         for (org.orcid.jaxb.model.v3.dev1.record.Keyword keyword : keywordsV2_1.getKeywords()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, keyword.getVisibility());
+            assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED, keyword.getVisibility());
             if (keyword.getContent().equals(keyword1)) {
                 found1 = true;
 

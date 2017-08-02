@@ -65,15 +65,16 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class WorksTest extends BlackBoxBaseV3_0_dev1 {
-    @Resource(name = "memberV3Dev1ApiClient")
-    private MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;        
+    
+    @Resource(name = "memberV3_0_dev1ApiClient")
+    private MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;
     
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         showMyOrcidPage();
-    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.1/samples/read_samples/work-2.1.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setSource(null);
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -90,7 +91,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.1/" + this.getUser1OrcidId() + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/work/\\d+"));
         ClientResponse getResponse = memberV3Dev1ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
@@ -135,7 +136,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
         String accessTokenForClient1 = getAccessToken();
         String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         
-        Work work1 = (Work) unmarshallFromPath("/record_2.1/samples/read_samples/work-2.1.xml", Work.class);
+        Work work1 = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
         work1.setPutCode(null);
         work1.setSource(null);
         work1.setVisibility(Visibility.PUBLIC);
@@ -151,7 +152,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
         work1.getExternalIdentifiers().getExternalIdentifier().add(wExtId1);
 
-        Work work2 = (Work) unmarshallFromPath("/record_2.1/samples/read_samples/work-2.1.xml", Work.class);
+        Work work2 = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
         work2.setPutCode(null);
         work2.setSource(null);
         work2.setVisibility(Visibility.PUBLIC);
@@ -167,7 +168,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
         work2.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         
-        Work work3 = (Work) unmarshallFromPath("/record_2.1/samples/read_samples/work-2.1.xml", Work.class);
+        Work work3 = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
         work3.setPutCode(null);
         work3.setSource(null);
         work3.setVisibility(Visibility.PUBLIC);
@@ -266,7 +267,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
     @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.1/samples/read_samples/work-2.1.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setSource(null);
         workToCreate.setVisibility(Visibility.PUBLIC);
@@ -281,7 +282,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.1/" + this.getUser1OrcidId() + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/work/\\d+"));
         ClientResponse getResponse = memberV3Dev1ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);

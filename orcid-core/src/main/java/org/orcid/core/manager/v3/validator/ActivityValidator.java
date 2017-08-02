@@ -216,7 +216,7 @@ public class ActivityValidator {
                     if(contributor.getContributorOrcid() != null) {
                         ContributorOrcid contributorOrcid = contributor.getContributorOrcid();
                         if(!PojoUtil.isEmpty(contributorOrcid.getUri())) {
-                            if(!OrcidStringUtils.isValidOrcidUri(contributorOrcid.getUri())) {
+                            if(!OrcidStringUtils.isValidOrcid2_1Uri(contributorOrcid.getUri())) {
                                 throw new OrcidValidationException("Invalid contributor URI");
                             }
                         }

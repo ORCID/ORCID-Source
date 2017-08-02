@@ -56,7 +56,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV3_0_dev1 {
     @Resource(name = "publicV3_0_dev1ApiClient")
     private PublicV3ApiClientImpl publicV3ApiClientImpl;
     
-    org.orcid.jaxb.model.common_v2.Visibility currentUserVisibility = null;
+    org.orcid.jaxb.model.v3.dev1.common.Visibility currentUserVisibility = null;
     
     ArrayList<Long> createdPutCodes = new ArrayList<Long>();
     
@@ -80,8 +80,8 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV3_0_dev1 {
             deleteExternalIdentifiers();
             saveExternalIdentifiersModal();            
         }
-        putCode1 = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
-        putCode2 = createExternalIdentifier(extId2Value, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        putCode1 = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        putCode2 = createExternalIdentifier(extId2Value, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
         allSet = true;
     }
     
@@ -134,7 +134,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV3_0_dev1 {
         assertNotNull(accessToken);                
 
         String extId1Value = "A-0003" + System.currentTimeMillis();
-        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);               
+        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);               
 
         //Get and verify
         ClientResponse response = memberV3Dev1ApiClient.viewExternalIdentifiers(getUser1OrcidId(), accessToken);        
@@ -262,7 +262,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV3_0_dev1 {
     }
     
     @SuppressWarnings({ "rawtypes", "deprecation" })
-    private Long createExternalIdentifier(String name, org.orcid.jaxb.model.common_v2.Visibility defaultUserVisibility) throws InterruptedException, JSONException {
+    private Long createExternalIdentifier(String name, org.orcid.jaxb.model.v3.dev1.common.Visibility defaultUserVisibility) throws InterruptedException, JSONException {
         //Change user visibility if needed
         if(!defaultUserVisibility.equals(currentUserVisibility)) {
             changeDefaultUserVisibility(webDriver, defaultUserVisibility, false);

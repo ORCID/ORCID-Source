@@ -32,7 +32,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.integration.blackbox.api.BlackBoxBaseV3;
 import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
@@ -55,7 +55,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Angel Montenegro
  * 
  */
-public class BlackBoxBaseV3_0_dev1 extends BlackBoxBase {
+public class BlackBoxBaseV3_0_dev1 extends BlackBoxBaseV3 {
     @Resource(name = "t2OAuthClient")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
     @Resource(name = "memberV3_0_dev1ApiClient")

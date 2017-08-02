@@ -27,24 +27,11 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.api.v2_1.release.BlackBoxBaseV2_1Release;
-import org.orcid.integration.blackbox.api.v2_1.release.MemberV2_1ApiClientImpl;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.integration.api.pub.PublicV3ApiClientImpl;
+import org.orcid.integration.blackbox.api.v3.dev1.BlackBoxBaseV3_0_dev1;
+import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Addresses;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
@@ -60,6 +47,19 @@ import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.dev1.record.Record;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -72,17 +72,17 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
-public class RecordTest extends BlackBoxBaseV2_1Release {    
-    @Resource(name = "memberV2_1ApiClient")
-    private MemberV2_1ApiClientImpl memberV2_1ApiClient;
-    @Resource(name = "publicV2_1ApiClient")
-    private PublicV2ApiClientImpl publicV2_1ApiClient;
+public class RecordTest extends BlackBoxBaseV3_0_dev1 {    
+    @Resource(name = "memberV3_0_dev1ApiClient")
+    private MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;
+    @Resource(name = "publicV3_0_dev1ApiClient")
+    private PublicV3ApiClientImpl publicV3Dev1ApiClient;
         
     @Test
     public void testViewRecordFromMemberAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
-        ClientResponse response = memberV2_1ApiClient.viewRecord(getUser1OrcidId(), accessToken);
+        ClientResponse response = memberV3Dev1ApiClient.viewRecord(getUser1OrcidId(), accessToken);
         assertNotNull(response);        
         assertEquals("invalid " + response,200,response.getStatus());        
         Record record = response.getEntity(Record.class);
@@ -291,7 +291,7 @@ public class RecordTest extends BlackBoxBaseV2_1Release {
     
     @Test
     public void testViewRecordFromPublicAPI() {
-        ClientResponse response = publicV2_1ApiClient.viewRecordXML(getUser1OrcidId());
+        ClientResponse response = publicV3Dev1ApiClient.viewRecordXML(getUser1OrcidId());
         assertNotNull(response);        
         assertEquals("invalid " + response,200,response.getStatus());        
         Record record = response.getEntity(Record.class);

@@ -63,9 +63,9 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
         openEditResearcherUrlsModal();
         deleteResearcherUrls();
         createResearcherUrl(researcherUrl1);
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         saveResearcherUrlsModal();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, false);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, false);
     }
 
     @AfterClass
@@ -93,7 +93,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.1/" + getUser1OrcidId() + "/researcher-urls/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + getUser1OrcidId() + "/researcher-urls/\\d+"));
 
         // Read
         ClientResponse getResponse = memberV3Dev1ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
@@ -271,10 +271,8 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
         // SET ALL TO LIMITED
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
         saveResearcherUrlsModal();
-
-        assertTrue(researcherUrls.getResearcherUrls().isEmpty());
 
         getAllResponse = publicV3ApiClient.viewResearcherUrlsXML(getUser1OrcidId());
         assertNotNull(getAllResponse);
@@ -286,7 +284,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         saveResearcherUrlsModal();
     }
 
@@ -298,7 +296,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO LIMITED
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
         saveResearcherUrlsModal();
 
         ClientResponse getAllResponse = memberV3Dev1ApiClient.getResearcherUrls(getUser1OrcidId(), accessToken);
@@ -313,7 +311,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO PRIVATE
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE);
         saveResearcherUrlsModal();
 
         getAllResponse = memberV3Dev1ApiClient.getResearcherUrls(getUser1OrcidId(), accessToken);
@@ -326,7 +324,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         saveResearcherUrlsModal();
     }
 

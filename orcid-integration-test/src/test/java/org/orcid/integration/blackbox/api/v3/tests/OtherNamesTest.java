@@ -59,8 +59,8 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
     private static String otherName1 = "other-name-1-" + System.currentTimeMillis();
     private static String otherName2 = "other-name-2-" + System.currentTimeMillis();    
     
-    private static org.orcid.jaxb.model.common_v2.Visibility currentDefaultVisibility = null;
-    private static org.orcid.jaxb.model.common_v2.Visibility currentOtherNamesVisibility = null;
+    private static org.orcid.jaxb.model.v3.dev1.common.Visibility currentDefaultVisibility = null;
+    private static org.orcid.jaxb.model.v3.dev1.common.Visibility currentOtherNamesVisibility = null;
 
 
     @BeforeClass
@@ -70,7 +70,7 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         deleteOtherNames();
         createOtherName(otherName1);
         createOtherName(otherName2);
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         saveOtherNamesModal();
     }    
 
@@ -83,14 +83,14 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         signout();
     }
 
-    private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
+    private void changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
         if (!v.equals(currentDefaultVisibility)) {
             changeDefaultUserVisibility(webDriver, v, false);
             currentDefaultVisibility = v;
         }
     }
 
-    private static void changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
+    private static void changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
         if(!v.equals(currentOtherNamesVisibility)) {
             showMyOrcidPage();
             openEditOtherNamesModal();
@@ -103,8 +103,8 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteOtherName() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
-        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC); 
+        changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC); 
 
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
@@ -222,7 +222,7 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
      */
     @Test
     public void testGetOtherNamesWithPublicAPI() throws InterruptedException, JSONException {
-        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         
         ClientResponse response = publicV3ApiClient.viewOtherNamesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -255,7 +255,7 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
      */
     @Test
     public void testGetOtherNamesWithMembersAPI() throws InterruptedException, JSONException {
-        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
                 
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
