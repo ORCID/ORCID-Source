@@ -96,29 +96,31 @@
         </div>
       </div>
 
-      <!-- Country -->            
-      <div ng-controller="CountryCtrl" class="workspace-section country">
-        <div class="workspace-section-header">
-          <div class="workspace-section-title">
-            <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
-              <div class="glyphicon glyphicon-pencil"> 
-                <div class="popover popover-tooltip top"> 
-                  <div class="arrow"></div>
-                  <div class="popover-content">
-                    <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
-                  </div>                
+      <!-- Country -->    
+    <script type="text/ng-template" id="country-ng2-template">        
+        <div ng-controller="CountryCtrl" class="workspace-section country">
+            <div class="workspace-section-header">
+                <div class="workspace-section-title">
+                    <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
+                        <div class="glyphicon glyphicon-pencil"> 
+                            <div class="popover popover-tooltip top"> 
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
+                                </div>                
+                            </div>
+                        </div>                  
+                    </div>
+                    <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
                 </div>
-              </div>                  
             </div>
-            <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
-          </div>
+            <div class="workspace-section-content">
+                <span ng-repeat="country in countryForm.addresses">                                       
+                    <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
+                </span>
+            </div>
         </div>
-        <div class="workspace-section-content">
-          <span ng-repeat="country in countryForm.addresses">                                       
-            <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
-          </span>
-        </div>
-      </div>
+    </script>
 
       <!-- Keywords -->         
       <div ng-controller="KeywordsCtrl" class="workspace-section keywords">

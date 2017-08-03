@@ -1,10 +1,10 @@
-
-/*declare var $: any;
+declare var $: any;
 declare var colorbox: any;
 declare var contains: any;
 declare var getBaseUri: any;
 declare var logAjaxError: any;
 declare var orcidVar: any;
+declare var scriptTmpl: any;
 
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
@@ -129,7 +129,7 @@ export const CountryCtrl = angular.module('orcidApp').controller(
                                  *  - If the item visibility is not null, set the default visibility to the item visibility
                                  * - If the default visibility is not null:
                                  *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-                                 * *
+                                 * */
                                 if($scope.defaultVisibility == null) {
                                     if(itemVisibility != null) {
                                         $scope.defaultVisibility = itemVisibility;
@@ -298,7 +298,23 @@ export const CountryCtrl = angular.module('orcidApp').controller(
     ]
 );
 
-// This is the Angular 2 part of the module
-@NgModule({})
-export class CountryCtrlNg2Module {}
-*/
+////////////////////////////////////
+
+//Ng1 hybrid syntax
+export class countryCtrl {
+
+}
+
+export const countryCmp = {
+    controller: countryCtrl,
+    controllerAs: 'ctrl'
+};
+
+
+@Component({
+    selector: 'country-ng2',
+    template:  scriptTmpl("country-ng2-template")
+})
+export class CountryComponent {
+
+}

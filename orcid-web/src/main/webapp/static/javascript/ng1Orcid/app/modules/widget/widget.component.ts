@@ -1,6 +1,6 @@
 declare var getBaseUri: any;
-declare var scriptTmpl: any;
 declare var orcidVar: any;
+declare var scriptTmpl: any;
 
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
@@ -21,7 +21,6 @@ export const widgetCmp = {
 
 @Component({
     selector: 'widget-ng2',
-    //template: 'asdfgg'
     template:  scriptTmpl("widget-ng2-template")
 })
 export class WidgetComponent {
