@@ -8819,12 +8819,40 @@ ul.comma li:last-child:after {
     flex-wrap: wrap-reverse;
 } 
 */
+.lang-rl .action-button-bar {
+	padding-left: 0;
+}
+
+.lang-rl .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item * {
+	text-align: center;
+}
+
+.lang-rl .bulk-edit ul.bulk-edit-toolbar {
+	float: left;
+}
+
+.lang-rl .bulk-edit .bulk-edit-delete {
+	float: left;
+	padding-left: 15px;
+}
+
+.lang-rl .bulk-edit-toolbar {
+    float: left;
+    margin-left: 15px;
+}
+
 .lang-rl .container .header #form-search {
     float: right;
 }
 
 .lang-rl .container .header .search form .bar {
     float: right;
+}
+
+.lang-rl .fixed-area ul.record-settings.pull-right,
+.lang-rl .fixed-area ul.record-settings.pull-right + span {
+	float: left!important;
+    text-align: left;
 }
 
 .lang-rl .full-name {
@@ -8871,6 +8899,14 @@ ul.comma li:last-child:after {
     float: right!important;
 }
 
+.lang-rl .see-more {
+	float: left;
+    left: -235px;
+    position: relative;
+    text-align: left;
+    top: 40px;
+}
+
 .lang-rl .sources-options {
     float: left;
 }
@@ -8880,8 +8916,21 @@ ul.comma li:last-child:after {
     text-align: right;
 }
 
+.lang-rl .workspace-affiliations ul.sources-options {
+	margin-left: -10px;
+}
+
 .lang-rl .workspace-body-list > li {
-    padding-left: 20px;
+    padding-left: 0px;
+}
+
+.lang-rl .workspace-body-list.workspace-affiliations > li {
+	padding-left: 15px;
+}
+
+.lang-rl .workspace-private-toolbar{
+	text-align: left;
+    padding-left: 15px;
 }
 
 .lang-rl .workspace-profile .workspace-section .workspace-section-header .workspace-section-title {
@@ -8893,8 +8942,12 @@ ul.comma li:last-child:after {
 }
 
 
-.lang-rl .workspace-title {
+.lang-rl .workspace-title,
+.lang-rl .workspace-title + .clear-fix.left,
+.lang-rl .workspace-title + .clear-fix.left + .info-detail,
+.lang-rl .workspace-title + .info-detail{
     float: right;
+    margin-right: 15px;
 }
 
 #verificationCodeFor2FA {

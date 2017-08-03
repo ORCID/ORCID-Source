@@ -26,9 +26,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -125,6 +127,15 @@ public class SecurityContextTestUtils {
 
     static public void clearSecurityContext() {
         SecurityContextHolder.setContext(new SecurityContextImpl());
+    }
+    
+    static public void setupSecurityContextForWebUser(String userId, String email) {
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(userId, email, "password");
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, "password");
+        auth.setDetails(details);
+        SecurityContextImpl securityContext = new SecurityContextImpl();
+        securityContext.setAuthentication(auth);
+        SecurityContextHolder.setContext(securityContext);
     }
 
 }

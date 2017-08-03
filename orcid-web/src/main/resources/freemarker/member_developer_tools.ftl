@@ -24,8 +24,7 @@
 	</div>
 	<div class="col-md-9 col-sm-12 col-xs-12 margin-top-box-mobile">		
 		<div ng-controller="ClientEditCtrl" id="member_developer_tools_header">	
-			<!-- Header -->
-			
+			<!-- Header -->			
 			<div class="row">
 				<div class="col-md-9 col-sm-10 col-xs-10">
 					<h2><@orcid.msg 'manage.developer_tools.group.title'/></h2>

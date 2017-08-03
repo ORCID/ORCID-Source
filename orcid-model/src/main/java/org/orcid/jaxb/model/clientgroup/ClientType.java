@@ -99,6 +99,8 @@ public enum ClientType {
             return premiumUpdaterScopes();
         case UPDATER:
             return updaterScopes();
+        case PUBLIC_CLIENT:
+            return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AUTHENTICATE, ScopePathType.READ_PUBLIC));
         default:
             throw new IllegalArgumentException("Unsupported client type: " + clientType);
         }
