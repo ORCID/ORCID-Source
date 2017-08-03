@@ -159,7 +159,7 @@
 					<!-- Add redirect uris -->
 					<div class="col-md-9 col-sm-9 col-xs-9 add-options">
 						<a href="" class="icon-href-bg" ng-click="addRedirectUriToNewClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
-						<div class="add-options margin-bottom-box">								
+						<div class="add-options margin-bottom-box" ng-show="!hideGoogleUri || !hideSwaggerUri || !hideSwaggerMemberUri">								
 							<div>
 								<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
 								<ul class="pullleft-list">
@@ -425,7 +425,7 @@
 					<!-- Add redirect uris -->
 					<div class="col-md-9 col-sm-9 col-xs-9 add-options">
 						<a href="" class="icon-href-bg" ng-click="addUriToExistingClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
-						<div class="add-options margin-bottom-box">								
+						<div class="add-options margin-bottom-box" ng-show="!hideGoogleUri || !hideSwaggerUri || !hideSwaggerMemberUri">								
 							<div>
 								<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
 								<ul class="pullleft-list">
