@@ -76,64 +76,45 @@ export const ClientEditCtrl = angular.module('orcidApp').controller(
                     console.log("Error creating client information.");
                 });
             };
-
-            // Add a new uri input field to a new client
-            $scope.addRedirectUriToNewClientTable = function(){
-                $scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
-            };
-
+            
             $scope.addTestRedirectUri = function(type, edit) {
-                var rUri = '';
-                if(type == 'google'){
+            	var rUri = null;
+        		if(type == 'google'){
                     rUri = $scope.googleUri;
-                }
-                if(type == 'swagger'){
+                    $scope.hideGoogleUri = true;
+                } else if(type == 'swagger'){
                     rUri = $scope.swaggerUri;
-                }
-                if(type == 'swagger-member'){
+                    $scope.hideSwaggerUri = true;
+                } else if(type == 'swagger-member'){
                     rUri = $scope.swaggerMemberUri;
+                    $scope.hideSwaggerMemberUri = true;
                 }
-
-                $.ajax({
-                    url: getBaseUri() + '/developer-tools/get-empty-redirect-uri.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        data.value.value=rUri;
-                        data.type.value='default';
-                        $scope.$apply(function(){
-                            if(edit == 'true'){
-                                if($scope.clientToEdit.redirectUris.length == 1 && $scope.clientToEdit.redirectUris[0].value.value == null) {
-                                    $scope.clientToEdit.redirectUris[0].value.value = rUri;
-                                } else {
-                                    $scope.clientToEdit.redirectUris.push(data);
-                                }
-                            } else {
-                                if($scope.newClient.redirectUris.length == 1 && $scope.newClient.redirectUris[0].value.value == null) {
-                                    $scope.newClient.redirectUris[0].value.value = rUri;
-                                } else {
-                                    $scope.newClient.redirectUris.push(data);
-                                }
-                            }
-                            if(type == 'google') {
-                                $scope.hideGoogleUri = true;
-                            }
-                            if(type == 'swagger'){
-                                $scope.hideSwaggerUri = true;
-                            }
-                            if(type == 'swagger-member'){
-                                $scope.hideSwaggerMemberUri = true;
-                            }
-
-                        });
-                    }
-                }).fail(function() {
-                    console.log("Error fetching empty redirect uri");
-                });
+                
+                if(edit == 'true') {
+	        		if($scope.clientToEdit.redirectUris.length == 1 && $scope.clientToEdit.redirectUris[0].value.value == null) {
+	                    $scope.clientToEdit.redirectUris[0].value.value = rUri;
+	                } else {
+	                 	$scope.addUriToExistingClientTable(rUri);   
+	                }
+                } else {
+                	if($scope.newClient.redirectUris.length == 1 && $scope.newClient.redirectUris[0].value.value == null) {
+	                    $scope.newClient.redirectUris[0].value.value = rUri;
+	                } else {
+	                 	$scope.addRedirectUriToNewClientTable(rUri);   
+	                }
+                }                    
             };
 
             // Add a new uri input field to a existing client
-            $scope.addUriToExistingClientTable = function(){
-                $scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
+            $scope.addUriToExistingClientTable = function(defaultValue){
+            	defaultValue = (typeof defaultValue != undefined && defaultValue != null) ? defaultValue : ''; 	
+				$scope.clientToEdit.redirectUris.push({value: {value: defaultValue},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
+            };
+            
+            // Add a new uri input field to a new client
+            $scope.addRedirectUriToNewClientTable = function(defaultValue){
+            	defaultValue = (typeof defaultValue != undefined && defaultValue != null) ? defaultValue : '';				
+                $scope.newClient.redirectUris.push({value: {value: defaultValue},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
             };
 
             $scope.closeModal = function(){
