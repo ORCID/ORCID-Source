@@ -55,6 +55,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
+import org.orcid.api.member.MemberApiServiceImplHelper;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
@@ -98,7 +99,7 @@ import io.swagger.annotations.ResponseHeader;
  * 
  */
 @Path("/v2.0_rc1")
-public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper {
+public class MemberV2ApiServiceImplV2_0_rc1 extends MemberApiServiceImplHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MemberV2ApiServiceImplV2_0_rc1.class);
 

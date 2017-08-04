@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.memberV3.server;
+package org.orcid.api.member;
 
 import org.orcid.core.exception.PutCodeFormatException;
 
@@ -23,7 +23,7 @@ import org.orcid.core.exception.PutCodeFormatException;
  * @author Shobhit Tyagi
  * 
  */
-public class MemberV3ApiServiceImplHelper {
+public class MemberApiServiceImplHelper {
 
     protected Long getPutCode(String putCode) {
         Long putCodeNum = null;
