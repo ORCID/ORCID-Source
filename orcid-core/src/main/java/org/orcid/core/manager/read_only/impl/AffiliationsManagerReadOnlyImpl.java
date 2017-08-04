@@ -124,7 +124,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
      * */
     @Override
     public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid) {
-        List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
+        List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
         return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
     }
 
