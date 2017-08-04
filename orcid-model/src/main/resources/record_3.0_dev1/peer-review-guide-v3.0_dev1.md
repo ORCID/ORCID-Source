@@ -1,13 +1,13 @@
 
-#ORCID API v2.1 Peer Review Guide
-Starting in v2.1, the ORCID API now supports a new activity type: ```peer-review```. 
+#ORCID API v3.0_dev1 Peer Review Guide
+Starting in v3.0_dev1, the ORCID API now supports a new activity type: ```peer-review```. 
 
 The ```peer-review``` activity type is intended to allow for recognition of and exchange of data about peer review service contributed by researchers. 
 
 The ```peer-review``` activity type follows the [CASRAI Peer Review Services data profile](http://dictionary.casrai.org/Peer_Review_Services), which was developed by the [Peer Review Services Working Group (PRS-WG)](http://casrai.org/standards/subject-groups/peer-review-services), led by [ORCID](http://orcid.org) and [F1000](http://f1000.com/). More details about ORCID's implementation of this recommendation, and the Early Adopter program for Peer Review can be found on the [Peer Review Early Adopter page](http://orcid.org/content/peer-review-early-adopter-program).
 
 ##Peer Review XML
-XML for the ```peer-review``` activity follows the [peer-review-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/peer-review-2.1.xsd) and consists of the following sections:
+XML for the ```peer-review``` activity follows the [peer-review-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/peer-review-3.0_dev1.xsd) and consists of the following sections:
 
 ###The fields
 
@@ -46,7 +46,7 @@ XML for the ```peer-review``` activity follows the [peer-review-2.1.xsd](https:/
 
 ###Example file
 
-For an example XML file, see [peer-review-2.1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/peer-review-2.1.xml )
+For an example XML file, see [peer-review-3.0_dev1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/peer-review-3.0_dev1.xml )
 
 ***Note:*** *Sample files contain system-generated elements/attributes that are returned when reading items from ORCID. The following items should not be included when posting items to ORCID:*
 
@@ -57,9 +57,9 @@ For an example XML file, see [peer-review-2.1.xml](https://github.com/ORCID/ORCI
 
 
 ##Peer Review API Reference
-```peer-review``` is available only in ORCID API v2.X, which uses a slightly different data structure from previous API versions. 
+```peer-review``` is available only in ORCID API v2.X and v3.X, which uses a slightly different data structure from previous API versions. 
 
-In v2.X, activities are read, added, and modified on an individual basis (rather than as a list), using a ```put-code```, which is a system-generated identifier used within the ORCID database.
+In v2.X and v3.X, activities are read, added, and modified on an individual basis (rather than as a list), using a ```put-code```, which is a system-generated identifier used within the ORCID database.
 
 The ```put-code``` for a specific item can be obtained by reading a summary of a user's ORCID record.
 
@@ -71,15 +71,15 @@ Other notable differences between v2.X previous versions include:
 ###Read Activities Summary
 | Action                   | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
-| Read activities summary | GET         | /read-limited | https://api.sandbox.orcid.org/v2.1/[ORCID-iD]/activities |
+| Read activities summary | GET         | /read-limited | https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/activities |
 
 ###Read/Modifiy Peer Review Activities
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
-| Add peer-review item    | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.1/[ORCID-iD]/peer-review            |
-| Read peer-review item   | GET         | /read-limited | https://api.sandbox.orcid.org/v2.1/[ORCID-iD]/peer-review/[PUT-CODE] |
-| Update peer-review item | PUT         | /activities/update       | https://api.sandbox.orcid.org/v2.1/[ORCID-iD]/peer-review/[PUT-CODE] |
-| Delete peer-review item | DELETE      | /activities/update       | https://api.sandbox.orcid.org/v2.1/[ORCID-iD]/peer-review/[PUT-CODE] |
+| Add peer-review item    | POST        | /activities/update       | https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-review            |
+| Read peer-review item   | GET         | /read-limited | https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-review/[PUT-CODE] |
+| Update peer-review item | PUT         | /activities/update       | https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-review/[PUT-CODE] |
+| Delete peer-review item | DELETE      | /activities/update       | https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-review/[PUT-CODE] |
 
 
 - **[ORCID-iD]** is the ORCID iD for the record, formatted as XXXX-XXXX-XXXX-XXXX
@@ -91,7 +91,7 @@ Other notable differences between v2.X previous versions include:
 ```shell
 curl -i -H "Accept: application/orcid+xml" \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
-	'https://api.sandbox.orcid.org/v2.1/0000-0002-1306-4180/activities'
+	'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-1306-4180/activities'
 ```
 
 ####Add Peer-Review Activity
@@ -100,7 +100,7 @@ curl -i -H "Accept: application/orcid+xml" \
 curl -i -H 'Content-type: application/orcid+xml’ \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
 	-d '@[FILE-PATH]/peer-review-item.xml' \
-	-X POST 'https://api.sandbox.orcid.org/v2.1/[ORCID]/peer-review'
+	-X POST 'https://api.sandbox.orcid.org/v3.0_dev1/[ORCID]/peer-review'
 ```
 
 ####Read Peer-Review Activity
@@ -108,7 +108,7 @@ curl -i -H 'Content-type: application/orcid+xml’ \
 ```
 curl -i -H "Accept: application/orcid+xml" \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
-	'https://api.sandbox.orcid.org/v2.1/[ORCID]/peer-review/[PUT-CODE]'
+	'https://api.sandbox.orcid.org/v3.0_dev1/[ORCID]/peer-review/[PUT-CODE]'
 ```
 
 ####Update Peer-Review Activity
@@ -117,7 +117,7 @@ curl -i -H "Accept: application/orcid+xml" \
 curl -i -H 'Content-type: application/orcid+xml’ \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
 	-d '@[FILE-PATH]/peer-review-item-updated.xml' \
-	-X PUT 'https://api.sandbox.orcid.org/v2.1/[ORCID]/peer-review/[PUT-CODE]'
+	-X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/[ORCID]/peer-review/[PUT-CODE]'
 ```
 
 ####Delete Peer-Review Activity
@@ -125,7 +125,7 @@ curl -i -H 'Content-type: application/orcid+xml’ \
 ```shell
 curl -i -H 'Content-type: application/orcid+xml’ \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
-	-X DELETE 'https://api.sandbox.orcid.org/v2.1/[ORCID]/peer-review/[PUT-CODE]'
+	-X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/[ORCID]/peer-review/[PUT-CODE]'
 ```
 
 

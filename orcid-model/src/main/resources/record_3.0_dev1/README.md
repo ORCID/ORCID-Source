@@ -1,148 +1,102 @@
-# ORCID API v2.1 Guide
+# ORCID API v3.0_dev1 Guide
 
 ## Current State (Release Stable)
-v2.1 is the current release of the ORCID API and should be used for all development.
+v3.0_dev1 is the current release of the ORCID API and should be used for all development.
 
 ## XSDs and current state (all stable)
-- [activities-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/activities-2.1.xsd) 
+- [activities-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/activities-3.0_dev1.xsd) 
 **stable**
-- [address-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/address-2.1.xsd)
+- [address-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/address-3.0_dev1.xsd)
 **stable**
-- [bulk-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/bulk-2.1.xsd)
+- [bulk-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/bulk-3.0_dev1.xsd)
 **stable**
-- [common-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_2.1/common-2.1.xsd)
+- [common-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_3.0_dev1/common-3.0_dev1.xsd)
 **stable**
-- [education-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/education-2.1.xsd)
+- [education-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/education-3.0_dev1.xsd)
 **stable**
-- [email-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/email-2.1.xsd)
+- [email-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/email-3.0_dev1.xsd)
 **stable**
-- [employment-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/employment-2.1.xsd)
+- [employment-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/employment-3.0_dev1.xsd)
 **not stable**
-- [error-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/error-2.1.xsd)
+- [error-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/error-3.0_dev1.xsd)
 **stable**
-- [external-identifier-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/external-identifier-2.1.xsd)
+- [external-identifier-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/external-identifier-3.0_dev1.xsd)
 **stable**
-- [funding-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/funding-2.1.xsd)
+- [funding-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/funding-3.0_dev1.xsd)
 **stable**
-- [keyword-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/keyword-2.1.xsd)
+- [keyword-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/keyword-3.0_dev1.xsd)
 **stable**
-- [other-names-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/other-name-2.1.xsd)
+- [other-names-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/other-name-3.0_dev1.xsd)
 **stable**
-- [peer-review-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/peer-review-2.1.xsd)
+- [peer-review-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/peer-review-3.0_dev1.xsd)
 **stable**
-- [person-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/person-2.1.xsd)
+- [person-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/person-3.0_dev1.xsd)
 **stable**
-- [personal-details-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/personal-details-2.1.xsd)
+- [personal-details-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/personal-details-3.0_dev1.xsd)
 **stable**
-- [researcher-url-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/researcher-url-2.1.xsd)
+- [researcher-url-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/researcher-url-3.0_dev1.xsd)
 **stable**
-- [search-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/search-2.1.xsd)
+- [search-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/search-3.0_dev1.xsd)
 **stable**
-- [work-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/work-2.1.xsd)
+- [work-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/work-3.0_dev1.xsd)
 **stable**
 
 ##Changes from Release candidate 2.1:
-### Search
-- Addition of search endpoints
-
-### Peer-review
-- Change external-id-type 'PEER-REVIEW' to 'peer-review'
-- Addition of 'peer-review service' as a group type for peer-reviews
-- Peer-review groups look-up by name option
-
-### Email addresses
-- Include primary and verified status when reading an email address
-
-##Changes from Version 1.2
-A number of changes to the ORCID API have been made to improve on the existing 1.2 release, this section highlights the most notable changes.
-
-###Multiple XSD
-The ORCID Messages Schema has been broken down in to multiple files. Namespaces are now used and common elements are reused in multiple sections.
-
-###Per item API
-With version 2.1 the ORCID API information is now added, updated, and read as individual items, as compared to entire sections of a record as was the case with 1.2. Existing items are read, updated or deleted using their put-code, and new items must be posted individually (with the exception of works which can be added up to 100 at a time). To read an entire section of a record the activities summary can be accessed.
-
-###Activities summary:
-When reading the works, funding, and peer-review sections, a summary of each activity is returned. The summary is intended to provide basic information about the item, including title, type, date, organization, source and identifiers. The full item can be retrieved by accessing the individual item using the put-code provided.
-
-###Activities group:
-
-Funding, Works and Peer-review items are grouped together based on a common external identifier. In the schema, the group is the parent of the items and contains a last modified date for the group and the identifier(s) used to create the group.
-
-### New attributes for items
-- *put-code* attribute on the parent field of an item to uniquely identify that item within the ORCID Registry
-- *display-index* indicates the order the researcher has ranked this item within its group or section, higher display indexes appear first. (By deafulat all items added via the API will have their display index set to 0, the display index will update when the order is edited by the researcher.)
-
-### Additional metadata about items on the record 
- - *created date* when the item was first added to the ORCID record
- - *last-modified-date* when the item was changed, such as being edited or having it's visibility changed. 
- - *source*  who added the item to the record. Items added via the API will have the *source-client-id* field to record the client iD, items added by the researcher will use the *source-orcid* field to record the researcher's ORCID iD.
-
-### Additional external identifier fields
-- *external-id-url* indicates how the identifier will resolve
-- *external-id-relationship* indicates the relationship between the item and the identifier
-
-###Peer-review
-A new activities section, peer-review, captures the formal review activity of researchers.
-
-###Non-editable fields
-The 2.1 API can not be used to edit the fields give-name, family-name or biography. 
-
-###Repeatable address field
-With 2.1 the address field can be repeated
+### WorkSummary
+- Addition of journal title field
 
 
 ## Sample files:
 
-- [read activities-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/activities-2.1.xml)
-- [read address-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/address-2.1.xml)
-- [write address-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/address-2.1.xml)
-- [write bulk-work xml-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_samples/bulk-work-2.1.xml)
-- [write bulk-work-2.1.json] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_samples/bulk-work-2.1.json)
-- [read biography-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/biography-2.1.xml)
-- [read education-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/education-2.1.xml)
-- [write education-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/education-2.1.xml)
-- [read educations-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/educations-2.1.xml)
-- [read email-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/email-2.1.xml)
-- [read emails-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/emails-2.1.xml)
-- [read employment-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/employment-2.1.xml)
-- [write employment-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/employment-2.1.xml)
-- [read employments-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/employments-2.1.xml)
-- [error-message-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/error-2.1.xml)
-- [read external-identifier-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/external-identifier-2.1.xml)
-- [write external-identifier-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/external-identifier-2.1.xml)
-- [read external-identifiers-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/external-identifiers-2.1.xml)
-- [read funding-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/funding-2.1.xml)
-- [write funding-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/funding-2.1.xml)
-- [read fundings-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/fundings-2.1.xml)
-- [read keyword-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/keyword-2.1.xml)
-- [write keyword-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/keyword-2.1.xml)
-- [keywords-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/keywords-2.1.xml)
-- [read other-name-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/other-name-2.1.xml)
-- [write other-name-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/other-name-2.1.xml)
-- [read other-names-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/other-names-2.1.xml)
-- [read peer-review-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-2.1.xml)
-- [write full peer-review-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-full-2.1.xml)
-- [write simple peer-review-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-simple-2.1.xml)
-- [read peer-reviews-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-reviews-2.1.xml)
-- [read person-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/person-2.1.xml)
-- [read personal-details-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/personal-details-2.1.xml)
-- [read researcher-url-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/researcher-url-2.1.xml)
-- [write researcher-url-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/researcher-url-2.1.xml)
-- [read researcher-urls-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/researcher-urls-2.1.xml)
-- [search-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/search-2.1.xml)
-- [read work-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/work-2.1.xml)
-- [write full work-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/work-full-2.1.xml)
-- [write simple work-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/work-simple-2.1.xml)
-- [read works-2.1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/works-2.1.xml)
+- [read activities-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/activities-3.0_dev1.xml)
+- [read address-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/address-3.0_dev1.xml)
+- [write address-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/address-3.0_dev1.xml)
+- [write bulk-work xml-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_samples/bulk-work-3.0_dev1.xml)
+- [write bulk-work-3.0_dev1.json] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_samples/bulk-work-3.0_dev1.json)
+- [read biography-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/biography-3.0_dev1.xml)
+- [read education-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/education-3.0_dev1.xml)
+- [write education-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/education-3.0_dev1.xml)
+- [read educations-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/educations-3.0_dev1.xml)
+- [read email-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/email-3.0_dev1.xml)
+- [read emails-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/emails-3.0_dev1.xml)
+- [read employment-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/employment-3.0_dev1.xml)
+- [write employment-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/employment-3.0_dev1.xml)
+- [read employments-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/employments-3.0_dev1.xml)
+- [error-message-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/error-3.0_dev1.xml)
+- [read external-identifier-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/external-identifier-3.0_dev1.xml)
+- [write external-identifier-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/external-identifier-3.0_dev1.xml)
+- [read external-identifiers-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/external-identifiers-3.0_dev1.xml)
+- [read funding-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/funding-3.0_dev1.xml)
+- [write funding-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/funding-3.0_dev1.xml)
+- [read fundings-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/fundings-3.0_dev1.xml)
+- [read keyword-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/keyword-3.0_dev1.xml)
+- [write keyword-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/keyword-3.0_dev1.xml)
+- [keywords-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/keywords-3.0_dev1.xml)
+- [read other-name-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/other-name-3.0_dev1.xml)
+- [write other-name-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/other-name-3.0_dev1.xml)
+- [read other-names-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/other-names-3.0_dev1.xml)
+- [read peer-review-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/peer-review-3.0_dev1.xml)
+- [write full peer-review-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/peer-review-full-3.0_dev1.xml)
+- [write simple peer-review-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/peer-review-simple-3.0_dev1.xml)
+- [read peer-reviews-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/peer-reviews-3.0_dev1.xml)
+- [read person-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/person-3.0_dev1.xml)
+- [read personal-details-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/personal-details-3.0_dev1.xml)
+- [read researcher-url-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/researcher-url-3.0_dev1.xml)
+- [write researcher-url-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/researcher-url-3.0_dev1.xml)
+- [read researcher-urls-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/researcher-urls-3.0_dev1.xml)
+- [search-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/search-3.0_dev1.xml)
+- [read work-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml)
+- [write full work-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/work-full-3.0_dev1.xml)
+- [write simple work-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/work-simple-3.0_dev1.xml)
+- [read works-3.0_dev1.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/works-3.0_dev1.xml)
 
 ## REST API Reference
 
 ### Swagger
 
 The swagger interfaces to the API available at:
-- [member](https://api.orcid.org/v2.1/)
-- [public](https://pub.orcid.org/v2.1/)
+- [member](https://api.orcid.org/v3.0_dev1/)
+- [public](https://pub.orcid.org/v3.0_dev1/)
 
 ### Scopes
 | Scope           | Request method | Obtain Access Token Through	| Expires In | API  |
@@ -158,19 +112,19 @@ The swagger interfaces to the API available at:
 ### Calls
 | Action                   | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
-| Read the entire record | GET       | /read-limited or /read-public | https://[HOST]/v2.1/[ORCID]/record |
-| Read an activities section | GET | /read-limited or /read-public | https://[HOST]/v2.1/[ORCID]/[SECTION]s |
-| Read a person section | GET | /read-limited or /read-public | https://[HOST]/v2.1/[ORCID]/[SECTION] |
-| Read a single item   | GET         | /read-limited or /read-public | https://[HOST]/v2.1/[ORCID]/[SECTION]/[PUT-CODE] |
-| Add a person item    | POST        | /person/update       		 | https://[HOST]/v2.1/[ORCID]/[SECTION]            |
-| Update a person item | PUT         | /person/update  				 | https://[HOST]/v2.1/[ORCID]/[SECTION]/[PUT-CODE] |
-| Delete a person item | DELETE      | /person/update				 | https://[HOST]/v2.1/[ORCID]/[SECTION]/[PUT-CODE] |
+| Read the entire record | GET       | /read-limited or /read-public | https://[HOST]/v3.0_dev1/[ORCID]/record |
+| Read an activities section | GET | /read-limited or /read-public | https://[HOST]/v3.0_dev1/[ORCID]/[SECTION]s |
+| Read a person section | GET | /read-limited or /read-public | https://[HOST]/v3.0_dev1/[ORCID]/[SECTION] |
+| Read a single item   | GET         | /read-limited or /read-public | https://[HOST]/v3.0_dev1/[ORCID]/[SECTION]/[PUT-CODE] |
+| Add a person item    | POST        | /person/update       		 | https://[HOST]/v3.0_dev1/[ORCID]/[SECTION]            |
+| Update a person item | PUT         | /person/update  				 | https://[HOST]/v3.0_dev1/[ORCID]/[SECTION]/[PUT-CODE] |
+| Delete a person item | DELETE      | /person/update				 | https://[HOST]/v3.0_dev1/[ORCID]/[SECTION]/[PUT-CODE] |
 | Add an activity    | POST          | /activities/update       | https://[HOST]/[ORCID]/[SECTION]            |
-| Update an activity | PUT           | /activities/update       | https://[HOST]/v2.1/[ORCID]/[SECTION]/[PUT-CODE] |
-| Delete an activity | DELETE        | /activities/update       | https://[HOST]/v2.1/[ORCID]/[SECTION]/[PUT-CODE] |
-| Add multiple works| POST           | /read-limited or /read-public | https://[HOST]/v2.1/[ORCID]/works		             |
-| Read multiple works| GET          | /activities/update       | https://[HOST]/v2.1/[ORCID]/works/[PUT-CODE1],[PUT-CODE2]  |
-| Search records     | GET         | /read-public      	      | https://[HOST]/v2.1/search?q=[SOLR-QUERY]*          	 |
+| Update an activity | PUT           | /activities/update       | https://[HOST]/v3.0_dev1/[ORCID]/[SECTION]/[PUT-CODE] |
+| Delete an activity | DELETE        | /activities/update       | https://[HOST]/v3.0_dev1/[ORCID]/[SECTION]/[PUT-CODE] |
+| Add multiple works| POST           | /read-limited or /read-public | https://[HOST]/v3.0_dev1/[ORCID]/works		             |
+| Read multiple works| GET          | /activities/update       | https://[HOST]/v3.0_dev1/[ORCID]/works/[PUT-CODE1],[PUT-CODE2]  |
+| Search records     | GET         | /read-public      	      | https://[HOST]/v3.0_dev1/search?q=[SOLR-QUERY]*          	 |
 
 [HOST] is the ORCID environment you are using
 - api.sandbox.orcid.org for the Member API on the ORCID Sandbox
@@ -208,38 +162,38 @@ The swagger interfaces to the API available at:
 
 | Item               |Scope               | Example cURL Statement                                         |
 |--------------------|--------------------------|----------------------------------------------------------------|
-| Entire record | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/record'```|
-| Activities summary | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/activities'```|
-| Addresses			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/address'```|
-| Education items    | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/educations'```|
-| Emails     		 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/email'```|
-| Employment items   | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/employments'```| 
-| External identifiers	| /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/external-identifiers'```|
-| Funding summary    | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/fundings'```|
-| Keywords     		 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/keywords'```|
-| Other names     	 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/other-names'```|
-| Peer review summary| /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-reviews'```|
-| Personal details	 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/personal-details'```|
-| Person			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/person'```|
-| Researcher URLs    | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls'```|
-| Works summary             | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/works'```|
+| Entire record | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/record'```|
+| Activities summary | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/activities'```|
+| Addresses			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/address'```|
+| Education items    | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/educations'```|
+| Emails     		 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/email'```|
+| Employment items   | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/employments'```| 
+| External identifiers	| /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/external-identifiers'```|
+| Funding summary    | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/fundings'```|
+| Keywords     		 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/keywords'```|
+| Other names     	 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/other-names'```|
+| Peer review summary| /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-reviews'```|
+| Personal details	 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/personal-details'```|
+| Person			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/person'```|
+| Researcher URLs    | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/researcher-urls'```|
+| Works summary             | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/works'```|
 
 
 ### Read Record Items
 | Item               |Scope               | Example cURL Statement                                         |
 |--------------------|--------------------------|----------------------------------------------------------------|
-| Address			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/address/4556'```|
-| Biography			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/biography'```|
-| Education          | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/education/22423'```|
-| Employment         | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/employment/22411'```| 
-| External identifier| /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/external-identifiers/3193'```|
-| Funding            | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/funding/4413'```|
-| Keywords     		 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/keywords/4504'```|
-| Other names     	 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/other-names/15812'```|
-| Peer review        | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-review/1374'```|
-| Researcher URL     | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls/41387'```|
-| Work               | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/work/733536'```|
-| Multiple Works     | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/works/733535,733536'```|
+| Address			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/address/4556'```|
+| Biography			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/biography'```|
+| Education          | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/education/22423'```|
+| Employment         | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/employment/22411'```| 
+| External identifier| /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/external-identifiers/3193'```|
+| Funding            | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding/4413'```|
+| Keywords     		 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/keywords/4504'```|
+| Other names     	 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/other-names/15812'```|
+| Peer review        | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review/1374'```|
+| Researcher URL     | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/researcher-urls/41387'```|
+| Work               | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/work/733536'```|
+| Multiple Works     | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/works/733535,733536'```|
 
 When reading multiple works the contents of each work is returned or an error code is returned if there is an issue with a single work.
 
@@ -247,49 +201,49 @@ When reading multiple works the contents of each work is returned or an error co
 ### Add Record Items
 |Item    |Scope       | Example cURL Statement  |
 |---------|----------------|-------------------------|
-| Address	|/person/update           |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/address```|
-| Education  |/activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/education' ```|
-| Employment |  /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/employment' ```| 
-| External identifiers	| /person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/external-identifiers```|
-| Funding  |/activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/funding-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/funding'```|
-| Keywords     	|/person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/keywords```|
-| Other names  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/other-names'```|
-| Peer review  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-review'```|
-| Researcher URL  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls'```|
-| Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/work'```|
-| Multiple works |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/works.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/works'```|
+| Address	|/person/update           |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/address```|
+| Education  |/activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/education' ```|
+| Employment |  /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/employment' ```| 
+| External identifiers	| /person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/external-identifiers```|
+| Funding  |/activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/funding-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding'```|
+| Keywords     	|/person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/keywords```|
+| Other names  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/other-names'```|
+| Peer review  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review'```|
+| Researcher URL  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/researcher-urls'```|
+| Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/work'```|
+| Multiple works |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/works.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/works'```|
 
-When posting multiple works the contents of each work is returned or an error code is returned if there is an issue with a single work, see [bulk work error sample](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/bulk-work-error.xml).
+When posting multiple works the contents of each work is returned or an error code is returned if there is an issue with a single work, see [bulk work error sample](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/bulk-work-error.xml).
 
 ### Update Record Items
 |Item  |Scope  | Example cURL Statement  |
 |------|----------------|---------------------|
-| Address	|/person/update       |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/address/[PUT-CODE]```|
-| Education  |/activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/education/[PUT-CODE]' ```|
-| Employment |  /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/employment/[PUT-CODE]' ```|
-| External identifiers	|/person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/external-identifiers/[PUT-CODE]```|
-| Funding  |/activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/funding-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/funding/[PUT-CODE]'```|
-| Keywords     	|/person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/keywords/[PUT-CODE]```|
-| Other names  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/other-names/[PUT-CODE]'```|
-| Peer review  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-review/[PUT-CODE]'```|
-| Researcher URL  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
-| Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/work/[PUT-CODE]'```|
+| Address	|/person/update       |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/address/[PUT-CODE]```|
+| Education  |/activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/education/[PUT-CODE]' ```|
+| Employment |  /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/employment/[PUT-CODE]' ```|
+| External identifiers	|/person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/external-identifiers/[PUT-CODE]```|
+| Funding  |/activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/funding-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding/[PUT-CODE]'```|
+| Keywords     	|/person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/keywords/[PUT-CODE]```|
+| Other names  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/other-names/[PUT-CODE]'```|
+| Peer review  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review/[PUT-CODE]'```|
+| Researcher URL  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
+| Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/work/[PUT-CODE]'```|
 
-When updating a record item, include the put code as an attribute in the root element, ex: ```<education:education put-code="14775" xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.1.xsd ">```
+When updating a record item, include the put code as an attribute in the root element, ex: ```<education:education put-code="14775" xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/education ../education-3.0_dev1.xsd ">```
 
 ### Delete Record Items
 |Item  | Scope      | Example cURL Statement  |
 |------|----------------|-------------------------|
-| Address	| /person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/address/[PUT-CODE]```|
-| Education  | /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/education/[PUT-CODE]'  ```|
-| Employment |  /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/employment/[PUT-CODE]' ```|
-| External identifiers	| /person/update    |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/external-identifiers/[PUT-CODE]```|
-| Funding  | /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/funding/[PUT-CODE]'```|
-| Keywords     	| /person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/keywords/[PUT-CODE]```|
-| Other names  | /person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
-| Peer review  | /activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-review/[PUT-CODE]'```|
-| Researcher URL  | /person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
-| Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/work/[PUT-CODE]'```|
+| Address	| /person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/address/[PUT-CODE]```|
+| Education  | /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/education/[PUT-CODE]'  ```|
+| Employment |  /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/employment/[PUT-CODE]' ```|
+| External identifiers	| /person/update    |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/external-identifiers/[PUT-CODE]```|
+| Funding  | /activities/update  |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding/[PUT-CODE]'```|
+| Keywords     	| /person/update            |```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/keywords/[PUT-CODE]```|
+| Other names  | /person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
+| Peer review  | /activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review/[PUT-CODE]'```|
+| Researcher URL  | /person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
+| Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/work/[PUT-CODE]'```|
 
 ### Webhooks
 |Item  | Scope      | Example cURL Statement  |
@@ -300,4 +254,4 @@ When updating a record item, include the put code as an attribute in the root el
 ### Search
 | Item               | Scope               |  Example cURL Statement                                         |
 |--------------------|--------------------------|-------------------------------------------------------|----------------------------------------------------------------|
-| Search records     | /read-public             | ```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/search?q=Simpson'```|
+| Search records     | /read-public             | ```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/search?q=Simpson'```|
