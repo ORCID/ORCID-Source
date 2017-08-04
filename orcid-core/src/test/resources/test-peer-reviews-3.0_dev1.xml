@@ -21,7 +21,7 @@
 	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:work="http://www.orcid.org/ns/work"
-	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-3.0_dev1.xsd ">
 	<common:last-modified-date>2005-11-12T12:00:00</common:last-modified-date>
 	<activities:group>
 		<common:last-modified-date>2005-11-12T12:00:00</common:last-modified-date>

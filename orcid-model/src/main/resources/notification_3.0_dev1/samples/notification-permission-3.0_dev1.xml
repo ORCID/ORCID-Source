@@ -17,7 +17,7 @@
     =============================================================================
 
 -->
-<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-permission-2.1.xsd" xmlns:common="http://www.orcid.org/ns/common" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-permission-3.0_dev1.xsd" xmlns:common="http://www.orcid.org/ns/common" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <notification:notification-type>permission</notification:notification-type>
     <notification:authorization-url>
         <!-- API user can specify just the path if they want, and leave out the uri element. -->

@@ -3,7 +3,7 @@
 	xmlns:personal-details="http://www.orcid.org/ns/personal-details"
 	xmlns:other-name="http://www.orcid.org/ns/other-name" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-2.1.xsd">
+	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-3.0_dev1.xsd">
 	<personal-details:name visibility="public">
 		<personal-details:given-names>Give Names</personal-details:given-names>
 		<personal-details:family-name>Family Name</personal-details:family-name>

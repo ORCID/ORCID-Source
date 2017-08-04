@@ -4,7 +4,7 @@
 	xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:bulk="http://www.orcid.org/ns/bulk" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-2.1.xsd">	
+	xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-3.0_dev1.xsd">	
 	<error:error>
 		<error:response-code>1</error:response-code>
 		<error:developer-message>developer-message</error:developer-message>

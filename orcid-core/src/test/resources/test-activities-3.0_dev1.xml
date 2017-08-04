@@ -23,7 +23,7 @@
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:work="http://www.orcid.org/ns/work" xmlns:peer-review="http://www.orcid.org/ns/peer-review"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-3.0_dev1.xsd ">
 	<common:last-modified-date>2005-11-12T12:00:00</common:last-modified-date>
 	<activities:educations>
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>

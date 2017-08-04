@@ -12,7 +12,7 @@
 	xmlns:personal-details="http://www.orcid.org/ns/personal-details"
 	xmlns:keyword="http://www.orcid.org/ns/keyword" xmlns:email="http://www.orcid.org/ns/email"
 	xmlns:external-identifier="http://www.orcid.org/ns/external-identifier" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-3.0_dev1.xsd ">
 	<common:last-modified-date>2017-01-18T15:06:05.147-06:00
 	</common:last-modified-date>
 	<activities:group>

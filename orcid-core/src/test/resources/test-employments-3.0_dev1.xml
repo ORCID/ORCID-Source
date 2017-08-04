@@ -21,7 +21,7 @@
 	xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-3.0_dev1.xsd ">
 	<common:last-modified-date>2002-11-23T12:00:00</common:last-modified-date>
 	<affiliation:employment-summary
 		put-code="0" visibility="private">

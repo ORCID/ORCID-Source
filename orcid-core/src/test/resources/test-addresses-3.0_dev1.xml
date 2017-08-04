@@ -19,7 +19,7 @@
 -->
 <address:addresses xmlns:address="http://www.orcid.org/ns/address"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/address ../address-2.1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/address ../address-3.0_dev1.xsd ">
 	<common:last-modified-date>2002-11-30T12:00:00</common:last-modified-date>
 	<address:address visibility="public" put-code="1">		
 		<common:created-date>2001-12-31T12:00:00</common:created-date>

@@ -3,7 +3,7 @@
 	xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:search="http://www.orcid.org/ns/search"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/search ../search-2.1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/search ../search-3.0_dev1.xsd ">
 	<search:result>
 		<common:orcid-identifier>
 			<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>

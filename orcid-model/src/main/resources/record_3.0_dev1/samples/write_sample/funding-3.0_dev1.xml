@@ -2,7 +2,7 @@
 <funding:funding
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/funding /funding-2.1.xsd ">    
+	xsi:schemaLocation="http://www.orcid.org/ns/funding /funding-3.0_dev1.xsd ">    
 	<funding:type>grant</funding:type>
 	<funding:organization-defined-type>Funding sub-type</funding:organization-defined-type>
 	<funding:title>

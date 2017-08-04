@@ -22,7 +22,7 @@
 	xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:education="http://www.orcid.org/ns/education"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-3.0_dev1.xsd ">
 	<common:last-modified-date>2002-10-24T12:00:00</common:last-modified-date>
 	<education:education-summary put-code="0"
 		visibility="private">
