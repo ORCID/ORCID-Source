@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_v2.Country;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.record_v2.Address;
 
@@ -91,7 +92,7 @@ public class AddressForm implements ErrorsInterface, Serializable {
 
         if (this.iso2Country != null && this.iso2Country.getValue() != null) {
             Country country = new Country();
-            country.setValue(this.iso2Country.getValue().value());
+            country.setValue(Iso3166Country.fromValue(this.iso2Country.getValue().value()));
             address.setCountry(country);
         }
        
