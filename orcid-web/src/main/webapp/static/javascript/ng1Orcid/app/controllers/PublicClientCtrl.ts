@@ -49,42 +49,24 @@ export const PublicClientCtrl = angular.module('orcidApp').controller(
             $scope.descriptionToDisplay = '';
             $scope.verifyEmailSent=false;
             
-            $scope.addTestRedirectUri = function(type) {
-                if(type == 'google'){
+            $scope.addTestRedirectUri = function(type) {  
+            	var rUri = null;
+        		if(type == 'google'){
                     rUri = $scope.googleUri;
-                }
-                if(type == 'swagger'){
+                    $scope.hideGoogleUri = true;
+                } else if(type == 'swagger'){
                     rUri = $scope.swaggerUri;
-                }
-                if(type == 'swagger-member'){
+                    $scope.hideSwaggerUri = true;
+                } else if(type == 'swagger-member'){
                     rUri = $scope.swaggerMemberUri;
+                    $scope.hideSwaggerMemberUri = true;
                 }
-
-                $.ajax({
-                    url: getBaseUri() + '/developer-tools/get-empty-redirect-uri.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        data.value.value=rUri;
-                        $scope.$apply(function(){
-                            if($scope.userCredentials.redirectUris.length == 1 && $scope.userCredentials.redirectUris[0].value.value == null) {
-                                $scope.userCredentials.redirectUris[0].value.value = rUri;
-                            } else {
-                                $scope.userCredentials.redirectUris.push(data);
-                            }
-                            if(type == 'google') {
-                                $scope.hideGoogleUri = true;
-                            }
-                            if(type == 'swagger'){
-                                $scope.hideSwaggerUri = true;
-                            }
-                            if(type == 'swagger-member'){
-                                $scope.hideSwaggerMemberUri = true;
-                            }
-                        });
-                    }
-                }).fail(function() {
-                    console.log("Error fetching empty redirect uri");
-                });
+                
+        		if($scope.userCredentials.redirectUris.length == 1 && $scope.userCredentials.redirectUris[0].value.value == null) {
+                    $scope.userCredentials.redirectUris[0].value.value = rUri;
+                } else {
+                 	$scope.addRedirectURI(rUri);   
+                }                
             };
 
             $scope.closeModal = function() {
@@ -468,8 +450,9 @@ export const PublicClientCtrl = angular.module('orcidApp').controller(
                 });
             };
             
-            $scope.addRedirectURI = function() {
-            	$scope.userCredentials.redirectUris.push({value: {value: ''}, type: {value: 'sso-authentication'}});                
+            $scope.addRedirectURI = function(defaultValue) {
+            	defaultValue = (typeof defaultValue != undefined && defaultValue != null) ? defaultValue : '';            	
+				$scope.userCredentials.redirectUris.push({value: {value: defaultValue}, type: {value: 'sso-authentication'}});                
             };            
             
             // init

@@ -348,28 +348,24 @@
 						<div class="row">
 							<div class="col-md-9 col-sm-9 col-xs-9 add-options">
 								<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+								<div class="add-options margin-bottom-box" ng-show="!hideGoogleUri || !hideSwaggerUri">								
+									<div>
+										<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
+										<ul class="pullleft-list">
+											<li ng-show="!hideGoogleUri" id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>
+											<li ng-show="!hideSwaggerUri" id="swagger-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('swagger')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>										
+										</ul>								
+									</div>
+								</div>
 							</div>
 							<div class="col-md-3 col-sm-3 col-xs-3">				
 								<ul class="sso-options pull-right">							
 									<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
 									<li><a href ng-click="editClientCredentials()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
 								</ul>					
-							</div>	
-						</div>
-						<div class="slidebox" ng-show="expanded == true">
-							<div class="row">
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="add-options">								
-										<div>
-											<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
-											<ul class="pullleft-list">
-												<li ng-show="!hideGoogleUri "id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
-												<li ng-show="!hideSwaggerUri" id="swagger-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('swagger')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>
-											</ul>								
-										</div>
-									</div>
-								</div>					
-							</div>					
+							</div>								
+						</div>						
+						<div class="slidebox">
 							<div class="row">
 								<div class="col-md-12 col-sm-12 col-xs-12">						
 									<div class="grey-box">
