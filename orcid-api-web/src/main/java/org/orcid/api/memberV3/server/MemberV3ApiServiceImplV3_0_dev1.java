@@ -76,6 +76,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
+import org.orcid.api.member.MemberApiServiceImplHelper;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
 import org.orcid.api.notificationsV3.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
@@ -117,7 +118,7 @@ import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.ResponseHeader;
 
 @Path("/v3.0_dev1")
-public class MemberV3ApiServiceImplV3_0_dev1 extends MemberV3ApiServiceImplHelper {
+public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper {
 
     @Context
     private UriInfo uriInfo;
