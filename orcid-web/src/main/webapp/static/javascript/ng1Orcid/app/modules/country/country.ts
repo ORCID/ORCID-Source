@@ -21,8 +21,8 @@ export const CountryModule = angular.module(
 @NgModule(
     {
         
-        declarations: [ CountryModule ],
-        entryComponents: [ CountryModule ]
+        declarations: [ CountryComponent ],
+        entryComponents: [ CountryComponent ]
     }
 )
 export class CountryNg2Module {}
@@ -34,7 +34,7 @@ CountryModule.directive(
     'countryNg2', 
     <any>downgradeComponent(
         {
-            component: CountryModule
+            component: CountryComponent
         }
     )
 );

@@ -6,7 +6,7 @@ import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
 import { BiographyNg2Module } from './biography/biography.ts';
-import { CountryNg2Module } from './widget/widget.ts';
+import { CountryNg2Module } from './country/country.ts';
 import { WidgetNg2Module } from './widget/widget.ts';
 
 // This URL handling strategy is custom and application-specific.
