@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -154,6 +155,11 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         datum.put("value", delegationDetails.getDelegateSummary().getCreditName().getContent());
         datum.put("orcid", delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
         return datum;
+    }
+    
+    public OrcidProfile getRealProfile() {
+        String realOrcid = getRealUserOrcid();
+        return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid, LoadOptions.BIO_ONLY);
     }
 
 }
