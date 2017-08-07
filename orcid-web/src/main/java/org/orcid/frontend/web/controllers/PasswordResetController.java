@@ -33,12 +33,12 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.impl.RegistrationManagerImpl;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
+import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.password.constants.OrcidPasswordConstants;
@@ -175,7 +175,7 @@ public class PasswordResetController extends BaseController {
             setError(resetPasswordForm, "FieldMatch.registrationForm");
         }
         
-        if (RegistrationManagerImpl.passwordIsCommon(resetPasswordForm.getPassword())) {
+        if (CommonPasswords.passwordIsCommon(resetPasswordForm.getPassword())) {
             setError(resetPasswordForm, "password.too_common", resetPasswordForm.getPassword());
         }
         return resetPasswordForm;

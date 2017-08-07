@@ -53,7 +53,6 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.impl.RegistrationManagerImpl;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
@@ -61,6 +60,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
+import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
@@ -799,7 +799,7 @@ public class BaseController {
             setError(password, "Pattern.registrationForm.password");
         }
         
-        if (RegistrationManagerImpl.passwordIsCommon(password.getValue())) {
+        if (CommonPasswords.passwordIsCommon(password.getValue())) {
             setError(password, "password.too_common", password.getValue());
         }
 

@@ -16,15 +16,9 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -71,8 +65,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);
 
-    private static final String COMMON_PASSWORDS_FILENAME = "common_passwords.txt";
-
     private EncryptionManager encryptionManager;
 
     private NotificationManager notificationManager;
@@ -98,8 +90,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Resource
     private OrcidGenerationManager orcidGenerationManager;
     
-    private static List<String> commonPasswords;
-
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -110,24 +100,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         this.notificationManager = notificationManager;
     }
     
-    static {
-        LOGGER.info("Building common passwords list...");
-        commonPasswords = new ArrayList<>();
-        InputStream inputStream = RegistrationManagerImpl.class.getResourceAsStream(COMMON_PASSWORDS_FILENAME);
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line = reader.readLine();
-            while (line != null) {
-                commonPasswords.add(line.trim());
-                line = reader.readLine();
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error building list of common passwords", e);
-            throw new RuntimeException(e);
-        }
-        LOGGER.info("Built list of " + commonPasswords.size() + " common passwords");
-    }
-
     @Override
     public void resetUserPassword(String toEmail, OrcidProfile orcidProfile) {
         LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcidIdentifier().getPath());
@@ -307,10 +279,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
             throw new InvalidRequestException("Unable to find orcid id for " + emailAddress);
         }
         return unclaimedOrcid;
-    }
-
-    public static boolean passwordIsCommon(String password) {
-        return commonPasswords.contains(password);
     }
 
 }

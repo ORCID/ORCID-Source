@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -169,20 +168,6 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         Map<String, String> map2 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map2);
         assertEquals(orcidAfter, map2.get(email));  
-    }
-    
-    @Test
-    public void testPasswordIsCommon() {
-        assertTrue(RegistrationManagerImpl.passwordIsCommon("baseball"));
-        assertTrue(RegistrationManagerImpl.passwordIsCommon("dragon"));
-        assertTrue(RegistrationManagerImpl.passwordIsCommon("football"));
-        assertTrue(RegistrationManagerImpl.passwordIsCommon("monkey"));
-        assertTrue(RegistrationManagerImpl.passwordIsCommon("shadow"));
-        assertTrue(RegistrationManagerImpl.passwordIsCommon("password"));
-        
-        assertFalse(RegistrationManagerImpl.passwordIsCommon("132871384164578961349"));
-        assertFalse(RegistrationManagerImpl.passwordIsCommon("advkuwAFdaAdf387922"));
-        assertFalse(RegistrationManagerImpl.passwordIsCommon("%@@$£&£$%^!@SSDFgwjhsad"));
     }
     
     private Registration createRegistrationForm(String email, boolean claimed) {
