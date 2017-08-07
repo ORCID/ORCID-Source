@@ -324,6 +324,7 @@ export const countryCmp = {
 })
 export class CountryComponent {
     bioBulkSrvc: any;
+    bulkEditShow: any;
     commonSrvc: any;
     countryForm: any;
     defaultVisibility: any;
@@ -339,6 +340,7 @@ export class CountryComponent {
 
     constructor() {
         //this.commonSrvc = commonSrvc;
+        this.bulkEditShow = false;
         this.countryForm = null;
         this.defaultVisibility = null;
         //this.emailSrvc = emailSrvc;
@@ -473,15 +475,20 @@ export class CountryComponent {
     };
 
     openEditModal(): void{
+        console.log('open edit modal 2');
+        this.showEdit = true;
         
         //if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-            /*
+            
             this.bulkEditShow = false;
             $.colorbox({
-                html: $compile($('#edit-country').html())($scope),
+                //html: $compile($('#edit-country').html())($scope),
+                //html: scriptTmpl("edit-country"),
+                html: $('#edit-country').html(),
                 scrolling: true,
                 onLoad: function() {
                     $('#cboxClose').remove();
+                    /*
                     if ($scope.countryForm.addresses.length == 0){                  
                         $scope.addNewModal();
                     } else {
@@ -492,18 +499,19 @@ export class CountryComponent {
                             }
                         }
                         $scope.updateDisplayIndex();
-                    }                
+                    } 
+                    */               
                 },
      
-                width: utilsService.formColorBoxResize(),
+                //width: utilsService.formColorBoxResize(),
                 onComplete: function() {      
                 },
                 onClosed: function() {
-                    $scope.getCountryForm();
+                    this.getCountryForm();
                 }            
             });
             $.colorbox.resize();
-            */
+            
         /*}else{
             showEmailVerificationModal();
         }*/
