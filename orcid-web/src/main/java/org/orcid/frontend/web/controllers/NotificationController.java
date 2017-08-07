@@ -265,7 +265,7 @@ public class NotificationController extends BaseController {
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.GET)
     public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
     	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_ONLY);
     	response.addHeader("X-Robots-Tag", "noindex");
     	Preferences pref = profile.getOrcidInternal().getPreferences();
         return pref != null ? pref : new Preferences();
@@ -274,7 +274,7 @@ public class NotificationController extends BaseController {
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.POST)
     public @ResponseBody Preferences setPreference(HttpServletRequest request, HttpServletResponse response, @RequestBody Preferences preferences, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
     	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_ONLY);
     	orcidProfileManager.updatePreferences(profile.getOrcidIdentifier().getPath(), preferences);
     	response.addHeader("X-Robots-Tag", "noindex");
         return preferences;
@@ -285,7 +285,7 @@ public class NotificationController extends BaseController {
     		@PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_ONLY);
 
         String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 

@@ -48,6 +48,7 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.RegistrationManager;
@@ -472,7 +473,7 @@ public class BaseController {
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
             }
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email, LoadOptions.BIO_ONLY);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = null;
                     if (isRegisterRequest) {

@@ -36,8 +36,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface JpaJaxbEntityAdapter {
 
-    OrcidProfile toOrcidProfile(ProfileEntity profileEntity);
-
     OrcidProfile toOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions);
 
     ProfileEntity toProfileEntity(OrcidProfile profile);

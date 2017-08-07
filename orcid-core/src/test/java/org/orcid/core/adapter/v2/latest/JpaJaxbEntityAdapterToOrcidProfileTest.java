@@ -39,6 +39,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Citation;
@@ -125,7 +126,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     public void testToOrcidProfile() throws SAXException, IOException {
         ProfileEntity profileEntity = profileDao.find("4444-4444-4444-4443");
         long start = System.currentTimeMillis();
-        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
         System.out.println(orcidProfile);
         checkOrcidProfile(orcidProfile);
@@ -137,7 +138,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     public void testToOrcidProfileWithNewWayOfDoingEmails() throws SAXException, IOException {
         ProfileEntity profileEntity = profileDao.find("4444-4444-4444-4445");
         long start = System.currentTimeMillis();
-        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
 
         ContactDetails contactDetails = orcidProfile.getOrcidBio().getContactDetails();
@@ -170,7 +171,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     public void testToOrcidProfileWithNewWayOfDoingWorkContributors() {
         ProfileEntity profileEntity = profileDao.find("4444-4444-4444-4445");
         long start = System.currentTimeMillis();
-        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
 
         List<OrcidWork> worksList = orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
@@ -187,7 +188,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     public void testToOrcidProfileWithDeprecationMessage() throws SAXException, IOException {
         ProfileEntity profileEntity = profileDao.find("4444-4444-4444-444X");
         long start = System.currentTimeMillis();
-        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
 
         assertNotNull(orcidProfile.getOrcidDeprecated());

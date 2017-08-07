@@ -164,8 +164,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * @param email
      * @return
      */
-    OrcidProfile retrieveOrcidProfileByEmail(String email);
-
     OrcidProfile retrieveOrcidProfileByEmail(String email, LoadOptions loadOptions);
 
     /**
