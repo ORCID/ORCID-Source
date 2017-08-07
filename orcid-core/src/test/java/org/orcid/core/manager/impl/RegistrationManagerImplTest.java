@@ -173,16 +173,16 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @Test
     public void testPasswordIsCommon() {
-        assertTrue(registrationManager.passwordIsCommon("baseball"));
-        assertTrue(registrationManager.passwordIsCommon("dragon"));
-        assertTrue(registrationManager.passwordIsCommon("football"));
-        assertTrue(registrationManager.passwordIsCommon("monkey"));
-        assertTrue(registrationManager.passwordIsCommon("shadow"));
-        assertTrue(registrationManager.passwordIsCommon("password"));
+        assertTrue(RegistrationManagerImpl.passwordIsCommon("baseball"));
+        assertTrue(RegistrationManagerImpl.passwordIsCommon("dragon"));
+        assertTrue(RegistrationManagerImpl.passwordIsCommon("football"));
+        assertTrue(RegistrationManagerImpl.passwordIsCommon("monkey"));
+        assertTrue(RegistrationManagerImpl.passwordIsCommon("shadow"));
+        assertTrue(RegistrationManagerImpl.passwordIsCommon("password"));
         
-        assertFalse(registrationManager.passwordIsCommon("132871384164578961349"));
-        assertFalse(registrationManager.passwordIsCommon("advkuwAFdaAdf387922"));
-        assertFalse(registrationManager.passwordIsCommon("%@@$£&£$%^!@SSDFgwjhsad"));
+        assertFalse(RegistrationManagerImpl.passwordIsCommon("132871384164578961349"));
+        assertFalse(RegistrationManagerImpl.passwordIsCommon("advkuwAFdaAdf387922"));
+        assertFalse(RegistrationManagerImpl.passwordIsCommon("%@@$£&£$%^!@SSDFgwjhsad"));
     }
     
     private Registration createRegistrationForm(String email, boolean claimed) {

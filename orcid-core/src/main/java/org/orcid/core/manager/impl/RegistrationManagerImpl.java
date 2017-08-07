@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
@@ -41,10 +42,10 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.VerifyRegistrationToken;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -55,7 +56,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.transaction.TransactionStatus;
@@ -67,7 +67,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Will Simpson
  * 
  */
-public class RegistrationManagerImpl implements RegistrationManager, InitializingBean {
+public class RegistrationManagerImpl implements RegistrationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);
 
@@ -98,7 +98,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
     @Resource
     private OrcidGenerationManager orcidGenerationManager;
     
-    private List<String> commonPasswords;
+    private static List<String> commonPasswords;
 
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -108,6 +108,24 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
     @Required
     public void setNotificationManager(NotificationManager notificationManager) {
         this.notificationManager = notificationManager;
+    }
+    
+    static {
+        LOGGER.info("Building common passwords list...");
+        commonPasswords = new ArrayList<>();
+        InputStream inputStream = RegistrationManagerImpl.class.getResourceAsStream(COMMON_PASSWORDS_FILENAME);
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line = reader.readLine();
+            while (line != null) {
+                commonPasswords.add(line.trim());
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error building list of common passwords", e);
+            throw new RuntimeException(e);
+        }
+        LOGGER.info("Built list of " + commonPasswords.size() + " common passwords");
     }
 
     @Override
@@ -291,27 +309,8 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         return unclaimedOrcid;
     }
 
-    @Override
-    public boolean passwordIsCommon(String password) {
+    public static boolean passwordIsCommon(String password) {
         return commonPasswords.contains(password);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        LOGGER.info("Building common passwords list...");
-        commonPasswords = new ArrayList<>();
-        InputStream inputStream = getClass().getResourceAsStream(COMMON_PASSWORDS_FILENAME);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-        try {
-            String line = reader.readLine();
-            while (line != null) {
-                commonPasswords.add(line.trim());
-                line = reader.readLine();
-            }
-        } finally {
-            reader.close();
-        }
-        LOGGER.info("Built list of " + commonPasswords.size() + " common passwords");
-    }
 }

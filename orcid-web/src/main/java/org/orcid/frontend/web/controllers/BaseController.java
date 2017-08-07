@@ -50,10 +50,10 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.impl.RegistrationManagerImpl;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
@@ -155,9 +155,6 @@ public class BaseController {
 
     @Resource(name = "csrfTokenRepo")
     protected CsrfTokenRepository csrfTokenRepository;
-    
-    @Resource
-    private RegistrationManager registrationManager;
     
     @Resource
     private SecurityQuestionManager securityQuestionManager;
@@ -802,7 +799,7 @@ public class BaseController {
             setError(password, "Pattern.registrationForm.password");
         }
         
-        if (registrationManager.passwordIsCommon(password.getValue())) {
+        if (RegistrationManagerImpl.passwordIsCommon(password.getValue())) {
             setError(password, "password.too_common", password.getValue());
         }
 
