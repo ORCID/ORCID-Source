@@ -18,6 +18,15 @@
 /*
  * 1 - Utility functions 
  */
+function scriptTmpl(elemId) {
+    var elt = document.getElementById( elemId );
+    var viewdef = "";
+    if (elt && elt.getAttribute('type') == 'text/ng-template') {
+        viewdef = elt.textContent;
+    }
+    viewdef.toString();
+    return viewdef;
+}
 
 var enableRightToLeft = function(){
     var rightToLeftLang = ["rl", "ar"];

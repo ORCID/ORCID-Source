@@ -42,12 +42,15 @@ import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
+import org.orcid.jaxb.model.common_v2.Day;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.Month;
 import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceName;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
+import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
@@ -148,9 +151,18 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private EncryptionManager encryptionManager;
     
+    private MapperFactory getNewMapperFactory() {
+        // for debugging in eclipse:
+        // return new DefaultMapperFactory.Builder()
+        // .compilerStrategy(new EclipseJdtCompilerStrategy())
+        // .build();
+        return new DefaultMapperFactory.Builder().build();
+    }
+    
+    
     @Override
     public MapperFacade getObject() throws Exception {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         // Register converters
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
@@ -317,7 +329,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getExternalIdentifierMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class, ExternalIdentifierEntity.class);        
         addV2DateFields(externalIdentifierClassMap);        
         externalIdentifierClassMap.field("putCode", "id");
@@ -334,7 +346,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getResearcherUrlMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);        
         addV2DateFields(researcherUrlClassMap);
         registerSourceConverters(mapperFactory, researcherUrlClassMap);
@@ -348,7 +360,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getOtherNameMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);        
         addV2DateFields(otherNameClassMap);
         registerSourceConverters(mapperFactory, otherNameClassMap);
@@ -362,7 +374,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getKeywordMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);        
         addV2DateFields(keywordClassMap);
         registerSourceConverters(mapperFactory, keywordClassMap);
@@ -375,7 +387,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getAddressMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);        
         addV2DateFields(addressClassMap);
         registerSourceConverters(mapperFactory, addressClassMap);
@@ -389,7 +401,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getEmailMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
         emailClassMap.byDefault();
         emailClassMap.field("email", "id");
@@ -402,7 +414,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getWorkMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
@@ -481,7 +493,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getFundingMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new FundingExternalIDsConverter());
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
@@ -528,13 +540,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         fundingSummaryClassMap.register();
 
-        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
     public MapperFacade getEducationMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
         addV2CommonFields(educationClassMap);
         registerSourceConverters(mapperFactory, educationClassMap);                
@@ -564,13 +575,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         educationSummaryClassMap.field("roleTitle", "title");
         educationSummaryClassMap.register();
 
-        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
     public MapperFacade getEmploymentMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
         addV2CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);
@@ -600,13 +610,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         employmentSummaryClassMap.field("roleTitle", "title");
         employmentSummaryClassMap.register();
 
-        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
-
+    
     public MapperFacade getPeerReviewMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
@@ -654,7 +663,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getGroupIdRecordMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<GroupIdRecord, GroupIdRecordEntity> classMap = mapperFactory.classMap(GroupIdRecord.class, GroupIdRecordEntity.class);
         addV2CommonFields(classMap);
@@ -669,7 +678,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getClientMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);        
         clientSummaryClassMap.field("name", "clientName");
         clientSummaryClassMap.field("description", "clientDescription");
@@ -759,7 +768,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getNameMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);        
         addV2DateFields(nameClassMap);        
         nameClassMap.field("creditName.content", "creditName");
@@ -772,7 +781,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getInvalidRecordDataChangeMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<RecordCorrection, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(RecordCorrection.class, InvalidRecordDataChangeEntity.class);        
         classMap.fieldBToA("id", "sequence");
         classMap.fieldBToA("sqlUsedToUpdate", "sqlUsedToUpdate");
@@ -798,6 +807,96 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("createdDate.value", "dateCreated");
         classMap.field("lastModifiedDate.value", "lastModified");
     }    
+    
+    private void mapFuzzyDateToStartDateEntityAndEndDateEntity(MapperFactory mapperFactory) {
+        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).customize(new CustomMapper<FuzzyDate, StartDateEntity>() {
+            @Override
+            public void mapAtoB(FuzzyDate fuzzyDate, StartDateEntity entity, MappingContext context) {
+                if (fuzzyDate.getYear() != null) {
+                    entity.setYear(Integer.valueOf(fuzzyDate.getYear().getValue()));
+                } else {
+                    entity.setYear(null);
+                }
+                
+                if (fuzzyDate.getMonth() != null) {
+                    entity.setMonth(Integer.valueOf(fuzzyDate.getMonth().getValue()));
+                } else {
+                    entity.setMonth(null);
+                }
+                
+                if (fuzzyDate.getDay() != null) {
+                    entity.setDay(Integer.valueOf(fuzzyDate.getDay().getValue()));
+                } else {
+                    entity.setDay(null);
+                }
+            }
+
+            @Override
+            public void mapBtoA(StartDateEntity entity, FuzzyDate fuzzyDate, MappingContext context) {
+                if (entity.getYear() != null) {
+                    fuzzyDate.setYear(new Year(entity.getYear()));
+                } else {
+                    fuzzyDate.setYear(null);
+                }
+                
+                if (entity.getMonth() != null) {
+                    fuzzyDate.setMonth(new Month(entity.getMonth()));
+                } else {
+                    fuzzyDate.setMonth(null);
+                }
+                
+                if (entity.getDay() != null) {
+                    fuzzyDate.setDay(new Day(entity.getDay()));
+                } else {
+                    fuzzyDate.setDay(null);
+                }
+            }
+        }).register();
+        
+        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).customize(new CustomMapper<FuzzyDate, EndDateEntity>() {
+            @Override
+            public void mapAtoB(FuzzyDate fuzzyDate, EndDateEntity entity, MappingContext context) {
+                if (fuzzyDate.getYear() != null) {
+                    entity.setYear(Integer.valueOf(fuzzyDate.getYear().getValue()));
+                } else {
+                    entity.setYear(null);
+                }
+                
+                if (fuzzyDate.getMonth() != null) {
+                    entity.setMonth(Integer.valueOf(fuzzyDate.getMonth().getValue()));
+                } else {
+                    entity.setMonth(null);
+                }
+                
+                if (fuzzyDate.getDay() != null) {
+                    entity.setDay(Integer.valueOf(fuzzyDate.getDay().getValue()));
+                } else {
+                    entity.setDay(null);
+                }
+            }
+
+            @Override
+            public void mapBtoA(EndDateEntity entity, FuzzyDate fuzzyDate, MappingContext context) {
+                if (entity.getYear() != null) {
+                    fuzzyDate.setYear(new Year(entity.getYear()));
+                } else {
+                    fuzzyDate.setYear(null);
+                }
+                
+                if (entity.getMonth() != null) {
+                    fuzzyDate.setMonth(new Month(entity.getMonth()));
+                } else {
+                    fuzzyDate.setMonth(null);
+                }
+                
+                if (entity.getDay() != null) {
+                    fuzzyDate.setDay(new Day(entity.getDay()));
+                } else {
+                    fuzzyDate.setDay(null);
+                }
+            }
+        }).register();
+    }
     
     @Override
     public Class<?> getObjectType() {

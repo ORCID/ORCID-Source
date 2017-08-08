@@ -131,7 +131,8 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     @Override
-    public boolean haveAnyEmailVerified(String orcid) {
+    @Cacheable(value = "any-verified-email", key = "#orcid.concat('-').concat(#lastModified)")
+    public boolean haveAnyEmailVerified(String orcid, long lastModified) {
         List<EmailEntity> entities = emailDao.findByOrcid(orcid);
         if(entities != null) {
             for(EmailEntity email : entities) {

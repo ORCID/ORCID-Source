@@ -37,6 +37,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
         'workspaceSrvc',     
         function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService, worksSrvc, workspaceSrvc ) {
 
+            var savingBibtex = false;
             var utilsService = utilsService;
 
             actBulkSrvc.initScope($scope);
@@ -133,7 +134,10 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                             });
                         });
                     } else {
-                        $scope.editWork = data;            
+                        $scope.editWork = data;
+                        if( $scope.editWork.workExternalIdentifiers.length == 0 ){
+                            $scope.addExternalIdentifier();
+                        }        
                         $scope.loadWorkTypes();
                         $scope.showAddWorkModal();
                     }
@@ -588,7 +592,9 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.openEditWork = function(putCode){
-                worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
+                worksSrvc.getEditable(putCode, function(data) {
+                    $scope.addWorkModal(data);
+                });
             };
 
             $scope.openFileDialog = function(){
@@ -673,24 +679,35 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.saveAllFromBibtex = function(){
-                var warksToSave =  new Array();
-                angular.forEach($scope.worksFromBibtex, function( work, key ) {
-                    if (work.errors.length == 0){
-                        warksToSave.push(work);
-                    } 
-                });
-                var numToSave = warksToSave.length;
-                angular.forEach( warksToSave, function( work, key ) {
-                    worksSrvc.putWork(work,function(data) {
-                        index = $scope.worksFromBibtex.indexOf(work);
-                        $scope.worksFromBibtex.splice(index, 1);
-                        $scope.$apply();
-                        numToSave--;
-                        if (numToSave == 0){
-                            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
-                        }
+                var worksToSave = null;
+                var numToSave = null;
+
+                if( savingBibtex == false ){
+                    savingBibtex = true;
+
+                    worksToSave =  new Array();
+                    angular.forEach($scope.worksFromBibtex, function( work, key ) {
+                        if (work.errors.length == 0){
+                            worksToSave.push(work);
+                        } 
                     });
-                });
+                    
+                    numToSave = worksToSave.length;
+                    angular.forEach( worksToSave, function( work, key ) {
+                        worksSrvc.putWork(work,function(data) {
+                            var index = $scope.worksFromBibtex.indexOf(work);
+                            $scope.worksFromBibtex.splice(index, 1);
+                            $scope.$apply();
+                            numToSave--;
+                            if (numToSave == 0){
+                                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                                savingBibtex = false;
+                            }
+                        });
+                    });
+
+                }
+                
             };
 
             $scope.serverValidate = function (relativePath) {

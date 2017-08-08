@@ -16,89 +16,66 @@
  */
 package org.orcid.listener.s3;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.listener.exception.DeprecatedRecordException;
-import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.listener.orcid.Orcid12APIClient;
-import org.orcid.listener.orcid.Orcid20APIClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.amazonaws.AmazonClientException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Component
 public class ExceptionHandler {
 
-	@Value("${org.orcid.message-listener.api12Enabled:true}")
-	private boolean is12IndexingEnabled;
+    @Value("${org.orcid.message-listener.api12Enabled:true}")
+    private boolean is12IndexingEnabled;
 
-	@Value("${org.orcid.message-listener.api20Enabled:true}")
-	private boolean is20IndexingEnabled;
+    @Value("${org.orcid.message-listener.api20Enabled:true}")
+    private boolean is20IndexingEnabled;
 
-	@Resource
-	private Orcid12APIClient orcid12ApiClient;
+    @Resource
+    private S3Updater s3Updater;
 
-	@Resource
-	private Orcid20APIClient orcid20ApiClient;
+    /**
+     * If the record is locked: - blank it in 1.2 bucket
+     */
+    public void handle12LockedRecordException(String orcid, OrcidMessage errorMessage) throws IOException, JAXBException {
+        // Update 1.2 buckets
+        if (is12IndexingEnabled) {
+            s3Updater.updateS3(orcid, errorMessage);
+        }
+    }
 
-	@Resource
-	private S3Updater s3Updater;
+    /**
+     * If the record is deprecated: - blank it in 1.2 bucket
+     * 
+     * @throws JAXBException
+     * @throws IOException
+     * 
+     */
+    public void handle12DeprecatedRecordException(String orcid, OrcidDeprecated errorMessage) throws IOException, JAXBException {
+        // Update 1.2 buckets
+        if (is12IndexingEnabled) {
+            s3Updater.updateS3(orcid, errorMessage);
+        }
+    }
 
-	/**
-	 * If the record is locked: - blank it in 1.2 bucket
-	 * 
-	 * @throws JAXBException
-	 * @throws AmazonClientException
-	 * @throws JsonProcessingException
-	 * @throws DeprecatedRecordException
-	 */
-	public void handle12LockedRecordException(String orcid, OrcidMessage errorMessage)
-			throws JsonProcessingException, AmazonClientException, JAXBException {
-		// Update 1.2 buckets
-		if (is12IndexingEnabled) {
-			s3Updater.updateS3(orcid, errorMessage);
-		}
-	}
-
-	/**
-	 * If the record is deprecated: - blank it in 1.2 bucket
-	 * 
-	 * @throws JAXBException
-	 * @throws AmazonClientException
-	 * @throws JsonProcessingException
-	 * @throws DeprecatedRecordException
-	 * @throws LockedRecordException
-	 */
-	public void handle12DeprecatedRecordException(String orcid, OrcidDeprecated errorMessage)
-			throws JsonProcessingException, AmazonClientException, JAXBException {
-		// Update 1.2 buckets
-		if (is12IndexingEnabled) {
-			s3Updater.updateS3(orcid, errorMessage);
-		}
-	}
-
-	/**
-	 * If the record is deprecated:
-	 *
-	 * - blank it in 2.0 bucket
-	 * 
-	 * @throws JAXBException
-	 * @throws AmazonClientException
-	 * @throws JsonProcessingException
-	 * @throws DeprecatedRecordException
-	 * @throws LockedRecordException
-	 */
-	public void handle20Exception(String orcid, OrcidError orcidError)
-			throws JsonProcessingException, AmazonClientException, JAXBException {
-		// Update 2.0 buckets
-		if (is20IndexingEnabled) {
-			s3Updater.updateS3(orcid, orcidError);
-		}
-	}
+    /**
+     * If the record is deprecated:
+     *
+     * - blank it in 2.0 bucket
+     * 
+     * @throws JAXBException
+     * @throws IOException
+     * 
+     */
+    public void handle20Exception(String orcid, OrcidError orcidError) throws IOException, JAXBException {
+        // Update 2.0 buckets
+        if (is20IndexingEnabled) {
+            s3Updater.updateS3(orcid, orcidError);
+        }
+    }
 }

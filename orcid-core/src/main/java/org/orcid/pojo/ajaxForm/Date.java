@@ -54,14 +54,14 @@ public class Date implements ErrorsInterface, Required, Serializable {
     }        
 
     public FuzzyDate toFuzzyDate() {
-        PublicationDate pd = new PublicationDate();
+        FuzzyDate fd = new FuzzyDate();
         if (!PojoUtil.isEmpty(this.getDay()))
-            pd.setDay(new Day(new Integer(this.getDay())));
+            fd.setDay(new Day(new Integer(this.getDay())));
         if (!PojoUtil.isEmpty(this.getMonth()))
-            pd.setMonth(new Month(new Integer(this.getMonth())));
+            fd.setMonth(new Month(new Integer(this.getMonth())));
         if (!PojoUtil.isEmpty(this.getYear()))
-            pd.setYear(new Year(new Integer(this.getYear())));
-        return pd;
+            fd.setYear(new Year(new Integer(this.getYear())));
+        return fd;
     }        
     
     public static Date valueOf(java.util.Date date) {

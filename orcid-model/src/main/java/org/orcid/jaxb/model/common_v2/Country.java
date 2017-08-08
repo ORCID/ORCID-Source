@@ -85,18 +85,6 @@ public class Country implements Serializable, Comparable<Country> {
         this.value = value;
     }
 
-    /**
-     * Sets the value of the value property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    @JsonIgnore
-    public void setValue(String value) {
-        this.value = Iso3166Country.fromValue(value);
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

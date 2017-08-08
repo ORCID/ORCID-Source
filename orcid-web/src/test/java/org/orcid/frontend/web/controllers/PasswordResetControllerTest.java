@@ -65,6 +65,7 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BindingResult;
@@ -194,7 +195,8 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         OneTimeResetPasswordForm oneTimeResetPasswordForm = new OneTimeResetPasswordForm();
         oneTimeResetPasswordForm.setEncryptedEmail("encrypted string not expired");
-
+        MockHttpSession session = new MockHttpSession();
+        when(servletRequest.getSession()).thenReturn(session);
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
         when(bindingResult.hasErrors()).thenReturn(true);
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);

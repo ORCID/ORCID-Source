@@ -42,6 +42,9 @@ psql -U postgres -d orcid -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orc
 
 psql -U postgres -c "CREATE DATABASE features;"
 psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE features to orcid;"
+
+psql -U postgres -c "CREATE DATABASE message_listener;"
+psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE message_listener to orcid;"
 ```
 
 * Verify user login and database exist
@@ -206,7 +209,7 @@ When this it is done, restart the server.
 
 Follow next instructions in order to generate the core javascript file.
 
-See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-Source/blob/master/orcid-nodejs/readme.md)
+See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-Source/blob/master/orcid-nodejs/README.md)
 
 ### Testing your set up
 
@@ -250,3 +253,6 @@ See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integr
 
 ## Updating the frontend javascript files
 [Webpack setup](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/src/main/webapp/static/javascript)
+
+## Eclipse tips
+[ECLIPSE_TIPS.md](ECLIPSE_TIPS.md)
