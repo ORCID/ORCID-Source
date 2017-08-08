@@ -48,6 +48,7 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
+import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -389,7 +390,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.add(getMessage("FieldMatch.registrationForm"));
         } 
 
-        if (registrationManager.passwordIsCommon(cp.getPassword())) {
+        if (CommonPasswords.passwordIsCommon(cp.getPassword())) {
             errors.add(getMessage("password.too_common", cp.getPassword()));
         }
 

@@ -35,7 +35,5 @@ public interface RegistrationManager {
 
     String createMinimalRegistration(Registration registration, boolean usedCaptcha, Locale locale, String ip);
     
-    boolean passwordIsCommon(String password);
-
     Long getCount();
 }

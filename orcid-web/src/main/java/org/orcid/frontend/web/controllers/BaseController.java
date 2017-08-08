@@ -50,7 +50,6 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -61,6 +60,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
+import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
@@ -155,9 +155,6 @@ public class BaseController {
 
     @Resource(name = "csrfTokenRepo")
     protected CsrfTokenRepository csrfTokenRepository;
-    
-    @Resource
-    private RegistrationManager registrationManager;
     
     @Resource
     private SecurityQuestionManager securityQuestionManager;
@@ -798,7 +795,7 @@ public class BaseController {
             setError(password, "Pattern.registrationForm.password");
         }
         
-        if (registrationManager.passwordIsCommon(password.getValue())) {
+        if (CommonPasswords.passwordIsCommon(password.getValue())) {
             setError(password, "password.too_common", password.getValue());
         }
 
