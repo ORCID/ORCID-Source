@@ -139,19 +139,19 @@
                                 {{contact.email}}<br>
                                 <a href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
                                 </td>
-                                <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!memberDetails.allowedFullAccess"></input></td>
+                                <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!memberDetails.allowedFullAccess || !contacts.permissionsByContactRoleId[contact.role.id].allowedEdit"></input></td>
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"
 								     	ng-change="validateContacts()"
-								     	ng-disabled="!memberDetails.allowedFullAccess">
+								     	ng-disabled="!memberDetails.allowedFullAccess || !contacts.permissionsByContactRoleId[contact.role.id].allowedEdit">
 										<#list contactRoleTypes?keys as key>
 											<option value="${key}" ng-selected="contact.role.roleType === '${key}'">${contactRoleTypes[key]}</option>
 										</#list>
 								    </select>
                                 </td>
                                 <td class="tooltip-container">
-                                    <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)" ng-show="memberDetails.allowedFullAccess"
+                                    <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)" ng-show="memberDetails.allowedFullAccess && contacts.permissionsByContactRoleId[contact.role.id].allowedEdit""
                                         class="glyphicon glyphicon-trash grey">
                                         <div class="popover popover-tooltip top">
                                             <div class="arrow"></div>

@@ -17,6 +17,10 @@
 package org.orcid.core.manager.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,16 +32,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactPermission;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
@@ -84,10 +91,10 @@ public class SalesForceManagerImplTest {
 
     @Mock
     private SelfPopulatingCache salesForceContactsCache;
-    
+
     @Mock
     private EmailManager emailManager;
-    
+
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
 
@@ -135,7 +142,7 @@ public class SalesForceManagerImplTest {
         when(salesForceDao.retrieveAllContactsByAccountId("account1Id")).thenReturn(contacts);
         when(salesForceDao.createContact(any(Contact.class))).thenReturn("id4");
     }
-    
+
     private void setUpEmails() {
         Emails emails = new Emails();
         Email email = new Email();
@@ -146,22 +153,28 @@ public class SalesForceManagerImplTest {
         when(profileLastModifiedAspect.retrieveLastModifiedDate("0000-0000-0000-0001")).thenReturn(null);
         when(emailManager.getEmails("0000-0000-0000-0001")).thenReturn(emails);
     }
-    
-    private Contact createContact(String id, String accountId, String email, String orcid) {
+
+    private Contact createContact(String contactId, String accountId, String email, String orcid) {
         Contact c = new Contact();
-        c.setId(id);
+        c.setId(contactId);
         c.setAccountId(accountId);
         c.setEmail(email);
         c.setOrcid(orcid);
         return c;
     }
-    
+
     private ContactRole createContactRole(String contactId, String roleId, ContactRoleType roleType) {
         ContactRole contactRole = new ContactRole();
         contactRole.setId(roleId);
         contactRole.setRoleType(roleType);
         contactRole.setContactId(contactId);
         return contactRole;
+    }
+
+    private Contact createContactWithRole(String contactId, String accountId, String email, String orcid, String roleId, ContactRoleType roleType) {
+        Contact contact = createContact(contactId, accountId, email, orcid);
+        contact.setRole(createContactRole(contactId, roleId, roleType));
+        return contact;
     }
 
     @Test
@@ -173,13 +186,13 @@ public class SalesForceManagerImplTest {
         ContactRole role = new ContactRole(ContactRoleType.TECHNICAL_CONTACT);
         role.setId("contact2Idrole1Id");
         contact.setRole(role);
-        salesForceManager.updateContact(contact);
+        ((SalesForceManagerImpl) salesForceManager).updateContact(contact);
         verify(salesForceDao, times(1)).createContactRole(argThat(r -> {
             return "contact2Id".equals(r.getContactId()) && "account1Id".equals(r.getAccountId()) && ContactRoleType.TECHNICAL_CONTACT.equals(r.getRoleType());
         }));
         verify(salesForceDao, times(1)).removeContactRole(eq("contact2Idrole1Id"));
     }
-    
+
     @Test
     public void createNewContactTest() {
         setUpContacts();
@@ -189,11 +202,11 @@ public class SalesForceManagerImplTest {
         salesForceManager.createContact(c1);
         verify(salesForceDao, times(1)).retrieveAllContactsByAccountId("account1Id");
         verify(salesForceDao, times(1)).createContact(c1);
-        verify(salesForceDao, times(1)).createContactRole(argThat(a -> {            
+        verify(salesForceDao, times(1)).createContactRole(argThat(a -> {
             return "id4".equals(a.getContactId()) && ContactRoleType.OTHER_CONTACT.equals(a.getRoleType()) && "account1Id".equals(a.getAccountId());
         }));
     }
-    
+
     @Test
     public void createNewContact_WithExistingEmail_Test() {
         setUpContacts();
@@ -203,11 +216,11 @@ public class SalesForceManagerImplTest {
         salesForceManager.createContact(c1);
         verify(salesForceDao, times(1)).retrieveAllContactsByAccountId("account1Id");
         verify(salesForceDao, times(0)).createContact(c1);
-        verify(salesForceDao, times(1)).createContactRole(argThat(a -> {            
+        verify(salesForceDao, times(1)).createContactRole(argThat(a -> {
             return "id1".equals(a.getContactId()) && ContactRoleType.OTHER_CONTACT.equals(a.getRoleType()) && "account1Id".equals(a.getAccountId());
         }));
     }
-    
+
     @Test
     public void createNewContact_WithExistingOrcid_Test() {
         setUpEmails();
@@ -218,7 +231,7 @@ public class SalesForceManagerImplTest {
         salesForceManager.createContact(c1);
         verify(salesForceDao, times(1)).retrieveAllContactsByAccountId("account1Id");
         verify(salesForceDao, times(0)).createContact(c1);
-        verify(salesForceDao, times(1)).createContactRole(argThat(a -> {            
+        verify(salesForceDao, times(1)).createContactRole(argThat(a -> {
             return "id3".equals(a.getContactId()) && ContactRoleType.OTHER_CONTACT.equals(a.getRoleType()) && "account1Id".equals(a.getAccountId());
         }));
     }
@@ -238,6 +251,102 @@ public class SalesForceManagerImplTest {
         assertEquals("2", salesForceManager.findBestWebsiteMatch(new URL("https://www.account.com"), members).get().getId());
         assertEquals("3", salesForceManager.findBestWebsiteMatch(new URL("https://account.com/abc"), members).get().getId());
         assertEquals("4", salesForceManager.findBestWebsiteMatch(new URL("http://else.co.uk"), members).get().getId());
+    }
+
+    @Test
+    public void testCalculateContactPermissions() {
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(createContactWithRole("contact1", "account1", "contact1@test.com", "0000-0000-0000-0001", "role1", ContactRoleType.MAIN_CONTACT));
+        contacts.add(createContactWithRole("contact2", "account1", "contact2@test.com", "0000-0000-0000-0002", "role2", ContactRoleType.AGREEMENT_SIGNATORY));
+        contacts.add(createContactWithRole("contact3", "account1", "contact3@test.com", "0000-0000-0000-0003", "role3", ContactRoleType.INVOICE_CONTACT));
+        Contact votingContact = createContactWithRole("contact4", "account1", "contact4@test.com", "0000-0000-0000-0004", "role4", ContactRoleType.OTHER_CONTACT);
+        votingContact.getRole().setVotingContact(true);
+        contacts.add(votingContact);
+
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0001");
+        List<ContactPermission> permissions = salesForceManager.calculateContactPermissions(contacts);
+        assertNotNull(permissions);
+        assertEquals(4, permissions.size());
+        Map<String, ContactPermission> permissionsMap = ContactPermission.mapByContactRoleId(permissions);
+        assertTrue(permissionsMap.get("role1").isAllowedEdit());
+        assertTrue(permissionsMap.get("role2").isAllowedEdit());
+        assertTrue(permissionsMap.get("role3").isAllowedEdit());
+        assertTrue(permissionsMap.get("role4").isAllowedEdit());
+
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0003");
+        permissions = salesForceManager.calculateContactPermissions(contacts);
+        assertNotNull(permissions);
+        assertEquals(4, permissions.size());
+        permissionsMap = ContactPermission.mapByContactRoleId(permissions);
+        assertFalse(permissionsMap.get("role1").isAllowedEdit());
+        assertFalse(permissionsMap.get("role2").isAllowedEdit());
+        assertTrue(permissionsMap.get("role3").isAllowedEdit());
+        assertFalse(permissionsMap.get("role4").isAllowedEdit());
+    }
+
+    @Test
+    public void testCheckContactUpdatePermissions() {
+        List<Contact> existingContacts = new ArrayList<>();
+        existingContacts.add(createContactWithRole("contact1", "account1", "contact1@test.com", "0000-0000-0000-0001", "role1", ContactRoleType.MAIN_CONTACT));
+        existingContacts.add(createContactWithRole("contact2", "account1", "contact2@test.com", "0000-0000-0000-0002", "role2", ContactRoleType.AGREEMENT_SIGNATORY));
+        existingContacts.add(createContactWithRole("contact3", "account1", "contact3@test.com", "0000-0000-0000-0003", "role3", ContactRoleType.INVOICE_CONTACT));
+        Contact votingContact = createContactWithRole("contact4", "account1", "contact4@test.com", "0000-0000-0000-0004", "role4", ContactRoleType.OTHER_CONTACT);
+        votingContact.getRole().setVotingContact(true);
+        existingContacts.add(votingContact);
+
+        List<Contact> updatedContacts = new ArrayList<>();
+        Contact updatedContact1 = createContactWithRole("contact1", "account1", "contact1@test.com", "0000-0000-0000-0001", "role1", ContactRoleType.MAIN_CONTACT);
+        updatedContacts.add(updatedContact1);
+        updatedContacts.add(createContactWithRole("contact2", "account1", "contact2@test.com", "0000-0000-0000-0002", "role2", ContactRoleType.AGREEMENT_SIGNATORY));
+        updatedContacts.add(createContactWithRole("contact3", "account1", "contact3@test.com", "0000-0000-0000-0003", "role3", ContactRoleType.INVOICE_CONTACT));
+        Contact updatedVotingContact = createContactWithRole("contact4", "account1", "contact4@test.com", "0000-0000-0000-0004", "role4", ContactRoleType.OTHER_CONTACT);
+        updatedVotingContact.getRole().setVotingContact(true);
+        updatedContacts.add(updatedVotingContact);
+
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0001");
+        salesForceManager.checkContactUpdatePermissions(existingContacts, updatedContacts);
+
+        updatedContact1.getRole().setRoleType(ContactRoleType.OTHER_CONTACT);
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0001");
+        try {
+            salesForceManager.checkContactUpdatePermissions(existingContacts, updatedContacts);
+        } catch (OrcidUnauthorizedException e) {
+            fail("Should be able to change main contact role when am main contact");
+        }
+
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0003");
+        boolean preventedChange = false;
+        try {
+            salesForceManager.checkContactUpdatePermissions(existingContacts, updatedContacts);
+        } catch (OrcidUnauthorizedException e) {
+            preventedChange = true;
+        }
+        if (!preventedChange) {
+            fail("Should not be able to change main contact role when am not main/signatory contact");
+        }
+
+        // Set role back to what it was, but change voting contact.
+        updatedContact1.getRole().setRoleType(ContactRoleType.MAIN_CONTACT);
+        updatedContact1.getRole().setVotingContact(true);
+        updatedVotingContact.getRole().setVotingContact(false);
+
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0001");
+        try {
+            salesForceManager.checkContactUpdatePermissions(existingContacts, updatedContacts);
+        } catch (OrcidUnauthorizedException e) {
+            fail("Should be able to change voting contact when am main contact");
+        }
+
+        when(sourceManager.retrieveRealUserOrcid()).thenReturn("0000-0000-0000-0003");
+        preventedChange = false;
+        try {
+            salesForceManager.checkContactUpdatePermissions(existingContacts, updatedContacts);
+        } catch (OrcidUnauthorizedException e) {
+            preventedChange = true;
+        }
+        if (!preventedChange) {
+            fail("Should not be able to change voting contact when am not main/signatory contact");
+        }
     }
 
     private Member createMember(String accountId, String name, String publicDisplayName, String website) throws MalformedURLException {
