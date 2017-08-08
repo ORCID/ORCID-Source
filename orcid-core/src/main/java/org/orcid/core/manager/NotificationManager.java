@@ -133,4 +133,10 @@ public interface NotificationManager {
     
     boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile);
 
+    void processOldNotificationsToAutoArchive();
+
+    void processOldNotificationsToAutoDelete();
+
+    void removeNotification(Long notificationId);
+
 }

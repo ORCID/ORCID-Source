@@ -172,4 +172,28 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         return query.getResultList();
     }
 
+    @Override
+    @Transactional
+    public int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize) {
+        Query selectQuery = entityManager.createQuery("select id from NotificationEntity where archivedDate is null and dateCreated < :createdBefore");
+        selectQuery.setParameter("createdBefore", createdBefore);
+        selectQuery.setMaxResults(batchSize);
+        @SuppressWarnings("unchecked")
+        List<Long> ids = selectQuery.getResultList();
+        if (ids.isEmpty()) {
+            return 0;
+        }
+        Query updateQuery = entityManager.createQuery("update NotificationEntity set archivedDate = now() where id in :ids");
+        updateQuery.setParameter("ids", ids);
+        return updateQuery.executeUpdate();
+    }
+
+    @Override
+    public List<NotificationEntity> findNotificationsCreatedBefore(Date createdBefore, int batchSize) {
+        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where dateCreated < :createdBefore", NotificationEntity.class);
+        query.setParameter("createdBefore", createdBefore);
+        query.setMaxResults(batchSize);
+        return query.getResultList();
+    }
+
 }

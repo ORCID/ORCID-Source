@@ -59,4 +59,8 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
     List<NotificationEntity> findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 
+    int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize);
+    
+    List<NotificationEntity> findNotificationsCreatedBefore(Date createdBefore, int batchSize);
+
 }

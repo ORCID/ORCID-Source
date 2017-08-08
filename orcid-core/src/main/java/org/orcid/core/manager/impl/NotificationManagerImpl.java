@@ -20,8 +20,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -1283,6 +1286,42 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
         return notificationAdapter.toNotification(notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, emailFrequencyDays, recordActiveDate));
+    }
+
+    @Override
+    public void processOldNotificationsToAutoArchive() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.add(Calendar.MONTH, -6);
+        Date createdBefore = calendar.getTime();
+        LOGGER.info("About to auto archive notifications created before {}", createdBefore);
+        int numArchived = 0;
+        do {
+            numArchived = notificationDao.archiveNotificationsCreatedBefore(createdBefore, 100);
+            LOGGER.info("Archived {} old notifications", numArchived);
+        } while (numArchived != 0);
+    }
+
+    @Override
+    public void processOldNotificationsToAutoDelete() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.add(Calendar.YEAR, -1);
+        Date createdBefore = calendar.getTime();
+        LOGGER.info("About to auto delete notifications created before {}", createdBefore);
+        List<NotificationEntity> notificationsToDelete = Collections.<NotificationEntity> emptyList();
+        do {
+            notificationsToDelete = notificationDao.findNotificationsCreatedBefore(createdBefore, 100);
+            LOGGER.info("Got batch of {} old notifications to delete", notificationsToDelete.size());
+            for (NotificationEntity notification : notificationsToDelete) {
+                LOGGER.info("About to delete old notification: id={}, orcid={}, dateCreated={}",
+                        new Object[] { notification.getId(), notification.getProfile().getId(), notification.getDateCreated() });
+                removeNotification(notification.getId());
+            }
+        } while (!notificationsToDelete.isEmpty());
+    }
+
+    @Override
+    public void removeNotification(Long notificationId) {
+        notificationDao.remove(notificationId);
     }
 
 }
