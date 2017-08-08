@@ -475,6 +475,7 @@ public class BaseController {
                 OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = null;
+                    String[] args = { email };
                     if (isRegisterRequest) {
                         if (orcidProfile.getOrcidHistory().getDeactivationDate() != null) {
                             codes = new String[] { "orcid.frontend.verify.deactivated_email" };
@@ -483,8 +484,8 @@ public class BaseController {
                         }
                     } else {
                         codes = new String[] { "orcid.frontend.verify.claimed_email" };
+                        args = new String[] { email, orcidUrlManager.getBaseUrl() + "/account#editDeprecate" };
                     }
-                    String[] args = { email };
                     bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Email already exists"));
                 } else {
                     String resendUrl = createResendClaimUrl(email, request);
