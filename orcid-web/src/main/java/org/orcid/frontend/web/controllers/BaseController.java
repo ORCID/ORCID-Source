@@ -553,11 +553,6 @@ public class BaseController {
         return effectiveOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(effectiveOrcid);
     }
 
-    public OrcidProfile getRealProfile() {
-        String realOrcid = getRealUserOrcid();
-        return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid);
-    }
-
     public String getMessage(String messageCode, Object... messageParams) {
         return localeManager.resolveMessage(messageCode, messageParams);
     }
