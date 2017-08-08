@@ -31,9 +31,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.TemplateManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.helper.UserSession;
 import org.orcid.jaxb.model.common_v2.Source;
@@ -66,16 +63,7 @@ public class NotificationController extends BaseController {
     private NotificationManager notificationManager;
 
     @Resource
-    private TemplateManager templateManager;
-
-    @Resource
     private EncryptionManager encryptionManager;
-    
-    @Resource
-    private OrcidUrlManager orcidUrlManager;
-    
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -85,10 +73,7 @@ public class NotificationController extends BaseController {
     
     @RequestMapping
     public ModelAndView getNotifications() {
-        ModelAndView mav = new ModelAndView("notifications");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
-        mav.addObject("profile", profile);
-        return mav;
+        return new ModelAndView("notifications");
     }
 
     @RequestMapping("/notifications.json")
@@ -265,7 +250,7 @@ public class NotificationController extends BaseController {
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.GET)
     public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
     	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_AND_INTERNAL_ONLY);
     	response.addHeader("X-Robots-Tag", "noindex");
     	Preferences pref = profile.getOrcidInternal().getPreferences();
         return pref != null ? pref : new Preferences();
@@ -274,7 +259,7 @@ public class NotificationController extends BaseController {
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.POST)
     public @ResponseBody Preferences setPreference(HttpServletRequest request, HttpServletResponse response, @RequestBody Preferences preferences, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
     	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_AND_INTERNAL_ONLY);
     	orcidProfileManager.updatePreferences(profile.getOrcidIdentifier().getPath(), preferences);
     	response.addHeader("X-Robots-Tag", "noindex");
         return preferences;
@@ -285,7 +270,7 @@ public class NotificationController extends BaseController {
     		@PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_AND_INTERNAL_ONLY);
 
         String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 

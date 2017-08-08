@@ -123,11 +123,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     @Override
-    public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
-        return toOrcidProfile(profileEntity, LoadOptions.ALL);
-    }
-
-    @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions) {
         if (profileEntity == null) {
             throw new IllegalArgumentException("Cannot convert a null profileEntity");
