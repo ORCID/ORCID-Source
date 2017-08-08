@@ -44,7 +44,7 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private Text email;
     
-    private Text emailAdditional;
+    private List<Text> emailsAdditional;
 
     private Text emailConfirm;
 
@@ -73,7 +73,7 @@ public class Registration implements ErrorsInterface, Serializable {
         password = new Text();
         passwordConfirm = new Text();
         email = new Text();
-        emailAdditional = new Text();
+        emailsAdditional = new ArrayList<Text>();
         emailConfirm = new Text();
         givenNames = new Text();
         familyNames = new Text();
@@ -113,12 +113,12 @@ public class Registration implements ErrorsInterface, Serializable {
         this.email = email;
     }
     
-    public Text getEmailAdditional() {
-        return emailAdditional;
+    public List<Text> getEmailsAdditional() {
+        return emailsAdditional;
     }
 
-    public void setEmailAdditional(Text emailAdditional) {
-        this.emailAdditional = emailAdditional;
+    public void setEmailsAdditional(List<Text> emailsAdditional) {
+        this.emailsAdditional = emailsAdditional;
     }
 
     public Text getEmailConfirm() {

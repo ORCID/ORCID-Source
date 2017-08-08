@@ -82,12 +82,12 @@
                 </span>
             </div>
         </div>  
-        <div>
+        <div data-ng-repeat="emailAdditional in register.emailsAdditional track by $index">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
-            <div class="relative">          
-                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="register.emailAdditional.value" ng-blur="serverValidate('EmailAdditional')"/>
-                <span class="orcid-error" ng-show="register.emailAdditional.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
-                    <div ng-repeat='error in register.emailAdditional.errors' ng-bind-html="error"></div>
+            <div class="relative">
+                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="register.emailsAdditional[$index].value" ng-blur="serverValidate('EmailsAdditional')"/>
+                <span class="orcid-error" ng-show="register.emailsAdditional[$index].errors.length > 0 && !showDeactivatedError && !showReactivationSent">
+                    <div ng-repeat='error in register.emailsAdditional[$index].errors' ng-bind-html="error"></div>
                 </span>
                 <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
@@ -96,8 +96,8 @@
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                 </span>
             </div>
-            <button ng-click="addEmailField()">Add another email</button>
         </div>
+        <button ng-click="addEmailField()">Add another email</button>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL' enabled=false>	
         <div>
