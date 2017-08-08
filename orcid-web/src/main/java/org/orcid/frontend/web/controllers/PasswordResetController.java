@@ -234,8 +234,22 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void sendReactivation(@RequestParam("email") String email) {
-        OrcidProfile orcidProfile = orcidProfileCacheManager.retrieve(emailManager.findOrcidIdByEmail(email));
+    public void sendReactivation(@RequestParam("email") String orcidOrEmail) {
+        String orcid = null;
+        String email = null;
+        if(orcidOrEmail.contains("@")) {
+            orcid = emailManager.findOrcidIdByEmail(orcidOrEmail);
+            email = orcidOrEmail;
+        } else {
+            orcid = orcidOrEmail;
+        }
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);
+        
+        //If email is null it means the user used the orcid id to login, so, retrieve the email from the orcidProfile
+        if(email == null) {
+            email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        }
+        
         notificationManager.sendReactivationEmail(email, orcidProfile);
     }
 
