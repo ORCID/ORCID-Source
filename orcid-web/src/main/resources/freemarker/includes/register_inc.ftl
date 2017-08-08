@@ -82,10 +82,20 @@
                 </span>
             </div>
         </div>  
-        <div data-ng-repeat="emailAdditional in register.emailsAdditional track by $index">
+        <div ng-repeat="emailAdditional in register.emailsAdditional track by $index">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
             <div class="relative">
                 <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="register.emailsAdditional[$index].value" ng-blur="serverValidate('EmailsAdditional')"/>
+                <div class="popover-help-container leftBuffer">
+                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <div id="email-additional-help" class="popover bottom">
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <p><@orcid.msg ''/></p>
+                        <p><@orcid.msg 'orcid.frontend.register.help.email_additional'/></p>
+                    </div>
+                </div>
+            </div>
                 <span class="orcid-error" ng-show="register.emailsAdditional[$index].errors.length > 0 && !showDeactivatedError && !showReactivationSent">
                     <div ng-repeat='error in register.emailsAdditional[$index].errors' ng-bind-html="error"></div>
                 </span>
@@ -97,7 +107,7 @@
                 </span>
             </div>
         </div>
-        <button ng-click="addEmailField()">Add another email</button>
+        <button ng-click="addEmailField()" class="btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL' enabled=false>	
         <div>
