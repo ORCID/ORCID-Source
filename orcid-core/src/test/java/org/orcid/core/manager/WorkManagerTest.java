@@ -102,7 +102,7 @@ public class WorkManagerTest extends BaseTest {
         Work work = getWork(null);
         
         work = workManager.createWork(unclaimedOrcid, work, true);        
-        work = workManager.getWork(unclaimedOrcid, work.getPutCode(), 0);
+        work = workManager.getWork(unclaimedOrcid, work.getPutCode());
         
         assertNotNull(work);
         assertEquals("Work title", work.getWorkTitle().getTitle().getContent());
@@ -115,7 +115,7 @@ public class WorkManagerTest extends BaseTest {
         Work work = getWork(null);
         
         work = workManager.createWork(claimedOrcid, work, true);        
-        work = workManager.getWork(claimedOrcid, work.getPutCode(), 0);
+        work = workManager.getWork(claimedOrcid, work.getPutCode());
         
         assertNotNull(work);
         assertEquals("Work title", work.getWorkTitle().getTitle().getContent());
@@ -211,7 +211,7 @@ public class WorkManagerTest extends BaseTest {
             assertNotNull(w.getExternalIdentifiers().getExternalIdentifier());
             assertEquals("doi-" + i + "-" + time, w.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
             
-            Work w1 = workManager.getWork(orcid, w.getPutCode(), 0L);
+            Work w1 = workManager.getWork(orcid, w.getPutCode());
             assertNotNull(w1);
             assertEquals("Bulk work " + i + " " + time, w1.getWorkTitle().getTitle().getContent());            
         
@@ -643,7 +643,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testGetAll() {
-        List<Work> elements = workManager.findWorks("0000-0000-0000-0003", System.currentTimeMillis());
+        List<Work> elements = workManager.findWorks("0000-0000-0000-0003");
         assertNotNull(elements);
         assertEquals(6, elements.size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false;
@@ -673,7 +673,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testGetAllSummaries() {
-        List<WorkSummary> elements = workManager.getWorksSummaryList("0000-0000-0000-0003", System.currentTimeMillis());
+        List<WorkSummary> elements = workManager.getWorksSummaryList("0000-0000-0000-0003");
         assertNotNull(elements);
         assertEquals(6, elements.size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false;
@@ -703,7 +703,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testGetPublic() {
-        List<Work> elements = workManager.findPublicWorks("0000-0000-0000-0003", System.currentTimeMillis());
+        List<Work> elements = workManager.findPublicWorks("0000-0000-0000-0003");
         assertNotNull(elements);
         assertEquals(1, elements.size());
         assertEquals(Long.valueOf(11), elements.get(0).getPutCode());
@@ -712,7 +712,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testFindWorkBulk() {
         String putCodes = "11,12,13";
-        WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes, System.currentTimeMillis());
+        WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes);
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
         assertEquals(3, workBulk.getBulk().size());
@@ -724,7 +724,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testFindWorkBulkInvalidPutCodes() {
         String putCodes = "11,12,13,invalid";
-        WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes, System.currentTimeMillis());
+        WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes);
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
         assertEquals(4, workBulk.getBulk().size());
@@ -741,7 +741,7 @@ public class WorkManagerTest extends BaseTest {
             tooManyPutCodes.append(",").append(i);
         }
         
-        workManager.findWorkBulk("0000-0000-0000-0003", tooManyPutCodes.toString(), System.currentTimeMillis());
+        workManager.findWorkBulk("0000-0000-0000-0003", tooManyPutCodes.toString());
         fail();
     }
 

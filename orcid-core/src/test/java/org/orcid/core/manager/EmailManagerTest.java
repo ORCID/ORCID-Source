@@ -85,15 +85,15 @@ public class EmailManagerTest extends BaseTest {
     
     @Test
     public void haveAnyEmailVerifiedTest() {
-        assertTrue(emailManager.haveAnyEmailVerified("0000-0000-0000-0003", 0L));
-        assertTrue(emailManager.haveAnyEmailVerified("4444-4444-4444-4442", 0L));
-        assertFalse(emailManager.haveAnyEmailVerified("0000-0000-0000-0001", 0L));
-        assertFalse(emailManager.haveAnyEmailVerified("4444-4444-4444-4445", 0L));
+        assertTrue(emailManager.haveAnyEmailVerified("0000-0000-0000-0003"));
+        assertTrue(emailManager.haveAnyEmailVerified("4444-4444-4444-4442"));
+        assertFalse(emailManager.haveAnyEmailVerified("0000-0000-0000-0001"));
+        assertFalse(emailManager.haveAnyEmailVerified("4444-4444-4444-4445"));
     }
     
     @Test
     public void getEmailsTest() {
-        Emails emails = emailManager.getEmails("0000-0000-0000-0003", System.currentTimeMillis());
+        Emails emails = emailManager.getEmails("0000-0000-0000-0003");
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
         assertEquals(5, emails.getEmails().size());
@@ -122,7 +122,7 @@ public class EmailManagerTest extends BaseTest {
     
     @Test
     public void getPublicEmailsTest() {
-        Emails emails = emailManager.getPublicEmails("0000-0000-0000-0003", System.currentTimeMillis());
+        Emails emails = emailManager.getPublicEmails("0000-0000-0000-0003");
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
         assertEquals(1, emails.getEmails().size());
@@ -173,13 +173,13 @@ public class EmailManagerTest extends BaseTest {
         assertEquals(to, map.get(email));
         
         //Assert the email is not anymore in the from record
-        Emails emails = emailManager.getEmails(from, System.currentTimeMillis());
+        Emails emails = emailManager.getEmails(from);
         for(Email e : emails.getEmails()) {
             assertFalse(email.equals(e.getEmail()));        
         }
         
         //Assert the email belongs to the to record
-        emails = emailManager.getEmails(to, System.currentTimeMillis());
+        emails = emailManager.getEmails(to);
         boolean found = false;
         for(Email e : emails.getEmails()) {
             if(email.equals(e.getEmail())) {
@@ -194,7 +194,7 @@ public class EmailManagerTest extends BaseTest {
     public void verifySetCurrentAndPrimaryTest() {
         String email = "public_0000-0000-0000-0004@test.orcid.org";
         String orcid = "0000-0000-0000-0004";
-        Emails emails = emailManager.getEmails(orcid, System.currentTimeMillis());
+        Emails emails = emailManager.getEmails(orcid);
         Email element = null;
         for(Email e : emails.getEmails()) {
             if(email.equals(e.getEmail())) {
@@ -210,7 +210,7 @@ public class EmailManagerTest extends BaseTest {
         
         emailManager.verifySetCurrentAndPrimary(orcid, email);
         
-        emails = emailManager.getEmails(orcid, System.currentTimeMillis());
+        emails = emailManager.getEmails(orcid);
         element = null;
         for(Email e : emails.getEmails()) {
             if(email.equals(e.getEmail())) {

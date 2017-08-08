@@ -33,9 +33,8 @@ import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
-import org.springframework.cache.annotation.Cacheable;
 
-public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadOnly {
+public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements AffiliationsManagerReadOnly {
     @Resource
     protected JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
 
@@ -124,9 +123,8 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
      * @return the list of employments that belongs to this user
      * */
     @Override
-    @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
+    public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid) {
+        List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
         return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
     }
 
@@ -139,8 +137,7 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
      * @return the list of educations that belongs to this user
      * */
     @Override
-    @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified) {
+    public List<EducationSummary> getEducationSummaryList(String userOrcid) {
         List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EDUCATION);
         return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
     }    

@@ -212,6 +212,129 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
         return w;
     }
+    
+    public static WorkForm valueOf(org.orcid.jaxb.model.v3.dev1.record.Work work) {
+        if (work == null)
+            return null;
+
+        WorkForm w = new WorkForm();
+
+        // Set work id
+        if (work.getPutCode() != null) {
+            w.setPutCode(Text.valueOf(work.getPutCode()));
+        }
+
+        // Set language
+        if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+            w.setLanguageCode(Text.valueOf(work.getLanguageCode()));
+        }
+
+        // Set type
+        if (work.getWorkType() != null) {
+            w.setWorkType(Text.valueOf(work.getWorkType().value()));
+            // Set category
+            WorkCategory category = WorkCategory.fromWorkType(org.orcid.jaxb.model.record_v2.WorkType.fromValue(work.getWorkType().value()));
+            w.setWorkCategory(Text.valueOf(category.value()));
+        }
+
+        if (work.getWorkTitle() != null) {
+            // Set title
+            if (work.getWorkTitle().getTitle() != null) {
+                w.setTitle(Text.valueOf(work.getWorkTitle().getTitle().getContent()));
+            }
+            // Set translated title
+            if (work.getWorkTitle().getTranslatedTitle() != null) {
+                TranslatedTitleForm tt = new TranslatedTitleForm();
+                tt.setContent(work.getWorkTitle().getTranslatedTitle().getContent());
+                tt.setLanguageCode(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                w.setTranslatedTitle(tt);
+            }
+            // Set subtitle
+            if (work.getWorkTitle().getSubtitle() != null) {
+                w.setSubtitle(Text.valueOf(work.getWorkTitle().getSubtitle().getContent()));
+            }
+        }
+
+        // Set journal title
+        if (work.getJournalTitle() != null ) {
+            w.setJournalTitle(Text.valueOf(work.getJournalTitle().getContent()));
+        }
+
+        // Set description
+        if (work.getShortDescription() != null) {
+            w.setShortDescription(Text.valueOf(work.getShortDescription()));
+        }
+
+        // Set url
+        if (work.getUrl() != null ) {
+            w.setUrl(Text.valueOf(work.getUrl().getValue()));
+        }
+
+        // Set visibility
+        if (work.getVisibility() != null) {
+            w.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(work.getVisibility().value()));
+        }
+
+        // Set country
+        if (work.getCountry() != null && work.getCountry().getValue() != null) {
+            w.setCountryCode(Text.valueOf(work.getCountry().getValue().value()));
+        }
+
+        // Set publication date
+        FuzzyDate fuzzyPublicationDate = null;
+        if (work.getPublicationDate() != null) {
+            org.orcid.jaxb.model.v3.dev1.common.PublicationDate publicationDate = work.getPublicationDate();
+            Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
+            Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
+            Integer day = PojoUtil.isEmpty(publicationDate.getDay()) ? null : Integer.valueOf(publicationDate.getDay().getValue());
+            if(year != null && year == 0) {
+                year = null;
+            }
+            if(month != null && month == 0) {
+                month = null;
+            }
+            if (day != null && day == 0) {
+                day = null;
+            }
+            fuzzyPublicationDate = FuzzyDate.valueOf(year, month, day);
+            w.setPublicationDate(Date.valueOf(fuzzyPublicationDate));
+        }
+        w.setDateSortString(PojoUtil.createDateSortString(null, fuzzyPublicationDate));
+
+        // Set citation
+        if (work.getWorkCitation() != null) {            
+            Citation citation = new Citation();
+            if(!PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
+                citation.setCitation(Text.valueOf(work.getWorkCitation().getCitation()));
+            }
+            if(work.getWorkCitation().getWorkCitationType() != null) {
+                citation.setCitationType(Text.valueOf(work.getWorkCitation().getWorkCitationType().value()));
+            }
+            
+            w.setCitation(citation);
+        }
+
+        // Set contributors
+        populateContributors(work, w);
+
+        // Set external identifiers
+        populateExternalIdentifiers(work, w);
+
+        // Set created date
+        w.setCreatedDate(Date.valueOf(work.getCreatedDate()));
+
+        // Set last modified
+        w.setLastModified(Date.valueOf(work.getLastModifiedDate()));
+
+        if(work.getSource() != null) {
+            // Set source
+            w.setSource(work.getSource().retrieveSourcePath());
+            if(work.getSource().getSourceName() != null) {
+                w.setSourceName(work.getSource().getSourceName().getContent());
+            }
+        }
+        return w;
+    }
 
     private static void populateExternalIdentifiers(Work work, WorkForm workForm) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
@@ -235,6 +358,38 @@ public class WorkForm implements ErrorsInterface, Serializable {
                             }
                         } else {
                             extId.setRelationship(Relationship.SELF);
+                        }
+                    }
+                    
+                    workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
+                }
+            }
+        }
+        workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
+    }
+    
+    private static void populateExternalIdentifiers(org.orcid.jaxb.model.v3.dev1.record.Work work, WorkForm workForm) {
+        List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
+        if(work.getExternalIdentifiers() != null) {        
+            org.orcid.jaxb.model.v3.dev1.record.ExternalIDs extIds = work.getExternalIdentifiers();
+            if (extIds != null) {
+                for (org.orcid.jaxb.model.v3.dev1.record.ExternalID extId : extIds.getExternalIdentifier()) {
+                    
+                    if(extId.getRelationship() == null) {
+                        if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
+                            if(WorkType.BOOK.equals(work.getWorkType())) {
+                                extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.PART_OF);
+                            } else {
+                                extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.SELF);
+                            }
+                        } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
+                            if(WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
+                                extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.PART_OF);
+                            } else {
+                                extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.SELF);
+                            }
+                        } else {
+                            extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.SELF);
                         }
                     }
                     
@@ -277,6 +432,19 @@ public class WorkForm implements ErrorsInterface, Serializable {
             org.orcid.jaxb.model.record_v2.WorkContributors contributors = work.getWorkContributors();
             if (contributors != null) {
                 for (org.orcid.jaxb.model.common_v2.Contributor contributor : contributors.getContributor()) {
+                    contributorsList.add(Contributor.valueOf(contributor));
+                }
+            }
+        }
+        workForm.setContributors(contributorsList);
+    }
+    
+    private static void populateContributors(org.orcid.jaxb.model.v3.dev1.record.Work work, WorkForm workForm) {
+        List<Contributor> contributorsList = new ArrayList<Contributor>();
+        if(work.getWorkContributors() != null) {
+            org.orcid.jaxb.model.v3.dev1.record.WorkContributors contributors = work.getWorkContributors();
+            if (contributors != null) {
+                for (org.orcid.jaxb.model.v3.dev1.common.Contributor contributor : contributors.getContributor()) {
                     contributorsList.add(Contributor.valueOf(contributor));
                 }
             }

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -51,6 +52,11 @@ public class TokenTargetFilterTest {
     @Before
     public void before() {
         SecurityContextHolder.setContext(new SecurityContextImpl());
+    }
+    
+    @After
+    public void after() {
+        RequestContextHolder.resetRequestAttributes();
     }
     
     @Test

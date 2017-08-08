@@ -30,6 +30,8 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
      *          the list of researcher urls associated with the orcid profile
      * */
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid, long lastModified);
+    
+    public List<ResearcherUrlEntity> getPublicResearcherUrls(String orcid, long lastModified);
 
     /**
      * Return the list of researcher urls associated to a specific profile

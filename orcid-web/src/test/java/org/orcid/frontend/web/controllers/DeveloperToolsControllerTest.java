@@ -149,7 +149,7 @@ public class DeveloperToolsControllerTest {
         c.setWebsite("http://ruri1.com");
         c.setDecryptedSecret("client-secret");
         clients.add(c);
-        when(mockClientManagerReadOnly.getClients(Matchers.anyString(), Matchers.anyLong())).thenReturn(clients);
+        when(mockClientManagerReadOnly.getClients(Matchers.anyString())).thenReturn(clients);
         when(mockClientManagerReadOnly.get(Matchers.anyString())).thenAnswer(new Answer<org.orcid.jaxb.model.client_v2.Client>(){
             @Override
             public org.orcid.jaxb.model.client_v2.Client answer(InvocationOnMock invocation) throws Throwable {

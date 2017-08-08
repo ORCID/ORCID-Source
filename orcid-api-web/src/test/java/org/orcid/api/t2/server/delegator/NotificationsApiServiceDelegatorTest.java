@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceDelegatorImpl;
+import org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceDelegatorImpl;
 import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;

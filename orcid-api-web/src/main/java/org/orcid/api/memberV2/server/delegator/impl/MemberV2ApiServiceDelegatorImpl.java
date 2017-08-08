@@ -275,7 +275,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        Work w = workManagerReadOnly.getWork(orcid, putCode, getLastModifiedTime(orcid));
+        Work w = workManagerReadOnly.getWork(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, w, ScopePathType.ORCID_WORKS_READ_LIMITED);
         contributorUtils.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
@@ -286,7 +286,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWorks(String orcid) {
-        List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid, getLastModifiedTime(orcid));
+        List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         List<WorkSummary> filteredList = null;
@@ -306,7 +306,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
-        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode, getLastModifiedTime(orcid));
+        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, ws, ScopePathType.ORCID_WORKS_READ_LIMITED);
         ActivityUtils.cleanEmptyFields(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
@@ -377,7 +377,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewFundings(String orcid) {
-        List<FundingSummary> fundingSummaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        List<FundingSummary> fundingSummaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         List<FundingSummary> filteredList = null;
@@ -449,7 +449,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEducations(String orcid) {
-        List<EducationSummary> educationsList = affiliationsManagerReadOnly.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EducationSummary> educationsList = affiliationsManagerReadOnly.getEducationSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         List<EducationSummary> filteredList = null;
@@ -514,7 +514,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEmployments(String orcid) {
-        List<EmploymentSummary> employmentsList = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EmploymentSummary> employmentsList = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         List<EmploymentSummary> filteredList = null;
@@ -586,7 +586,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPeerReviews(String orcid) {
-        List<PeerReviewSummary> peerReviewList = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
+        List<PeerReviewSummary> peerReviewList = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         List<PeerReviewSummary> filteredList = null;
@@ -707,7 +707,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
      */
     @Override
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getResearcherUrls(orcid, getLastModifiedTime(orcid));
+        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getResearcherUrls(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         if (researcherUrls.getResearcherUrls() != null) {
@@ -770,18 +770,17 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewEmails(String orcid) {
         Emails emails = null;
-        long lastModified = getLastModifiedTime(orcid);
 
         try {
             // return all emails if client has /email/read-private scope
             orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);
-            emails = emailManagerReadOnly.getEmails(orcid, lastModified);
+            emails = emailManagerReadOnly.getEmails(orcid);
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
             emails.setEmails(filteredList);
         } catch (OrcidAccessControlException e) {
-            emails = emailManagerReadOnly.getEmails(orcid, lastModified);
+            emails = emailManagerReadOnly.getEmails(orcid);
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
@@ -800,7 +799,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManagerReadOnly.getOtherNames(orcid, getLastModifiedTime(orcid));
+        OtherNames otherNames = otherNameManagerReadOnly.getOtherNames(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         if (otherNames.getOtherNames() != null) {
@@ -925,7 +924,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewKeywords(String orcid) {
-        Keywords keywords = profileKeywordManagerReadOnly.getKeywords(orcid, getLastModifiedTime(orcid));
+        Keywords keywords = profileKeywordManagerReadOnly.getKeywords(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         if (keywords.getKeywords() != null) {
@@ -988,7 +987,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManagerReadOnly.getAddresses(orcid, getLastModifiedTime(orcid));
+        Addresses addresses = addressManagerReadOnly.getAddresses(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         if (addresses.getAddress() != null) {
@@ -1052,7 +1051,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewBiography(String orcid) {
-        Biography bio = biographyManagerReadOnly.getBiography(orcid, getLastModifiedTime(orcid));
+        Biography bio = biographyManagerReadOnly.getBiography(orcid);
         if (bio == null) {
             throw new OrcidNoBioException();
         }
@@ -1096,7 +1095,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             throw new OrcidNoResultException("No such profile: " + orcid);
         }
         
-        WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes, profileEntity.getLastModified().getTime());
+        WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
         contributorUtils.filterContributorPrivateData(workBulk);        
         ActivityUtils.cleanEmptyFields(workBulk);

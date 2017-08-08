@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -45,6 +46,12 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
+    }
+    
+    @Override
+    @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<OtherNameEntity> getPublicOtherNames(String orcid, long lastModified) {
+        return getOtherNames(orcid, Visibility.PUBLIC);
     }
 
     @Override

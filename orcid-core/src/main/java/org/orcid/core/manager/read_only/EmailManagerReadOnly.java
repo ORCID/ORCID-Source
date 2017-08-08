@@ -40,11 +40,11 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     
     boolean isPrimaryEmailVerified(String orcid);
     
-    boolean haveAnyEmailVerified(String orcid, long lastModified);
+    boolean haveAnyEmailVerified(String orcid);
     
-    Emails getEmails(String orcid, long lastModified);
+    Emails getEmails(String orcid);
     
-    Emails getPublicEmails(String orcid, long lastModified);
+    Emails getPublicEmails(String orcid);
     
     boolean isPrimaryEmail(String orcid, String email);
     

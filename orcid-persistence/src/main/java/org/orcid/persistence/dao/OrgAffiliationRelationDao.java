@@ -118,4 +118,8 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      *            removed.
      */
     void removeAllAffiliations(String orcid);
+
+    List<OrgAffiliationRelationEntity> getEducationSummaries(String orcid, long lastModified);
+
+    List<OrgAffiliationRelationEntity> getEmploymentSummaries(String orcid, long lastModified);
 }

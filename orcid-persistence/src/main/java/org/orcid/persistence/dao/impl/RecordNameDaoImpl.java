@@ -26,6 +26,7 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -40,7 +41,8 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }
 
     @Override
-    public RecordNameEntity getRecordName(String orcid) {
+    @Cacheable(value = "record-name", key = "#orcid.concat('-').concat(#lastModified)")
+    public RecordNameEntity getRecordName(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM RecordNameEntity WHERE profile.id = :orcid");
         query.setParameter("orcid", orcid);
         return (RecordNameEntity) query.getSingleResult();

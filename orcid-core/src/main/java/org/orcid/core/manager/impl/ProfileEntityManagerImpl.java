@@ -192,7 +192,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                     LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
                     clearRecord(deprecatedOrcid);
                     // Move all email's to the primary record
-                    Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid, System.currentTimeMillis());
+                    Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid);
                     if (deprecatedAccountEmails != null) {
                         // For each email in the deprecated profile
                         for (Email email : deprecatedAccountEmails.getEmails()) {

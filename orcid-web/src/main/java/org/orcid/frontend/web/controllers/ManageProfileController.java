@@ -433,8 +433,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             return deprecateProfile;
         }
 
-        Emails deprecatingEmails = emailManager.getEmails(deprecatingEntity.getId(), 0l);
-        Emails primaryEmails = emailManager.getEmails(primaryEntity.getId(), 0l);
+        Emails deprecatingEmails = emailManager.getEmails(deprecatingEntity.getId());
+        Emails primaryEmails = emailManager.getEmails(primaryEntity.getId());
                 
         String primaryAccountName = RecordNameUtils.getPublicName(primaryEntity.getRecordNameEntity());
         String deprecatingAccountName = RecordNameUtils.getPublicName(deprecatingEntity.getRecordNameEntity());
@@ -575,7 +575,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmails(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {                                
-        Emails v2Emails = emailManager.getEmails(getCurrentUserOrcid(), profileEntityManager.getLastModified(getCurrentUserOrcid()));       
+        Emails v2Emails = emailManager.getEmails(getCurrentUserOrcid());       
         return org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails);
     }
 
@@ -671,7 +671,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());        
-        Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);
+        Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
         AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
         if (form != null && form.getAddresses() != null) {
@@ -733,7 +733,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm() throws NoSuchRequestHandlingMethodException {
         String currentOrcid = getCurrentUserOrcid();
-        Name name = recordNameManager.getRecordName(currentOrcid, profileEntityManager.getLastModified(currentOrcid));
+        Name name = recordNameManager.getRecordName(currentOrcid);
         return NamesForm.valueOf(name);
     }
     
@@ -774,7 +774,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
     public @ResponseBody BiographyForm getBiographyForm() {
-        Biography bio = biographyManager.getBiography(getCurrentUserOrcid(), profileEntityManager.getLastModified(getCurrentUserOrcid()));
+        Biography bio = biographyManager.getBiography(getCurrentUserOrcid());
         BiographyForm form = BiographyForm.valueOf(bio);
         if(form.getVisiblity() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());            

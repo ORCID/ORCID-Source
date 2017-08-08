@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -39,7 +40,8 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     }
 
     @Override
-    public BiographyEntity getBiography(String orcid) {
+    @Cacheable(value = "biography", key = "#orcid.concat('-').concat(#lastModified)")
+    public BiographyEntity getBiography(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM BiographyEntity WHERE profile.id = :orcid");
         query.setParameter("orcid", orcid);
         return (BiographyEntity) query.getSingleResult();

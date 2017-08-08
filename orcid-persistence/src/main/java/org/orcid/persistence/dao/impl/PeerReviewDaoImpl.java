@@ -26,6 +26,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> implements PeerReviewDao {
@@ -52,7 +53,8 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }    
     
     @Override
-    public List<PeerReviewEntity> getByUser(String userOrcid) {
+    @Cacheable(value = "peer-reviews", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<PeerReviewEntity> getByUser(String userOrcid, long lastModified) {
         TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where profile.id=:userOrcid", PeerReviewEntity.class);
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();

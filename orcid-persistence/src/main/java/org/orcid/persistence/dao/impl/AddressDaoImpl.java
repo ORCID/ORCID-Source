@@ -61,7 +61,13 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
-
+    
+    @Override
+    @Cacheable(value = "public-address", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<AddressEntity> getPublicAddresses(String orcid, long lastModified) {
+        return getAddresses(orcid, Visibility.PUBLIC);
+    }
+   
     @SuppressWarnings("unchecked")
     @Override
     public List<AddressEntity> getAddresses(String orcid, Visibility visibility) {
