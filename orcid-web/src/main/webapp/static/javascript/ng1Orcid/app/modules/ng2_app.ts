@@ -5,6 +5,8 @@ import { Component, NgModule } from '@angular/core';
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
+import { ModalNgComponent } from '../directives/modal-ng2.component.ts';
+
 import { BiographyNg2Module } from './biography/biography.ts';
 import { CountryNg2Module } from './country/country.ts';
 import { WidgetNg2Module } from './widget/widget.ts';
@@ -13,7 +15,8 @@ import { WidgetNg2Module } from './widget/widget.ts';
 // Using it we can tell the Angular 2 router to handle only URL starting with settings.
 export class Ng1Ng2UrlHandlingStrategy implements UrlHandlingStrategy {
     shouldProcessUrl(url) { 
-        return url.toString().startsWith("/settings"); 
+        //return url.toString().startsWith("/settings"); 
+        return url;
     }
     extract(url) { 
         return url; 
@@ -39,11 +42,7 @@ export class RootCmp {
 
 @NgModule({
     imports: [
-        BrowserModule,
-        UpgradeModule,
-        BiographyNg2Module,
-        CountryNg2Module,
-        WidgetNg2Module
+        ModalNgComponent
         // We don't need to provide any routes.
         // The router will collect all routes from all the registered modules.
         //RouterModule.forRoot([])

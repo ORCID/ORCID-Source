@@ -99,7 +99,7 @@
     </div>      
 </script>
 
-<!--
+
 <script type="text/ng-template" id="edit-country">
 
     <div class="lightbox-container" id="country-popover">
@@ -190,7 +190,6 @@
         </div>
     </div>  
 </script>
--->
 
 <script type="text/ng-template" id="edit-keyword">
     <!-- Keywords -->

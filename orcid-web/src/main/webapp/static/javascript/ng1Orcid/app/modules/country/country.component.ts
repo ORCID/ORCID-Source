@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { NgModule } from '@angular/core';
 
+//import { ModalNgComponent } from '../../directives/modal-ng2.component.ts';
+
 // This is the Angular 1 part of the module
 /*
 export const CountryCtrl = angular.module('orcidApp').controller(
@@ -482,9 +484,9 @@ export class CountryComponent {
             
             this.bulkEditShow = false;
             $.colorbox({
-                //html: $compile($('#edit-country').html())($scope),
-                //html: scriptTmpl("edit-country"),
-                html: $('#edit-country').html(),
+                //html: $compile($('#edit-country').html())(this),
+                html: scriptTmpl("edit-country"),
+                //html: 'testcolorbox',
                 scrolling: true,
                 onLoad: function() {
                     $('#cboxClose').remove();
@@ -507,7 +509,7 @@ export class CountryComponent {
                 onComplete: function() {      
                 },
                 onClosed: function() {
-                    this.getCountryForm();
+                    //this.getCountryForm();
                 }            
             });
             $.colorbox.resize();
