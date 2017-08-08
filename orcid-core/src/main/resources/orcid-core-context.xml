@@ -738,7 +738,7 @@
 		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
 		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
-		<property name="maxElementsOnDisk" value="${org.orcid.core.profileCache.maxElementsOnDisk:50000}" />
+		<property name="maxElementsOnDisk" value="${org.orcid.core.profileCache.maxElementsOnDisk:40000}" />
 		<property name="strategy" value="NONE" />
 	</bean>
 		
@@ -856,7 +856,7 @@
         <property name="maxElementsInMemory" value="30000" />
         <property name="timeToLiveSeconds" value="86400" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxElementsOnDisk" value="150000" />
+        <property name="maxElementsOnDisk" value="120000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="true" />
