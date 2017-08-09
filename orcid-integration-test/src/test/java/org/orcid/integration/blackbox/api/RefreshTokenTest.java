@@ -43,9 +43,9 @@ public class RefreshTokenTest extends BlackBoxBase {
 
     @Resource
     private OauthHelper oauthHelper;
-    
+
     @Test
-    public void generateRefreshTokenInMemberAPITest() throws InterruptedException, JSONException {   
+    public void generateRefreshTokenInMemberAPITest() throws InterruptedException, JSONException {
         String clientId = getClient1ClientId();
         String clientSecret = getClient1ClientSecret();
         String redirectUri = getClient1RedirectUri();
@@ -55,7 +55,7 @@ public class RefreshTokenTest extends BlackBoxBase {
         oauthHelper.setWebDriverHelper(webDriverHelper);
         String authorizationCode = oauthHelper.getAuthorizationCode(clientId, ScopePathType.ACTIVITIES_UPDATE.value(), userId, userPassword, true);
         assertNotNull(authorizationCode);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));              
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
         ClientResponse tokenResponse = oauthHelper.getClientResponse(clientId, clientSecret, null, redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
@@ -64,15 +64,15 @@ public class RefreshTokenTest extends BlackBoxBase {
         assertNotNull(accessToken);
         String refreshToken = (String) jsonObject.get("refresh_token");
         assertNotNull(refreshToken);
-        
+
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
-        params.add("client_secret", clientSecret);        
+        params.add("client_secret", clientSecret);
         params.add("redirect_uri", redirectUri);
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
-        
-        tokenResponse = oauthHelper.getOauthT2Client().obtainOauth2RefreshTokenPost("refresh_token", accessToken, params);   
+
+        tokenResponse = oauthHelper.getOauthT2Client().obtainOauth2RefreshTokenPost("refresh_token", accessToken, params);
         assertNotNull(tokenResponse);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
@@ -81,11 +81,11 @@ public class RefreshTokenTest extends BlackBoxBase {
         assertNotNull(refreshedAccessToken);
         String refreshedRefreshToken = (String) jsonObject.get("refresh_token");
         assertNotNull(refreshedRefreshToken);
-        
+
         assertFalse(refreshedAccessToken.equals(accessToken));
         assertFalse(refreshedRefreshToken.equals(refreshToken));
     }
-    
+
     @Test
     public void generateRefreshTokenInPublicAPITest() throws InterruptedException, JSONException {
         String clientId = getClient1ClientId();
@@ -97,7 +97,7 @@ public class RefreshTokenTest extends BlackBoxBase {
         oauthHelper.setWebDriverHelper(webDriverHelper);
         String authorizationCode = oauthHelper.getAuthorizationCode(clientId, ScopePathType.PERSON_UPDATE.value(), userId, userPassword, true);
         assertNotNull(authorizationCode);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));              
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
         ClientResponse tokenResponse = oauthHelper.getClientResponse(clientId, clientSecret, null, redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
@@ -106,15 +106,15 @@ public class RefreshTokenTest extends BlackBoxBase {
         assertNotNull(accessToken);
         String refreshToken = (String) jsonObject.get("refresh_token");
         assertNotNull(refreshToken);
-        
+
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
-        params.add("client_secret", clientSecret);        
+        params.add("client_secret", clientSecret);
         params.add("redirect_uri", redirectUri);
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
-        
-        tokenResponse = oauthHelper.getOauthT1Client().obtainOauth2RefreshTokenPost("refresh_token", accessToken, params);   
+
+        tokenResponse = oauthHelper.getOauthT1Client().obtainOauth2RefreshTokenPost("refresh_token", accessToken, params);
         assertNotNull(tokenResponse);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
@@ -123,7 +123,7 @@ public class RefreshTokenTest extends BlackBoxBase {
         assertNotNull(refreshedAccessToken);
         String refreshedRefreshToken = (String) jsonObject.get("refresh_token");
         assertNotNull(refreshedRefreshToken);
-        
+
         assertFalse(refreshedAccessToken.equals(accessToken));
         assertFalse(refreshedRefreshToken.equals(refreshToken));
     }
