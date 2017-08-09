@@ -1,45 +1,45 @@
 # ORCID API v3.0_dev1 Guide
 
-## Current State (Release Stable)
-v3.0_dev1 is the current release of the ORCID API and should be used for all development.
+## Current State (Release unstable)
+v3.0_dev1 is the current development release of the ORCID API and should be considered unstable.
 
-## XSDs and current state (all stable)
+## XSDs and current state (all unstable)
 - [activities-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/activities-3.0_dev1.xsd) 
-**stable**
+**unstable**
 - [address-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/address-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [bulk-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/bulk-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [common-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_3.0_dev1/common-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [education-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/education-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [email-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/email-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [employment-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/employment-3.0_dev1.xsd)
 **not stable**
 - [error-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/error-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [external-identifier-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/external-identifier-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [funding-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/funding-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [keyword-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/keyword-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [other-names-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/other-name-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [peer-review-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/peer-review-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [person-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/person-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [personal-details-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/personal-details-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [researcher-url-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/researcher-url-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [search-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/search-3.0_dev1.xsd)
-**stable**
+**unstable**
 - [work-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/work-3.0_dev1.xsd)
-**stable**
+**unstable**
 
 ##Changes from Release candidate 2.1:
 ### WorkSummary
