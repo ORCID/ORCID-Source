@@ -7,7 +7,12 @@ angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', funct
                 } else if (key == 'emailsAdditional'){
                     for (var index in data1.emailsAdditional) {
                         if (data1.emailsAdditional[index] != null && data1.emailsAdditional[index].errors !== undefined) {
-                            data1.emailsAdditional[index].errors = data2.emailsAdditional[index].errors;
+                            if(data2.emailsAdditional[index] == undefined){
+                                data1.emailsAdditional[index].errors = null;
+                            } else {
+                                data1.emailsAdditional[index].errors = data2.emailsAdditional[index].errors;
+                            }
+
                         }
                     }
                 } else {
