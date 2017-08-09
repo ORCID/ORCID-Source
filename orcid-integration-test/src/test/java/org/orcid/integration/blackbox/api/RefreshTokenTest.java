@@ -68,7 +68,6 @@ public class RefreshTokenTest extends BlackBoxBase {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
-        params.add("redirect_uri", redirectUri);
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
 
@@ -108,7 +107,6 @@ public class RefreshTokenTest extends BlackBoxBase {
         assertNotNull(refreshToken);
 
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("redirect_uri", redirectUri);
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
 
@@ -152,7 +150,6 @@ public class RefreshTokenTest extends BlackBoxBase {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
-        params.add("redirect_uri", redirectUri);
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
 
@@ -194,7 +191,6 @@ public class RefreshTokenTest extends BlackBoxBase {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", getClient2ClientId());
         params.add("client_secret", getClient2ClientSecret());
-        params.add("redirect_uri", redirectUri);
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
 
@@ -233,7 +229,6 @@ public class RefreshTokenTest extends BlackBoxBase {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", "bad-secret");
-        params.add("redirect_uri", redirectUri);
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
 
@@ -272,7 +267,6 @@ public class RefreshTokenTest extends BlackBoxBase {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
-        params.add("redirect_uri", redirectUri);
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
 
