@@ -87,6 +87,85 @@ public class RefreshTokenTest extends BlackBoxBase {
     }
 
     @Test
+    public void generateRefreshTokenWithWrongClientIdInMemberAPITest() throws InterruptedException, JSONException {
+        String clientId = getClient1ClientId();
+        String clientSecret = getClient1ClientSecret();
+        String redirectUri = getClient1RedirectUri();
+        String userId = getUser1OrcidId();
+        String userPassword = getUser1Password();
+        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), redirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);
+        String authorizationCode = oauthHelper.getAuthorizationCode(clientId, ScopePathType.ACTIVITIES_UPDATE.value(), userId, userPassword, true);
+        assertNotNull(authorizationCode);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+        ClientResponse tokenResponse = oauthHelper.getClientResponse(clientId, clientSecret, null, redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertNotNull(accessToken);
+        String refreshToken = (String) jsonObject.get("refresh_token");
+        assertNotNull(refreshToken);
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", getClient2ClientId());
+        params.add("client_secret", getClient2ClientSecret());
+        params.add("redirect_uri", redirectUri);
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+
+        tokenResponse = oauthHelper.getOauthT2Client().obtainOauth2RefreshTokenPost("refresh_token", accessToken, params);
+        assertNotNull(tokenResponse);
+        assertEquals(400, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        String error = (String) jsonObject.get("error");
+        assertEquals("invalid_request", error);
+        String errorDescription = (String) jsonObject.get("error_description");
+        assertEquals("This token does not belong to the given client", errorDescription);
+    }
+    
+    @Test
+    public void generateRefreshTokenWithBadClientSecretInMemberAPITest() throws InterruptedException, JSONException {
+        String clientId = getClient1ClientId();
+        String clientSecret = getClient1ClientSecret();
+        String redirectUri = getClient1RedirectUri();
+        String userId = getUser1OrcidId();
+        String userPassword = getUser1Password();
+        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), redirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);
+        String authorizationCode = oauthHelper.getAuthorizationCode(clientId, ScopePathType.ACTIVITIES_UPDATE.value(), userId, userPassword, true);
+        assertNotNull(authorizationCode);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+        ClientResponse tokenResponse = oauthHelper.getClientResponse(clientId, clientSecret, null, redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertNotNull(accessToken);
+        String refreshToken = (String) jsonObject.get("refresh_token");
+        assertNotNull(refreshToken);
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", clientId);
+        params.add("client_secret", "bad-secret");
+        params.add("redirect_uri", redirectUri);
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+
+        tokenResponse = oauthHelper.getOauthT2Client().obtainOauth2RefreshTokenPost("refresh_token", accessToken, params);
+        assertNotNull(tokenResponse);
+        assertEquals(401, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        String error = (String) jsonObject.get("error");
+        assertEquals("invalid_client", error);
+        String errorDescription = (String) jsonObject.get("error_description");
+        assertEquals("Bad client credentials", errorDescription);
+    }
+
+
+    @Test
     public void generateRefreshTokenInPublicAPITest() throws InterruptedException, JSONException {
         String clientId = getClient1ClientId();
         String clientSecret = getClient1ClientSecret();
