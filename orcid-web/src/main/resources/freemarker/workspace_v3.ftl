@@ -122,38 +122,35 @@
                 -->
             </div>
         </div>
-        <!--
-
-
-        -->
+        <modalngcomponent>this is the new content</modalngcomponent>
     </script>
 
-        <!--
-        Original Code
-        --------------------------
-        <div ng-controller="CountryCtrl" class="workspace-section country">
-            <div class="workspace-section-header">
-                <div class="workspace-section-title">
-                    <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
-                        <div class="glyphicon glyphicon-pencil"> 
-                            <div class="popover popover-tooltip top"> 
-                                <div class="arrow"></div>
-                                <div class="popover-content">
-                                    <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
-                                </div>                
-                            </div>
-                        </div>                  
-                    </div>
-                    <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
+    <!--
+    Original Code
+    --------------------------
+    <div ng-controller="CountryCtrl" class="workspace-section country">
+        <div class="workspace-section-header">
+            <div class="workspace-section-title">
+                <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
+                    <div class="glyphicon glyphicon-pencil"> 
+                        <div class="popover popover-tooltip top"> 
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
+                            </div>                
+                        </div>
+                    </div>                  
                 </div>
-            </div>
-            <div class="workspace-section-content">
-                <span ng-repeat="country in countryForm.addresses">                                       
-                    <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
-                </span>
+                <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
             </div>
         </div>
-        -->
+        <div class="workspace-section-content">
+            <span ng-repeat="country in countryForm.addresses">                                       
+                <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
+            </span>
+        </div>
+    </div>
+    -->    
     <country-ng2></country-ng2>
 
       <!-- Keywords -->         
