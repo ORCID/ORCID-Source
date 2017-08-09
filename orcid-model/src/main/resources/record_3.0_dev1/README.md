@@ -1,7 +1,7 @@
 # ORCID API v3.0_dev1 Guide
 
 ## Current State (Release unstable)
-v3.0_dev1 is the current development release of the ORCID API and should be considered unstable.
+v3.0_dev1 is the current development release of the ORCID API and is only for internal use.
 
 ## XSDs and current state (all unstable)
 - [activities-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/activities-3.0_dev1.xsd) 
