@@ -151,7 +151,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
                         duplicateCount++;
                     }
 
-                    if(registration.getEmailsAdditional() != null){
+                    if(!(registration.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(registration.getEmailsAdditional().get(0).getValue()))){
                         for(Text emailAdditional : registration.getEmailsAdditional()) {
                             String emailAddressAdditional = emailAdditional.getValue();
                             if (emailManager.emailExists(emailAddressAdditional)) {
@@ -302,7 +302,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         emails.add(emailEntity);
         
         // Set additional emails
-        if(registration.getEmailsAdditional() != null){
+        if(registration.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(registration.getEmailsAdditional().get(0).getValue())){
             for(Text emailAdditional : registration.getEmailsAdditional()) {
                 EmailEntity emailAdditionalEntity = new EmailEntity();
                 emailAdditionalEntity.setId(emailAdditional.getValue().trim());
