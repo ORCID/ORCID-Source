@@ -151,8 +151,8 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
                         duplicateCount++;
                     }
 
-                    if(!(registration.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(registration.getEmailsAdditional().get(0).getValue()))){
-                        for(Text emailAdditional : registration.getEmailsAdditional()) {
+                    for(Text emailAdditional : registration.getEmailsAdditional()) {
+                        if(!PojoUtil.isEmpty(emailAdditional)){
                             String emailAddressAdditional = emailAdditional.getValue();
                             if (emailManager.emailExists(emailAddressAdditional)) {
                                 duplicateAdditionalEmail = true;
@@ -162,7 +162,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
                                 } else {
                                     throw new InvalidRequestException("Unable to register: more than 2 duplicate emails");
                                 }
-                            }  
+                            } 
                         }
                     }
                         
@@ -302,8 +302,8 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         emails.add(emailEntity);
         
         // Set additional emails
-        if(registration.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(registration.getEmailsAdditional().get(0).getValue())){
-            for(Text emailAdditional : registration.getEmailsAdditional()) {
+        for(Text emailAdditional : registration.getEmailsAdditional()) {
+            if(!PojoUtil.isEmpty(emailAdditional)){
                 EmailEntity emailAdditionalEntity = new EmailEntity();
                 emailAdditionalEntity.setId(emailAdditional.getValue().trim());
                 emailAdditionalEntity.setProfile(newRecord);
@@ -316,7 +316,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
                 emails.add(emailAdditionalEntity);
             }
         }
-        
+       
         //Add all emails to record
         newRecord.setEmails(emails);
 

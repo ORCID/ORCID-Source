@@ -302,9 +302,9 @@ public class RegistrationController extends BaseController {
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
         
-        if(!(reg.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(reg.getEmailsAdditional().get(0).getValue()))){
-            regEmailsAdditionalValidate(request, reg, false, false);
-            for(Text emailAdditional : reg.getEmailsAdditional()) {
+        regEmailsAdditionalValidate(request, reg, false, false);
+        for(Text emailAdditional : reg.getEmailsAdditional()) {
+            if(!PojoUtil.isEmpty(emailAdditional)){
                 copyErrors(emailAdditional, reg);
             }
         }
@@ -341,11 +341,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerEmailsAdditionalValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailAdditionalValidate(HttpServletRequest request, @RequestBody Registration reg) {
-        if(reg.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(reg.getEmailsAdditional().get(0).getValue())){
-            return(reg);
-        } else {
-            return regEmailsAdditionalValidate(request, reg, false, false);
-        }
+        return regEmailsAdditionalValidate(request, reg, false, false);
     }
     
     public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
@@ -434,80 +430,83 @@ public class RegistrationController extends BaseController {
     public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
             List<Text> emailsAdditionalList = new ArrayList<Text>();
             for(Text emailAdditional : reg.getEmailsAdditional()) {
-                emailAdditional.setErrors(new ArrayList<String>());
-                if (!isKeyup && (emailAdditional.getValue() == null || emailAdditional.getValue().trim().isEmpty())) {
-                    setError(emailAdditional, "Email.registrationForm.email");
-                }
-                
-                String emailAddressAdditional = emailAdditional.getValue();
-        
-                MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "EmailAdditional");
-                // Validate the email address is ok        
-                if(!validateEmailAddress(emailAddressAdditional)) {
-                    String[] codes = { "Email.personalInfoForm.email" };
-                    String[] args = { emailAddressAdditional };
-                    mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Not vaild"));
-                } else {
-                    //Validate duplicates 
-                    //If email exists
-                    if(emailManager.emailExists(emailAddressAdditional)) {
-                        String orcid = emailManager.findOrcidIdByEmail(emailAddressAdditional);
+                if(!PojoUtil.isEmpty(emailAdditional)){
+                    emailAdditional.setErrors(new ArrayList<String>());
+                    if (!isKeyup && (emailAdditional.getValue() == null || emailAdditional.getValue().trim().isEmpty())) {
+                        setError(emailAdditional, "Email.registrationForm.email");
+                    }
+                    
+                    String emailAddressAdditional = emailAdditional.getValue();
+            
+                    MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "EmailAdditional");
+                    // Validate the email address is ok        
+                    if(!validateEmailAddress(emailAddressAdditional)) {
+                        String[] codes = { "Email.personalInfoForm.email" };
                         String[] args = { emailAddressAdditional };
-                        //If it is claimed, should return a duplicated exception
-                        if(profileEntityManager.isProfileClaimedByEmail(emailAddressAdditional)) {                                                                        
-                                String[] codes = null;
-                                if(profileEntityManager.isDeactivated(orcid)) {
-                                        codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                        mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Not vaild"));
+                    } else {
+                        //Validate duplicates 
+                        //If email exists
+                        if(emailManager.emailExists(emailAddressAdditional)) {
+                            String orcid = emailManager.findOrcidIdByEmail(emailAddressAdditional);
+                            String[] args = { emailAddressAdditional };
+                            //If it is claimed, should return a duplicated exception
+                            if(profileEntityManager.isProfileClaimedByEmail(emailAddressAdditional)) {                                                                        
+                                    String[] codes = null;
+                                    if(profileEntityManager.isDeactivated(orcid)) {
+                                            codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                                } else {
+                                    codes = new String[] { "orcid.frontend.verify.duplicate_email" };
+                                }                                        
+                                mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Email already exists"));                    
                             } else {
-                                codes = new String[] { "orcid.frontend.verify.duplicate_email" };
-                            }                                        
-                            mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Email already exists"));                    
-                        } else {
-                                if(profileEntityManager.isDeactivated(orcid)) {
-                                        String[] codes = new String[] { "orcid.frontend.verify.deactivated_email" };
-                                        mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Email already exists"));
-                                } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
-                                        //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
-                                        String resendUrl = createResendClaimUrl(emailAddressAdditional, request);
-                                String[] codes = { "orcid.frontend.verify.unclaimed_email" };
-                                args = new String[] { emailAddressAdditional, resendUrl };
-                                        mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Unclaimed record exists"));                        
-                            } else {
-                                LOGGER.info("Email " + emailAddressAdditional + " belongs to a unclaimed record and can be auto deprecated");
+                                    if(profileEntityManager.isDeactivated(orcid)) {
+                                            String[] codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                                            mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Email already exists"));
+                                    } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
+                                            //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
+                                            String resendUrl = createResendClaimUrl(emailAddressAdditional, request);
+                                    String[] codes = { "orcid.frontend.verify.unclaimed_email" };
+                                    args = new String[] { emailAddressAdditional, resendUrl };
+                                            mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Unclaimed record exists"));                        
+                                } else {
+                                    LOGGER.info("Email " + emailAddressAdditional + " belongs to a unclaimed record and can be auto deprecated");
+                                }
+                            }                                
+                        }
+                    }
+                    
+                    for (ObjectError oe : mbr.getAllErrors()) {
+                        Object[] arguments = oe.getArguments();
+                        if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
+                            // XXX
+                            emailAdditional.getErrors().add(getMessage("oauth.registration.duplicate_email", arguments));
+                        } else if (oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
+                            Object email = "";
+                            if (arguments != null && arguments.length > 0) {
+                                email = arguments[0];
                             }
-                        }                                
+                            String link = "/signin";
+                            String linkType = reg.getLinkType();
+                            if ("social".equals(linkType)) {
+                                link = "/social/access";
+                            } else if ("shibboleth".equals(linkType)) {
+                                link = "/shibboleth/signin";
+                            }
+                            emailAdditional.getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
+                        }
+                        else if(oe.getCode().equals("orcid.frontend.verify.deactivated_email")){
+                            // Handle this message in angular to allow AJAX action
+                            emailAdditional.getErrors().add(oe.getCode());
+                        }
+                        else {
+                            emailAdditional.getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
+                        }
                     }
+                    
+                    emailsAdditionalList.add(emailAdditional);
                 }
                 
-                for (ObjectError oe : mbr.getAllErrors()) {
-                    Object[] arguments = oe.getArguments();
-                    if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
-                        // XXX
-                        emailAdditional.getErrors().add(getMessage("oauth.registration.duplicate_email", arguments));
-                    } else if (oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
-                        Object email = "";
-                        if (arguments != null && arguments.length > 0) {
-                            email = arguments[0];
-                        }
-                        String link = "/signin";
-                        String linkType = reg.getLinkType();
-                        if ("social".equals(linkType)) {
-                            link = "/social/access";
-                        } else if ("shibboleth".equals(linkType)) {
-                            link = "/shibboleth/signin";
-                        }
-                        emailAdditional.getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
-                    }
-                    else if(oe.getCode().equals("orcid.frontend.verify.deactivated_email")){
-                        // Handle this message in angular to allow AJAX action
-                        emailAdditional.getErrors().add(oe.getCode());
-                    }
-                    else {
-                        emailAdditional.getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
-                    }
-                }
-                
-                emailsAdditionalList.add(emailAdditional);
             }
             reg.setEmailsAdditional(emailsAdditionalList);
             return reg;
