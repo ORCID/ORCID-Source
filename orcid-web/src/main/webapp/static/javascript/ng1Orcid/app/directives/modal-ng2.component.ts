@@ -1,8 +1,7 @@
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  
-import { Component, Input } from '@angular/core';
-import { NgModule } from '@angular/core';
+import { Component, Input, NgModule } from '@angular/core';
 
 /*
 //Example of how to include the directive in the template, just add the attr to the tag

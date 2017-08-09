@@ -122,10 +122,10 @@
                 -->
             </div>
         </div>
+        <!--
 
-        <modal-ng-component> 
-            Testing modal content
-        </modal-ng-component>
+
+        -->
     </script>
 
         <!--

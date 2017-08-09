@@ -5,7 +5,7 @@ import { Component, NgModule } from '@angular/core';
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
-import { ModalNgComponent } from '../directives/modal-ng2.component.ts';
+//import { ModalNgComponent } from '../directives/modal-ng2.component.ts';
 
 import { BiographyNg2Module } from './biography/biography.ts';
 import { CountryNg2Module } from './country/country.ts';
@@ -42,7 +42,11 @@ export class RootCmp {
 
 @NgModule({
     imports: [
-        ModalNgComponent
+        BrowserModule,
+        BiographyNg2Module,
+        CountryNg2Module,
+        UpgradeModule,
+        WidgetNg2Module
         // We don't need to provide any routes.
         // The router will collect all routes from all the registered modules.
         //RouterModule.forRoot([])
