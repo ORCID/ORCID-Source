@@ -85,6 +85,8 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             update_1_2_API(orcid);
         } else if (AvailableBroker.DUMP_STATUS_2_0_API.equals(destinationBroker)) {
             update_2_0_API(orcid);
+        } else if (AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API.equals(destinationBroker)) {
+            update_2_0_Activities_API(orcid);
         }
     }
 
