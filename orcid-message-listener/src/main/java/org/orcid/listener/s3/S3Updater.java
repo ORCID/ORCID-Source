@@ -127,7 +127,7 @@ public class S3Updater {
 
     private void putJsonElement(String orcid, OrcidMessage profile) throws JsonProcessingException {
         try {
-            String bucket = bucketPrefix + "-api-1-2-json-" + getBucketCheckSum(orcid);
+            String bucket = getBucketName("api-1-2", "json", orcid);
             s3MessagingService.send(bucket, orcid + ".json", toJson(profile), MediaType.APPLICATION_JSON);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -137,7 +137,7 @@ public class S3Updater {
 
     private void putXmlElement(String orcid, OrcidMessage profile) throws IOException, JAXBException {
         try {
-            String bucket = bucketPrefix + "-api-1-2-xml-" + getBucketCheckSum(orcid);
+            String bucket = getBucketName("api-1-2", "xml", orcid);
             s3MessagingService.send(bucket, orcid + ".xml", toXML(profile), MediaType.APPLICATION_XML);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -147,7 +147,7 @@ public class S3Updater {
 
     private void putJsonElement(String orcid, OrcidDeprecated error) throws JsonProcessingException {
         try {
-            String bucket = bucketPrefix + "-api-1-2-json-" + getBucketCheckSum(orcid);
+            String bucket = getBucketName("api-1-2", "json", orcid);
             s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -157,7 +157,7 @@ public class S3Updater {
 
     private void putXmlElement(String orcid, OrcidDeprecated error) throws IOException, JAXBException {
         try {
-            String bucket = bucketPrefix + "-api-1-2-xml-" + getBucketCheckSum(orcid);
+            String bucket = getBucketName("api-1-2", "xml", orcid);
             s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -167,7 +167,7 @@ public class S3Updater {
 
     private void putJsonElement(String orcid, Record record) throws JsonProcessingException {
         try {
-            String bucket = bucketPrefix + "-api-2-0-json-" + getBucketCheckSum(orcid);
+            String bucket = getBucketName("api-2-0", "json", orcid);
             s3MessagingService.send(bucket, orcid + ".json", toJson(record), MediaType.APPLICATION_JSON);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -177,7 +177,7 @@ public class S3Updater {
 
     private void putXmlElement(String orcid, Record record) throws IOException, JAXBException {
         try {
-            String bucket = bucketPrefix + "-api-2-0-xml-" + getBucketCheckSum(orcid);
+            String bucket = getBucketName("api-2-0", "xml", orcid);
             s3MessagingService.send(bucket, orcid + ".xml", toXML(record), MediaType.APPLICATION_XML);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -187,8 +187,8 @@ public class S3Updater {
 
     private void putJsonElement(String orcid, ActivitiesSummary as) throws JsonProcessingException {
         try {
-            String bucket = bucketPrefix + "-api-2-0-activities-json-" + getBucketCheckSum(orcid);
-            s3MessagingService.send(bucket, orcid + ".json", toJson(as), MediaType.APPLICATION_JSON);
+            String bucket = getBucketName("api-2-0-activities", "json", orcid);
+            s3MessagingService.send(bucket, orcid + "_activities.json", toJson(as), MediaType.APPLICATION_JSON);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
             throw e;
@@ -197,8 +197,8 @@ public class S3Updater {
 
     private void putXmlElement(String orcid, ActivitiesSummary as) throws IOException, JAXBException {
         try {
-            String bucket = bucketPrefix + "-api-2-0-activities-xml-" + getBucketCheckSum(orcid);
-            s3MessagingService.send(bucket, orcid + ".xml", toXML(as), MediaType.APPLICATION_XML);
+            String bucket = getBucketName("api-2-0-activities", "xml", orcid);
+            s3MessagingService.send(bucket, orcid + "_activities.xml", toXML(as), MediaType.APPLICATION_XML);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
             throw e;
@@ -207,7 +207,7 @@ public class S3Updater {
 
     private void putJsonElement(String orcid, OrcidError error) throws JsonProcessingException {
         try {
-            String bucket = bucketPrefix + "-api-2-0-json-" + getBucketCheckSum(orcid);
+            String bucket = getBucketName("api-2-0", "json", orcid);
             s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -217,7 +217,7 @@ public class S3Updater {
 
     private void putXmlElement(String orcid, OrcidError error) throws IOException, JAXBException {
         try {
-            String bucket = bucketPrefix + "-api-2-0-xml-" + getBucketCheckSum(orcid);
+            String bucket = getBucketName("api-2-0", "xml", orcid);
             s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -245,15 +245,15 @@ public class S3Updater {
         return baos.toByteArray();
     }
 
-    public String getBucketCheckSum(String orcid) {
+    public String getBucketName(String apiVersion, String format, String orcid) {
         if (bucketPrefix.endsWith("-dev") || bucketPrefix.endsWith("-qa") || bucketPrefix.endsWith("-sandbox")) {
-            return "all";
+            return bucketPrefix + "-all";
         } else {
             String c = String.valueOf(orcid.charAt(orcid.length() - 1));
             if ("X".equals(c)) {
                 c = "x";
             }
-            return c;
+            return bucketPrefix + '-' + apiVersion + '-' + format + '-' + c;
         }
     }
 }
