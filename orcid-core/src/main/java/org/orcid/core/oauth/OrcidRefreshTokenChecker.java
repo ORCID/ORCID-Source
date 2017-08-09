@@ -56,11 +56,11 @@ public class OrcidRefreshTokenChecker {
                 ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRES_IN)) : 0L;
         String refreshToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REFRESH_TOKEN);
 
-        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
+        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByRefreshTokenValue(refreshToken);
 
         // Verify the token belongs to this client
         if (!clientId.equals(token.getClientDetailsId())) {
-            throw new IllegalArgumentException("This token doesnt belong to the given client");
+            throw new IllegalArgumentException("This token does not belong to the given client");
         }
 
         // Verify client is enabled
