@@ -369,7 +369,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
             generateRefreshToken(parent, CLIENT_ID_2, revokeOld, expireIn, parentScope);        
             fail();
         } catch(IllegalArgumentException e) {
-            assertTrue(e.getMessage().contains("This token doesnt belong to the given client"));
+            assertTrue(e.getMessage().contains("This token does not belong to the given client"));
         } catch(Exception e) {
             fail();
         }
@@ -416,7 +416,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
             generateRefreshToken(parent, null, revokeOld, expireIn, parentScope);        
             fail();
         } catch(InvalidTokenException e) {
-            assertTrue(e.getMessage().contains("Token and refresh token does not match"));
+            assertTrue(e.getMessage().contains("Unable to find refresh token"));
         } catch(Exception e) {
             fail();
         }
@@ -435,16 +435,13 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         Long expireIn = null;
         
         OrcidOauth2TokenDetail parent = createToken(CLIENT_ID_1, USER_ORCID, tokenValue, refreshTokenValue, parentTokenExpiration, parentScope);
-        try {
-            //Change the value we are going to use for the refresh token
-            parent.setTokenValue("invalid-value");
-            generateRefreshToken(parent, null, revokeOld, expireIn, parentScope);        
-            fail();
-        } catch(NoResultException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }
+        // Change the value we are going to use for the refresh token
+        parent.setTokenValue("invalid-value");
+        OAuth2AccessToken refreshedToken = generateRefreshToken(parent, null, revokeOld, expireIn, parentScope);
+        // We shouldn't care about the access token, it's not required and
+        // shouldn't really be there. If the refresh token and client
+        // credentials are good, we can generate the refresh token.
+        assertNotNull(refreshedToken);
     } 
        
 }
