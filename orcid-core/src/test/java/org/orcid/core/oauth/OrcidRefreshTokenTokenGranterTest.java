@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
