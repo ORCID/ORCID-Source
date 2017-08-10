@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -56,7 +57,12 @@ public class OrcidRefreshTokenChecker {
                 ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRES_IN)) : 0L;
         String refreshToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REFRESH_TOKEN);
 
-        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByRefreshTokenValue(refreshToken);
+        OrcidOauth2TokenDetail token = null;
+        try {
+            token = orcidOauth2TokenDetailDao.findByRefreshTokenValue(refreshToken);
+        } catch (NoResultException e) {
+            throw new InvalidTokenException("Unable to find refresh token", e);
+        }
 
         // Verify the token belongs to this client
         if (!clientId.equals(token.getClientDetailsId())) {
