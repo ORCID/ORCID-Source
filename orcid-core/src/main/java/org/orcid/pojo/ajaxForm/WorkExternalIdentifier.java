@@ -68,6 +68,22 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
 
     }
     
+    public static WorkExternalIdentifier valueOf(org.orcid.jaxb.model.v3.dev1.record.ExternalID workExternalIdentifier) {
+        WorkExternalIdentifier wi = new WorkExternalIdentifier();
+        if (workExternalIdentifier != null) {
+            if (workExternalIdentifier.getValue() != null)
+                wi.setWorkExternalIdentifierId(Text.valueOf(workExternalIdentifier.getValue()));
+            if (workExternalIdentifier.getType() != null)
+                wi.setWorkExternalIdentifierType(Text.valueOf(workExternalIdentifier.getType()));
+            if(workExternalIdentifier.getRelationship() != null)
+                wi.setRelationship(Text.valueOf(workExternalIdentifier.getRelationship().value()));
+            if(workExternalIdentifier.getUrl() != null)
+                wi.setUrl(Text.valueOf(workExternalIdentifier.getUrl().getValue()));
+        }
+        return wi;
+
+    }
+    
     public org.orcid.jaxb.model.message.WorkExternalIdentifier toWorkExternalIdentifier() {
         org.orcid.jaxb.model.message.WorkExternalIdentifier we = new org.orcid.jaxb.model.message.WorkExternalIdentifier();
         if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierId())) 

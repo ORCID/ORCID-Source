@@ -87,7 +87,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         }
 
         mav.addObject("hideRegistration", (sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin()));
-        mav.addObject("hasVerifiedEmail", emailManagerReadOnly.haveAnyEmailVerified(userOrcid, entity.getLastModified().getTime()));
+        mav.addObject("hasVerifiedEmail", emailManagerReadOnly.haveAnyEmailVerified(userOrcid));
         return mav;
     }
 
@@ -109,9 +109,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/get-client.json", method = RequestMethod.GET)
     public @ResponseBody Client getClient() {
         String userOrcid = getEffectiveUserOrcid();
-        ProfileEntity member = profileEntityCacheManager.retrieve(userOrcid);
-        Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();
-        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(userOrcid, lastModified);
+        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
 
         if (existingClients.isEmpty()) {
             return null;

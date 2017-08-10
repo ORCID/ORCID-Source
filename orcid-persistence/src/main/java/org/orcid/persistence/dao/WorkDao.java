@@ -152,6 +152,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * Retrieve a work from database
      * @param orcid
      * @param id
+     * @param lastModified 
      * @return the WorkEntity associated with the parameter id
      * */
     WorkEntity getWork(String orcid, Long id);

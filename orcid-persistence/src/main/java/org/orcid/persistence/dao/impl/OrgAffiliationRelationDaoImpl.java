@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliationRelationEntity, Long> implements OrgAffiliationRelationDao {
@@ -160,6 +161,18 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         Query query = entityManager.createNativeQuery("DELETE FROM org_affiliation_relation WHERE client_source_id=:clientSourceId");
         query.setParameter("clientSourceId", clientSourceId);
         query.executeUpdate();
+    }
+    
+    @Override
+    @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<OrgAffiliationRelationEntity> getEducationSummaries(String userOrcid, long lastModified) {
+        return getByUserAndType(userOrcid, org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);
+    }
+    
+    @Override
+    @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<OrgAffiliationRelationEntity> getEmploymentSummaries(String userOrcid, long lastModified) {
+        return getByUserAndType(userOrcid, org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);
     }
     
     /**

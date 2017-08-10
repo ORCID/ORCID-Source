@@ -45,5 +45,7 @@ public interface AddressDao extends GenericDao<AddressEntity, Long> {
      *            removed.
      */
     void removeAllAddress(String orcid);
+
+    List<AddressEntity> getPublicAddresses(String orcid, long lastModified);
     
 }

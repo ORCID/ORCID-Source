@@ -126,7 +126,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
     @Test
     public void getAllTest() {
         String orcid = "0000-0000-0000-0003";
-        Keywords elements = profileKeywordManager.getKeywords(orcid, System.currentTimeMillis());
+        Keywords elements = profileKeywordManager.getKeywords(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getKeywords());
         assertEquals(5, elements.getKeywords().size());
@@ -156,7 +156,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
     @Test
     public void getPublicTest() {
         String orcid = "0000-0000-0000-0003";        
-        Keywords elements = profileKeywordManager.getPublicKeywords(orcid, System.currentTimeMillis());
+        Keywords elements = profileKeywordManager.getPublicKeywords(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getKeywords());
         assertEquals(1, elements.getKeywords().size());

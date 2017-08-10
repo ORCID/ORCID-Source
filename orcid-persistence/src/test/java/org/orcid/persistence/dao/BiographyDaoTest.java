@@ -59,7 +59,7 @@ public class BiographyDaoTest extends DBUnitTest {
     
     @Test
     public void testfindByOrcid() {
-        BiographyEntity bio = biographyDao.getBiography("4444-4444-4444-4447");
+        BiographyEntity bio = biographyDao.getBiography("4444-4444-4444-4447", System.currentTimeMillis());
         assertNotNull(bio);
         assertEquals("Biography for 4444-4444-4444-4447", bio.getBiography());
         assertEquals(Visibility.LIMITED, bio.getVisibility());        
@@ -67,7 +67,7 @@ public class BiographyDaoTest extends DBUnitTest {
     
     @Test
     public void testUpdate() {
-        BiographyEntity bio = biographyDao.getBiography("4444-4444-4444-4442");
+        BiographyEntity bio = biographyDao.getBiography("4444-4444-4444-4442", System.currentTimeMillis());
         assertNotNull(bio);
         assertEquals("Biography for 4444-4444-4444-4442", bio.getBiography());
         assertEquals(Visibility.PUBLIC, bio.getVisibility()); 
@@ -76,7 +76,7 @@ public class BiographyDaoTest extends DBUnitTest {
         bio.setVisibility(Visibility.LIMITED);
         assertTrue(biographyDao.updateBiography("4444-4444-4444-4442", bio.getBiography(), bio.getVisibility()));
         
-        BiographyEntity updatedBio = biographyDao.getBiography("4444-4444-4444-4442");
+        BiographyEntity updatedBio = biographyDao.getBiography("4444-4444-4444-4442", System.currentTimeMillis());
         assertNotNull(updatedBio);
         assertEquals("Updated biography", bio.getBiography());
         assertEquals(Visibility.LIMITED, bio.getVisibility());

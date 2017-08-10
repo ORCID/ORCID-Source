@@ -120,7 +120,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     
     void removeFundingByClientSourceId(String clientSourceId);
     
-    List<ProfileFundingEntity> getByUser(String userOrcid);
+    List<ProfileFundingEntity> getByUser(String userOrcid, long lastModified);
     
     /**
      * Returns a list of external ids of fundings that still have old external identifiers

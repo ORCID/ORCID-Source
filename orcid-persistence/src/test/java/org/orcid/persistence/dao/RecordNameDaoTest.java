@@ -60,7 +60,7 @@ public class RecordNameDaoTest extends DBUnitTest {
     
     @Test
     public void testfindByOrcid() {
-        RecordNameEntity recordName = recordNameDao.getRecordName("4444-4444-4444-4442");
+        RecordNameEntity recordName = recordNameDao.getRecordName("4444-4444-4444-4442", System.currentTimeMillis());
         assertNotNull(recordName);
         assertEquals("Credit Name", recordName.getCreditName());
         assertEquals("Given Names", recordName.getGivenNames());
@@ -80,7 +80,7 @@ public class RecordNameDaoTest extends DBUnitTest {
     
     @Test
     public void testUpdate() {
-        RecordNameEntity recordName = recordNameDao.getRecordName("4444-4444-4444-4447");
+        RecordNameEntity recordName = recordNameDao.getRecordName("4444-4444-4444-4447", System.currentTimeMillis());
         assertNotNull(recordName);
         assertEquals("Credit Name", recordName.getCreditName());
         assertEquals("Given Names", recordName.getGivenNames());
@@ -93,7 +93,7 @@ public class RecordNameDaoTest extends DBUnitTest {
         recordName.setVisibility(Visibility.PUBLIC);
         assertTrue(recordNameDao.updateRecordName(recordName));
         
-        RecordNameEntity updatedRecordName = recordNameDao.getRecordName("4444-4444-4444-4447");
+        RecordNameEntity updatedRecordName = recordNameDao.getRecordName("4444-4444-4444-4447", System.currentTimeMillis());
         assertEquals("Updated Credit Name", updatedRecordName.getCreditName());
         assertEquals("Updated Given Names", updatedRecordName.getGivenNames());
         assertEquals("Updated Family Name", updatedRecordName.getFamilyName());

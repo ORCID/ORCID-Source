@@ -295,7 +295,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
         profileDao.persist(profileEntity);
         profileDao.flush();
-        OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity);
+        OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
         return updatedTranslatedOrcid;
     }
 
@@ -653,13 +653,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             act.setVisibility(defaultWorkVisibility);
         else
             act.setVisibility(act.getVisibility() != null ? act.getVisibility() : Visibility.PRIVATE);
-    }
-
-    @Override
-    @Transactional
-    public OrcidProfile retrieveOrcidProfileByEmail(String email) {
-        return retrieveOrcidProfileByEmail(email, LoadOptions.ALL);
-    }
+    }   
 
     @Override
     @Transactional
@@ -1957,7 +1951,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             @Override
             @Transactional
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                OrcidProfile orcidProfile = retrieveOrcidProfileByEmail(email);
+                OrcidProfile orcidProfile = retrieveOrcidProfileByEmail(email, LoadOptions.BIO_ONLY);
                 notificationManager.sendVerificationReminderEmail(orcidProfile, email);
                 emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
                 emailEventDao.flush();

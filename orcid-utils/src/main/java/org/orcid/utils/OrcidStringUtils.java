@@ -38,6 +38,8 @@ public class OrcidStringUtils {
 
         public static String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
         public static String ORCID_URI_STRING = "http://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
+        public static String ORCID_URI_2_1_STRING = "https://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
+        
         
 	private static String LT = "&lt;";
 	private static String GT = "&gt;";
@@ -55,6 +57,8 @@ public class OrcidStringUtils {
 			.compile(ORCID_STRING);
 	private static final Pattern orcidUriPattern = Pattern
                 .compile(ORCID_URI_STRING);
+	private static final Pattern orcidUri2_1Pattern = Pattern
+                .compile(ORCID_URI_2_1_STRING);
 	private static final Pattern clientIdPattern = Pattern
 			.compile("APP-[\\dA-Z]{16}");
 
@@ -76,6 +80,14 @@ public class OrcidStringUtils {
                 return false;
         }
 	}
+	
+	public static boolean isValidOrcid2_1Uri(String orcidUri) {
+            if (StringUtils.isNotBlank(orcidUri)) {
+                return orcidUri2_1Pattern.matcher(orcidUri).matches();
+        } else {
+                return false;
+        }
+        }
 
 	public static String getOrcidNumber(String orcid) {
 		Matcher matcher = orcidPattern.matcher(orcid);

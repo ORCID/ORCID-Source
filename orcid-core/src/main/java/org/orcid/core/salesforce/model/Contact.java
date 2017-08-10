@@ -17,6 +17,10 @@
 package org.orcid.core.salesforce.model;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -103,6 +107,10 @@ public class Contact implements Serializable {
     public String toString() {
         return "Contact [id=" + id + ", accountId=" + accountId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", role=" + role
                 + ", orcid=" + orcid + "]";
+    }
+
+    public static Map<String, Contact> mapByContactRoleId(Collection<Contact> contacts) {
+        return contacts.stream().collect(Collectors.toMap(c -> c.getRole().getId(), Function.identity()));
     }
 
 }

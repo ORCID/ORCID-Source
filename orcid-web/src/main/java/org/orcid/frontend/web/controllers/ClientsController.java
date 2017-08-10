@@ -90,7 +90,7 @@ public class ClientsController extends BaseWorkspaceController {
         mav.addObject("member_type", memberType);
         
         Long lastModified = entity.getLastModified() == null ? 0 : entity.getLastModified().getTime();
-        Set<org.orcid.jaxb.model.client_v2.Client> clients = clientManagerReadOnly.getClients(memberId, lastModified);
+        Set<org.orcid.jaxb.model.client_v2.Client> clients = clientManagerReadOnly.getClients(memberId);
         if(clients.isEmpty()) {
             mav.addObject("allow_more_clients", true);
         } else if(MemberType.PREMIUM.equals(memberType) || MemberType.PREMIUM_INSTITUTION.equals(memberType)) {
@@ -221,7 +221,7 @@ public class ClientsController extends BaseWorkspaceController {
         String memberId = getEffectiveUserOrcid();
         ProfileEntity member = profileEntityCacheManager.retrieve(memberId);
         Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();       
-        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(memberId, lastModified);
+        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(memberId);
         List<Client> clients = new ArrayList<Client>();
         for (org.orcid.jaxb.model.client_v2.Client existingClient : existingClients) {
             clients.add(Client.fromModelObject(existingClient));

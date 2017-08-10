@@ -102,7 +102,7 @@ public class ClientManagerReadOnlyTest {
         clients.add(getClientDetailsEntity(seed2));
         clients.add(getClientDetailsEntity(seed3));
         when(daoMock.findByGroupId(anyString())).thenReturn(clients);
-        Set<Client> results = clientManagerReadOnly.getClients("anything", 0L);
+        Set<Client> results = clientManagerReadOnly.getClients("anything");
         assertEquals(3, results.size());
         for (Client client : results) {
             if (client.getId().equals(seed1)) {

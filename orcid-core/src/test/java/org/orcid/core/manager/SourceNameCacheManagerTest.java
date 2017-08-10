@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.BaseTest;
@@ -78,7 +79,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
         when(mock_clientDetailsDao.existsAndIsNotPublicClient(OLD_FORMAT_CLIENT_ID)).thenReturn(true);
         when(mock_clientDetailsDao.existsAndIsNotPublicClient(AdditionalMatchers.not(Matchers.eq(OLD_FORMAT_CLIENT_ID)))).thenReturn(false);
                 
-        when(mock_recordNameDao.getRecordName(Matchers.eq(USER_PUBLIC_NAME))).thenAnswer(new Answer<RecordNameEntity>(){
+        when(mock_recordNameDao.getRecordName(Matchers.eq(USER_PUBLIC_NAME), Mockito.anyLong())).thenAnswer(new Answer<RecordNameEntity>(){
             @Override
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
@@ -91,7 +92,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
             }            
         });
         
-        when(mock_recordNameDao.getRecordName(Matchers.eq(USER_LIMITED_NAME))).thenAnswer(new Answer<RecordNameEntity>(){
+        when(mock_recordNameDao.getRecordName(Matchers.eq(USER_LIMITED_NAME), Mockito.anyLong())).thenAnswer(new Answer<RecordNameEntity>(){
             @Override
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
@@ -104,7 +105,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
             }            
         });
         
-        when(mock_recordNameDao.getRecordName(Matchers.eq(USER_PRIVATE_NAME))).thenAnswer(new Answer<RecordNameEntity>(){
+        when(mock_recordNameDao.getRecordName(Matchers.eq(USER_PRIVATE_NAME), Mockito.anyLong())).thenAnswer(new Answer<RecordNameEntity>(){
             @Override
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
@@ -119,7 +120,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
         
         
         //Set up a client with the old id format and a user in the profile table, to be sure that the name is picked from the client details table
-        when(mock_recordNameDao.getRecordName(Matchers.eq(OLD_FORMAT_CLIENT_ID))).thenAnswer(new Answer<RecordNameEntity>(){
+        when(mock_recordNameDao.getRecordName(Matchers.eq(OLD_FORMAT_CLIENT_ID), Mockito.anyLong())).thenAnswer(new Answer<RecordNameEntity>(){
             @Override
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
@@ -177,7 +178,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
         assertEquals("Credit name for " + user1, name1);
         name1 = sourceNameCacheManager.retrieve(user1);
         assertEquals("Credit name for " + user1, name1);
-        verify(mock_recordNameDao, times(1)).getRecordName(user1);
+        verify(mock_recordNameDao, times(1)).getRecordName(Mockito.eq(user1), Mockito.anyLong());
         verify(mock_clientDetailsDao, times(1)).existsAndIsNotPublicClient(user1);                        
         //Remove it from cache
         sourceNameCacheManager.remove(user1);
@@ -193,7 +194,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
         assertEquals("Credit name for " + user1, name1);
         sourceNameCacheManager.remove(user1);
         name1 = sourceNameCacheManager.retrieve(user1);
-        verify(mock_recordNameDao, times(1)).getRecordName(user1);
+        verify(mock_recordNameDao, times(1)).getRecordName(Mockito.eq(user1), Mockito.anyLong());
         verify(mock_clientDetailsDao, times(1)).existsAndIsNotPublicClient(user1);
         sourceNameCacheManager.remove(user1);
     }

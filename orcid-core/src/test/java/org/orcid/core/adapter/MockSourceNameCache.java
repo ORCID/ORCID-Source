@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -67,7 +68,7 @@ public class MockSourceNameCache {
     public void init() throws Exception {         
         MockitoAnnotations.initMocks(this);
         
-        when(mockedRecordNameDao.getRecordName((Matchers.<String> any()))).thenAnswer(new Answer<RecordNameEntity>(){
+        when(mockedRecordNameDao.getRecordName(Mockito.anyString(), Mockito.anyLong())).thenAnswer(new Answer<RecordNameEntity>(){
             @Override
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];

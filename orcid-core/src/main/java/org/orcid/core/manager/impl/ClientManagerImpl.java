@@ -234,7 +234,7 @@ public class ClientManagerImpl implements ClientManager {
         switch (member.getGroupType()) {
         case BASIC:
         case BASIC_INSTITUTION:
-            Set<Client> clients = clientManagerReadOnly.getClients(memberId, lastModified);
+            Set<Client> clients = clientManagerReadOnly.getClients(memberId);
             if (clients != null && !clients.isEmpty()) {
                 throw new IllegalArgumentException("Your membership doesn't allow you to have more clients");
             }

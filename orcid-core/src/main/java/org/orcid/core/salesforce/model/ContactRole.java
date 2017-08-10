@@ -64,7 +64,7 @@ public class ContactRole implements Serializable {
     public void setContactId(String contactId) {
         this.contactId = contactId;
     }
-    
+
     public Boolean isVotingContact() {
         return isVotingContact;
     }

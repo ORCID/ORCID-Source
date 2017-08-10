@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.read_only.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,7 +27,6 @@ import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.springframework.cache.annotation.Cacheable;
 
 public class AddressManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements AddressManagerReadOnly {
     
@@ -42,8 +40,7 @@ public class AddressManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implemen
     }
 
     @Override
-    @Cacheable(value = "primary-address", key = "#orcid.concat('-').concat(#lastModified)")
-    public Address getPrimaryAddress(String orcid, long lastModified) {        
+    public Address getPrimaryAddress(String orcid) {        
         List<AddressEntity> addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         Address address = null;
         if(addresses != null) {
@@ -64,26 +61,15 @@ public class AddressManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implemen
     }
     
     @Override
-    @Cacheable(value = "address", key = "#orcid.concat('-').concat(#lastModified)")
-    public Addresses getAddresses(String orcid, long lastModified) {
-        return getAddresses(orcid, null);        
+    public Addresses getAddresses(String orcid) {
+        List<AddressEntity> addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
+        return adapter.toAddressList(addresses);        
     }
 
     @Override
-    @Cacheable(value = "public-address", key = "#orcid.concat('-').concat(#lastModified)")
-    public Addresses getPublicAddresses(String orcid, long lastModified) {
-        return getAddresses(orcid, Visibility.PUBLIC);
+    public Addresses getPublicAddresses(String orcid) {
+        List<AddressEntity> addresses = addressDao.getAddresses(orcid, Visibility.PUBLIC);
+        return adapter.toAddressList(addresses);        
     }
     
-    private Addresses getAddresses(String orcid, Visibility visibility) {
-        List<AddressEntity> addresses = new ArrayList<AddressEntity>();
-        
-        if (visibility == null) {
-            addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
-        } else {
-            addresses = addressDao.getAddresses(orcid, visibility);
-        }           
-        
-        return adapter.toAddressList(addresses);        
-    }    
 }

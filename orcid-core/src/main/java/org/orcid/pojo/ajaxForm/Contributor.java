@@ -70,6 +70,28 @@ public class Contributor implements ErrorsInterface, Serializable {
         return c;
     }
     
+    public static Contributor valueOf(org.orcid.jaxb.model.v3.dev1.common.Contributor contributor) {
+        Contributor c = new Contributor();
+        if (contributor != null) {
+            if (contributor.getContributorAttributes() != null) {
+                contributor.getContributorAttributes();
+                if (contributor.getContributorAttributes().getContributorRole() != null)
+                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
+                if (contributor.getContributorAttributes().getContributorSequence() != null)
+                    c.setContributorSequence(Text.valueOf(contributor.getContributorAttributes().getContributorSequence().value()));
+            }
+            if (contributor.getContributorOrcid() != null) {
+                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
+                c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
+            }
+            //Set default values that must be overwritten by the controller
+            if (contributor.getCreditName() != null) {
+                c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
+            }
+        }
+        return c;
+    }
+    
     public static Contributor valueOf(FundingContributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {

@@ -38,7 +38,7 @@
 	</cache>
 
 	<cache name="pub-min-works-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		timeToLiveSeconds="86400" maxElementsOnDisk="40000" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
@@ -182,12 +182,6 @@
 	</cache>
 	
 	<cache name="peer-reviews-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="works-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
 		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
