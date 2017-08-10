@@ -9,7 +9,7 @@ import { UpgradeModule } from '@angular/upgrade/static';
 
 import { BiographyNg2Module } from './biography/biography.ts';
 import { CountryNg2Module } from './country/country.ts';
-import { ModalNg2Module } from './modalNg2/modal-ng.ts';
+//import { ModalNg2Module } from './modalNg2/modal-ng.ts';
 import { WidgetNg2Module } from './widget/widget.ts';
 
 // This URL handling strategy is custom and application-specific.
@@ -41,13 +41,14 @@ export class RootCmp {
         RootCmp
     ],
     declarations: [
-        RootCmp
+        RootCmp,
+        //ModalNg2Module
     ],
     imports: [
         BrowserModule,
         BiographyNg2Module,
         CountryNg2Module,
-        ModalNg2Module,
+        //ModalNg2Module,
         UpgradeModule,
         WidgetNg2Module
     ],

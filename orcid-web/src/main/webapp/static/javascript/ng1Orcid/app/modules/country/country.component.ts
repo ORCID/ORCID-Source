@@ -305,20 +305,6 @@ export const CountryCtrl = angular.module('orcidApp').controller(
 );
 */
 
-////////////////////////////////////
-
-//Ng1 hybrid syntax
-/*
-export class countryCtrl {
-
-}
-
-export const countryCmp = {
-    controller: countryCtrl,
-    controllerAs: 'ctrl'
-};
-*/
-
 
 @Component({
     selector: 'country-ng2',
