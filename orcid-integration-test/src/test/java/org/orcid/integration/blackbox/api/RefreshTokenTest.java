@@ -84,7 +84,7 @@ public class RefreshTokenTest extends BlackBoxBase {
         assertFalse(refreshedAccessToken.equals(accessToken));
         assertFalse(refreshedRefreshToken.equals(refreshToken));
     }
-    
+
     @Test
     public void generateRefreshTokenInMemberWithBasicAuthMemberAPITest() throws InterruptedException, JSONException {
         String clientId = getClient1ClientId();
@@ -110,7 +110,6 @@ public class RefreshTokenTest extends BlackBoxBase {
         params.add("refresh_token", refreshToken);
         params.add("grant_type", "refresh_token");
 
-        
         tokenResponse = oauthHelper.getOauthT2Client().obtainOauth2RefreshTokenPostWithBasicAuth("refresh_token", clientId, clientSecret, params);
         assertNotNull(tokenResponse);
         assertEquals(200, tokenResponse.getStatus());
@@ -124,7 +123,6 @@ public class RefreshTokenTest extends BlackBoxBase {
         assertFalse(refreshedAccessToken.equals(accessToken));
         assertFalse(refreshedRefreshToken.equals(refreshToken));
     }
-
 
     @Test
     public void generateRefreshTokenInMemberWithoutOriginalTokenAPITest() throws InterruptedException, JSONException {
@@ -241,6 +239,42 @@ public class RefreshTokenTest extends BlackBoxBase {
         assertEquals("invalid_client", error);
         String errorDescription = (String) jsonObject.get("error_description");
         assertEquals("Bad client credentials", errorDescription);
+    }
+
+    @Test
+    public void generateRefreshTokenWithNoClientCredentialsInMemberAPITest() throws InterruptedException, JSONException {
+        String clientId = getClient1ClientId();
+        String clientSecret = getClient1ClientSecret();
+        String redirectUri = getClient1RedirectUri();
+        String userId = getUser1OrcidId();
+        String userPassword = getUser1Password();
+        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), redirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);
+        String authorizationCode = oauthHelper.getAuthorizationCode(clientId, ScopePathType.ACTIVITIES_UPDATE.value(), userId, userPassword, true);
+        assertNotNull(authorizationCode);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+        ClientResponse tokenResponse = oauthHelper.getClientResponse(clientId, clientSecret, null, redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertNotNull(accessToken);
+        String refreshToken = (String) jsonObject.get("refresh_token");
+        assertNotNull(refreshToken);
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("refresh_token", refreshToken);
+        params.add("grant_type", "refresh_token");
+
+        tokenResponse = oauthHelper.getOauthT2Client().obtainOauth2RefreshTokenPost("refresh_token", null, params);
+        assertNotNull(tokenResponse);
+        assertEquals(401, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        String error = (String) jsonObject.get("error");
+        assertEquals("unauthorized", error);
+        String errorDescription = (String) jsonObject.get("error_description");
+        assertEquals("An Authentication object was not found in the SecurityContext", errorDescription);
     }
 
     @Test
