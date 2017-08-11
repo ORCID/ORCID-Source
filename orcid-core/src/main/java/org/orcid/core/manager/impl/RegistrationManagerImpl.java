@@ -144,7 +144,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
                     boolean duplicatePrimaryEmail = false;
                     boolean duplicateAdditionalEmail = false;
                     int duplicateCount = 0;
-                    String duplicateAdditionalAddress = new String();
+                    String duplicateAdditionalAddress = null;
                     
                     if (emailManager.emailExists(emailAddress)) {
                         duplicatePrimaryEmail = true;
@@ -159,6 +159,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
                                 duplicateCount++;
                                 if(PojoUtil.isEmpty(duplicateAdditionalAddress)){
                                     duplicateAdditionalAddress = emailAddressAdditional;
+                                    break;
                                 } else {
                                     throw new InvalidRequestException("Unable to register: more than 2 duplicate emails");
                                 }
@@ -167,58 +168,39 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
                     }
                         
                     if (duplicatePrimaryEmail && !duplicateAdditionalEmail) {
-                        //check if auto-deprecate enabled for primary email
                         checkAutoDeprecateIsEnabledForEmail(emailAddress);
-                        //get unclaimed orcid for primary email
-                        String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
-                        //remove primary email from unclaimed orcid
+                        String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);       
                         emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
-                        //create new orcid with primary and additional emails
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
-                        //deprecate unclaimed primary email orcid into new orcid
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
                         adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
-                        //send notification email
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid);
-                        //remove unclaimed orcid from cache
                         profileEntityCacheManager.remove(unclaimedOrcid);
                         return newUserOrcid;
                        
                     } else if (!duplicatePrimaryEmail && duplicateAdditionalEmail && duplicateCount < 2) {
-                        //check if auto-deprecate enabled for additional email
                         checkAutoDeprecateIsEnabledForEmail(duplicateAdditionalAddress);
-                        //get unclaimed orcid for additional email
                         String unclaimedOrcid = getOrcidIdFromEmail(duplicateAdditionalAddress);
-                        //remove additional email from unclaimed orcid
                         emailManager.removeEmail(unclaimedOrcid, duplicateAdditionalAddress, true);
-                        //create new orcid with primary and additional emails
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
-                        //deprecate unclaimed additional email orcid into new orcid
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
                         adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
-                        //send notification email
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid);
-                        //remove unclaimed orcid from cache
                         profileEntityCacheManager.remove(unclaimedOrcid);
                         return newUserOrcid;
 
                     } else if (duplicatePrimaryEmail && duplicateAdditionalEmail && duplicateCount < 2) {
-                        //check and remove primary email
                         checkAutoDeprecateIsEnabledForEmail(emailAddress);
                         String unclaimedOrcid01 = getOrcidIdFromEmail(emailAddress);
                         emailManager.removeEmail(unclaimedOrcid01, emailAddress, true);
-                        //check and remove additional email
                         checkAutoDeprecateIsEnabledForEmail(duplicateAdditionalAddress);
                         String unclaimedOrcid02 = getOrcidIdFromEmail(duplicateAdditionalAddress);
                         emailManager.removeEmail(unclaimedOrcid02, emailAddress, true);
-                        //create new orcid with primary and additional emails
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
-                        //deprecate unclaimed primary email orcid
                         ProfileDeprecationRequest result01 = new ProfileDeprecationRequest();
                         adminManager.deprecateProfile(result01, unclaimedOrcid01, newUserOrcid);
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid01);
                         profileEntityCacheManager.remove(unclaimedOrcid01);
-                        //deprecate unclaimed additional email orcid
                         ProfileDeprecationRequest result02 = new ProfileDeprecationRequest();
                         adminManager.deprecateProfile(result02, unclaimedOrcid02, newUserOrcid);
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid02);
