@@ -51,5 +51,7 @@ public interface WorkEntityCacheManager {
     List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified);
 
     WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified);
+    
+    void evictExpiredElements();
 
 }

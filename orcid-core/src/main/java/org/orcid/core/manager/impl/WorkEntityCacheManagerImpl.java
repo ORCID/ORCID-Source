@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.util.TimeUtil;
 
 /**
  * 
@@ -163,6 +165,11 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
         WorkEntity workEntity = null;
+        
+        CacheConfiguration config = fullWorkEntityCache.getCacheConfiguration();
+        int tti = TimeUtil.convertTimeToInt(config.getTimeToIdleSeconds());
+        int ttl = TimeUtil.convertTimeToInt(config.getTimeToLiveSeconds());
+        
         try {
             fullWorkEntityCache.acquireReadLockOnKey(key);
             workEntity = (WorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
@@ -176,7 +183,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
                     workEntity = workDao.getWork(orcid, workId);
                     workDao.detach(workEntity);
-                    fullWorkEntityCache.put(new Element(key, workEntity));
+                    fullWorkEntityCache.put(new Element(key, workEntity, tti, ttl));
                 }
 
             } finally {
@@ -313,6 +320,14 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             slackManager.sendSystemAlert(message);
             throw e;
         }
+    }
+
+    @Override
+    public void evictExpiredElements() {
+        System.out.println("Elements before: " + fullWorkEntityCache.getSize());
+        fullWorkEntityCache.evictExpiredElements();
+        fullWorkEntityCache.flush();
+        System.out.println("Elements after: " + fullWorkEntityCache.getSize());
     }
     
 }
