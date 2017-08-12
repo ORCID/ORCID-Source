@@ -30,8 +30,7 @@ public class OrcidCacheEvictionUtil {
     private WorkEntityCacheManager workEntityCacheManager;
     
     @Scheduled(fixedDelay = 5000)
-    public void evictExpiredElementsOnWorksCache() {
-        System.out.println("------------->Cleaning cache");
+    public void evictExpiredElementsOnWorksCache() {        
         workEntityCacheManager.evictExpiredElements();
     }
 }
