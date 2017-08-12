@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.SlackManager;
@@ -54,19 +55,46 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
     @Resource(name = "workLastModifiedCache")
     private Cache workLastModifiedCache;
+    private int workLastModifiedCacheTTL;
+    private int workLastModifiedCacheTTI;
 
     @Resource(name = "publicWorkLastModifiedCache")
     private Cache publicWorkLastModifiedCache;
+    private int publicWorkLastModifiedCacheTTL;
+    private int publicWorkLastModifiedCacheTTI;
 
     @Resource(name = "minimizedWorkEntityCache")
     private Cache minimizedWorkEntityCache;
+    private int minimizedWorkEntityCacheTTL;
+    private int minimizedWorkEntityCacheTTI;
 
     @Resource(name = "fullWorkEntityCache")
     private Cache fullWorkEntityCache;
+    private int fullWorkEntityCacheTTL;
+    private int fullWorkEntityCacheTTI;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private WorkDao workDao;
+
+    @PostConstruct
+    private void init() {
+        CacheConfiguration config1 = fullWorkEntityCache.getCacheConfiguration();
+        fullWorkEntityCacheTTI = TimeUtil.convertTimeToInt(config1.getTimeToIdleSeconds());
+        fullWorkEntityCacheTTL = TimeUtil.convertTimeToInt(config1.getTimeToLiveSeconds());
+
+        CacheConfiguration config2 = workLastModifiedCache.getCacheConfiguration();
+        workLastModifiedCacheTTI = TimeUtil.convertTimeToInt(config2.getTimeToIdleSeconds());
+        workLastModifiedCacheTTL = TimeUtil.convertTimeToInt(config2.getTimeToLiveSeconds());
+
+        CacheConfiguration config3 = publicWorkLastModifiedCache.getCacheConfiguration();
+        publicWorkLastModifiedCacheTTI = TimeUtil.convertTimeToInt(config3.getTimeToIdleSeconds());
+        publicWorkLastModifiedCacheTTL = TimeUtil.convertTimeToInt(config3.getTimeToLiveSeconds());
+
+        CacheConfiguration config4 = minimizedWorkEntityCache.getCacheConfiguration();
+        minimizedWorkEntityCacheTTI = TimeUtil.convertTimeToInt(config4.getTimeToIdleSeconds());
+        minimizedWorkEntityCacheTTL = TimeUtil.convertTimeToInt(config4.getTimeToLiveSeconds());
+    }
 
     @Resource
     private SlackManager slackManager;
@@ -165,11 +193,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
         WorkEntity workEntity = null;
-        
-        CacheConfiguration config = fullWorkEntityCache.getCacheConfiguration();
-        int tti = TimeUtil.convertTimeToInt(config.getTimeToIdleSeconds());
-        int ttl = TimeUtil.convertTimeToInt(config.getTimeToLiveSeconds());
-        
+
         try {
             fullWorkEntityCache.acquireReadLockOnKey(key);
             workEntity = (WorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
@@ -183,7 +207,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
                     workEntity = workDao.getWork(orcid, workId);
                     workDao.detach(workEntity);
-                    fullWorkEntityCache.put(new Element(key, workEntity, tti, ttl));
+                    fullWorkEntityCache.put(new Element(key, workEntity, fullWorkEntityCacheTTI, fullWorkEntityCacheTTL));
                 }
 
             } finally {
@@ -241,7 +265,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                     WorkBaseEntity cachedWork = toWorkBaseEntity(getElementFromCache(workCache, key, orcid));
                     int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
                     if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
-                        workCache.put(new Element(key, mWorkRefreshedFromDB));
+                        workCache.put(createElement(key, mWorkRefreshedFromDB, workCache));
                         returnArray[returnListIndex] = mWorkRefreshedFromDB;
                     } else {
                         returnArray[returnListIndex] = cachedWork;
@@ -323,11 +347,30 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     }
 
     @Override
-    public void evictExpiredElements() {
-        System.out.println("Elements before: " + fullWorkEntityCache.getSize());
+    public void evictExpiredElements() {        
         fullWorkEntityCache.evictExpiredElements();
         fullWorkEntityCache.flush();
-        System.out.println("Elements after: " + fullWorkEntityCache.getSize());
+    }
+    
+    private Element createElement(Object key, WorkBaseEntity element, Cache cache) {
+        int tti = 1000;
+        int ttl = 1000;
+        
+        if(cache.equals(workLastModifiedCache)) {
+            tti = workLastModifiedCacheTTI;            
+            ttl = workLastModifiedCacheTTL;        
+        } else if (cache.equals(publicWorkLastModifiedCache)) {            
+            tti = publicWorkLastModifiedCacheTTI;
+            ttl = publicWorkLastModifiedCacheTTL;
+        } else if (cache.equals(minimizedWorkEntityCache)) {
+            tti = minimizedWorkEntityCacheTTI;
+            ttl = minimizedWorkEntityCacheTTL;
+        } else if (cache.equals(fullWorkEntityCache)) {
+            tti = fullWorkEntityCacheTTI;
+            ttl = fullWorkEntityCacheTTL;
+        }
+        
+        return new Element(key, element, tti, ttl);
     }
     
 }
