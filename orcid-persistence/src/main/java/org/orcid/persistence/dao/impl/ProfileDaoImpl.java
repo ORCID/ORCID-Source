@@ -165,7 +165,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev) {
+    public List<String> findEmailsUnverfiedDays(int daysUnverified, int ignoreOlderThanDays, int maxResults, EmailEventType ev) {
         // @formatter:off
 		String queryStr = "SELECT e.email FROM email e "
 				+ "LEFT JOIN email_event ev ON e.email = ev.email "
@@ -175,9 +175,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 				+ "where ev.email IS NULL " + "and e.is_verified = false "
 				+ "and e.date_created < (now() - CAST('" + daysUnverified
 				+ "' AS INTERVAL DAY)) "
+				+ "and e.date_created > (now() - CAST('" + ignoreOlderThanDays
+                                + "' AS INTERVAL DAY)) "
 				+ "and (e.source_id = e.orcid OR e.source_id is null)"
 				+ " ORDER BY e.last_modified";
-		// @formatter:on
+	// @formatter:on
         Query query = entityManager.createNativeQuery(queryStr);
         query.setParameter("evt", ev.name());
         query.setMaxResults(maxResults);
