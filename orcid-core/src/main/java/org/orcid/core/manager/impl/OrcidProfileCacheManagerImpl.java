@@ -237,9 +237,11 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
     }
     
     @Override
-    public void evictExpiredElements() {        
+    public void evictExpiredElements() {   
+        LOG.info("Elements on profileCache before eviction: " + profileCache.getSize());
         profileCache.evictExpiredElements();
         profileCache.flush();
+        LOG.info("Elements on profileCache after eviction: " + profileCache.getSize());
     }
     
     private Element createElement(Object key, Object element, Cache cache) {

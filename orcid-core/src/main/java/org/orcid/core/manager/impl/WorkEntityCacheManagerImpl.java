@@ -354,12 +354,16 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public void evictExpiredElements() {   
         // Evict full works
+        LOGGER.info("Elements on fullWorkEntityCache before eviction: " + fullWorkEntityCache.getSize());
         fullWorkEntityCache.evictExpiredElements();
         fullWorkEntityCache.flush();
+        LOGGER.info("Elements on fullWorkEntityCache after eviction: " + fullWorkEntityCache.getSize());
         
         // Evict minimized works
+        LOGGER.info("Elements on minimizedWorkEntityCache before eviction: " + minimizedWorkEntityCache.getSize());
         minimizedWorkEntityCache.evictExpiredElements();
         minimizedWorkEntityCache.flush();        
+        LOGGER.info("Elements on minimizedWorkEntityCache after eviction: " + minimizedWorkEntityCache.getSize());
     }
     
     private Element createElement(Object key, Object element, Cache cache) {
