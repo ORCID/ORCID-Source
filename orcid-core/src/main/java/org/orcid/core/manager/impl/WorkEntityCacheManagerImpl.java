@@ -53,6 +53,12 @@ import net.sf.ehcache.util.TimeUtil;
 public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkEntityCacheManagerImpl.class);
 
+    // Default time to live will be one hour
+    private static final int DEFAULT_TTL = 3600;
+
+    // Default time to idle will be one hour
+    private static final int DEFAULT_TTI = 3600;
+
     @Resource(name = "workLastModifiedCache")
     private Cache workLastModifiedCache;
     private int workLastModifiedCacheTTL;
@@ -80,20 +86,20 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @PostConstruct
     private void init() {
         CacheConfiguration config1 = fullWorkEntityCache.getCacheConfiguration();
-        fullWorkEntityCacheTTI = TimeUtil.convertTimeToInt(config1.getTimeToIdleSeconds());
-        fullWorkEntityCacheTTL = TimeUtil.convertTimeToInt(config1.getTimeToLiveSeconds());
+        fullWorkEntityCacheTTI = config1.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config1.getTimeToIdleSeconds()) : DEFAULT_TTI;
+        fullWorkEntityCacheTTL = config1.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config1.getTimeToLiveSeconds()) : DEFAULT_TTL;
 
         CacheConfiguration config2 = workLastModifiedCache.getCacheConfiguration();
-        workLastModifiedCacheTTI = TimeUtil.convertTimeToInt(config2.getTimeToIdleSeconds());
-        workLastModifiedCacheTTL = TimeUtil.convertTimeToInt(config2.getTimeToLiveSeconds());
+        workLastModifiedCacheTTI = config2.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config2.getTimeToIdleSeconds()) : DEFAULT_TTI;
+        workLastModifiedCacheTTL = config2.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config2.getTimeToLiveSeconds()) : DEFAULT_TTL;
 
         CacheConfiguration config3 = publicWorkLastModifiedCache.getCacheConfiguration();
-        publicWorkLastModifiedCacheTTI = TimeUtil.convertTimeToInt(config3.getTimeToIdleSeconds());
-        publicWorkLastModifiedCacheTTL = TimeUtil.convertTimeToInt(config3.getTimeToLiveSeconds());
+        publicWorkLastModifiedCacheTTI = config3.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config3.getTimeToIdleSeconds()) : DEFAULT_TTI;
+        publicWorkLastModifiedCacheTTL = config3.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config3.getTimeToLiveSeconds()) : DEFAULT_TTL;
 
         CacheConfiguration config4 = minimizedWorkEntityCache.getCacheConfiguration();
-        minimizedWorkEntityCacheTTI = TimeUtil.convertTimeToInt(config4.getTimeToIdleSeconds());
-        minimizedWorkEntityCacheTTL = TimeUtil.convertTimeToInt(config4.getTimeToLiveSeconds());
+        minimizedWorkEntityCacheTTI = config4.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToIdleSeconds()) : DEFAULT_TTI;
+        minimizedWorkEntityCacheTTL = config4.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToLiveSeconds()) : DEFAULT_TTL;
     }
 
     @Resource
@@ -119,7 +125,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 workLastModifiedList = toWorkLastModifiedList(getElementFromCache(workLastModifiedCache, key, orcid));
                 if (workLastModifiedList == null) {
                     workLastModifiedList = workDao.getWorkLastModifiedList(orcid);
-                    workLastModifiedCache.put(new Element(key, workLastModifiedList));
+                    workLastModifiedCache.put(createElement(key, workLastModifiedList, workLastModifiedCache));
                 }
 
             } finally {
@@ -145,7 +151,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 workLastModifiedList = toWorkLastModifiedList(getElementFromCache(publicWorkLastModifiedCache, key, orcid));
                 if (workLastModifiedList == null) {
                     workLastModifiedList = workDao.getPublicWorkLastModifiedList(orcid);
-                    publicWorkLastModifiedCache.put(new Element(key, workLastModifiedList));
+                    publicWorkLastModifiedCache.put(createElement(key, workLastModifiedList, publicWorkLastModifiedCache));
                 }
 
             } finally {
@@ -173,7 +179,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
                     minimizedWorkEntity = workDao.getMinimizedWorkEntity(workId);
                     workDao.detach(minimizedWorkEntity);
-                    minimizedWorkEntityCache.put(new Element(key, minimizedWorkEntity));
+                    minimizedWorkEntityCache.put(createElement(key, minimizedWorkEntity, minimizedWorkEntityCache));
                 }
             } finally {
                 minimizedWorkEntityCache.releaseWriteLockOnKey(key);
@@ -207,7 +213,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
                     workEntity = workDao.getWork(orcid, workId);
                     workDao.detach(workEntity);
-                    fullWorkEntityCache.put(new Element(key, workEntity, fullWorkEntityCacheTTI, fullWorkEntityCacheTTL));
+                    fullWorkEntityCache.put(createElement(key, workEntity, fullWorkEntityCache));
                 }
 
             } finally {
@@ -224,6 +230,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
      * @param workIdsWithLastModified
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends WorkBaseEntity> List<T> retrieveWorkList(String orcid, Map<Long, Date> workIdsWithLastModified, Cache workCache,
             Function<List<Long>, List<T>> workRetriever) {
@@ -276,9 +283,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 }
             }
         }
-        @SuppressWarnings("unchecked")
-        List<T> results = (List<T>) Arrays.asList(returnArray);
-        return results;
+        return (List<T>) Arrays.asList(returnArray);
     }
 
     @Override
@@ -347,30 +352,27 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     }
 
     @Override
-    public void evictExpiredElements() {        
+    public void evictExpiredElements() {   
+        // Evict full works
         fullWorkEntityCache.evictExpiredElements();
         fullWorkEntityCache.flush();
+        
+        // Evict minimized works
+        minimizedWorkEntityCache.evictExpiredElements();
+        minimizedWorkEntityCache.flush();        
     }
     
-    private Element createElement(Object key, WorkBaseEntity element, Cache cache) {
-        int tti = 1000;
-        int ttl = 1000;
-        
-        if(cache.equals(workLastModifiedCache)) {
-            tti = workLastModifiedCacheTTI;            
-            ttl = workLastModifiedCacheTTL;        
-        } else if (cache.equals(publicWorkLastModifiedCache)) {            
-            tti = publicWorkLastModifiedCacheTTI;
-            ttl = publicWorkLastModifiedCacheTTL;
+    private Element createElement(Object key, Object element, Cache cache) {
+        if(cache.equals(workLastModifiedCache)) {  
+            return new Element(key, element, workLastModifiedCacheTTI, workLastModifiedCacheTTL);
+        } else if (cache.equals(publicWorkLastModifiedCache)) {
+            return new Element(key, element, publicWorkLastModifiedCacheTTI, publicWorkLastModifiedCacheTTL);
         } else if (cache.equals(minimizedWorkEntityCache)) {
-            tti = minimizedWorkEntityCacheTTI;
-            ttl = minimizedWorkEntityCacheTTL;
+            return new Element(key, element, minimizedWorkEntityCacheTTI, minimizedWorkEntityCacheTTL);
         } else if (cache.equals(fullWorkEntityCache)) {
-            tti = fullWorkEntityCacheTTI;
-            ttl = fullWorkEntityCacheTTL;
-        }
-        
-        return new Element(key, element, tti, ttl);
-    }
-    
+            return new Element(key, element, fullWorkEntityCacheTTI, fullWorkEntityCacheTTL);
+        } else {
+            return new Element(key, element, DEFAULT_TTI, DEFAULT_TTL);
+        }                
+    }   
 }

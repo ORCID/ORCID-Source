@@ -18,10 +18,13 @@ package org.orcid.core.manager.impl;
 
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.util.TimeUtil;
 
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileCacheManager;
@@ -32,21 +35,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
+    // Default time to live will be one hour
+    private static final int DEFAULT_TTL = 3600;
 
+    // Default time to idle will be one hour
+    private static final int DEFAULT_TTI = 3600;
+    
     private OrcidProfileManagerReadOnly orcidProfileManager;
 
     @Resource(name = "publicProfileCache")
     private Cache publicProfileCache;
+    private int publicProfileCacheTTI;
+    private int publicProfileCacheTTL;
     
     @Resource(name = "publicBioCache")
     private Cache publicBioCache;
+    private int publicBioCacheTTI;
+    private int publicBioCacheTTL;
 
     @Resource(name = "profileCache")
     private Cache profileCache;
-
+    private int profileCacheTTI;
+    private int profileCacheTTL;
+    
     @Resource(name = "profileBioAndInternalCache")
     private Cache profileBioAndInternalCache;
-
+    private int profileBioAndInternalCacheTTI;
+    private int profileBioAndInternalCacheTTL;
+    
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileCacheManagerImpl.class);
@@ -55,6 +71,25 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
         this.orcidProfileManager = orcidProfileManager;
     }
 
+    @PostConstruct
+    private void init() {
+        CacheConfiguration config1 = publicProfileCache.getCacheConfiguration();
+        publicProfileCacheTTI = config1.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config1.getTimeToIdleSeconds()) : DEFAULT_TTI;
+        publicProfileCacheTTL = config1.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config1.getTimeToLiveSeconds()) : DEFAULT_TTL;
+
+        CacheConfiguration config2 = publicBioCache.getCacheConfiguration();
+        publicBioCacheTTI = config2.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config2.getTimeToIdleSeconds()) : DEFAULT_TTI;
+        publicBioCacheTTL = config2.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config2.getTimeToLiveSeconds()) : DEFAULT_TTL;
+
+        CacheConfiguration config3 = profileCache.getCacheConfiguration();
+        profileCacheTTI = config3.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config3.getTimeToIdleSeconds()) : DEFAULT_TTI;
+        profileCacheTTL = config3.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config3.getTimeToLiveSeconds()) : DEFAULT_TTL;
+
+        CacheConfiguration config4 = profileBioAndInternalCache.getCacheConfiguration();
+        profileBioAndInternalCacheTTI = config4.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToIdleSeconds()) : DEFAULT_TTI;
+        profileBioAndInternalCacheTTL = config4.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToLiveSeconds()) : DEFAULT_TTL;
+    }
+    
     @Override
     public OrcidProfile retrievePublic(String orcid) {
         Object key = new OrcidCacheKey(orcid, releaseName);
@@ -72,7 +107,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                 op = toOrcidProfile(publicProfileCache.get(orcid));
                 if (needsFresh(dbDate, op)) {
                     op = orcidProfileManager.retrievePublicOrcidProfile(orcid);
-                    publicProfileCache.put(new Element(key, op));
+                    publicProfileCache.put(createElement(key, op, publicProfileCache));
                 }
             } finally {
                 publicProfileCache.releaseWriteLockOnKey(key);
@@ -97,7 +132,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                 op = toOrcidProfile(publicBioCache.get(orcid));
                 if (needsFresh(dbDate, op)) {
                     op = orcidProfileManager.retrievePublicOrcidProfile(orcid, LoadOptions.BIO_ONLY);
-                    publicBioCache.put(new Element(key, op));
+                    publicBioCache.put(createElement(key, op, publicBioCache));
                 }
             } finally {
                 publicBioCache.releaseWriteLockOnKey(key);
@@ -122,7 +157,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                 op = toOrcidProfile(profileBioAndInternalCache.get(orcid));
                 if (needsFresh(dbDate, op)) {
                     op = orcidProfileManager.retrieveFreshOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
-                    profileBioAndInternalCache.put(new Element(key, op));
+                    profileBioAndInternalCache.put(createElement(key, op, profileBioAndInternalCache));
                 }
             } finally {
                 profileBioAndInternalCache.releaseWriteLockOnKey(key);
@@ -147,7 +182,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                     op = toOrcidProfile(profileCache.get(orcid));
                     if (needsFresh(dbDate, op)) {
                         op = orcidProfileManager.retrieveFreshOrcidProfile(orcid, LoadOptions.ALL);
-                        profileCache.put(new Element(key, op));
+                        profileCache.put(createElement(key, op, profileCache));
                     }
             } finally {
                 profileCache.releaseWriteLockOnKey(key);
@@ -173,7 +208,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
         Object key = new OrcidCacheKey(orcid, releaseName);
         try {
             profileCache.acquireWriteLockOnKey(key);
-            profileCache.put(new Element(key, orcidProfile));            
+            profileCache.put(createElement(key, orcidProfile, profileCache));
         } finally {
             profileCache.releaseWriteLockOnKey(key);
         }
@@ -200,5 +235,24 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
             return true;
         return false;
     }
-
+    
+    @Override
+    public void evictExpiredElements() {        
+        profileCache.evictExpiredElements();
+        profileCache.flush();
+    }
+    
+    private Element createElement(Object key, Object element, Cache cache) {
+        if(cache.equals(publicProfileCache)) {  
+            return new Element(key, element, publicProfileCacheTTI, publicProfileCacheTTL);
+        } else if (cache.equals(publicBioCache)) {
+            return new Element(key, element, publicBioCacheTTI, publicBioCacheTTL);
+        } else if (cache.equals(profileCache)) {
+            return new Element(key, element, profileCacheTTI, profileCacheTTL);
+        } else if (cache.equals(profileBioAndInternalCache)) {
+            return new Element(key, element, profileBioAndInternalCacheTTI, profileBioAndInternalCacheTTL);
+        } else {
+            return new Element(key, element, DEFAULT_TTI, DEFAULT_TTL);
+        }                
+    }
 }

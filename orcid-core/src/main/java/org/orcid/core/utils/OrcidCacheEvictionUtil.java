@@ -18,8 +18,8 @@ package org.orcid.core.utils;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -29,8 +29,12 @@ public class OrcidCacheEvictionUtil {
     @Resource
     private WorkEntityCacheManager workEntityCacheManager;
     
-    @Scheduled(fixedDelay = 5000)
+    @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
+    
+    @Scheduled(cron = "${org.orcid.core.utils.evictExpiredElementsOnWorksCache:0 0 */3 * * *}")
     public void evictExpiredElementsOnWorksCache() {        
         workEntityCacheManager.evictExpiredElements();
+        orcidProfileCacheManager.evictExpiredElements();
     }
 }
