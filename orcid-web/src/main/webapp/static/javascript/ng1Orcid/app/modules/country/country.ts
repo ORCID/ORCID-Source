@@ -8,8 +8,8 @@ import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
 
 //In the end only countryNg2 should remain
 import { CountryComponent } from './country.component.ts';
-//import { ModalNgComponent } from '../modalNg2/modal-ng.component.ts';
-//import { ModalNg2Module } from '../modalNg2/modal-ng.ts';
+import { ModalNgComponent } from '../modalNg2/modal-ng.component.ts';
+import { ModalNg2Module } from '../modalNg2/modal-ng.ts';
 
 // This is the Angular 1 part of the module
 export const CountryModule = angular.module(
@@ -29,10 +29,14 @@ export const CountryModule = angular.module(
         
         declarations: [ 
             CountryComponent,
-            //ModalNgComponent,
-            //ModalNg2Module
+            ModalNgComponent,
+            ModalNg2Module
         ],
-        entryComponents: [ CountryComponent ]
+        entryComponents: [ CountryComponent ],
+        /*exports: [
+            ModalNgComponent,
+            ModalNg2Module
+        ]*/
     }
 )
 export class CountryNg2Module {}
