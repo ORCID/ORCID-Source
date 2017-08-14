@@ -8819,6 +8819,11 @@ ul.comma li:last-child:after {
     flex-wrap: wrap-reverse;
 } 
 */
+.lang-rl ul.id-details/*,*/ 
+/*.lang-rl ul.id-details li*/ {
+    padding-right: 15px;
+}
+
 .lang-rl .action-button-bar {
 	padding-left: 0;
 }
@@ -8905,6 +8910,10 @@ ul.comma li:last-child:after {
     position: relative;
     text-align: left;
     top: 40px;
+}
+
+.lang-rl .source-line {
+    padding-right: 15px;
 }
 
 .lang-rl .sources-options {
