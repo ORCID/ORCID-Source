@@ -230,6 +230,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private int claimReminderAfterDays = 8;
 
     private int verifyReminderAfterDays = 7;
+    
+    private int verifyIgnoreOlderThanDays = 14;
 
     @Value("${org.orcid.core.activities.max:10000}")
     private long maxNumOfActivities;
@@ -1935,11 +1937,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     synchronized public void processUnverifiedEmails7Days() {
-        LOG.info("About to process unclaimed profiles for reminder");
+        LOG.info("About to process unverified emails for reminder");
         List<String> emails = Collections.<String> emptyList();
         do {
-            emails = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, INDEXING_BATCH_SIZE, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
-            LOG.info("Got batch of {} unclaimed profiles for reminder", emails.size());
+            emails = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, verifyIgnoreOlderThanDays, INDEXING_BATCH_SIZE, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+            LOG.info("Got batch of {} unverified emails for reminder", emails.size());
             for (String email : emails) {
                 processUnverifiedEmails7DaysInTransaction(email);
             }
