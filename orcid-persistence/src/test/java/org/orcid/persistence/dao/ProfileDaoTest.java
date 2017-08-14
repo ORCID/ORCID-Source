@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.dbunit.dataset.DataSetException;
+import org.joda.time.LocalDateTime;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -46,6 +48,9 @@ import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.EmailEventEntity;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -71,6 +76,12 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private EmailDao emailDao;
+    
+    @Resource
+    private GenericDao<EmailEventEntity, Long> emailEventDao;
 
     @Resource
     private ClientDetailsDao clientDetailsDao;
@@ -589,5 +600,112 @@ public class ProfileDaoTest extends DBUnitTest {
         profileDao.disable2FA("2000-0000-0000-0002");
         profile = profileDao.find("2000-0000-0000-0002");
         assertFalse(profile.getUsing2FA());
+    }
+    
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void findEmailsUnverfiedDaysTest() {
+        String orcid = "9999-9999-9999-999X";
+        ProfileEntity profile = new ProfileEntity();
+        profile.setId(orcid);
+        profile.setClaimed(true);
+        profileDao.persist(profile);
+        
+        // Created today
+        EmailEntity unverified_1 = new EmailEntity();
+        unverified_1.setDateCreated(new Date());
+        unverified_1.setLastModified(new Date());
+        unverified_1.setProfile(profile);
+        unverified_1.setVerified(false);
+        unverified_1.setVisibility(Visibility.PUBLIC);
+        unverified_1.setPrimary(false);
+        unverified_1.setCurrent(true);
+        unverified_1.setId("unverified_1@test.orcid.org");
+        
+        // Created a week ago
+        EmailEntity unverified_2 = new EmailEntity();
+        unverified_2.setDateCreated(LocalDateTime.now().minusDays(7).toDate());
+        unverified_2.setLastModified(LocalDateTime.now().minusDays(7).toDate());
+        unverified_2.setProfile(profile);
+        unverified_2.setVerified(false);
+        unverified_2.setVisibility(Visibility.PUBLIC);
+        unverified_2.setPrimary(false);
+        unverified_2.setCurrent(true);
+        unverified_2.setId("unverified_2@test.orcid.org");
+        
+        // Created 15 days ago
+        EmailEntity unverified_3 = new EmailEntity();
+        unverified_3.setDateCreated(LocalDateTime.now().minusDays(15).toDate());
+        unverified_3.setLastModified(LocalDateTime.now().minusDays(15).toDate());
+        unverified_3.setProfile(profile);
+        unverified_3.setVerified(false);
+        unverified_3.setVisibility(Visibility.PUBLIC);
+        unverified_3.setPrimary(false);
+        unverified_3.setCurrent(true);
+        unverified_3.setId("unverified_3@test.orcid.org");
+        
+        // Created 7 days ago and verified
+        EmailEntity verified_1 = new EmailEntity();
+        verified_1.setDateCreated(LocalDateTime.now().minusDays(7).toDate());
+        verified_1.setLastModified(LocalDateTime.now().minusDays(7).toDate());
+        verified_1.setProfile(profile);
+        verified_1.setVerified(true);
+        verified_1.setVisibility(Visibility.PUBLIC);
+        verified_1.setPrimary(false);
+        verified_1.setCurrent(true);
+        verified_1.setId("verified_1@test.orcid.org");
+        
+        // Created 15 days ago and verified
+        EmailEntity verified_2 = new EmailEntity();
+        verified_2.setDateCreated(LocalDateTime.now().minusDays(15).toDate());
+        verified_2.setLastModified(LocalDateTime.now().minusDays(15).toDate());
+        verified_2.setProfile(profile);
+        verified_2.setVerified(true);
+        verified_2.setVisibility(Visibility.PUBLIC);
+        verified_2.setPrimary(false);
+        verified_2.setCurrent(true);
+        verified_2.setId("verified_2@test.orcid.org");
+        
+        emailDao.removeAll();
+        emailDao.persist(unverified_1);
+        emailDao.persist(unverified_2);
+        emailDao.persist(unverified_3);
+        emailDao.persist(verified_1);
+        emailDao.persist(verified_2);
+        
+        List<Pair<String, Date>> results = profileDao.findEmailsUnverfiedDays(7, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+        assertNotNull(results);
+        assertEquals(2, results.size());
+        
+        boolean found1 = false, found2 = false;
+        
+        for(Pair<String, Date> element : results) {
+            assertNotNull(element.getRight());
+            if(element.getLeft().equals("unverified_2@test.orcid.org")) {
+                found1 = true;
+            } else if(element.getLeft().equals("unverified_3@test.orcid.org")) {
+                found2 = true;
+            } else {
+                fail("Unexpected email id: " + element.getRight());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        
+        // Put an email event on 'unverified_2@test.orcid.org' and verify there is only one result
+        emailEventDao.persist(new EmailEventEntity("unverified_2@test.orcid.org", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+        
+        results = profileDao.findEmailsUnverfiedDays(7, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals("unverified_3@test.orcid.org", results.get(0).getLeft());
+        
+        // Put an email event on 'unverified_3@test.orcid.org' and verify there is no result anymore
+        emailEventDao.persist(new EmailEventEntity("unverified_3@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
+        results = profileDao.findEmailsUnverfiedDays(7, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+        assertNotNull(results);
+        assertTrue(results.isEmpty());        
     }
 }
