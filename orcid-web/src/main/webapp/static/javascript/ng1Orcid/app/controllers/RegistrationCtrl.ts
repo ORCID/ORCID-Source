@@ -314,10 +314,13 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             }; 
 
             $scope.addEmailField = function () {
-                //$scope.additionalEmails = $scope.register.emailsAdditional
-                console.log($scope.register.emailsAdditional);
                 $scope.register.emailsAdditional.push({value: ''});
-            }           
+            }  
+
+            $scope.removeEmailField = function (index) {
+                console.log("index is: " + index);
+                $scope.register.emailsAdditional.splice(index);
+            }          
         }
     ]
 );
