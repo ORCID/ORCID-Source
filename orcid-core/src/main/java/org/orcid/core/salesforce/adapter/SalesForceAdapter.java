@@ -79,9 +79,10 @@ public class SalesForceAdapter {
                     salesForceOpportunity.setId(extractOpportunityId(opportunity));
                     JSONObject account = extractObject(opportunity, "Account");
                     salesForceOpportunity.setTargetAccountId(extractAccountId(account));
-                    // salesForceOpportunity.setAccountName(JsonUtils.extractString(account,
-                    // "Name"));
-                    salesForceOpportunity.setAccountName(JsonUtils.extractString(account, "Public_Display_Name__c"));
+                    String accountName = JsonUtils.extractString(account, "Name");
+                    salesForceOpportunity.setAccountName(accountName);
+                    String accountDisplayName = JsonUtils.extractString(account, "Public_Display_Name__c");
+                    salesForceOpportunity.setAccountName(StringUtils.isNotBlank(accountDisplayName) ? accountDisplayName : accountName);
                     opportunityList.add(salesForceOpportunity);
                 }
                 return consortium;
