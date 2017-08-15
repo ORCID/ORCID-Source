@@ -1524,4 +1524,6 @@
 	
 	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		
+	<bean id="orcidCacheEvictionUtil" class="org.orcid.core.utils.OrcidCacheEvictionUtil" />
+		
 </beans>
