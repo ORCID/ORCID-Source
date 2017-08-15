@@ -1330,7 +1330,9 @@
     <bean id="jpa2JaxbAdapter" class="org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl" />
     <bean id="jaxb2JpaAdapter" class="org.orcid.core.adapter.impl.Jaxb2JpaAdapterImpl" />
 	
-	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory" />
+	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory">
+	   <constructor-arg value="${org.orcid.core.orika.debug:false}" />
+	</bean>
 	<bean id="mapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getObject"/>
 	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
 	    <property name="mapperFacade" ref="mapperFacade" />
