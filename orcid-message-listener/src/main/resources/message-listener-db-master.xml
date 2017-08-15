@@ -34,5 +34,7 @@
     <include file="/db/add_column_for_2_0_dump_status.xml"/>
     <include file="/db/add_column_for_2_0_solr_status.xml"/>
     <include file="/db/set_default_values.xml"/>
+    <include file="/db/add_column_for_2_0_activities_dump_status.xml"/>
+    <include file="/db/add_last_indexed_date_column_for_every_broker.xml"/>
         
 </databaseChangeLog>
