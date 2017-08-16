@@ -100,8 +100,20 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams) {
         WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
-        WebResource.Builder builder = resource.header("Authorization", "Bearer " + token);
+        WebResource.Builder builder = resource.getRequestBuilder();
+        if (token != null) {
+            builder.header("Authorization", "Bearer " + token);
+        }
         return builder.entity(formParams).post(ClientResponse.class);
+    }
+    
+    public ClientResponse obtainOauth2RefreshTokenPostWithBasicAuth(String grantType, String username, String password, MultivaluedMap<String, String> formParams) {
+        orcidClientHelper.addBasicAuth(username, password);
+        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        WebResource.Builder builder = resource.getRequestBuilder();
+        ClientResponse response = builder.entity(formParams).post(ClientResponse.class);
+        orcidClientHelper.removeBasicAuth();
+        return response;
     }
     
     @Override

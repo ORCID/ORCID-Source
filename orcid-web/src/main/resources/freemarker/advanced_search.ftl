@@ -25,6 +25,7 @@
 					<h1>${springMacroRequestContext.getMessage("orcid_bio_search.h1advancedsearch")}</h1>
 					<p><span ng-class="{'alert alert-error':hasErrors}"><b>${springMacroRequestContext.getMessage("orcid_bio_search.pyoumustpopulate")}</b></span></p>
 					<form id="searchForm" class="form-horizontal" ng-submit="getFirstResults()">
+					    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						<fieldset>
 							<div class="control-group">
 								<!-- Search by ORCID iD -->
@@ -84,6 +85,7 @@
 						<p>${springMacroRequestContext.getMessage("orcid_bio_search.searchpublicly")}</p>
 					</div>
 					<form id="searchForm" class="form-horizontal" ng-submit="getFirstResults()">
+					    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						<fieldset>
 							<div class="row">
 								<div class="control-group col-md-6">

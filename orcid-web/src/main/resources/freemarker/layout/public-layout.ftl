@@ -178,36 +178,36 @@
                                     <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
                                 
                                     <@security.authorize access="!hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">                              
-    	                                <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
-    	                                <li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                              
+                                        <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
+                                        <li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                              
                                     </@security.authorize>
                                     <@security.authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">                              
-    	                                <li><a ${(nav=="record")?string('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
-    	                                    <#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
-    	                                </a></li>
-    	                                <@security.authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">
-    	                                <li ng-controller="NotificationsCountCtrl">
-    	                                    <a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
-    	                                </li>
-    	                                </@security.authorize>
-    	                            
-    	                                <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a></li>
-    	                            
-    	                                <#if !inDelegationMode || isDelegatedByAdmin>
-    	                                    <@security.authorize access="hasAnyRole('ROLE_GROUP','ROLE_BASIC','ROLE_BASIC_INSTITUTION','ROLE_PREMIUM','ROLE_PREMIUM_INSTITUTION')">
-    	                                        <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-    	                                    </@security.authorize>
-    	                                    <@security.authorize access="hasRole('ROLE_USER')">
-    	                                        <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-    	                                    </@security.authorize>
-    	                                </#if>
-    	                            
-    	                                <@security.authorize access="hasRole('ROLE_ADMIN')">
-    	                                    <li><a ${(nav=="members")?string('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
-    	                                    <li><a ${(nav=="admin")?string('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
-    	                                </@security.authorize>
+                                        <li><a ${(nav=="record")?string('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
+                                            <#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
+                                        </a></li>
+                                        <@security.authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">
+                                        <li ng-controller="NotificationsCountCtrl">
+                                            <a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
+                                        </li>
+                                        </@security.authorize>
+                                    
+                                        <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a></li>
+                                    
+                                        <#if !inDelegationMode || isDelegatedByAdmin>
+                                            <@security.authorize access="hasAnyRole('ROLE_GROUP','ROLE_BASIC','ROLE_BASIC_INSTITUTION','ROLE_PREMIUM','ROLE_PREMIUM_INSTITUTION')">
+                                                <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                                            </@security.authorize>
+                                            <@security.authorize access="hasRole('ROLE_USER')">
+                                                <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                                            </@security.authorize>
+                                        </#if>
+                                    
+                                        <@security.authorize access="hasRole('ROLE_ADMIN')">
+                                            <li><a ${(nav=="members")?string('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
+                                            <li><a ${(nav=="admin")?string('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
+                                        </@security.authorize>
                                             
-                                    </@security.authorize>								                               
+                                    </@security.authorize>                                                             
                                     <li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
                                 </ul>
                             </li>
@@ -557,7 +557,7 @@
                         </nav>
                     </div>
                     <div class="col-md-10">
-                        <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0" src="${staticCdn}/img/cc-zero.svg" height="16px" width="16px"/></a> To the extent possible under law, the person who associated CC0 with this work has waived all copyright and related or neighboring rights to this work, unless otherwise indicated.</p>
+                        <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0; height: 16px!important; width: 16px!important; overflow: hidden;" src="${staticCdn}/img/cc-zero.svg" height="16px" width="16px"/></a> To the extent possible under law, the person who associated CC0 with this work has waived all copyright and related or neighboring rights to this work, unless otherwise indicated.</p>
                         <nav>
                             <ul class="inline-list">
                                 <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>

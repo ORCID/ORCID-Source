@@ -70,7 +70,7 @@ public class HandleFailedMessages {
         client = Client.create();
         mapper = new ObjectMapper();
     }
-    
+
     @Scheduled(cron = "${org.orcid.cron.reindex-failed}")
     public void resendFailedElements() {
         List<RecordStatusEntity> failedElements = manager.getFailedElements(BATCH_SIZE);
@@ -93,11 +93,15 @@ public class HandleFailedMessages {
                     RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.SOLR.value());
                     jmsTemplate.convertAndSend(MessageConstants.Queues.RETRY, message.getMap());
                 }
+                // Send RetryMessage for 2.0 activities dump
+                if (element.getDumpStatus20ActivitiesApi() > 0) {
+                    RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API.value());
+                    jmsTemplate.convertAndSend(MessageConstants.Queues.RETRY, message.getMap());
+                }
 
                 // Should we notify about this element?
-                if ((element.getDumpStatus12Api() > maxFailuresBeforeNotify)
-                        || (element.getDumpStatus20Api() > maxFailuresBeforeNotify)
-                        || (element.getSolrStatus20Api() > maxFailuresBeforeNotify)) {
+                if ((element.getDumpStatus12Api() > maxFailuresBeforeNotify) || (element.getDumpStatus20Api() > maxFailuresBeforeNotify)
+                        || (element.getSolrStatus20Api() > maxFailuresBeforeNotify) || (element.getDumpStatus20ActivitiesApi() > maxFailuresBeforeNotify)) {
                     elementsToNotify.add(element);
                 }
             } catch (JmsException e) {
