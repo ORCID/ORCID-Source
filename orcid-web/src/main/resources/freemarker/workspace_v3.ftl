@@ -97,7 +97,8 @@
       </div>
 
     <!-- Country -->    
-    <script type="text/ng-template" id="country-ng2-template">        
+    <script type="text/ng-template" id="country-ng2-template">
+        asfasf  
         <div class="workspace-section country">
             <div class="workspace-section-header">
                 <div class="workspace-section-title">
@@ -122,6 +123,7 @@
                 -->
             </div>
         </div>
+        <div modalngcomponent>test modal</div>
         
     </script>
 
