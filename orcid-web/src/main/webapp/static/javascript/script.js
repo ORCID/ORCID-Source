@@ -934,31 +934,33 @@ bibToWorkTypeMap['proceedings'] = [ 'conference', 'conference-paper' ];
 bibToWorkTypeMap['techreport'] = [ 'publication', 'report' ];
 bibToWorkTypeMap['unpublished'] = [ 'other_output', 'other' ];
 
-function workExternalIdentifierId(work, id, value) {
+function workExternalIdentifierId(work, idType, value) {
 	
 	//Define relationship type based on work type
 	var relationship = 'self';
-	if(id == 'issn') {
+	if(idType == 'issn') {
 		if(work.workType.value != 'book') {
 			relationship = 'part-of';
 		}
-	} else if(id == 'isbn') {
-		if(work.workType.value == 'book-chapter' || work.workType.value == 'conference-paper') {
+	} else if(idType == 'isbn') {
+	    var isbnWorkSelfWorkTypes = ['book','manual','report','other_output'];
+		if(isbnWorkSelfWorkTypes.indexOf(work.workType.value) < 0) {
 			relationship = 'part-of';
 		}
 	} 
-	
+
     var ident = {
         workExternalIdentifierId : {
             'value' : value
         },
         workExternalIdentifierType : {
-            'value' : id
+            'value' : idType
         }, 
         relationship : {
         	'value' : relationship
         }
     };
+    
     if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null)
         work.workExternalIdentifiers[0] = ident;
     else
