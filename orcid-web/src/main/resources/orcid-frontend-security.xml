@@ -162,8 +162,9 @@
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
     
-	<sec:http use-expressions="false" pattern="/oauth/.*" access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
-		request-matcher="regex">
+	<sec:http use-expressions="false" pattern="/oauth/.*" 
+	    authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager" 
+	    create-session="ifRequired" request-matcher="regex" entry-point-ref="approveOauthAuthenticationEntryPoint">
 		<sec:access-denied-handler error-page="/oauth/signin" />
 		<sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="oAuthAuthorizeNotSignedInFilter" />
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
@@ -193,17 +194,17 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/userinfo"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-			
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />	
 			
-		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />		
-		<sec:form-login authentication-failure-url="/oauth/signin"
-			login-page="${org.orcid.core.baseUri}/oauth/signin" login-processing-url="/signin/auth"
-			username-parameter="userId" password-parameter="password"
-			default-target-url="${org.orcid.core.baseUri}/my-orcid" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
+		<sec:logout/>
 	</sec:http>
+	
+	<bean id="approveOauthAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+	    <constructor-arg name="loginFormUrl" value="/oauth/signin" />
+	</bean>
 	
 	<sec:http pattern="/shibboleth/.*" use-expressions="false" authentication-manager-ref="authenticationManager" 
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"

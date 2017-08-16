@@ -29,6 +29,10 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.frontend.spring.OrcidWebAuthenticationDetails;
+import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
+import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
+import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
@@ -136,6 +140,7 @@ public class OauthLoginController extends OauthControllerBase {
             if (form.getErrors().isEmpty()) {
                 try {
                     // Authenticate user
+                    copy2FAFields(form, request);
                     Authentication auth = authenticateUser(request, form.getUserName().getValue(), form.getPassword().getValue());
                     profileEntityManager.updateLastLoginDetails(auth.getName(), OrcidRequestUtil.getIpAddress(request));
 
@@ -186,6 +191,12 @@ public class OauthLoginController extends OauthControllerBase {
                         String errorMessage = getMessage("orcid.frontend.security.unclaimed_exists");
                         errorMessage = errorMessage.replace("{{resendClaimUrl}}", resendEmailUrl);
                         form.getErrors().add(errorMessage);
+                    } else if (ae instanceof VerificationCodeFor2FARequiredException) {
+                        form.setVerificationCodeRequired(true);
+                    } else if (ae instanceof Bad2FAVerificationCodeException) {
+                        form.getErrors().add(getMessage("orcid.frontend.security.2fa.bad_verification_code"));
+                    } else if (ae instanceof Bad2FARecoveryCodeException) {
+                        form.getErrors().add(getMessage("orcid.frontend.security.2fa.bad_recovery_code"));
                     } else {
                         form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
                     }                                            
@@ -204,6 +215,16 @@ public class OauthLoginController extends OauthControllerBase {
             LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
         }
         return form;
+    }
+
+    private void copy2FAFields(OauthAuthorizeForm form, HttpServletRequest request) {
+        if (form.getVerificationCode() != null) {
+            request.setAttribute(OrcidWebAuthenticationDetails.VERIFICATION_CODE_PARAMETER, form.getVerificationCode().getValue());
+        }
+        
+        if (form.getRecoveryCode() != null) {
+            request.setAttribute(OrcidWebAuthenticationDetails.RECOVERY_CODE_PARAMETER, form.getRecoveryCode().getValue());
+        }
     }
 
     private void validateUserNameAndPassword(OauthAuthorizeForm form) {
