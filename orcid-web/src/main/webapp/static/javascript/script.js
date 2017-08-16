@@ -1036,6 +1036,8 @@ function populateWorkAjaxForm(bibJson, work) {
 
 /* start bibtexParse 0.0.22 */
 
+/* start bibtexParse 0.0.23 */
+
 //Original work by Henrik Muehe (c) 2010
 //
 //CommonJS port by Mikola Lysenko 2013
@@ -1096,7 +1098,7 @@ function populateWorkAjaxForm(bibJson, work) {
 
       this.tryMatch = function(s, canCommentOut) {
           if (canCommentOut == undefined || canCommentOut == null)
-              canComment = true;
+              canCommentOut = true;
           this.skipWhitespace(canCommentOut);
           if (this.input.substring(this.pos, this.pos + s.length) == s) {
               return true;
@@ -1152,9 +1154,9 @@ function populateWorkAjaxForm(bibJson, work) {
                   };
               };
               if (this.input[this.pos] == '\\' && escaped == false)
-                  escaped == true;
+                  escaped = true;
               else
-                  escaped == false;
+                  escaped = false;
               this.pos++;
           };
       };
@@ -1191,9 +1193,9 @@ function populateWorkAjaxForm(bibJson, work) {
                   };
               }
               if (this.input[this.pos] == '\\' && escaped == false)
-                  escaped == true;
+                  escaped = true;
               else
-                  escaped == false;
+                  escaped = false;
               this.pos++;
           };
       };
@@ -1226,7 +1228,7 @@ function populateWorkAjaxForm(bibJson, work) {
           return values.join("");
       };
 
-      this.key = function() {
+      this.key = function(optional) {
           var start = this.pos;
           while (true) {
               if (this.pos >= this.input.length) {
@@ -1235,6 +1237,10 @@ function populateWorkAjaxForm(bibJson, work) {
                               // а-яА-Я is Cyrillic
               //console.log(this.input[this.pos]);
               if (this.notKey.indexOf(this.input[this.pos]) >= 0) {
+                  if (optional && this.input[this.pos] != ',') {
+                      this.pos = start;
+                      return null;
+                  };
                   return this.input.substring(start, this.pos);
               } else {
                   this.pos++;
@@ -1273,9 +1279,11 @@ function populateWorkAjaxForm(bibJson, work) {
 
       this.entry_body = function(d) {
           this.currentEntry = {};
-          this.currentEntry['citationKey'] = this.key();
+          this.currentEntry['citationKey'] = this.key(true);
           this.currentEntry['entryType'] = d.substring(1);
-          this.match(",");
+          if (this.currentEntry['citationKey'] != null) {            
+              this.match(",");
+          }
           this.key_value_list();
           this.entries.push(this.currentEntry);
       };
@@ -1303,6 +1311,18 @@ function populateWorkAjaxForm(bibJson, work) {
           this.entry_body(d);
       };
 
+      this.alernativeCitationKey = function () {
+          this.entries.forEach(function (entry) {
+              if (!entry.citationKey && entry.entryTags) {
+                  entry.citationKey = '';
+                  if (entry.entryTags.author) {
+                      entry.citationKey += entry.entryTags.author.split(',')[0] += ', ';
+                  }
+                  entry.citationKey += entry.entryTags.year;
+              }
+          });
+      }
+
       this.bibtex = function() {
           while (this.matchAt()) {
               var d = this.directive();
@@ -1311,13 +1331,15 @@ function populateWorkAjaxForm(bibJson, work) {
                   this.string();
               } else if (d == "@PREAMBLE") {
                   this.preamble();
-              } else if (d == "@COMMENT") {
+              } else if (d == "@COMMENT" || d == "@Comment") {
                   this.comment();
               } else {
                   this.entry(d);
               }
               this.match("}");
           };
+
+          this.alernativeCitationKey();
       };
   };
   
@@ -1330,7 +1352,7 @@ function populateWorkAjaxForm(bibJson, work) {
 
   /* added during hackathon don't hate on me */
   exports.toBibtex = function(json) {
-      out = '';
+      var out = '';
       for ( var i in json) {
           out += "@" + json[i].entryType;
           out += '{';
@@ -1340,7 +1362,7 @@ function populateWorkAjaxForm(bibJson, work) {
               out += json[i].entry ;
           if (json[i].entryTags) {
               var tags = '';
-              for (jdx in json[i].entryTags) {
+              for (var jdx in json[i].entryTags) {
                   if (tags.length != 0)
                       tags += ', ';
                   tags += jdx + '= {' + json[i].entryTags[jdx] + '}';
@@ -1354,6 +1376,9 @@ function populateWorkAjaxForm(bibJson, work) {
   };
 
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
+
+/* end bibtexParse */
+
 
 /* end bibtexParse */
 
