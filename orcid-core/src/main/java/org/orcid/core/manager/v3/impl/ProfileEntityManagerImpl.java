@@ -326,7 +326,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                         if (!scopePathMap.isEmpty()) {
                             applicationSummary.setScopePaths(scopePathMap);
                             applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
-                            applicationSummary.setOrcidUri(orcidUrlManager.getBaseUriHttp() + "/" + client.getId());
+                            applicationSummary.setOrcidUri(orcidUrlManager.getBaseUrl() + "/" + client.getId());
                             applicationSummary.setOrcidPath(client.getId());
                             applicationSummary.setName(client.getClientName());
                             applicationSummary.setWebsiteValue(client.getClientWebsite());

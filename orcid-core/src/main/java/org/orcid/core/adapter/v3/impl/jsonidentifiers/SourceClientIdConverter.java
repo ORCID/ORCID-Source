@@ -53,7 +53,7 @@ public class SourceClientIdConverter extends BidirectionalConverter<SourceClient
         
         SourceClientId sourceClientId = new SourceClientId();
         sourceClientId.setHost(orcidUrlManager.getBaseHost());
-        sourceClientId.setUri(orcidUrlManager.getBaseUriHttp() + "/client/" + source);
+        sourceClientId.setUri(orcidUrlManager.getBaseUrl() + "/client/" + source);
         sourceClientId.setPath(source);
         return sourceClientId;
     }

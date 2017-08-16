@@ -105,7 +105,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         OrcidIdentifier orcidIdentifier = new OrcidIdentifier();
         orcidIdentifier.setPath(orcid);
         orcidIdentifier.setHost(orcidUrlManager.getBaseHost());
-        orcidIdentifier.setUri(orcidUrlManager.getBaseUriHttp() + "/" + orcid);
+        orcidIdentifier.setUri(orcidUrlManager.getBaseUrl() + "/" + orcid);
         return orcidIdentifier;
     }
 
