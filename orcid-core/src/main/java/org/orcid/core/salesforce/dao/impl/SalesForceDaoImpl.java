@@ -93,6 +93,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     public List<Member> retrieveMembers() {
         return retry(accessToken -> retrieveMembersFromSalesForce(accessToken));
     }
+    
+    @Override
+    public Member retrieveMember(String accountId) {
+        return retry(accessToken -> retrieveMemberFromSalesForce(accessToken, accountId));
+    }
 
     @Override
     public List<Member> retrieveMembersByWebsite(String websiteUrl) {
@@ -320,10 +325,39 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         } while (nextRecordsUrl != null);
         return membersList;
     }
+    
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private Member retrieveMemberFromSalesForce(String accessToken, String accountId) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get member from SalesForce");
+        List<Member> membersList = new ArrayList<>();
+        JSONObject jsonObject = retrieveMembersObject(accessToken);
+        membersList.addAll(salesForceAdapter.createMembersListFromJson(jsonObject));
+        return !membersList.isEmpty() ? membersList.get(0) : null;
+    }
 
     private JSONObject retrieveMembersObject(String accessToken) {
-        WebResource resource = createQueryResource(
-                "SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
+        return retrieveMembersObject(accessToken, null);
+    }
+
+    private JSONObject retrieveMembersObject(String accessToken, String accountId) {
+        StringBuffer query = new StringBuffer();
+        query.append("SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+        query.append(
+                "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
+        query.append("Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
+        if (accountId != null) {
+            validateSalesForceId(accountId);
+            query.append(" AND Account.Id = '");
+            query.append(accountId);
+            query.append("'");
+        }
+        WebResource resource = createQueryResource(query.toString());
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         return checkResponse(response, 200, "Error getting member list from SalesForce");

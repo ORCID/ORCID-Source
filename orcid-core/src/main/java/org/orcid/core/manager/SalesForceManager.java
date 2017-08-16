@@ -39,6 +39,8 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
 
     List<Member> retrieveMembers();
 
+    Member retrieveMember(String accountId);
+
     List<Member> retrieveConsortia();
 
     Consortium retrieveConsortium(String consortiumId);

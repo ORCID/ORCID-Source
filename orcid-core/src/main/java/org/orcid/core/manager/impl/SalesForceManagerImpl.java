@@ -77,6 +77,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Resource(name = "salesForceMembersListCache")
     private SelfPopulatingCache salesForceMembersListCache;
 
+    @Resource(name = "salesForceMemberCache")
+    private SelfPopulatingCache salesForceMemberCache;
+
     @Resource(name = "salesForceMemberDetailsCache")
     private SelfPopulatingCache salesForceMemberDetailsCache;
 
@@ -113,6 +116,11 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         return (List<Member>) salesForceMembersListCache.get(releaseName).getObjectValue();
     }
 
+    @Override
+    public Member retrieveMember(String accountId) {
+        return (Member) salesForceMemberCache.get(accountId).getObjectValue();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Member> retrieveConsortia() {
@@ -132,14 +140,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public MemberDetails retrieveDetails(String memberId) {
-        List<Member> members = retrieveMembers();
-        Optional<Member> match = members.stream().filter(e -> {
-            String id = e.getId();
-            String legacyId = id.substring(0, 15);
-            return memberId.equalsIgnoreCase(id) || memberId.equals(legacyId);
-        }).findFirst();
-        if (match.isPresent()) {
-            Member salesForceMember = match.get();
+        Member salesForceMember = retrieveMember(memberId);
+        if (salesForceMember != null) {
             MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
                     .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
             details.setMember(salesForceMember);

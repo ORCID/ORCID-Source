@@ -1158,6 +1158,20 @@
         </property>
     </bean>
     
+    <bean id="salesForceMemberCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-member" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1000" />
+        <property name="timeToLiveSeconds" value="3600" />
+        <property name="timeToIdleSeconds" value="3600" />
+        <property name="strategy" value="NONE" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
+        <property name="cacheEntryFactory">
+            <bean class="org.orcid.core.salesforce.cache.MemberCacheEntryFactory" />
+        </property>
+    </bean>
+    
     <bean id="salesForceMemberDetailsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="sales-force-member-details" />
         <property name="cacheManager" ref="coreCacheManager" />
