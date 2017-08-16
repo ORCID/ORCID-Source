@@ -5,8 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  
 import { NgModule } from '@angular/core';
 import {UpgradeAdapter} from '@angular/upgrade';
-import {commonSrvc} from './../../services/commonSrvc.js';
-import {prefsSrvc} from './../../services/prefsSrvc.js';
+import {prefsSrvc} from './../../services/prefsSrvc.service.ts';
 
 //Ng1 hybrid syntax
 /*worksPrivacyPreferencesCtrl {
@@ -28,7 +27,6 @@ export class WorksPrivacyPreferencesComponent {
     showElement: any;
     
     constructor(
-        commonSrvc: commonSrvc,
         prefsSrvc: prefsSrvc
 
     ) {
