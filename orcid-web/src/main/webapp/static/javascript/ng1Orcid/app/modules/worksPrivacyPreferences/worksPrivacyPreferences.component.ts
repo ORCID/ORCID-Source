@@ -10,19 +10,7 @@ import {prefsSrvc} from './../../services/prefsSrvc.js';
 
 //Ng1 hybrid syntax
 /*worksPrivacyPreferencesCtrl {
-    commonSrvc: any;
-    prefsSrvc: any;
 
-
-    static $inject = [
-        '$compile',
-        '$rootScope',
-        '$scope',
-        'commonSrvc',
-        'prefsSrvc',
-    ];
-
-}
 
 export const worksPrivacyPreferencesCmp = {
     controller: worksPrivacyPreferencesCtrl,

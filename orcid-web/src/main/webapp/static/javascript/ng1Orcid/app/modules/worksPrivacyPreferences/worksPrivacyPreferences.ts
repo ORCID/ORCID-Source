@@ -2,8 +2,8 @@ import * as angular from 'angular';
 import { NgModule } from '@angular/core';
 import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
 
-//In the end only widgetNg2 should remain
-import { /*widgetCmp, widgetCtrl,*/ WorksPrivacyPreferencesComponent } from './worksPrivacyPreferences.component.ts';
+//In the end only worksPrivacyPreferencesNg2 should remain
+import { /*worksPrivacyPreferencesCmp, worksPrivacyPreferencesCtrl,*/ WorksPrivacyPreferencesComponent } from './worksPrivacyPreferences.component.ts';
 
 // This is the Angular 1 part of the module
 export const WorksPrivacyPreferencesModule = angular.module(
@@ -11,8 +11,6 @@ export const WorksPrivacyPreferencesModule = angular.module(
     []
 );
 
-//WidgetModule.component('widgetCmp', widgetCmp);
-//WidgetModule.controller('widgetCtrl', widgetCtrl);
 
 //WorksPrivacyPreferencesModule.component('worksPrivacyPreferencesCmp', worksPrivacyPreferencesCmp);
 //WorksPrivacyPreferencesModule.controller('worksPrivacyPreferencesCtrl', worksPrivacyPreferencesCtrl);
