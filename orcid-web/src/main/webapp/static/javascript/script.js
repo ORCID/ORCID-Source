@@ -1034,8 +1034,6 @@ function populateWorkAjaxForm(bibJson, work) {
     return work;
 };
 
-/* start bibtexParse 0.0.22 */
-
 /* start bibtexParse 0.0.23 */
 
 //Original work by Henrik Muehe (c) 2010
@@ -1378,10 +1376,6 @@ function populateWorkAjaxForm(bibJson, work) {
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
-
-
-/* end bibtexParse */
-
 
 /* start latexJs 0.0.0 */
 
