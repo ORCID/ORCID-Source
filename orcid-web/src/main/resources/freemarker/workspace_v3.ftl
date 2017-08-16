@@ -122,7 +122,7 @@
                 -->
             </div>
         </div>
-        <div modalngcomponent>this is the new content</div>
+        
     </script>
 
     <!--
