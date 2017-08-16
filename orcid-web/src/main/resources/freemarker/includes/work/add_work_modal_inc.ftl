@@ -74,7 +74,7 @@
                                 <span class="orcid-error" ng-show="editWork.title.errors.length > 0">
                                     <div ng-repeat='error in editWork.title.errors' ng-bind-html="error"></div>
                                 </span>
-                                <div class="add-item-link">
+                                <div class="add-item-link clearfix">
                                     <span ng-hide="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.labelshowtranslatedtitle'/></a></span>
                                     <span ng-show="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-minus-sign"></i> <@orcid.msg 'manual_work_form_contents.labelhidetranslatedtitle'/></a></span>
                                 </div>
@@ -295,7 +295,7 @@
                                     </label>                            
                                     <a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first && editWork.workExternalIdentifiers.length == 1"></a>                            
                                 </div>
-                                <div ng-show="$last" class="add-item-link">         
+                                <div ng-show="$last" class="add-item-link clearfix">         
                                     <span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
                                 </div>
                             </div>
