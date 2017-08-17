@@ -336,7 +336,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private Member retrieveMemberFromSalesForce(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get member from SalesForce");
         List<Member> membersList = new ArrayList<>();
-        JSONObject jsonObject = retrieveMembersObject(accessToken);
+        JSONObject jsonObject = retrieveMembersObject(accessToken, accountId);
         membersList.addAll(salesForceAdapter.createMembersListFromJson(jsonObject));
         return !membersList.isEmpty() ? membersList.get(0) : null;
     }

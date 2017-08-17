@@ -204,7 +204,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             accountId = salesForceDao.createMember(member);
         }
         opportunity.setTargetAccountId(accountId);
-        opportunity.setConsortiumLeadId(retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid()));
+        String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        opportunity.setConsortiumLeadId(consortiumLeadId);
         opportunity.setType(OPPORTUNITY_TYPE);
         opportunity.setMemberType(getPremiumConsortiumMemberTypeId());
         opportunity.setStageName(OPPORTUNITY_INITIAL_STAGE_NAME);
@@ -214,7 +215,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         opportunity.setRecordTypeId(getConsortiumMemberRecordTypeId());
         opportunity.setName(OPPORTUNITY_NAME);
         createOpportunity(opportunity);
-        evictAll();
+        removeMemberDetailsFromCache(consortiumLeadId);
+        salesForceConsortiumCache.remove(consortiumLeadId);
         return accountId;
     }
 
@@ -320,13 +322,19 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public void updateMember(Member member) {
         salesForceDao.updateMember(member);
-        salesForceMembersListCache.removeAll();
+        String memberId = member.getId();
+        salesForceMemberCache.remove(memberId);
+        removeMemberDetailsFromCache(memberId);
+        String consortiumLeadId = member.getConsortiumLeadId();
+        if (consortiumLeadId != null) {
+            removeMemberDetailsFromCache(consortiumLeadId);
+            salesForceConsortiumCache.remove(consortiumLeadId);
+        }
     }
 
     @Override
     public String createOpportunity(Opportunity opportunity) {
         String accountId = salesForceDao.createOpportunity(opportunity);
-        salesForceMembersListCache.removeAll();
         return accountId;
     }
 
@@ -341,8 +349,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             opportunity.setStageName(OPPORTUNITY_CLOSED_LOST);
             salesForceDao.updateOpportunity(opportunity);
         }
-        // Need to make more granular!
-        evictAll();
+        salesForceMembersListCache.removeAll();
+        removeMemberDetailsFromCache(accountId);
+        salesForceConsortiumCache.remove(accountId);
     }
 
     @Override
@@ -370,8 +379,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         if (salesForceConnectionDao.findByOrcidAndAccountId(contact.getOrcid(), accountId) == null) {
             salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
         }
-        // Need to make more granular!
-        evictAll();
+        salesForceContactsCache.remove(accountId);
     }
 
     @Override
@@ -383,6 +391,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         checkContactUpdatePermissions(existingContacts, updatedList);
         removeContactRole(contact);
         removeContactAccess(contact);
+        salesForceContactsCache.remove(accountId);
     }
 
     private void removeContactAccess(Contact contact) {
@@ -401,8 +410,6 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
         contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> salesForceDao.removeContactRole(r.getId()));
-        // Need to make more granular!
-        evictAll();
     }
 
     /**
@@ -422,8 +429,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         contactRole.setVotingContact(contact.getRole().isVotingContact());
         String contactRoleId = salesForceDao.createContactRole(contactRole);
         contact.getRole().setId(contactRoleId);
-        // Need to make more granular!
-        evictAll();
+        salesForceContactsCache.remove(accountId);
     }
 
     @Override
@@ -441,6 +447,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         contacts.stream().forEach(c -> updateContact(c));
         // Update access control list for self-service
         updateAccessControl(contacts, accountId);
+        salesForceContactsCache.remove(accountId);
     }
 
     private void updateAccessControl(Collection<Contact> contacts, String accountId) {
@@ -456,13 +463,22 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void evictAll() {
-        salesForceMembersListCache.removeAll();
+        evictLists();
+        salesForceMemberCache.removeAll();
         salesForceMemberDetailsCache.removeAll();
-        salesForceConsortiaListCache.removeAll();
         salesForceConsortiumCache.removeAll();
         salesForceContactsCache.removeAll();
         premiumConsortiumMemberTypeId = null;
         consortiumMemberRecordTypeId = null;
+    }
+
+    private void evictLists() {
+        salesForceMembersListCache.removeAll();
+        salesForceConsortiaListCache.removeAll();
+    }
+
+    private void removeMemberDetailsFromCache(String memberId) {
+        salesForceMemberDetailsCache.remove(new MemberDetailsCacheKey(memberId, null, ReleaseNameUtils.getReleaseName()));
     }
 
     private List<SubMember> findSubMembers(String memberId) {
