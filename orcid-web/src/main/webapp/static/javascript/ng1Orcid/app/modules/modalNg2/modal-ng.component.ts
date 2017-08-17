@@ -9,7 +9,7 @@ declare var scriptTmpl: any;
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  
-import { Component, NgModule } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
 
 @Component(
     {
@@ -22,6 +22,8 @@ import { Component, NgModule } from '@angular/core';
     }
 )
 export class ModalNgComponent {
+    @Output() onOpen = new EventEmitter<void>();
+
     constructor(){
         console.log('ModalNgComponent loaded');
         
@@ -32,7 +34,7 @@ export class ModalNgComponent {
     };
 
     openEditModal(): void{
-        console.log('open modal 2');
+        console.log('open modal 3');
 
         $.colorbox({
             //html: $compile($('#edit-country').html())(this),

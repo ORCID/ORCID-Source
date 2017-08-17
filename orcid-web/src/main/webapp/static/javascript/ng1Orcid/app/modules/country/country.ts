@@ -16,14 +16,11 @@ export const CountryModule = angular.module(
     []
 );
 
-//WidgetModule.component('countryCmp', countryCmp);
-//WidgetModule.controller('countryCtrl', countryCtrl);
 
 // This is the Angular 2 part of the module
 @NgModule(
     {
         imports: [
-            //BrowserModule
         ],
         
         declarations: [ 

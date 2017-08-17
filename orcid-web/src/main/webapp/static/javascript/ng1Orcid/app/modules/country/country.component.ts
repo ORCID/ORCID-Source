@@ -9,10 +9,9 @@ declare var scriptTmpl: any;
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { NgModule } from '@angular/core';
-
-//import { ModalNgComponent } from '../../directives/modal-ng2.component.ts';
+ 
 
 // This is the Angular 1 part of the module
 /*
@@ -311,6 +310,8 @@ export const CountryCtrl = angular.module('orcidApp').controller(
     template:  scriptTmpl("country-ng2-template")
 })
 export class CountryComponent {
+    @ViewChild('modalng2') modalngcomponent;
+    
     bioBulkSrvc: any;
     bulkEditShow: any;
     commonSrvc: any;
@@ -462,6 +463,7 @@ export class CountryComponent {
         });
     };
 
+    /*
     openEditModal(): void{
         console.log('open edit modal 2');
         this.showEdit = true;
@@ -488,7 +490,7 @@ export class CountryComponent {
                         }
                         $scope.updateDisplayIndex();
                     } 
-                    */               
+                    * /               
                 },
      
                 //width: utilsService.formColorBoxResize(),
@@ -502,8 +504,9 @@ export class CountryComponent {
             
         /*}else{
             showEmailVerificationModal();
-        }*/
+        }* /
     };
+    */
 
     setBulkGroupPrivacy(priv): void{
         for (var idx in this.countryForm.addresses){
