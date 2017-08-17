@@ -151,7 +151,12 @@
 								    </select>
                                 </td>
                                 <td class="tooltip-container">
-                                    <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)" ng-show="memberDetails.allowedFullAccess && contacts.permissionsByContactRoleId[contact.role.id].allowedEdit""
+                                    <a 
+                                        id="revokeAppBtn" 
+                                        name="{{contact.email}}" 
+                                        ng-click="confirmRevoke(contact)" 
+                                        ng-show="memberDetails.allowedFullAccess 
+                                            && contacts.permissionsByContactRoleId[contact.role.id].allowedEdit"
                                         class="glyphicon glyphicon-trash grey">
                                         <div class="popover popover-tooltip top">
                                             <div class="arrow"></div>
