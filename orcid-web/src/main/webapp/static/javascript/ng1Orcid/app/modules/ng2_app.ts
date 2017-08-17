@@ -5,7 +5,7 @@ import { Component, NgModule } from '@angular/core';
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
-import { BiographyNg2Module } from './biography/biography.ts';
+//import { BiographyNg2Module } from './biography/biography.ts';
 import { WidgetNg2Module } from './widget/widget.ts';
 
 // This URL handling strategy is custom and application-specific.
@@ -40,7 +40,7 @@ export class RootCmp {
     imports: [
         BrowserModule,
         UpgradeModule,
-        BiographyNg2Module,
+        //BiographyNg2Module,
         WidgetNg2Module
         // We don't need to provide any routes.
         // The router will collect all routes from all the registered modules.
