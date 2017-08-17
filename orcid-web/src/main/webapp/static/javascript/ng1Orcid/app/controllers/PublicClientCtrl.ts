@@ -41,7 +41,7 @@ export const PublicClientCtrl = angular.module('orcidApp').controller(
             $scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [BASE_URI]/oauth/token";
             $scope.swaggerUri = orcidVar.pubBaseUri +"/v2.0/";
             $scope.swaggerMemberUri = $scope.swaggerUri.replace("pub","api");
-            $scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
+            $scope.tokenURL = getBaseUri() + '/oauth/token';
             $scope.userCredentials = null;
             $scope.selectedRedirectUri = '';
             $scope.emailSrvc = emailSrvc;
