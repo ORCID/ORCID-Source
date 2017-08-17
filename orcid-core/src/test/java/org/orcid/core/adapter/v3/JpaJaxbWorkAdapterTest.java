@@ -44,7 +44,7 @@ import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
@@ -80,7 +80,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     public void testToWorkEntity() throws JAXBException {
         Work work = getWork(true);
         assertNotNull(work);
-        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        LegacyWorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, workEntity.getVisibility());
         assertNotNull(workEntity);
@@ -117,7 +117,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     public void fromProfileWorkEntityToWorkTest() {
         // Set base url to https to ensure source URI is converted to http
         orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
-        WorkEntity work = getWorkEntity();
+        LegacyWorkEntity work = getWorkEntity();
         assertNotNull(work);
         Work w = jpaJaxbWorkAdapter.toWork(work);
         assertNotNull(w);
@@ -154,7 +154,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
 
     @Test
     public void fromProfileWorkEntityToWorkSummaryTest() {
-        WorkEntity work = getWorkEntity();
+        LegacyWorkEntity work = getWorkEntity();
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
@@ -184,9 +184,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
 
-    private WorkEntity getWorkEntity() {
+    private LegacyWorkEntity getWorkEntity() {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
-        WorkEntity work = new WorkEntity();
+        LegacyWorkEntity work = new LegacyWorkEntity();
         work.setDateCreated(date);
         work.setLastModified(date);
         work.setProfile(new ProfileEntity("0000-0000-0000-0001"));

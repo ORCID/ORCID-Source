@@ -24,7 +24,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 
 /**
  * orcid-persistence - Dec 7, 2011 - Jaxb2JpaAdapter
@@ -46,6 +46,6 @@ public interface Jaxb2JpaAdapter {
     
     ProfileFundingEntity getUpdatedProfileFundingEntity(Funding updatedFunding);
     
-    WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity);
+    LegacyWorkEntity getWorkEntity(OrcidWork orcidWork, LegacyWorkEntity workEntity);
 
 }

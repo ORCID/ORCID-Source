@@ -69,7 +69,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -310,8 +310,8 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         profile.setExternalIdentifiers(extIds);
 
         // Set works
-        TreeSet<WorkEntity> works = new TreeSet<WorkEntity>();
-        WorkEntity work = new WorkEntity();
+        TreeSet<LegacyWorkEntity> works = new TreeSet<LegacyWorkEntity>();
+        LegacyWorkEntity work = new LegacyWorkEntity();
         work.setWorkType(WorkType.OTHER);
         work.setTitle("My work title");
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);

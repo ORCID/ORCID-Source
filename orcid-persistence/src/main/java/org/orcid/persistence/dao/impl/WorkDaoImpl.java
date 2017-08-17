@@ -25,12 +25,11 @@ import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
-import org.orcid.persistence.jpa.entities.decoupled.DecoupledWorkEntity;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
@@ -40,29 +39,6 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public WorkDaoImpl() {
         super(WorkEntity.class);
     }
-
-    /**
-     * @deprepcated Use {@link org.orcid.core.manager.WorkEntityCacheManager#retrievePublicMinimizedWorks(String, long)} instead
-     * 
-     * Find the public works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    @SuppressWarnings("unchecked")
-    @Cacheable(value = "dao-public-works", key = "#orcid.concat('-').concat(#lastModified)")
-    @Deprecated
-    public List<MinimizedWorkEntity> findPublicWorks(String orcid, long lastModified) {
-        Query query = entityManager
-                .createQuery("from MinimizedWorkEntity w "
-                        + "where w.visibility='PUBLIC' and w.orcid=:orcid "
-                        + "order by w.displayIndex desc, w.dateCreated asc");
-        query.setParameter("orcid", orcid);
-
-        return query.getResultList();
-    }
-
     
     @Override
     public MinimizedWorkEntity getMinimizedWorkEntity(Long id) {
@@ -175,23 +151,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workId", workId);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
-    }
-    
-    
-    /**
-     * Returns a list of work ids of works that still have old external identifiers
-     * @param limit
-     *          The batch number to fetch
-     * @return a list of work ids with old ext ids          
-     * */
-    @Override
-    @SuppressWarnings("unchecked")    
-    public List<BigInteger> getWorksWithOldExtIds(long workId, long limit) {
-        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and external_ids_json is not null order by work_id limit :limit) AS a WHERE (j->'relationship') is null");
-        query.setParameter("limit", limit);
-        query.setParameter("workId", workId);
-        return query.getResultList();
-    }
+    }    
     
     /**
      * Returns a list of work ids where the ext id relationship is null
@@ -233,11 +193,11 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * Retrieve a work from database
      * @param orcid
      * @param id
-     * @return the DecoupledWorkEntity associated with the parameter id
+     * @return the WorkEntity associated with the parameter id
      * */
     @Override
-    public DecoupledWorkEntity getWork(String orcid, Long id) {
-        TypedQuery<DecoupledWorkEntity> query = entityManager.createQuery("FROM DecoupledWorkEntity WHERE id = :workId and orcid = :orcid", DecoupledWorkEntity.class);        
+    public WorkEntity getWork(String orcid, Long id) {
+        TypedQuery<WorkEntity> query = entityManager.createQuery("FROM WorkEntity WHERE id = :workId and orcid = :orcid", WorkEntity.class);        
         query.setParameter("workId", id);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
@@ -265,6 +225,13 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         Query query = entityManager.createNativeQuery("update work set display_index=(display_index + 1), last_modified=now() where orcid=:orcid");                
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
+    }
+
+    @Override
+    public LegacyWorkEntity findLegacyWork(Long id) {
+        TypedQuery<LegacyWorkEntity> query = entityManager.createQuery("FROM LegacyWorkEntity WHERE id = :workId", LegacyWorkEntity.class);        
+        query.setParameter("workId", id);        
+        return query.getSingleResult();
     }
 }
 

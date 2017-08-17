@@ -28,7 +28,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.utils.NullUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -69,12 +69,12 @@ public class DeleteWorkByIdentifier {
     }
 
     private void delete(String workId) {
-        GenericDao<WorkEntity, Long> workDao = createWorkDao();
+        GenericDao<LegacyWorkEntity, Long> workDao = createWorkDao();
         workDao.remove(Long.valueOf(workId));
     }
 
     private void deleteAll(File orcidsToDelete) {
-        GenericDao<WorkEntity, Long> workDao = createWorkDao();
+        GenericDao<LegacyWorkEntity, Long> workDao = createWorkDao();
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(orcidsToDelete);
@@ -109,9 +109,9 @@ public class DeleteWorkByIdentifier {
     }
 
     @SuppressWarnings({"unchecked", "resource"})    
-    private GenericDao<WorkEntity, Long> createWorkDao() {
+    private GenericDao<LegacyWorkEntity, Long> createWorkDao() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
-        return (GenericDao<WorkEntity, Long>) context.getBean("workDao");
+        return (GenericDao<LegacyWorkEntity, Long>) context.getBean("workDao");
     }
 
 }

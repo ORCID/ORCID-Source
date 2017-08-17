@@ -22,7 +22,7 @@ import java.util.List;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 
 /**
  * 
@@ -31,20 +31,20 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
  */
 public interface JpaJaxbWorkAdapter {
 
-    WorkEntity toWorkEntity(Work work);
+    LegacyWorkEntity toWorkEntity(Work work);
 
-    Work toWork(WorkEntity workEntity);
+    Work toWork(LegacyWorkEntity workEntity);
     
-    WorkSummary toWorkSummary(WorkEntity workEntity);
+    WorkSummary toWorkSummary(LegacyWorkEntity workEntity);
 
-    List<Work> toWork(Collection<WorkEntity> workEntities);
+    List<Work> toWork(Collection<LegacyWorkEntity> workEntities);
 
     List<Work> toMinimizedWork(Collection<MinimizedWorkEntity> minimizedEntities);
     
-    List<WorkSummary> toWorkSummary(Collection<WorkEntity> workEntities);
+    List<WorkSummary> toWorkSummary(Collection<LegacyWorkEntity> workEntities);
     
     List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities);
     
-    WorkEntity toWorkEntity(Work work, WorkEntity existing);
+    LegacyWorkEntity toWorkEntity(Work work, LegacyWorkEntity existing);
 
 }

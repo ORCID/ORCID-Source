@@ -22,7 +22,7 @@ import ma.glasnost.orika.ObjectFactory;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 
 /**
  * @author Will Simpson
@@ -41,7 +41,7 @@ public class WorkEntityFactory implements ObjectFactory<NotificationWorkEntity> 
         NotificationWorkEntity nwe = new NotificationWorkEntity();
         String putCode = ((Item) source).getPutCode();
         if (putCode != null) {
-            WorkEntity work = workDao.find(Long.valueOf(putCode));
+            LegacyWorkEntity work = workDao.find(Long.valueOf(putCode));
             nwe.setWork(work);
         }
         return nwe;

@@ -24,11 +24,11 @@ import java.util.Comparator;
  * @author Angel Montenegro
  * 
  */
-public class WorkEntityDisplayIndexComparatorDesc<T> implements Comparator<WorkEntity>, Serializable {
+public class WorkEntityDisplayIndexComparatorDesc<T> implements Comparator<LegacyWorkEntity>, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Override
-    public int compare(WorkEntity o1, WorkEntity o2) {
+    public int compare(LegacyWorkEntity o1, LegacyWorkEntity o2) {
         Long index = o1.getDisplayIndex();
         Long otherIndex = o2.getDisplayIndex();
         if (index == otherIndex) return o2.compareTo(o1);

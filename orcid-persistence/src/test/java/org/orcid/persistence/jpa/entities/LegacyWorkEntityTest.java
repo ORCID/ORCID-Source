@@ -20,12 +20,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
-public class WorkEntityTest {
+public class LegacyWorkEntityTest {
 
     @Test
     public void testWorkEntityComparison() {
-        WorkEntity one = new WorkEntity();
-        WorkEntity two = null;
+        LegacyWorkEntity one = new LegacyWorkEntity();
+        LegacyWorkEntity two = null;
 
         //Compare with null
         try {
@@ -39,7 +39,7 @@ public class WorkEntityTest {
         assertEquals(one.compareTo(one), 0);
 
         //Compare empty objects
-        two = new WorkEntity();
+        two = new LegacyWorkEntity();
         assertEquals(one.compareTo(two), -1);
         assertEquals(two.compareTo(one), -1);
 
@@ -72,9 +72,9 @@ public class WorkEntityTest {
 
     @Test
     public void testChronologicallyOrderWorkEntityTest() {
-        WorkEntity.ChronologicallyOrderedWorkEntityComparator comparator = new WorkEntity.ChronologicallyOrderedWorkEntityComparator();
-        WorkEntity one = new WorkEntity();
-        WorkEntity two = null;
+        LegacyWorkEntity.ChronologicallyOrderedWorkEntityComparator comparator = new LegacyWorkEntity.ChronologicallyOrderedWorkEntityComparator();
+        LegacyWorkEntity one = new LegacyWorkEntity();
+        LegacyWorkEntity two = null;
 
         //Compare with null
         try {
@@ -88,7 +88,7 @@ public class WorkEntityTest {
         assertEquals(comparator.compare(one, one), 0);
 
         //Compare empty objects
-        two = new WorkEntity();
+        two = new LegacyWorkEntity();
         assertEquals(comparator.compare(one, two), -1);
         assertEquals(comparator.compare(two, one), -1);
 

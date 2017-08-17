@@ -25,7 +25,7 @@ import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 
 /**
  * 
@@ -41,15 +41,15 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
 
     @Override
-    public WorkEntity toWorkEntity(Work work) {
+    public LegacyWorkEntity toWorkEntity(Work work) {
         if (work == null) {
             return null;
         }
-        return mapperFacade.map(work, WorkEntity.class);
+        return mapperFacade.map(work, LegacyWorkEntity.class);
     }
     
     @Override
-    public WorkEntity toWorkEntity(Work work, WorkEntity existing) {
+    public LegacyWorkEntity toWorkEntity(Work work, LegacyWorkEntity existing) {
         if (work == null) {
             return null;
         }
@@ -58,7 +58,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
 
     @Override
-    public Work toWork(WorkEntity workEntity) {
+    public Work toWork(LegacyWorkEntity workEntity) {
         if (workEntity == null) {
             return null;
         }
@@ -66,7 +66,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
 
     @Override
-    public WorkSummary toWorkSummary(WorkEntity workEntity) {
+    public WorkSummary toWorkSummary(LegacyWorkEntity workEntity) {
         if (workEntity == null) {
             return null;
         }
@@ -74,7 +74,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }                    
     
     @Override
-    public List<Work> toWork(Collection<WorkEntity> workEntities) {
+    public List<Work> toWork(Collection<LegacyWorkEntity> workEntities) {
         if (workEntities == null) {
             return null;
         }
@@ -90,7 +90,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
     
     @Override
-    public List<WorkSummary> toWorkSummary(Collection<WorkEntity> workEntities) {
+    public List<WorkSummary> toWorkSummary(Collection<LegacyWorkEntity> workEntities) {
         if(workEntities == null) {
             return null;
         }

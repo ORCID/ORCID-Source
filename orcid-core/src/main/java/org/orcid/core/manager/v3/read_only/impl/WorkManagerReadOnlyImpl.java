@@ -42,7 +42,7 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
 
@@ -102,13 +102,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      */
     @Override
     public Work getWork(String orcid, Long workId) {
-        WorkEntity work = workDao.getWork(orcid, workId);
+        LegacyWorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWork(work);
     }
 
     @Override
     public WorkSummary getWorkSummary(String orcid, Long workId) {
-        WorkEntity work = workDao.getWork(orcid, workId);
+        LegacyWorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWorkSummary(work);
     }
 
@@ -189,7 +189,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         for (String putCode : putCodes) {
             try {
                 Long id = Long.valueOf(putCode);
-                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, getLastModified(orcid));
+                LegacyWorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, getLastModified(orcid));
                 works.add(jpaJaxbWorkAdapter.toWork(workEntity));
             } catch (Exception e) {
                 works.add(orcidCoreExceptionMapper.getV3OrcidError(new PutCodeFormatException("'" + putCode + "' is not a valid put code")));

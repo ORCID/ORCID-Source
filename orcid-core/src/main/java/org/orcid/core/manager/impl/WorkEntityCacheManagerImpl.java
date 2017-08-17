@@ -33,7 +33,7 @@ import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.ReleaseNameUtils;
@@ -196,20 +196,20 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
      * @return a WorkEntity
      */
     @Override
-    public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
+    public LegacyWorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
-        WorkEntity workEntity = null;
+        LegacyWorkEntity workEntity = null;
 
         try {
             fullWorkEntityCache.acquireReadLockOnKey(key);
-            workEntity = (WorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
+            workEntity = (LegacyWorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
         } finally {
             fullWorkEntityCache.releaseReadLockOnKey(key);
         }
         if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
             try {
                 fullWorkEntityCache.acquireWriteLockOnKey(key);
-                workEntity = (WorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
+                workEntity = (LegacyWorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
                 if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
                     workEntity = workDao.getWork(orcid, workId);
                     workDao.detach(workEntity);
@@ -303,7 +303,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     }
 
     @Override
-    public List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified) {
+    public List<LegacyWorkEntity> retrieveFullWorks(String orcid, long profileLastModified) {
         Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
         return retrieveWorkList(orcid, workIdsWithLastModified, fullWorkEntityCache, idList -> workDao.getWorkEntities(idList));
     }

@@ -68,7 +68,7 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
@@ -320,10 +320,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         String orcid = profileEntity.getId();
         LOGGER.debug("About to convert works from entity: " + orcid);
         Date lastModified = profileEntity.getLastModified();
-        List<WorkEntity> works = workEntityCacheManager.retrieveFullWorks(orcid, lastModified != null ? lastModified.getTime() : 0);
+        List<LegacyWorkEntity> works = workEntityCacheManager.retrieveFullWorks(orcid, lastModified != null ? lastModified.getTime() : 0);
         if (works != null && !works.isEmpty()) {
             List<OrcidWork> unsorted = new ArrayList<>();
-            for (WorkEntity workEntity : works) {
+            for (LegacyWorkEntity workEntity : works) {
                 OrcidWork orcidWork = getOrcidWork(workEntity);
                 orcidWork.setVisibility(Visibility.fromValue(workEntity.getVisibility().value()));
                 unsorted.add(orcidWork);
@@ -789,7 +789,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    public OrcidWork getOrcidWork(WorkEntity work) {
+    public OrcidWork getOrcidWork(LegacyWorkEntity work) {
         if (work == null) {
             return null;
         }
@@ -850,14 +850,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return localeString.substring(0, 2);
     }
 
-    private Citation getWorkCitation(WorkEntity work) {
+    private Citation getWorkCitation(LegacyWorkEntity work) {
         if (StringUtils.isNotBlank(work.getCitation()) && work.getCitationType() != null) {
             return new Citation(work.getCitation(), CitationType.fromValue(work.getCitationType().value()));
         }
         return null;
     }
 
-    private WorkTitle getWorkTitle(WorkEntity work) {
+    private WorkTitle getWorkTitle(LegacyWorkEntity work) {
         if (work == null || StringUtils.isBlank(work.getTitle())) {
             return null;
         }
@@ -869,7 +869,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return workTitle;
     }
 
-    private WorkContributors getWorkContributors(WorkEntity work) {
+    private WorkContributors getWorkContributors(LegacyWorkEntity work) {
         if (work == null) {
             return null;
         }

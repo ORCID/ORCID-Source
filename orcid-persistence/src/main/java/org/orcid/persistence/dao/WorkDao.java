@@ -20,27 +20,18 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
-import org.orcid.persistence.jpa.entities.decoupled.DecoupledWorkEntity;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public interface WorkDao extends GenericDao<WorkEntity, Long> {
-
-    /**
-     * Find the public works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    List<MinimizedWorkEntity> findPublicWorks(String orcid, long lastModified);
+public interface WorkDao extends GenericDao<WorkEntity, Long> {    
     
     MinimizedWorkEntity getMinimizedWorkEntity(Long id);
 
@@ -96,16 +87,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     boolean updateToMaxDisplay(String orcid, Long workId);
     
     /**
-     * Returns a list of work ids of works that still have old external identifiers
-     * @param limit
-     *          The batch number to fetch
-     * @param workId
-     *          The id of the latest work processed         
-     * @return a list of work ids with old ext ids          
-     * */
-    List<BigInteger> getWorksWithOldExtIds(long workId, long limit);
-    
-    /**
      * Returns a list of work ids where the ext id relationship is null         
      * @return a list of work ids    
      * */
@@ -127,9 +108,9 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * @param orcid
      * @param id
      * 
-     * @return the DecoupledWorkEntity associated with the parameter id
+     * @return the WorkEntity associated with the parameter id
      * */
-    DecoupledWorkEntity getWork(String orcid, Long id);
+    WorkEntity getWork(String orcid, Long id);
 
     List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid);
 
@@ -142,4 +123,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
     
     List<WorkEntity> getWorkEntities(List<Long> ids);        
+
+    LegacyWorkEntity findLegacyWork(Long id);
 }

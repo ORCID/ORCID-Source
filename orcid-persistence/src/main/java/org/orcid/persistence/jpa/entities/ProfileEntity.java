@@ -119,7 +119,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Set<GivenPermissionByEntity> givenPermissionBy;
     private SortedSet<ProfileFundingEntity> profileFunding;
     private Set<AddressEntity> addresses;
-    private SortedSet<WorkEntity> works;
+    private SortedSet<LegacyWorkEntity> works;
     private SortedSet<PeerReviewEntity> peerReviews;
     private Locale locale = Locale.EN;
     private Boolean sendChangeNotifications;
@@ -522,7 +522,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      */
     @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Sort(type = SortType.COMPARATOR, comparator = WorkEntityDisplayIndexComparatorDesc.class)
-    public SortedSet<WorkEntity> getWorks() {
+    public SortedSet<LegacyWorkEntity> getWorks() {
         return works;
     }
 
@@ -530,7 +530,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      * @param works
      *            the works to set
      */
-    public void setWorks(SortedSet<WorkEntity> works) {
+    public void setWorks(SortedSet<LegacyWorkEntity> works) {
         this.works = works;
     }
 

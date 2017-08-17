@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 
@@ -189,7 +190,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         for (String putCode : putCodes) {
             try {
                 Long id = Long.valueOf(putCode);
-                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, getLastModified(orcid));
+                LegacyWorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, getLastModified(orcid));
                 works.add(jpaJaxbWorkAdapter.toWork(workEntity));
             } catch (Exception e) {
                 works.add(orcidCoreExceptionMapper.getOrcidError(new PutCodeFormatException("'" + putCode + "' is not a valid put code")));

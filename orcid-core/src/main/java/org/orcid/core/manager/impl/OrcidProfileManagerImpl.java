@@ -129,7 +129,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -1040,7 +1040,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     if (orcidWork.isDuplicated(updatedWork)) {
                         // Update the existing work
                         long workId = Long.valueOf(orcidWork.getPutCode());
-                        WorkEntity workEntity = workDao.find(workId);
+                        LegacyWorkEntity workEntity = workDao.find(workId);
                         workEntity.clean();
                         workEntity = jaxb2JpaAdapter.getWorkEntity(updatedWork, workEntity);
                         workDao.persist(workEntity);
@@ -1293,7 +1293,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
             // Create the work entity
-            WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
+            LegacyWorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
             workEntity.setProfile(profileEntity);
             workDao.persist(workEntity);
             updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));

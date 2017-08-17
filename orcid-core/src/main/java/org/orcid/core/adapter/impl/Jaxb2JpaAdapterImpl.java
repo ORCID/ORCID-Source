@@ -121,7 +121,7 @@ import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
@@ -219,16 +219,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
-        SortedSet<WorkEntity> workEntities = getWorkEntities(profileEntity, orcidWorks);
+        SortedSet<LegacyWorkEntity> workEntities = getWorkEntities(profileEntity, orcidWorks);
         profileEntity.setWorks(workEntities);
     }
 
-    private SortedSet<WorkEntity> getWorkEntities(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
-        SortedSet<WorkEntity> existingWorkEntities = profileEntity.getWorks();        
-        Map<String, WorkEntity> existingWorkEntitiesMap = createWorkEntitiesMap(existingWorkEntities);
-        SortedSet<WorkEntity> workEntities = null;
+    private SortedSet<LegacyWorkEntity> getWorkEntities(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
+        SortedSet<LegacyWorkEntity> existingWorkEntities = profileEntity.getWorks();        
+        Map<String, LegacyWorkEntity> existingWorkEntitiesMap = createWorkEntitiesMap(existingWorkEntities);
+        SortedSet<LegacyWorkEntity> workEntities = null;
         if (existingWorkEntities == null) {
-            workEntities = new TreeSet<WorkEntity>();
+            workEntities = new TreeSet<LegacyWorkEntity>();
         } else {
             // To allow for orphan deletion
             existingWorkEntities.clear();
@@ -237,7 +237,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (orcidWorks != null && orcidWorks.getOrcidWork() != null && !orcidWorks.getOrcidWork().isEmpty()) {
             List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
             for (OrcidWork orcidWork : orcidWorkList) {
-                WorkEntity workEntity = getWorkEntity(orcidWork, existingWorkEntitiesMap.get(orcidWork.getPutCode()));
+                LegacyWorkEntity workEntity = getWorkEntity(orcidWork, existingWorkEntitiesMap.get(orcidWork.getPutCode()));
                 if (workEntity != null) {
                     workEntity.setProfile(profileEntity);
                     workEntities.add(workEntity);
@@ -247,24 +247,24 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return workEntities;
     }
 
-    private Map<String, WorkEntity> createWorkEntitiesMap(SortedSet<WorkEntity> workEntities) {
-        Map<String, WorkEntity> map = new HashMap<>();
+    private Map<String, LegacyWorkEntity> createWorkEntitiesMap(SortedSet<LegacyWorkEntity> workEntities) {
+        Map<String, LegacyWorkEntity> map = new HashMap<>();
         if (workEntities != null) {
-            for (WorkEntity workEntity : workEntities) {
+            for (LegacyWorkEntity workEntity : workEntities) {
                 map.put(String.valueOf(workEntity.getId()), workEntity);
             }
         }
         return map;
     }
     
-    public WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
+    public LegacyWorkEntity getWorkEntity(OrcidWork orcidWork, LegacyWorkEntity workEntity) {
         if (orcidWork != null) {
             if(workEntity == null) {
                 String putCode = orcidWork.getPutCode();
                 if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
                     throw new IllegalArgumentException("Invalid put-code was supplied: " + putCode);
                 }
-                workEntity = new WorkEntity();
+                workEntity = new LegacyWorkEntity();
             } else {
                 workEntity.clean();
             }

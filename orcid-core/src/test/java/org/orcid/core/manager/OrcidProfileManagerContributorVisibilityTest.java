@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -265,7 +265,7 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
     }
 
     private Contributor retrieveWorkContributorEntityDirectlyFromDb(OrcidWork retrievedWork) {
-        WorkEntity workEntity = workDao.find(Long.valueOf(retrievedWork.getPutCode()));
+        LegacyWorkEntity workEntity = workDao.find(Long.valueOf(retrievedWork.getPutCode()));
         String contributorsJson = workEntity.getContributorsJson();
         WorkContributors workContributors = JsonUtils.readObjectFromJsonString(contributorsJson, WorkContributors.class);
         assertNotNull(workContributors);

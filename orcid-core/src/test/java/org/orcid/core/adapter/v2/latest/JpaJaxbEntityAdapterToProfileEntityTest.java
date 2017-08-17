@@ -48,7 +48,7 @@ import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,10 +151,10 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getVerified());
         assertEquals("4444-4444-4444-4446", nonPrimaryEmail1.getElementSourceId());
 
-        Set<WorkEntity> workEntities = profileEntity.getWorks();
+        Set<LegacyWorkEntity> workEntities = profileEntity.getWorks();
         assertEquals(3, workEntities.size());
 
-        for (WorkEntity workEntity : workEntities) {
+        for (LegacyWorkEntity workEntity : workEntities) {
             String contributorsJson = workEntity.getContributorsJson();
             if ("Work title 1".equals(workEntity.getTitle())) {
                 assertEquals("Journal Title # 1", workEntity.getJournalTitle());
@@ -240,7 +240,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertTrue(currentOrcidWorks.size() == 1);
         currentOrcidWorks.get(0).setWorkType(WorkType.DATA_SET);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessage.getOrcidProfile());
-        List<WorkEntity> works = new ArrayList<WorkEntity>(profileEntity.getWorks());
+        List<LegacyWorkEntity> works = new ArrayList<LegacyWorkEntity>(profileEntity.getWorks());
         assertEquals(1, works.size());
         assertTrue(works.get(0).getWorkType().equals(org.orcid.jaxb.model.record_v2.WorkType.DATA_SET));
     }
