@@ -24,12 +24,15 @@ import javax.ws.rs.core.UriBuilder;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 
 public class OrcidClientHelper {
 
     protected Client jerseyClient;
 
     protected URI baseUri;
+    
+    private HTTPBasicAuthFilter basicAuthFilter;
 
     public OrcidClientHelper(URI baseUri, Client client) throws URISyntaxException {
         this.jerseyClient = client;
@@ -100,6 +103,15 @@ public class OrcidClientHelper {
 
     public WebResource createRootResource(String uri) {
         return createRootResource(deriveUriFromRestPath(uri));
+    }
+    
+    public void addBasicAuth(String username, String password) {
+        basicAuthFilter = new HTTPBasicAuthFilter(username, password);
+        jerseyClient.addFilter(basicAuthFilter);
+    }
+
+    public void removeBasicAuth() {
+        jerseyClient.removeFilter(basicAuthFilter);
     }
 
     private URI resolveUri(URI uri) {

@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -329,20 +328,6 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         } 
-    }
-    
-    @Test
-    public void testPasswordIsCommon() {
-        assertTrue(registrationManager.passwordIsCommon("baseball"));
-        assertTrue(registrationManager.passwordIsCommon("dragon"));
-        assertTrue(registrationManager.passwordIsCommon("football"));
-        assertTrue(registrationManager.passwordIsCommon("monkey"));
-        assertTrue(registrationManager.passwordIsCommon("shadow"));
-        assertTrue(registrationManager.passwordIsCommon("password"));
-        
-        assertFalse(registrationManager.passwordIsCommon("132871384164578961349"));
-        assertFalse(registrationManager.passwordIsCommon("advkuwAFdaAdf387922"));
-        assertFalse(registrationManager.passwordIsCommon("%@@$£&£$%^!@SSDFgwjhsad"));
     }
     
     private Registration createRegistrationForm(String email, boolean claimed) {

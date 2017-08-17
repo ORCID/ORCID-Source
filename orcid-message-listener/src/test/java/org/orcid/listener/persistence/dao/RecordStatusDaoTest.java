@@ -19,6 +19,7 @@ package org.orcid.listener.persistence.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -78,6 +79,10 @@ public class RecordStatusDaoTest {
         assertEquals(Integer.valueOf(0), entity.getSolrStatus20Api());
         assertNotNull(entity.getDateCreated());
         assertNotNull(entity.getLastModified());
+        assertNotNull(entity.getLastIndexedDump12Api());
+        assertNull(entity.getLastIndexedDump20ActivitiesApi());
+        assertNull(entity.getLastIndexedDump20Api());
+        assertNull(entity.getLastIndexedSolr20Api());
     }
 
     @Test
@@ -86,22 +91,10 @@ public class RecordStatusDaoTest {
         String orcid = "0000-0000-1001";
         recordStatusDao.create(orcid, AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
         assertTrue(recordStatusDao.exists(orcid));
-        assertTrue(recordStatusDao.updateStatus(orcid, AvailableBroker.DUMP_STATUS_1_2_API));
-        assertTrue(recordStatusDao.updateStatus(orcid, AvailableBroker.DUMP_STATUS_2_0_API));
-        assertFalse(recordStatusDao.updateStatus("0000-0000-0000-2000", AvailableBroker.DUMP_STATUS_1_2_API));
-        assertFalse(recordStatusDao.updateStatus("0000-0000-0000-2000", AvailableBroker.DUMP_STATUS_2_0_API));
-    }
-
-    @Test
-    @Transactional
-    public void updateStatus2Test() {
-        String orcid = "0000-0000-1002";
-        recordStatusDao.create(orcid, AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
-        assertTrue(recordStatusDao.exists(orcid));
-        assertTrue(recordStatusDao.updateStatus(orcid, AvailableBroker.DUMP_STATUS_1_2_API, 1250));
-        assertTrue(recordStatusDao.updateStatus(orcid, AvailableBroker.DUMP_STATUS_2_0_API, 5000));
-        assertFalse(recordStatusDao.updateStatus("0000-0000-0000-2000", AvailableBroker.DUMP_STATUS_1_2_API, 1250));
-        assertFalse(recordStatusDao.updateStatus("0000-0000-0000-2000", AvailableBroker.DUMP_STATUS_2_0_API, 5000));
+        assertTrue(recordStatusDao.updateFailCount(orcid, AvailableBroker.DUMP_STATUS_1_2_API));
+        assertTrue(recordStatusDao.updateFailCount(orcid, AvailableBroker.DUMP_STATUS_2_0_API));
+        assertFalse(recordStatusDao.updateFailCount("0000-0000-0000-2000", AvailableBroker.DUMP_STATUS_1_2_API));
+        assertFalse(recordStatusDao.updateFailCount("0000-0000-0000-2000", AvailableBroker.DUMP_STATUS_2_0_API));
     }
 
     @Test
@@ -140,5 +133,5 @@ public class RecordStatusDaoTest {
         
         list = recordStatusDao.getFailedElements(2);
         assertEquals(2, list.size());
-    }
+    }    
 }

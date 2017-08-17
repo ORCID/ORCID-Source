@@ -182,19 +182,19 @@ public class SourceInActivitiesTest extends BaseTest {
         assertNotNull(work4.getSource().retrieveSourcePath());
         assertEquals(userOrcid, work4.getSource().retrieveSourcePath());
 
-        Work fromDb1 = workManager.getWork(userOrcid, work1.getPutCode(), 0L);
+        Work fromDb1 = workManager.getWork(userOrcid, work1.getPutCode());
         assertNotNull(fromDb1);
         assertEquals(userOrcid, fromDb1.getSource().retrieveSourcePath());
 
-        Work fromDb2 = workManager.getWork(userOrcid, work2.getPutCode(), 0L);
+        Work fromDb2 = workManager.getWork(userOrcid, work2.getPutCode());
         assertNotNull(fromDb2);
         assertEquals(CLIENT_1_ID, fromDb2.getSource().retrieveSourcePath());
 
-        Work fromDb3 = workManager.getWork(userOrcid, work3.getPutCode(), 0L);
+        Work fromDb3 = workManager.getWork(userOrcid, work3.getPutCode());
         assertNotNull(fromDb3);
         assertEquals(CLIENT_2_ID, fromDb3.getSource().retrieveSourcePath());
 
-        Work fromDb4 = workManager.getWork(userOrcid, work4.getPutCode(), 0L);
+        Work fromDb4 = workManager.getWork(userOrcid, work4.getPutCode());
         assertNotNull(fromDb4);
         assertEquals(userOrcid, fromDb4.getSource().retrieveSourcePath());
     }
@@ -468,7 +468,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
         work = workManager.createWork(userOrcid, work, false);
-        return workManager.getWork(userOrcid, work.getPutCode(), 0L);
+        return workManager.getWork(userOrcid, work.getPutCode());
     }
     
     private Work getWorkWithoutTitle(String userOrcid2, boolean validate) {
@@ -481,7 +481,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
         work = workManager.createWork(userOrcid, work, validate);
-        return workManager.getWork(userOrcid, work.getPutCode(), 0L);
+        return workManager.getWork(userOrcid, work.getPutCode());
 	}
     
     private Work getWorkWithoutExternalIdentifier(String userOrcid, boolean validate) {
@@ -491,7 +491,7 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkTitle(title);
         work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.BOOK);
         work = workManager.createWork(userOrcid, work, validate);
-        return workManager.getWork(userOrcid, work.getPutCode(), 0L);
+        return workManager.getWork(userOrcid, work.getPutCode());
     }
     private Work getWorkWithPutCode(String userOrcid, boolean validate) {
         Work work = new Work();
@@ -507,7 +507,7 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.BOOK);
         work.setPutCode(Long.valueOf(111));
         work = workManager.createWork(userOrcid, work, validate);
-        return workManager.getWork(userOrcid, work.getPutCode(), 0L);
+        return workManager.getWork(userOrcid, work.getPutCode());
     }
 
     private Funding getFunding(String userOrcid) {

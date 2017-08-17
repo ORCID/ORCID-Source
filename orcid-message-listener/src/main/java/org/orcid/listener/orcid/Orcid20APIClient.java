@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
@@ -57,12 +58,12 @@ public class Orcid20APIClient {
     }
 
     /**
-     * Fetches the profile from the ORCID public API v1.2
+     * Fetches the public record from the ORCID API v2.0
      * 
      * @param orcid
-     * @return
+     * @return Record
      */
-    public Record fetchPublicProfile(String orcid) throws LockedRecordException, DeprecatedRecordException {
+    public Record fetchPublicRecord(String orcid) throws LockedRecordException, DeprecatedRecordException {
         WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/record");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
         Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
@@ -82,6 +83,34 @@ public class Orcid20APIClient {
             }
         }
         return response.getEntity(Record.class);
+    }
+    
+    /**
+     * Fetches the public activities from the ORCID API v2.0
+     * 
+     * @param orcid
+     * @return Record
+     */
+    public ActivitiesSummary fetchPublicActivities(String orcid) throws LockedRecordException, DeprecatedRecordException {
+        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/activities");
+        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
+        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+        ClientResponse response = builder.get(ClientResponse.class);
+        if (response.getStatus() != 200) {
+            OrcidError orcidError = null;
+            switch (response.getStatus()) {
+            case 301:
+                orcidError = response.getEntity(OrcidError.class);
+                throw new DeprecatedRecordException(orcidError);
+            case 409:
+                orcidError = response.getEntity(OrcidError.class);
+                throw new LockedRecordException(orcidError);
+            default:
+                LOG.error("Unable to fetch public activities for " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
+                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+            }
+        }
+        return response.getEntity(ActivitiesSummary.class);
     }
     
     public Funding fetchFunding(String orcid, Long putCode){

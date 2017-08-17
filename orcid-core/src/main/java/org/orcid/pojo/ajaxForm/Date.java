@@ -54,14 +54,14 @@ public class Date implements ErrorsInterface, Required, Serializable {
     }        
 
     public FuzzyDate toFuzzyDate() {
-        PublicationDate pd = new PublicationDate();
+        FuzzyDate fd = new FuzzyDate();
         if (!PojoUtil.isEmpty(this.getDay()))
-            pd.setDay(new Day(new Integer(this.getDay())));
+            fd.setDay(new Day(new Integer(this.getDay())));
         if (!PojoUtil.isEmpty(this.getMonth()))
-            pd.setMonth(new Month(new Integer(this.getMonth())));
+            fd.setMonth(new Month(new Integer(this.getMonth())));
         if (!PojoUtil.isEmpty(this.getYear()))
-            pd.setYear(new Year(new Integer(this.getYear())));
-        return pd;
+            fd.setYear(new Year(new Integer(this.getYear())));
+        return fd;
     }        
     
     public static Date valueOf(java.util.Date date) {
@@ -82,6 +82,20 @@ public class Date implements ErrorsInterface, Required, Serializable {
     }
 
     public static Date valueOf(LastModifiedDate date) {
+        Date newDate = new Date();
+        if (date != null && date.getValue() != null)
+            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
+        return newDate;
+    }
+    
+    public static Date valueOf(org.orcid.jaxb.model.v3.dev1.common.CreatedDate date) {
+        Date newDate = new Date();
+        if (date != null && date.getValue() != null)
+            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
+        return newDate;
+    }
+
+    public static Date valueOf(org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate date) {
         Date newDate = new Date();
         if (date != null && date.getValue() != null)
             return Date.valueOf(date.getValue().toGregorianCalendar().getTime());

@@ -54,7 +54,6 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -193,7 +192,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                     LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
                     clearRecord(deprecatedOrcid);
                     // Move all email's to the primary record
-                    Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid, System.currentTimeMillis());
+                    Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid);
                     if (deprecatedAccountEmails != null) {
                         // For each email in the deprecated profile
                         for (Email email : deprecatedAccountEmails.getEmails()) {
@@ -230,29 +229,27 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
     
     /**
-     * Enable developer tools
+     * Enable developer tools on the given record
      * 
-     * @param profile
-     *            The profile to update
-     * @return true if the developer tools where enabled on that profile
+     * @param orcid
+     *            record id
+     * @return true if the developer tools where enabled on the given record
      */
     @Override
-    public boolean enableDeveloperTools(OrcidProfile profile) {
-        boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), true);
-        return result;
+    public boolean enableDeveloperTools(String orcid) {
+        return profileDao.updateDeveloperTools(orcid, true);
     }
 
     /**
-     * Disable developer tools
+     * Disable developer tools in the given record
      * 
-     * @param profile
-     *            The profile to update
-     * @return true if the developer tools where disabeled on that profile
+     * @param orcid
+     *            record id
+     * @return true if the developer tools where disabled on the given record
      */
     @Override
-    public boolean disableDeveloperTools(OrcidProfile profile) {
-        boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
-        return result;
+    public boolean disableDeveloperTools(String orcid) {
+        return profileDao.updateDeveloperTools(orcid, false);
     }
 
     @Override

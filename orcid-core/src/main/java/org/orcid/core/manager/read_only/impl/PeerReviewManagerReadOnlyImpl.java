@@ -37,9 +37,8 @@ import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
-import org.springframework.cache.annotation.Cacheable;
 
-public class PeerReviewManagerReadOnlyImpl implements PeerReviewManagerReadOnly {
+public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PeerReviewManagerReadOnly {
     @Resource
     protected JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
 
@@ -62,9 +61,8 @@ public class PeerReviewManagerReadOnlyImpl implements PeerReviewManagerReadOnly 
     }    
 
     @Override
-    @Cacheable(value = "peer-reviews", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<PeerReview> findPeerReviews(String orcid, long lastModified) {
-        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
+    public List<PeerReview> findPeerReviews(String orcid) {
+        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid, getLastModified(orcid));
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntities);        
     }
 
@@ -77,9 +75,8 @@ public class PeerReviewManagerReadOnlyImpl implements PeerReviewManagerReadOnly 
      * @return the list of peer reviews that belongs to this user
      * */
     @Override
-    @Cacheable(value = "peer-reviews-summaries", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<PeerReviewSummary> getPeerReviewSummaryList(String orcid, long lastModified) {
-        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
+    public List<PeerReviewSummary> getPeerReviewSummaryList(String orcid) {
+        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid, getLastModified(orcid));
         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
     }
 

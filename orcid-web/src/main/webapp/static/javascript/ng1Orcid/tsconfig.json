@@ -16,14 +16,14 @@
     //"noEmitHelpers": true,
     "sourceMap": true,
     "strictNullChecks": false,
-    "target": "es5",
+    "target": "es6",
     "typeRoots": [
       "node_modules/@types"
     ],
     "types": [
       //"hammerjs",
-      "jasmine",
-      "node"
+      //"jasmine",
+      //"node"
       //"source-map",
       //"uglify-js",
       //"webpack"

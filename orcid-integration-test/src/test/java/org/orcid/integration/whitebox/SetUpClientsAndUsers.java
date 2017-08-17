@@ -31,6 +31,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos.GetBlockLocationsRequestProto;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -498,7 +499,7 @@ public class SetUpClientsAndUsers {
         }        
         
         if(params.containsKey(DEVELOPER_TOOLS)) {
-            profileEntityManager.enableDeveloperTools(orcidProfile);
+            profileEntityManager.enableDeveloperTools(params.get(ORCID));
         }
     }
 
@@ -538,7 +539,7 @@ public class SetUpClientsAndUsers {
             profileDao.updatePreferences(orcid, true, true, true, true, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, true, 1f);                        
             
             // Set default bio
-            org.orcid.jaxb.model.record_v2.Biography bio = biographyManager.getBiography(orcid, 0L);
+            org.orcid.jaxb.model.record_v2.Biography bio = biographyManager.getBiography(orcid);
             if (bio == null || bio.getContent() == null) {
                 bio = new org.orcid.jaxb.model.record_v2.Biography(params.get(BIO)); 
                 bio.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
@@ -558,7 +559,7 @@ public class SetUpClientsAndUsers {
             }
 
             // Remove keywords
-            List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors(orcid, 0L);
+            List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywords(orcid, 0L);
             if(keywords != null && !keywords.isEmpty()) {
                 for(ProfileKeywordEntity keyword : keywords) {
                     profileKeywordDao.deleteProfileKeyword(keyword);
@@ -590,7 +591,7 @@ public class SetUpClientsAndUsers {
             }
 
             // Remove emails
-            List<EmailEntity> emails = emailDao.findByOrcid(orcid);
+            List<EmailEntity> emails = emailDao.findByOrcid(orcid, profileEntityManager.getLastModified(orcid));
             if(emails != null && !emails.isEmpty()) {
                 for(EmailEntity rc2Email : emails) {
                     if (!params.get(EMAIL).equals(rc2Email.getId())) {
@@ -626,7 +627,7 @@ public class SetUpClientsAndUsers {
             }
 
             // Remove fundings
-            List<ProfileFundingEntity> fundings = profileFundingDao.getByUser(orcid);
+            List<ProfileFundingEntity> fundings = profileFundingDao.getByUser(orcid, profileEntityManager.getLastModified(orcid));
             if(fundings != null && !fundings.isEmpty()) {
                 for(ProfileFundingEntity funding : fundings) {
                     profileFundingDao.removeProfileFunding(orcid, funding.getId());
@@ -634,7 +635,7 @@ public class SetUpClientsAndUsers {
             }
             
             // Remove peer reviews
-            List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
+            List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid, profileEntityManager.getLastModified(orcid));
             if(peerReviews != null && !peerReviews.isEmpty()) {
                 for(PeerReviewEntity peerReview : peerReviews) {
                     peerReviewDao.removePeerReview(orcid, peerReview.getId());

@@ -40,6 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -129,7 +130,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         ProfileEntity profileEntity = profileDao.find(userOrcid);
         assertNotNull(profileEntity);
         assertEquals(userOrcid, profileEntity.getId());
-        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
         assertNotNull(orcidProfile);
         testOrcidIdentifier(orcidProfile.getOrcidIdentifier());
         assertNotNull(orcidProfile.getOrcidActivities());
@@ -351,7 +352,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         affiliations.add(affiliation);
         profile.setOrgAffiliationRelations(affiliations);
 
-        OrcidProfile orcidProfile = adapter.toOrcidProfile(profile);
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profile, LoadOptions.ALL);
         // Check profile
         assertNotNull(orcidProfile);
         assertNotNull(orcidProfile.getOrcidIdentifier());

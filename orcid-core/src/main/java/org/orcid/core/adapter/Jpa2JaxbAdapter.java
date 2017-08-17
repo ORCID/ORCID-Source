@@ -34,9 +34,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
  * @author Declan Newman (declan)
  **/
 
-public interface Jpa2JaxbAdapter {
-
-    OrcidProfile toOrcidProfile(ProfileEntity profileEntity);
+public interface Jpa2JaxbAdapter {    
 
     OrcidProfile toOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions);
 

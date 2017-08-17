@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.NotificationManager;
@@ -42,6 +43,7 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -134,7 +136,7 @@ public class RegistrationController extends BaseController {
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
+    private ProfileEntityManager profileEntityManager;   
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -152,7 +154,15 @@ public class RegistrationController extends BaseController {
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
-        reg.getTermsOfUse().setValue(false);        
+        reg.getTermsOfUse().setValue(false);   
+        
+        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        if(isOauth2ScreensRequest != null) {
+            reg.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
+        } else {
+            reg.setCreationType(Text.valueOf(CreationMethod.DIRECT.value()));
+        }
+        
         setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
         
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);

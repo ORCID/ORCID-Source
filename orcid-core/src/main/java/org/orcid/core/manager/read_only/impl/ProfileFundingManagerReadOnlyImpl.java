@@ -39,9 +39,8 @@ import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
-import org.springframework.cache.annotation.Cacheable;
 
-public class ProfileFundingManagerReadOnlyImpl implements ProfileFundingManagerReadOnly {
+public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileFundingManagerReadOnly {
     
     @Resource
     protected FundingSubTypeSolrDao fundingSubTypeSolrDao;
@@ -120,9 +119,8 @@ public class ProfileFundingManagerReadOnlyImpl implements ProfileFundingManagerR
      * @return the list of fundings that belongs to this user
      * */
     @Override
-    @Cacheable(value = "fundings-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<FundingSummary> getFundingSummaryList(String userOrcid, long lastModified) {
-        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
+    public List<FundingSummary> getFundingSummaryList(String userOrcid) {
+        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid, getLastModified(userOrcid));
         return jpaJaxbFundingAdapter.toFundingSummary(fundingEntities);
     }
     
@@ -135,9 +133,8 @@ public class ProfileFundingManagerReadOnlyImpl implements ProfileFundingManagerR
      * @return the list of fundings that belongs to this user
      * */
     @Override
-    @Cacheable(value = "fundings", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<Funding> getFundingList(String userOrcid, long lastModified) {
-        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
+    public List<Funding> getFundingList(String userOrcid) {
+        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid, getLastModified(userOrcid));
         return jpaJaxbFundingAdapter.toFunding(fundingEntities);
     }
         

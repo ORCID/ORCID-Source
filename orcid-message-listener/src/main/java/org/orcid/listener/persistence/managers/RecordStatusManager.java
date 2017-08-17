@@ -38,7 +38,7 @@ public class RecordStatusManager {
     @Transactional
     public void markAsSent(String orcid, AvailableBroker broker) {
         if (dao.exists(orcid)) {
-            dao.updateStatus(orcid, broker, OK);
+            dao.success(orcid, broker);
         } else {
             dao.create(orcid, broker, OK);
         }
@@ -47,7 +47,7 @@ public class RecordStatusManager {
     @Transactional
     public void markAsFailed(String orcid, AvailableBroker broker) {
         if (dao.exists(orcid)) {
-            dao.updateStatus(orcid, broker);
+            dao.updateFailCount(orcid, broker);
         } else {
             dao.create(orcid, broker, FIRST_FAIL);
         }

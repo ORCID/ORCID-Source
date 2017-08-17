@@ -59,6 +59,12 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
+    
+    @Override
+    @Cacheable(value = "public-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified) {
+        return getExternalIdentifiers(orcid, Visibility.PUBLIC);
+    }
 
     @SuppressWarnings("unchecked")
     @Override

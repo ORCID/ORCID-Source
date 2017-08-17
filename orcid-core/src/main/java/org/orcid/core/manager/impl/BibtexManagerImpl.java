@@ -90,13 +90,12 @@ public class BibtexManagerImpl implements BibtexManager{
     
     @Override
     public String generateBibtexReferenceList(String orcid) {
-        long last = workManager.getLastModified(orcid);
         ActivitiesSummary summary = activitiesManager.getActivitiesSummary(orcid);
         List<String> citations = new ArrayList<String>();
         if (summary.getWorks()!=null){
             for (WorkGroup group : summary.getWorks().getWorkGroup()){
                 WorkSummary workSummary = group.getWorkSummary().get(0);
-                Work work = workManager.getWork(orcid, workSummary.getPutCode(), last);
+                Work work = workManager.getWork(orcid, workSummary.getPutCode());
                 String bibtex = generateBibtex(orcid,work); 
                 if (bibtex != null)
                     citations.add(bibtex);

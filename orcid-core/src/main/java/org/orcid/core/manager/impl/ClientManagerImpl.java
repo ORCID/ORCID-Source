@@ -93,12 +93,29 @@ public class ClientManagerImpl implements ClientManager {
     @Override
     @Transactional
     public Client create(Client newClient) throws IllegalArgumentException {
+        return create(newClient, false);
+    }
+
+    @Override
+    @Transactional
+    public Client createPublicClient(Client newClient) {
+        return create(newClient, true);
+    }
+    
+    private Client create(Client newClient, boolean publicClient) {
         String memberId = sourceManager.retrieveSourceOrcid();
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
 
         // Verify if the member type allow him to create another client
-        validateCreateClientRequest(memberId);
-
+        if(publicClient) {
+            ClientDetailsEntity existingPublicClient = clientDetailsDao.getPublicClient(memberId);
+            if(existingPublicClient != null) {
+                return jpaJaxbClientAdapter.toClient(existingPublicClient);
+            }
+        } else {
+            validateCreateClientRequest(memberId);
+        }
+        
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
         Date now = new Date();
         newEntity.setDateCreated(now);
@@ -111,8 +128,12 @@ public class ClientManagerImpl implements ClientManager {
         newEntity.setPersistentTokensEnabled(true);
 
         // Set ClientType
-        newEntity.setClientType(getClientType(memberEntity.getGroupType()));
-
+        if(!publicClient) {
+            newEntity.setClientType(getClientType(memberEntity.getGroupType()));
+        } else {
+            newEntity.setClientType(ClientType.PUBLIC_CLIENT);
+        }
+        
         // Set ClientResourceIdEntity
         Set<ClientResourceIdEntity> clientResourceIdEntities = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity clientResourceIdEntity = new ClientResourceIdEntity();
@@ -135,7 +156,11 @@ public class ClientManagerImpl implements ClientManager {
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
         clientGrantedAuthorityEntity.setClientDetailsEntity(newEntity);
-        clientGrantedAuthorityEntity.setAuthority("ROLE_CLIENT");
+        if (publicClient) {
+            clientGrantedAuthorityEntity.setAuthority("ROLE_PUBLIC");
+        } else {
+            clientGrantedAuthorityEntity.setAuthority("ROLE_CLIENT");
+        }
         clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
         newEntity.setClientGrantedAuthorities(clientGrantedAuthorityEntities);
 
@@ -158,7 +183,7 @@ public class ClientManagerImpl implements ClientManager {
 
         return jpaJaxbClientAdapter.toClient(newEntity);
     }
-
+    
     @Override
     @Transactional
     public Client edit(Client existingClient) {
@@ -209,7 +234,7 @@ public class ClientManagerImpl implements ClientManager {
         switch (member.getGroupType()) {
         case BASIC:
         case BASIC_INSTITUTION:
-            Set<Client> clients = clientManagerReadOnly.getClients(memberId, lastModified);
+            Set<Client> clients = clientManagerReadOnly.getClients(memberId);
             if (clients != null && !clients.isEmpty()) {
                 throw new IllegalArgumentException("Your membership doesn't allow you to have more clients");
             }
@@ -221,6 +246,10 @@ public class ClientManagerImpl implements ClientManager {
     }
 
     private ClientType getClientType(MemberType memberType) {
+        if(memberType == null) {
+            return ClientType.PUBLIC_CLIENT;
+        }
+        
         switch (memberType) {
         case BASIC:
             return ClientType.UPDATER;
@@ -233,5 +262,5 @@ public class ClientManagerImpl implements ClientManager {
         default:
             throw new IllegalArgumentException("Invalid member type: " + memberType);
         }
-    }
+    }    
 }

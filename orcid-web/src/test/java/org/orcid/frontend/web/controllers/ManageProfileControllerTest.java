@@ -203,7 +203,7 @@ public class ManageProfileControllerTest {
             }
         });
 
-        when(mockEmailManager.getEmails(Mockito.anyString(), Mockito.anyLong())).thenAnswer(new Answer<Emails>() {
+        when(mockEmailManager.getEmails(Mockito.anyString())).thenAnswer(new Answer<Emails>() {
 
             @Override
             public Emails answer(InvocationOnMock invocation) throws Throwable {

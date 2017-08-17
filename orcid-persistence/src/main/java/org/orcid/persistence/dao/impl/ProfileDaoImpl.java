@@ -165,11 +165,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev) {
+    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev) {
         // @formatter:off
-		String queryStr = "SELECT e.email FROM email e "
+		String queryStr = "SELECT e.email, e.date_created FROM email e "
 				+ "LEFT JOIN email_event ev ON e.email = ev.email "
-				+ "AND (ev.email_event_type = :evt or ev.email_event_type='VERIFY_EMAIL_7_DAYS_SENT_SKIPPED') "
+				+ "AND (ev.email_event_type = :evt or ev.email_event_type='VERIFY_EMAIL_7_DAYS_SENT_SKIPPED' or ev.email_event_type = 'VERIFY_EMAIL_TOO_OLD') "
 				+ "JOIN profile p on p.orcid = e.orcid and p.claimed = true "
 				+ "AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null "
 				+ "where ev.email IS NULL " + "and e.is_verified = false "
@@ -181,7 +181,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery(queryStr);
         query.setParameter("evt", ev.name());
         query.setMaxResults(maxResults);
-        return query.getResultList();
+        List<Object[]> dbInfo = query.getResultList();
+        List<Pair<String, Date>> results = new ArrayList<Pair<String, Date>>();
+        dbInfo.stream().forEach(element -> {
+            Pair<String, Date> pair = Pair.of((String) element[0], (Date) element[1]);
+            results.add(pair);
+        });
+        return results;
     }
 
     @SuppressWarnings("unchecked")

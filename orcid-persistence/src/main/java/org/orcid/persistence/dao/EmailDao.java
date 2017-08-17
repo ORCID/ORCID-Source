@@ -59,11 +59,11 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     boolean moveEmailToOtherAccountAsNonPrimary(String email, String origin, String destination);
     
-    List<EmailEntity> findByOrcid(String orcid);
+    List<EmailEntity> findByOrcid(String orcid, long lastModified);
     
     List<EmailEntity> findByOrcid(String orcid, Visibility visibility);
     
-    boolean verifySetCurrentAndPrimary(String orcid, String email);
+    boolean updateVerifySetCurrentAndPrimary(String orcid, String email);
     
     /***
      * Indicates if the given email address could be auto deprecated given the
@@ -83,4 +83,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     EmailEntity findPrimaryEmail(String orcid);
     
     boolean hideAllEmails(String orcid);
+
+    List<EmailEntity> findPublicEmails(String orcid, long lastModified);
 }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactPermission;
 
 public class ContactsForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
@@ -29,6 +30,7 @@ public class ContactsForm implements ErrorsInterface, Serializable {
     private List<String> errors = new ArrayList<String>();
     private String accountId;
     private List<Contact> contactsList;
+    private Map<String, ContactPermission> permissionsByContactRoleId;
     private Map<String, String> roleMap;
 
     @Override
@@ -55,6 +57,14 @@ public class ContactsForm implements ErrorsInterface, Serializable {
 
     public void setContactsList(List<Contact> contactsList) {
         this.contactsList = contactsList;
+    }
+
+    public Map<String, ContactPermission> getPermissionsByContactRoleId() {
+        return permissionsByContactRoleId;
+    }
+
+    public void setPermissionsByContactRoleId(Map<String, ContactPermission> permissionsByContactRoleId) {
+        this.permissionsByContactRoleId = permissionsByContactRoleId;
     }
 
     public Map<String, String> getRoleMap() {

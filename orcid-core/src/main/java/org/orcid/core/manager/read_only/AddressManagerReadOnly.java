@@ -25,11 +25,11 @@ import org.orcid.jaxb.model.record_v2.Addresses;
  * 
  */
 public interface AddressManagerReadOnly {
-    Address getPrimaryAddress(String orcid, long lastModified);
+    Address getPrimaryAddress(String orcid);
     
-    Addresses getAddresses(String orcid, long lastModified);
+    Addresses getAddresses(String orcid);
     
-    Addresses getPublicAddresses(String orcid, long lastModified);
+    Addresses getPublicAddresses(String orcid);
     
     Address getAddress(String orcid, Long putCode);
 }

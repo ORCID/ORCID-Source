@@ -55,8 +55,8 @@ public class ProfileFundingDaoTest extends DBUnitTest {
     @Test
     public void removeAllTest() {
         long initialNumber = dao.countAll();
-        long elementThatBelogsToUser = dao.getByUser(USER_ORCID).size();
-        long otherUserElements = dao.getByUser(OTHER_USER_ORCID).size();
+        long elementThatBelogsToUser = dao.getByUser(USER_ORCID, 0L).size();
+        long otherUserElements = dao.getByUser(OTHER_USER_ORCID, 0L).size();
         assertEquals(5, elementThatBelogsToUser);
         assertTrue(elementThatBelogsToUser < initialNumber);
         assertEquals(3, otherUserElements);
@@ -64,8 +64,8 @@ public class ProfileFundingDaoTest extends DBUnitTest {
         dao.removeAllFunding(USER_ORCID);
         
         long finalNumberOfElements = dao.countAll();
-        long finalNumberOfOtherUserElements = dao.getByUser(OTHER_USER_ORCID).size();
-        long finalNumberOfElementsThatBelogsToUser = dao.getByUser(USER_ORCID).size();
+        long finalNumberOfOtherUserElements = dao.getByUser(OTHER_USER_ORCID, 0L).size();
+        long finalNumberOfElementsThatBelogsToUser = dao.getByUser(USER_ORCID, 0L).size();
         assertEquals(0, finalNumberOfElementsThatBelogsToUser);
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);

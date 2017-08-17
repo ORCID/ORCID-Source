@@ -31,7 +31,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.jaxb.model.common_v2.Day;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.Month;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Employment;
@@ -80,6 +84,21 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNull(oar.getSourceId());        
         assertNull(oar.getClientSourceId());        
         assertNull(oar.getElementSourceId());
+    }
+    
+    @Test
+    public void testToOrgAffiliationRelationEntityWithNullMonthAndDay() throws JAXBException {
+        Employment e = getEmploymentWithDates();
+        OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
+        assertNotNull(oar.getStartDate().getYear());
+        assertNotNull(oar.getStartDate().getMonth());
+        assertNotNull(oar.getStartDate().getDay());
+        
+        e = getEmploymentWithDatesWithNullMonthAndDay();
+        oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e, oar);
+        assertNotNull(oar.getStartDate().getYear());
+        assertNull(oar.getStartDate().getMonth());
+        assertNull(oar.getStartDate().getDay());
     }
 
     @Test
@@ -130,6 +149,31 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(employmentSummary.getSource());
         assertNotNull(employmentSummary.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", employmentSummary.getSource().retrieveSourcePath());
+    }
+    
+    private Employment getEmploymentWithDatesWithNullMonthAndDay() {
+        Employment employment = new Employment();
+        employment.setRoleTitle("role title");
+        
+        FuzzyDate startDate = new FuzzyDate(new Year(2017), null, null);
+        FuzzyDate endDate = new FuzzyDate(new Year(2017), null, null);
+        
+        employment.setStartDate(startDate);
+        employment.setEndDate(endDate);
+        
+        return employment;
+    }
+    
+    private Employment getEmploymentWithDates() {
+        Employment employment = new Employment();
+        employment.setRoleTitle("role title");
+        
+        FuzzyDate startDate = new FuzzyDate(new Year(2017), new Month(1), new Day(1));
+        FuzzyDate endDate = new FuzzyDate(new Year(2017), new Month(3), new Day(1));
+        
+        employment.setStartDate(startDate);
+        employment.setEndDate(endDate);
+        return employment;
     }
     
     private Employment getEmployment(boolean full) throws JAXBException {

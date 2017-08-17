@@ -26,6 +26,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, Long> implements ProfileFundingDao {
@@ -229,7 +230,8 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     }
     
     @Override
-    public List<ProfileFundingEntity> getByUser(String userOrcid) {
+    @Cacheable(value = "fundings", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<ProfileFundingEntity> getByUser(String userOrcid, long lastModified) {
         TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid order by displayIndex desc, dateCreated asc", ProfileFundingEntity.class);
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();

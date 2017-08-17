@@ -285,7 +285,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             throw new InvalidGrantException("Client " + clientId + " doesnt have refresh token enabled");
         }
 
-        OrcidOauth2TokenDetail parentToken = orcidOauth2TokenDetailDao.findByTokenValue(parentTokenValue);
+        OrcidOauth2TokenDetail parentToken = orcidOauth2TokenDetailDao.findByRefreshTokenValue(refreshTokenValue);
 
         ProfileEntity profileEntity = new ProfileEntity(parentToken.getProfile().getId());
         OrcidOauth2TokenDetail newToken = new OrcidOauth2TokenDetail();

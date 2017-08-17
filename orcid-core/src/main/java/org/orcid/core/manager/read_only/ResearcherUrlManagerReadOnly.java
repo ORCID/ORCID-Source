@@ -26,7 +26,7 @@ public interface ResearcherUrlManagerReadOnly {
      * @return 
      *          the list of public researcher urls associated with the orcid profile
      * */
-    ResearcherUrls getPublicResearcherUrls(String orcid, long lastModified);
+    ResearcherUrls getPublicResearcherUrls(String orcid);
     
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -34,7 +34,7 @@ public interface ResearcherUrlManagerReadOnly {
      * @return 
      *          the list of researcher urls associated with the orcid profile
      * */
-    ResearcherUrls getResearcherUrls(String orcid, long lastModified);
+    ResearcherUrls getResearcherUrls(String orcid);
     
     /**
      * Retrieve a researcher url from database

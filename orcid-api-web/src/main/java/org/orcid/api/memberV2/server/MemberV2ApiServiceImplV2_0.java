@@ -76,8 +76,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
+import org.orcid.api.member.MemberApiServiceImplHelper;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
-import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
@@ -124,7 +125,7 @@ import io.swagger.annotations.ResponseHeader;
  */
 @Api("Member API v2.0")
 @Path("/v2.0")
-public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
+public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
 
     @Context
     private UriInfo uriInfo;

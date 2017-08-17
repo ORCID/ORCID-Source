@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -39,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * Controller for delegate permissions that have been granted TO the current
@@ -52,7 +52,7 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
 public class ManageDelegatorsController extends BaseWorkspaceController {
 
     @Resource
-    private SourceManager sourceManager;
+    private SourceManager sourceManager;    
 
     @RequestMapping
     public ModelAndView manageDelegators() {
@@ -64,7 +64,7 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/delegation.json", method = RequestMethod.GET)
     public @ResponseBody
-    Delegation getDelegatesJson() throws NoSuchRequestHandlingMethodException {
+    Delegation getDelegatesJson() {
         OrcidProfile realProfile = getRealProfile();
         Delegation delegation = realProfile.getOrcidBio().getDelegation();
         return delegation;
@@ -72,7 +72,7 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/delegators-and-me.json", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, Object> getDelegatorsPlusMeJson() throws NoSuchRequestHandlingMethodException {
+    Map<String, Object> getDelegatorsPlusMeJson() {
         Map<String, Object> map = new HashMap<>();
         OrcidProfile realProfile = getRealProfile();
         Delegation delegation = realProfile.getOrcidBio().getDelegation();
@@ -154,6 +154,11 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         datum.put("value", delegationDetails.getDelegateSummary().getCreditName().getContent());
         datum.put("orcid", delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
         return datum;
+    }
+    
+    public OrcidProfile getRealProfile() {
+        String realOrcid = getRealUserOrcid();
+        return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
     }
 
 }

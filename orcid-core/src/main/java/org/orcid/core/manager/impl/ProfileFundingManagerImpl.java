@@ -173,7 +173,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     	activityValidator.validateFunding(funding, sourceEntity, true, isApiRequest, null);
 
         //Check for duplicates
-        List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
+        List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
         if(fundings != null && isApiRequest) {
             for(Funding exstingFunding : fundings) {
@@ -239,7 +239,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         
         activityValidator.validateFunding(funding, sourceEntity, false, isApiRequest, originalVisibility);
     	if(!isApiRequest) {
-    	    List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
+    	    List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
             for(ProfileFundingEntity existingFunding : existingFundings) {
                 Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
                 if(!existing.getPutCode().equals(funding.getPutCode())) {

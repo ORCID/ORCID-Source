@@ -25,14 +25,13 @@ import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
+public class BiographyManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements BiographyManagerReadOnly {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BiographyManagerReadOnlyImpl.class);
     
@@ -43,11 +42,10 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
     }
     
     @Override
-    @Cacheable(value = "biography", key = "#orcid.concat('-').concat(#lastModified)")
-    public Biography getBiography(String orcid, long lastModified) {
+    public Biography getBiography(String orcid) {
         BiographyEntity biographyEntity = null;
         try {
-            biographyEntity = biographyDao.getBiography(orcid);
+            biographyEntity = biographyDao.getBiography(orcid, getLastModified(orcid));
         } catch(Exception e) {
             LOGGER.warn("Couldn't find biography for " + orcid); 
         }
@@ -63,9 +61,8 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
     }
     
     @Override
-    @Cacheable(value = "public-biography", key = "#orcid.concat('-').concat(#lastModified)")
-    public Biography getPublicBiography(String orcid, long lastModified) {
-        Biography bio = getBiography(orcid, lastModified);
+    public Biography getPublicBiography(String orcid) {
+        Biography bio = getBiography(orcid);
         if(bio != null && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(bio.getVisibility())) {
             return bio;
         }

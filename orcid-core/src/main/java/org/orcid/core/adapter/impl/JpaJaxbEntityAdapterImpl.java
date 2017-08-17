@@ -46,11 +46,6 @@ public class JpaJaxbEntityAdapterImpl implements JpaJaxbEntityAdapter {
     }
 
     @Override
-    public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
-        return toOrcidProfile(profileEntity, LoadOptions.ALL);
-    }
-
-    @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions) {
         return jpa2JaxbAdapter.toOrcidProfile(profileEntity, loadOptions);
 

@@ -44,12 +44,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -60,6 +61,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
+import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
@@ -154,9 +156,6 @@ public class BaseController {
 
     @Resource(name = "csrfTokenRepo")
     protected CsrfTokenRepository csrfTokenRepository;
-    
-    @Resource
-    private RegistrationManager registrationManager;
     
     @Resource
     private SecurityQuestionManager securityQuestionManager;
@@ -471,9 +470,10 @@ public class BaseController {
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
             }
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email, LoadOptions.BIO_ONLY);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = null;
+                    String[] args = { email };
                     if (isRegisterRequest) {
                         if (orcidProfile.getOrcidHistory().getDeactivationDate() != null) {
                             codes = new String[] { "orcid.frontend.verify.deactivated_email" };
@@ -482,8 +482,8 @@ public class BaseController {
                         }
                     } else {
                         codes = new String[] { "orcid.frontend.verify.claimed_email" };
+                        args = new String[] { email, orcidUrlManager.getBaseUrl() + "/account#editDeprecate" };
                     }
-                    String[] args = { email };
                     bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Email already exists"));
                 } else {
                     String resendUrl = createResendClaimUrl(email, request);
@@ -549,11 +549,6 @@ public class BaseController {
     public OrcidProfile getEffectiveProfile() {
         String effectiveOrcid = getEffectiveUserOrcid();
         return effectiveOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(effectiveOrcid);
-    }
-
-    public OrcidProfile getRealProfile() {
-        String realOrcid = getRealUserOrcid();
-        return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid);
     }
 
     public String getMessage(String messageCode, Object... messageParams) {
@@ -772,8 +767,18 @@ public class BaseController {
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
-        String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
-        return targetUrl != null ? targetUrl : getBaseUri() + "/my-orcid";
+        String targetUrl = null;
+        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+            // Just redirect to the authorization screen
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString;
+            request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        } else {
+            targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);            
+        }
+        
+        return targetUrl == null ? getBaseUri() + "/my-orcid" : targetUrl;
     }
 
     protected void passwordConfirmValidate(Text passwordConfirm, Text password) {
@@ -791,7 +796,7 @@ public class BaseController {
             setError(password, "Pattern.registrationForm.password");
         }
         
-        if (registrationManager.passwordIsCommon(password.getValue())) {
+        if (CommonPasswords.passwordIsCommon(password.getValue())) {
             setError(password, "password.too_common", password.getValue());
         }
 

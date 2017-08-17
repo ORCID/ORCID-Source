@@ -53,7 +53,7 @@ public interface PeerReviewManagerReadOnly {
      * @param lastModified
      * @return a list containing the user peer reviews
      * */
-    List<PeerReview> findPeerReviews(String orcid, long lastModified);
+    List<PeerReview> findPeerReviews(String orcid);
     
     /**
      * Get the list of peer reivews that belongs to a user
@@ -63,7 +63,7 @@ public interface PeerReviewManagerReadOnly {
      *          Last modified date used to check the cache
      * @return the list of peer reviews that belongs to this user
      * */
-    List<PeerReviewSummary> getPeerReviewSummaryList(String orcid, long lastModified);
+    List<PeerReviewSummary> getPeerReviewSummaryList(String orcid);
     
     /**
      * Generate a grouped list of peer reviews with the given list of peer reviews

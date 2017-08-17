@@ -56,6 +56,8 @@ public class OrcidResourceResolver implements LSResourceResolver {
             return "/record_2.0_rc4/" + systemId;
         } else if(systemId.endsWith("-2.1.xsd")) {
             return "/record_2.1/" + systemId;
+        } else if(systemId.endsWith("-3.0_dev1.xsd")) {
+            return "/record_3.0_dev1/" + systemId;
         }
         return "/" + systemId;
     }

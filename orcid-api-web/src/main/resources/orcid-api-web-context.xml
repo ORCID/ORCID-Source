@@ -135,31 +135,33 @@
     </bean>
 
     <!--  Notifications -->
-    <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
+    <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
     
-    <bean id="notificationsApiServiceDelegatorRc1" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+    <bean id="notificationsApiServiceDelegatorRc1" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
     	<property name="externalVersion" value="2.0_rc1" />
     </bean>
     
-    <bean id="notificationsApiServiceDelegatorRc2" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+    <bean id="notificationsApiServiceDelegatorRc2" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
     	<property name="externalVersion" value="2.0_rc2" />
     </bean>
     
-	<bean id="notificationsApiServiceDelegatorRc3" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+	<bean id="notificationsApiServiceDelegatorRc3" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
     	<property name="externalVersion" value="2.0_rc3" />
     </bean>
 
-	<bean id="notificationsApiServiceDelegatorRc4" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+	<bean id="notificationsApiServiceDelegatorRc4" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
     	<property name="externalVersion" value="2.0_rc4" />
     </bean>
 
-	<bean id="notificationsApiServiceDelegatorV2" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+	<bean id="notificationsApiServiceDelegatorV2" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
     	<property name="externalVersion" value="2.0" />
     </bean>
 
-	<bean id="notificationsApiServiceDelegatorV2_1" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+	<bean id="notificationsApiServiceDelegatorV2_1" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
     	<property name="externalVersion" value="2.1" />
     </bean>
+    
+    <bean id="notificationsApiServiceDelegatorV3_0_dev1" class="org.orcid.api.notificationsV3.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
 
     <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
     
@@ -215,6 +217,12 @@
     <bean id="memberV2ApiServiceImplV2_1" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_1">    	
         <property name="serviceDelegator" ref="memberV2ApiServiceDelegatorV2_1"/>
         <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorV2_1"/>
-    </bean>        
-        
+    </bean>  
+    
+    <!-- member 3.0_dev1 -->      
+    <bean id="memberV3ApiServiceDelegatorV3_0_dev1" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceDelegatorImpl" />
+    <bean id="memberV3ApiServiceImplV3_0_dev1" class="org.orcid.api.memberV3.server.MemberV3ApiServiceImplV3_0_dev1">     
+        <property name="serviceDelegator" ref="memberV3ApiServiceDelegatorV3_0_dev1"/>
+        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorV3_0_dev1"/>
+    </bean>  
 </beans>

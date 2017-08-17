@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulk:bulk xmlns:common="http://www.orcid.org/ns/common"
+    xmlns:error="http://www.orcid.org/ns/error" 
+    xmlns:work="http://www.orcid.org/ns/work"
+    xmlns:bulk="http://www.orcid.org/ns/bulk" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-2.1.xsd">
+    <work:work put-code="156043" visibility="public">
+        <common:created-date>2017-02-16T22:06:56.222Z</common:created-date>
+        <common:last-modified-date>2017-02-16T22:06:56.222Z</common:last-modified-date>
+        <common:source>
+            <common:source-orcid>
+                <common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+                <common:path>8888-8888-8888-8880</common:path>
+                <common:host>orcid.org</common:host>
+            </common:source-orcid>
+            <common:source-name />
+        </common:source> 
+        <work:title>
+            <common:title>Current treatment of left main coronary artery disease # 1</common:title>
+        </work:title>
+        <work:journal-title>Cor et Vasa</work:journal-title>
+        <work:type>journal-article</work:type>
+        <common:publication-date>
+            <common:year>2015</common:year>
+            <common:month>06</common:month>
+            <common:day>01</common:day>
+        </common:publication-date>
+        <common:external-ids>
+            <common:external-id>
+                <common:external-id-type>doi</common:external-id-type>
+                <common:external-id-value>10.1016/j.crvasa.2015.05.007</common:external-id-value>
+                <common:external-id-url>http://extId/1</common:external-id-url>
+                <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
+        </common:external-ids>
+    </work:work>
+    <error:error>
+        <error:response-code>400</error:response-code>
+        <error:developer-message>Invalid work type, valid values are: artistic-performance, book-chapter, book-review, book, conference-abstract, conference-paper, conference-poster, data-set, dictionary-entry, disclosure, dissertation, edited-book, encyclopedia-entry, invention, journal-article, journal-issue, lecture-speech, license, magazine-article, manual, newsletter-article, newspaper-article, online-resource, other, patent, registered-copyright, report, research-technique, research-tool, spin-off-company, standards-and-policy, supervised-student-publication, technical-standard, test, trademark, translation, website, working-paper, undefined.</error:developer-message>
+        <error:user-message>Please specify a work type.</error:user-message>
+        <error:error-code>9037</error:error-code>
+        <error:more-info>http://members.orcid.org/api/api-error-codes</error:more-info>
+    </error:error>
+</bulk:bulk>

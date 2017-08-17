@@ -131,7 +131,7 @@ public class AddressManagerTest extends BaseTest {
     @Test
     public void getAllTest() {
         String orcid = "0000-0000-0000-0003";
-        Addresses elements = addressManager.getAddresses(orcid, System.currentTimeMillis());
+        Addresses elements = addressManager.getAddresses(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getAddress());
         assertEquals(5, elements.getAddress().size());
@@ -161,7 +161,7 @@ public class AddressManagerTest extends BaseTest {
     @Test
     public void getPublicTest() {
         String orcid = "0000-0000-0000-0003";        
-        Addresses elements = addressManager.getPublicAddresses(orcid, System.currentTimeMillis());
+        Addresses elements = addressManager.getPublicAddresses(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getAddress());
         assertEquals(1, elements.getAddress().size());
