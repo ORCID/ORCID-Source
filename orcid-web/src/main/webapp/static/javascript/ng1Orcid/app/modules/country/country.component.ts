@@ -9,7 +9,7 @@ declare var scriptTmpl: any;
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Inject, Input, ViewChild } from '@angular/core';
 import { NgModule } from '@angular/core';
  
 
@@ -327,8 +327,10 @@ export class CountryComponent {
     showEdit: any;
     showElement: any;
 
-    constructor() {
-        //this.commonSrvc = commonSrvc;
+    constructor(@Inject('commonSrvc') commonSrvc) {
+        this.commonSrvc = commonSrvc;
+        console.log('this.commonSrvc', this.commonSrvc);
+
         this.bulkEditShow = false;
         this.countryForm = null;
         this.defaultVisibility = null;
