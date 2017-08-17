@@ -82,7 +82,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             return;
         }
         try{
-            org.orcid.jaxb.model.record_v2.Record record = orcid20ApiClient.fetchPublicProfile(orcid); 
+            org.orcid.jaxb.model.record_v2.Record record = orcid20ApiClient.fetchPublicRecord(orcid); 
             //get detailed funding so we can discover org name and id
             List<Funding> fundings = new ArrayList<Funding>();
             if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getFundings() != null && record.getActivitiesSummary().getFundings().getFundingGroup() != null){

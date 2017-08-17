@@ -50,39 +50,45 @@ public class RecordStatusDao {
     public void create(String orcid, AvailableBroker broker, Integer status) {
         RecordStatusEntity entity = new RecordStatusEntity();
         entity.setId(orcid);
+        Date now = new Date();
         switch (broker) {
         case DUMP_STATUS_1_2_API:
             entity.setDumpStatus12Api(status);
+            entity.setLastIndexedDump12Api(now);
             break;
         case DUMP_STATUS_2_0_API:
             entity.setDumpStatus20Api(status);
+            entity.setLastIndexedDump20Api(now);
+            break;
+        case DUMP_STATUS_2_0_ACTIVITIES_API:
+            entity.setDumpStatus20ActivitiesApi(status);
+            entity.setLastIndexedDump20ActivitiesApi(now);
             break;
         case SOLR:
             entity.setSolrStatus20Api(status);
+            entity.setLastIndexedSolr20Api(now);
             break;
         }
-        Date now = new Date();
-        entity.setDateCreated(now);
+        entity.setDateCreated(now);        
         entity.setLastModified(now);
         entityManager.persist(entity);
     }
 
-    public boolean updateStatus(String orcid, AvailableBroker broker, Integer status) {
-        Query query = entityManager.createNativeQuery("UPDATE record_status SET " + broker + " = :status, last_modified = now() WHERE orcid = :orcid");
+    public boolean updateFailCount(String orcid, AvailableBroker broker) {
+        Query query = entityManager.createNativeQuery("UPDATE record_status SET " + broker + " = (" + broker + " + 1), last_modified=now() WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
-        query.setParameter("status", status);
         return query.executeUpdate() > 0;
     }
-
-    public boolean updateStatus(String orcid, AvailableBroker broker) {
-        Query query = entityManager.createNativeQuery("UPDATE record_status SET " + broker + " = (" + broker + " + 1), last_modified = now() WHERE orcid = :orcid");
+    
+    public boolean success(String orcid, AvailableBroker broker) {
+        Query query = entityManager.createNativeQuery("UPDATE record_status SET " + broker + " = 0, " + broker.getLastIndexedColumnName() + " = now() WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
     
     public List<RecordStatusEntity> getFailedElements(int batchSize) {
-        TypedQuery<RecordStatusEntity> query = entityManager.createQuery("FROM RecordStatusEntity WHERE dumpStatus12Api > 0 OR dumpStatus20Api > 0 OR solrStatus20Api > 0 ORDER BY id", RecordStatusEntity.class);
+        TypedQuery<RecordStatusEntity> query = entityManager.createQuery("FROM RecordStatusEntity WHERE dumpStatus12Api > 0 OR dumpStatus20Api > 0 OR dumpStatus20ActivitiesApi > 0 OR solrStatus20Api > 0 ORDER BY id", RecordStatusEntity.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
-    }
+    }        
 }

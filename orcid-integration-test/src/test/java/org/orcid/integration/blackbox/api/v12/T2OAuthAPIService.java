@@ -50,13 +50,19 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @Path(T2OrcidApiService.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams);
+    ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams);
 
     @POST
     @Path(T2OrcidApiService.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams);
+    ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams);
+    
+    @POST
+    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    ClientResponse obtainOauth2RefreshTokenPostWithBasicAuth(String grantType, String username, String password, MultivaluedMap<String, String> formParams);
 
     
     /**

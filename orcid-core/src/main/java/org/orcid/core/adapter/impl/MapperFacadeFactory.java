@@ -118,6 +118,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.impl.generator.EclipseJdtCompilerStrategy;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.TypeFactory;
 
@@ -135,13 +136,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private WorkDao workDao;
-    
+
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
 
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     @Resource
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
@@ -150,16 +151,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private EncryptionManager encryptionManager;
+
+    private boolean orikaDebug;
     
+    public MapperFacadeFactory(boolean orikaDebug) {
+        this.orikaDebug = orikaDebug;
+    }
+
     private MapperFactory getNewMapperFactory() {
-        // for debugging in eclipse:
-        // return new DefaultMapperFactory.Builder()
-        // .compilerStrategy(new EclipseJdtCompilerStrategy())
-        // .build();
+        if (orikaDebug) {
+            return new DefaultMapperFactory.Builder().compilerStrategy(new EclipseJdtCompilerStrategy()).build();
+        }
         return new DefaultMapperFactory.Builder().build();
     }
-    
-    
+
     @Override
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = getNewMapperFactory();
@@ -174,82 +179,78 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 TypeFactory.<Item> valueOf(Item.class));
 
         // Custom notification
-        ClassMapBuilder<NotificationCustom, NotificationCustomEntity> notificationCustomClassMap = mapperFactory.classMap(NotificationCustom.class, NotificationCustomEntity.class); 
+        ClassMapBuilder<NotificationCustom, NotificationCustomEntity> notificationCustomClassMap = mapperFactory.classMap(NotificationCustom.class,
+                NotificationCustomEntity.class);
         registerSourceConverters(mapperFactory, notificationCustomClassMap);
-        mapCommonFields(notificationCustomClassMap).register();        
-        
+        mapCommonFields(notificationCustomClassMap).register();
+
         // Permission notification
-        ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class, NotificationAddItemsEntity.class);
+        ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class,
+                NotificationAddItemsEntity.class);
         registerSourceConverters(mapperFactory, notificationPermissionClassMap);
-        mapCommonFields(
-                notificationPermissionClassMap.field("authorizationUrl.uri", "authorizationUrl")
-                        .field("items.items", "notificationItems").customize(new CustomMapper<NotificationPermission, NotificationAddItemsEntity>() {
-                            @Override
-                            public void mapAtoB(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
-                                if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
-                                    String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
-                                    // validate
-                                    validateAndConvertToURI(authUrl);
-                                    entity.setAuthorizationUrl(authUrl);
-                                }                                
-                            }
+        mapCommonFields(notificationPermissionClassMap.field("authorizationUrl.uri", "authorizationUrl").field("items.items", "notificationItems")
+                .customize(new CustomMapper<NotificationPermission, NotificationAddItemsEntity>() {
+                    @Override
+                    public void mapAtoB(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
+                        if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
+                            String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
+                            // validate
+                            validateAndConvertToURI(authUrl);
+                            entity.setAuthorizationUrl(authUrl);
+                        }
+                    }
 
-                            @Override
-                            public void mapBtoA(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
-                                AuthorizationUrl authUrl = notification.getAuthorizationUrl();
-                                if (authUrl != null) {
-                                    authUrl.setPath(extractFullPath(authUrl.getUri()));
-                                    authUrl.setHost(orcidUrlManager.getBaseHost());
-                                }
-                            }
-                        })).register();
-        
+                    @Override
+                    public void mapBtoA(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
+                        AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+                        if (authUrl != null) {
+                            authUrl.setPath(extractFullPath(authUrl.getUri()));
+                            authUrl.setHost(orcidUrlManager.getBaseHost());
+                        }
+                    }
+                })).register();
+
         // Institutional sign in notification
-        ClassMapBuilder<NotificationInstitutionalConnection, NotificationInstitutionalConnectionEntity> institutionalConnectionNotificationClassMap = mapperFactory.classMap(NotificationInstitutionalConnection.class, NotificationInstitutionalConnectionEntity.class);
-        registerSourceConverters(mapperFactory, institutionalConnectionNotificationClassMap); 
-        mapCommonFields(
-                institutionalConnectionNotificationClassMap.field("authorizationUrl.uri", "authorizationUrl")
-                        .customize(new CustomMapper<NotificationInstitutionalConnection, NotificationInstitutionalConnectionEntity>() {
-                            @Override
-                            public void mapAtoB(NotificationInstitutionalConnection notification, NotificationInstitutionalConnectionEntity entity, MappingContext context) {
-                                if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
-                                    String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
-                                    // validate
-                                    validateAndConvertToURI(authUrl);
-                                    entity.setAuthorizationUrl(authUrl);
-                                }                                
-                            }
+        ClassMapBuilder<NotificationInstitutionalConnection, NotificationInstitutionalConnectionEntity> institutionalConnectionNotificationClassMap = mapperFactory
+                .classMap(NotificationInstitutionalConnection.class, NotificationInstitutionalConnectionEntity.class);
+        registerSourceConverters(mapperFactory, institutionalConnectionNotificationClassMap);
+        mapCommonFields(institutionalConnectionNotificationClassMap.field("authorizationUrl.uri", "authorizationUrl")
+                .customize(new CustomMapper<NotificationInstitutionalConnection, NotificationInstitutionalConnectionEntity>() {
+                    @Override
+                    public void mapAtoB(NotificationInstitutionalConnection notification, NotificationInstitutionalConnectionEntity entity, MappingContext context) {
+                        if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
+                            String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
+                            // validate
+                            validateAndConvertToURI(authUrl);
+                            entity.setAuthorizationUrl(authUrl);
+                        }
+                    }
 
-                            @Override
-                            public void mapBtoA(NotificationInstitutionalConnectionEntity entity, NotificationInstitutionalConnection notification, MappingContext context) {
-                                AuthorizationUrl authUrl = notification.getAuthorizationUrl();
-                                if (authUrl != null) {
-                                    authUrl.setPath(extractFullPath(authUrl.getUri()));
-                                    authUrl.setHost(orcidUrlManager.getBaseHost());
-                                }
-                                String providerId = entity.getAuthenticationProviderId();
-                                if (StringUtils.isNotBlank(providerId)) {
-                                    String idpName = identityProviderManager.retrieveIdentitifyProviderName(providerId);
-                                    notification.setIdpName(idpName);
-                                } else {
-                                    notification.setIdpName(LAST_RESORT_IDENTITY_PROVIDER_NAME);
-                                }
-                            }
-                        })).register();
-        
-        
+                    @Override
+                    public void mapBtoA(NotificationInstitutionalConnectionEntity entity, NotificationInstitutionalConnection notification, MappingContext context) {
+                        AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+                        if (authUrl != null) {
+                            authUrl.setPath(extractFullPath(authUrl.getUri()));
+                            authUrl.setHost(orcidUrlManager.getBaseHost());
+                        }
+                        String providerId = entity.getAuthenticationProviderId();
+                        if (StringUtils.isNotBlank(providerId)) {
+                            String idpName = identityProviderManager.retrieveIdentitifyProviderName(providerId);
+                            notification.setIdpName(idpName);
+                        } else {
+                            notification.setIdpName(LAST_RESORT_IDENTITY_PROVIDER_NAME);
+                        }
+                    }
+                })).register();
+
         // Amend notification
-        ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class, NotificationAmendedEntity.class);
-        registerSourceConverters(mapperFactory, amendNotificationClassMap); 
+        ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class,
+                NotificationAmendedEntity.class);
+        registerSourceConverters(mapperFactory, amendNotificationClassMap);
         mapCommonFields(amendNotificationClassMap).register();
-        mapperFactory.classMap(NotificationItemEntity.class, Item.class)
-            .fieldMap("externalIdType", "externalIdentifier.type")
-            .converter("externalIdentifierIdConverter")
-            .add()
-            .field("externalIdValue", "externalIdentifier.value")
-            .byDefault()
-            .register();                
-        
+        mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.type").converter("externalIdentifierIdConverter")
+                .add().field("externalIdValue", "externalIdentifier.value").byDefault().register();
+
         return mapperFactory.getMapperFacade();
     }
 
@@ -327,11 +328,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         }
 
     }
-    
+
     public MapperFacade getExternalIdentifierMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class, ExternalIdentifierEntity.class);        
-        addV2DateFields(externalIdentifierClassMap);        
+        ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class,
+                ExternalIdentifierEntity.class);
+        addV2DateFields(externalIdentifierClassMap);
         externalIdentifierClassMap.field("putCode", "id");
         externalIdentifierClassMap.field("type", "externalIdCommonName");
         externalIdentifierClassMap.field("value", "externalIdReference");
@@ -339,15 +341,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         externalIdentifierClassMap.fieldBToA("displayIndex", "displayIndex");
         externalIdentifierClassMap.byDefault();
         registerSourceConverters(mapperFactory, externalIdentifierClassMap);
-        
-        //TODO: add relationship to database schema for people.
+
+        // TODO: add relationship to database schema for people.
         externalIdentifierClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);        
+        ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);
         addV2DateFields(researcherUrlClassMap);
         registerSourceConverters(mapperFactory, researcherUrlClassMap);
         researcherUrlClassMap.field("putCode", "id");
@@ -358,10 +360,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         researcherUrlClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getOtherNameMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);        
+        ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);
         addV2DateFields(otherNameClassMap);
         registerSourceConverters(mapperFactory, otherNameClassMap);
         otherNameClassMap.field("putCode", "id");
@@ -372,23 +374,23 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         otherNameClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getKeywordMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);        
+        ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);
         addV2DateFields(keywordClassMap);
         registerSourceConverters(mapperFactory, keywordClassMap);
         keywordClassMap.field("putCode", "id");
         keywordClassMap.field("content", "keywordName");
         keywordClassMap.fieldBToA("displayIndex", "displayIndex");
         keywordClassMap.byDefault();
-        keywordClassMap.register();        
+        keywordClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getAddressMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);        
+        ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);
         addV2DateFields(addressClassMap);
         registerSourceConverters(mapperFactory, addressClassMap);
         addressClassMap.field("putCode", "id");
@@ -396,10 +398,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addressClassMap.field("visibility", "visibility");
         addressClassMap.fieldBToA("displayIndex", "displayIndex");
         addressClassMap.byDefault();
-        addressClassMap.register();        
+        addressClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getEmailMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
@@ -412,14 +414,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         emailClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
-        
+
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
         workClassMap.byDefault();
         workClassMap.field("putCode", "id");
@@ -434,7 +436,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("workCitation.workCitationType", "citationType");
         workClassMap.field("workCitation.citation", "citation");
         workClassMap.field("workType", "workType");
-        workClassMap.field("publicationDate", "publicationDate");        
+        workClassMap.field("publicationDate", "publicationDate");
         workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workClassMap.field("url.value", "workUrl");
         workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
@@ -487,7 +489,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         minimizedWorkClassMap.register();
 
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
-                .register();        
+                .register();
 
         return mapperFactory.getMapperFacade();
     }
@@ -529,7 +531,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         fundingSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         fundingSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
-        
+
         fundingSummaryClassMap.fieldBToA("org.name", "organization.name");
         fundingSummaryClassMap.fieldBToA("org.city", "organization.address.city");
         fundingSummaryClassMap.fieldBToA("org.region", "organization.address.region");
@@ -548,7 +550,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
         addV2CommonFields(educationClassMap);
-        registerSourceConverters(mapperFactory, educationClassMap);                
+        registerSourceConverters(mapperFactory, educationClassMap);
         educationClassMap.fieldBToA("org.name", "organization.name");
         educationClassMap.fieldBToA("org.city", "organization.address.city");
         educationClassMap.fieldBToA("org.region", "organization.address.region");
@@ -613,15 +615,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getPeerReviewMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
         converterFactory.registerConverter("workExternalIdentifierConverterId", new PeerReviewWorkExternalIDConverter());
-        //do same as work
-        
+        // do same as work
+
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
         addV2CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);
@@ -653,12 +655,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         peerReviewSummaryClassMap.field("organization.address.region", "org.region");
         peerReviewSummaryClassMap.field("organization.address.country", "org.country");
         peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
-        peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");        
+        peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         peerReviewSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
-        
+
         return mapperFactory.getMapperFacade();
     }
 
@@ -673,46 +675,48 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("description", "groupDescription");
         classMap.field("type", "groupType");
         classMap.register();
-        
+
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getClientMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);        
+        ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);
         clientSummaryClassMap.field("name", "clientName");
         clientSummaryClassMap.field("description", "clientDescription");
         clientSummaryClassMap.byDefault();
-        clientSummaryClassMap.register();        
-                
-        ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);        
+        clientSummaryClassMap.register();
+
+        ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);
         clientClassMap.field("name", "clientName");
-        clientClassMap.field("description", "clientDescription");        
-        clientClassMap.field("website", "clientWebsite");        
+        clientClassMap.field("description", "clientDescription");
+        clientClassMap.field("website", "clientWebsite");
         clientClassMap.field("allowAutoDeprecate", "allowAutoDeprecate");
-        
+
         clientClassMap.fieldBToA("clientId", "id");
-        clientClassMap.fieldBToA("clientType", "clientType");        
-        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");                       
-        
+        clientClassMap.fieldBToA("clientType", "clientType");
+        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");
+
         clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
             /**
-             * On the way in, from Client to ClientDetailsEntity, we need to care about mapping the redirect uri's, since all config features will not change from UI requests             
-             * */
+             * On the way in, from Client to ClientDetailsEntity, we need to
+             * care about mapping the redirect uri's, since all config features
+             * will not change from UI requests
+             */
             @Override
             public void mapAtoB(Client a, ClientDetailsEntity b, MappingContext context) {
                 Map<String, ClientRedirectUriEntity> existingRedirectUriEntitiesMap = new HashMap<String, ClientRedirectUriEntity>();
-                if(b.getClientRegisteredRedirectUris() != null && !b.getClientRegisteredRedirectUris().isEmpty()) {
+                if (b.getClientRegisteredRedirectUris() != null && !b.getClientRegisteredRedirectUris().isEmpty()) {
                     existingRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(b.getClientRegisteredRedirectUris());
-                }                        
-                if(b.getClientRegisteredRedirectUris() != null) {
+                }
+                if (b.getClientRegisteredRedirectUris() != null) {
                     b.getClientRegisteredRedirectUris().clear();
                 } else {
                     b.setClientRegisteredRedirectUris(new TreeSet<ClientRedirectUriEntity>());
                 }
-                
-                if(a.getClientRedirectUris() != null) {
-                    for(ClientRedirectUri cru : a.getClientRedirectUris()) {
+
+                if (a.getClientRedirectUris() != null) {
+                    for (ClientRedirectUri cru : a.getClientRedirectUris()) {
                         String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(cru);
                         if (existingRedirectUriEntitiesMap.containsKey(rUriKey)) {
                             ClientRedirectUriEntity existingEntity = existingRedirectUriEntitiesMap.get(rUriKey);
@@ -738,21 +742,23 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             }
 
             /**
-             * On the way out, from ClientDetailsEntity to Client, we just need to care about mapping the redirect uri's and the primary client secret since all config features will not be visible on the UI
-             * */
+             * On the way out, from ClientDetailsEntity to Client, we just need
+             * to care about mapping the redirect uri's and the primary client
+             * secret since all config features will not be visible on the UI
+             */
             @Override
             public void mapBtoA(ClientDetailsEntity b, Client a, MappingContext context) {
-                if(b.getClientSecrets() != null) {
-                    for(ClientSecretEntity entity : b.getClientSecrets()) {
-                        if(entity.isPrimary()) {
+                if (b.getClientSecrets() != null) {
+                    for (ClientSecretEntity entity : b.getClientSecrets()) {
+                        if (entity.isPrimary()) {
                             a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getClientSecret()));
                         }
                     }
                 }
-                if(b.getRegisteredRedirectUri() != null) {
+                if (b.getRegisteredRedirectUri() != null) {
                     a.setClientRedirectUris(new HashSet<ClientRedirectUri>());
-                    for(ClientRedirectUriEntity entity : b.getClientRegisteredRedirectUris()) {
-                        ClientRedirectUri element = new ClientRedirectUri();                        
+                    for (ClientRedirectUriEntity entity : b.getClientRegisteredRedirectUris()) {
+                        ClientRedirectUri element = new ClientRedirectUri();
                         element.setRedirectUri(entity.getRedirectUri());
                         element.setRedirectUriType(entity.getRedirectUriType());
                         element.setUriActType(entity.getUriActType());
@@ -760,17 +766,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(entity.getPredefinedClientScope()));
                         a.getClientRedirectUris().add(element);
                     }
-                }                
+                }
             }
-        });                  
-        clientClassMap.register();                
+        });
+        clientClassMap.register();
         return mapperFactory.getMapperFacade();
     }
 
     public MapperFacade getNameMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);        
-        addV2DateFields(nameClassMap);        
+        ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);
+        addV2DateFields(nameClassMap);
         nameClassMap.field("creditName.content", "creditName");
         nameClassMap.field("givenNames.content", "givenNames");
         nameClassMap.field("familyName.content", "familyName");
@@ -779,20 +785,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         nameClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getInvalidRecordDataChangeMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        ClassMapBuilder<RecordCorrection, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(RecordCorrection.class, InvalidRecordDataChangeEntity.class);        
+        ClassMapBuilder<RecordCorrection, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(RecordCorrection.class, InvalidRecordDataChangeEntity.class);
         classMap.fieldBToA("id", "sequence");
         classMap.fieldBToA("sqlUsedToUpdate", "sqlUsedToUpdate");
         classMap.fieldBToA("description", "description");
         classMap.fieldBToA("numChanged", "numChanged");
         classMap.fieldBToA("type", "type");
         classMap.byDefault();
-        classMap.register();        
+        classMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("createdDate", "dateCreated").field("putCode", "id").byDefault();
     }
@@ -806,8 +812,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private void addV2DateFields(ClassMapBuilder<?, ?> classMap) {
         classMap.field("createdDate.value", "dateCreated");
         classMap.field("lastModifiedDate.value", "lastModified");
-    }    
-    
+    }
+
     private void mapFuzzyDateToStartDateEntityAndEndDateEntity(MapperFactory mapperFactory) {
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).customize(new CustomMapper<FuzzyDate, StartDateEntity>() {
             @Override
@@ -817,13 +823,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 } else {
                     entity.setYear(null);
                 }
-                
+
                 if (fuzzyDate.getMonth() != null) {
                     entity.setMonth(Integer.valueOf(fuzzyDate.getMonth().getValue()));
                 } else {
                     entity.setMonth(null);
                 }
-                
+
                 if (fuzzyDate.getDay() != null) {
                     entity.setDay(Integer.valueOf(fuzzyDate.getDay().getValue()));
                 } else {
@@ -838,13 +844,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 } else {
                     fuzzyDate.setYear(null);
                 }
-                
+
                 if (entity.getMonth() != null) {
                     fuzzyDate.setMonth(new Month(entity.getMonth()));
                 } else {
                     fuzzyDate.setMonth(null);
                 }
-                
+
                 if (entity.getDay() != null) {
                     fuzzyDate.setDay(new Day(entity.getDay()));
                 } else {
@@ -852,7 +858,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 }
             }
         }).register();
-        
+
         mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).customize(new CustomMapper<FuzzyDate, EndDateEntity>() {
             @Override
             public void mapAtoB(FuzzyDate fuzzyDate, EndDateEntity entity, MappingContext context) {
@@ -861,13 +867,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 } else {
                     entity.setYear(null);
                 }
-                
+
                 if (fuzzyDate.getMonth() != null) {
                     entity.setMonth(Integer.valueOf(fuzzyDate.getMonth().getValue()));
                 } else {
                     entity.setMonth(null);
                 }
-                
+
                 if (fuzzyDate.getDay() != null) {
                     entity.setDay(Integer.valueOf(fuzzyDate.getDay().getValue()));
                 } else {
@@ -882,13 +888,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 } else {
                     fuzzyDate.setYear(null);
                 }
-                
+
                 if (entity.getMonth() != null) {
                     fuzzyDate.setMonth(new Month(entity.getMonth()));
                 } else {
                     fuzzyDate.setMonth(null);
                 }
-                
+
                 if (entity.getDay() != null) {
                     fuzzyDate.setDay(new Day(entity.getDay()));
                 } else {
@@ -897,7 +903,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             }
         }).register();
     }
-    
+
     @Override
     public Class<?> getObjectType() {
         return MapperFacade.class;
@@ -906,6 +912,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+    
+    public void setOrikaDebug(boolean orikaDebug) {
+        this.orikaDebug = orikaDebug;
     }
 
 }

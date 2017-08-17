@@ -25,6 +25,7 @@
 		    </#if>
             <p><small>${springMacroRequestContext.getMessage("reset_password.enterEmail")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
         	<form id="password-reset-form" name="emailAddressForm">
+        	    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         		<fieldset>
         			<span class="orcid-error"
 			            ng-show="requestResetPassword.errors.length > 0">
