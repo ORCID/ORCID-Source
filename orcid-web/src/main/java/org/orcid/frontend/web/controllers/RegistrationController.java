@@ -432,10 +432,11 @@ public class RegistrationController extends BaseController {
             for(Text emailAdditional : reg.getEmailsAdditional()) {
                 if(!PojoUtil.isEmpty(emailAdditional)){
                     emailAdditional.setErrors(new ArrayList<String>());
-                    if (!isKeyup && (emailAdditional.getValue() == null || emailAdditional.getValue().trim().isEmpty())) {
-                        setError(emailAdditional, "Email.registrationForm.email");
-                    }
                     
+                    if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
+                        setError(reg.getEmail(), "Email.registrationForm.email");
+                    }
+            
                     String emailAddressAdditional = emailAdditional.getValue();
             
                     MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "EmailAdditional");
@@ -443,7 +444,11 @@ public class RegistrationController extends BaseController {
                     if(!validateEmailAddress(emailAddressAdditional)) {
                         String[] codes = { "Email.personalInfoForm.email" };
                         String[] args = { emailAddressAdditional };
-                        mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Not vaild"));
+                        mbr.addError(new FieldError("emailAdditional", "emailAdditional", emailAddressAdditional, false, codes, args, "Not vaild"));
+                    } else if(emailAddressAdditional.equals(reg.getEmail().getValue())){
+                        String[] codes = { "Email.personalInfoForm.additionalEmailCannotMatch" };
+                        String[] args = { emailAddressAdditional };
+                        mbr.addError(new FieldError("emailAdditional", "emailAdditional", emailAddressAdditional, false, codes, args, "Not vaild"));
                     } else {
                         //Validate duplicates 
                         //If email exists

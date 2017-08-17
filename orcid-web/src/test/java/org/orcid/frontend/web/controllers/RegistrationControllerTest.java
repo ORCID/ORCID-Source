@@ -163,6 +163,28 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertEquals("Given Names", form.getGivenNames().getValue());
         assertEquals("Family Name", form.getFamilyNames().getValue());        
     }
+    @Test
+    public void regEmailsAdditonalValidateNotSameAsPrimary() {
+        String additionalEmail = "email1@test.orcid.org";
+        
+        Registration reg = new Registration();
+        List<Text> emailsAdditionalList = new ArrayList<Text>();
+        Text emailAdditional = new Text();
+        emailAdditional.setValue(additionalEmail);
+        emailsAdditionalList.add(emailAdditional);
+        reg.setEmailsAdditional(emailsAdditionalList);
+        reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+        
+        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        
+        assertNotNull(reg);
+        assertNotNull(reg.getEmailsAdditional());
+        for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
+            assertNotNull(emailAdditionalListItem.getErrors());
+            assertEquals(1, emailAdditionalListItem.getErrors().size());
+            assertEquals("Additional email cannot match primary email", emailAdditionalListItem.getErrors().get(0));
+        }
+    }
     
     @Test
     public void regEmailValidateUnclaimedAccountTest() {
