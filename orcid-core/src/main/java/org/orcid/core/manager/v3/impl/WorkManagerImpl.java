@@ -49,7 +49,7 @@ import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -142,7 +142,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
-                long lastModifiedTime = getLastModified(orcid);
                 List<Work> existingWorks = this.findWorks(orcid);       
                 if (existingWorks != null) {
                     for (Work existing : existingWorks) {
@@ -156,9 +155,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
         }
 
-        LegacyWorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        workEntity.setProfile(profile);
+        workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
         
         // Set source id 
@@ -223,9 +222,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         }
                         
                         //Save the work
-                        LegacyWorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+                        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                        workEntity.setProfile(profile);
+                        workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
                         
                         // Set source id 
@@ -305,7 +304,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Override
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
-        LegacyWorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
+        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
@@ -345,7 +344,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Override
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
-        LegacyWorkEntity workEntity = workDao.getWork(orcid, workId);
+        WorkEntity workEntity = workDao.getWork(orcid, workId);
         orcidSecurityManager.checkSource(workEntity);
         try {
             Item item = createItem(workEntity);
@@ -359,7 +358,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return result;
     }
 
-    private void setIncomingWorkPrivacy(LegacyWorkEntity workEntity, ProfileEntity profile) {
+    private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_v2.Visibility incomingWorkVisibility = workEntity.getVisibility();
         org.orcid.jaxb.model.common_v2.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
@@ -369,7 +368,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
     }
 
-    private Item createItem(LegacyWorkEntity workEntity) {
+    private Item createItem(WorkEntity workEntity) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);

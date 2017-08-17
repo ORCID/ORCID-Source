@@ -49,7 +49,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -155,9 +155,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
         }
 
-        LegacyWorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        workEntity.setProfile(profile);
+        workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
         
         // Set source id 
@@ -222,9 +222,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         }
                         
                         //Save the work
-                        LegacyWorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+                        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                        workEntity.setProfile(profile);
+                        workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
                         
                         // Set source id 
@@ -304,7 +304,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Override
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
-        LegacyWorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
+        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
         Visibility originalVisibility = workEntity.getVisibility();
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
@@ -344,7 +344,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Override
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
-        LegacyWorkEntity workEntity = workDao.getWork(orcid, workId);
+        WorkEntity workEntity = workDao.getWork(orcid, workId);
         orcidSecurityManager.checkSource(workEntity);
         try {
             Item item = createItem(workEntity);
@@ -358,7 +358,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return result;
     }
 
-    private void setIncomingWorkPrivacy(LegacyWorkEntity workEntity, ProfileEntity profile) {
+    private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
         Visibility incomingWorkVisibility = workEntity.getVisibility();
         Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
@@ -368,7 +368,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
     }
 
-    private Item createItem(LegacyWorkEntity workEntity) {
+    private Item createItem(WorkEntity workEntity) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);

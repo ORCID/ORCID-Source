@@ -39,7 +39,7 @@ public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk>
     private static final long serialVersionUID = -3187757614938904392L;
 
     private NotificationEntity notification;
-    private LegacyWorkEntity work;
+    private WorkEntity work;
 
     @Override
     @Transient
@@ -64,7 +64,7 @@ public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk>
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "work_id", nullable = false)
-    public LegacyWorkEntity getWork() {
+    public WorkEntity getWork() {
         return work;
     }
 
@@ -72,7 +72,7 @@ public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk>
      * @param work
      *            the work to set
      */
-    public void setWork(LegacyWorkEntity work) {
+    public void setWork(WorkEntity work) {
         this.work = work;
     }
 
@@ -113,10 +113,10 @@ public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk>
                 return -1;
             }
 
-            LegacyWorkEntity work1 = profileWork1.getWork();
-            LegacyWorkEntity work2 = profileWork2.getWork();
+            WorkEntity work1 = profileWork1.getWork();
+            WorkEntity work2 = profileWork2.getWork();
 
-            LegacyWorkEntity.ChronologicallyOrderedWorkEntityComparator workEntityComparator = new LegacyWorkEntity.ChronologicallyOrderedWorkEntityComparator();
+            WorkEntity.ChronologicallyOrderedWorkEntityComparator workEntityComparator = new WorkEntity.ChronologicallyOrderedWorkEntityComparator();
 
             return workEntityComparator.compare(work1, work2);
         }

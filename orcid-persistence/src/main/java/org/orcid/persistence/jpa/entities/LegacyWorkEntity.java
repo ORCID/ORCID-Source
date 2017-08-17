@@ -16,8 +16,6 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import java.util.Comparator;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,7 +31,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "work")
 @Deprecated
-public class LegacyWorkEntity extends org.orcid.persistence.jpa.entities.WorkEntity implements Comparable<LegacyWorkEntity>, ProfileAware, DisplayIndexInterface {
+public class LegacyWorkEntity extends org.orcid.persistence.jpa.entities.WorkEntity implements ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = 1L;
 
@@ -56,109 +54,6 @@ public class LegacyWorkEntity extends org.orcid.persistence.jpa.entities.WorkEnt
         this.profile = profile;
     }
     
-    @Override
-    public int compareTo(LegacyWorkEntity other) {
-        if (other == null) {
-            throw new NullPointerException("Can't compare with null");
-        }
-
-        int comparison = compareOrcidId(other);
-        if (comparison == 0) {
-            comparison = comparePublicationDate(other);
-            if (comparison == 0) {
-                comparison = compareTitles(other);
-                if (comparison == 0) {
-                    return compareIds(other);
-                }
-            }
-        }
-
-        return comparison;
-    }
-
-    protected int compareTitles(LegacyWorkEntity other) {
-        if (other.getTitle() == null) {
-            if (title == null) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-        if (title == null) {
-            return -1;
-        }
-        return title.compareToIgnoreCase(other.getTitle());
-    }
-
-    protected int compareIds(LegacyWorkEntity other) {
-        if (other.getId() == null) {
-            if (id == null) {
-                if (equals(other)) {
-                    return 0;
-                } else {
-                    // If can't determine preferred order, then be polite and
-                    // say 'after you!'
-                    return -1;
-                }
-            } else {
-                return 1;
-            }
-        }
-        if (id == null) {
-            return -1;
-        }
-        return id.compareTo(other.getId());
-    }
-
-    protected int comparePublicationDate(LegacyWorkEntity other) {
-        if (other.getPublicationDate() == null) {
-            if (this.publicationDate == null) {
-                return 0;
-            } else {
-                return 1;
-            }
-        } else if (this.publicationDate == null) {
-            return -1;
-        }
-
-        return this.publicationDate.compareTo(other.getPublicationDate());
-    }
-
-    protected int compareOrcidId(LegacyWorkEntity other) {
-        if (this.getOrcid() == null) {
-            if (other.getOrcid() == null) {
-                return 0;
-            } else {
-                return -1;
-            }
-        } else if (other.getOrcid() == null) {
-            return 1;
-        } else {
-            return this.getOrcid().compareTo(other.getOrcid());
-        }
-    }
-
-    
-    public static class ChronologicallyOrderedWorkEntityComparator implements Comparator<LegacyWorkEntity> {
-        public int compare(LegacyWorkEntity work1, LegacyWorkEntity work2) {
-            if (work2 == null) {
-                throw new NullPointerException("Can't compare with null");
-            }
-
-            // Negate the result (Multiply it by -1) to reverse the order.
-            int comparison = work1.comparePublicationDate(work2) * -1;
-
-            if (comparison == 0) {
-                comparison = work1.compareTitles(work2);
-                if (comparison == 0) {
-                    return work1.compareIds(work2);
-                }
-            }
-
-            return comparison;
-        }
-    }
-
     /**
      * Clean simple fields so that entity can be reused.
      */

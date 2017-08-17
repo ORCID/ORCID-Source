@@ -59,7 +59,7 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
 
 public class WorkManagerTest extends BaseTest {
@@ -135,9 +135,9 @@ public class WorkManagerTest extends BaseTest {
         Work w3 = getWork("extId3");
         w3 = workManager.createWork(claimedOrcid, w3, true);
         
-        LegacyWorkEntity entity1 = workDao.find(w1.getPutCode());
-        LegacyWorkEntity entity2 = workDao.find(w2.getPutCode());
-        LegacyWorkEntity entity3 = workDao.find(w3.getPutCode());
+        WorkEntity entity1 = workDao.find(w1.getPutCode());
+        WorkEntity entity2 = workDao.find(w2.getPutCode());
+        WorkEntity entity3 = workDao.find(w3.getPutCode());
         
         assertNotNull(entity1.getDisplayIndex());
         assertNotNull(entity2.getDisplayIndex());
@@ -155,7 +155,7 @@ public class WorkManagerTest extends BaseTest {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
-        LegacyWorkEntity w = workDao.find(w1.getPutCode());
+        WorkEntity w = workDao.find(w1.getPutCode());
         
         assertNotNull(w1);
         assertEquals(Long.valueOf(1), w.getDisplayIndex());
@@ -166,7 +166,7 @@ public class WorkManagerTest extends BaseTest {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
-        LegacyWorkEntity w = workDao.find(w1.getPutCode());
+        WorkEntity w = workDao.find(w1.getPutCode());
         
         assertNotNull(w1);
         assertEquals(Long.valueOf(0), w.getDisplayIndex());

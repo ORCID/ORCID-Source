@@ -232,6 +232,9 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
      */
     @SuppressWarnings("unchecked")
     @Override
+    
+    //TODO: We need another cache to keep legacy work entities
+    
     public <T extends WorkBaseEntity> List<T> retrieveWorkList(String orcid, Map<Long, Date> workIdsWithLastModified, Cache workCache,
             Function<List<Long>, List<T>> workRetriever) {
         WorkBaseEntity[] returnArray = new WorkBaseEntity[workIdsWithLastModified.size()];
