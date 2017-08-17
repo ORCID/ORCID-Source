@@ -2,10 +2,11 @@ declare var scriptTmpl: any;
 
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';  
+import { CommonModule } from '@angular/common'; 
+import { Component, Inject, Input, ViewChild } from '@angular/core'; 
 import { NgModule } from '@angular/core';
 import {UpgradeAdapter} from '@angular/upgrade';
-import {prefsSrvc} from './../../services/prefsSrvc.service.ts';
+
 
 //Ng1 hybrid syntax
 /*worksPrivacyPreferencesCtrl {
@@ -16,20 +17,21 @@ export const worksPrivacyPreferencesCmp = {
     controllerAs: 'ctrl'
 };*/
 
-
-import {Component, Input} from '@angular/core';
 @Component({
     selector: 'works-privacy-preferences-ng2',
     template:  scriptTmpl("works-privacy-preferences-ng2-template")
 })
 export class WorksPrivacyPreferencesComponent {
+    @ViewChild('modalng2') modalngcomponent;
+
+    prefsSrvc: any;
     privacyHelp: any;
     showElement: any;
     
-    constructor(
-        prefsSrvc: prefsSrvc
-
-    ) {
+    constructor(@Inject('prefsSrvc') prefsSrvc) {
+    
+        this.prefsSrvc = prefsSrvc;
+        console.log('this.prefsSrvc', this.prefsSrvc);
         this.privacyHelp = {};
         this.showElement = {};
     }
