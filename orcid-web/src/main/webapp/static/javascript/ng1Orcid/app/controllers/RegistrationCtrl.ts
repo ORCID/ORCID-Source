@@ -80,9 +80,7 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                        $scope.register.email.value=email;
                        $scope.register.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];
                        $scope.register.linkType=linkFlag;
-                       $scope.$apply();  
-                       console.log($scope.register);
-                       console.log(data);             
+                       $scope.$apply();             
             
                         // make sure inputs stayed trimmed
                         $scope.$watch('register.email.value', function(newValue, oldValue) {
@@ -172,7 +170,6 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        console.log(data);
                         $scope.register = data;             
                         $scope.$apply();                
                         if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
@@ -259,7 +256,6 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                     success: function(data) {
                         commonSrvc.copyErrorsLeft($scope.register, data);
                         $scope.$apply();
-                        console.log(data);
                     }
                 }).fail(function() {
                     // something bad is happening!
@@ -318,8 +314,7 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             }  
 
             $scope.removeEmailField = function (index) {
-                console.log("index is: " + index);
-                $scope.register.emailsAdditional.splice(index);
+                $scope.register.emailsAdditional.splice(index, 1);
             }          
         }
     ]

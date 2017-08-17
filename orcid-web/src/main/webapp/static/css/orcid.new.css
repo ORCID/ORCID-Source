@@ -194,6 +194,11 @@ textarea {
     background-color: #fff;
     border: none;
     margin-bottom: 10px;
+    padding: 0;
+}
+
+.btn-white-no-border:hover {
+    color: #a6ce39;
 }
 
 .container {
@@ -2552,6 +2557,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .popover-help-container {
     display: inline;
+}
+
+.popover-help-container  .btn-white-no-border {
+    font-size: 14px;
+    padding-left: 0;
 }
 
 

@@ -86,18 +86,21 @@
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
             <div class="relative">
                 <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="register.emailsAdditional[$index].value" ng-blur="serverValidate('EmailsAdditional')"/>
-                <div class="popover-help-container leftBuffer">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                <div id="email-additional-help" class="popover bottom">
-                    <div class="arrow"></div>
-                    <div class="popover-content">
-                        <p><@orcid.msg ''/></p>
-                        <p><@orcid.msg 'orcid.frontend.register.help.email_additional'/></p>
+                <div ng-show="$first" class="popover-help-container leftBuffer">
+                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <div id="email-additional-help" class="popover bottom">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <p><@orcid.msg ''/></p>
+                            <p><@orcid.msg 'orcid.frontend.register.help.email_additional'/></p>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div ng-show="!$first" class="popover-help-container leftBuffer">
+                    <button class="btn-white-no-border" ng-click="removeEmailField($index)"><i class="glyphicon glyphicon-remove-sign"></i></button>
+                </div>
                 <span class="orcid-error" ng-show="register.emailsAdditional[$index].errors.length > 0 && !showDeactivatedError && !showReactivationSent">
-                    <div ng-repeat='error in register.emailsAdditional[$index].errors' ng-bind-html="error"></div>
+                    <div ng-repeat='error in register.emailsAdditional[$index].errors track by $index' ng-bind-html="error"></div>
                 </span>
                 <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
