@@ -18,7 +18,6 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -30,6 +29,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.persistence.jpa.entities.decoupled.DecoupledWorkEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,80 +39,6 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     public WorkDaoImpl() {
         super(WorkEntity.class);
-    }
-
-    /**
-     * Add a new work to the work table
-     * 
-     * @param work
-     *            The work that will be persisted
-     * @return the work already persisted on database
-     * */
-    @Override 
-    @Transactional
-    public WorkEntity addWork(WorkEntity work) {
-        this.persist(work);
-        this.flush();
-        return work;
-    }
-
-    @Override
-    @Transactional
-    public WorkEntity editWork(WorkEntity updatedWork) {
-        WorkEntity workToUpdate =  this.find(updatedWork.getId());
-        mergeWork(workToUpdate, updatedWork);
-        workToUpdate = this.merge(workToUpdate);
-        return workToUpdate;
-    }
-    
-    private void mergeWork(WorkEntity workToUpdate, WorkEntity workWithNewData) {
-        workToUpdate.setTitle(workWithNewData.getTitle());
-        workToUpdate.setTranslatedTitle(workWithNewData.getTranslatedTitle());
-        workToUpdate.setSubtitle(workWithNewData.getSubtitle());
-        workToUpdate.setDescription(workWithNewData.getDescription());
-        workToUpdate.setWorkUrl(workWithNewData.getWorkUrl());
-        workToUpdate.setCitation(workWithNewData.getCitation());
-        workToUpdate.setJournalTitle(workWithNewData.getJournalTitle());
-        workToUpdate.setLanguageCode(workWithNewData.getLanguageCode());
-        workToUpdate.setTranslatedTitleLanguageCode(workWithNewData.getTranslatedTitleLanguageCode());
-        workToUpdate.setIso2Country(workWithNewData.getIso2Country());
-        workToUpdate.setCitationType(workWithNewData.getCitationType());
-        workToUpdate.setWorkType(workWithNewData.getWorkType());
-        workToUpdate.setPublicationDate(workWithNewData.getPublicationDate());
-        workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
-        workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());        
-        workToUpdate.setVisibility(workWithNewData.getVisibility());
-        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());                
-        workToUpdate.setSourceId(workWithNewData.getSourceId());
-        workToUpdate.setClientSourceId(workWithNewData.getClientSourceId());        
-        workToUpdate.setLastModified(new Date());
-        if(workWithNewData.getAddedToProfileDate() != null) {
-            workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
-        }
-        workToUpdate.setProfile(workWithNewData.getProfile());
-    }
-
-    /**
-     * @deprecated Use {@link org.orcid.core.manager.WorkEntityCacheManager#retrieveMinimizedWorks(String, long) } instead
-     * 
-     * Find works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    @SuppressWarnings("unchecked")
-    @Cacheable(value = "dao-works", key = "#orcid.concat('-').concat(#lastModified)")
-    @Deprecated
-    public List<MinimizedWorkEntity> findWorks(String orcid, long lastModified) {
-
-        Query query = entityManager
-                .createQuery("from MinimizedWorkEntity w "
-                        + "where w.orcid=:orcid "
-                        + "order by w.displayIndex desc, w.dateCreated asc");
-        query.setParameter("orcid", orcid);
-
-        return query.getResultList();
     }
 
     /**
@@ -307,11 +233,11 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * Retrieve a work from database
      * @param orcid
      * @param id
-     * @return the WorkEntity associated with the parameter id
+     * @return the DecoupledWorkEntity associated with the parameter id
      * */
     @Override
-    public WorkEntity getWork(String orcid, Long id) {
-        TypedQuery<WorkEntity> query = entityManager.createQuery("FROM WorkEntity WHERE id = :workId and profile.id = :orcid", WorkEntity.class);        
+    public DecoupledWorkEntity getWork(String orcid, Long id) {
+        TypedQuery<DecoupledWorkEntity> query = entityManager.createQuery("FROM DecoupledWorkEntity WHERE id = :workId and orcid = :orcid", DecoupledWorkEntity.class);        
         query.setParameter("workId", id);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
@@ -340,6 +266,5 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
-
 }
 

@@ -17,21 +17,13 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Comparator;
-import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.record_v2.CitationType;
-import org.orcid.jaxb.model.common_v2.Iso3166Country;
 
 /**
  * orcid-entities - Dec 6, 2011 - WorkEntity
@@ -40,7 +32,7 @@ import org.orcid.jaxb.model.common_v2.Iso3166Country;
  */
 @Entity
 @Table(name = "work")
-public class WorkEntity extends org.orcid.persistence.jpa.entities.decoupled.WorkEntity implements Comparable<WorkEntity>, ProfileAware, DisplayIndexInterface {
+public class WorkEntity extends org.orcid.persistence.jpa.entities.decoupled.DecoupledWorkEntity implements Comparable<WorkEntity>, ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,10 +55,89 @@ public class WorkEntity extends org.orcid.persistence.jpa.entities.decoupled.Wor
         this.profile = profile;
     }
     
-    
+    @Override
+    public int compareTo(WorkEntity other) {
+        if (other == null) {
+            throw new NullPointerException("Can't compare with null");
+        }
+
+        int comparison = compareOrcidId(other);
+        if (comparison == 0) {
+            comparison = comparePublicationDate(other);
+            if (comparison == 0) {
+                comparison = compareTitles(other);
+                if (comparison == 0) {
+                    return compareIds(other);
+                }
+            }
+        }
+
+        return comparison;
+    }
+
+    protected int compareTitles(WorkEntity other) {
+        if (other.getTitle() == null) {
+            if (title == null) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+        if (title == null) {
+            return -1;
+        }
+        return title.compareToIgnoreCase(other.getTitle());
+    }
+
+    protected int compareIds(WorkEntity other) {
+        if (other.getId() == null) {
+            if (id == null) {
+                if (equals(other)) {
+                    return 0;
+                } else {
+                    // If can't determine preferred order, then be polite and
+                    // say 'after you!'
+                    return -1;
+                }
+            } else {
+                return 1;
+            }
+        }
+        if (id == null) {
+            return -1;
+        }
+        return id.compareTo(other.getId());
+    }
+
+    protected int comparePublicationDate(WorkEntity other) {
+        if (other.getPublicationDate() == null) {
+            if (this.publicationDate == null) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else if (this.publicationDate == null) {
+            return -1;
+        }
+
+        return this.publicationDate.compareTo(other.getPublicationDate());
+    }
+
+    protected int compareOrcidId(WorkEntity other) {
+        if (this.getOrcid() == null) {
+            if (other.getOrcid() == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else if (other.getOrcid() == null) {
+            return 1;
+        } else {
+            return this.getOrcid().compareTo(other.getOrcid());
+        }
+    }
 
     
-
     public static class ChronologicallyOrderedWorkEntityComparator implements Comparator<WorkEntity> {
         public int compare(WorkEntity work1, WorkEntity work2) {
             if (work2 == null) {
@@ -103,5 +174,4 @@ public class WorkEntity extends org.orcid.persistence.jpa.entities.decoupled.Wor
         languageCode = null;
         iso2Country = null;
     }
-
 }

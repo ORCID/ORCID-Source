@@ -24,6 +24,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.persistence.jpa.entities.decoupled.DecoupledWorkEntity;
 
 /**
  * 
@@ -31,33 +32,6 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
  * 
  */
 public interface WorkDao extends GenericDao<WorkEntity, Long> {
-
-    /**
-     * Add a new work to the work table
-     * 
-     * @param work
-     *            The work that will be persisted
-     * @return the work already persisted on database
-     * */
-    WorkEntity addWork(WorkEntity work);
-
-    /**
-     * Edits an existing work
-     * 
-     * @param work
-     *            The work to be edited
-     * @return the updated work
-     * */
-    WorkEntity editWork(WorkEntity work);
-
-    /**
-     * Find works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of minimized works associated to the specific user
-     * */
-    List<MinimizedWorkEntity> findWorks(String orcid, long lastModified);
 
     /**
      * Find the public works for a specific user
@@ -152,10 +126,10 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * Retrieve a work from database
      * @param orcid
      * @param id
-     * @param lastModified 
-     * @return the WorkEntity associated with the parameter id
+     * 
+     * @return the DecoupledWorkEntity associated with the parameter id
      * */
-    WorkEntity getWork(String orcid, Long id);
+    DecoupledWorkEntity getWork(String orcid, Long id);
 
     List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid);
 
@@ -167,5 +141,5 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
     
-    List<WorkEntity> getWorkEntities(List<Long> ids);
+    List<WorkEntity> getWorkEntities(List<Long> ids);        
 }

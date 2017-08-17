@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -126,6 +127,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
+import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.annotation.Rollback;
@@ -1854,7 +1856,10 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile = getWorkInsideOrcidProfile("w3", orcidId);
         orcidProfileManager.addOrcidWorks(profile);
         
-        List<MinimizedWorkEntity> all = workDao.findWorks(orcidId, System.currentTimeMillis());
+        List<WorkLastModifiedEntity> wlme = workDao.getPublicWorkLastModifiedList(orcidId);
+        List<Long> ids = wlme.stream().map((w) -> w.getId()).collect(Collectors.toList());
+        
+        List<MinimizedWorkEntity> all = workDao.getMinimizedWorkEntities(ids);
         assertNotNull(all);
         Long displayIndex1 = null;
         Long displayIndex2 = null;

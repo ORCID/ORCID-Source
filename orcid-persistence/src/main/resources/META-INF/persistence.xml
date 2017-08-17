@@ -70,7 +70,8 @@
         <class>org.orcid.persistence.jpa.entities.AddressEntity</class>
         <class>org.orcid.persistence.jpa.entities.RecordNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.BiographyEntity</class>  
-        <class>org.orcid.persistence.jpa.entities.IdentifierTypeEntity</class>        
+        <class>org.orcid.persistence.jpa.entities.IdentifierTypeEntity</class>
+        <class>org.orcid.persistence.jpa.entities.decoupled.DecoupledWorkEntity</class>        
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>
