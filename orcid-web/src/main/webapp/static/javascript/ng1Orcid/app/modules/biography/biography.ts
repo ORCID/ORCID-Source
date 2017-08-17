@@ -20,7 +20,7 @@ export const BiographyModule = angular.module(
 );
 
 BiographyModule.service('biographyService', biographyService);
-BiographyModule.component('biographyCmp', biographyCmp);
+//BiographyModule.component('biographyCmp', biographyCmp);
 //BiographyModule.controller('BiographyCtrl', BiographyCtrl);
 BiographyModule.controller(
     'BiographyCtrl',

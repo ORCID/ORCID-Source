@@ -16,7 +16,7 @@
     //"noEmitHelpers": true,
     "sourceMap": true,
     "strictNullChecks": false,
-    "target": "es6",
+    "target": "es5",
     "typeRoots": [
       "node_modules/@types"
     ],
