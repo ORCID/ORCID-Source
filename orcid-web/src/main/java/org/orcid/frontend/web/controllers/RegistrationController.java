@@ -454,11 +454,11 @@ public class RegistrationController extends BaseController {
                     if(!validateEmailAddress(emailAddressAdditional)) {
                         String[] codes = { "Email.personalInfoForm.email" };
                         String[] args = { emailAddressAdditional };
-                        mbr.addError(new FieldError("emailAdditional", "emailAdditional", emailAddressAdditional, false, codes, args, "Not vaild"));
+                        mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Not vaild"));
                     } else if(emailAddressAdditional.equals(reg.getEmail().getValue())){
                         String[] codes = { "Email.personalInfoForm.additionalEmailCannotMatch" };
                         String[] args = { emailAddressAdditional };
-                        mbr.addError(new FieldError("emailAdditional", "emailAdditional", emailAddressAdditional, false, codes, args, "Not vaild"));
+                        mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Additional email cannot match primary"));
                     } else {
                         //Validate duplicates 
                         //If email exists
