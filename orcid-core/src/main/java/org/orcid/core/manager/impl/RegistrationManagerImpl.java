@@ -159,9 +159,8 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
                                 duplicateCount++;
                                 if(PojoUtil.isEmpty(duplicateAdditionalAddress)){
                                     duplicateAdditionalAddress = emailAddressAdditional;
-                                    break;
                                 } else {
-                                    throw new InvalidRequestException("Unable to register: more than 2 duplicate emails");
+                                    throw new InvalidRequestException("More than 2 duplicate emails");
                                 }
                             } 
                         }
