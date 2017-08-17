@@ -311,7 +311,7 @@ export const CountryCtrl = angular.module('orcidApp').controller(
 })
 export class CountryComponent {
     @ViewChild('modalng2') modalngcomponent;
-    
+
     bioBulkSrvc: any;
     bulkEditShow: any;
     commonSrvc: any;

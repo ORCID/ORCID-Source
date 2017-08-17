@@ -101,7 +101,7 @@
         <div class="workspace-section country">
             <div class="workspace-section-header">
                 <div class="workspace-section-title">
-                    <div id="country-open-edit-modal" class="edit-country edit-option" (click)="modalng2.openEditModal()" title=""> 
+                    <div id="country-open-edit-modal" class="edit-country edit-option" (click)="modalng2.openModal()" title=""> 
                         <div class="glyphicon glyphicon-pencil"> 
                             <div class="popover popover-tooltip top"> 
                                 <div class="arrow"></div>
@@ -123,8 +123,8 @@
             </div>
         </div>
         <div modalngcomponent #modalng2> 
-            <!--
-            <div class="edit-record <#if RequestParameters['bulkEdit']??>
+            
+            <div id="edit-country" class="edit-record <#if RequestParameters['bulkEdit']??>
             edit-record-bulk-edit
                 </#if> edit-country row">
 
@@ -156,8 +156,10 @@
                                                     <option value="${key}">${isoCountries[key]}</option>
                                                 </#list>
                                             </select>                                       
-                                        </div>                                  
+                                        </div>         
+                                        <!--                         
                                         <div class="source" ng-if="country.sourceName || country.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="country.sourceName">{{country.sourceName}}</span><span ng-if="country.sourceName == null">{{orcidId}}</span></div>
+                                        -->
                                     </div> 
                                     <div class="col-md-6" style="position: static">
                                         <ul class="record-settings pull-right">                                                                             
@@ -183,8 +185,10 @@
                                                     elementId="$index"/>    
                                             </li>
                                         </ul>
+                                        <!--
                                         <span class="created-date pull-right" ng-show="country.createdDate" ng-class="{'hidden-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
                                         <span class="created-date pull-left" ng-show="country.createdDate" ng-class="{'visible-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+                                        --> 
                                     </div>                                  
                                 </div>                                          
                             </div>
@@ -195,7 +199,7 @@
                             </div>
                         </div>                  
                         <div class="record-buttons">                        
-                            <a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+                            <a (click)="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
                                 <div class="popover popover-tooltip-add top">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
@@ -203,13 +207,13 @@
                                     </div>
                                 </div>
                             </span></a>                         
-                            <button class="btn btn-primary pull-right" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-                            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
+                            <button class="btn btn-primary pull-right" (click)="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+                            <a class="cancel-option pull-right" (click)="console.log('test');closeModal()"><@spring.message "freemarker.btncancel"/></a> 
                         </div>
                     </div>
                 </div>
             </div>
-            -->
+            
         </div>
         
     </script>

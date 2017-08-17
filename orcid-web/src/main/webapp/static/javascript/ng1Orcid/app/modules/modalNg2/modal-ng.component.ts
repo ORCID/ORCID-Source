@@ -15,31 +15,30 @@ import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core'
     {
         selector: '[modalngcomponent]',
         template: `
-            <div class="lightbox-container testmjc">
+            <div class="lightbox-container">
                 <ng-content></ng-content>
             </div>
         `
     }
 )
 export class ModalNgComponent {
-    @Output() onOpen = new EventEmitter<void>();
+    //@Output() onOpen = new EventEmitter<void>();
 
     constructor(){
         console.log('ModalNgComponent loaded');
         
     }
 
-    closeModal(): void{     
+    closeModal(): void{
+        console.log('close modal');
         $.colorbox.close();
     };
 
-    openEditModal(): void{
+    openModal(): void{
         console.log('open modal 3');
 
         $.colorbox({
-            //html: $compile($('#edit-country').html())(this),
-            html: scriptTmpl("edit-country"),
-            //html: 'testcolorbox',
+            html: $('#edit-country').html(),
             scrolling: true,
             onLoad: function() {
                 $('#cboxClose').remove();           
@@ -53,6 +52,5 @@ export class ModalNgComponent {
             }            
         });
         $.colorbox.resize();
-
     };
 }
