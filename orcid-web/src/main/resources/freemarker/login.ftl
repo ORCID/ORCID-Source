@@ -202,7 +202,7 @@
 		<@orcid.checkFeatureStatus 'OAUTH_2SCREENS'>
 			<div class="col-md-6 col-md-offset-3" ng-controller="OauthAuthorizationController">
 				<div class="login">			
-					<p class="title" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" id="switch-to-register-form" ng-click="switchForm()">Register now</a></p>
+					<p class="title" ng-show="!showRegisterForm" ng-cloak>${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a href="#" id="switch-to-register-form" ng-click="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
 					<p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
 					<div ng-show="!showRegisterForm">
 						<div class="personal-login" ng-cloak>
