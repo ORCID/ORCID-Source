@@ -469,7 +469,7 @@
                             <a
                             ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
                             ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
-                            class="glyphicon glyphicon-trash grey"">
+                            class="glyphicon glyphicon-trash grey">
                                 <div class="popover popover-tooltip top">
                                     <div class="arrow"></div>
                                     <div class="popover-content">

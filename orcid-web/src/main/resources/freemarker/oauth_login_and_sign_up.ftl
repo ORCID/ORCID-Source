@@ -282,7 +282,7 @@
                                     </div>              
                                 </div>
                                 <div class="form-group clear-fix">
-                                    <div class="oauth-privacy"">                      
+                                    <div class="oauth-privacy">                      
                                         <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
                                         <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
                                         <@orcid.privacyToggle 

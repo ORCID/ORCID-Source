@@ -5,9 +5,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
-
-
-import { BiographyNg2Module } from './biography/biography.ts';
+//import { BiographyNg2Module } from './biography/biography.ts';
 import { CountryNg2Module } from './country/country.ts';
 import { WidgetNg2Module } from './widget/widget.ts';
 
@@ -43,9 +41,9 @@ export class RootCmp {
     ],
     imports: [
         BrowserModule,
-        BiographyNg2Module,
         CountryNg2Module,
         UpgradeModule,
+        //BiographyNg2Module,
         WidgetNg2Module
     ],
     providers: [

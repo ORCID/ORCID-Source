@@ -24,7 +24,8 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
-        BiographyModule.name,
+        
+        //BiographyModule.name,
         CountryModule.name,
         WidgetModule.name
     ]

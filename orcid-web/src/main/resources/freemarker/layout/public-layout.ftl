@@ -109,7 +109,7 @@
                         
                         <div class="account-settings-mobile-menu">
                             <span class="account-settings-mobile"> 
-                                <a ${(nav=="settings")?string('class="active"', '')}href="<@orcid.rootPath '/account'/>">
+                                <a ${(nav=="settings")?string('class="active"', '')} href="<@orcid.rootPath '/account'/>">
                                     <@orcid.msg 'public-layout.account_setting'/>
                                 </a>
                             </span>
@@ -565,11 +565,11 @@
                                 <li><a href="https://orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>
                                 <li><a href="${aboutUri}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
                                 <li><a href="https://orcid.org/trademark-and-id-display-guidelines">Trademark &amp; iD display guidelines</a></li>
-                                <!--<li><a href="${aboutUri}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>-->
                             </ul>
                         </nav>
                     </div>
                 </div>
+            </div>
         </footer>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='NEW_FOOTER' enabled=false>
