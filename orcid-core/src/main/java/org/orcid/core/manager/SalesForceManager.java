@@ -49,10 +49,14 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
 
     MemberDetails retrieveDetails(String memberId);
 
+    MemberDetails retrieveFreshDetails(String memberId);
+
     List<Contact> retrieveContactsByAccountId(String accountId);
+    
+    List<Contact> retrieveFreshContactsByAccountId(String accountId);
 
     void addOrcidsToContacts(List<Contact> contacts);
-    
+
     void addAccessInfoToContacts(List<Contact> contacts, String accountId);
 
     void enableAccess(String accountId, List<Contact> contactsList);

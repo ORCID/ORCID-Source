@@ -151,10 +151,23 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         throw new IllegalArgumentException("No member details found for " + memberId);
     }
 
+    @Override
+    public MemberDetails retrieveFreshDetails(String memberId) {
+        salesForceMemberCache.remove(memberId);
+        removeMemberDetailsFromCache(memberId);
+        return retrieveDetails(memberId);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Contact> retrieveContactsByAccountId(String accountId) {
         return (List<Contact>) salesForceContactsCache.get(accountId).getObjectValue();
+    }
+
+    @Override
+    public List<Contact> retrieveFreshContactsByAccountId(String accountId) {
+        salesForceContactsCache.remove(accountId);
+        return retrieveContactsByAccountId(accountId);
     }
 
     @Override
