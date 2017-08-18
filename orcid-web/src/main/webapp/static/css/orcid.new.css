@@ -7267,6 +7267,10 @@ a:hover .mozilla-badge {
     left: 34px;
 }
 
+.popover-tooltip-add .popover-content span {
+    white-space: nowrap;
+}
+
 .settings-table #name-help.popover {
     left: -127px;
     top: 17px;
