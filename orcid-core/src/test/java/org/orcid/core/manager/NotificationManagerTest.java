@@ -77,6 +77,7 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
@@ -562,6 +563,15 @@ public class NotificationManagerTest extends DBUnitTest {
             assertNotNull(n.getPutCode());
             assertThat(n.getPutCode(), not(anyOf(is(Long.valueOf(0)), is(Long.valueOf(3)), is(Long.valueOf(6)), is(Long.valueOf(9)))));
         }                
+    }
+    
+    @Test
+    public void testCreateAndDeleteNotification(){
+        NotificationAmended notification = new NotificationAmended();
+        notification.setAmendedSection(AmendedSection.PEER_REVIEW);
+        Notification result = notificationManager.createNotification("4444-4444-4444-4441", notification);
+        assertNotNull(result.getPutCode());
+        notificationManager.removeNotification(result.getPutCode());
     }
     
     private OrcidProfile getProfile(Locale locale) throws JAXBException {
