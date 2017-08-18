@@ -169,6 +169,18 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
+    public void addAccessInfoToContacts(List<Contact> contacts, String accountId) {
+        for (Contact contact : contacts) {
+            String orcid = contact.getOrcid();
+            if (orcid != null && salesForceConnectionDao.findByOrcidAndAccountId(orcid, accountId) != null) {
+                contact.setSelfServiceEnabled(true);
+            } else {
+                contact.setSelfServiceEnabled(false);
+            }
+        }
+    }
+
+    @Override
     public void enableAccess(String accountId, List<Contact> contactsList) {
         contactsList.forEach(c -> {
             String orcid = c.getOrcid();
@@ -183,6 +195,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
                 connection.setEmail(c.getEmail());
                 salesForceConnectionDao.persist(connection);
             }
+            c.setSelfServiceEnabled(true);
         });
     }
 

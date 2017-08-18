@@ -233,6 +233,7 @@ public class ManageMembersController extends BaseController {
         MemberDetailsForm consortiumForm = MemberDetailsForm.fromMemberDetails(memberDetails);
         List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(id);
         salesForceManager.addOrcidsToContacts(contactsList);
+        salesForceManager.addAccessInfoToContacts(contactsList, memberDetails.getMember().getId());
         consortiumForm.setContactsList(contactsList);
         consortiumForm.setRoleMap(generateSalesForceRoleMap());
         return consortiumForm;

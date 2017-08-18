@@ -38,6 +38,7 @@ public class Contact implements Serializable {
     private String email;
     private ContactRole role;
     private String orcid;
+    private boolean selfServiceEnabled;
 
     public String getId() {
         return id;
@@ -103,10 +104,18 @@ public class Contact implements Serializable {
         this.orcid = orcid;
     }
 
+    public boolean isSelfServiceEnabled() {
+        return selfServiceEnabled;
+    }
+
+    public void setSelfServiceEnabled(boolean selfServiceEnabled) {
+        this.selfServiceEnabled = selfServiceEnabled;
+    }
+
     @Override
     public String toString() {
         return "Contact [id=" + id + ", accountId=" + accountId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", role=" + role
-                + ", orcid=" + orcid + "]";
+                + ", orcid=" + orcid + ", selfServiceEnabled=" + selfServiceEnabled + "]";
     }
 
     public static Map<String, Contact> mapByContactRoleId(Collection<Contact> contacts) {
