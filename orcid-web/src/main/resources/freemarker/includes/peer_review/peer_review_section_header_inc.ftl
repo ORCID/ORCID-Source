@@ -22,7 +22,7 @@
             <div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
                 <a href="" ng-click="workspaceSrvc.togglePeerReviews($event)" class="toggle-text">
                    <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i>
-                   Peer Review (<span ng-bind="peerReviewSrvc.peerReviewCount()"></span>)
+                   <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.peerReviewCount()"></span>)
                 </a>
             </div>
         </div>
