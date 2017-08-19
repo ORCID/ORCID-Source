@@ -120,11 +120,11 @@ These instructions are for Spring Tool Suite for Eclipse.
 
 * For Windows 10 users, if all your projects shows an error "Missing artifact jdk.tools:jdk.tools:jar:1.6", it means your STS Maven plugin is looking for a Java 1.6 tools.jar library, please modify the STS.ini fileto indicate the java executable you want to use to run STS, which should be the JDK one: 
 
-```
--vm
-C:/Program Files/Java/jdk1.8.0_65/bin/javaw.exe
-``` 
+        -vm
+        C:/Program Files/Java/jdk1.8.0_65/bin/javaw.exe
 Do this before the '-vmargs' param
+
+### Tomcat Setup
 
 * Select Window -> Preferences -> Servers(Expand) -> Runtime Environments
 
@@ -156,10 +156,15 @@ Do this before the '-vmargs' param
 
 * In VM Arguments add the following (changing the /Users/rcpeters/git/ORCID-Source path to your repo checkout)
 
-```
--Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
-```
+        -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
+
 * Click Ok
+
+* Under **Server Locations** select **User custom location** set and **Server Path** to `/tmp-tomcat-orcid-web`.
+      * You also need to make a directory under `/tmp-tomcat-orcid-web`. In a linux shell:
+  `sudo mkdir /tmp-tomcat-orcid-web; sudo chown -R $(whoami) /tmp-tomcat-orcid-web;`
+
+* Under `Server Options` make sure everything is unchecked.
 
 * In Timeouts, increase the time limit of Start to 600 seconds and Stop to 100.
 
