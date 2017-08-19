@@ -2,11 +2,14 @@ import 'reflect-metadata';
 
 import { BrowserModule } from "@angular/platform-browser";
 import { Component, NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http';
+import { JsonpModule } from '@angular/http';
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
 import { BiographyNg2Module } from './biography/biography.ts';
 import { WidgetNg2Module } from './widget/widget.ts';
+import { WorksPrivacyPreferencesNg2Module } from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
 // This URL handling strategy is custom and application-specific.
 // Using it we can tell the Angular 2 router to handle only URL starting with settings.
@@ -39,9 +42,12 @@ export class RootCmp {
 @NgModule({
     imports: [
         BrowserModule,
+        HttpModule,
+        JsonpModule,
         UpgradeModule,
         BiographyNg2Module,
-        WidgetNg2Module
+        WidgetNg2Module,
+        WorksPrivacyPreferencesNg2Module
         // We don't need to provide any routes.
         // The router will collect all routes from all the registered modules.
         //RouterModule.forRoot([])

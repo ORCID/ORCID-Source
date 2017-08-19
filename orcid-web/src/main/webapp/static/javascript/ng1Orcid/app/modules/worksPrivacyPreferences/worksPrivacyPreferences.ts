@@ -24,13 +24,13 @@ export const WorksPrivacyPreferencesModule = angular.module(
         
     }
 )
-export class WidgetNg2Module {}
+export class WorksPrivacyPreferencesNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
 WorksPrivacyPreferencesModule.directive(
-    'WorksPrivacyPreferencesNg2', 
+    'worksPrivacyPreferencesNg2', 
     <any>downgradeComponent(
         {
             component: WorksPrivacyPreferencesComponent,

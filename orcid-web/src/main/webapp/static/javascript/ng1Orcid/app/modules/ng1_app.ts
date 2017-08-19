@@ -14,6 +14,7 @@ import 'angular-route'
 
 import { BiographyModule } from './biography/biography.ts';
 import { WidgetModule } from './widget/widget.ts'
+import { WorksPrivacyPreferencesModule } from './worksPrivacyPreferences/worksPrivacyPreferences.ts'
 
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -24,7 +25,8 @@ export const orcidApp = angular.module(
         vcRecaptcha,
         uibootstraptypeahead,
         BiographyModule.name,
-        WidgetModule.name
+        WidgetModule.name,
+        WorksPrivacyPreferencesModule.name
     ]
 );
 /*

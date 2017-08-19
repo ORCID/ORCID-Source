@@ -172,12 +172,15 @@
                 
                 
                 <!-- Privacy preferences -->
-                <tr>
+                <!--<tr>
                     <th><a name="editPrivacyPreferences"></a>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
                         ng-bind="privacyPreferencesToggleText" id="privacyPreferencesToggle"></a></td>
+                </tr>-->
+                <tr>
+                    <th>Privacy preferences</th>
                 </tr>
-                <tr ng-controller="WorksPrivacyPreferencesCtrl"
+                <!--<tr ng-controller="WorksPrivacyPreferencesCtrl"
                     ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection" ng-cloak>
                     <td colspan="2">
                         <div class="editTablePadCell35" id="privacy-settings">
@@ -192,7 +195,9 @@
                             elementId="workPrivHelp" />    
                         </div>
                     </td>
-                </tr>
+                </tr>-->
+
+                <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
                 <tr>
                     <th><a name="editSecurityQuestion"></a>${springMacroRequestContext.getMessage("manage.security_question")}</th>
                     <td><a href="" ng-click="toggleSecurityQuestionEdit()"
@@ -386,6 +391,11 @@
                 </#if>
             </tbody>
         </table>
+
+        <script type="text/ng-template" id="works-privacy-preferences-ng2-template">
+            <h1>Here's some stuff!</h1>
+        </script>
+        <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
         
         <h1 id="manage-permissions">
             ${springMacroRequestContext.getMessage("manage.trusted_organisations")}

@@ -15,7 +15,6 @@ import { Ng2AppModule } from './modules/ng2_app.ts';
 
 platformBrowserDynamic().bootstrapModule(Ng2AppModule).then(platformRef => {
     const upgrade = (<any>platformRef.instance).upgrade;
-    upgrade.upgradeNg1Provider('prefsSrvc');
     // bootstrap angular1
     upgrade.bootstrap(document.body, [orcidApp.name]);
     //setUpLocationSync(upgrade);
