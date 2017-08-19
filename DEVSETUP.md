@@ -161,7 +161,7 @@ Do this before the '-vmargs' param
 * Click Ok
 
 * Under **Server Locations** select **User custom location** set and **Server Path** to `/tmp-tomcat-orcid-web`.
-      * You also need to a directory under `/tmp-tomcat-orcid-web`. In a linux shell:
+      * You also need to make a directory under `/tmp-tomcat-orcid-web`. In a linux shell:
   `sudo mkdir /tmp-tomcat-orcid-web; sudo chown -R $(whoami) /tmp-tomcat-orcid-web;`
 
 * Under `Server Options` make sure everything is unchecked.
