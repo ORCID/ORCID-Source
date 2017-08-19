@@ -9,7 +9,7 @@ declare var scriptTmpl: any;
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  
-import { Component, Inject, Input, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef } from '@angular/core';
 import { NgModule } from '@angular/core';
  
 
@@ -304,6 +304,8 @@ export const CountryCtrl = angular.module('orcidApp').controller(
 );
 */
 
+//var SessionService = injector.get(SessionService);
+import { HeroService } from '../../shared/common.ts';
 
 @Component({
     selector: 'country-ng2',
@@ -311,10 +313,11 @@ export const CountryCtrl = angular.module('orcidApp').controller(
 })
 export class CountryComponent {
     @ViewChild('modalng2') modalngcomponent;
+    //@Inject('commonSrvc') commonSrvc;
 
     bioBulkSrvc: any;
     bulkEditShow: any;
-    commonSrvc: any;
+    commonSrvc2: any;
     countryForm: any;
     defaultVisibility: any;
     emailSrvc: any;
@@ -327,9 +330,14 @@ export class CountryComponent {
     showEdit: any;
     showElement: any;
 
-    constructor(@Inject('commonSrvc') commonSrvc) {
-        this.commonSrvc = commonSrvc;
-        console.log('this.commonSrvc', this.commonSrvc);
+    constructor( 
+        //@Inject('commonSrvc') commonSrvc 
+        private heroService: HeroService
+    ) {
+        //this.commonSrvc2 = this.commonSrvc;
+        //console.log('this.commonSrvc', this.commonSrvc2);
+        console.log('test service 6', heroService.getHeroes()); 
+
 
         this.bulkEditShow = false;
         this.countryForm = null;

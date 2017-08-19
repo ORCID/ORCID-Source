@@ -11,11 +11,16 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { orcidApp } from './modules/ng1_app.ts';
 import { Ng2AppModule } from './modules/ng2_app.ts';
 
+import { UpgradeAdapter } from '@angular/upgrade';
+import { UpgradeModule } from '@angular/upgrade/static';
 
+//var upgrade = new UpgradeAdapter();
 
 platformBrowserDynamic().bootstrapModule(Ng2AppModule).then(platformRef => {
     const upgrade = (<any>platformRef.instance).upgrade;
-    upgrade.upgradeNg1Provider('commonSrvc');
+    console.log('upgrade4');  
+
+    //upgrade.upgradeNg1Provider('commonSrvc');
     // bootstrap angular1
     upgrade.bootstrap(document.body, [orcidApp.name]);
     //setUpLocationSync(upgrade);

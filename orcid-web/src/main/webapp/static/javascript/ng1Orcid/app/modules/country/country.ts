@@ -3,12 +3,14 @@ declare var logAjaxError: any;
 
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef, NgModule } from '@angular/core';
 import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
 
 //In the end only countryNg2 should remain
 import { CountryComponent } from './country.component.ts';
 import { ModalNgComponent } from '../modalNg2/modal-ng.component.ts';
+
+import { HeroService } from '../../shared/common.ts';
 
 // This is the Angular 1 part of the module
 export const CountryModule = angular.module(
@@ -16,8 +18,8 @@ export const CountryModule = angular.module(
     []
 );
 
-
 // This is the Angular 2 part of the module
+
 @NgModule(
     {
         imports: [
@@ -27,7 +29,8 @@ export const CountryModule = angular.module(
             CountryComponent,
             ModalNgComponent
         ],
-        entryComponents: [ CountryComponent ]
+        entryComponents: [ CountryComponent ],
+        providers: [HeroService]
     }
 )
 export class CountryNg2Module {}
