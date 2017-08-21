@@ -8,10 +8,11 @@ declare var scriptTmpl: any;
 
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';  
+import { CommonModule } from '@angular/common'; 
 import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef } from '@angular/core';
 import { NgModule } from '@angular/core';
- 
+
+import { CommonService } from '../../shared/common.ts'; 
 
 // This is the Angular 1 part of the module
 /*
@@ -304,8 +305,8 @@ export const CountryCtrl = angular.module('orcidApp').controller(
 );
 */
 
+
 //var SessionService = injector.get(SessionService);
-import { HeroService } from '../../shared/common.ts';
 
 @Component({
     selector: 'country-ng2',
@@ -313,30 +314,23 @@ import { HeroService } from '../../shared/common.ts';
 })
 export class CountryComponent {
     @ViewChild('modalng2') modalngcomponent;
-    //@Inject('commonSrvc') commonSrvc;
 
-    bioBulkSrvc: any;
     bulkEditShow: any;
-    commonSrvc2: any;
     countryForm: any;
     defaultVisibility: any;
     emailSrvc: any;
     newElementDefaultVisibility: any;
     newInput: any;
     orcidId: any;
-    primaryElementIndex: any;
-    privacyHelp: any;
-    scrollTop: any;  
+    primaryElementIndex: any;  
     showEdit: any;
     showElement: any;
 
     constructor( 
-        //@Inject('commonSrvc') commonSrvc 
-        private heroService: HeroService
+        private commonService: CommonService
     ) {
-        //this.commonSrvc2 = this.commonSrvc;
         //console.log('this.commonSrvc', this.commonSrvc2);
-        console.log('test service 6', heroService.getHeroes()); 
+        //console.log('test service ', commonService.getHeroes()); 
 
 
         this.bulkEditShow = false;
@@ -346,9 +340,7 @@ export class CountryComponent {
         this.newElementDefaultVisibility = null;
         this.newInput = false;    
         this.orcidId = orcidVar.orcidId;
-        this.primaryElementIndex = null;
-        this.privacyHelp = false;
-        this.scrollTop = 0;   
+        this.primaryElementIndex = null;   
         this.showEdit = false;
         this.showElement = {};
     }

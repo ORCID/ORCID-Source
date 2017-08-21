@@ -1,11 +1,16 @@
 import 'reflect-metadata';
 
+//Angular imports
 import { BrowserModule } from "@angular/platform-browser";
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Component, NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http'
+import { FormsModule }   from '@angular/forms'; // <-- NgModel lives here
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
-//import { BiographyNg2Module } from './biography/biography.ts';
+
+//User generated modules imports
+import { BiographyNg2Module } from './biography/biography.ts';
 import { CountryNg2Module } from './country/country.ts';
 import { WidgetNg2Module } from './widget/widget.ts';
 
@@ -40,10 +45,12 @@ export class RootCmp {
         RootCmp
     ],
     imports: [
+        BiographyNg2Module,
         BrowserModule,
         CountryNg2Module,
+        FormsModule,
+        HttpModule,
         UpgradeModule,
-        //BiographyNg2Module,
         WidgetNg2Module
     ],
     providers: [

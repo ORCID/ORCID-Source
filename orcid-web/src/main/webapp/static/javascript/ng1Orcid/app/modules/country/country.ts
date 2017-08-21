@@ -6,11 +6,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef, NgModule } from '@angular/core';
 import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
 
-//In the end only countryNg2 should remain
 import { CountryComponent } from './country.component.ts';
 import { ModalNgComponent } from '../modalNg2/modal-ng.component.ts';
 
-import { HeroService } from '../../shared/common.ts';
+import { CommonService } from '../../shared/common.ts';
 
 // This is the Angular 1 part of the module
 export const CountryModule = angular.module(
@@ -29,8 +28,12 @@ export const CountryModule = angular.module(
             CountryComponent,
             ModalNgComponent
         ],
-        entryComponents: [ CountryComponent ],
-        providers: [HeroService]
+        entryComponents: [ 
+            CountryComponent 
+        ],
+        providers: [
+            CommonService
+        ]
     }
 )
 export class CountryNg2Module {}
