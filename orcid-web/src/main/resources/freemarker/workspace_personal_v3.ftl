@@ -66,7 +66,7 @@
                             <div>${springMacroRequestContext.getMessage("Length.changePersonalInfoForm.biography")}</div>
                         </span>
                         <span class="orcid-error" [hidden]="biographyForm?.biography?.errors?.length == 0">
-                            <div ng-repeat='error in biographyForm.biography.errors' ng-bind-html="error"></div>
+                            <div *ngFor='let error of biographyForm?.biography?.errors'>{{error}}</div>
                         </span>
                     </div>
                 </div>

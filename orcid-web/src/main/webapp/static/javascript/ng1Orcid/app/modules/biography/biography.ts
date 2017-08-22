@@ -3,6 +3,7 @@ declare var logAjaxError: any;
 
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule, NgFor } from '@angular/common'; 
 import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef, NgModule } from '@angular/core';
 import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
 import { FormsModule }   from '@angular/forms'; // <-- NgModel lives here
@@ -20,6 +21,7 @@ export const BiographyModule = angular.module(
 @NgModule(
     {
         imports: [
+            CommonModule,
             FormsModule
         ],
         declarations: [ 

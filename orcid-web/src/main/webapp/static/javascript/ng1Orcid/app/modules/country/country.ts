@@ -42,7 +42,7 @@ export class CountryNg2Module {}
 //Must convert as much as possible of our code to directives
 
 CountryModule.directive(
-    'countryNg2', 
+    'countryNg2test', 
     <any>downgradeComponent(
         {
             component: CountryComponent

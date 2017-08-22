@@ -10,7 +10,7 @@ declare var scriptTmpl: any;
 //Import all the angular components
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule, NgFor } from '@angular/common'; 
 import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild, ElementRef } from '@angular/core';
 import { NgModule } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
@@ -34,8 +34,7 @@ export class BiographyComponent implements AfterViewInit {
     constructor(
         private biographyService: BiographyService
     ) {
-        console.log('BiographyComponent loaded v.0.4'); 
-        //biographyService.getBiographyData();
+        console.log('BiographyComponent loaded v.0.6'); 
 
         this.biographyForm = null;
         //this.configuration = initialConfigService.getInitialConfiguration();;
