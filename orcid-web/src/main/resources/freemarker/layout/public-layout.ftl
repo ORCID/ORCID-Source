@@ -143,10 +143,14 @@
                         
                         <!-- Desktop / Tablet View -->
                         <ul class="menu public" ng-show="menuVisible == true" resize>
-                            <li class="active-trail"><a href="<@orcid.rootPath "/my-orcid" />">Edit your record</a></li>
-                            <li><a href="<@orcid.rootPath "/about" />">About ORCID</a></li>
-                            <li><a href="<@orcid.rootPath "/contact-us" />">Contact us</a></li>
-                            <li><a href="<@orcid.rootPath "/help" />">Help</a></li>
+                            <li class="active-trail"><a href="<@orcid.rootPath "/my-orcid" />"><@orcid.msg
+                                'public-layout.edit_your_record'/></a></li>
+                            <li><a href="<@orcid.rootPath "/about" />"><@orcid.msg
+                                'public-layout.about_orcid'/></a></li>
+                            <li><a href="<@orcid.rootPath "/contact-us" />"><@orcid.msg
+                                'public-layout.contact_us'/></a></li>
+                            <li><a href="<@orcid.rootPath "/help" />"><@orcid.msg
+                                'public-layout.help'/></a></li>
                         </ul> 
                     </div>
                 <#else>
