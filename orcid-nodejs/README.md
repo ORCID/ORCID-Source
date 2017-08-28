@@ -12,7 +12,7 @@ Open a terminal at your root project and run
 
     mvn -f orcid-nodejs/pom.xml \
     -Dnodejs.workingDirectory='${project.parent.basedir}/orcid-web/src/main/webapp/static/javascript/ng1Orcid' \
-    -DwebpackConfig=localhost \
+    -DwebpackConfig=tmp-tomcat-orcid-web \
     clean install
 
 where **nodejs.workingDirectory** must be replaced with full path to folder containing _package.json_ and **webpackConfig** is a prefix of PREFIX.webpack.config.js file
