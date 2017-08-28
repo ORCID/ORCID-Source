@@ -75,7 +75,6 @@ export class BiographyComponent implements AfterViewInit {
         this.biographyService.getBiographyData().subscribe(
             data => {
                 this.biographyForm  = data;
-                console.log('data returned', data);
             },
             error => console.log(error)
         );

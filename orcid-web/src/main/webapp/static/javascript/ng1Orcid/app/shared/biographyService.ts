@@ -12,7 +12,6 @@ export class BiographyService {
     }
 
     getBiographyData(): Observable<any> {
-        console.log('service biography called');
         return this.http.get(getBaseUri() + '/account/biographyForm.json')
             .map((res:Response) => res.json());
     }

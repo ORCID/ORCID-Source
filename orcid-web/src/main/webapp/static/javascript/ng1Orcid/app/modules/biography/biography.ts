@@ -35,7 +35,6 @@ export const BiographyModule = angular.module(
         ]
     }
 )
-
 export class BiographyNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
