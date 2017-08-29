@@ -11,9 +11,6 @@ export const WidgetModule = angular.module(
     []
 );
 
-//WidgetModule.component('widgetCmp', widgetCmp);
-//WidgetModule.controller('widgetCtrl', widgetCtrl);
-
 // This is the Angular 2 part of the module
 @NgModule(
     {

@@ -1,6 +1,3 @@
-//Declare all the external variables 
-declare var scriptTmpl: any;
-
 //Import all the angular components
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';

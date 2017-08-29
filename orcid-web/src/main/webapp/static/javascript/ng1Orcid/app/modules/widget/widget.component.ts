@@ -1,7 +1,3 @@
-declare var getBaseUri: any;
-declare var orcidVar: any;
-declare var scriptTmpl: any;
-
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  

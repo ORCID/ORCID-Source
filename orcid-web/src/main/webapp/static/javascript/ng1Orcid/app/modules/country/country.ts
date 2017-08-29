@@ -1,6 +1,3 @@
-declare var getBaseUri: any;
-declare var logAjaxError: any;
-
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef, NgModule } from '@angular/core';

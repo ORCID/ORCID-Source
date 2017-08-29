@@ -1,10 +1,4 @@
 declare var $: any;
-declare var colorbox: any;
-declare var contains: any;
-declare var getBaseUri: any;
-declare var logAjaxError: any;
-declare var orcidVar: any;
-declare var scriptTmpl: any;
 
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';

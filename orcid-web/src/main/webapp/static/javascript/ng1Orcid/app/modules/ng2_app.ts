@@ -1,6 +1,6 @@
+//Angular imports
 import 'reflect-metadata';
 
-//Angular imports
 import { CommonModule, NgFor } 
     from '@angular/common'; 
 
@@ -69,7 +69,6 @@ export class RootCmp {
         CommonModule, 
         FormsModule,
         HttpModule,
-        NgFor,
         UpgradeModule,
         /* User Generated Modules */
         BiographyNg2Module,
@@ -86,6 +85,6 @@ export class RootCmp {
 })
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.02');
+        console.log('v0.03');
     }
 }
