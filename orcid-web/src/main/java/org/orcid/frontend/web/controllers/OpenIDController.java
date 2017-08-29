@@ -76,6 +76,8 @@ public class OpenIDController {
         if (authHeader != null) {
             //lookup token, check it's valid, check scope.
             String tokenValue = authHeader.replace("Bearer", "").trim();
+            //deal with incorrect bearer case in request (I'm looking at you spring security!)
+            tokenValue = authHeader.replace("bearer", "").trim();
             OAuth2AccessToken tok = tokenStore.readAccessToken(tokenValue);
             if (tok != null && !tok.isExpired()){
                 boolean hasScope = false;
