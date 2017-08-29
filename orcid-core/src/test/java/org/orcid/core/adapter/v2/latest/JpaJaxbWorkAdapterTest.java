@@ -36,16 +36,15 @@ import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
@@ -81,7 +80,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     public void testToWorkEntity() throws JAXBException {
         Work work = getWork(true);
         assertNotNull(work);
-        LegacyWorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
         assertEquals(Visibility.PRIVATE, workEntity.getVisibility());
         assertNotNull(workEntity);
@@ -118,7 +117,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     public void fromProfileWorkEntityToWorkTest() {
         // Set base url to https to ensure source URI is converted to http
         orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
-        LegacyWorkEntity work = getWorkEntity();
+        WorkEntity work = getWorkEntity();
         assertNotNull(work);
         Work w = jpaJaxbWorkAdapter.toWork(work);
         assertNotNull(w);
@@ -155,7 +154,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
 
     @Test
     public void fromProfileWorkEntityToWorkSummaryTest() {
-        LegacyWorkEntity work = getWorkEntity();
+        WorkEntity work = getWorkEntity();
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
@@ -184,12 +183,12 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
 
-    private LegacyWorkEntity getWorkEntity() {
+    private WorkEntity getWorkEntity() {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
-        LegacyWorkEntity work = new LegacyWorkEntity();
+        WorkEntity work = new WorkEntity();
         work.setDateCreated(date);
         work.setLastModified(date);
-        work.setProfile(new ProfileEntity("0000-0000-0000-0001"));
+        work.setOrcid("0000-0000-0000-0001");
         work.setVisibility(Visibility.LIMITED);
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId("APP-5555555555555555");        

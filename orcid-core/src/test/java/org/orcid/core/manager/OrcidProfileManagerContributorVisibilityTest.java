@@ -265,7 +265,7 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
     }
 
     private Contributor retrieveWorkContributorEntityDirectlyFromDb(OrcidWork retrievedWork) {
-        LegacyWorkEntity workEntity = workDao.find(Long.valueOf(retrievedWork.getPutCode()));
+        LegacyWorkEntity workEntity = workDao.findLegacyWork(Long.valueOf(retrievedWork.getPutCode()));
         String contributorsJson = workEntity.getContributorsJson();
         WorkContributors workContributors = JsonUtils.readObjectFromJsonString(contributorsJson, WorkContributors.class);
         assertNotNull(workContributors);

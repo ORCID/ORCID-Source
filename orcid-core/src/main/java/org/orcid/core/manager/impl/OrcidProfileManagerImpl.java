@@ -1039,8 +1039,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 for (OrcidWork orcidWork : existingOrcidWorksSet) {
                     if (orcidWork.isDuplicated(updatedWork)) {
                         // Update the existing work
-                        long workId = Long.valueOf(orcidWork.getPutCode());
-                        LegacyWorkEntity workEntity = workDao.find(workId);
+                        LegacyWorkEntity workEntity = workDao.findLegacyWork(Long.valueOf(orcidWork.getPutCode()));
                         workEntity.clean();
                         workEntity = jaxb2JpaAdapter.getWorkEntity(updatedWork, workEntity);
                         workDao.persist(workEntity);

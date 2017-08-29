@@ -124,5 +124,9 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     
     List<WorkEntity> getWorkEntities(List<Long> ids);        
 
+    @Deprecated
     LegacyWorkEntity findLegacyWork(Long id);
+    
+    @Deprecated
+    List<LegacyWorkEntity> getLegacyWorkEntities(List<Long> ids);
 }

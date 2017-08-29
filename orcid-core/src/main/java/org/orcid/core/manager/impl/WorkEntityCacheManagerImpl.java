@@ -31,9 +31,9 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.ReleaseNameUtils;
@@ -196,6 +196,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
      * @return a WorkEntity
      */
     @Override
+    @Deprecated
     public LegacyWorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
         LegacyWorkEntity workEntity = null;
@@ -211,7 +212,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 fullWorkEntityCache.acquireWriteLockOnKey(key);
                 workEntity = (LegacyWorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
                 if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
-                    workEntity = workDao.getWork(orcid, workId);
+                    workEntity = workDao.findLegacyWork(workId);
                     workDao.detach(workEntity);
                     fullWorkEntityCache.put(createElement(key, workEntity, fullWorkEntityCache));
                 }
@@ -232,9 +233,6 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
      */
     @SuppressWarnings("unchecked")
     @Override
-    
-    //TODO: We need another cache to keep legacy work entities
-    
     public <T extends WorkBaseEntity> List<T> retrieveWorkList(String orcid, Map<Long, Date> workIdsWithLastModified, Cache workCache,
             Function<List<Long>, List<T>> workRetriever) {
         WorkBaseEntity[] returnArray = new WorkBaseEntity[workIdsWithLastModified.size()];
@@ -303,12 +301,6 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                     throw new IllegalStateException(String.format("Duplicate key %s", u));
                 }, LinkedHashMap::new));
         return this.retrieveWorkList(orcid, workIdsWithLastModified, minimizedWorkEntityCache, idList -> workDao.getMinimizedWorkEntities(idList));
-    }
-
-    @Override
-    public List<LegacyWorkEntity> retrieveFullWorks(String orcid, long profileLastModified) {
-        Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
-        return retrieveWorkList(orcid, workIdsWithLastModified, fullWorkEntityCache, idList -> workDao.getWorkEntities(idList));
     }
 
     private Map<Long, Date> retrieveWorkLastModifiedMap(String orcid, long profileLastModified) {
@@ -382,4 +374,63 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             return new Element(key, element, DEFAULT_TTI, DEFAULT_TTL);
         }                
     }   
+    
+    @Override
+    @Deprecated
+    public List<LegacyWorkEntity> retrieveFullWorks(String orcid, long profileLastModified) {
+        Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
+        LegacyWorkEntity[] returnArray = new LegacyWorkEntity[workIdsWithLastModified.size()];
+        List<Long> fetchList = new ArrayList<Long>();
+        Map<Long, Integer> fetchListIndexOrder = new LinkedHashMap<Long, Integer>();
+        int index = 0;
+
+        for (Long workId : workIdsWithLastModified.keySet()) {
+            // get works from the cache if we can
+            Object key = new WorkCacheKey(workId, releaseName);
+            try {
+                fullWorkEntityCache.acquireReadLockOnKey(key);
+                Element element = getElementFromCache(fullWorkEntityCache, key, orcid);
+                LegacyWorkEntity cachedWork = (LegacyWorkEntity) (element != null ? element.getObjectValue() : null);                        
+                if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(workId).getTime()) {
+                    fetchListIndexOrder.put(workId, index);
+                    fetchList.add(workId);
+                } else {
+                    returnArray[index] = cachedWork;
+                }
+                index++;
+            } finally {
+                fullWorkEntityCache.releaseReadLockOnKey(key);
+            }
+        }
+
+        // now fetch all the others that are *not* in the cache
+        if (fetchList.size() > 0) {
+            List<LegacyWorkEntity> refreshedWorks = workDao.getLegacyWorkEntities(fetchList);
+            for (LegacyWorkEntity mWorkRefreshedFromDB : refreshedWorks) {
+                Object key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
+                try {
+                    fullWorkEntityCache.acquireWriteLockOnKey(key);
+                    // check cache again here to prevent race condition
+                    // since something could have updated while we were
+                    // fetching from DB
+                    // (or can we skip because new last modified is always
+                    // going to be after profile last modified as provided)
+                    Element element = getElementFromCache(fullWorkEntityCache, key, orcid);
+                    LegacyWorkEntity cachedWork = (LegacyWorkEntity) (element != null ? element.getObjectValue() : null);                        
+                    int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
+                    if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
+                        fullWorkEntityCache.put(createElement(key, mWorkRefreshedFromDB, fullWorkEntityCache));
+                        returnArray[returnListIndex] = mWorkRefreshedFromDB;
+                    } else {
+                        returnArray[returnListIndex] = cachedWork;
+                    }
+
+                } finally {
+                    fullWorkEntityCache.releaseWriteLockOnKey(key);
+                }
+            }
+        }
+        return (List<LegacyWorkEntity>) Arrays.asList(returnArray);
+    }
+
 }

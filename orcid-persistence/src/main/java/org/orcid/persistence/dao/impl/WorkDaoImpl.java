@@ -228,10 +228,24 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
+    @Deprecated
     public LegacyWorkEntity findLegacyWork(Long id) {
         TypedQuery<LegacyWorkEntity> query = entityManager.createQuery("FROM LegacyWorkEntity WHERE id = :workId", LegacyWorkEntity.class);        
         query.setParameter("workId", id);        
         return query.getSingleResult();
+    }
+
+    @Override
+    @Deprecated
+    public List<LegacyWorkEntity> getLegacyWorkEntities(List<Long> ids) {
+        // batch up list into sets of 50;
+        List<LegacyWorkEntity> list = new ArrayList<>();
+        for (List<Long> partition : Lists.partition(ids, 50)) {
+            TypedQuery<LegacyWorkEntity> query = entityManager.createQuery("SELECT x FROM LegacyWorkEntity x WHERE x.id IN :ids", LegacyWorkEntity.class);
+            query.setParameter("ids", partition);
+            list.addAll(query.getResultList());
+        }
+        return list;
     }
 }
 
