@@ -90,7 +90,8 @@ export class BiographyComponent implements AfterViewInit {
             return; // do nothing if there is a length error
         }
         /* */
-        this.biographyService.setBiographyData( this.biographyForm ).subscribe(
+        this.biographyService.setBiographyData( this.biographyForm )
+        .subscribe(
             data => {
                 this.biographyForm  = data;
             },

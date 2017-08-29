@@ -39,13 +39,11 @@ export class BiographyNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-
 BiographyModule.directive(
     'biographyNg2', 
     <any>downgradeComponent(
         {
             component: BiographyComponent,
-            //inputs: ['text']
         }
     )
 );

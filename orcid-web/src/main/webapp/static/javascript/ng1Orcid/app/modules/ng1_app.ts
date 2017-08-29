@@ -1,15 +1,14 @@
 /**
  * This file defines the root module of the Angular 1 of the application.
  */
-//import 'reflect-metadata';
 
 //Angular and other libraries imports
 import * as $ from 'jquery'
 import * as angular from 'angular'
-import * as vcRecaptcha from 'angular-recaptcha'
 import * as ngCookies from 'angular-cookies'
 import * as ngSanitize from 'angular-sanitize'
 import * as uibootstraptypeahead from 'angular-ui-bootstrap'
+import * as vcRecaptcha from 'angular-recaptcha'
 import 'angular-route'
 
 //User generated imports
