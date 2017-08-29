@@ -37,6 +37,8 @@ export const internalConsortiumCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.findConsortium = function() {
+                $scope.success_edit_member_message = null;
+                $scope.consortium = null;
                 $.ajax({
                     url: getBaseUri()+'/manage-members/find-consortium.json?id=' + encodeURIComponent($scope.salesForceId),
                     type: 'GET',
@@ -65,11 +67,9 @@ export const internalConsortiumCtrl = angular.module('orcidApp').controller(
                     success: function(data){
                         $scope.$apply(function(){
                             if(data.errors.length == 0){
-                                $scope.consortium = null;
                                 $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
-                            } else {
-                                $scope.consortium = data;
                             }
+                            $scope.consortium = data;
                         });
                         $scope.closeModal();
                     }

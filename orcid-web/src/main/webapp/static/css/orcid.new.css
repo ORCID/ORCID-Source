@@ -3970,6 +3970,18 @@ ul.sso-options li span {
     width: 25%;
 }
 
+.admin-edit-consortium td,
+.admin-edit-consortium th {
+    padding: 3px 4px;
+    vertical-align: top;
+    font-size: 12px;
+    width: 20%;
+}
+
+#bottom-confirm-update-consortium {
+	margin-bottom: 10px;
+}
+
 .developer-tools .create-client .ruri {
     width: 95%;
 }
