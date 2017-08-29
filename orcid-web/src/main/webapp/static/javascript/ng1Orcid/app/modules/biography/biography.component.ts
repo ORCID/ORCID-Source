@@ -11,8 +11,7 @@ declare var scriptTmpl: any;
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule, NgFor } from '@angular/common'; 
-import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild, ElementRef } from '@angular/core';
-import { NgModule } from '@angular/core';
+import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild, ElementRef, NgModule } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 
 import { BiographyService } from '../../shared/biographyService.ts'; 
@@ -34,9 +33,13 @@ export class BiographyComponent implements AfterViewInit {
     constructor(
         private biographyService: BiographyService
     ) {
-        console.log('BiographyComponent loaded v.0.6'); 
+        console.log('BiographyComponent loaded v.0.10'); 
 
-        this.biographyForm = null;
+        this.biographyForm = {
+            biography: {
+                value: ''
+            }
+        };
         //this.configuration = initialConfigService.getInitialConfiguration();;
         this.emails = {};
         //this.emailSrvc = emailSrvc;
@@ -52,19 +55,14 @@ export class BiographyComponent implements AfterViewInit {
     };
 
     checkLength(): any {
-        if ( this.biographyForm != null ){
-            if ( this.biographyForm.biography != null ){
-                if ( this.biographyForm.biography.value != null ){    
-                    if ( this.biographyForm.biography.value.length > 5000 ) {
-                        this.lengthError = true;
-                    } else {
-                        this.lengthError = false;
-                    }
-                }
-            }
+        if ( this.biographyForm.biography.value.length > 5000 ) {
+            this.lengthError = true;
+        } else {
+            this.lengthError = false;
         }
+
         console.log('this.lengthError', this.lengthError);
-        return this.lengthError;
+        return !this.lengthError; //Negating the error, if error is present will be true and return false to avoid user input
     };
 
     close(): void {
@@ -76,23 +74,11 @@ export class BiographyComponent implements AfterViewInit {
             data => {
                 this.biographyForm  = data;
             },
-            error => console.log(error)
+            error => {
+                console.log(error);
+                logAjaxError(error);
+            } 
         );
-
-        /* Moved to service
-        $.ajax({
-            url: getBaseUri() + '/account/biographyForm.json',
-            dataType: 'json',
-            success: function(data) {
-                this.biographyForm = data;
-                console.log('this.biographyForm', this.biographyForm);
-            }
-        }).fail(function(e){
-            // something bad is happening!
-            console.log("error fetching BiographyForm");
-            logAjaxError(e);
-        });
-        */
     };
 
     hideTooltip(tp): void{
@@ -100,9 +86,21 @@ export class BiographyComponent implements AfterViewInit {
     };
 
     setBiographyForm(): any{
-        if( this.checkLength() ){    
+        if( this.checkLength() == false ){    
             return; // do nothing if there is a length error
-        } 
+        }
+        /* */
+        this.biographyService.setBiographyData( this.biographyForm ).subscribe(
+            data => {
+                this.biographyForm  = data;
+            },
+            error => {
+                console.log(error);
+                logAjaxError(error);
+            } 
+        );
+        /* */
+        /* 
         $.ajax({
             contentType: 'application/json;charset=UTF-8',
             data:  angular.toJson(this.biographyForm),
@@ -112,13 +110,14 @@ export class BiographyComponent implements AfterViewInit {
             success: function(data) {
                 this.biographyForm = data;
                 if(data.errors.length == 0){
-                    this.close();
+                    //this.close();
                 }
             }
         }).fail(function() {
             // something bad is happening!
             console.log("BiographyCtrl.serverValidate() error");
         });
+        */
     };
 
     setPrivacy(priv, $event:any): void {
@@ -183,19 +182,6 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
                 }
             );
             /////////////////////// End of verified email logic for work
-
-
-
-            
-
-            
-
-            
-
-            
-            
-
-           
 
         }
     ]

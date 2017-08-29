@@ -54,15 +54,15 @@
                 </div>
             </div>
             
-            <div [hidden]="!showEdit"  class="biography-edit">
+            <div [hidden]="!showEdit" class="biography-edit">
                 <div class="row">
                     <div class="col-md-12 col-xs-12 col-sm-12">
-                        <textarea id="biography" name="biography" class="input-xlarge" rows="20" (change)="checkLength()" [(ngModel)]="biographyForm"></textarea>.biography.value
+                        <textarea id="biography" name="biography" class="input-xlarge" rows="20" (change)="checkLength()" (keypress)="checkLength()" [(ngModel)]="biographyForm.biography.value"></textarea>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                        <span class="orcid-error" [hidden]="!lengthError">
+                        <span class="orcid-error" *ngIf="lengthError==true">
                             <div>${springMacroRequestContext.getMessage("Length.changePersonalInfoForm.biography")}</div>
                         </span>
                         <span class="orcid-error" [hidden]="biographyForm?.biography?.errors?.length == 0">
