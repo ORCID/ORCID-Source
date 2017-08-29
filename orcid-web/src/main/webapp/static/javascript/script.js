@@ -303,10 +303,10 @@ var om = new OrcidMessage();
  * will redir them to the signin page.
  */
 function logAjaxError(e){
-    //console.log("status: " + e.status);
-    //console.log("statusText: " + e.statusText);
-    //console.log("readyState: " + e.readyState);
-    //console.log("responseText: " + e.responseText);
+    console.log("status: " + e.status);
+    console.log("statusText: " + e.statusText);
+    console.log("readyState: " + e.readyState);
+    console.log("responseText: " + e.responseText);
 }
 
 function getBaseUri() {

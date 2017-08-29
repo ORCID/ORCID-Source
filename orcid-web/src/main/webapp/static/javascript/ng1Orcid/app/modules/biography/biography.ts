@@ -1,6 +1,3 @@
-declare var getBaseUri: any;
-declare var logAjaxError: any;
-
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule, NgFor } from '@angular/common'; 
@@ -31,7 +28,7 @@ export const BiographyModule = angular.module(
             BiographyComponent 
         ],
         providers: [
-            BiographyService
+            
         ]
     }
 )

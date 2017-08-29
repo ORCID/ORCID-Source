@@ -22,16 +22,17 @@ export class BiographyService {
 
     setBiographyData( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
-        let headers = new Headers({ 
-            'Content-Type': 'application/json' 
-        });
+        let headers = new Headers(
+            { 
+                'Content-Type': 'application/json' 
+            }
+        );
         let options = new RequestOptions(
             { 
                 headers: headers 
             }
         );
-
-
+        
         return this.http.post( 
             this.url, 
             encoded_data, 

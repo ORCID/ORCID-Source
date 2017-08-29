@@ -1,10 +1,4 @@
 //Declare all the external variables 
-declare var $: any;
-declare var colorbox: any;
-declare var contains: any;
-declare var getBaseUri: any;
-declare var logAjaxError: any;
-declare var orcidVar: any;
 declare var scriptTmpl: any;
 
 //Import all the angular components
@@ -33,8 +27,6 @@ export class BiographyComponent implements AfterViewInit {
     constructor(
         private biographyService: BiographyService
     ) {
-        console.log('BiographyComponent loaded v.0.10'); 
-
         this.biographyForm = {
             biography: {
                 value: ''
@@ -61,7 +53,6 @@ export class BiographyComponent implements AfterViewInit {
             this.lengthError = false;
         }
 
-        console.log('this.lengthError', this.lengthError);
         return !this.lengthError; //Negating the error, if error is present will be true and return false to avoid user input
     };
 
@@ -75,8 +66,7 @@ export class BiographyComponent implements AfterViewInit {
                 this.biographyForm  = data;
             },
             error => {
-                console.log(error);
-                logAjaxError(error);
+                console.log('getBiographyFormError', error);
             } 
         );
     };
@@ -89,36 +79,16 @@ export class BiographyComponent implements AfterViewInit {
         if( this.checkLength() == false ){    
             return; // do nothing if there is a length error
         }
-        /* */
         this.biographyService.setBiographyData( this.biographyForm )
         .subscribe(
             data => {
                 this.biographyForm  = data;
+                this.close();
             },
             error => {
-                console.log(error);
-                logAjaxError(error);
+                console.log('setBiographyFormError', error);
             } 
         );
-        /* */
-        /* 
-        $.ajax({
-            contentType: 'application/json;charset=UTF-8',
-            data:  angular.toJson(this.biographyForm),
-            dataType: 'json',
-            type: 'POST',
-            url: getBaseUri() + '/account/biographyForm.json',
-            success: function(data) {
-                this.biographyForm = data;
-                if(data.errors.length == 0){
-                    //this.close();
-                }
-            }
-        }).fail(function() {
-            // something bad is happening!
-            console.log("BiographyCtrl.serverValidate() error");
-        });
-        */
     };
 
     setPrivacy(priv, $event:any): void {
