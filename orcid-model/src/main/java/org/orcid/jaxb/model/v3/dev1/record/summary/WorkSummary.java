@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.v3.dev1.common.Title;
 import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
@@ -58,7 +58,7 @@ import org.orcid.jaxb.model.v3.dev1.record.WorkType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "publicationDate", "journalTitle" })
+@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "journalTitle", "publicationDate" })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
 public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
 
@@ -67,6 +67,8 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     protected WorkTitle title;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkType type;
+    @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")
+    protected Title journalTitle;
     @XmlElement(name = "publication-date", namespace = "http://www.orcid.org/ns/common")
     protected PublicationDate publicationDate;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
@@ -77,7 +79,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
-
+    
     @XmlAttribute(name = "put-code")
     protected Long putCode;
     @XmlAttribute(name="path")
@@ -87,9 +89,6 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     @XmlAttribute(name = "display-index")
     protected String displayIndex;
     
-    @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")
-    protected Title journalTitle;
-
     public WorkTitle getTitle() {
         return title;
     }
