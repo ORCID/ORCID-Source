@@ -29,6 +29,11 @@ public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
     private boolean persistentTokenEnabled = false;
     private String redirectUrl;
     private boolean emailAccessAllowed = false;
+    private boolean verificationCodeRequired;
+    private boolean badVerificationCode;
+    private boolean badRecoveryCode;
+    private Text verificationCode;
+    private Text recoveryCode;
 
     @Override
     public List<String> getErrors() {
@@ -87,5 +92,46 @@ public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
     public void setEmailAccessAllowed(boolean emailAccessAllowed) {
         this.emailAccessAllowed = emailAccessAllowed;
     }
+
+    public boolean isVerificationCodeRequired() {
+        return verificationCodeRequired;
+    }
+
+    public void setVerificationCodeRequired(boolean verificationCodeRequired) {
+        this.verificationCodeRequired = verificationCodeRequired;
+    }
+
+    public boolean isBadVerificationCode() {
+        return badVerificationCode;
+    }
+
+    public void setBadVerificationCode(boolean badVerificationCode) {
+        this.badVerificationCode = badVerificationCode;
+    }
+
+    public boolean isBadRecoveryCode() {
+        return badRecoveryCode;
+    }
+
+    public void setBadRecoveryCode(boolean badRecoveryCode) {
+        this.badRecoveryCode = badRecoveryCode;
+    }
+
+    public Text getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(Text verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public Text getRecoveryCode() {
+        return recoveryCode;
+    }
+
+    public void setRecoveryCode(Text recoveryCode) {
+        this.recoveryCode = recoveryCode;
+    }
+    
     
 }

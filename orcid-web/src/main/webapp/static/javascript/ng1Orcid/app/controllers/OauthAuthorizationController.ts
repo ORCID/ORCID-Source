@@ -154,6 +154,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
 
             $scope.loadAndInitLoginForm = function() {
                 $scope.isOrcidPresent = false;
+                $scope.showVerificationCodeFor2FA = false;
                 $.ajax({
                     url: getBaseUri() + '/oauth/custom/authorize/empty.json',
                     type: 'GET',
@@ -475,6 +476,9 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                                 $scope.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', $scope.authorizationForm.errors) != -1);
                                 $scope.showReactivationSent = false;
                                 $scope.$apply();
+                            } else if (data.verificationCodeRequired) {
+                                $scope.showVerificationCodeFor2FA = true;
+                                $('#2FAInstructions').show();
                             } else {
                                 // Fire google GA event
                                 if($scope.authorizationForm.approved) {
@@ -497,6 +501,10 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     console.log("An error occured authenticating the user.");
                 });
             };
+            
+            $('#enterRecoveryCode').click(function() {
+                 $('#recoveryCodeSignin').show(); 
+            });
 
             $scope.switchForm = function() {
                 $scope.showRegisterForm = !$scope.showRegisterForm;
