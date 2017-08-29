@@ -1,8 +1,9 @@
 import 'reflect-metadata';
 
 import { BrowserModule } from "@angular/platform-browser";
+import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
+import { HttpModule, Request, XSRFStrategy } from '@angular/http';
 import { JsonpModule } from '@angular/http';
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
@@ -39,9 +40,41 @@ export class Ng1Ng2UrlHandlingStrategy implements UrlHandlingStrategy {
 export class RootCmp {
 }
 
+export class MetaXSRFStrategy implements XSRFStrategy {
+    constructor(
+
+    ) { 
+
+
+    }
+
+  configureRequest(req: Request): void {
+    var token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+    var header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+    //this._headerName = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+    //var xsrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+    if (token && header) {
+      req.headers.set(header, token);
+    }
+  }
+}
+
+/*export class CookieXSRFStrategy implements XSRFStrategy {
+  constructor(
+      private _cookieName: string = 'XSRF-TOKEN', private _headerName: string = 'X-XSRF-TOKEN') {}
+
+  configureRequest(req: Request): void {
+    const xsrfToken = getDOM().getCookie(this._cookieName);
+    if (xsrfToken) {
+      req.headers.set(this._headerName, xsrfToken);
+    }
+  }
+}*/
+
 @NgModule({
     imports: [
         BrowserModule,
+        CommonModule,
         HttpModule,
         JsonpModule,
         UpgradeModule,
@@ -56,11 +89,21 @@ export class RootCmp {
         { 
             provide: UrlHandlingStrategy, 
             useClass: Ng1Ng2UrlHandlingStrategy 
-        }
+        },
+        { 
+            provide: XSRFStrategy, 
+            //useValue: new CookieXSRFStrategy('_csrf', '_csrf_header')
+            useClass: MetaXSRFStrategy
+
+        },
+
     ],
+
     bootstrap: [RootCmp],
-    declarations: [RootCmp]
+    declarations: [RootCmp],
+
 })
+
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){}
 }
