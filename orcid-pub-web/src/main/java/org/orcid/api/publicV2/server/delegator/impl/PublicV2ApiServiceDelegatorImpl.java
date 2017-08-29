@@ -205,10 +205,6 @@ public class PublicV2ApiServiceDelegatorImpl
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
-    private long getLastModifiedTime(String orcid) {
-        return profileEntityManagerReadOnly.getLastModified(orcid);
-    }
-
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -492,8 +488,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewExternalIdentifiers(String orcid) {
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid, lastModifiedTime);
+        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
         publicAPISecurityManagerV2.filter(extIds);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(extIds);
