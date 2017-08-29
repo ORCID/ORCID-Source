@@ -64,13 +64,13 @@
                     <div class="row">   
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <h1 class="lightbox-title wizard-header">Link Peer Review</h1>
-                            <span ng-click="showPeerReviewImportWizard()" class="close-wizard">Hide link Peer Review</span>
+                            <span ng-click="showPeerReviewImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_peer_review'/></span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="justify">
-                                <p class="wizard-content">ORCID works with our member organizations to make it easy to connect your ORCID iD and link to information in their records. Choose one of the link wizards to get started.</p>
+                                <p class="wizard-content"><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
                             </div>                                  
                         </div>
                     </div>

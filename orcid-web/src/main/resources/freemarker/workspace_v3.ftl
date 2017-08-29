@@ -530,7 +530,7 @@
           <!-- Bibtex Importer Wizard -->
           <div ng-if="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
             <div class=box-border" ng-if="canReadFiles" ng-cloak>
-              <h4>Link BibTeX</h4><span ng-click="openBibTextWizard()" class="hide-importer">Hide link BibTeX</span>
+              <h4><@orcid.msg 'workspace.bibtexImporter.link_bibtex'/></h4><span ng-click="openBibTextWizard()" class="hide-importer"><@orcid.msg 'workspace.bibtexImporter.hide_link_bibtex'/></span>
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                   <p>

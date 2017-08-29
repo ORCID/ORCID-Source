@@ -53,7 +53,7 @@ public class SourceOrcidConverter extends BidirectionalConverter<SourceOrcid, St
         
         SourceOrcid sourceOrcid = new SourceOrcid();
         sourceOrcid.setHost(orcidUrlManager.getBaseHost());
-        sourceOrcid.setUri(orcidUrlManager.getBaseUriHttp() + "/" + source);
+        sourceOrcid.setUri(orcidUrlManager.getBaseUrl() + "/" + source);
         sourceOrcid.setPath(source);
         return sourceOrcid;
     }

@@ -96,7 +96,6 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
 
     @Override
     public Person getPersonDetails(String orcid) {
-        long lastModifiedTime = getLastModified(orcid);
         Person person = new Person();
         person.setName(recordNameManager.getRecordName(orcid));
         person.setBiography(biographyManager.getBiography(orcid));
@@ -108,7 +107,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
             person.setAddresses(filteredAddresses);
         }
 
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime);
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid);
         if (extIds.getExternalIdentifiers() != null) {
             PersonExternalIdentifiers filteredExtIds = new PersonExternalIdentifiers();
             filteredExtIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(extIds.getExternalIdentifiers()));
@@ -147,7 +146,6 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
 
     @Override
     public Person getPublicPersonDetails(String orcid) {
-        long lastModifiedTime = getLastModified(orcid);
         Person person = new Person();
 
         Name name = recordNameManager.getRecordName(orcid);
@@ -167,7 +165,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
             person.setAddresses(filteredAddresses);
         }
 
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid);
         if (extIds.getExternalIdentifiers() != null) {
             PersonExternalIdentifiers filteredExtIds = new PersonExternalIdentifiers();
             filteredExtIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(extIds.getExternalIdentifiers()));

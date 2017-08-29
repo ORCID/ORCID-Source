@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -162,27 +163,78 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertEquals("Given Names", form.getGivenNames().getValue());
         assertEquals("Family Name", form.getFamilyNames().getValue());        
     }
+    @Test
+    public void regEmailsAdditonalValidateNotSameAsPrimary() {
+        String additionalEmail = "email1@test.orcid.org";
+        
+        Registration reg = new Registration();
+        List<Text> emailsAdditionalList = new ArrayList<Text>();
+        Text emailAdditional = new Text();
+        emailAdditional.setValue(additionalEmail);
+        emailsAdditionalList.add(emailAdditional);
+        reg.setEmailsAdditional(emailsAdditionalList);
+        reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+        
+        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        
+        assertNotNull(reg);
+        assertNotNull(reg.getEmailsAdditional());
+        for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
+            assertNotNull(emailAdditionalListItem.getErrors());
+            assertEquals(1, emailAdditionalListItem.getErrors().size());
+            assertEquals("Additional email cannot match primary email", emailAdditionalListItem.getErrors().get(0));
+        }
+    }
     
     @Test
     public void regEmailValidateUnclaimedAccountTest() {
-    	String email = "email1@test.orcid.org";
-    	String orcid = "0000-0000-0000-0000";
-    	when(emailManager.emailExists(email)).thenReturn(true); 
-    	when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
-    	when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
-    	when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
-    	when(emailManager.isAutoDeprecateEnableForEmail(email)).thenReturn(true);
-    	    	
-    	Registration reg = new Registration();
-    	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
-    	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
-    	
-    	assertNotNull(reg);
-    	assertNotNull(reg.getEmail());
-    	assertNotNull(reg.getEmail().getErrors());
-    	//No errors, since the account can be auto deprecated
-    	assertTrue(reg.getEmail().getErrors().isEmpty());    	
+        String email = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(email)).thenReturn(true); 
+        when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+        when(emailManager.isAutoDeprecateEnableForEmail(email)).thenReturn(true);
+        
+        Registration reg = new Registration();
+        reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+        reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
+        reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+        
+        assertNotNull(reg);
+        assertNotNull(reg.getEmail());
+        assertNotNull(reg.getEmail().getErrors());
+        //No errors, since the account can be auto deprecated
+        assertTrue(reg.getEmail().getErrors().isEmpty());       
+    }
+    
+    @Test
+    public void regEmailsAdditonalValidateUnclaimedAccountTest() {
+        String additionalEmail = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(additionalEmail)).thenReturn(true); 
+        when(emailManager.findOrcidIdByEmail(additionalEmail)).thenReturn(orcid);
+        when(profileEntityManager.isProfileClaimedByEmail(additionalEmail)).thenReturn(false);
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+        when(emailManager.isAutoDeprecateEnableForEmail(additionalEmail)).thenReturn(true);
+        
+        Registration reg = new Registration();
+        List<Text> emailsAdditionalList = new ArrayList<Text>();
+        Text emailAdditional = new Text();
+        emailAdditional.setValue(additionalEmail);
+        emailsAdditionalList.add(emailAdditional);
+        reg.setEmailsAdditional(emailsAdditionalList);
+        
+        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        
+        assertNotNull(reg);
+        //No errors, since the account can be auto deprecated
+        assertTrue(reg.getEmail().getErrors().isEmpty());     
+        assertNotNull(reg.getEmailsAdditional());
+        for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
+            assertNotNull(emailAdditionalListItem.getErrors());
+            assertTrue(emailAdditionalListItem.getErrors().isEmpty());
+        }
     }
     
     @Test
@@ -210,6 +262,34 @@ public class RegistrationControllerTest extends DBUnitTest {
     }
     
     @Test
+    public void regEmailsAdditionalValidateUnclaimedAccountButEnableAutoDeprecateDisableOnClientTest() {
+        String additionalEmail = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(additionalEmail)).thenReturn(true); 
+        when(emailManager.findOrcidIdByEmail(additionalEmail)).thenReturn(orcid);
+        when(profileEntityManager.isProfileClaimedByEmail(additionalEmail)).thenReturn(false);
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+        when(emailManager.isAutoDeprecateEnableForEmail(additionalEmail)).thenReturn(false);
+        when(servletRequest.getScheme()).thenReturn("http");            
+        
+        Registration reg = new Registration();
+        List<Text> emailsAdditionalList = new ArrayList<Text>();
+        Text emailAdditional = new Text();
+        emailAdditional.setValue(additionalEmail);
+        emailsAdditionalList.add(emailAdditional);
+        reg.setEmailsAdditional(emailsAdditionalList);
+        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+         
+        assertNotNull(reg);
+        assertNotNull(reg.getEmailsAdditional());
+        for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
+            assertNotNull(emailAdditionalListItem.getErrors());
+            assertEquals(1, emailAdditionalListItem.getErrors().size());
+            assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href=\"http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org\">resend the claim email</a>?", emailAdditionalListItem.getErrors().get(0));
+        }
+    }
+    
+    @Test
     public void regEmailValidateDeactivatedAccountTest() {
     	String email = "email1@test.orcid.org";
     	String orcid = "0000-0000-0000-0000";
@@ -232,27 +312,111 @@ public class RegistrationControllerTest extends DBUnitTest {
     }
     
     @Test
-    public void regEmailValidateDeactivatedAndUnclaimedAccountTest() {
-    	String email = "email1@test.orcid.org";
-    	String orcid = "0000-0000-0000-0000";
-    	when(emailManager.emailExists(email)).thenReturn(true); 
-    	when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
-    	//Set it as unclaimed
-    	when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
-    	//And set it as deactivated
-    	when(profileEntityManager.isDeactivated(orcid)).thenReturn(true);
-    	when(emailManager.isAutoDeprecateEnableForEmail(email)).thenReturn(true);
+    public void regEmailsAdditionalValidateDeactivatedAccountTest() {
+        String additionalEmail = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(additionalEmail)).thenReturn(true); 
+        when(emailManager.findOrcidIdByEmail(additionalEmail)).thenReturn(orcid);
+        when(profileEntityManager.isProfileClaimedByEmail(additionalEmail)).thenReturn(false);
+        //Set it as deactivated
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(true);
+                
+        Registration reg = new Registration();
+        List<Text> emailsAdditionalList = new ArrayList<Text>();
+        Text emailAdditional = new Text();
+        emailAdditional.setValue(additionalEmail);
+        emailsAdditionalList.add(emailAdditional);
+        reg.setEmailsAdditional(emailsAdditionalList);
+        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+         
+        assertNotNull(reg);
+        assertNotNull(reg.getEmailsAdditional());
+        for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
+            assertNotNull(emailAdditionalListItem.getErrors());
+            assertEquals(1, emailAdditionalListItem.getErrors().size());
+            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("orcid.frontend.verify.deactivated_email"));
+        }
+    }
+    
+    @Test
+    public void regEmailsAdditionalValidateDeactivatedAndUnclaimedAccountTest() {
+        String additionalEmail = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(additionalEmail)).thenReturn(true);
+        //Set it as unclaimed
+        when(emailManager.findOrcidIdByEmail(additionalEmail)).thenReturn(orcid);
+        when(profileEntityManager.isProfileClaimedByEmail(additionalEmail)).thenReturn(false);
+        //And set it as deactivated
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(true);
+    	when(emailManager.isAutoDeprecateEnableForEmail(additionalEmail)).thenReturn(true);
     	
     	Registration reg = new Registration();
-    	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
-    	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+        List<Text> emailsAdditionalList = new ArrayList<Text>();
+        Text emailAdditional = new Text();
+        emailAdditional.setValue(additionalEmail);
+        emailsAdditionalList.add(emailAdditional);
+        reg.setEmailsAdditional(emailsAdditionalList);
+        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
-    	assertNotNull(reg.getEmail());
-    	assertNotNull(reg.getEmail().getErrors());
-    	assertEquals(1, reg.getEmail().getErrors().size());
-    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("orcid.frontend.verify.deactivated_email"));
+        assertNotNull(reg.getEmailsAdditional());
+        for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
+            assertNotNull(emailAdditionalListItem.getErrors());
+            assertEquals(1, emailAdditionalListItem.getErrors().size());
+            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("orcid.frontend.verify.deactivated_email"));
+        }
+    }
+    
+    @Test
+    public void regEmailValidateDeactivatedAndUnclaimedAccountTest() {
+        String email = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(email)).thenReturn(true); 
+        when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+        //Set it as unclaimed
+        when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
+        //And set it as deactivated
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(true);
+        when(emailManager.isAutoDeprecateEnableForEmail(email)).thenReturn(true);
+        
+        Registration reg = new Registration();
+        reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+        reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
+        reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+        
+        assertNotNull(reg);
+        assertNotNull(reg.getEmail());
+        assertNotNull(reg.getEmail().getErrors());
+        assertEquals(1, reg.getEmail().getErrors().size());
+        assertTrue(reg.getEmail().getErrors().get(0).startsWith("orcid.frontend.verify.deactivated_email"));
+    }
+    
+    @Test
+    public void regEmailsAdditionalValidateClaimedAccountTest() {
+        String additionalEmail = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(additionalEmail)).thenReturn(true); 
+        when(emailManager.findOrcidIdByEmail(additionalEmail)).thenReturn(orcid);
+        //Set it as claimed
+        when(profileEntityManager.isProfileClaimedByEmail(additionalEmail)).thenReturn(true);
+        //And set it as active
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+        
+        Registration reg = new Registration();
+        List<Text> emailsAdditionalList = new ArrayList<Text>();
+        Text emailAdditional = new Text();
+        emailAdditional.setValue(additionalEmail);
+        emailsAdditionalList.add(emailAdditional);
+        reg.setEmailsAdditional(emailsAdditionalList);
+        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        
+        assertNotNull(reg);
+        assertNotNull(reg.getEmailsAdditional());
+        for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
+            assertNotNull(emailAdditionalListItem.getErrors());
+            assertEquals(1, emailAdditionalListItem.getErrors().size());
+            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system. Would you like to"));
+        }     
     }
     
     @Test

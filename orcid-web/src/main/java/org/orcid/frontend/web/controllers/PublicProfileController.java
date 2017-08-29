@@ -344,7 +344,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         mav.addObject("publicGroupedEmails", groupedEmails);
 
         // Fill external identifiers
-        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);
+        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid);
         Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
         mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
 

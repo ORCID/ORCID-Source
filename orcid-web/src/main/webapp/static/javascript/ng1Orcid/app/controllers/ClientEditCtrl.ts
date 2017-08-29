@@ -39,7 +39,7 @@ export const ClientEditCtrl = angular.module('orcidApp').controller(
             $scope.selectedScopes = [];
             $scope.swaggerUri = orcidVar.pubBaseUri+ '/v2.0/';
             $scope.swaggerMemberUri = $scope.swaggerUri.replace("pub","api");
-            $scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
+            $scope.tokenURL = getBaseUri() + '/oauth/token';
             $scope.viewing = false;
             $scope.selectedRedirectUriValue = null;
            

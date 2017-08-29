@@ -862,7 +862,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewExternalIdentifiers(String orcid) {
-        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getExternalIdentifiers(orcid, getLastModifiedTime(orcid));
+        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getExternalIdentifiers(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         if (extIds.getExternalIdentifiers() != null) {

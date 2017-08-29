@@ -34,15 +34,18 @@ public enum Features implements Feature {
     @Label("Split oauth in 2 screens")
     OAUTH_2SCREENS,
     
-    @Label("Two factor authentication")
-    TWO_FACTOR_AUTHENTICATION,
+    @Label("Mutiple emails on register form")
+    REG_MULTI_EMAIL,
     
+    @Label("Revoke access token if authorization code is reused")
+    REVOKE_TOKEN_ON_CODE_REUSE,
+
     @Label("Survey link")
     SURVEY,
     
-    @Label("Revoke access token if authorization code is reused")
-    REVOKE_TOKEN_ON_CODE_REUSE;
-
+    @Label("Two factor authentication")
+    TWO_FACTOR_AUTHENTICATION;
+    
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

@@ -29,7 +29,7 @@ public interface ExternalIdentifierManagerReadOnly {
      * @return the list of public external identifiers associated with the orcid
      *         profile
      */
-    PersonExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified);
+    PersonExternalIdentifiers getPublicExternalIdentifiers(String orcid);
 
     /**
      * Return the list of external identifiers associated to a specific profile
@@ -38,7 +38,7 @@ public interface ExternalIdentifierManagerReadOnly {
      * @return the list of external identifiers associated with the orcid
      *         profile
      */
-    PersonExternalIdentifiers getExternalIdentifiers(String orcid, long lastModified);
+    PersonExternalIdentifiers getExternalIdentifiers(String orcid);
 
     /**
      * Retrieve a external identifier from database

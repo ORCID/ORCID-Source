@@ -69,6 +69,7 @@ import org.apache.jena.rdf.model.ResIterator;
 
 /**
  * @author Stian Soiland-Reyes
+ * @author Sarven Capadisli
  */
 @Provider
 @Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, JSON_LD, N_TRIPLES })
@@ -102,7 +103,26 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 	    
 		
 	}
-	
+    public static class LDP {
+
+        /** The RDF model that holds the vocabulary terms */
+        private static Model m_model = ModelFactory.createDefaultModel();
+
+        /** The namespace of the vocabulary as a string */
+        public static final String NS = "http://www.w3.org/ns/ldp#";
+
+        public static final Property inbox = m_model.createProperty( NS + "inbox" );
+    }
+    public static class PIM {
+
+        /** The RDF model that holds the vocabulary terms */
+        private static Model m_model = ModelFactory.createDefaultModel();
+
+        /** The namespace of the vocabulary as a string */
+        public static final String NS = "http://www.w3.org/ns/pim/space#";
+
+        public static final Property storage = m_model.createProperty( NS + "storage" );
+    }
     private static final String COUNTRIES_TTL = "countries.ttl";
 	private static final String MEMBER_API = "https://api.orcid.org/";
     private static final String EN = "en";
@@ -110,6 +130,8 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final List<String> URL_NAME_HOMEPAGE = Arrays.asList("homepage", "home", "home page", "personal", "personal homepage", "personal home page");
     private static final String URL_NAME_FOAF = "foaf";
     private static final String URL_NAME_WEBID = "webid";
+    private static final String URL_NAME_INBOX = "inbox";
+    private static final String URL_NAME_STORAGE = "storage";
 
 	private static OntModel countries;
 
@@ -398,6 +420,10 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
                 person.addSeeAlso(page);
             } else if (isWebID(urlName)) {
                 person.addSameAs(page);
+            } else if (isInbox(urlName)) {
+                person.addProperty(LDP.inbox, page);
+            } else if (isStorage(urlName)) {
+                person.addProperty(PIM.storage, page);
             } else {
                 // It's some other foaf:page which might not be about
                 // this person
@@ -425,6 +451,20 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             return false;
         }
         return urlName.equals(URL_NAME_WEBID);
+    }
+
+    private boolean isInbox(String urlName) {
+        if (urlName == null) {
+            return false;
+        }
+        return urlName.equals(URL_NAME_INBOX);
+    }
+
+    private boolean isStorage(String urlName) {
+        if (urlName == null) {
+            return false;
+        }
+        return urlName.equals(URL_NAME_STORAGE);
     }
 
     /**

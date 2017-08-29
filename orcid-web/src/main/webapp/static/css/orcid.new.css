@@ -87,6 +87,10 @@ sub {
     margin-bottom: 1em;
 }
 
+.leftBuffer {
+    margin-left: 1em;
+}
+
 .topBuffer {
     margin-top: 1em;
 }
@@ -184,6 +188,18 @@ textarea {
 /*
     Some default styles
 */
+
+.btn-white-no-border{
+    color: #338caf;
+    background-color: #fff;
+    border: none;
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+.btn-white-no-border:hover {
+    color: #a6ce39;
+}
 
 .container {
     min-height: 100%;
@@ -2543,6 +2559,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     display: inline;
 }
 
+.popover-help-container  .btn-white-no-border {
+    font-size: 14px;
+    padding-left: 0;
+}
+
 
 /* Do not modify */
 
@@ -3947,6 +3968,18 @@ ul.sso-options li span {
     vertical-align: top;
     font-size: 12px;
     width: 25%;
+}
+
+.admin-edit-consortium td,
+.admin-edit-consortium th {
+    padding: 3px 4px;
+    vertical-align: top;
+    font-size: 12px;
+    width: 20%;
+}
+
+#bottom-confirm-update-consortium {
+	margin-bottom: 10px;
 }
 
 .developer-tools .create-client .ruri {
@@ -7265,6 +7298,10 @@ a:hover .mozilla-badge {
 
 .tooltip-container a.glyphicon-trash:hover .arrow {
     left: 34px;
+}
+
+.popover-tooltip-add .popover-content span {
+    white-space: nowrap;
 }
 
 .settings-table #name-help.popover {

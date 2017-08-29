@@ -245,7 +245,7 @@ public class ClaimController extends BaseController {
         }
 
         if (!emailManager.emailExists(email)) {
-            errors.add(getMessage("orcid.frontend.reset.password.email_not_found", email));
+            errors.add(getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + email + " " + getMessage("orcid.frontend.reset.password.email_not_found_2"));
             return resendClaimRequest;
         }
 

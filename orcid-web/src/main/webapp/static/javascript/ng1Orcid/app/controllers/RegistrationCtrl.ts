@@ -32,6 +32,7 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             $scope.recatchaResponse = null;
             $scope.showDeactivatedError = false;
             $scope.showReactivationSent = false;
+            $scope.register = {};
             
             $scope.model = {
                 key: orcidVar.recaptchaKey
@@ -77,8 +78,9 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                        $scope.register.givenNames.value=givenName;
                        $scope.register.familyNames.value=familyName;
                        $scope.register.email.value=email;
+                       $scope.register.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];
                        $scope.register.linkType=linkFlag;
-                       $scope.$apply();               
+                       $scope.$apply();             
             
                         // make sure inputs stayed trimmed
                         $scope.$watch('register.email.value', function(newValue, oldValue) {
@@ -91,6 +93,14 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                         $scope.$watch('register.email.errors', function(newValue, oldValue) {
                                 $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.register.email.errors) != -1);
                                 $scope.showReactivationSent = false;
+                        }); // initialize the watch
+
+                        // make sure inputs stayed trimmed
+                        $scope.$watch('register.emailsAdditional.value', function(newValue, oldValue) {
+                            if(newValue !== oldValue) {
+                                trimAjaxFormText($scope.register.emailsAdditional);
+                                $scope.serverValidate('EmailsAdditional');
+                            }
                         }); // initialize the watch
                         
                         // make sure email is trimmed
@@ -160,7 +170,6 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        console.log(data);
                         $scope.register = data;             
                         $scope.$apply();                
                         if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
@@ -237,7 +246,7 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             $scope.serverValidate = function (field) {        
                 if (field === undefined) {
                     field = '';
-                } 
+                }
                 $.ajax({
                     url: getBaseUri() + '/register' + field + 'Validate.json',
                     type: 'POST',
@@ -252,6 +261,7 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                     // something bad is happening!
                     console.log("RegistrationCtrl.serverValidate() error");
                 });
+                
             };
 
             $scope.setRecatchaResponse = function (response) {
@@ -297,7 +307,15 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             
             $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
                 $scope.register.activitiesVisibilityDefault.visibility = priv;
-            };            
+            }; 
+
+            $scope.addEmailField = function () {
+                $scope.register.emailsAdditional.push({value: ''});
+            }  
+
+            $scope.removeEmailField = function (index) {
+                $scope.register.emailsAdditional.splice(index, 1);
+            }          
         }
     ]
 );

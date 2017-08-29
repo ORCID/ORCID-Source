@@ -138,7 +138,7 @@ public class PasswordResetController extends BaseController {
 
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetRequest.getEmail(), LoadOptions.BIO_ONLY);
         if (profile == null) {
-            errors.add(getMessage("orcid.frontend.reset.password.email_not_found", passwordResetRequest.getEmail()));
+            errors.add(getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " " + getMessage("orcid.frontend.reset.password.email_not_found_2"));
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
