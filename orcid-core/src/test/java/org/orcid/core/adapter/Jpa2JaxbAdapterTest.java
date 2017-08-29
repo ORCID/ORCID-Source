@@ -320,7 +320,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         work.setId(24816L);
         works.add(work);
         profile.setWorks(works);
-        when(mockWorkEntityCacheManager.retrieveFullWorks(userOrcid, 0)).thenReturn(new ArrayList<>(works));
+        when(mockWorkEntityCacheManager.retrieveLegacyFullWorks(userOrcid, 0)).thenReturn(new ArrayList<>(works));
 
         // Existing org
         OrgEntity newOrg = new OrgEntity();

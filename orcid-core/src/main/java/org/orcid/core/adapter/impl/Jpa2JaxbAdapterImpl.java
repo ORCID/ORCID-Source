@@ -320,7 +320,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         String orcid = profileEntity.getId();
         LOGGER.debug("About to convert works from entity: " + orcid);
         Date lastModified = profileEntity.getLastModified();
-        List<LegacyWorkEntity> works = workEntityCacheManager.retrieveFullWorks(orcid, lastModified != null ? lastModified.getTime() : 0);
+        List<LegacyWorkEntity> works = workEntityCacheManager.retrieveLegacyFullWorks(orcid, lastModified != null ? lastModified.getTime() : 0);
         if (works != null && !works.isEmpty()) {
             List<OrcidWork> unsorted = new ArrayList<>();
             for (LegacyWorkEntity workEntity : works) {

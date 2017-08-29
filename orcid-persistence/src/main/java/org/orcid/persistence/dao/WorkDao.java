@@ -129,4 +129,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     
     @Deprecated
     List<LegacyWorkEntity> getLegacyWorkEntities(List<Long> ids);
+    
+    @Deprecated
+    void persist(LegacyWorkEntity entity);
 }

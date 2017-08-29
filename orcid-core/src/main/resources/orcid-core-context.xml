@@ -1144,6 +1144,18 @@
         <property name="copyOnWrite" value="true" />
     </bean>
     
+    <bean id="fullLegacyWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="full-legacy-work-entity" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="30000" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="7200" />
+        <property name="maxElementsOnDisk" value="120000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="true" />
+    </bean>
+    
     <bean id="salesForceMembersListCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="sales-force-members-list" />
         <property name="cacheManager" ref="coreCacheManager" />

@@ -247,5 +247,10 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         }
         return list;
     }
+
+    @Override
+    public void persist(LegacyWorkEntity entity) {
+        entityManager.persist(entity);
+    }
 }
 

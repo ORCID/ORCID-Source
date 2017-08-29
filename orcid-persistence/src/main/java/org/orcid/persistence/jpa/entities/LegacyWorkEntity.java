@@ -31,7 +31,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "work")
 @Deprecated
-public class LegacyWorkEntity extends org.orcid.persistence.jpa.entities.WorkEntity implements ProfileAware, DisplayIndexInterface {
+public class LegacyWorkEntity extends WorkFullEntity implements ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = 1L;
 
