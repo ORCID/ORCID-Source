@@ -74,7 +74,7 @@
 </head>
 <body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
-    	<p><strong>${notification.source.sourceName.content}</strong> has updated items in the ${notification.amendedSection!?capitalize} section of your record.</p>
+    	<p><strong>${notification.source.sourceName.content}</strong> <@orcid.msg 'notifications.has_updated'/> ${notification.amendedSection!?capitalize} <@orcid.msg 'notifications.section_of'/></p>
         <#if (notification.activities.activities)??>
             <p>
                 <#list notification.activities.activities as activity>
