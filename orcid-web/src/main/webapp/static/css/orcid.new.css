@@ -87,6 +87,10 @@ sub {
     margin-bottom: 1em;
 }
 
+.leftBuffer {
+    margin-left: 1em;
+}
+
 .topBuffer {
     margin-top: 1em;
 }
@@ -184,6 +188,18 @@ textarea {
 /*
     Some default styles
 */
+
+.btn-white-no-border{
+    color: #338caf;
+    background-color: #fff;
+    border: none;
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+.btn-white-no-border:hover {
+    color: #a6ce39;
+}
 
 .container {
     min-height: 100%;
@@ -2541,6 +2557,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .popover-help-container {
     display: inline;
+}
+
+.popover-help-container  .btn-white-no-border {
+    font-size: 14px;
+    padding-left: 0;
 }
 
 

@@ -48,6 +48,7 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -126,12 +127,38 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Override
     public String createMinimalRegistration(Registration registration, boolean usedCaptcha, Locale locale, String ip) {
         String emailAddress = registration.getEmail().getValue();
+        
         try {
             String orcidId = transactionTemplate.execute(new TransactionCallback<String>() {
                 public String doInTransaction(TransactionStatus status) {
+                    boolean duplicatePrimaryEmail = false;
+                    boolean duplicateAdditionalEmail = false;
+                    int duplicateCount = 0;
+                    String duplicateAdditionalAddress = null;
+                    
                     if (emailManager.emailExists(emailAddress)) {
+                        duplicatePrimaryEmail = true;
+                        duplicateCount++;
+                    }
+
+                    for(Text emailAdditional : registration.getEmailsAdditional()) {
+                        if(!PojoUtil.isEmpty(emailAdditional)){
+                            String emailAddressAdditional = emailAdditional.getValue();
+                            if (emailManager.emailExists(emailAddressAdditional)) {
+                                duplicateAdditionalEmail = true;
+                                duplicateCount++;
+                                if(PojoUtil.isEmpty(duplicateAdditionalAddress)){
+                                    duplicateAdditionalAddress = emailAddressAdditional;
+                                } else {
+                                    throw new InvalidRequestException("More than 2 duplicate emails");
+                                }
+                            } 
+                        }
+                    }
+                        
+                    if (duplicatePrimaryEmail && !duplicateAdditionalEmail) {
                         checkAutoDeprecateIsEnabledForEmail(emailAddress);
-                        String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
+                        String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);       
                         emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
@@ -139,9 +166,40 @@ public class RegistrationManagerImpl implements RegistrationManager {
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid);
                         profileEntityCacheManager.remove(unclaimedOrcid);
                         return newUserOrcid;
+                       
+                    } else if (!duplicatePrimaryEmail && duplicateAdditionalEmail && duplicateCount < 2) {
+                        checkAutoDeprecateIsEnabledForEmail(duplicateAdditionalAddress);
+                        String unclaimedOrcid = getOrcidIdFromEmail(duplicateAdditionalAddress);
+                        emailManager.removeEmail(unclaimedOrcid, duplicateAdditionalAddress, true);
+                        String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
+                        ProfileDeprecationRequest result = new ProfileDeprecationRequest();
+                        adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
+                        notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid);
+                        profileEntityCacheManager.remove(unclaimedOrcid);
+                        return newUserOrcid;
+
+                    } else if (duplicatePrimaryEmail && duplicateAdditionalEmail && duplicateCount < 2) {
+                        checkAutoDeprecateIsEnabledForEmail(emailAddress);
+                        String unclaimedOrcid01 = getOrcidIdFromEmail(emailAddress);
+                        emailManager.removeEmail(unclaimedOrcid01, emailAddress, true);
+                        checkAutoDeprecateIsEnabledForEmail(duplicateAdditionalAddress);
+                        String unclaimedOrcid02 = getOrcidIdFromEmail(duplicateAdditionalAddress);
+                        emailManager.removeEmail(unclaimedOrcid02, emailAddress, true);
+                        String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
+                        ProfileDeprecationRequest result01 = new ProfileDeprecationRequest();
+                        adminManager.deprecateProfile(result01, unclaimedOrcid01, newUserOrcid);
+                        notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid01);
+                        profileEntityCacheManager.remove(unclaimedOrcid01);
+                        ProfileDeprecationRequest result02 = new ProfileDeprecationRequest();
+                        adminManager.deprecateProfile(result02, unclaimedOrcid02, newUserOrcid);
+                        notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid02);
+                        profileEntityCacheManager.remove(unclaimedOrcid02);
+                        return newUserOrcid;
+
                     } else {
                         return createMinimalProfile(registration, usedCaptcha, locale, ip);
                     }
+                    
                 }
             });
             return orcidId;
@@ -201,7 +259,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         // Encrypt the password
         newRecord.setEncryptedPassword(encryptionManager.hashForInternalUse(registration.getPassword().getValue()));
 
-        // Set the email
+        // Set primary email
         EmailEntity emailEntity = new EmailEntity();
         emailEntity.setId(registration.getEmail().getValue().trim());
         emailEntity.setProfile(newRecord);
@@ -213,6 +271,24 @@ public class RegistrationManagerImpl implements RegistrationManager {
         emailEntity.setSourceId(orcid);
         Set<EmailEntity> emails = new HashSet<>();
         emails.add(emailEntity);
+        
+        // Set additional emails
+        for(Text emailAdditional : registration.getEmailsAdditional()) {
+            if(!PojoUtil.isEmpty(emailAdditional)){
+                EmailEntity emailAdditionalEntity = new EmailEntity();
+                emailAdditionalEntity.setId(emailAdditional.getValue().trim());
+                emailAdditionalEntity.setProfile(newRecord);
+                emailAdditionalEntity.setPrimary(false);
+                emailAdditionalEntity.setCurrent(true);
+                emailAdditionalEntity.setVerified(false);
+                // Email is private by default
+                emailAdditionalEntity.setVisibility(Visibility.PRIVATE);
+                emailAdditionalEntity.setSourceId(orcid);
+                emails.add(emailAdditionalEntity);
+            }
+        }
+       
+        //Add all emails to record
         newRecord.setEmails(emails);
 
         // Set the name
