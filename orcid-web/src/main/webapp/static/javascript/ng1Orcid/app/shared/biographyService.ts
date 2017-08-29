@@ -7,10 +7,17 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class BiographyService {
+    private header: string;
+    private token: string;
     private url: string;
 
     constructor( private http: Http ){
+        this.header = $("meta[name='_csrf_header']").attr("content");
+        this.token = $("meta[name='_csrf']").attr("content");
         this.url = getBaseUri() + '/account/biographyForm.json';
+
+        console.log('header', this.header);
+        console.log('token', this.token);
     }
 
     getBiographyData(): Observable<any> {
@@ -35,7 +42,7 @@ export class BiographyService {
                 headers: headers 
             }
         );
-        console.log('options 5', options);
+        console.log('options 6', options);
 
         return this.http.post( 
             this.url, 

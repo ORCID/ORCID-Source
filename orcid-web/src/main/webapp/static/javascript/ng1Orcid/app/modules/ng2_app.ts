@@ -9,6 +9,8 @@ import { FormsModule }   from '@angular/forms'; // <-- NgModel lives here
 import { RouterModule, UrlHandlingStrategy } from '@angular/router';
 import { UpgradeModule } from '@angular/upgrade/static';
 
+import { XSRFStrategy, Request } from '@angular/http';
+
 //User generated modules imports
 import { BiographyNg2Module } from './biography/biography.ts';
 import { CountryNg2Module } from './country/country.ts';
@@ -26,6 +28,20 @@ export class Ng1Ng2UrlHandlingStrategy implements UrlHandlingStrategy {
     merge(url, whole) { 
         return url; 
     }
+}
+
+export class MetaXSRFStrategy implements XSRFStrategy {
+    constructor(
+
+    ) { }
+
+  configureRequest(req: Request): any {
+    var token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+    var header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+    if (token && header) {
+      req.headers.set(header, token);
+    }
+  }
 }
 
 @Component(
@@ -57,6 +73,10 @@ export class RootCmp {
         { 
             provide: UrlHandlingStrategy, 
             useClass: Ng1Ng2UrlHandlingStrategy 
+        },
+        { 
+            provide: XSRFStrategy, 
+            useClass: MetaXSRFStrategy
         }
     ]
 })
