@@ -1,5 +1,6 @@
 import * as angular from 'angular';
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
 
 //In the end only worksPrivacyPreferencesNg2 should remain
@@ -18,7 +19,7 @@ export const WorksPrivacyPreferencesModule = angular.module(
 // This is the Angular 2 part of the module
 @NgModule(
     {
-        
+        imports: [ CommonModule ],
         declarations: [ WorksPrivacyPreferencesComponent ],
         entryComponents: [ WorksPrivacyPreferencesComponent ],
         
