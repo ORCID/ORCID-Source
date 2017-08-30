@@ -54,8 +54,7 @@ public class WorkBaseEntity extends SourceAwareEntity<Long> {
     protected PublicationDateEntity publicationDate;
     protected String externalIdentifiersJson;  
     protected Visibility visibility;
-    protected Long displayIndex;
-    protected String orcid;    
+    protected Long displayIndex;        
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "work_seq")
@@ -223,14 +222,5 @@ public class WorkBaseEntity extends SourceAwareEntity<Long> {
 
     public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
-    }
-
-    @Column(name = "orcid", updatable = false, insertable = false)
-    public String getOrcid() {
-        return orcid;
-    }
-
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
     }
 }

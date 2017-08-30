@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -27,4 +28,15 @@ public class WorkEntity extends WorkFullEntity {
      * 
      */
     private static final long serialVersionUID = 5393331681525893472L;
+    
+    protected String orcid;
+    
+    @Column(name = "orcid", updatable = false, insertable = true)
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
+    }
 }

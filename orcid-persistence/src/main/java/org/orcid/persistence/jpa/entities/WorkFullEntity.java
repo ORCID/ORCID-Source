@@ -92,15 +92,12 @@ public class WorkFullEntity extends WorkBaseEntity implements Comparable<WorkFul
             throw new NullPointerException("Can't compare with null");
         }
 
-        int comparison = compareOrcidId(other);
+        int comparison = comparePublicationDate(other);
         if (comparison == 0) {
-            comparison = comparePublicationDate(other);
+            comparison = compareTitles(other);
             if (comparison == 0) {
-                comparison = compareTitles(other);
-                if (comparison == 0) {
-                    return compareIds(other);
-                }
-            }
+                return compareIds(other);
+            }            
         }
 
         return comparison;
@@ -154,21 +151,6 @@ public class WorkFullEntity extends WorkBaseEntity implements Comparable<WorkFul
         return this.publicationDate.compareTo(other.getPublicationDate());
     }
 
-    protected int compareOrcidId(WorkFullEntity other) {
-        if (this.getOrcid() == null) {
-            if (other.getOrcid() == null) {
-                return 0;
-            } else {
-                return -1;
-            }
-        } else if (other.getOrcid() == null) {
-            return 1;
-        } else {
-            return this.getOrcid().compareTo(other.getOrcid());
-        }
-    }
-
-    
     public static class ChronologicallyOrderedWorkEntityComparator implements Comparator<WorkFullEntity> {
         public int compare(WorkFullEntity work1, WorkFullEntity work2) {
             if (work2 == null) {
