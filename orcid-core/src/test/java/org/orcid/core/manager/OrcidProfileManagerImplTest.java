@@ -1856,7 +1856,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile = getWorkInsideOrcidProfile("w3", orcidId);
         orcidProfileManager.addOrcidWorks(profile);
         
-        List<WorkLastModifiedEntity> wlme = workDao.getPublicWorkLastModifiedList(orcidId);
+        List<WorkLastModifiedEntity> wlme = workDao.getWorkLastModifiedList(orcidId);
         List<Long> ids = wlme.stream().map((w) -> w.getId()).collect(Collectors.toList());
         
         List<MinimizedWorkEntity> all = workDao.getMinimizedWorkEntities(ids);
