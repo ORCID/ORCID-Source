@@ -26,13 +26,13 @@
         <div class="notification-top-bar">
         	<ul class="inline-list pull-right">
         		<li ng-show="notificationsSrvc.bulkArchiveMap.length > 0 && notificationsSrvc.selectionActive" ng-cloak>
-        			<button class="btn btn-primary" ng-click="notificationsSrvc.bulkArchive()" ng-hide=""><i class="glyphicon glyphicon-download-alt"></i> Archive Selected</button>        			
+        			<button class="btn btn-primary" ng-click="notificationsSrvc.bulkArchive()" ng-hide=""><i class="glyphicon glyphicon-download-alt"></i> ${springMacroRequestContext.getMessage("notifications.archive_selected")}</button>        			
         		</li>
         		<li>&nbsp;</li>
         		<li>
         			<button class="btn btn-primary" ng-click="notificationsSrvc.toggleArchived()">
-        				<span ng-hide="notificationsSrvc.showArchived" ng-cloak>Show archived</span>
-        				<span ng-show="notificationsSrvc.showArchived" ng-cloak>Hide archived</span>
+        				<span ng-hide="notificationsSrvc.showArchived" ng-cloak>${springMacroRequestContext.getMessage("notifications.show_archived")}</span>
+        				<span ng-show="notificationsSrvc.showArchived" ng-cloak>${springMacroRequestContext.getMessage("notifications.hide_archived")}
         			</button>		            
         		</li>
         	</ul>
