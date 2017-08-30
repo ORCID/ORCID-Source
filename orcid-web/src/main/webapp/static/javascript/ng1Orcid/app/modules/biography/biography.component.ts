@@ -16,7 +16,10 @@ import { BiographyService }
     from '../../shared/biographyService.ts'; 
 
 import { ConfigurationService } 
-    from '../../shared/configurationService.ts'; 
+    from '../../shared/configurationService.ts';
+
+import { EmailService } 
+    from '../../shared/emailService.ts'; 
 
 @Component({
     selector: 'biography-ng2',
@@ -36,16 +39,16 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
 
     constructor(
         private biographyService: BiographyService,
-        private configurationService: ConfigurationService
+        private configurationService: ConfigurationService,
+        private emailService: EmailService
     ) {
         this.biographyForm = {
             biography: {
                 value: ''
             }
         };
-        this.configuration = configurationService.getInitialConfiguration();;
+        
         this.emails = {};
-        //this.emailSrvc = emailSrvc;
         this.emailVerified = true; //change to false once service is ready
         this.lengthError = false;
         this.showEdit = false;
@@ -135,6 +138,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getBiographyForm();
+        this.configuration = this.configurationService.getInitialConfiguration();
     };
 
 /*
@@ -153,16 +157,9 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
             emailSrvc, 
             initialConfigService
         ) {
-            $scope.biographyForm = null;
-            $scope.emailSrvc = emailSrvc;
-            $scope.lengthError = false;
-            $scope.showEdit = false;
-            $scope.showElement = {};
 
             /////////////////////// Begin of verified email logic for work
-            var configuration = initialConfigService.getInitialConfiguration();;
-            var emails = {};
-            var emailVerified = false;
+            
 
             var showEmailVerificationModal = function(){
                 $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});

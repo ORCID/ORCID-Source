@@ -33,6 +33,7 @@ import { WidgetNg2Module } from './widget/widget.ts';
 //User generated services
 import { BiographyService } from '../shared/biographyService.ts'; 
 import { ConfigurationService } from '../shared/configurationService.ts'; 
+import { EmailService } from '../shared/emailService.ts'; 
 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
@@ -82,11 +83,12 @@ export class RootCmp {
             useClass: MetaXSRFStrategy
         },
         BiographyService,
-        ConfigurationService
+        ConfigurationService,
+        EmailService
     ]
 })
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.20');
+        console.log('v0.22');
     }
 }

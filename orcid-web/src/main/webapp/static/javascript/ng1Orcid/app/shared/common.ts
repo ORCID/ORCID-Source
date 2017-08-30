@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class CommonService {
-    shownElement: any;
+    private shownElement: any;
 
     copyErrorsLeft( data1, data2 ): void {
-        for (var key in data1) {
+        for (let key in data1) {
             if (key == 'errors') {
                 data1.errors = data2.errors;
             } else {
@@ -21,9 +21,9 @@ export class CommonService {
     };
 
     showPrivacyHelp(elem, event, offsetArrow): void{
-        var top = $(event.target.parentNode).parent().prop('offsetTop');
-        var left = $(event.target.parentNode).parent().prop('offsetLeft');
-        var scrollTop = $('.fixed-area').scrollTop();
+        let top = $(event.target.parentNode).parent().prop('offsetTop');
+        let left = $(event.target.parentNode).parent().prop('offsetLeft');
+        let scrollTop = $('.fixed-area').scrollTop();
         
         if (elem === '-privacy'){
             $('.edit-record .bulk-privacy-bar .popover-help-container').css({
@@ -46,9 +46,9 @@ export class CommonService {
     };
 
     showTooltip(elem, event, topOffset, leftOffset, arrowOffset): void {
-        var top = $(event.target.parentNode).parent().prop('offsetTop');
-        var left = $(event.target.parentNode).parent().prop('offsetLeft');    
-        var scrollTop = $('.fixed-area').scrollTop();
+        let top = $(event.target.parentNode).parent().prop('offsetTop');
+        let left = $(event.target.parentNode).parent().prop('offsetLeft');   
+        let scrollTop = $('.fixed-area').scrollTop();
         
         $('.edit-record .popover-tooltip').css({
             top: top - scrollTop - topOffset,
