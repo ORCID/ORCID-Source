@@ -3,20 +3,28 @@
 import { NgFor } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component } 
+import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
     from 'rxjs/Rx';
 
+import { Subject } 
+    from 'rxjs/Subject';
+
 import { BiographyService } 
     from '../../shared/biographyService.ts'; 
+
+import { ConfigurationService } 
+    from '../../shared/configurationService.ts'; 
 
 @Component({
     selector: 'biography-ng2',
     template:  scriptTmpl("biography-ng2-template")
 })
-export class BiographyComponent implements AfterViewInit {
+export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     biographyForm: any;
     configuration: any;
     emails: any;
@@ -27,7 +35,8 @@ export class BiographyComponent implements AfterViewInit {
     showElement: any;
 
     constructor(
-        private biographyService: BiographyService
+        private biographyService: BiographyService,
+        private configurationService: ConfigurationService
     ) {
         this.biographyForm = {
             biography: {
@@ -63,7 +72,9 @@ export class BiographyComponent implements AfterViewInit {
     };
 
     getBiographyForm(): void{
-        this.biographyService.getBiographyData().subscribe(
+        this.biographyService.getBiographyData()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
             data => {
                 this.biographyForm  = data;
             },
@@ -82,6 +93,7 @@ export class BiographyComponent implements AfterViewInit {
             return; // do nothing if there is a length error
         }
         this.biographyService.setBiographyData( this.biographyForm )
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.biographyForm  = data;
@@ -111,10 +123,20 @@ export class BiographyComponent implements AfterViewInit {
         }
     };
 
-    //Default init function provided by Angular Core
+    //Default init functions provided by Angular Core
     ngAfterViewInit() {
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+    };
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
+
+    ngOnInit() {
         this.getBiographyForm();
     };
+
 /*
 export const BiographyCtrl = angular.module('orcidApp').controller(
     'BiographyCtrl',

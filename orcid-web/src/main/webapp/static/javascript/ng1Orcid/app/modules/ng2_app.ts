@@ -1,7 +1,7 @@
 //Angular imports
 import 'reflect-metadata';
 
-import { CommonModule, NgFor } 
+import { CommonModule } 
     from '@angular/common'; 
 
 import { Component, NgModule } 
@@ -32,6 +32,7 @@ import { WidgetNg2Module } from './widget/widget.ts';
 
 //User generated services
 import { BiographyService } from '../shared/biographyService.ts'; 
+import { ConfigurationService } from '../shared/configurationService.ts'; 
 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
@@ -80,11 +81,12 @@ export class RootCmp {
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
         },
-        BiographyService
+        BiographyService,
+        ConfigurationService
     ]
 })
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.06');
+        console.log('v0.13');
     }
 }
