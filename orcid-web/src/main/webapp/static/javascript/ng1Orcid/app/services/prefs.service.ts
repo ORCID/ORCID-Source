@@ -39,11 +39,11 @@ export class PrefsSrvc {
         return this.http.get( 'account/preferences.json' ).map(( res: Response ) => res.json()).catch(this.handleError);
     }
 
-    //update email frequency
+    //TODO: update email frequency
 
-    //update notification prefs
+    //TODO: update notification prefs
 
-    //update default visibility
+    //TODO: update default visibility
 
     updateDefaultVisibility( data: any ): Observable<any> {
         const headers = new Headers({ 'Content-Type': 'application/json;charset=UTF-8', 'Accept': 'text/plain'});
@@ -53,7 +53,7 @@ export class PrefsSrvc {
             data.default_visibility,
             options
         ).map(( res: Response ) => res.text()).catch(this.handleError);
-        
+
 
     }
 
@@ -77,5 +77,5 @@ export class PrefsSrvc {
             });
         }*/ 
 
-    //clear message
+    //TODO: clear message
 }
