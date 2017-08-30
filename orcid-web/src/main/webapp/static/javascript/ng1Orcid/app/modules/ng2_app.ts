@@ -87,6 +87,6 @@ export class RootCmp {
 })
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.13');
+        console.log('v0.20');
     }
 }

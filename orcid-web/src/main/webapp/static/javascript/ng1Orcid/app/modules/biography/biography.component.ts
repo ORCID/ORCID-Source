@@ -43,7 +43,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                 value: ''
             }
         };
-        //this.configuration = initialConfigService.getInitialConfiguration();;
+        this.configuration = configurationService.getInitialConfiguration();;
         this.emails = {};
         //this.emailSrvc = emailSrvc;
         this.emailVerified = true; //change to false once service is ready

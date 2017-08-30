@@ -1,4 +1,4 @@
-import { Location, LocationStrategy, PathLocationStrategy } 
+import { Location } 
     from '@angular/common';
 
 import { Injectable } 
@@ -15,15 +15,17 @@ export class ConfigurationService {
     private paramVerifyEdit: boolean;
     private paramVerifyEditRegex: any;
     
-    constructor( /*private location: Location*/ ){
-//        console.log( 'location', this.location );
-
+    constructor(){
         this.configValues = {
             propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
             showModalManualEditVerificationEnabled: true
         };
         this.paramVerifyEditRegex = /.*\?(.*\&)*(verifyEdit){1}(=true){0,1}(?!=false)((\&){1}.+)*/g;
-        //this.paramVerifyEdit = this.paramVerifyEditRegex.test( $location.absUrl() ); 
+        this.paramVerifyEdit = this.paramVerifyEditRegex.test( window.location );
+
+        if( this.paramVerifyEdit == true ){
+            this.configValues['showModalManualEditVerificationEnabled'] = true;
+        } 
     }
 
 
@@ -32,21 +34,3 @@ export class ConfigurationService {
     }
 
 }
-
-/*
-angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
-    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
-
-
-    
-    
-
-    
-
-    if( paramVerifyEdit == true ){
-        configValues.showModalManualEditVerificationEnabled = true;
-    } 
-
-    return initialConfigService;
-}]);
-*/
