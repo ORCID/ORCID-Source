@@ -172,13 +172,10 @@
                 
                 
                 <!-- Privacy preferences -->
-                <!--<tr>
+                <tr>
                     <th><a name="editPrivacyPreferences"></a>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
                         ng-bind="privacyPreferencesToggleText" id="privacyPreferencesToggle"></a></td>
-                </tr>-->
-                <tr>
-                    <th>Privacy preferences</th>
                 </tr>
                 <!--<tr ng-controller="WorksPrivacyPreferencesCtrl"
                     ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection" ng-cloak>
@@ -196,8 +193,44 @@
                         </div>
                     </td>
                 </tr>-->
-
-                <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
+                <tr ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection">
+                    <td colspan="2">
+                        <script type="text/ng-template" id="works-privacy-preferences-ng2-template">
+                        <div class="editTablePadCell35" id="privacy-settings">
+                            ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
+                            <!--<@orcid.privacyToggle3Ng2
+                            questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+                            clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
+                            publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
+                            limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
+                            privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
+                            elementId="workPrivHelp" />-->
+                            <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
+                            <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp('workPrivHelp-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip('workPrivHelp-privacy')">
+                                <li class="publicActive" [ngClass]="{publicInActive: default_visibility != 'PUBLIC'}"><a (click)="updateActivitiesVisibilityDefault('PUBLIC', $event)" name="privacy-toggle-3-public"></a></li>
+                                <li class="limitedActive" [ngClass]="{limitedInActive: default_visibility != 'LIMITED'}"><a (click)="updateActivitiesVisibilityDefault('LIMITED', $event)" name="privacy-toggle-3-limited"></a></li>
+                                <li class="privateActive" [ngClass]="{privateInActive: default_visibility != 'PRIVATE'}"><a (click)="updateActivitiesVisibilityDefault('PRIVATE', $event)"  name="privacy-toggle-3-private"></a></li>
+                            </ul>
+                        </div>
+                        <div class="popover-help-container">
+                           <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement['workPrivHelp-privacy'] == true ? 'block' : ''">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+                                    <ul class="privacyHelp">
+                                        <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+                                        <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+                                        <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+                                    </ul>
+                                   <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+                                </div>                
+                            </div>                              
+                        </div>   
+                        </div>
+                        </script> 
+                        <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
+                    </td>
+                 </tr>
                 <tr>
                     <th><a name="editSecurityQuestion"></a>${springMacroRequestContext.getMessage("manage.security_question")}</th>
                     <td><a href="" ng-click="toggleSecurityQuestionEdit()"
@@ -391,11 +424,6 @@
                 </#if>
             </tbody>
         </table>
-
-        <script type="text/ng-template" id="works-privacy-preferences-ng2-template">
-            <h1>Here's some stuff!</h1>
-        </script>
-        <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
         
         <h1 id="manage-permissions">
             ${springMacroRequestContext.getMessage("manage.trusted_organisations")}
