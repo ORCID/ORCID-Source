@@ -83,7 +83,7 @@
             <p>
         </#if>
         <div class="pull-right margin-top">
-    		<a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="">Archive</a>  <a href="<@orcid.rootPath '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a>
+    		<a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class=""><@orcid.msg 'notifications.archive'/></a>  <a href="<@orcid.rootPath '/my-orcid'/>" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
     	</div>
      </div>
      <#if notification.sourceDescription??>
