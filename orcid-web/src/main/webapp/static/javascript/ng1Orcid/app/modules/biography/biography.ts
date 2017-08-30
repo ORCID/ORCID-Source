@@ -1,12 +1,20 @@
-import * as angular from 'angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule, NgFor } from '@angular/common'; 
-import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef, NgModule } from '@angular/core';
-import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
-import { FormsModule }   from '@angular/forms'; // <-- NgModel lives here
+import * as angular 
+    from 'angular';
 
-import { BiographyComponent } from './biography.component.ts';
-import { BiographyService } from '../../shared/biographyService.ts'; 
+import { CommonModule } 
+    from '@angular/common'; 
+
+import { Directive, NgModule } 
+    from '@angular/core';
+
+import { FormsModule }
+    from '@angular/forms'; // <-- NgModel lives here
+
+import { downgradeComponent, UpgradeModule } 
+    from '@angular/upgrade/static';
+
+import { BiographyComponent } 
+    from './biography.component.ts';
 
 // This is the Angular 1 part of the module
 export const BiographyModule = angular.module(

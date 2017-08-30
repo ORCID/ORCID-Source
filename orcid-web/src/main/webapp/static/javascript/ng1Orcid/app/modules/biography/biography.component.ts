@@ -1,11 +1,16 @@
 //Import all the angular components
-import * as angular from 'angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule, NgFor } from '@angular/common'; 
-import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild, ElementRef, NgModule } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
 
-import { BiographyService } from '../../shared/biographyService.ts'; 
+import { NgFor } 
+    from '@angular/common'; 
+
+import { AfterViewInit, Component } 
+    from '@angular/core';
+
+import { Observable } 
+    from 'rxjs/Rx';
+
+import { BiographyService } 
+    from '../../shared/biographyService.ts'; 
 
 @Component({
     selector: 'biography-ng2',
