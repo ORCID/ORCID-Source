@@ -610,7 +610,7 @@ public class SetUpClientsAndUsers {
             }
 
             // Remove works
-            List<WorkLastModifiedEntity> works = workDao.getPublicWorkLastModifiedList(orcid);
+            List<WorkLastModifiedEntity> works = workDao.getWorkLastModifiedList(orcid);
             if(works != null && !works.isEmpty()) {
                 for(WorkLastModifiedEntity work : works) {
                     workDao.removeWork(orcid, work.getId());

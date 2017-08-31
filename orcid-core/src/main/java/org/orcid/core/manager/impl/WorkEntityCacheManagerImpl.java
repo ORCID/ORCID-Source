@@ -171,41 +171,6 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         return workLastModifiedList;
     }
     
-    /**
-     * Retrieves a full WorkEntity
-     * 
-     * @param workId
-     * @param workLastModified
-     * @return a WorkEntity
-     */
-    @Override    
-    public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
-        Object key = new WorkCacheKey(workId, releaseName);
-        WorkEntity workEntity = null;
-
-        try {
-            fullWorkEntityCache.acquireReadLockOnKey(key);
-            workEntity = (WorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
-        } finally {
-            fullWorkEntityCache.releaseReadLockOnKey(key);
-        }
-        if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
-            try {
-                fullWorkEntityCache.acquireWriteLockOnKey(key);
-                workEntity = (WorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
-                if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
-                    workEntity = workDao.find(workId);
-                    workDao.detach(workEntity);
-                    fullWorkEntityCache.put(createElement(key, workEntity, fullWorkEntityCache));
-                }
-
-            } finally {
-                fullWorkEntityCache.releaseWriteLockOnKey(key);
-            }
-        }
-        return workEntity;
-    }
-    
     @Override
     public MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
@@ -232,7 +197,41 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         }
         return minimizedWorkEntity;
     }
+    
+    /**
+     * Retrieves a full WorkEntity
+     * 
+     * @param workId
+     * @param workLastModified
+     * @return a WorkEntity
+     */
+    @Override    
+    public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
+        Object key = new WorkCacheKey(workId, releaseName);
+        WorkEntity workEntity = null;
 
+        try {
+            fullWorkEntityCache.acquireReadLockOnKey(key);
+            workEntity = (WorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
+        } finally {
+            fullWorkEntityCache.releaseReadLockOnKey(key);
+        }
+        if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
+            try {
+                fullWorkEntityCache.acquireWriteLockOnKey(key);
+                workEntity = (WorkEntity) toWorkBaseEntity(getElementFromCache(fullWorkEntityCache, key, orcid));
+                if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
+                    workEntity = workDao.getWork(orcid, workId);
+                    workDao.detach(workEntity);
+                    fullWorkEntityCache.put(createElement(key, workEntity, fullWorkEntityCache));
+                }
+
+            } finally {
+                fullWorkEntityCache.releaseWriteLockOnKey(key);
+            }
+        }
+        return workEntity;
+    }
     
     /**
      * Fetches a list of minimized works - does this by checking cache and then
