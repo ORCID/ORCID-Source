@@ -333,17 +333,16 @@ kind of variable. This temp value is only used in this macro lib -->
  	</div>
 </#macro>
 
-<#macro privacyToggle3Ng2 publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
+<#macro privacyToggle3Ng2 publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle=""> 
     <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
-        <p>element ID is ${elementId}</p>
-        <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} + '-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
+        <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
             <li class="publicActive" [ngClass]="{publicInActive: default_visibility != 'PUBLIC'}"><a (click)="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
             <li class="limitedActive" [ngClass]="{limitedInActive: default_visibility != 'LIMITED'}"><a (click)="${limitedClick}" name="privacy-toggle-3-limited" id="${limitedId}"></a></li>
             <li class="privateActive" [ngClass]="{privateInActive: default_visibility != 'PRIVATE'}"><a (click)="${privateClick}"  name="privacy-toggle-3-private" id="${privateId}"></a></li>
         </ul>
     </div>
-    <div class="popover-help-container" [ngClass]="commonSrvc.shownElement['workPrivHelp-privacy'] == true ? 'block' : ''">
-       <div class="popover top privacy-myorcid3">
+    <div class="popover-help-container" >
+       <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[${elementId} +'-privacy'] == true ? 'block' : ''">
             <div class="arrow"></div>
             <div class="popover-content">
                 <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
