@@ -177,7 +177,7 @@
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
                         ng-bind="privacyPreferencesToggleText" id="privacyPreferencesToggle"></a></td>
                 </tr>
-                <tr ng-controller="WorksPrivacyPreferencesCtrl"
+                <!--<tr ng-controller="WorksPrivacyPreferencesCtrl"
                     ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection" ng-cloak>
                     <td colspan="2">
                         <div class="editTablePadCell35" id="privacy-settings">
@@ -191,6 +191,21 @@
                             privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
                             elementId="workPrivHelp" />    
                         </div>
+                    </td>
+                </tr>-->
+                <tr ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection">
+                    <td colspan="2">
+                        <script type="text/ng-template" id="works-privacy-preferences-ng2-template">
+                        <div class="editTablePadCell35" id="privacy-settings">
+                            ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
+                            <@orcid.privacyToggle3Ng2
+                            publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
+                            limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
+                            privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
+                            elementId="workPrivHelp" /> 
+                        </div>
+                        </script> 
+                        <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
                     </td>
                 </tr>
                 <tr>

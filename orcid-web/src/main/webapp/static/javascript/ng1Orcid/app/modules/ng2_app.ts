@@ -10,7 +10,7 @@ import { Component, NgModule }
 import { FormsModule } 
     from '@angular/forms'; // <-- NgModel lives here
 
-import { HttpModule, Request, XSRFStrategy } 
+import { HttpModule, JsonpModule, Request, XSRFStrategy } 
     from '@angular/http';
 
 import { BrowserModule } 
@@ -26,9 +26,14 @@ import { UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated modules imports
-import { BiographyNg2Module } from './biography/biography.ts';
-import { CountryNg2Module } from './country/country.ts';
-import { WidgetNg2Module } from './widget/widget.ts';
+import { BiographyNg2Module } 
+    from './biography/biography.ts';
+import { CountryNg2Module } 
+    from './country/country.ts';
+import { WidgetNg2Module } 
+    from './widget/widget.ts';
+import { WorksPrivacyPreferencesNg2Module } 
+    from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
 //User generated services
 import { BiographyService } from '../shared/biographyService.ts'; 
@@ -71,11 +76,13 @@ export class RootCmp {
         CommonModule, 
         FormsModule,
         HttpModule,
+        JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
         BiographyNg2Module,
         CountryNg2Module,
-        WidgetNg2Module
+        WidgetNg2Module,
+        WorksPrivacyPreferencesNg2Module
     ],
     providers: [
         { 
@@ -86,7 +93,9 @@ export class RootCmp {
         ConfigurationService,
         EmailService
     ]
+
 })
+
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
         console.log('v0.25');
