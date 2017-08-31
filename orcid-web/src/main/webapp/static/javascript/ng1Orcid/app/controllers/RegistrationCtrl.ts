@@ -83,41 +83,29 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                        $scope.register.email.value=email;
                        $scope.register.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];
                        $scope.register.linkType=linkFlag;
-                       $scope.$apply();             
-            
-                        // make sure inputs stayed trimmed
+                       $scope.$apply();  
+
+                       // make sure inputs stayed trimmed
                         $scope.$watch('register.email.value', function(newValue, oldValue) {
                             if(newValue !== oldValue) {
                                 trimAjaxFormText($scope.register.email);
                             }
-                        }); // initialize the watch
+                        }); // initialize the watch        
                         
-                        // special handling of deactivation error
+                        // special handling of deactivation error for primary email
                         $scope.$watch('register.email.errors', function(newValue, oldValue) {
                                 $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.register.email.errors) != -1);
                                 $scope.showReactivationSent = false;
                         }); // initialize the watch
 
-                        // special handling of deactivation error
+                        // special handling of deactivation error for additional emails
                         $scope.$watch('register.emailsAdditional', function(newValue, oldValue) {
                             for (var index in $scope.register.emailsAdditional) {
-                                console.log($scope.register.emailsAdditional[index].errors);
                                 $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', $scope.register.emailsAdditional[index].errors) != -1));
                                 $scope.showEmailsAdditionalReactivationSent.splice(index, 1, false);
-                                console.log($scope.showEmailsAdditionalDeactivatedError);
-                                console.log($scope.showEmailsAdditionalReactivationSent);
-                            }
-                                
+                            }                              
                         }, true); // initialize the watch
 
-                        // make sure inputs stayed trimmed
-                        $scope.$watch('register.emailsAdditional.value', function(newValue, oldValue) {
-                            if(newValue !== oldValue) {
-                                trimAjaxFormText($scope.register.emailsAdditional);
-                                $scope.serverValidate('EmailsAdditional');
-                            }
-                        }); // initialize the watch
-                        
                         // make sure email is trimmed
                         $scope.$watch('register.emailConfirm.value', function(newValue, oldValue) {
                             if(newValue !== oldValue){
@@ -340,6 +328,7 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
 
             $scope.addEmailField = function () {
                 $scope.register.emailsAdditional.push({value: ''});
+                $scope.focusIndex = $scope.register.emailsAdditional.length-1;
             };  
 
             $scope.removeEmailField = function (index) {

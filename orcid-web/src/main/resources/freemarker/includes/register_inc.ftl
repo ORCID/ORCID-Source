@@ -85,7 +85,7 @@
         <div ng-repeat="emailAdditional in register.emailsAdditional track by $index">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
             <div class="relative">
-                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="register.emailsAdditional[$index].value" ng-blur="serverValidate('EmailsAdditional')"/>
+                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="register.emailsAdditional[$index].value" focus-last-input="$index == focusIndex" ng-blur="serverValidate('EmailsAdditional')"/>
                 <div ng-show="$first" class="popover-help-container leftBuffer">
                     <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
                     <div id="email-additional-help" class="popover bottom">
