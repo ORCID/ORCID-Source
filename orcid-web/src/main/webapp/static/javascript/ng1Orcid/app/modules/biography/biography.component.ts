@@ -79,13 +79,30 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.biographyForm  = data;
+                this.biographyForm = data;
             },
             error => {
                 console.log('getBiographyFormError', error);
             } 
         );
     };
+
+    getEmails(): void {
+        this.emailService.getEmails()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.emails = data;
+                console.log('data', data);
+                if( this.emailService.getEmailPrimary().verified == true ) {
+                    this.emailVerified = true;
+                }
+            },
+            error => {
+                console.log('getBiographyFormError', error);
+            } 
+        );
+    }
 
     hideTooltip(tp): void{
         this.showElement[tp] = false;
@@ -139,6 +156,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getBiographyForm();
         this.configuration = this.configurationService.getInitialConfiguration();
+        this.getEmails();
     };
 
 /*
@@ -165,14 +183,7 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
                 $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
             };
             
-            $scope.emailSrvc.getEmails(
-                function(data) {
-                    emails = data.emails;
-                    if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
-                        emailVerified = true;
-                    }
-                }
-            );
+            
             /////////////////////// End of verified email logic for work
 
         }

@@ -1,6 +1,3 @@
-import { Location } 
-    from '@angular/common';
-
 import { Injectable } 
     from '@angular/core';
 

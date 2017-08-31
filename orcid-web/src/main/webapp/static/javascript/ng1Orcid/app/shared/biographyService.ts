@@ -21,7 +21,7 @@ export class BiographyService {
         return this.http.get(
             this.url
         )
-        .map((res:Response) => res.json());
+        .map((res:Response) => res.json()).share();
     }
 
     setBiographyData( obj ): Observable<any> {
@@ -42,6 +42,6 @@ export class BiographyService {
             encoded_data, 
             { headers: headers }
         )
-        .map((res:Response) => res.json());
+        .map((res:Response) => res.json()).share();
     }
 }
