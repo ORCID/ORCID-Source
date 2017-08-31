@@ -96,6 +96,7 @@
 			                     <div ng-show="showResetPassword" ng-cloak>
 			                        <p><small>${springMacroRequestContext.getMessage("reset_password.enterEmail")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>
 			                        <form id="password-reset-form" name="emailAddressForm">
+			                           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			                           <span class="orcid-error" ng-show="requestResetPassword.errors.length > 0">
 			                              <div ng-repeat='error in requestResetPassword.errors' ng-bind-html="error"></div>
 			                           </span>
@@ -266,6 +267,7 @@
 										<div ng-show="showResetPassword" ng-cloak>
 										 	<p><small>${springMacroRequestContext.getMessage("reset_password.enterEmail")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>
 											<form id="password-reset-form" name="emailAddressForm">
+											    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 												<span class="orcid-error" ng-show="requestResetPassword.errors.length > 0">
 												   <div ng-repeat='error in requestResetPassword.errors' ng-bind-html="error"></div>
 												</span>
@@ -448,7 +450,7 @@
 							</div>
 							<!--Visibility default-->
 							<div class="form-group clear-fix">
-								<div class="oauth-privacy"">                      
+								<div class="oauth-privacy">                      
 									<label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
 									<label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
 									<@orcid.privacyToggle 

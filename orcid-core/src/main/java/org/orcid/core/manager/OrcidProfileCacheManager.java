@@ -37,4 +37,6 @@ public interface OrcidProfileCacheManager {
     
     public void remove(String orcid);
     
+    public void evictExpiredElements();
+    
 }

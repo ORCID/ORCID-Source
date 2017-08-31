@@ -99,13 +99,14 @@
     </div>      
 </script>
 
+
 <script type="text/ng-template" id="edit-country">
-    <!-- Country -->
+
     <div class="lightbox-container" id="country-popover">
         <div class="edit-record <#if RequestParameters['bulkEdit']??>
             edit-record-bulk-edit
             </#if> edit-country row">
-            <!-- Title -->
+
             <div class="col-md-12 col-sm-12 col-xs-12">           
                 <div class=""> 
                     <h1 class="lightbox-title pull-left">

@@ -1,27 +1,14 @@
 declare var getBaseUri: any;
-declare var scriptTmpl: any;
 declare var orcidVar: any;
+declare var scriptTmpl: any;
 
 import * as angular from 'angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';  
-import { NgModule } from '@angular/core';
-/*
-//Ng1 hybrid syntax
-export class widgetCtrl {
+import { Component, Input, NgModule } from '@angular/core';
 
-}
-
-export const widgetCmp = {
-    controller: widgetCtrl,
-    controllerAs: 'ctrl'
-};
-*/
-
-import {Component, Input} from '@angular/core';
 @Component({
     selector: 'widget-ng2',
-    //template: 'asdfgg'
     template:  scriptTmpl("widget-ng2-template")
 })
 export class WidgetComponent {

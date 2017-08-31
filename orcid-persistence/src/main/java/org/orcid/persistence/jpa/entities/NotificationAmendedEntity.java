@@ -63,9 +63,6 @@ public class NotificationAmendedEntity extends NotificationEntity {
 
     public void setNotificationWorks(SortedSet<NotificationWorkEntity> notificationWorks) {
         this.notificationWorks = notificationWorks;
-        for (NotificationWorkEntity nwe : notificationWorks) {
-            nwe.setNotification(this);
-        }
     }
 
 }

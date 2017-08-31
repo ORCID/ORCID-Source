@@ -1,12 +1,9 @@
-declare var getBaseUri: any;
-declare var logAjaxError: any;
-
 import * as angular from 'angular';
 import { NgModule } from '@angular/core';
 import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
 
 //In the end only widgetNg2 should remain
-import { /*widgetCmp, widgetCtrl,*/ WidgetComponent } from './widget.component.ts';
+import { WidgetComponent } from './widget.component.ts';
 
 // This is the Angular 1 part of the module
 export const WidgetModule = angular.module(
