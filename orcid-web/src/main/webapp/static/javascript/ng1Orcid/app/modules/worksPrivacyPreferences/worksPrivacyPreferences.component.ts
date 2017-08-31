@@ -30,17 +30,9 @@ import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild
 })
 export class WorksPrivacyPreferencesComponent implements OnInit {
     private response: any;
-    preferences: Preferences[];
-    privacyHelp: any;
-    showElement: any;
-    developer_tools_enabled: boolean
-    send_member_update_requests: boolean
-    send_orcid_news: boolean
-    send_change_notifications: boolean
-    email_frequency: string;
     default_visibility: string;
-    notifications_enabled: boolean
-    send_administrative_change_notifications: boolean
+    preferences: Preferences[];
+    saved: boolean
     
     constructor(
 
@@ -50,42 +42,19 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
 
     ) {
 
-        this.privacyHelp = {};
-        this.showElement = {};
-        this.developer_tools_enabled = false;
-        this.send_member_update_requests = false;
-        this.send_orcid_news = false;
-        this.send_change_notifications = false;
-        this.email_frequency = '';
         this.default_visibility = '';
-        this.notifications_enabled = false;
-        this.send_administrative_change_notifications = false;
+        this.saved = false;
     }
-
-    /*hideTooltip(el): void {
-        this.showElement[el] = false;
-    };
-
-    showTooltip(el): void {
-        this.showElement[el] = true;
-    };
-
-    toggleClickPrivacyHelp(key): void {
-        if (document.documentElement.className.indexOf('no-touch')  == -1 ) {
-            this.privacyHelp[key]=!this.privacyHelp[key];
-        }
-    };*/
 
     updateActivitiesVisibilityDefault(priv: string, $event: any): void {
         this.preferences['default_visibility'] = priv;      
         this.prefsSrvc.updateDefaultVisibility(this.preferences).subscribe(
             (response) => {
                 this.response = response;
-                console.log(this.preferences);
                 let preferences_parsed = null;
                 preferences_parsed = JSON.parse(JSON.stringify(this.preferences, null, 2));
-                console.log("preferences_parsed", preferences_parsed);
                 this.default_visibility = preferences_parsed.default_visibility;
+                this.saved = true;
             },
             (err) => {
                 console.log(err);
