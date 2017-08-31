@@ -11,14 +11,10 @@ import { Preferences } from './preferences';
 
 @Injectable()
 export class PrefsSrvc {
-    
-    saved: boolean;
 
     constructor(
         private http: Http,
         private jsonp: Jsonp) {
-
-            this.saved = false;
 
          }
 
@@ -39,11 +35,61 @@ export class PrefsSrvc {
         return this.http.get( 'account/preferences.json' ).map(( res: Response ) => res.json()).catch(this.handleError);
     }
 
-    //TODO: update email frequency
+    //NOT TESTED: update email frequency
+    updateEmailFrequency ( data: any ): Observable<any> {
+        const headers = new Headers({ 'Content-Type': 'application/json;charset=UTF-8', 'Accept': 'text/plain'});
+        const options = new RequestOptions({ headers: headers });
+        return this.http.post(
+            getBaseUri() + '/account/email_preferences.json',
+            data.email_frequency,
+            options
+        ).map(( res: Response ) => res.text()).catch(this.handleError);
+    }
 
-    //TODO: update notification prefs
+    /*updateEmailFrequency: function() {
+            $.ajax({
+                url: getBaseUri() + '/account/email_preferences.json',
+                type: 'POST',
+                data: serv.prefs['email_frequency'],
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'text',
+                success: function(data) {                    
+                    serv.saved = true;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with prefs");
+            });
+    }*/
 
-    //TODO: update default visibility
+    //NOT TESTED: update notification prefs
+    updateNotificationPreferences( data: any ): Observable<any> {
+        const headers = new Headers({ 'Content-Type': 'application/json;charset=UTF-8', 'Accept': 'application/json'});
+        const options = new RequestOptions({ headers: headers });
+        return this.http.post(
+            getBaseUri() + '/account/notification_preferences.json',
+            JSON.stringify(data),
+            options
+        ).map(( res: Response ) => res.text()).catch(this.handleError);
+    }
+
+    /*updateNotificationPreferences: function() {
+            $.ajax({
+                url: getBaseUri() + '/account/notification_preferences.json',
+                type: 'POST',
+                data: angular.toJson(serv.prefs),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {                    
+                    serv.saved = true;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with prefs");
+            });
+    }*/
 
     updateDefaultVisibility( data: any ): Observable<any> {
         const headers = new Headers({ 'Content-Type': 'application/json;charset=UTF-8', 'Accept': 'text/plain'});
@@ -53,8 +99,6 @@ export class PrefsSrvc {
             data.default_visibility,
             options
         ).map(( res: Response ) => res.text()).catch(this.handleError);
-
-
     }
 
     /*updateDefaultVisibility: function() {
@@ -77,5 +121,12 @@ export class PrefsSrvc {
             });
         }*/ 
 
-    //TODO: clear message
+    //NOT TESTED: clear message
+    clearMessage(): boolean{
+        return false;
+    }
+
+    /*clearMessage: function(){
+            serv.saved = false;
+    }*/
 }
