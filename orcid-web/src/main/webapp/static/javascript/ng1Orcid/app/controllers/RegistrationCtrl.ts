@@ -32,6 +32,9 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
             $scope.recatchaResponse = null;
             $scope.showDeactivatedError = false;
             $scope.showReactivationSent = false;
+            $scope.showEmailsAdditionalDeactivatedError = [false];
+            $scope.showEmailsAdditionalReactivationSent = [false];
+
             $scope.register = {};
             
             $scope.model = {
@@ -94,6 +97,18 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                                 $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.register.email.errors) != -1);
                                 $scope.showReactivationSent = false;
                         }); // initialize the watch
+
+                        // special handling of deactivation error
+                        $scope.$watch('register.emailsAdditional', function(newValue, oldValue) {
+                            for (var index in $scope.register.emailsAdditional) {
+                                console.log($scope.register.emailsAdditional[index].errors);
+                                $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', $scope.register.emailsAdditional[index].errors) != -1));
+                                $scope.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                                console.log($scope.showEmailsAdditionalDeactivatedError);
+                                console.log($scope.showEmailsAdditionalReactivationSent);
+                            }
+                                
+                        }, true); // initialize the watch
 
                         // make sure inputs stayed trimmed
                         $scope.$watch('register.emailsAdditional.value', function(newValue, oldValue) {
@@ -243,6 +258,20 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                 });
             };
 
+            $scope.sendEmailsAdditionalReactivationEmail = function (index) {
+                $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, false);
+                $scope.showEmailsAdditionalReactivationSent.splice(index, 1, true);
+                $.ajax({
+                    url: getBaseUri() + '/sendReactivation.json',
+                    type: "POST",
+                    data: { email: $scope.register.emailsAdditional[index].value },
+                    dataType: 'json',
+                }).fail(function(){
+                // something bad is happening!
+                    console.log("error sending reactivation email");
+                });
+            };
+
             $scope.serverValidate = function (field) {        
                 if (field === undefined) {
                     field = '';
@@ -311,11 +340,12 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
 
             $scope.addEmailField = function () {
                 $scope.register.emailsAdditional.push({value: ''});
-            }  
+            };  
 
             $scope.removeEmailField = function (index) {
                 $scope.register.emailsAdditional.splice(index, 1);
-            }          
+            }; 
+     
         }
     ]
 );
