@@ -21,9 +21,12 @@
 		<h3 class="notification-alert-title" ng-cloak>		
 			<@orcid.msg 'notifications.alert_title_1'/>
 		</h3>
-		<p>
-			<@orcid.msg 'notifications.alert_content_1'/> {{notification.idpName}}<@orcid.msg 'notifications.alert_content_2'/> {{notification.source.sourceName.content}}<@orcid.msg 'notifications.alert_content_3'/>
-		</p>	
+        <!--fix inconsistent whitespace around idp name and source name in different languages-->
+        <#compress>
+    		<p>
+    			<@orcid.msg 'notifications.alert_content_1'/> {{notification.idpName}} <@orcid.msg 'notifications.alert_content_2'/> {{notification.source.sourceName.content}} <@orcid.msg 'notifications.alert_content_3'/>
+    		</p>
+        </#compress>	
 		<div class="pull-right">
 			<a ng-click="notificationsSrvc.archive(notification.putCode); alert['$index'] = !alert['$index']" class="cancel"><@orcid.msg 'notifications.archive'/></a>
 			<a ng-click="notificationsSrvc.suppressAlert(notification.putCode); alert['$index'] = !alert['$index']" class="cancel"><@orcid.msg 'notifications.alert_close'/></a>

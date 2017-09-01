@@ -79,7 +79,8 @@ public class OpenIDController {
         String authHeader = request.getHeader("Authorization"); //note we do not support form post per https://tools.ietf.org/html/rfc6750 because it's a MAY and pointless
         if (authHeader != null) {
             //lookup token, check it's valid, check scope.
-            String tokenValue = authHeader.replace("Bearer", "").replace("bearer", "").trim();
+            //deal with incorrect bearer case in request (I'm looking at you spring security!)
+            String tokenValue = authHeader.replaceAll("Bearer|bearer", "").trim();
             OAuth2AccessToken tok = tokenStore.readAccessToken(tokenValue);
             if (tok != null && !tok.isExpired()){
                 boolean hasScope = false;
