@@ -27,6 +27,7 @@ import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Person;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -55,6 +56,9 @@ public class OpenIDController {
     private TokenStore tokenStore;
     
     @Resource OpenIDConnectDiscoveryService openIDConnectDiscoveryService;
+    
+    @Value("${org.orcid.core.baseUri}")
+    private String path;
     
     /** Expose the public key as JSON
      * 
@@ -89,7 +93,7 @@ public class OpenIDController {
                 if (hasScope){
                     String orcid = tok.getAdditionalInformation().get("orcid").toString();
                     Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
-                    return ResponseEntity.ok(new OpenIDConnectUserInfo(orcid,person));
+                    return ResponseEntity.ok(new OpenIDConnectUserInfo(orcid,person,path));
                 }
             }            
         }
