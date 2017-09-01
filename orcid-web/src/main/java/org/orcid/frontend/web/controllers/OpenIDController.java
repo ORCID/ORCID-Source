@@ -27,6 +27,7 @@ import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Person;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -56,6 +57,9 @@ public class OpenIDController {
     
     @Resource OpenIDConnectDiscoveryService openIDConnectDiscoveryService;
     
+    @Value("${org.orcid.core.baseUri}")
+    private String path;
+    
     /** Expose the public key as JSON
      * 
      * @param request
@@ -75,9 +79,7 @@ public class OpenIDController {
         String authHeader = request.getHeader("Authorization"); //note we do not support form post per https://tools.ietf.org/html/rfc6750 because it's a MAY and pointless
         if (authHeader != null) {
             //lookup token, check it's valid, check scope.
-            String tokenValue = authHeader.replace("Bearer", "").trim();
-            //deal with incorrect bearer case in request (I'm looking at you spring security!)
-            tokenValue = authHeader.replace("bearer", "").trim();
+            String tokenValue = authHeader.replace("Bearer", "").replace("bearer", "").trim();
             OAuth2AccessToken tok = tokenStore.readAccessToken(tokenValue);
             if (tok != null && !tok.isExpired()){
                 boolean hasScope = false;
@@ -90,7 +92,7 @@ public class OpenIDController {
                 if (hasScope){
                     String orcid = tok.getAdditionalInformation().get("orcid").toString();
                     Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
-                    return ResponseEntity.ok(new OpenIDConnectUserInfo(orcid,person));
+                    return ResponseEntity.ok(new OpenIDConnectUserInfo(orcid,person,path));
                 }
             }            
         }
