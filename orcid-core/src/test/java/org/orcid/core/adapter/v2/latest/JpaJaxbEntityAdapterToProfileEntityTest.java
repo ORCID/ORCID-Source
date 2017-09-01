@@ -24,6 +24,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,13 +45,16 @@ import org.orcid.core.JaxbOrcidMessageUtil;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
@@ -81,6 +86,9 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
     
     @Resource
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
+    
+    @Resource
+    private WorkDao workDao;
     
     @Mock
     private SourceManager mockSourceManager;
@@ -191,15 +199,64 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertEquals("ghi789", retrievedProfileEntity.getEncryptedVerificationCode());
         assertTrue(retrievedProfileEntity.getSendChangeNotifications());
         assertFalse(retrievedProfileEntity.getSendOrcidNews());
-    }    
+    }
 
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setWorksTest() throws JAXBException {
-        OrcidMessage orcidMessage = getOrcidMessage(ORCID_INTERNAL_FULL_XML);
+        OrcidMessage orcidMessage = getOrcidMessage(ORCID_PROTECTED_FULL_XML);
         OrcidWorks works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks();
         ProfileEntity profile = profileDao.find("5555-5555-5555-5558");
         adapter.setWorks(profile, works);
+
+        List<WorkEntity> workEntities = workDao.getWorksByOrcidId(profile.getId());
+        assertEquals(3, workEntities.size());
+
+        for (WorkEntity workEntity : workEntities) {
+            String contributorsJson = workEntity.getContributorsJson();
+            if ("Work title 1".equals(workEntity.getTitle())) {
+                assertEquals("Journal Title # 1", workEntity.getJournalTitle());
+                assertNotNull(contributorsJson);
+                assertTrue(contributorsJson.startsWith("{\"contributor\":[{\""));
+                Map<String, Object> mappedJson = JsonUtils.<HashMap> readObjectFromJsonString(contributorsJson, HashMap.class);
+                List<Map<String, Object>> contributorsList = (List<Map<String, Object>>) mappedJson.get("contributor");
+                Map<String, Object> contributor0 = contributorsList.get(0);
+                assertEquals(4, contributor0.keySet().size());
+                Map<String, Object> contributorOrcid0 = (Map<String, Object>) contributor0.get("contributorOrcid");
+                assertEquals("http://orcid.org/4444-4444-4444-4446", contributorOrcid0.get("uri"));
+                assertEquals("4444-4444-4444-4446", contributorOrcid0.get("path"));
+                assertEquals("orcid.org", contributorOrcid0.get("host"));
+                assertTrue(contributorOrcid0.containsKey("value"));
+                assertNull(contributorOrcid0.get("value"));
+                assertTrue(contributorOrcid0.containsKey("valueAsString"));
+                assertNull(contributorOrcid0.get("valueAsString"));
+                assertTrue(contributor0.containsKey("creditName"));
+                assertNull(contributor0.get("creditName"));
+                assertTrue(contributor0.containsKey("contributorEmail"));
+                assertNull(contributor0.get("contributorEmail"));
+                Map<String, Object> contributorAttributes0 = (Map<String, Object>) contributor0.get("contributorAttributes");
+                assertNotNull(contributorAttributes0);
+                assertEquals("FIRST", contributorAttributes0.get("contributorSequence"));
+                assertEquals("AUTHOR", contributorAttributes0.get("contributorRole"));
+
+                Map<String, Object> contributor1 = contributorsList.get(1);
+                assertEquals(4, contributor1.keySet().size());
+                assertTrue(contributor1.containsKey("contributorOrcid"));
+                assertNull(contributor1.get("contributorOrcid"));
+                assertEquals("John W. Spaeth", ((Map<String, Object>) contributor1.get("creditName")).get("content"));
+                assertEquals("PUBLIC", ((Map<String, Object>) contributor1.get("creditName")).get("visibility"));
+                assertTrue(contributor1.containsKey("contributorEmail"));
+                assertNull(contributor1.get("contributorEmail"));
+                assertTrue(contributor1.containsKey("contributorAttributes"));
+                assertNull(contributor1.get("contributorAttributes"));
+            } else if (workEntity.getTitle().equals("Work title 2")) {
+                assertNull(contributorsJson);
+                assertEquals("Journal Title # 2", workEntity.getJournalTitle());
+            } else {
+                assertNull(contributorsJson);
+                assertNull(workEntity.getJournalTitle());
+            }
+        }
     }
     
     private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {
