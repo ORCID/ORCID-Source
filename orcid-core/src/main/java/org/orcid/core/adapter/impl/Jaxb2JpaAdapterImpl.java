@@ -218,12 +218,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (updateOptions.isUpdateFundings()) {
             setFundings(profileEntity, orcidFundings);
         }
-        if (updateOptions.isUpdateWorks()) {
-            setWorks(profileEntity, orcidWorks);
-        }
     }
 
-    private void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
+    @Override
+    @Deprecated
+    public void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
         String orcid = profileEntity.getId();
         // Get the existing works
         List<WorkEntity> existingWorks = workDao.getWorksByOrcidId(orcid);
@@ -267,7 +266,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
         }
     }
-    
+
+    @Override
+    @Deprecated
     public WorkEntity getWorkEntity(String orcid, OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
             if(workEntity == null) {
@@ -320,7 +321,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             
             workEntity.setAddedToProfileDate(new Date());
             //Set source
-            setSource(orcidWork.getSource(), workEntity);
+            SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+            String sourceId = sourceEntity.getSourceId();
+            
+            if(!orcid.equals(sourceId)) {
+                workEntity.setClientSourceId(sourceId);                    
+            } else {
+                // This case should never happen, since this method must be accessible only by API code
+                workEntity.setSourceId(sourceId);
+            }
+                        
             if(workEntity.getDisplayIndex() == null) {
                 workEntity.setDisplayIndex(0L);
             }

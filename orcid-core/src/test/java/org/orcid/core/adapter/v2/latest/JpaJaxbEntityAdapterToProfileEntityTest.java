@@ -21,13 +21,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -37,18 +37,22 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.JaxbOrcidMessageUtil;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
-import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -75,14 +79,17 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
     @Autowired
     private JpaJaxbEntityAdapter adapter;
     
-    @Autowired
-    private WorkDao workDao;
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
+    
+    @Mock
+    private SourceManager mockSourceManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
     }
-
+    
     @Before
     public void initDelegationProfiles() {
         ProfileEntity entityReceivingPermission = new ProfileEntity();
@@ -94,6 +101,12 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         ProfileEntity source1 = new ProfileEntity();
         source1.setId("2111-1111-1111-1114");
         profileDao.merge(source1);
+    
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceProfile(new ProfileEntity("5555-5555-5555-5558"));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
     }
 
     @AfterClass
@@ -125,6 +138,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessage.getOrcidProfile());
         assertNotNull(profileEntity);
         profileDao.persist(profileEntity);
+
         
         ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(retrievedProfileEntity);
@@ -151,55 +165,6 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());
         assertEquals("4444-4444-4444-4446", nonPrimaryEmail1.getElementSourceId());
-
-        List<WorkEntity> workEntities = workDao.getWorksByOrcidId(profileEntity.getId());
-        assertEquals(3, workEntities.size());
-
-        for (WorkEntity workEntity : workEntities) {
-            String contributorsJson = workEntity.getContributorsJson();
-            if ("Work title 1".equals(workEntity.getTitle())) {
-                assertEquals("Journal Title # 1", workEntity.getJournalTitle());
-                assertNotNull(contributorsJson);
-                assertTrue(contributorsJson.startsWith("{\"contributor\":[{\""));
-                Map<String, Object> mappedJson = JsonUtils.<HashMap> readObjectFromJsonString(contributorsJson, HashMap.class);
-                List<Map<String, Object>> contributorsList = (List<Map<String, Object>>) mappedJson.get("contributor");
-                Map<String, Object> contributor0 = contributorsList.get(0);
-                assertEquals(4, contributor0.keySet().size());
-                Map<String, Object> contributorOrcid0 = (Map<String, Object>) contributor0.get("contributorOrcid");
-                assertEquals("http://orcid.org/4444-4444-4444-4446", contributorOrcid0.get("uri"));
-                assertEquals("4444-4444-4444-4446", contributorOrcid0.get("path"));
-                assertEquals("orcid.org", contributorOrcid0.get("host"));
-                assertTrue(contributorOrcid0.containsKey("value"));
-                assertNull(contributorOrcid0.get("value"));
-                assertTrue(contributorOrcid0.containsKey("valueAsString"));
-                assertNull(contributorOrcid0.get("valueAsString"));
-                assertTrue(contributor0.containsKey("creditName"));
-                assertNull(contributor0.get("creditName"));
-                assertTrue(contributor0.containsKey("contributorEmail"));
-                assertNull(contributor0.get("contributorEmail"));
-                Map<String, Object> contributorAttributes0 = (Map<String, Object>) contributor0.get("contributorAttributes");
-                assertNotNull(contributorAttributes0);
-                assertEquals("FIRST", contributorAttributes0.get("contributorSequence"));
-                assertEquals("AUTHOR", contributorAttributes0.get("contributorRole"));
-
-                Map<String, Object> contributor1 = contributorsList.get(1);
-                assertEquals(4, contributor1.keySet().size());
-                assertTrue(contributor1.containsKey("contributorOrcid"));
-                assertNull(contributor1.get("contributorOrcid"));
-                assertEquals("John W. Spaeth", ((Map<String, Object>) contributor1.get("creditName")).get("content"));
-                assertEquals("PUBLIC", ((Map<String, Object>) contributor1.get("creditName")).get("visibility"));
-                assertTrue(contributor1.containsKey("contributorEmail"));
-                assertNull(contributor1.get("contributorEmail"));
-                assertTrue(contributor1.containsKey("contributorAttributes"));
-                assertNull(contributor1.get("contributorAttributes"));
-            } else if (workEntity.getTitle().equals("Work title 2")) {
-                assertNull(contributorsJson);
-                assertEquals("Journal Title # 2", workEntity.getJournalTitle());
-            } else {
-                assertNull(contributorsJson);
-                assertNull(workEntity.getJournalTitle());
-            }
-        }
 
         assertEquals(2, profileEntity.getProfileFunding().size());
         for (ProfileFundingEntity profileGrantEntity : profileEntity.getProfileFunding()) {
@@ -228,6 +193,15 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(retrievedProfileEntity.getSendOrcidNews());
     }    
 
+    @Test
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void setWorksTest() throws JAXBException {
+        OrcidMessage orcidMessage = getOrcidMessage(ORCID_INTERNAL_FULL_XML);
+        OrcidWorks works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks();
+        ProfileEntity profile = profileDao.find("5555-5555-5555-5558");
+        adapter.setWorks(profile, works);
+    }
+    
     private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {
         return (OrcidMessage) unmarshaller.unmarshal(JaxbOrcidMessageUtil.class.getResourceAsStream(orcidMessagePath));
     }

@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -48,4 +49,7 @@ public interface Jaxb2JpaAdapter {
 
     @Deprecated
     WorkEntity getWorkEntity(String orcid, OrcidWork orcidWork, WorkEntity workEntity);
+    
+    @Deprecated
+    void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks);
 }

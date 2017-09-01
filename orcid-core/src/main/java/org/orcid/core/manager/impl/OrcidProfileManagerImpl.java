@@ -297,8 +297,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             throw new RuntimeException(e);
         }
 
+        // Persist the profile
         profileDao.persist(profileEntity);
         profileDao.flush();
+        
+        // Then persist the works
+        if(orcidProfile.getOrcidActivities() != null && orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
+            adapter.setWorks(profileEntity, orcidProfile.getOrcidActivities().getOrcidWorks());
+        } 
+        
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
         return updatedTranslatedOrcid;
     }
@@ -422,6 +429,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         profileDao.flush();
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
         profileDao.refresh(updatedProfileEntity);
+        
+        // Then persist the works
+        if(orcidProfile.getOrcidActivities() != null && orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
+            adapter.setWorks(profileEntity, orcidProfile.getOrcidActivities().getOrcidWorks());
+        } else {
+            adapter.setWorks(profileEntity, null);
+        }
+        
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
 
         orcidProfileCacheManager.put(updatedOrcidProfile);
