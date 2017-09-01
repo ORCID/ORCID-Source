@@ -19,7 +19,9 @@ package org.orcid.persistence.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -27,6 +29,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -69,5 +72,17 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(0, finalNumberOfElementsThatBelogsToUser);
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
+    }
+    
+    @Test
+    public void getWorksByOrcidIdTest() {
+        List<WorkEntity> works = dao.getWorksByOrcidId("0000-0000-0000-0003");
+        List<Long> existingIds = new ArrayList<Long>(Arrays.asList(11L, 12L, 13L, 14L, 15L, 16L));
+        assertEquals(6, works.size());
+        for(WorkEntity w : works) {
+            assertTrue(existingIds.contains(w.getId()));
+            existingIds.remove(w.getId());
+        }
+        assertTrue("Elements not found: " + existingIds, existingIds.isEmpty());
     }
 }

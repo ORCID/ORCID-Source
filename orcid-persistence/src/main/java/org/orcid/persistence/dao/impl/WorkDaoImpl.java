@@ -19,13 +19,13 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -228,29 +228,16 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
-    @Deprecated
-    public LegacyWorkEntity findLegacyWork(Long id) {
-        TypedQuery<LegacyWorkEntity> query = entityManager.createQuery("FROM LegacyWorkEntity WHERE id = :workId", LegacyWorkEntity.class);        
-        query.setParameter("workId", id);        
-        return query.getSingleResult();
-    }
-
-    @Override
-    @Deprecated
-    public List<LegacyWorkEntity> getLegacyWorkEntities(List<Long> ids) {
-        // batch up list into sets of 50;
-        List<LegacyWorkEntity> list = new ArrayList<>();
-        for (List<Long> partition : Lists.partition(ids, 50)) {
-            TypedQuery<LegacyWorkEntity> query = entityManager.createQuery("SELECT x FROM LegacyWorkEntity x WHERE x.id IN :ids", LegacyWorkEntity.class);
+    public List<WorkEntity> getWorksByOrcidId(String orcid) {
+        List<WorkEntity> works = new ArrayList<>();
+        List<WorkLastModifiedEntity> lastModifiedWorks = getWorkLastModifiedList(orcid);
+        List<Long> ids = lastModifiedWorks.stream().map(w -> w.getId()).collect(Collectors.toList());
+        for(List<Long> partition : Lists.partition(ids, 50)) {
+            TypedQuery<WorkEntity> query = entityManager.createQuery("SELECT x FROM WorkEntity x WHERE x.id IN :ids", WorkEntity.class);
             query.setParameter("ids", partition);
-            list.addAll(query.getResultList());
+            works.addAll(query.getResultList());
         }
-        return list;
-    }
-
-    @Override
-    public void persist(LegacyWorkEntity entity) {
-        entityManager.persist(entity);
+        return works;
     }
 }
 

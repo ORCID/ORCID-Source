@@ -69,7 +69,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -310,17 +310,18 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         profile.setExternalIdentifiers(extIds);
 
         // Set works
-        TreeSet<LegacyWorkEntity> works = new TreeSet<LegacyWorkEntity>();
-        LegacyWorkEntity work = new LegacyWorkEntity();
+        TreeSet<WorkEntity> works = new TreeSet<WorkEntity>();
+        WorkEntity work = new WorkEntity();
         work.setWorkType(WorkType.OTHER);
         work.setTitle("My work title");
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         work.setDisplayIndex(20000L);
         work.setClientSourceId(clientId);
         work.setId(24816L);
+        work.setOrcid(profile.getId());
         works.add(work);
-        profile.setWorks(works);
-        when(mockWorkEntityCacheManager.retrieveLegacyFullWorks(userOrcid, 0)).thenReturn(new ArrayList<>(works));
+        
+        when(mockWorkEntityCacheManager.retrieveFullWorks(userOrcid, 0)).thenReturn(new ArrayList<>(works));
 
         // Existing org
         OrgEntity newOrg = new OrgEntity();

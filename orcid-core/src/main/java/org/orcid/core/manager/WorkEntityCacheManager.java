@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -52,10 +51,7 @@ public interface WorkEntityCacheManager {
     WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified);
     
     @Deprecated
-    List<LegacyWorkEntity> retrieveLegacyFullWorks(String orcid, long profileLastModified);
-    
-    @Deprecated
-    LegacyWorkEntity retrieveLegacyFullWork(String orcid, long workId, long workLastModified);
+    List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified);
     
     void evictExpiredElements();
 

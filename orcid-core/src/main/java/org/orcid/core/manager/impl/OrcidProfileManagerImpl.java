@@ -129,7 +129,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -979,7 +979,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         checkUserCanHoldMoreElement(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
 
         if (compareWorksUsingScopusWay) {
-            checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
+            checkForAlreadyExistingWorks(orcid, existingOrcidWorks, updatedOrcidWorksList);
             if (existingOrcidWorks != null)
                 checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
             else
@@ -1028,7 +1028,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
     }
 
-    private void checkForAlreadyExistingWorks(OrcidWorks existingOrcidWorks, List<OrcidWork> updatedOrcidWorksList) {
+    private void checkForAlreadyExistingWorks(String orcid, OrcidWorks existingOrcidWorks, List<OrcidWork> updatedOrcidWorksList) {
         if (existingOrcidWorks != null) {
             Set<OrcidWork> existingOrcidWorksSet = new HashSet<>();
             for (OrcidWork existingWork : existingOrcidWorks.getOrcidWork()) {
@@ -1039,9 +1039,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 for (OrcidWork orcidWork : existingOrcidWorksSet) {
                     if (orcidWork.isDuplicated(updatedWork)) {
                         // Update the existing work
-                        LegacyWorkEntity workEntity = workDao.findLegacyWork(Long.valueOf(orcidWork.getPutCode()));
+                        WorkEntity workEntity = workDao.find(Long.valueOf(orcidWork.getPutCode()));
                         workEntity.clean();
-                        workEntity = jaxb2JpaAdapter.getWorkEntity(updatedWork, workEntity);
+                        workEntity = jaxb2JpaAdapter.getWorkEntity(orcid, updatedWork, workEntity);
                         workDao.persist(workEntity);
                         // Since it was already updated, remove it from the list
                         // of updated works
@@ -1292,8 +1292,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
             // Create the work entity
-            LegacyWorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
-            workEntity.setProfile(profileEntity);
+            WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(orcid, updatedOrcidWork, null);            
             workDao.persist(workEntity);
             updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));
             if (updatedOrcidWork.getWorkTitle() != null && updatedOrcidWork.getWorkTitle().getTitle() != null) {

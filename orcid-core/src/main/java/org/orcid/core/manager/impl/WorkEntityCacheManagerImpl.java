@@ -31,7 +31,6 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -80,11 +79,6 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     private int fullWorkEntityCacheTTL;
     private int fullWorkEntityCacheTTI;
 
-    @Resource(name = "fullLegacyWorkEntityCache")
-    private Cache fullLegacyWorkEntityCache;
-    private int fullLegacyWorkEntityCacheTTL;
-    private int fullLegacyWorkEntityCacheTTI;
-
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private WorkDao workDao;
@@ -105,11 +99,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
         CacheConfiguration config4 = minimizedWorkEntityCache.getCacheConfiguration();
         minimizedWorkEntityCacheTTI = config4.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToIdleSeconds()) : DEFAULT_TTI;
-        minimizedWorkEntityCacheTTL = config4.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToLiveSeconds()) : DEFAULT_TTL;
-    
-        CacheConfiguration config5 = fullLegacyWorkEntityCache.getCacheConfiguration();
-        fullLegacyWorkEntityCacheTTI = config5.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config5.getTimeToIdleSeconds()) : DEFAULT_TTI;
-        fullLegacyWorkEntityCacheTTL = config5.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config5.getTimeToLiveSeconds()) : DEFAULT_TTL;    
+        minimizedWorkEntityCacheTTL = config4.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToLiveSeconds()) : DEFAULT_TTL;    
     }
 
     @Resource
@@ -367,13 +357,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         LOGGER.info("Elements on minimizedWorkEntityCache before eviction: " + minimizedWorkEntityCache.getSize());
         minimizedWorkEntityCache.evictExpiredElements();
         minimizedWorkEntityCache.flush();        
-        LOGGER.info("Elements on minimizedWorkEntityCache after eviction: " + minimizedWorkEntityCache.getSize());
-        
-        // Evict 1.2 works
-        LOGGER.info("Elements on fullLegacyWorkEntityCache before eviction: " + fullLegacyWorkEntityCache.getSize());
-        fullLegacyWorkEntityCache.evictExpiredElements();
-        fullLegacyWorkEntityCache.flush();
-        LOGGER.info("Elements on fullLegacyWorkEntityCache after eviction: " + fullLegacyWorkEntityCache.getSize());
+        LOGGER.info("Elements on minimizedWorkEntityCache after eviction: " + minimizedWorkEntityCache.getSize());        
     }
     
     private Element createElement(Object key, Object element, Cache cache) {
@@ -385,54 +369,16 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             return new Element(key, element, minimizedWorkEntityCacheTTI, minimizedWorkEntityCacheTTL);
         } else if (cache.equals(fullWorkEntityCache)) {
             return new Element(key, element, fullWorkEntityCacheTTI, fullWorkEntityCacheTTL);
-        } else if(cache.equals(fullLegacyWorkEntityCache)) {
-            return new Element(key, element, fullLegacyWorkEntityCacheTTI, fullLegacyWorkEntityCacheTTL);
         } else {
             return new Element(key, element, DEFAULT_TTI, DEFAULT_TTL);
         }                
     }   
-    
-    /**
-     * Retrieves a full LegacyWorkEntity
-     * 
-     * @param workId
-     * @param workLastModified
-     * @return a WorkEntity
-     */
+        
     @Override
     @Deprecated
-    public LegacyWorkEntity retrieveLegacyFullWork(String orcid, long workId, long workLastModified) {
-        Object key = new WorkCacheKey(workId, releaseName);
-        LegacyWorkEntity workEntity = null;
-
-        try {
-            fullLegacyWorkEntityCache.acquireReadLockOnKey(key);
-            workEntity = (LegacyWorkEntity) toWorkBaseEntity(getElementFromCache(fullLegacyWorkEntityCache, key, orcid));
-        } finally {
-            fullLegacyWorkEntityCache.releaseReadLockOnKey(key);
-        }
-        if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
-            try {
-                fullLegacyWorkEntityCache.acquireWriteLockOnKey(key);
-                workEntity = (LegacyWorkEntity) toWorkBaseEntity(getElementFromCache(fullLegacyWorkEntityCache, key, orcid));
-                if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
-                    workEntity = workDao.findLegacyWork(workId);
-                    workDao.detach(workEntity);
-                    fullLegacyWorkEntityCache.put(createElement(key, workEntity, fullLegacyWorkEntityCache));
-                }
-
-            } finally {
-                fullLegacyWorkEntityCache.releaseWriteLockOnKey(key);
-            }
-        }
-        return workEntity;
-    }
-    
-    @Override
-    @Deprecated
-    public List<LegacyWorkEntity> retrieveLegacyFullWorks(String orcid, long profileLastModified) {
+    public List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified) {
         Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
-        LegacyWorkEntity[] returnArray = new LegacyWorkEntity[workIdsWithLastModified.size()];
+        WorkEntity[] returnArray = new WorkEntity[workIdsWithLastModified.size()];
         List<Long> fetchList = new ArrayList<Long>();
         Map<Long, Integer> fetchListIndexOrder = new LinkedHashMap<Long, Integer>();
         int index = 0;
@@ -441,9 +387,9 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             // get works from the cache if we can
             Object key = new WorkCacheKey(workId, releaseName);
             try {
-                fullLegacyWorkEntityCache.acquireReadLockOnKey(key);
-                Element element = getElementFromCache(fullLegacyWorkEntityCache, key, orcid);
-                LegacyWorkEntity cachedWork = (LegacyWorkEntity) (element != null ? element.getObjectValue() : null);                        
+                fullWorkEntityCache.acquireReadLockOnKey(key);
+                Element element = getElementFromCache(fullWorkEntityCache, key, orcid);
+                WorkEntity cachedWork = (WorkEntity) (element != null ? element.getObjectValue() : null);                        
                 if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(workId).getTime()) {
                     fetchListIndexOrder.put(workId, index);
                     fetchList.add(workId);
@@ -452,37 +398,37 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 }
                 index++;
             } finally {
-                fullLegacyWorkEntityCache.releaseReadLockOnKey(key);
+                fullWorkEntityCache.releaseReadLockOnKey(key);
             }
         }
 
         // now fetch all the others that are *not* in the cache
         if (fetchList.size() > 0) {
-            List<LegacyWorkEntity> refreshedWorks = workDao.getLegacyWorkEntities(fetchList);
-            for (LegacyWorkEntity mWorkRefreshedFromDB : refreshedWorks) {
+            List<WorkEntity> refreshedWorks = workDao.getWorkEntities(fetchList);
+            for (WorkEntity mWorkRefreshedFromDB : refreshedWorks) {
                 Object key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
                 try {
-                    fullLegacyWorkEntityCache.acquireWriteLockOnKey(key);
+                    fullWorkEntityCache.acquireWriteLockOnKey(key);
                     // check cache again here to prevent race condition
                     // since something could have updated while we were
                     // fetching from DB
                     // (or can we skip because new last modified is always
                     // going to be after profile last modified as provided)
-                    Element element = getElementFromCache(fullLegacyWorkEntityCache, key, orcid);
-                    LegacyWorkEntity cachedWork = (LegacyWorkEntity) (element != null ? element.getObjectValue() : null);                        
+                    Element element = getElementFromCache(fullWorkEntityCache, key, orcid);
+                    WorkEntity cachedWork = (WorkEntity) (element != null ? element.getObjectValue() : null);                        
                     int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
                     if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
-                        fullLegacyWorkEntityCache.put(createElement(key, mWorkRefreshedFromDB, fullLegacyWorkEntityCache));
+                        fullWorkEntityCache.put(createElement(key, mWorkRefreshedFromDB, fullWorkEntityCache));
                         returnArray[returnListIndex] = mWorkRefreshedFromDB;
                     } else {
                         returnArray[returnListIndex] = cachedWork;
                     }
 
                 } finally {
-                    fullLegacyWorkEntityCache.releaseWriteLockOnKey(key);
+                    fullWorkEntityCache.releaseWriteLockOnKey(key);
                 }
             }
         }
-        return (List<LegacyWorkEntity>) Arrays.asList(returnArray);
+        return (List<WorkEntity>) Arrays.asList(returnArray);
     }
 }

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -42,13 +41,12 @@ import org.orcid.core.JaxbOrcidMessageUtil;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +74,9 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
     @Autowired
     private JpaJaxbEntityAdapter adapter;
+    
+    @Autowired
+    private WorkDao workDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -151,20 +152,17 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getVerified());
         assertEquals("4444-4444-4444-4446", nonPrimaryEmail1.getElementSourceId());
 
-        Set<LegacyWorkEntity> workEntities = profileEntity.getWorks();
+        List<WorkEntity> workEntities = workDao.getWorksByOrcidId(profileEntity.getId());
         assertEquals(3, workEntities.size());
 
-        for (LegacyWorkEntity workEntity : workEntities) {
+        for (WorkEntity workEntity : workEntities) {
             String contributorsJson = workEntity.getContributorsJson();
             if ("Work title 1".equals(workEntity.getTitle())) {
                 assertEquals("Journal Title # 1", workEntity.getJournalTitle());
-                
                 assertNotNull(contributorsJson);
                 assertTrue(contributorsJson.startsWith("{\"contributor\":[{\""));
                 Map<String, Object> mappedJson = JsonUtils.<HashMap> readObjectFromJsonString(contributorsJson, HashMap.class);
                 List<Map<String, Object>> contributorsList = (List<Map<String, Object>>) mappedJson.get("contributor");
-                
-
                 Map<String, Object> contributor0 = contributorsList.get(0);
                 assertEquals(4, contributor0.keySet().size());
                 Map<String, Object> contributorOrcid0 = (Map<String, Object>) contributor0.get("contributorOrcid");
@@ -194,7 +192,6 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
                 assertNull(contributor1.get("contributorEmail"));
                 assertTrue(contributor1.containsKey("contributorAttributes"));
                 assertNull(contributor1.get("contributorAttributes"));
-
             } else if (workEntity.getTitle().equals("Work title 2")) {
                 assertNull(contributorsJson);
                 assertEquals("Journal Title # 2", workEntity.getJournalTitle());
@@ -229,21 +226,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertEquals("ghi789", retrievedProfileEntity.getEncryptedVerificationCode());
         assertTrue(retrievedProfileEntity.getSendChangeNotifications());
         assertFalse(retrievedProfileEntity.getSendOrcidNews());
-    }
-
-    @Test
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Rollback(true)
-    public void testReligiousTextConvertedFromBible() throws Exception {
-        OrcidMessage orcidMessage = getOrcidMessage(ORCID_INTERNAL_FULL_XML);
-        List<OrcidWork> currentOrcidWorks = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
-        assertTrue(currentOrcidWorks.size() == 1);
-        currentOrcidWorks.get(0).setWorkType(WorkType.DATA_SET);
-        ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessage.getOrcidProfile());
-        List<LegacyWorkEntity> works = new ArrayList<LegacyWorkEntity>(profileEntity.getWorks());
-        assertEquals(1, works.size());
-        assertTrue(works.get(0).getWorkType().equals(org.orcid.jaxb.model.record_v2.WorkType.DATA_SET));
-    }
+    }    
 
     private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {
         return (OrcidMessage) unmarshaller.unmarshal(JaxbOrcidMessageUtil.class.getResourceAsStream(orcidMessagePath));

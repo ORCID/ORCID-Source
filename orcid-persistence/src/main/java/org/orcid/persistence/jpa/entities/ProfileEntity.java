@@ -119,7 +119,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Set<GivenPermissionByEntity> givenPermissionBy;
     private SortedSet<ProfileFundingEntity> profileFunding;
     private Set<AddressEntity> addresses;
-    private SortedSet<LegacyWorkEntity> works;
     private SortedSet<PeerReviewEntity> peerReviews;
     private Locale locale = Locale.EN;
     private Boolean sendChangeNotifications;
@@ -515,23 +514,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      */
     public void setProfileFunding(SortedSet<ProfileFundingEntity> funding) {
         this.profileFunding = funding;
-    }
-
-    /**
-     * @return the works
-     */
-    @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Sort(type = SortType.COMPARATOR, comparator = WorkEntityDisplayIndexComparatorDesc.class)
-    public SortedSet<LegacyWorkEntity> getWorks() {
-        return works;
-    }
-
-    /**
-     * @param works
-     *            the works to set
-     */
-    public void setWorks(SortedSet<LegacyWorkEntity> works) {
-        this.works = works;
     }
 
     /**

@@ -61,7 +61,6 @@
         <class>org.orcid.persistence.jpa.entities.ShibbolethAccountEntity</class>
         <class>org.orcid.persistence.jpa.entities.SubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.WebhookEntity</class>
-        <class>org.orcid.persistence.jpa.entities.LegacyWorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkLastModifiedEntity</class>
         <class>org.orcid.persistence.jpa.entities.GroupIdRecordEntity</class>
         <class>org.orcid.persistence.jpa.entities.UserconnectionEntity</class>

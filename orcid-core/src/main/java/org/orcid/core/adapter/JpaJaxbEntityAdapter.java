@@ -38,9 +38,7 @@ public interface JpaJaxbEntityAdapter {
 
     OrcidProfile toOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions);
 
-    ProfileEntity toProfileEntity(OrcidProfile profile);
-
-    ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity);
+    ProfileEntity toProfileEntity(OrcidProfile profile);    
     
     ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity, UpdateOptions updateOptions);
 

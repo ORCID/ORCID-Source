@@ -20,7 +20,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.persistence.jpa.entities.LegacyWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -125,11 +124,5 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     List<WorkEntity> getWorkEntities(List<Long> ids);        
 
     @Deprecated
-    LegacyWorkEntity findLegacyWork(Long id);
-    
-    @Deprecated
-    List<LegacyWorkEntity> getLegacyWorkEntities(List<Long> ids);
-    
-    @Deprecated
-    void persist(LegacyWorkEntity entity);
+    List<WorkEntity> getWorksByOrcidId(String orcid);
 }
