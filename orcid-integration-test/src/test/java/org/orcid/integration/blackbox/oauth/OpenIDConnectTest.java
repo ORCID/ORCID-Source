@@ -86,8 +86,11 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         Assert.assertEquals("https://orcid.org",signedJWT.getJWTClaimsSet().getIssuer());
         Assert.assertEquals("9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getSubject());
         Assert.assertEquals("APP-9999999999999901",signedJWT.getJWTClaimsSet().getAudience().get(0));
-        Assert.assertEquals("yesMate",signedJWT.getJWTClaimsSet().getClaim("nonce"));        
-
+        Assert.assertEquals("yesMate",signedJWT.getJWTClaimsSet().getClaim("nonce"));   
+        Assert.assertEquals("User One Credit name",signedJWT.getJWTClaimsSet().getClaim("name"));
+        Assert.assertEquals("One",signedJWT.getJWTClaimsSet().getClaim("family_name"));
+        Assert.assertEquals("User",signedJWT.getJWTClaimsSet().getClaim("given_name"));
+        
         //get JWKS         
         Client client = Client.create();
         WebResource webResource = client.resource(baseUri+"/oauth/jwks");
@@ -106,6 +109,8 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
                 .accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         String userInfoString = userInfo.getEntity(String.class);
         JSONObject user = new JSONObject(userInfoString);
+        Assert.assertTrue(user.get("id").toString().startsWith("http"));
+        Assert.assertTrue(user.get("id").toString().endsWith("9999-0000-0000-0004"));
         Assert.assertEquals("9999-0000-0000-0004",user.get("sub"));
         Assert.assertEquals("User One Credit name",user.get("name"));
         Assert.assertEquals("One",user.get("family_name"));
