@@ -1,6 +1,9 @@
-import * as angular from 'angular';
-import { NgModule } from '@angular/core';
-import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
+import * as angular 
+    from 'angular';
+import { NgModule } 
+    from '@angular/core';
+import { downgradeComponent, UpgradeModule } 
+    from '@angular/upgrade/static';
 
 //In the end only widgetNg2 should remain
 import { WidgetComponent } from './widget.component.ts';
@@ -14,10 +17,8 @@ export const WidgetModule = angular.module(
 // This is the Angular 2 part of the module
 @NgModule(
     {
-        
         declarations: [ WidgetComponent ],
         entryComponents: [ WidgetComponent ],
-        
     }
 )
 export class WidgetNg2Module {}

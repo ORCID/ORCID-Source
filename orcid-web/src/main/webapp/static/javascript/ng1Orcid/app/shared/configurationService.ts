@@ -25,7 +25,6 @@ export class ConfigurationService {
         } 
     }
 
-
     getInitialConfiguration(): object{
         return this.configValues;
     }

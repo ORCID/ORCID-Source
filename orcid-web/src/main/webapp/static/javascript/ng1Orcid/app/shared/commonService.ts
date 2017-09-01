@@ -4,6 +4,10 @@ import { Injectable } from '@angular/core';
 export class CommonService {
     private shownElement: any;
 
+    constructor() { 
+        this.shownElement = [];
+    }
+
     copyErrorsLeft( data1, data2 ): void {
         for (let key in data1) {
             if (key == 'errors') {

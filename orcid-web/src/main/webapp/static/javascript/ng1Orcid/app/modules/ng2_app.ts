@@ -8,7 +8,7 @@ import { Component, NgModule }
     from '@angular/core';
 
 import { FormsModule } 
-    from '@angular/forms'; // <-- NgModel lives here
+    from '@angular/forms';
 
 import { HttpModule, JsonpModule, Request, XSRFStrategy } 
     from '@angular/http';
@@ -36,9 +36,14 @@ import { WorksPrivacyPreferencesNg2Module }
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
 //User generated services
-import { BiographyService } from '../shared/biographyService.ts'; 
-import { ConfigurationService } from '../shared/configurationService.ts'; 
-import { EmailService } from '../shared/emailService.ts'; 
+import { BiographyService } 
+    from '../shared/biographyService.ts'; 
+import { CommonService }
+    from '../shared/commonService.ts'
+import { ConfigurationService } 
+    from '../shared/configurationService.ts'; 
+import { EmailService } 
+    from '../shared/emailService.ts'; 
 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
@@ -90,6 +95,7 @@ export class RootCmp {
             useClass: MetaXSRFStrategy
         },
         BiographyService,
+        CommonService,
         ConfigurationService,
         EmailService
     ]
@@ -98,6 +104,6 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.26');
+        console.log('v0.28');
     }
 }

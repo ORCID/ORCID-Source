@@ -11,9 +11,15 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class BiographyService {
+    private headers: Headers;
     private url: string;
 
     constructor( private http: Http ){
+        this.headers = new Headers(
+            { 
+                'Content-Type': 'application/json' 
+            }
+        );
         this.url = getBaseUri() + '/account/biographyForm.json';
     }
 
@@ -26,21 +32,11 @@ export class BiographyService {
 
     setBiographyData( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
-        let headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
-            }
-        );
-        let options = new RequestOptions(
-            { 
-                headers: headers 
-            }
-        );
         
         return this.http.post( 
             this.url, 
             encoded_data, 
-            { headers: headers }
+            { headers: this.headers }
         )
         .map((res:Response) => res.json()).share();
     }

@@ -1,7 +1,4 @@
-import * as angular from 'angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';  
-import { Component, Input, NgModule } from '@angular/core';
+ import { Component, Input, NgModule } from '@angular/core';
 
 @Component({
     selector: 'widget-ng2',

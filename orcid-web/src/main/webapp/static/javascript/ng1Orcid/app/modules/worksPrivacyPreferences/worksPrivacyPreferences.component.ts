@@ -1,32 +1,19 @@
-declare var getBaseUri: any;
-declare var scriptTmpl: any;
-declare var orcidVar: any;
-
-import * as angular from 'angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common'; 
-import { NgModule, OnInit } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser'; 
 import { Observable } from 'rxjs/Observable';
+import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild, ElementRef, OnInit } from '@angular/core'; 
+
 import 'rxjs/add/operator/switchMap';
 
 import { PrefsSrvc } from './../../services/prefs.service.ts';
 import { Preferences } from './../../services/preferences';
-import { CommonSrvc } from './../../services/common.service.ts';
-
-//Ng1 hybrid syntax
-/*worksPrivacyPreferencesCtrl {
+import { CommonService } 
+    from '../../shared/commonService.ts';
 
 
-export const worksPrivacyPreferencesCmp = {
-    controller: worksPrivacyPreferencesCtrl,
-    controllerAs: 'ctrl'
-};*/
-
-import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild, ElementRef } from '@angular/core'; 
 @Component({
     selector: 'works-privacy-preferences-ng2',
     template:  scriptTmpl("works-privacy-preferences-ng2-template"),
-    providers: [PrefsSrvc, CommonSrvc]
+    providers: [PrefsSrvc, CommonService]
 })
 export class WorksPrivacyPreferencesComponent implements OnInit {
     private response: any;
@@ -37,9 +24,8 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
     constructor(
 
         private prefsSrvc: PrefsSrvc,
-        private commonSrvc: CommonSrvc,
-        
-
+        private commonSrvc: CommonService,
+       
     ) {
 
         this.default_visibility = '';

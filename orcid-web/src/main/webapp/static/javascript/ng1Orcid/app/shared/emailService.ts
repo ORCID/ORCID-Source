@@ -12,7 +12,8 @@ import 'rxjs/Rx';
 @Injectable()
 export class EmailService {
     private delEmail: any;
-    private emails: any;            
+    private emails: any;
+    private headers: Headers;          
     private inputEmail: any;
     private primaryEmail: any;
     private unverifiedSetPrimary: boolean;
@@ -20,7 +21,12 @@ export class EmailService {
 
     constructor( private http: Http ){
         this.delEmail = null;
-        this.emails = null;          
+        this.emails = null;
+        this.headers = new Headers(
+            { 
+                'Content-Type': 'application/json' 
+            }
+        );     
         this.inputEmail = null;
         this.primaryEmail = null;
         this.unverifiedSetPrimary = false;
@@ -29,21 +35,11 @@ export class EmailService {
 
     addEmail(): Observable<any> {
         let encoded_data = JSON.stringify( this.inputEmail );
-        let headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
-            }
-        );
-        let options = new RequestOptions(
-            { 
-                headers: headers 
-            }
-        );
         
         return this.http.post( 
             this.url, 
             encoded_data, 
-            { headers: headers }
+            { headers: this.headers }
         )
         .map(
             (res:Response) => res.json()
@@ -62,21 +58,11 @@ export class EmailService {
 
     deleteEmail() {
         let encoded_data = JSON.stringify( this.delEmail );
-        let headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
-            }
-        );
-        let options = new RequestOptions(
-            { 
-                headers: headers 
-            }
-        );
         
         return this.http.delete( 
             getBaseUri() + '/account/deleteEmail.json?' + encoded_data, 
             //encoded_data, 
-            { headers: headers }
+            { headers: this.headers }
         )
         .map(
             (res:Response) => res.json()
@@ -127,21 +113,11 @@ export class EmailService {
 
     saveEmail(): Observable<any> {
         let encoded_data = JSON.stringify( this.emails );
-        let headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
-            }
-        );
-        let options = new RequestOptions(
-            { 
-                headers: headers 
-            }
-        );
         
         return this.http.post( 
             this.url, 
             encoded_data, 
-            { headers: headers }
+            { headers: this.headers }
         )
         .map(
             (res:Response) => res.json()
@@ -210,18 +186,3 @@ export class EmailService {
         */
     }
 }
-
-/*
-angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
-    var serv = {
-        
-        
-        ,
-        
-        ,
-        
-    };
-
-    return serv;
-});
-*/

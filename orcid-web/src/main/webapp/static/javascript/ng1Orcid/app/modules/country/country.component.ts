@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef } from '@angular/core';
 import { NgModule } from '@angular/core';
 
-import { CommonService } from '../../shared/common.ts'; 
+import { CommonService } from '../../shared/commonService.ts'; 
 
 // This is the Angular 1 part of the module
 /*

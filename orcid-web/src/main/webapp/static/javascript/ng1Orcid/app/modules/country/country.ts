@@ -6,7 +6,7 @@ import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
 import { CountryComponent } from './country.component.ts';
 import { ModalNgComponent } from '../modalNg2/modal-ng.component.ts';
 
-import { CommonService } from '../../shared/common.ts';
+import { CommonService } from '../../shared/commonService.ts';
 
 // This is the Angular 1 part of the module
 export const CountryModule = angular.module(
