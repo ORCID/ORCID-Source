@@ -115,6 +115,14 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         Assert.assertEquals("User One Credit name",user.get("name"));
         Assert.assertEquals("One",user.get("family_name"));
         Assert.assertEquals("User",user.get("given_name"));
+        
+        //test other 'bearer' case
+        userInfo = webResource
+                .header("Authorization", "bearer "+tokenJSON.getString("access_token"))
+                .accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        userInfoString = userInfo.getEntity(String.class);
+        user = new JSONObject(userInfoString);
+        Assert.assertEquals("9999-0000-0000-0004",user.get("sub"));
     }
     
     @Test
