@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +43,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
@@ -126,9 +129,11 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -177,7 +182,13 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     
     @Resource
     private ProfileFundingDao profileFundingDao;
+    
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
 
+    @Mock
+    private SourceManager mockSourceManager;
+    
     @Before
     @Transactional
     @Rollback
@@ -239,6 +250,12 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         }
         
         orcidProfileManager.setCompareWorksUsingScopusWay(true);
+    
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(clientDetails);
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);    
     }
 
     @After
