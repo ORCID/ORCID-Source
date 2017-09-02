@@ -321,15 +321,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             
             workEntity.setAddedToProfileDate(new Date());
             //Set source
-            SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-            String sourceId = sourceEntity.getSourceId();
-            
-            if(!orcid.equals(sourceId)) {
-                workEntity.setClientSourceId(sourceId);                    
-            } else {
-                // This case should never happen, since this method must be accessible only by API code
-                workEntity.setSourceId(sourceId);
-            }
+            setSource(orcidWork.getSource(), workEntity);
                         
             if(workEntity.getDisplayIndex() == null) {
                 workEntity.setDisplayIndex(0L);

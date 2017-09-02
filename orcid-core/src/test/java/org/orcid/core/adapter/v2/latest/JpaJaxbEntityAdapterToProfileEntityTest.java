@@ -21,7 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,12 +38,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.orcid.core.JaxbOrcidMessageUtil;
-import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
-import org.orcid.core.manager.SourceManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -53,11 +48,9 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -85,14 +78,8 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
     private JpaJaxbEntityAdapter adapter;
     
     @Resource
-    private Jaxb2JpaAdapter jaxb2JpaAdapter;
-    
-    @Resource
     private WorkDao workDao;
     
-    @Mock
-    private SourceManager mockSourceManager;
-
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
@@ -109,12 +96,6 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         ProfileEntity source1 = new ProfileEntity();
         source1.setId("2111-1111-1111-1114");
         profileDao.merge(source1);
-    
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
-        SourceEntity sourceEntity = new SourceEntity();
-        sourceEntity.setSourceProfile(new ProfileEntity("5555-5555-5555-5558"));
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
     }
 
     @AfterClass
