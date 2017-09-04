@@ -44,6 +44,8 @@ import { ConfigurationService }
     from '../shared/configurationService.ts'; 
 import { EmailService } 
     from '../shared/emailService.ts'; 
+import { ModalService } 
+    from '../shared/modalService.ts'; 
 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
@@ -97,13 +99,14 @@ export class RootCmp {
         BiographyService,
         CommonService,
         ConfigurationService,
-        EmailService
+        EmailService,
+        ModalService
     ]
 
 })
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.28');
+        console.log('v0.32');
     }
 }

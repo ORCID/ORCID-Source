@@ -1,9 +1,13 @@
 declare var $: any;
+ 
+import { Component, OnInit, OnDestroy/*Component, EventEmitter, Input, NgModule, Output*/ } 
+    from '@angular/core';
 
-import * as angular from 'angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';  
-import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
+import { Subscription } 
+    from 'rxjs/Subscription';
+
+import { ModalService } 
+    from '../../shared/modalService.ts'; 
 
 @Component(
     {
@@ -15,10 +19,11 @@ import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core'
         `
     }
 )
-export class ModalNgComponent {
+export class ModalNgComponent implements OnInit, OnDestroy {
     //@Output() onOpen = new EventEmitter<void>();
 
-    constructor(){
+    private subscription: Subscription;
+    constructor( private modalService: ModalService ){
         console.log('ModalNgComponent loaded');
         
     }
@@ -47,4 +52,21 @@ export class ModalNgComponent {
         });
         $.colorbox.resize();
     };
+
+    ngOnInit() {
+        this.subscription = this.modalService.notifyObservable.subscribe(
+            (res) => {
+                if ( res.hasOwnProperty('option') 
+                    /*&& res.option === 'onSubmit'*/ ) {
+                    console.log('res.value',res.value);
+                    // perform your other action from here
+
+                }
+            }
+        );
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
 }

@@ -12,6 +12,9 @@ import { Observable }
 import { Subject } 
     from 'rxjs/Subject';
 
+import { Subscription }
+    from 'rxjs/Subscription';
+
 import { BiographyService } 
     from '../../shared/biographyService.ts'; 
 
@@ -19,7 +22,10 @@ import { ConfigurationService }
     from '../../shared/configurationService.ts';
 
 import { EmailService } 
-    from '../../shared/emailService.ts'; 
+    from '../../shared/emailService.ts';
+
+import { ModalService } 
+    from '../../shared/modalService.ts'; 
 
 @Component({
     selector: 'biography-ng2',
@@ -40,7 +46,8 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor(
         private biographyService: BiographyService,
         private configurationService: ConfigurationService,
-        private emailService: EmailService
+        private emailService: EmailService,
+        private modalService: ModalService
     ) {
         this.biographyForm = {
             biography: {
@@ -49,7 +56,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         
         this.emails = {};
-        this.emailVerified = true; //change to false once service is ready
+        this.emailVerified = false; //change to false once service is ready
         this.lengthError = false;
         this.showEdit = false;
         this.showElement = {};
@@ -93,7 +100,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                console.log('data', data);
+                console.log('data', data, this.emailService.getEmailPrimary(), this.emailService.getEmailPrimary().verified);
                 if( this.emailService.getEmailPrimary().verified == true ) {
                     this.emailVerified = true;
                 }
@@ -136,10 +143,11 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     toggleEdit(): void {
+        console.log('this.emailVerified', this.emailVerified);
         if( this.emailVerified === true || this.configuration.showModalManualEditVerificationEnabled == false){
             this.showEdit = !this.showEdit;
         }else{
-            //this.showEmailVerificationModal();
+            this.modalService.notifyOther('open');
         }
     };
 
@@ -157,37 +165,5 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getBiographyForm();
         this.configuration = this.configurationService.getInitialConfiguration();
         this.getEmails();
-    };
-
-/*
-export const BiographyCtrl = angular.module('orcidApp').controller(
-    'BiographyCtrl',
-    [
-        '$scope',
-        '$rootScope',
-        '$compile',
-        'emailSrvc',
-        'initialConfigService', 
-        function (
-            $scope, 
-            $rootScope, 
-            $compile, 
-            emailSrvc, 
-            initialConfigService
-        ) {
-
-            /////////////////////// Begin of verified email logic for work
-            
-
-            var showEmailVerificationModal = function(){
-                $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
-            };
-            
-            
-            /////////////////////// End of verified email logic for work
-
-        }
-    ]
-);
-*/    
+    }; 
 }

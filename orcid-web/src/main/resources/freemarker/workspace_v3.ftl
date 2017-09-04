@@ -57,6 +57,7 @@
 
 
       <modal-email-un-verified></modal-email-un-verified>
+      <modalngcomponent #modalemailunverified>modalngcomponent</modalngcomponent>
 
       <div class="qrcode-container">
         <a href="http://qrcode.orcid.org" target="workspace.qrcode.link.text"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
