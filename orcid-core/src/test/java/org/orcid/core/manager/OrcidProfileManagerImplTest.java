@@ -1267,42 +1267,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Test
     @Transactional
     @Rollback(true)
-    public void testDeactivateProfile() {
-        OrcidProfile profile1 = createBasicProfile();
-        profile1.getOrcidBio().getPersonalDetails().setCreditName(new CreditName("My Credit Name"));
-        ExternalIdentifiers extIds = new ExternalIdentifiers();
-        ExternalIdentifier extId = new ExternalIdentifier();
-        extId.setExternalIdCommonName(new ExternalIdCommonName("External body"));
-        extId.setExternalIdReference(new ExternalIdReference("abc123"));
-        extIds.getExternalIdentifier().add(extId);
-        profile1.getOrcidBio().setExternalIdentifiers(extIds);
-        
-        OtherNames otherNames = new OtherNames();
-        otherNames.addOtherName("OtherName 1",null);
-        otherNames.addOtherName("OtherName 2",null);
-        
-        profile1.getOrcidBio().getPersonalDetails().setOtherNames(otherNames);
-        
-        profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
-        assertEquals(1, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(2, profile1.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
-        assertEquals("My Credit Name", profile1.getOrcidBio().getPersonalDetails().getCreditName().getContent());        
-        assertEquals(Visibility.PRIVATE, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
-        
-        orcidProfileManager.deactivateOrcidProfile(profile1);
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-        assertTrue(retrievedProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().isEmpty());
-        assertNull(retrievedProfile.getOrcidBio().getPersonalDetails().getCreditName());
-        assertEquals(0, retrievedProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());       
-        assertEquals("Given Names Deactivated", retrievedProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals("Family Name Deactivated", retrievedProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        assertNull(retrievedProfile.getOrcidBio().getBiography().getContent());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
     public void testRetrieveProfileWhenNonExistant() {
         OrcidProfile orcidProfile = orcidProfileManager.retrievePublicOrcidProfile("1234-5678-8765-4321");
         assertNull(orcidProfile);
