@@ -110,7 +110,7 @@ public class AnalyticsProcessTest {
         assertEquals(Integer.valueOf(200), data.getResponseCode());
         assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
-        assertEquals("xml", data.getContentType());
+        assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
     
     @Test
@@ -182,7 +182,7 @@ public class AnalyticsProcessTest {
         assertEquals(Integer.valueOf(200), data.getResponseCode());
         assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
-        assertEquals("xml", data.getContentType());
+        assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
 
     @Test
@@ -222,7 +222,7 @@ public class AnalyticsProcessTest {
         assertEquals(Integer.valueOf(200), data.getResponseCode());
         assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
-        assertEquals("xml", data.getContentType());
+        assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
 
     @Test
@@ -259,7 +259,7 @@ public class AnalyticsProcessTest {
         assertEquals(Integer.valueOf(200), data.getResponseCode());
         assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
-        assertEquals("xml", data.getContentType());
+        assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
     
     @Test
@@ -296,7 +296,7 @@ public class AnalyticsProcessTest {
         assertEquals(Integer.valueOf(200), data.getResponseCode());
         assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid, data.getUrl());
         assertEquals("blah", data.getUserAgent());
-        assertEquals("xml", data.getContentType());
+        assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
     
     @Test
@@ -363,7 +363,7 @@ public class AnalyticsProcessTest {
 
         AnalyticsData data = captor.getValue();
         assertNotNull(data);
-        assertEquals("json", data.getContentType()); // default content type
+        assertEquals(MediaType.APPLICATION_JSON, data.getContentType()); // default content type
     }
     
     @Test
@@ -392,7 +392,7 @@ public class AnalyticsProcessTest {
 
         AnalyticsData data = captor.getValue();
         assertNotNull(data);
-        assertEquals("json", data.getContentType()); // default content type
+        assertEquals(OrcidApiConstants.ORCID_JSON, data.getContentType()); // default content type
     }
     
     @Test
@@ -421,7 +421,7 @@ public class AnalyticsProcessTest {
 
         AnalyticsData data = captor.getValue();
         assertNotNull(data);
-        assertEquals("xml", data.getContentType()); // default content type
+        assertEquals(MediaType.APPLICATION_XML, data.getContentType()); // default content type
     }
     
     @Test
@@ -450,7 +450,7 @@ public class AnalyticsProcessTest {
 
         AnalyticsData data = captor.getValue();
         assertNotNull(data);
-        assertEquals("xml", data.getContentType()); // default content type
+        assertEquals(OrcidApiConstants.VND_ORCID_XML, data.getContentType()); // default content type
     }
     
     @Test
@@ -540,7 +540,7 @@ public class AnalyticsProcessTest {
         AnalyticsData data = captor.getValue();
         assertNotNull(data);
         assertEquals("POST", data.getMethod());
-        assertEquals("json", data.getContentType()); // default content type
+        assertEquals(MediaType.APPLICATION_JSON, data.getContentType()); // default content type
     }
     
     @Test
@@ -570,7 +570,7 @@ public class AnalyticsProcessTest {
         AnalyticsData data = captor.getValue();
         assertNotNull(data);
         assertEquals("POST", data.getMethod());
-        assertEquals("xml", data.getContentType()); // default content type
+        assertEquals(OrcidApiConstants.ORCID_XML, data.getContentType()); // default content type
     }
     
     @Test
