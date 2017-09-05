@@ -100,13 +100,12 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                console.log('data', data, this.emailService.getEmailPrimary(), this.emailService.getEmailPrimary().verified);
                 if( this.emailService.getEmailPrimary().verified == true ) {
                     this.emailVerified = true;
                 }
             },
             error => {
-                console.log('getBiographyFormError', error);
+                console.log('getEmails', error);
             } 
         );
     }
@@ -143,7 +142,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     toggleEdit(): void {
-        console.log('this.emailVerified', this.emailVerified);
         if( this.emailVerified === true || this.configuration.showModalManualEditVerificationEnabled == false){
             this.showEdit = !this.showEdit;
         }else{
