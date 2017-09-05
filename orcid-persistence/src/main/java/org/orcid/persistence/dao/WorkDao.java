@@ -30,43 +30,7 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
  * @author Angel Montenegro
  * 
  */
-public interface WorkDao extends GenericDao<WorkEntity, Long> {
-
-    /**
-     * Add a new work to the work table
-     * 
-     * @param work
-     *            The work that will be persisted
-     * @return the work already persisted on database
-     * */
-    WorkEntity addWork(WorkEntity work);
-
-    /**
-     * Edits an existing work
-     * 
-     * @param work
-     *            The work to be edited
-     * @return the updated work
-     * */
-    WorkEntity editWork(WorkEntity work);
-
-    /**
-     * Find works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of minimized works associated to the specific user
-     * */
-    List<MinimizedWorkEntity> findWorks(String orcid, long lastModified);
-
-    /**
-     * Find the public works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    List<MinimizedWorkEntity> findPublicWorks(String orcid, long lastModified);
+public interface WorkDao extends GenericDao<WorkEntity, Long> {    
     
     MinimizedWorkEntity getMinimizedWorkEntity(Long id);
 
@@ -122,16 +86,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     boolean updateToMaxDisplay(String orcid, Long workId);
     
     /**
-     * Returns a list of work ids of works that still have old external identifiers
-     * @param limit
-     *          The batch number to fetch
-     * @param workId
-     *          The id of the latest work processed         
-     * @return a list of work ids with old ext ids          
-     * */
-    List<BigInteger> getWorksWithOldExtIds(long workId, long limit);
-    
-    /**
      * Returns a list of work ids where the ext id relationship is null         
      * @return a list of work ids    
      * */
@@ -152,7 +106,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * Retrieve a work from database
      * @param orcid
      * @param id
-     * @param lastModified 
+     * 
      * @return the WorkEntity associated with the parameter id
      * */
     WorkEntity getWork(String orcid, Long id);
@@ -167,5 +121,8 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
     
-    List<WorkEntity> getWorkEntities(List<Long> ids);
+    List<WorkEntity> getWorkEntities(List<Long> ids);        
+
+    @Deprecated
+    List<WorkEntity> getWorksByOrcidId(String orcid);
 }

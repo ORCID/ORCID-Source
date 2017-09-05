@@ -142,7 +142,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
-                long lastModifiedTime = getLastModified(orcid);
                 List<Work> existingWorks = this.findWorks(orcid);       
                 if (existingWorks != null) {
                     for (Work existing : existingWorks) {
@@ -158,7 +157,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        workEntity.setProfile(profile);
+        workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
         
         // Set source id 
@@ -225,7 +224,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                        workEntity.setProfile(profile);
+                        workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
                         
                         // Set source id 

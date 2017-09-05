@@ -25,7 +25,9 @@ import javax.annotation.Resource;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -44,6 +46,9 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
     
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -78,6 +83,20 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             if (params.get(OrcidOauth2Constants.NONCE) != null)
                 claims.claim(OrcidOauth2Constants.NONCE, params.get(OrcidOauth2Constants.NONCE));
             claims.claim(OrcidOauth2Constants.AUTH_TIME, profileEntityManager.getLastLogin(accessToken.getAdditionalInformation().get("orcid").toString()));
+            
+            Person person = personDetailsManagerReadOnly.getPublicPersonDetails(accessToken.getAdditionalInformation().get("orcid").toString());
+            if (person.getName() != null){
+                if (person.getName().getCreditName() != null){
+                    claims.claim("name", person.getName().getCreditName().getContent());
+                }
+                if (person.getName().getFamilyName() != null){
+                    claims.claim("family_name", person.getName().getFamilyName().getContent());
+                }
+                if (person.getName().getGivenNames() != null){
+                    claims.claim("given_name", person.getName().getGivenNames().getContent());
+                }            
+            }
+            
             SignedJWT signedJWT = keyManager.sign(claims.build());
             String idTok = signedJWT.serialize();
             accessToken.getAdditionalInformation().put(OrcidOauth2Constants.ID_TOKEN, idTok);

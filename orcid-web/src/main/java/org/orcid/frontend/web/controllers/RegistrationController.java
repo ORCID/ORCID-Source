@@ -456,9 +456,13 @@ public class RegistrationController extends BaseController {
                         String[] args = { emailAddressAdditional };
                         mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Not vaild"));
                     } else if(emailAddressAdditional.equals(reg.getEmail().getValue())){
-                        String[] codes = { "Email.personalInfoForm.additionalEmailCannotMatch" };
+                        String[] codes = { "Email.personalInfoForm.additionalEmailCannotMatchPrimary" };
                         String[] args = { emailAddressAdditional };
                         mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Additional email cannot match primary"));
+                    } else if (duplicateAdditionalEmails(reg, emailAddressAdditional)){
+                        String[] codes = { "Email.personalInfoForm.additionalEmailCannotMatchAdditional" };
+                        String[] args = { emailAddressAdditional };
+                        mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Additional email cannot match additional"));  
                     } else {
                         //Validate duplicates 
                         //If email exists
@@ -526,6 +530,20 @@ public class RegistrationController extends BaseController {
             reg.setEmailsAdditional(emailsAdditionalList);
             return reg;
         }
+    
+    public boolean duplicateAdditionalEmails(Registration reg, String emailAddressAdditional) {
+        int count = 0;
+        for(Text emailCheckAdditional : reg.getEmailsAdditional()){
+            if(emailAddressAdditional.equals(emailCheckAdditional.getValue())){
+                count++;
+            }
+        }
+        if(count > 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
         
     @RequestMapping(value = "/registerEmailConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailConfirmValidate(@RequestBody Registration reg) {

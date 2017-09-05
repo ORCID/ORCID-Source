@@ -93,6 +93,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
@@ -106,9 +107,9 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/WorksEntityData.xml", 
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
-            "/data/OrgAffiliationEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
+            "/data/BiographyEntityData.xml", "/data/WorksEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml",
+            "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml");
 
     @Resource(name = "t2OrcidApiServiceDelegatorLatest")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
@@ -118,7 +119,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     @Mock
     private UriInfo mockedUriInfo;
-
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -230,8 +231,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(4, retreivedWorksList.size());
     }
 
-    @Test
-    @Transactional
+    @Test    
     public void testUpdateExistingNonPrivateWork() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
@@ -261,6 +261,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
         List<OrcidWork> retreivedWorksList = retrievedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        assertEquals(4, retreivedWorksList.size());
         boolean foundWorkFromAnotherSource = false;
         boolean foundUpdated = false;
         boolean foundExisting = false;
@@ -270,28 +271,31 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
                 // The updated work
                 assertEquals("Updated by works update", retrievedWork.getWorkTitle().getTitle().getContent());
                 assertEquals(Visibility.PUBLIC, retrievedWork.getVisibility());
+                assertEquals("APP-5555555555555555", retrievedWork.getSource().retrieveSourcePath());
                 foundUpdated = true;
             } else if ("6".equals(retrievedWork.getPutCode())) {
                 assertEquals("Journal article B", retrievedWork.getWorkTitle().getTitle().getContent());
                 assertEquals(Visibility.LIMITED, retrievedWork.getVisibility());
+                assertEquals("4444-4444-4444-4446", retrievedWork.getSource().retrieveSourcePath());
                 foundWorkFromAnotherSource = true;
             } else if ("7".equals(retrievedWork.getPutCode())) {
                 // Existing private work
                 assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
                 assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
+                assertEquals("APP-5555555555555555", retrievedWork.getSource().retrieveSourcePath());
                 foundExisting = true;
             } else if ("8".equals(retrievedWork.getPutCode())) {
                 // Existing private work added by the user
                 assertEquals("Journal article D", retrievedWork.getWorkTitle().getTitle().getContent());
                 assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
+                assertEquals("4444-4444-4444-4446", retrievedWork.getSource().retrieveSourcePath());
                 foundExistingPrivate = true;
             }
         }
         assertTrue("Work from other source should be there", foundWorkFromAnotherSource);
         assertTrue("Updated work should be there", foundUpdated);
         assertTrue("Existing private work should be there", foundExisting);
-        assertTrue("Existing private work added by the user should be there", foundExistingPrivate);
-        assertEquals(4, retreivedWorksList.size());
+        assertTrue("Existing private work added by the user should be there", foundExistingPrivate);        
     }
 
     @Test(expected = WrongSourceException.class)

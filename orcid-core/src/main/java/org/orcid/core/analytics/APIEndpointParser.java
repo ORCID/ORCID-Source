@@ -29,6 +29,8 @@ public class APIEndpointParser {
     private static final String API_VERSION_REGEX = "v\\d{1,}.*";
 
     private static final String API_VERSION_2X_REGEX = "v2.*";
+    
+    private static final String API_VERSION_3X_REGEX = "v3.*";
 
     private static final String RECORD_CATEGORY = "record";
 
@@ -72,6 +74,9 @@ public class APIEndpointParser {
             category = path.get(categoryIndex).toString();
         } else if (apiVersion != null && apiVersion.matches(API_VERSION_2X_REGEX)) {
             // no category in URL: version 2.x so category is record
+            category = RECORD_CATEGORY;
+        } else if (apiVersion != null && apiVersion.matches(API_VERSION_3X_REGEX)) {
+            // same rule applies for v3
             category = RECORD_CATEGORY;
         } else {
             // no category in URL: version 1.x so category is orcid-bio

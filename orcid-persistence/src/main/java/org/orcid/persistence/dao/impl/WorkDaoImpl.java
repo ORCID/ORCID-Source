@@ -18,8 +18,8 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -30,7 +30,6 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
@@ -40,103 +39,6 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public WorkDaoImpl() {
         super(WorkEntity.class);
     }
-
-    /**
-     * Add a new work to the work table
-     * 
-     * @param work
-     *            The work that will be persisted
-     * @return the work already persisted on database
-     * */
-    @Override 
-    @Transactional
-    public WorkEntity addWork(WorkEntity work) {
-        this.persist(work);
-        this.flush();
-        return work;
-    }
-
-    @Override
-    @Transactional
-    public WorkEntity editWork(WorkEntity updatedWork) {
-        WorkEntity workToUpdate =  this.find(updatedWork.getId());
-        mergeWork(workToUpdate, updatedWork);
-        workToUpdate = this.merge(workToUpdate);
-        return workToUpdate;
-    }
-    
-    private void mergeWork(WorkEntity workToUpdate, WorkEntity workWithNewData) {
-        workToUpdate.setTitle(workWithNewData.getTitle());
-        workToUpdate.setTranslatedTitle(workWithNewData.getTranslatedTitle());
-        workToUpdate.setSubtitle(workWithNewData.getSubtitle());
-        workToUpdate.setDescription(workWithNewData.getDescription());
-        workToUpdate.setWorkUrl(workWithNewData.getWorkUrl());
-        workToUpdate.setCitation(workWithNewData.getCitation());
-        workToUpdate.setJournalTitle(workWithNewData.getJournalTitle());
-        workToUpdate.setLanguageCode(workWithNewData.getLanguageCode());
-        workToUpdate.setTranslatedTitleLanguageCode(workWithNewData.getTranslatedTitleLanguageCode());
-        workToUpdate.setIso2Country(workWithNewData.getIso2Country());
-        workToUpdate.setCitationType(workWithNewData.getCitationType());
-        workToUpdate.setWorkType(workWithNewData.getWorkType());
-        workToUpdate.setPublicationDate(workWithNewData.getPublicationDate());
-        workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
-        workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());        
-        workToUpdate.setVisibility(workWithNewData.getVisibility());
-        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());                
-        workToUpdate.setSourceId(workWithNewData.getSourceId());
-        workToUpdate.setClientSourceId(workWithNewData.getClientSourceId());        
-        workToUpdate.setLastModified(new Date());
-        if(workWithNewData.getAddedToProfileDate() != null) {
-            workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
-        }
-        workToUpdate.setProfile(workWithNewData.getProfile());
-    }
-
-    /**
-     * @deprecated Use {@link org.orcid.core.manager.WorkEntityCacheManager#retrieveMinimizedWorks(String, long) } instead
-     * 
-     * Find works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    @SuppressWarnings("unchecked")
-    @Cacheable(value = "dao-works", key = "#orcid.concat('-').concat(#lastModified)")
-    @Deprecated
-    public List<MinimizedWorkEntity> findWorks(String orcid, long lastModified) {
-
-        Query query = entityManager
-                .createQuery("from MinimizedWorkEntity w "
-                        + "where w.orcid=:orcid "
-                        + "order by w.displayIndex desc, w.dateCreated asc");
-        query.setParameter("orcid", orcid);
-
-        return query.getResultList();
-    }
-
-    /**
-     * @deprepcated Use {@link org.orcid.core.manager.WorkEntityCacheManager#retrievePublicMinimizedWorks(String, long)} instead
-     * 
-     * Find the public works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    @SuppressWarnings("unchecked")
-    @Cacheable(value = "dao-public-works", key = "#orcid.concat('-').concat(#lastModified)")
-    @Deprecated
-    public List<MinimizedWorkEntity> findPublicWorks(String orcid, long lastModified) {
-        Query query = entityManager
-                .createQuery("from MinimizedWorkEntity w "
-                        + "where w.visibility='PUBLIC' and w.orcid=:orcid "
-                        + "order by w.displayIndex desc, w.dateCreated asc");
-        query.setParameter("orcid", orcid);
-
-        return query.getResultList();
-    }
-
     
     @Override
     public MinimizedWorkEntity getMinimizedWorkEntity(Long id) {
@@ -249,23 +151,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workId", workId);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
-    }
-    
-    
-    /**
-     * Returns a list of work ids of works that still have old external identifiers
-     * @param limit
-     *          The batch number to fetch
-     * @return a list of work ids with old ext ids          
-     * */
-    @Override
-    @SuppressWarnings("unchecked")    
-    public List<BigInteger> getWorksWithOldExtIds(long workId, long limit) {
-        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and external_ids_json is not null order by work_id limit :limit) AS a WHERE (j->'relationship') is null");
-        query.setParameter("limit", limit);
-        query.setParameter("workId", workId);
-        return query.getResultList();
-    }
+    }    
     
     /**
      * Returns a list of work ids where the ext id relationship is null
@@ -311,7 +197,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     public WorkEntity getWork(String orcid, Long id) {
-        TypedQuery<WorkEntity> query = entityManager.createQuery("FROM WorkEntity WHERE id = :workId and profile.id = :orcid", WorkEntity.class);        
+        TypedQuery<WorkEntity> query = entityManager.createQuery("FROM WorkEntity WHERE id = :workId and orcid = :orcid", WorkEntity.class);        
         query.setParameter("workId", id);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
@@ -341,5 +227,17 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return query.executeUpdate() > 0;
     }
 
+    @Override
+    public List<WorkEntity> getWorksByOrcidId(String orcid) {
+        List<WorkEntity> works = new ArrayList<>();
+        List<WorkLastModifiedEntity> lastModifiedWorks = getWorkLastModifiedList(orcid);
+        List<Long> ids = lastModifiedWorks.stream().map(w -> w.getId()).collect(Collectors.toList());
+        for(List<Long> partition : Lists.partition(ids, 50)) {
+            TypedQuery<WorkEntity> query = entityManager.createQuery("SELECT x FROM WorkEntity x WHERE x.id IN :ids", WorkEntity.class);
+            query.setParameter("ids", partition);
+            works.addAll(query.getResultList());
+        }
+        return works;
+    }
 }
 

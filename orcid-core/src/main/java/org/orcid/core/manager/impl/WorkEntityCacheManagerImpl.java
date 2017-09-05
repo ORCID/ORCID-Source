@@ -99,7 +99,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
         CacheConfiguration config4 = minimizedWorkEntityCache.getCacheConfiguration();
         minimizedWorkEntityCacheTTI = config4.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToIdleSeconds()) : DEFAULT_TTI;
-        minimizedWorkEntityCacheTTL = config4.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToLiveSeconds()) : DEFAULT_TTL;
+        minimizedWorkEntityCacheTTL = config4.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config4.getTimeToLiveSeconds()) : DEFAULT_TTL;    
     }
 
     @Resource
@@ -160,7 +160,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         }
         return workLastModifiedList;
     }
-
+    
     @Override
     public MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
@@ -187,7 +187,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         }
         return minimizedWorkEntity;
     }
-
+    
     /**
      * Retrieves a full WorkEntity
      * 
@@ -195,7 +195,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
      * @param workLastModified
      * @return a WorkEntity
      */
-    @Override
+    @Override    
     public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
         WorkEntity workEntity = null;
@@ -222,7 +222,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         }
         return workEntity;
     }
-
+    
     /**
      * Fetches a list of minimized works - does this by checking cache and then
      * fetching all misses in one go from the DB.
@@ -302,12 +302,6 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         return this.retrieveWorkList(orcid, workIdsWithLastModified, minimizedWorkEntityCache, idList -> workDao.getMinimizedWorkEntities(idList));
     }
 
-    @Override
-    public List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified) {
-        Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
-        return retrieveWorkList(orcid, workIdsWithLastModified, fullWorkEntityCache, idList -> workDao.getWorkEntities(idList));
-    }
-
     private Map<Long, Date> retrieveWorkLastModifiedMap(String orcid, long profileLastModified) {
         List<WorkLastModifiedEntity> workLastModifiedList = retrieveWorkLastModifiedList(orcid, profileLastModified);
         // @formatter:off
@@ -363,7 +357,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         LOGGER.info("Elements on minimizedWorkEntityCache before eviction: " + minimizedWorkEntityCache.getSize());
         minimizedWorkEntityCache.evictExpiredElements();
         minimizedWorkEntityCache.flush();        
-        LOGGER.info("Elements on minimizedWorkEntityCache after eviction: " + minimizedWorkEntityCache.getSize());
+        LOGGER.info("Elements on minimizedWorkEntityCache after eviction: " + minimizedWorkEntityCache.getSize());        
     }
     
     private Element createElement(Object key, Object element, Cache cache) {
@@ -379,4 +373,62 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             return new Element(key, element, DEFAULT_TTI, DEFAULT_TTL);
         }                
     }   
+        
+    @Override
+    @Deprecated
+    public List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified) {
+        Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
+        WorkEntity[] returnArray = new WorkEntity[workIdsWithLastModified.size()];
+        List<Long> fetchList = new ArrayList<Long>();
+        Map<Long, Integer> fetchListIndexOrder = new LinkedHashMap<Long, Integer>();
+        int index = 0;
+
+        for (Long workId : workIdsWithLastModified.keySet()) {
+            // get works from the cache if we can
+            Object key = new WorkCacheKey(workId, releaseName);
+            try {
+                fullWorkEntityCache.acquireReadLockOnKey(key);
+                Element element = getElementFromCache(fullWorkEntityCache, key, orcid);
+                WorkEntity cachedWork = (WorkEntity) (element != null ? element.getObjectValue() : null);                        
+                if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(workId).getTime()) {
+                    fetchListIndexOrder.put(workId, index);
+                    fetchList.add(workId);
+                } else {
+                    returnArray[index] = cachedWork;
+                }
+                index++;
+            } finally {
+                fullWorkEntityCache.releaseReadLockOnKey(key);
+            }
+        }
+
+        // now fetch all the others that are *not* in the cache
+        if (fetchList.size() > 0) {
+            List<WorkEntity> refreshedWorks = workDao.getWorkEntities(fetchList);
+            for (WorkEntity mWorkRefreshedFromDB : refreshedWorks) {
+                Object key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
+                try {
+                    fullWorkEntityCache.acquireWriteLockOnKey(key);
+                    // check cache again here to prevent race condition
+                    // since something could have updated while we were
+                    // fetching from DB
+                    // (or can we skip because new last modified is always
+                    // going to be after profile last modified as provided)
+                    Element element = getElementFromCache(fullWorkEntityCache, key, orcid);
+                    WorkEntity cachedWork = (WorkEntity) (element != null ? element.getObjectValue() : null);                        
+                    int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
+                    if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
+                        fullWorkEntityCache.put(createElement(key, mWorkRefreshedFromDB, fullWorkEntityCache));
+                        returnArray[returnListIndex] = mWorkRefreshedFromDB;
+                    } else {
+                        returnArray[returnListIndex] = cachedWork;
+                    }
+
+                } finally {
+                    fullWorkEntityCache.releaseWriteLockOnKey(key);
+                }
+            }
+        }
+        return (List<WorkEntity>) Arrays.asList(returnArray);
+    }
 }
