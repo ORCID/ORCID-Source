@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -30,7 +31,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -39,7 +43,10 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -56,7 +63,13 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
 
     @Resource
     private WorkDao workDao;
+    
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
 
+    @Mock
+    private SourceManager mockSourceManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -70,7 +83,12 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
 
     @Before
     public void before() {
-        orcidProfileManager.clearOrcidProfileCache();
+        orcidProfileManager.clearOrcidProfileCache();        
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(new ClientDetailsEntity("APP-5555555555555555"));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
     }
 
     @Test

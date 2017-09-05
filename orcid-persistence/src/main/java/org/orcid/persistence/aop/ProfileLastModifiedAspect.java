@@ -18,11 +18,13 @@ package org.orcid.persistence.aop;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.OrcidAware;
 import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
@@ -111,6 +113,17 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         }
     }
 
+    @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(orcidAware, ..)")
+    public void updateProfileLastModified(JoinPoint joinPoint, OrcidAware orcidAware) {
+        if (!enabled) {
+            return;
+        }
+        String orcid = orcidAware.getOrcid();
+        if(!StringUtils.isEmpty(orcid)) {
+            updateProfileLastModified(joinPoint, orcid);
+        }
+    }
+    
     @Override
     public int getOrder() {
         return PRECEDENCE;

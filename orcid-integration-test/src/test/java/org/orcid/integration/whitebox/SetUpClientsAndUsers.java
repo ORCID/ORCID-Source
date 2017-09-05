@@ -31,7 +31,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos.GetBlockLocationsRequestProto;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -89,7 +88,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -99,6 +97,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -611,9 +610,9 @@ public class SetUpClientsAndUsers {
             }
 
             // Remove works
-            List<MinimizedWorkEntity> works = workDao.findWorks(orcid, 0L);
+            List<WorkLastModifiedEntity> works = workDao.getWorkLastModifiedList(orcid);
             if(works != null && !works.isEmpty()) {
-                for(MinimizedWorkEntity work : works) {
+                for(WorkLastModifiedEntity work : works) {
                     workDao.removeWork(orcid, work.getId());
                 }
             }
