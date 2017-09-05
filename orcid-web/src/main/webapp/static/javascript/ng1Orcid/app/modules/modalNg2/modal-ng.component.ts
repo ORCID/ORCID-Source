@@ -23,8 +23,9 @@ export class ModalNgComponent implements OnInit, OnDestroy {
     //@Output() onOpen = new EventEmitter<void>();
 
     private subscription: Subscription;
+    
     constructor( private modalService: ModalService ){
-        console.log('ModalNgComponent loaded');
+        console.log('ModalNgComponent loaded', modalService);
         
     }
 
@@ -54,11 +55,11 @@ export class ModalNgComponent implements OnInit, OnDestroy {
     };
 
     ngOnInit() {
-        this.subscription = this.modalService.notifyObservable.subscribe(
+        this.subscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
+                console.log('res.value',res);
                 if ( res.hasOwnProperty('option') 
-                    /*&& res.option === 'onSubmit'*/ ) {
-                    console.log('res.value',res.value);
+                    && res.option === 'onSubmit' ) {
                     // perform your other action from here
 
                 }

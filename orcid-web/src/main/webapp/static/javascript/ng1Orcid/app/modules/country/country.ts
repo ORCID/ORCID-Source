@@ -22,8 +22,7 @@ export const CountryModule = angular.module(
         ],
         
         declarations: [ 
-            CountryComponent,
-            ModalNgComponent
+            CountryComponent
         ],
         entryComponents: [ 
             CountryComponent 

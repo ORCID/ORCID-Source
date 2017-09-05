@@ -11,8 +11,10 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ModalService {
+
     private notify = new Subject<any>();
-    notifyObservable = this.notify.asObservable();
+    
+    notifyObservable$ = this.notify.asObservable();
 
     constructor(){
 

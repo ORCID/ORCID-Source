@@ -1,6 +1,11 @@
-import * as angular from 'angular';
-import { NgModule } from '@angular/core';
-import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
+import * as angular 
+    from 'angular';
+
+import { NgModule } 
+    from '@angular/core';
+
+import { downgradeComponent, UpgradeModule } 
+    from '@angular/upgrade/static';
 
 import { ModalNgComponent } from './modal-ng.component.ts';
 
@@ -21,11 +26,11 @@ export const ModalModule = angular.module(
         ],
         entryComponents: [ 
             ModalNgComponent 
-        ],
+        ]/*,
         exports: [
             ModalNgComponent,
             ModalNg2Module
-        ]
+        ]*/
     }
 )
 export class ModalNg2Module {}
