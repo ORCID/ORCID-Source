@@ -39,6 +39,7 @@ import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
 import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers;
 import org.orcid.core.constants.DefaultPreferences;
+import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -102,6 +103,7 @@ import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -164,6 +166,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     @Resource
     protected RecordNameManager recordNameManager;
     
+    @Resource
+    protected WorkDao workDao;
+    
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
         return toProfileEntity(profile, existingProfileEntity, UpdateOptions.ALL);
@@ -213,51 +218,62 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (updateOptions.isUpdateFundings()) {
             setFundings(profileEntity, orcidFundings);
         }
-        if (updateOptions.isUpdateWorks()) {
-            setWorks(profileEntity, orcidWorks);
-        }
     }
 
-    private void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
-        SortedSet<WorkEntity> workEntities = getWorkEntities(profileEntity, orcidWorks);
-        profileEntity.setWorks(workEntities);
-    }
-
-    private SortedSet<WorkEntity> getWorkEntities(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
-        SortedSet<WorkEntity> existingWorkEntities = profileEntity.getWorks();        
-        Map<String, WorkEntity> existingWorkEntitiesMap = createWorkEntitiesMap(existingWorkEntities);
-        SortedSet<WorkEntity> workEntities = null;
-        if (existingWorkEntities == null) {
-            workEntities = new TreeSet<WorkEntity>();
-        } else {
-            // To allow for orphan deletion
-            existingWorkEntities.clear();
-            workEntities = existingWorkEntities;
-        }
-        if (orcidWorks != null && orcidWorks.getOrcidWork() != null && !orcidWorks.getOrcidWork().isEmpty()) {
-            List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
-            for (OrcidWork orcidWork : orcidWorkList) {
-                WorkEntity workEntity = getWorkEntity(orcidWork, existingWorkEntitiesMap.get(orcidWork.getPutCode()));
-                if (workEntity != null) {
-                    workEntity.setProfile(profileEntity);
-                    workEntities.add(workEntity);
+    @Override
+    @Deprecated
+    public void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
+        String orcid = profileEntity.getId();
+        // Get the existing works
+        List<WorkEntity> existingWorks = workDao.getWorksByOrcidId(orcid);
+        
+        Map<Long, WorkEntity> existingWorksMap = new HashMap<Long, WorkEntity>();
+        
+        // Iterate over the existing list of works and delete the ones that are not in the orcidWorks list
+        for(WorkEntity entity : existingWorks) {
+            boolean deleteMe = true;
+            if(orcidWorks != null && orcidWorks.getOrcidWork() != null) {
+                for(OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
+                    if(!PojoUtil.isEmpty(orcidWork.getPutCode()) && entity.getId().equals(Long.valueOf(orcidWork.getPutCode()))) {
+                        deleteMe = false;
+                        break;
+                    }
                 }
             }
+            
+            if (deleteMe) {
+                try {
+                    workDao.remove(entity.getId());
+                } catch (Exception e) {
+                    throw new ApplicationException("Unable to delete work with id " + entity.getId(), e);
+                }
+            } else {
+                existingWorksMap.put(entity.getId(), entity);
+            }
+            
         }
-        return workEntities;
-    }
-
-    private Map<String, WorkEntity> createWorkEntitiesMap(SortedSet<WorkEntity> workEntities) {
-        Map<String, WorkEntity> map = new HashMap<>();
-        if (workEntities != null) {
-            for (WorkEntity workEntity : workEntities) {
-                map.put(String.valueOf(workEntity.getId()), workEntity);
+        
+        // Iterate over the list of orcidWorks and update the ones that have a put code and insert the ones that doesnt have any put code
+        if(orcidWorks != null && orcidWorks.getOrcidWork() != null) {
+            for(OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
+                if(!PojoUtil.isEmpty(orcidWork.getPutCode())) {
+                    WorkEntity updatedEntity = getWorkEntity(orcid, orcidWork, existingWorksMap.get(Long.valueOf(orcidWork.getPutCode())));
+                    updatedEntity.setLastModified(new Date());
+                    workDao.merge(updatedEntity);
+                } else {
+                    WorkEntity newEntity = getWorkEntity(orcid, orcidWork, null);
+                    Date now = new Date();
+                    newEntity.setDateCreated(now);
+                    newEntity.setLastModified(now);
+                    workDao.persist(newEntity);
+                }                
             }
         }
-        return map;
     }
-    
-    public WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
+
+    @Override
+    @Deprecated
+    public WorkEntity getWorkEntity(String orcid, OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
             if(workEntity == null) {
                 String putCode = orcidWork.getPutCode();
@@ -265,6 +281,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     throw new IllegalArgumentException("Invalid put-code was supplied: " + putCode);
                 }
                 workEntity = new WorkEntity();
+                workEntity.setOrcid(orcid);
             } else {
                 workEntity.clean();
             }
@@ -273,6 +290,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 workEntity.setCitation(workCitation.getCitation());
                 workEntity.setCitationType(CitationType.fromValue(workCitation.getWorkCitationType().value()));
             }
+            
             // New way of doing work contributors
             workEntity.setContributorsJson(getWorkContributorsJson(orcidWork.getWorkContributors()));
             workEntity.setDescription(orcidWork.getShortDescription() != null ? orcidWork.getShortDescription() : null);
@@ -308,6 +326,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setAddedToProfileDate(new Date());
             //Set source
             setSource(orcidWork.getSource(), workEntity);
+                        
             if(workEntity.getDisplayIndex() == null) {
                 workEntity.setDisplayIndex(0L);
             }

@@ -61,7 +61,6 @@
         <class>org.orcid.persistence.jpa.entities.ShibbolethAccountEntity</class>
         <class>org.orcid.persistence.jpa.entities.SubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.WebhookEntity</class>
-        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkLastModifiedEntity</class>
         <class>org.orcid.persistence.jpa.entities.GroupIdRecordEntity</class>
         <class>org.orcid.persistence.jpa.entities.UserconnectionEntity</class>
@@ -70,7 +69,8 @@
         <class>org.orcid.persistence.jpa.entities.AddressEntity</class>
         <class>org.orcid.persistence.jpa.entities.RecordNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.BiographyEntity</class>  
-        <class>org.orcid.persistence.jpa.entities.IdentifierTypeEntity</class>        
+        <class>org.orcid.persistence.jpa.entities.IdentifierTypeEntity</class>
+        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>        
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>

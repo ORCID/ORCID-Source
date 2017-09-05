@@ -63,22 +63,18 @@ import org.orcid.jaxb.model.message.ActivitiesContainer;
 import org.orcid.jaxb.model.message.Activity;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
-import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.DeactivationDate;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedPassword;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
-import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -91,8 +87,6 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OtherName;
-import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
@@ -103,7 +97,6 @@ import org.orcid.jaxb.model.message.SourceClientId;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -133,12 +126,12 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -297,8 +290,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             throw new RuntimeException(e);
         }
 
+        // Persist the profile
         profileDao.persist(profileEntity);
         profileDao.flush();
+        
+        // Then persist the works
+        if(orcidProfile.getOrcidActivities() != null && orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
+            adapter.setWorks(profileEntity, orcidProfile.getOrcidActivities().getOrcidWorks());
+        } 
+        
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
         return updatedTranslatedOrcid;
     }
@@ -382,50 +382,63 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return createdOrcidProfile;
     }
 
-    @Override
-    @Transactional
+    @Override    
     public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile) {
         return updateOrcidProfile(orcidProfile, UpdateOptions.ALL);
     }
 
-    @Override
-    @Transactional
-    public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile, UpdateOptions updateOptions) {
+    private OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile, UpdateOptions updateOptions) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
-        ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
+                Visibility defaultVisibility = Visibility.fromValue(existingProfileEntity.getActivitiesVisibilityDefault().value());
 
-        Visibility defaultVisibility = Visibility.fromValue(existingProfileEntity.getActivitiesVisibilityDefault().value());
+                if (existingProfileEntity != null) {
+                    // Dont delete the existing elements anymore
+                    // profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
+                    setWorkPrivacy(orcidProfile, defaultVisibility);
+                    setAffiliationPrivacy(orcidProfile, defaultVisibility);
+                    setFundingPrivacy(orcidProfile, defaultVisibility);
+                }
+                dedupeWorks(orcidProfile);
+                dedupeAffiliations(orcidProfile);
+                dedupeFundings(orcidProfile);
+                addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
 
-        if (existingProfileEntity != null) {
-            // Dont delete the existing elements anymore
-            // profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
-            setWorkPrivacy(orcidProfile, defaultVisibility);
-            setAffiliationPrivacy(orcidProfile, defaultVisibility);
-            setFundingPrivacy(orcidProfile, defaultVisibility);
-        }
-        dedupeWorks(orcidProfile);
-        dedupeAffiliations(orcidProfile);
-        dedupeFundings(orcidProfile);
-        addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
+                Boolean claimed = orcidProfile.getOrcidHistory() != null ? orcidProfile.getOrcidHistory().isClaimed() : existingProfileEntity.getClaimed();
 
-        Boolean claimed = orcidProfile.getOrcidHistory() != null ? orcidProfile.getOrcidHistory().isClaimed() : existingProfileEntity.getClaimed();
+                if (orcidProfile.getOrcidInternal() != null && orcidProfile.getOrcidInternal().getPreferences() != null
+                        && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() != null) {
+                    defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
+                }
+                addDefaultVisibilityToBioItems(orcidProfile, defaultVisibility, claimed);
 
-        if (orcidProfile.getOrcidInternal() != null && orcidProfile.getOrcidInternal().getPreferences() != null
-                && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() != null) {
-            defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
-        }
-        addDefaultVisibilityToBioItems(orcidProfile, defaultVisibility, claimed);
-
-        ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity, updateOptions);
-        profileEntity.setLastModified(new Date());
-        profileEntity.setIndexingStatus(IndexingStatus.PENDING);
-        profileDao.flush();
-        ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
-        profileDao.refresh(updatedProfileEntity);
-        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
-
-        orcidProfileCacheManager.put(updatedOrcidProfile);
-        return updatedOrcidProfile;
+                ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity, updateOptions);
+                profileEntity.setLastModified(new Date());
+                profileEntity.setIndexingStatus(IndexingStatus.PENDING);
+                profileDao.flush();
+                ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
+                profileDao.refresh(updatedProfileEntity);
+                
+                // Then persist the works
+                if(orcidProfile.getOrcidActivities() != null && orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
+                    adapter.setWorks(profileEntity, orcidProfile.getOrcidActivities().getOrcidWorks());
+                } else {
+                    adapter.setWorks(profileEntity, null);
+                }
+            }
+        });
+        
+        OrcidProfile profile = transactionTemplate.execute(new TransactionCallback<OrcidProfile>() {
+            @Override
+            public OrcidProfile doInTransaction(TransactionStatus status) {
+                return convertToOrcidProfile(profileDao.find(orcidProfile.getOrcidIdentifier().getPath()), LoadOptions.ALL);
+            }
+            
+        });
+        
+        return profile;
     }
 
     /**
@@ -683,7 +696,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @return
      */
     @Override
-    @Transactional
     public OrcidProfile updateOrcidWorks(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
@@ -752,8 +764,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param updatedOrcidProfile
      * @return
      */
-    @Override
-    @Transactional
+    @Override    
     public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
 
@@ -790,8 +801,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @return
      */
     @Deprecated
-    @Override
-    @Transactional
+    @Override    
     public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {
         addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid());
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
@@ -806,7 +816,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     @Override
-    @Transactional
+    @Deprecated
     public OrcidProfile updateAffiliations(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
@@ -837,8 +847,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return profileToReturn;
     }
 
-    @Override
-    @Transactional
+    @Override    
+    @Deprecated
     public OrcidProfile updateFundings(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
@@ -944,8 +954,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 activitiesVisibilityDefault, developerToolsEnabled, sendEmailFrequencyDays);
     }
 
-    @Override
-    @Transactional
+    @Override    
     public OrcidProfile updateOrcidPreferences(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
@@ -979,7 +988,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         checkUserCanHoldMoreElement(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
 
         if (compareWorksUsingScopusWay) {
-            checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
+            checkForAlreadyExistingWorks(orcid, existingOrcidWorks, updatedOrcidWorksList);
             if (existingOrcidWorks != null)
                 checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
             else
@@ -1028,7 +1037,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
     }
 
-    private void checkForAlreadyExistingWorks(OrcidWorks existingOrcidWorks, List<OrcidWork> updatedOrcidWorksList) {
+    private void checkForAlreadyExistingWorks(String orcid, OrcidWorks existingOrcidWorks, List<OrcidWork> updatedOrcidWorksList) {
         if (existingOrcidWorks != null) {
             Set<OrcidWork> existingOrcidWorksSet = new HashSet<>();
             for (OrcidWork existingWork : existingOrcidWorks.getOrcidWork()) {
@@ -1039,10 +1048,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 for (OrcidWork orcidWork : existingOrcidWorksSet) {
                     if (orcidWork.isDuplicated(updatedWork)) {
                         // Update the existing work
-                        long workId = Long.valueOf(orcidWork.getPutCode());
-                        WorkEntity workEntity = workDao.find(workId);
+                        WorkEntity workEntity = workDao.find(Long.valueOf(orcidWork.getPutCode()));
                         workEntity.clean();
-                        workEntity = jaxb2JpaAdapter.getWorkEntity(updatedWork, workEntity);
+                        workEntity = jaxb2JpaAdapter.getWorkEntity(orcid, updatedWork, workEntity);
                         workDao.persist(workEntity);
                         // Since it was already updated, remove it from the list
                         // of updated works
@@ -1293,8 +1301,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
             // Create the work entity
-            WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
-            workEntity.setProfile(profileEntity);
+            WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(orcid, updatedOrcidWork, null);            
             workDao.persist(workEntity);
             updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));
             if (updatedOrcidWork.getWorkTitle() != null && updatedOrcidWork.getWorkTitle().getTitle() != null) {
@@ -1373,60 +1380,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return dedupedOrcidWorks;
     }
 
-    @Override
-    @Transactional
-    @Deprecated
-    public OrcidProfile deactivateOrcidProfile(OrcidProfile existingOrcidProfile) {
-        OrcidProfile blankedOrcidProfile = new OrcidProfile();
-
-        OrcidBio existingBio = existingOrcidProfile.getOrcidBio();
-
-        OrcidBio minimalBio = new OrcidBio();
-
-        ContactDetails minimalContactDetails = new ContactDetails();
-        minimalContactDetails.getEmail().addAll(existingBio.getContactDetails().getEmail());
-
-        OrcidInternal minimalOrcidInternal = new OrcidInternal();
-        minimalOrcidInternal.setSecurityDetails(existingOrcidProfile.getOrcidInternal().getSecurityDetails());
-
-        OrcidHistory deactivatedOrcidHistory = existingOrcidProfile.getOrcidHistory();
-        deactivatedOrcidHistory.setDeactivationDate(new DeactivationDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-
-        blankedOrcidProfile.setOrcidHistory(deactivatedOrcidHistory);
-
-        // only names names from bio with a visibility setting
-        PersonalDetails minimalPersonalDetails = new PersonalDetails();
-        minimalPersonalDetails.setOtherNames(null);
-        CreditName creditName = new CreditName();
-        creditName.setVisibility(Visibility.PUBLIC);
-        minimalPersonalDetails.setCreditName(creditName);
-        minimalPersonalDetails.setGivenNames(new GivenNames("Given Names Deactivated"));
-        minimalPersonalDetails.setFamilyName(new FamilyName("Family Name Deactivated"));
-
-        for (Email email : minimalContactDetails.getEmail()) {
-            setVisibilityToPrivate(email);
-        }
-        setVisibilityToPrivate(minimalPersonalDetails.getOtherNames());
-        if (minimalPersonalDetails.getOtherNames() != null && minimalPersonalDetails.getOtherNames().getOtherName() != null) {
-            for (OtherName name : minimalPersonalDetails.getOtherNames().getOtherName())
-                setVisibilityToPrivate(name);
-        }
-
-        minimalBio.setPersonalDetails(minimalPersonalDetails);
-        minimalBio.setContactDetails(minimalContactDetails);
-        minimalBio.setBiography(new Biography());
-        minimalBio.setExternalIdentifiers(new ExternalIdentifiers());
-        blankedOrcidProfile.setOrcidBio(minimalBio);
-        blankedOrcidProfile.setOrcidIdentifier(existingOrcidProfile.getOrcidIdentifier().getPath());
-
-        OrcidProfile profileToReturn = updateOrcidProfile(blankedOrcidProfile);
-
-        userConnectionDao.deleteByOrcid(existingOrcidProfile.getOrcidIdentifier().getPath());
-
-        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
-        return profileToReturn;
-    }
-
     /**
      * Set the locked status of an account to true
      * 
@@ -1467,29 +1420,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (PojoUtil.isEmpty(orcid))
             return false;
         return profileDao.isLocked(orcid);
-    }
-
-    /**
-     * Reactivate an inactive profile
-     */
-    public OrcidProfile reactivateOrcidProfile(OrcidProfile deactivatedOrcidProfile) {
-        OrcidHistory deactivatedOrcidHistory = deactivatedOrcidProfile.getOrcidHistory();
-        deactivatedOrcidHistory.setDeactivationDate(null);
-        OrcidProfile profileToReturn = updateOrcidProfile(deactivatedOrcidProfile);
-        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
-        return profileToReturn;
-    }
-
-    private void setVisibilityToPrivate(VisibilityType visibilityType) {
-        if (visibilityType != null) {
-            visibilityType.setVisibility(Visibility.PRIVATE);
-        }
-    }
-
-    private void setVisibilityToPrivate(OtherNames visibilityType) {
-        if (visibilityType != null) {
-            visibilityType.setVisibility(Visibility.PRIVATE);
-        }
     }
 
     /**

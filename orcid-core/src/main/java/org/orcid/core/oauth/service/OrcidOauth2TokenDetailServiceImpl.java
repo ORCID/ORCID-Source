@@ -16,6 +16,7 @@
  */
 package org.orcid.core.oauth.service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -240,8 +241,16 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         }
         Date now = new Date();
         for (OrcidOauth2TokenDetail token : existingTokens) {
-            if (token.getTokenExpiration() != null && token.getTokenExpiration().after(now)) {
-                return true;
+            if (token.getTokenExpiration() != null && token.getTokenExpiration().after(now) && (token.getTokenDisabled() == null || !token.getTokenDisabled())) {
+                // Verify the token have at least one of the required scopes
+                List<String> scopes = Arrays.asList(ScopePathType.ACTIVITIES_UPDATE.value(), ScopePathType.AFFILIATIONS_CREATE.value(), ScopePathType.AFFILIATIONS_UPDATE.value());
+                if(!PojoUtil.isEmpty(token.getScope())) {
+                    for(String scope : token.getScope().split(" ")) {
+                        if(scopes.contains(scope.trim())) {
+                            return true;
+                        }
+                    }
+                }
             }
         }
         return false;

@@ -20,36 +20,38 @@ import java.util.Comparator;
 import java.util.Date;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.record_v2.CitationType;
 
-/**
- * orcid-entities - Dec 6, 2011 - WorkEntity
- * 
- * @author Declan Newman (declan)
- */
 @Entity
 @Table(name = "work")
-public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>, ProfileAware, DisplayIndexInterface {
+public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>, DisplayIndexInterface, OrcidAware {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1938355431548785244L;
+    protected String orcid;
+    protected String citation;
+    protected Iso3166Country iso2Country;
+    protected CitationType citationType;
+    protected String contributorsJson;
+    protected Date addedToProfileDate;
+    
+    @Column(name = "orcid", updatable = false, insertable = true)
+    public String getOrcid() {
+        return orcid;
+    }
 
-    private static final long serialVersionUID = 1L;
-
-    private String citation;
-    private Iso3166Country iso2Country;
-    private CitationType citationType;
-    private String contributorsJson;
-    private ProfileEntity profile;
-    private Date addedToProfileDate;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
+    }
 
     @Column(name = "citation", length = 5000)
     public String getCitation() {
@@ -91,23 +93,6 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
         this.iso2Country = iso2Country;
     }
 
-    /**
-     * @return the profile
-     */
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "orcid", nullable = true)
-    public ProfileEntity getProfile() {
-        return profile;
-    }
-
-    /**
-     * @param profile
-     *            the profile to set
-     */
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
-    }
-
     @Column(name = "added_to_profile_date")
     public Date getAddedToProfileDate() {
         return addedToProfileDate;
@@ -116,28 +101,25 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
     public void setAddedToProfileDate(Date addedToProfileDate) {
         this.addedToProfileDate = addedToProfileDate;
     }
-
+    
     @Override
     public int compareTo(WorkEntity other) {
         if (other == null) {
             throw new NullPointerException("Can't compare with null");
         }
 
-        int comparison = compareOrcidId(other);
+        int comparison = comparePublicationDate(other);
         if (comparison == 0) {
-            comparison = comparePublicationDate(other);
+            comparison = compareTitles(other);
             if (comparison == 0) {
-                comparison = compareTitles(other);
-                if (comparison == 0) {
-                    return compareIds(other);
-                }
-            }
+                return compareIds(other);
+            }            
         }
 
         return comparison;
     }
 
-    private int compareTitles(WorkEntity other) {
+    protected int compareTitles(WorkEntity other) {
         if (other.getTitle() == null) {
             if (title == null) {
                 return 0;
@@ -151,7 +133,7 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
         return title.compareToIgnoreCase(other.getTitle());
     }
 
-    private int compareIds(WorkEntity other) {
+    protected int compareIds(WorkEntity other) {
         if (other.getId() == null) {
             if (id == null) {
                 if (equals(other)) {
@@ -171,7 +153,7 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
         return id.compareTo(other.getId());
     }
 
-    private int comparePublicationDate(WorkEntity other) {
+    protected int comparePublicationDate(WorkEntity other) {
         if (other.getPublicationDate() == null) {
             if (this.publicationDate == null) {
                 return 0;
@@ -183,20 +165,6 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
         }
 
         return this.publicationDate.compareTo(other.getPublicationDate());
-    }
-
-    private int compareOrcidId(WorkEntity other) {
-        if (this.getProfile() == null) {
-            if (other.getProfile() == null) {
-                return 0;
-            } else {
-                return -1;
-            }
-        } else if (other.getProfile() == null) {
-            return 1;
-        } else {
-            return this.getProfile().getId().compareTo(other.getProfile().getId());
-        }
     }
 
     public static class ChronologicallyOrderedWorkEntityComparator implements Comparator<WorkEntity> {
@@ -218,7 +186,7 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
             return comparison;
         }
     }
-
+    
     /**
      * Clean simple fields so that entity can be reused.
      */
@@ -235,5 +203,4 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
         languageCode = null;
         iso2Country = null;
     }
-
 }

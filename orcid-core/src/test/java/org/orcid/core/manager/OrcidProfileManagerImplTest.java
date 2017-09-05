@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -41,6 +43,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
@@ -125,8 +129,11 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
+import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -175,7 +182,13 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     
     @Resource
     private ProfileFundingDao profileFundingDao;
+    
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
 
+    @Mock
+    private SourceManager mockSourceManager;
+    
     @Before
     @Transactional
     @Rollback
@@ -237,6 +250,12 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         }
         
         orcidProfileManager.setCompareWorksUsingScopusWay(true);
+    
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(clientDetails);
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);    
     }
 
     @After
@@ -1248,42 +1267,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Test
     @Transactional
     @Rollback(true)
-    public void testDeactivateProfile() {
-        OrcidProfile profile1 = createBasicProfile();
-        profile1.getOrcidBio().getPersonalDetails().setCreditName(new CreditName("My Credit Name"));
-        ExternalIdentifiers extIds = new ExternalIdentifiers();
-        ExternalIdentifier extId = new ExternalIdentifier();
-        extId.setExternalIdCommonName(new ExternalIdCommonName("External body"));
-        extId.setExternalIdReference(new ExternalIdReference("abc123"));
-        extIds.getExternalIdentifier().add(extId);
-        profile1.getOrcidBio().setExternalIdentifiers(extIds);
-        
-        OtherNames otherNames = new OtherNames();
-        otherNames.addOtherName("OtherName 1",null);
-        otherNames.addOtherName("OtherName 2",null);
-        
-        profile1.getOrcidBio().getPersonalDetails().setOtherNames(otherNames);
-        
-        profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
-        assertEquals(1, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(2, profile1.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
-        assertEquals("My Credit Name", profile1.getOrcidBio().getPersonalDetails().getCreditName().getContent());        
-        assertEquals(Visibility.PRIVATE, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
-        
-        orcidProfileManager.deactivateOrcidProfile(profile1);
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-        assertTrue(retrievedProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().isEmpty());
-        assertNull(retrievedProfile.getOrcidBio().getPersonalDetails().getCreditName());
-        assertEquals(0, retrievedProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());       
-        assertEquals("Given Names Deactivated", retrievedProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals("Family Name Deactivated", retrievedProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        assertNull(retrievedProfile.getOrcidBio().getBiography().getContent());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
     public void testRetrieveProfileWhenNonExistant() {
         OrcidProfile orcidProfile = orcidProfileManager.retrievePublicOrcidProfile("1234-5678-8765-4321");
         assertNull(orcidProfile);
@@ -1854,7 +1837,10 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile = getWorkInsideOrcidProfile("w3", orcidId);
         orcidProfileManager.addOrcidWorks(profile);
         
-        List<MinimizedWorkEntity> all = workDao.findWorks(orcidId, System.currentTimeMillis());
+        List<WorkLastModifiedEntity> wlme = workDao.getWorkLastModifiedList(orcidId);
+        List<Long> ids = wlme.stream().map((w) -> w.getId()).collect(Collectors.toList());
+        
+        List<MinimizedWorkEntity> all = workDao.getMinimizedWorkEntities(ids);
         assertNotNull(all);
         Long displayIndex1 = null;
         Long displayIndex2 = null;

@@ -69,7 +69,7 @@ export const SwitchUserCtrl = angular.module('orcidApp').controller(
 
             $scope.switchUser = function(targetOrcid){
                 $.ajax({
-                    url: getBaseUri() + '/switch-user?j_username=' + targetOrcid,
+                    url: getBaseUri() + '/switch-user?username=' + targetOrcid,
                     dataType: 'json',
                     complete: function(data) {
                         window.location.reload();

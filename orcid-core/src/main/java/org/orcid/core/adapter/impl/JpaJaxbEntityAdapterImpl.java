@@ -25,6 +25,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -54,12 +55,7 @@ public class JpaJaxbEntityAdapterImpl implements JpaJaxbEntityAdapter {
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile) {
         return jaxb2JpaAdapter.toProfileEntity(profile, null);
-    }
-    
-    @Override
-    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
-        return jaxb2JpaAdapter.toProfileEntity(profile, existingProfileEntity);
-    }
+    }    
     
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity, UpdateOptions updateOptions) {
@@ -85,6 +81,12 @@ public class JpaJaxbEntityAdapterImpl implements JpaJaxbEntityAdapter {
     @Override
     public DisambiguatedOrganization getDisambiguatedOrganization(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         return jpa2JaxbAdapter.getDisambiguatedOrganization(orgDisambiguatedEntity);
+    }
+
+    @Override
+    @Deprecated
+    public void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
+        jaxb2JpaAdapter.setWorks(profileEntity, orcidWorks);        
     }
 
 }
