@@ -137,7 +137,8 @@
                             <tr ng-repeat="contact in contacts.contactsList">
                                 <td><b>{{contact.name}}</b><br>
                                 {{contact.email}}<br>
-                                <a href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
+                                <a ng-if="contact.orcid" href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
+                                <span ng-if="!contact.orcid" class="orcid-error"><@spring.message "manage_consortium.this_contact_does_not_1"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_2.link"><@spring.message "manage_consortium.this_contact_does_not_2"/></a> <@spring.message "manage_consortium.this_contact_does_not_3"/></span>
                                 </td>
                                 <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!memberDetails.allowedFullAccess || !contacts.permissionsByContactRoleId[contact.role.id].allowedEdit"></input></td>
                                 <td>
