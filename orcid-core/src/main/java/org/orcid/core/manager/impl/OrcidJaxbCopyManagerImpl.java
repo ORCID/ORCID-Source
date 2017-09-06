@@ -163,6 +163,9 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
                 // mentioned
             	addSourceToActivity(updatedActivity, targetSource);
             }
+            if(updatedActivity instanceof OrcidWork) {
+                ((OrcidWork) updatedActivity).setModified(true);
+            }
         }
         existingActivities.retrieveActivities().addAll((List) updatedActivities.retrieveActivities());
     }
