@@ -333,12 +333,12 @@ kind of variable. This temp value is only used in this macro lib -->
  	</div>
 </#macro>
 
-<#macro privacyToggle3Ng2 publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle=""> 
+<#macro privacyToggle3Ng2 angularModel publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle=""> 
     <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
         <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
-            <li class="publicActive" [ngClass]="{publicInActive: default_visibility != 'PUBLIC'}"><a (click)="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
-            <li class="limitedActive" [ngClass]="{limitedInActive: default_visibility != 'LIMITED'}"><a (click)="${limitedClick}" name="privacy-toggle-3-limited" id="${limitedId}"></a></li>
-            <li class="privateActive" [ngClass]="{privateInActive: default_visibility != 'PRIVATE'}"><a (click)="${privateClick}"  name="privacy-toggle-3-private" id="${privateId}"></a></li>
+            <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a (click)="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
+            <li class="limitedActive" [ngClass]="{limitedInActive: ${angularModel} != 'LIMITED'}"><a (click)="${limitedClick}" name="privacy-toggle-3-limited" id="${limitedId}"></a></li>
+            <li class="privateActive" [ngClass]="{privateInActive: ${angularModel} != 'PRIVATE'}"><a (click)="${privateClick}"  name="privacy-toggle-3-private" id="${privateId}"></a></li>
         </ul>
     </div>
     <div class="popover-help-container" >
