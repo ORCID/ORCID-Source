@@ -114,6 +114,46 @@ public class AnalyticsProcessTest {
     }
     
     @Test
+    public void testAnalyticsProcessForPublicClientWithAmpersand() throws InterruptedException {
+        String clientDetailsId = "some-client-details-id";
+        Mockito.when(clientDetailsEntityCacheManager.retrieve(Mockito.eq(clientDetailsId))).thenReturn(getPublicClientWithAmpersand());
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("1234-4321-1234-4321"))).thenReturn(getProfileEntity());
+
+        ContainerRequest request = getRequest();
+        ContainerResponse response = getResponse(request);
+
+        AnalyticsProcess process = new AnalyticsProcess();
+        process.setRequest(request);
+        process.setResponse(response);
+        process.setClientDetailsId(clientDetailsId);
+        process.setAnalyticsClient(analyticsClient);
+        process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
+        process.setProfileEntityCacheManager(profileEntityCacheManager);
+        process.setPublicApi(true);
+        process.setIp("37.14.150.83");
+        process.setScheme("https");
+
+        Thread t = new Thread(process);
+        t.start();
+        t.join();
+
+        ArgumentCaptor<AnalyticsData> captor = ArgumentCaptor.forClass(AnalyticsData.class);
+        Mockito.verify(analyticsClient).sendAnalyticsData(captor.capture());
+
+        AnalyticsData data = captor.getValue();
+        assertNotNull(data);
+        assertEquals("POST", data.getMethod());
+        assertEquals("works", data.getCategory());
+        assertEquals("Public API v2.0", data.getApiVersion());
+        assertEquals(ClientType.PUBLIC_CLIENT.value() + " | a public + client - some-client-details-id", data.getClientDetailsString());
+        assertEquals("37.14.150.0", data.getIpAddress());
+        assertEquals(Integer.valueOf(200), data.getResponseCode());
+        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
+        assertEquals("blah", data.getUserAgent());
+        assertEquals(MediaType.APPLICATION_XML, data.getContentType());
+    }
+    
+    @Test
     public void testSchemeCorrection() throws InterruptedException {
         String clientDetailsId = "some-client-details-id";
         Mockito.when(clientDetailsEntityCacheManager.retrieve(Mockito.eq(clientDetailsId))).thenReturn(getPublicClient());
@@ -646,7 +686,14 @@ public class AnalyticsProcessTest {
         client.setClientType(ClientType.PUBLIC_CLIENT);
         return client;
     }
-
+    
+    private ClientDetailsEntity getPublicClientWithAmpersand() {
+        ClientDetailsEntity client = new ClientDetailsEntity();
+        client.setClientName("a public & client");
+        client.setClientType(ClientType.PUBLIC_CLIENT);
+        return client;
+    }
+    
     private ProfileEntity getProfileEntity() {
         ProfileEntity profileEntity = new ProfileEntity();
         profileEntity.setId("1234-4321-1234-4321");
