@@ -74,7 +74,7 @@
                 <span class="orcid-error" ng-show="register.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
                     <div ng-repeat='error in register.email.errors' ng-bind-html="error"></div>
                 </span>
-                <span class="orcid-error" ng-show="showDeactivatedError[$index]" ng-cloak>
+                <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
