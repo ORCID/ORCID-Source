@@ -212,9 +212,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         Assert.assertEquals(200,d.getStatus());
         JSONObject dObj = d.getEntity(JSONObject.class);
         assertEquals(dObj.get("issuer").toString(),"https://orcid.org");
-
     }
-    
     
     @Test
     public void testImplicitOauth() throws URISyntaxException, ParseException, JOSEException, JSONException, InvalidHashException{
@@ -277,21 +275,5 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         assertEquals(map.get("error"),"invalid_client");
         assertEquals(map.get("error_description"),"Unauthorized grant type: implicit");         
     }
-    
-    public void testImplicitInvalidScope(){
-        //TODO: check you can't ask for implicit update permissions
-        //Behaves weird anyway - check behaviour on live service.
-        HashMap<String,String> requestParams = new HashMap<String,String>();
-        requestParams.put("nonce", "yesMate");
-        requestParams.put("state", "Boaty McBoatface");
-       String response = getImplicitTokenResponse(Lists.newArrayList("/activities/update"),requestParams);        
-       System.out.println("xx -- "+response);
-    }
-    
-    //TODO: implement.  Complicated!
-    public void testPromptNoneForLoggedInUser() throws InterruptedException{
-        
-    }
-    
     
 }

@@ -21,12 +21,10 @@ import java.util.Set;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.oauth.OrcidImplicitTokenGranter.ImplicitScopes;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.ClientDetails;
