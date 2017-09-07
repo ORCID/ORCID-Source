@@ -26,6 +26,7 @@ import javax.ws.rs.HttpMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.analytics.AnalyticsData;
 import org.orcid.core.analytics.client.AnalyticsClient;
+import org.orcid.core.togglz.Features;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,7 +64,7 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
     protected static final String CONTENT_TYPE_PARAM = "cd2";
 
     protected static final String RESPONSE_CODE_PARAM = "cd3";
-    
+
     protected static final String CLIENT_PARAM = "cd4";
 
     @Value("${org.orcid.core.api.analytics.trackingCode:}")
@@ -81,6 +82,11 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
 
     private void recordEvent(AnalyticsData data) {
         String payload = getEventPayload(data);
+
+        if (Features.API_ANALYTICS_DEBUG.isActive()) {
+            LOGGER.info("Posting API analytics data: {}\npayload: {}", new Object[] { data.toString(), payload });
+        }
+
         postData(payload);
     }
 
@@ -98,8 +104,7 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
             int response = connection.getResponseCode();
 
             if (response != 200) {
-                LOGGER.warn("Analytics: received response code " + response);
-                LOGGER.warn("Payload was: " + payload);
+                LOGGER.warn("Analytics: received response code {}, payload was {}", new Object[] { response, payload });
             }
             connection.disconnect();
         } catch (IOException e) {
