@@ -90,6 +90,7 @@
 				<ref bean="clientCredentialsTokenGranter" />
 				<ref bean="authorizationCodeTokenGranter" />
 				<ref bean="refreshTokenTokenGranter" />
+				<ref bean="orcidImplicitTokenGranter" />
 			</list>
 		</constructor-arg>
 	</bean>
@@ -107,6 +108,12 @@
 	<!-- The 'granter responsible for returning and removing the auth codes -->
 	<bean id="authorizationCodeTokenGranter" class="org.orcid.core.oauth.OrcidAuthorizationCodeTokenGranter">
 		<constructor-arg ref="orcidAuthorizationCodeService" />
+		<constructor-arg ref="tokenServices" />
+		<constructor-arg ref="clientDetailsManager" />
+		<constructor-arg ref="oAuth2RequestFactory" />
+	</bean>
+	
+	<bean id="orcidImplicitTokenGranter" class="org.orcid.core.oauth.OrcidImplicitTokenGranter">
 		<constructor-arg ref="tokenServices" />
 		<constructor-arg ref="clientDetailsManager" />
 		<constructor-arg ref="oAuth2RequestFactory" />

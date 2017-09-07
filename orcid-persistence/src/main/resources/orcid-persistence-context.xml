@@ -195,6 +195,7 @@
     </bean>
 
     <bean id="clientScopeDao" class="org.orcid.persistence.dao.impl.ClientScopeDaoImpl" />            
+<bean id="clientAuthorizedGrantTypeDao" class="org.orcid.persistence.dao.impl.ClientAuthorizedGrantTypeDaoImpl" />
 
     <bean id="givenPermissionToDao" class="org.orcid.persistence.dao.impl.GivenPermissionToDaoImpl" />
 

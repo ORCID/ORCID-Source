@@ -487,6 +487,21 @@ public class BlackBoxBase {
         return token;
     }
     
+    /** Implicit Tokens
+     * @returns url
+     */
+    public String getImplicitTokenResponse(List<String> scopes, Map<String,String> params){
+        return getImplicitTokenResponse(getClient1ClientId(), scopes, getUser1OrcidId(), getUser1Password(), getClient1RedirectUri(),params, "token");
+    }
+    
+    public String getImplicitTokenResponse(String clientId, List<String> scopes, String userName, String userPassword, String clientRedirectUri, Map<String,String> params, String responseType) {                
+        String scopesString = StringUtils.join(scopes, " ");
+        WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);                        
+        String response = oauthHelper.obtainImplicitTokenResponse(clientId, scopesString, userName, userPassword, clientRedirectUri,params,responseType);
+        return response;
+    }
+    
     /**
      * PERSONAL NAMES
      */

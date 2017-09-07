@@ -73,6 +73,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     private int writeValiditySeconds;
     @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
     private int readValiditySeconds;
+    @Value("${org.orcid.core.token.implicit_validity_seconds:600}")
+    private int implicitValiditySeconds;
     
     private TokenStore orcidTokenStore;
 
@@ -153,6 +155,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             if (allAreClientCredentialsScopes) {
                 return readValiditySeconds;
             }
+        } else if(OrcidOauth2Constants.IMPLICIT_GRANT_TYPE.equals(authorizationRequest.getGrantType())){
+            return implicitValiditySeconds;
         } else if (isPersistentTokenEnabled(authorizationRequest)) {
             return readValiditySeconds;
         }

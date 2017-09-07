@@ -32,6 +32,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos.GetBlockLocationsRequestProto;
+import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,6 +86,7 @@ import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -350,8 +352,8 @@ public class SetUpClientsAndUsers {
         if (client1 == null) {
             createClient(client1Params, clientType);
         } else {
+            clientDetailsManager.addAuthorizedGrantTypeToClient(Sets.newHashSet("implicit"), client1);
             clientDetailsManager.addScopesToClient(getScopes(client1Params, clientType), client1);
-            
         }
 
         // Create client 2
@@ -665,6 +667,9 @@ public class SetUpClientsAndUsers {
         clientAuthorizedGrantTypes.add("client_credentials");
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
+        if (client1ClientId.equals(params.get(CLIENT_ID))){
+            clientAuthorizedGrantTypes.add("implicit");
+        }
         
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
         RedirectUri redirectUri = new RedirectUri(params.get(REDIRECT_URI));

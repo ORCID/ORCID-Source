@@ -133,7 +133,7 @@ public class LoginController extends OauthControllerBase {
 
         // validate client scopes
         try {
-            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);
+            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails,requestInfoForm.getResponseType());
         } catch (InvalidScopeException e) {
             String redirectUriWithParams = redirectUri + "?error=invalid_scope&error_description=" + e.getMessage();
             return new ModelAndView(new RedirectView(redirectUriWithParams));

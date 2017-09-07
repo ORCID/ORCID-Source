@@ -30,14 +30,16 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class OauthAuthorizationPageHelper {
 
-    public static String authorizationScreenUrl = "%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s";
+    public static final String authorizationScreenUrl = "%s/oauth/authorize?client_id=%s&response_type=%s&scope=%s&redirect_uri=%s";
+    public static final String authorizationScreenUrlWithCode = "%s/oauth/authorize?client_id=%s&response_type=%s&scope=%s&redirect_uri=%s";
+    public static final String RESPONSE_TYPE_CODE = "code";
     
     public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password, boolean longLife, WebDriver webDriver) {
-        return loginAndAuthorize(baseUrl, clientId,  redirectUri, scopes, stateParam, userId, password, longLife, null, webDriver);
+        return loginAndAuthorize(baseUrl, clientId,  redirectUri, scopes, stateParam, userId, password, longLife, null, webDriver,RESPONSE_TYPE_CODE);
     }
     
-    public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password, boolean longLife, Map<String,String> params,WebDriver webDriver) {
-        String formattedAuthorizationScreen = String.format(authorizationScreenUrl, baseUrl, clientId, scopes, redirectUri);
+    public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password, boolean longLife, Map<String,String> params,WebDriver webDriver, String responseType) {
+        String formattedAuthorizationScreen = String.format(authorizationScreenUrlWithCode, baseUrl, clientId, responseType, scopes, redirectUri);
         if(!PojoUtil.isEmpty(stateParam)) {
             formattedAuthorizationScreen += "&state=" + stateParam;
         }
@@ -93,7 +95,7 @@ public class OauthAuthorizationPageHelper {
     }
     
     public static String authorizeOnAlreadyLoggedInUser(final WebDriver loggedInDriver, String baseUrl, String clientId, String redirectUri, String scopes, String stateParam) {
-        String formattedAuthorizationScreen = String.format(authorizationScreenUrl, baseUrl, clientId, scopes, redirectUri);
+        String formattedAuthorizationScreen = String.format(authorizationScreenUrl, baseUrl, clientId,scopes, redirectUri);
         
         if(!PojoUtil.isEmpty(stateParam)) {
             formattedAuthorizationScreen += "&state=" + stateParam;

@@ -171,4 +171,8 @@ public class OauthHelper {
     public void closeWebDriver() {
         webDriverHelper.close();
     }
+
+    public String obtainImplicitTokenResponse(String clientId, String scopesString, String userName, String userPassword, String clientRedirectUri, Map<String, String> params, String responseType) {
+        return webDriverHelper.obtainImplicitTokenResponse(clientId, scopesString, userName, userPassword,clientRedirectUri,params,responseType);
+    }
 }

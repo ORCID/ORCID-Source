@@ -50,6 +50,7 @@ public class OrcidTokenEnhancer implements TokenEnhancer {
             additionalInfo.putAll(result.getAdditionalInformation());
         }
 
+        //TODO: decide if we want these in implicit responses...
         // If the additional info object already contains the orcid info, leave
         // it
         if (!additionalInfo.containsKey("orcid")) {

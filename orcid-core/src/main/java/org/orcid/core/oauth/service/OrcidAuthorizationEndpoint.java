@@ -104,14 +104,15 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
      * Validate if the given client have the defined scope
      * @param scopes a space or comma separated list of scopes
      * @param clientDetails
+     * @param responseType
      * @throws InvalidScopeException in case the given client doesnt have any of the given scopes
      * */
-    public void validateScope(String scopes, ClientDetails clientDetails) throws InvalidScopeException {
+    public void validateScope(String scopes, ClientDetails clientDetails, String responseType) throws InvalidScopeException {
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(OAuth2Utils.SCOPE, scopes);
         
         //Check the user have permissions to the other scopes
-        orcidOAuth2RequestValidator.validateParameters(parameters, clientDetails);
+        orcidOAuth2RequestValidator.validateParameters(parameters, clientDetails,responseType);
     }       
     
     private URI buildRedirectUri(ServletWebRequest webRequest) throws URISyntaxException {
