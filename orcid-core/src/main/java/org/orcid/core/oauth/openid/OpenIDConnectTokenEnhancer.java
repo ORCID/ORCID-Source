@@ -20,13 +20,13 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -40,9 +40,13 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import com.nimbusds.openid.connect.sdk.claims.AccessTokenHash;
 
 public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
     
@@ -71,8 +75,6 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         if (PojoUtil.isEmpty(scopes) || !ScopePathType.getScopesFromSpaceSeparatedString(scopes).contains(ScopePathType.OPENID) ){
             return accessToken;
         }
-        //TODO check persistentToken? (additionalinfo.get("persistent") is always false (set by OrcidTokenEnhancer).  Request grantPersistentToken is always true (set by spring).  LOL
-        
         //inject the OpenID Connect "id_token" (authn).  This is distinct from the access token (authz), so is for transporting info to the client only
         //this means we do not have to support using them for authentication purposes. Some APIs support it, but it is not part of the spec.          
         try {
@@ -130,20 +132,6 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
      * @return
      */
     private String createAccessTokenHash(String accessToken){
-        try {
-            byte[] bytes = accessToken.getBytes("UTF-8");
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            digest.update(bytes, 0, bytes.length);
-            bytes = digest.digest();
-            bytes = Arrays.copyOfRange(bytes, 0, 127);
-            return Base64.getEncoder().encodeToString(bytes);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        return null;
+        return AccessTokenHash.compute(new BearerAccessToken(accessToken), JWSAlgorithm.RS256).toString();
     }
 }

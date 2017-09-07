@@ -48,14 +48,22 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.Lists;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import com.nimbusds.openid.connect.sdk.claims.AccessTokenHash;
+import com.nimbusds.openid.connect.sdk.validators.AccessTokenValidator;
+import com.nimbusds.openid.connect.sdk.validators.InvalidHashException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
@@ -74,7 +82,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     
     //client must have openid scope.
     @Test
-    public void checkIDTokenAndUserInfo() throws InterruptedException, JSONException, ParseException, URISyntaxException, JOSEException {
+    public void checkIDTokenAndUserInfo() throws InterruptedException, JSONException, ParseException, URISyntaxException, JOSEException, InvalidHashException {
         //Get id token
         String clientId = getClient1ClientId();
         String clientRedirectUri = getClient1RedirectUri();
@@ -119,7 +127,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         Assert.assertEquals("9999-0000-0000-0004",user.get("sub"));
     }
 
-    private void checkJWT(String id) throws ParseException, JOSEException {
+    private SignedJWT checkJWT(String id) throws ParseException, JOSEException, InvalidHashException {
         SignedJWT signedJWT = SignedJWT.parse(id);  
         Assert.assertEquals("https://orcid.org",signedJWT.getJWTClaimsSet().getIssuer());
         Assert.assertEquals("9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getSubject());
@@ -139,6 +147,8 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         //check sig
         JWSVerifier verifier = new RSASSAVerifier(jwk);
         Assert.assertTrue(signedJWT.verify(verifier));
+                
+        return signedJWT;
     }
     
     @Test
@@ -169,18 +179,28 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     
     @Test
     public void testPromptNone() throws InterruptedException{
-        String clientId = getClient1ClientId();
-        String clientRedirectUri = getClient1RedirectUri();
-        String userId = getUser1OrcidId();
-        String password = getUser1Password();
-        String scope = "openid";
+        //test prompt none for logged in user
+        /*The Authorization Server MUST NOT display any authentication or consent user interface pages. 
+         * An error is returned if an End-User is not already authenticated or the Client does not have 
+         * pre-configured consent for the requested Claims or does not fulfill other conditions for 
+         * processing the request. The error code will typically be login_required, interaction_required.
+         */
         HashMap<String,String> params = new HashMap<String,String>();
         params.put("nonce", "yesMate");
-        params.put("prompt", "none");
         try{
-            String authorizationCode = getAuthorizationCode(clientId, clientRedirectUri, scope, userId, password, true,params);            
-            fail();
+            params.put("prompt", "none");
+            String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, getClient1ClientId(), "token", "openid", getClient1RedirectUri());
+            ClientConfig config = new DefaultClientConfig();
+            config.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
+            Client client = Client.create(config);
+            //Client client = Client.create();
+            WebResource webResource1 = client.resource(formattedAuthorizationScreen+"&prompt=none");
+            ClientResponse noneResponse1 = webResource1.get(ClientResponse.class);
+            WebResource webResource2 = client.resource(noneResponse1.getLocation());
+            ClientResponse noneResponse2 = webResource2.get(ClientResponse.class);
+            assertTrue(noneResponse2.getLocation().toString().contains("oauth/playground?error=login_required"));
         }catch(Exception e){
+            throw e;
         }
     }
     
@@ -197,18 +217,10 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     
     
     @Test
-    public void testImplicitOauth() throws URISyntaxException, ParseException, JOSEException, JSONException{
-        //Get id token
-        /*
-        String clientId = getClient1ClientId();
-        String clientRedirectUri = getClient1RedirectUri();
-        String clientSecret = getClient1ClientSecret();
-        String userId = getUser1OrcidId();
-        String password = getUser1Password();
-        String scope = "openid";
-        */
+    public void testImplicitOauth() throws URISyntaxException, ParseException, JOSEException, JSONException, InvalidHashException{
         HashMap<String,String> requestParams = new HashMap<String,String>();
         requestParams.put("nonce", "yesMate");
+        requestParams.put("state", "Boaty McBoatface");
         String response = getImplicitTokenResponse(Lists.newArrayList("openid"),requestParams);
         assertTrue(response.contains("#")); //check it's got a fragment
         response = response.replace('#', '?'); //switch to query param for ease of parsing
@@ -217,26 +229,21 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         for (NameValuePair pair: params){
             map.put(pair.getName(), pair.getValue());
         }
-        //check response
-        /*https://localhost:8443/orcid-web/oauth/playground#
-        access_token=215b2797-aa3d-4e00-8911-13e933112487&
-                token_type=bearer&expires_in=599&
-                tokenVersion=1&
-                name=User%20One%20Credit%20name&
-                orcid=9999-0000-0000-0004&
-                persistent=false&
-                id_token=eyJraWQiOiJPcGVuSURUZXN0S2V5MSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoiSkg3SVkxMG9vbmxRVHk4YXozY3VPRXZEemlUYnZtZVJyejlFZWIwVkJPQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE9PSIsImF1ZCI6IkFQUC05OTk5OTk5OTk5OTk5OTAxIiwic3ViIjoiOTk5OS0wMDAwLTAwMDAtMDAwNCIsImF1dGhfdGltZSI6MTUwNDc4MjY0MSwiaXNzIjoiaHR0cHM6XC9cL29yY2lkLm9yZyIsIm5hbWUiOiJVc2VyIE9uZSBDcmVkaXQgbmFtZSIsImV4cCI6MTUwNDc4MzI0MSwiZ2l2ZW5fbmFtZSI6IlVzZXIiLCJpYXQiOjE1MDQ3ODI2NDEsIm5vbmNlIjoieWVzTWF0ZSIsImZhbWlseV9uYW1lIjoiT25lIiwianRpIjoiMzAxMmRlNmItOTIyZC00ZTI3LTkxZDEtNTM3ODMxZjU5ZDVmIn0.LHzMIam4Z-pW-d0tJJLwS8eaK0Jpm9V90qGbBvrUdSWD3M3dAdJyFcQjw1gJiR6Xap-xr-NKB2xxTNfvz1sHZd8sZu02H1ak0A6Y6liwQlRQgvd2HmBnZyrZXdPU1CRTeIR8E_MWtRe5MIffUcvdMOFU36w2Ime0Gdnxq4Nu8M6ipg5CZhO-O3ma5Wtkr53B1ozmgqUh2NaJwNWzhFNyjrhwl9rOZEQbArLH637Gk2rT4gW3TTXz8p7GwiYc_JtVho_OnYADNgbVKw0i9w4lBicswwGHpVF7cOiCOKJ7fuTeU49TN4CMmwT0L6AO1j9bwx7XEUD_GS5Gcd9uhydMXw
-                */
         assertEquals(map.get("access_token").length(), 36); //guid length
         assertTrue(map.get("id_token")!=null);
         assertEquals(map.get("token_type"),"bearer");
         assertEquals(map.get("name"),"User One Credit name");
         assertEquals(map.get("orcid"),"9999-0000-0000-0004");
+        assertEquals(map.get("state"),"Boaty McBoatface");
         //check expiry about 10 minutes
         assertTrue((Integer.parseInt(map.get("expires_in")) <= 600));
         assertTrue((Integer.parseInt(map.get("expires_in")) > 590));
         //check id_token
-        checkJWT(map.get("id_token"));        
+        SignedJWT signedJWT = checkJWT(map.get("id_token"));   
+        //check hash
+        assertNotNull(signedJWT.getJWTClaimsSet().getClaim("at_hash"));
+        AccessTokenValidator.validate(new BearerAccessToken(map.get("access_token")), JWSAlgorithm.RS256, new AccessTokenHash(signedJWT.getJWTClaimsSet().getClaim("at_hash").toString()));
+
         //check access token works
         Client client = Client.create();
         WebResource webResource = client.resource(baseUri+"/oauth/userinfo");
@@ -249,7 +256,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     }
     
     @Test
-    public void testImplicitOauthErrors() throws URISyntaxException {
+    public void testImplicitWithNoAuthorizedGrant() throws URISyntaxException {
         HashMap<String,String> requestParams = new HashMap<String,String>();
         requestParams.put("nonce", "noMate");
         
@@ -268,19 +275,22 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
             map.put(pair.getName(), pair.getValue());
         }
         assertEquals(map.get("error"),"invalid_client");
-        assertEquals(map.get("error_description"),"Unauthorized grant type: implicit");
-        
+        assertEquals(map.get("error_description"),"Unauthorized grant type: implicit");         
+    }
+    
+    public void testImplicitInvalidScope(){
         //TODO: check you can't ask for implicit update permissions
         //Behaves weird anyway - check behaviour on live service.
-        //String response = getImplicitTokenResponse(Lists.newArrayList("/activities/update"),requestParams);        
+        HashMap<String,String> requestParams = new HashMap<String,String>();
+        requestParams.put("nonce", "yesMate");
+        requestParams.put("state", "Boaty McBoatface");
+       String response = getImplicitTokenResponse(Lists.newArrayList("/activities/update"),requestParams);        
+       System.out.println("xx -- "+response);
+    }
+    
+    //TODO: implement.  Complicated!
+    public void testPromptNoneForLoggedInUser() throws InterruptedException{
         
-        /*        String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, getClient1ClientId(), "token", "/activites/update", getClient1RedirectUri());
-        Client client = Client.create();
-        WebResource webResource = client.resource(formattedAuthorizationScreen);
-        ClientResponse invalid = webResource.get(ClientResponse.class);
-        
-        System.out.println(invalid.getEntity(String.class));        
-        */
     }
     
     
