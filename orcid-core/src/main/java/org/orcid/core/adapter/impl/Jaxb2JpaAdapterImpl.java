@@ -257,9 +257,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(orcidWorks != null && orcidWorks.getOrcidWork() != null) {
             for(OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
                 if(!PojoUtil.isEmpty(orcidWork.getPutCode())) {
-                    WorkEntity updatedEntity = getWorkEntity(orcid, orcidWork, existingWorksMap.get(Long.valueOf(orcidWork.getPutCode())));
-                    updatedEntity.setLastModified(new Date());
-                    workDao.merge(updatedEntity);
+                    if(orcidWork.isModified()) {
+                        WorkEntity updatedEntity = getWorkEntity(orcid, orcidWork, existingWorksMap.get(Long.valueOf(orcidWork.getPutCode())));
+                        updatedEntity.setLastModified(new Date());
+                        workDao.merge(updatedEntity);
+                    }
                 } else {
                     WorkEntity newEntity = getWorkEntity(orcid, orcidWork, null);
                     Date now = new Date();
