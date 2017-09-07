@@ -136,9 +136,21 @@
                         <tbody>
                             <tr ng-repeat="contact in contacts.contactsList">
                                 <td><b>{{contact.name}}</b><br>
-                                {{contact.email}}<br>
-                                <a ng-if="contact.orcid" href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
-                                <span ng-if="!contact.orcid" class="orcid-error"><@spring.message "manage_consortium.this_contact_does_not_1"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_2.link"><@spring.message "manage_consortium.this_contact_does_not_2"/></a> <@spring.message "manage_consortium.this_contact_does_not_3"/></span>
+                                    {{contact.email}}<br>
+                                    <a ng-if="contact.orcid" href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
+                                    <div ng-if="!contact.orcid">
+                                        <@spring.message "manage_consortium.no_orcid_id"/></span> 
+                                        <div class="popover-help-container">
+                                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                            <div id="voting-contact-help" class="popover bottom">
+                                              <div class="arrow"></div>
+                                              <div class="popover-content">
+                                                <p><@spring.message "manage_consortium.this_contact_does_not_1"/></p>
+                                                <p><@spring.message "manage_consortium.this_contact_does_not_2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="https://support.orcid.org/knowledgebase/articles/148603" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
+                                              </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!memberDetails.allowedFullAccess || !contacts.permissionsByContactRoleId[contact.role.id].allowedEdit"></input></td>
                                 <td>
@@ -275,7 +287,7 @@
 	        <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	        <div ng-show="!emailSearchResult.found" >
 	            <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
-	            <p><@orcid.msg 'manage_consortium.add_contacts_must_have_account'/></p>
+	            <p><@orcid.msg 'manage_consortium.add_contacts_must_have_account'/> <@spring.message "manage_consortium.add_contacts_to_add"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="https://support.orcid.org/knowledgebase/articles/148603" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
 	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	        </div>
 	        <div ng-show="emailSearchResult.found">
