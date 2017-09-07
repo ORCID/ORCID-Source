@@ -4,8 +4,10 @@ import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild
 
 import 'rxjs/add/operator/switchMap';
 
-import { PrefsSrvc } from './../../services/prefs.service.ts';
-import { Preferences } from './../../services/preferences';
+import { PrefsSrvc } 
+    from '../../shared/prefs.service.ts';
+import { Preferences } 
+    from '../../shared/preferences.ts';
 import { CommonService } 
     from '../../shared/commonService.ts';
 

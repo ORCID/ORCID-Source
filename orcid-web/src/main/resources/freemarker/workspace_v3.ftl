@@ -58,7 +58,6 @@
 
       <modal-email-un-verified></modal-email-un-verified>
       <modalngcomponent #modalemailunverified>
-        modalngcomponent
       </modalngcomponent>
 
       <div class="qrcode-container">
@@ -224,6 +223,7 @@
     <!--
     Original Code
     --------------------------
+    -->   
     <div ng-controller="CountryCtrl" class="workspace-section country">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
@@ -246,8 +246,9 @@
             </span>
         </div>
     </div>
-    -->    
+    <!--
     <country-ng2></country-ng2>
+    -->    
 
       <!-- Keywords -->         
       <div ng-controller="KeywordsCtrl" class="workspace-section keywords">

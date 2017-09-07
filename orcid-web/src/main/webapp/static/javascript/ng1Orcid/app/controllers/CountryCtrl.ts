@@ -1,5 +1,4 @@
-
-/*declare var $: any;
+declare var $: any;
 declare var colorbox: any;
 declare var contains: any;
 declare var getBaseUri: any;
@@ -129,7 +128,7 @@ export const CountryCtrl = angular.module('orcidApp').controller(
                                  *  - If the item visibility is not null, set the default visibility to the item visibility
                                  * - If the default visibility is not null:
                                  *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-                                 * *
+                                 * */
                                 if($scope.defaultVisibility == null) {
                                     if(itemVisibility != null) {
                                         $scope.defaultVisibility = itemVisibility;
@@ -301,4 +300,3 @@ export const CountryCtrl = angular.module('orcidApp').controller(
 // This is the Angular 2 part of the module
 @NgModule({})
 export class CountryCtrlNg2Module {}
-*/

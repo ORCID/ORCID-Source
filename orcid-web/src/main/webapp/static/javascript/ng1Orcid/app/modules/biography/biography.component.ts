@@ -102,22 +102,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    getEmails(): void {
-        this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified == true ) {
-                    this.emailVerified = true;
-                }
-            },
-            error => {
-                console.log('getEmails', error);
-            } 
-        );
-    }
-
     hideTooltip(tp): void{
         this.showElement[tp] = false;
     };
@@ -150,11 +134,22 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     toggleEdit(): void {
-        if( this.emailVerified === true || this.configuration.showModalManualEditVerificationEnabled == false){
-            this.showEdit = !this.showEdit;
-        }else{
-            this.modalService.notifyOther('open');
-        }
+
+        this.emailService.getEmails()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.showEdit = !this.showEdit;
+                }else{
+                    this.modalService.notifyOther('open');
+                }
+            },
+            error => {
+                console.log('getEmails', error);
+            } 
+        );
     };
 
     //Default init functions provided by Angular Core
@@ -170,6 +165,5 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getBiographyForm();
         this.configuration = this.configurationService.getInitialConfiguration();
-        this.getEmails();
     }; 
 }

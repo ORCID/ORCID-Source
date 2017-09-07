@@ -9,7 +9,8 @@ import { Directive, NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-import { WorksPrivacyPreferencesComponent } from './worksPrivacyPreferences.component.ts';
+import { WorksPrivacyPreferencesComponent } 
+    from './worksPrivacyPreferences.component.ts';
 
 // This is the Angular 1 part of the module
 export const WorksPrivacyPreferencesModule = angular.module(

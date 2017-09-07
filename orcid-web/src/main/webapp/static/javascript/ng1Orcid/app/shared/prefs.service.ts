@@ -1,5 +1,3 @@
-declare var getBaseUri: any;
-
 import { Injectable } from '@angular/core';
 import { CookieXSRFStrategy, HttpModule, XSRFStrategy } from '@angular/http';
 import { JsonpModule } from '@angular/http';
@@ -16,7 +14,7 @@ export class PrefsSrvc {
         private http: Http,
         private jsonp: Jsonp) {
 
-         }
+     }
 
     private handleError (error: Response | any) {
         let errMsg: string;
