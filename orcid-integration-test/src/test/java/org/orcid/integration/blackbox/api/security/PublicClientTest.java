@@ -65,7 +65,7 @@ public class PublicClientTest extends BlackBoxBaseV2Release {
         String password = getUser1Password();
         WebDriver webDriver = getWebDriver();
         for (ScopePathType scope : ScopePathType.values()) {
-            if (ScopePathType.AUTHENTICATE.equals(scope) || ScopePathType.OPENID.equals(scope) || ScopePathType.READ_PUBLIC.equals(scope)) {
+            if (ScopePathType.AUTHENTICATE.equals(scope) || ScopePathType.OPENID.equals(scope)) {
                 String authCode = getAuthorizationCode(clientId, clientRedirectUri, scope.value(), userId, password, true);
                 assertFalse(PojoUtil.isEmpty(authCode));
             } else {
