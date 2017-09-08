@@ -99,8 +99,10 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         			trimClientCredentialScopes(scopes.trim().replaceAll(" +", " ")));
     	}
     	//if we have an id_token response_type but no token scope, add it in.
-    	if ("id_token".equals(requestParameters.get(OAuth2Utils.RESPONSE_TYPE))){
-    	requestParameters.put(OAuth2Utils.RESPONSE_TYPE, "id_token token");
+    	//this is because spring can't cope without the 'token' response type.
+    	if ("id_token".equals(requestParameters.get(OAuth2Utils.RESPONSE_TYPE)) && 
+    	        requestParameters.get(OAuth2Utils.SCOPE).contains("openid")){
+    	    requestParameters.put(OAuth2Utils.RESPONSE_TYPE, "id_token token");
     	}
 	}
 

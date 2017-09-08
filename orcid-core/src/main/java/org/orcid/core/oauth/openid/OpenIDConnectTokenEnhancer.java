@@ -16,17 +16,12 @@
  */
 package org.orcid.core.oauth.openid;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -41,13 +36,17 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.openid.connect.sdk.claims.AccessTokenHash;
 
+/** This class creates and appends JWT id_tokens to the response.
+ * 
+ * @author tom
+ *
+ */
 public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
     
     @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
@@ -71,6 +70,7 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         Map<String,String> params = authentication.getOAuth2Request().getRequestParameters();
 
         //only add if we're using openid scope.
+        //only add in implicit flow if response_type id_token is present
         String scopes = params.get(OrcidOauth2Constants.SCOPE_PARAM);        
         if (PojoUtil.isEmpty(scopes) || !ScopePathType.getScopesFromSpaceSeparatedString(scopes).contains(ScopePathType.OPENID) ){
             return accessToken;
@@ -83,7 +83,6 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             claims.audience(params.get(OrcidOauth2Constants.CLIENT_ID_PARAM));
             claims.subject(orcid);
             claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
-            //claims.subject(accessToken.getAdditionalInformation().get("orcid").toString());
             claims.issuer("https://orcid.org");
             Date now = new Date();
             claims.expirationTime(new Date(now.getTime()+600000));

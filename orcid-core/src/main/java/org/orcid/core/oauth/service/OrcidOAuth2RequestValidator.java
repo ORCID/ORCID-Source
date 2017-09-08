@@ -33,7 +33,7 @@ import org.springframework.security.oauth2.provider.request.DefaultOAuth2Request
 public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
     
     private static enum ImplicitScopes {
-        OPENID("openid");
+        OPENID("openid"), AUTHENTICATE("/authenticate");
     private String value;
     ImplicitScopes(String v){
         value=v;
@@ -50,6 +50,9 @@ public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
                 return false;
         }
         return true;
+    }
+    public String toString(){
+        return value;
     }
     };
 

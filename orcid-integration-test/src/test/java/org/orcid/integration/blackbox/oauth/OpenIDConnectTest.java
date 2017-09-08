@@ -253,6 +253,23 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     }
     
     @Test
+    public void testImplicitOauthAuthenticate() throws URISyntaxException, ParseException, JOSEException, JSONException, InvalidHashException{
+        HashMap<String,String> requestParams = new HashMap<String,String>();
+        requestParams.put("nonce", "yesMate");
+        requestParams.put("state", "Boaty McBoatface");
+        String response = getImplicitTokenResponse(Lists.newArrayList("/authenticate"),requestParams,true);
+        assertTrue(response.contains("#")); //check it's got a fragment
+        response = response.replace('#', '?'); //switch to query param for ease of parsing
+        List<NameValuePair> params = URLEncodedUtils.parse(new URI(response), "UTF-8");
+        Map<String,String> map = new HashMap<String,String>();
+        for (NameValuePair pair: params){
+            map.put(pair.getName(), pair.getValue());
+        }
+        assertEquals(map.get("access_token").length(), 36); //guid length
+        assertTrue(map.get("id_token")==null);
+    }
+    
+    @Test
     public void testImplicitWithNoAuthorizedGrant() throws URISyntaxException {
         HashMap<String,String> requestParams = new HashMap<String,String>();
         requestParams.put("nonce", "noMate");
@@ -282,8 +299,16 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         HashMap<String,String> requestParams = new HashMap<String,String>();
         requestParams.put("nonce", "yesMate");
         requestParams.put("state", "Boaty McBoatface");
-        String response = getImplicitTokenResponse(Lists.newArrayList("/activities-update"),requestParams,true);  
-        assertTrue(getWebDriver().getCurrentUrl().contains("error=invalid_grant"));
+        
+        String clientId = getClient1ClientId();
+        String clientRedirectUri = getClient1RedirectUri();
+        String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, clientId, "token", "/read-limited", clientRedirectUri);
+        getWebDriver().get(formattedAuthorizationScreen);
+        assertTrue(getWebDriver().getCurrentUrl().contains("error=invalid_scope"));
+        
+        formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, clientId, "token", "openid /read-limited", clientRedirectUri);
+        getWebDriver().get(formattedAuthorizationScreen);
+        assertTrue(getWebDriver().getCurrentUrl().contains("error=invalid_scope"));
     }
     
     @Test
