@@ -70,7 +70,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.description'/></label>
-                            <textarea rows="4" cols="50" ng-model="memberDetails.description.value" ng-change="validateMemberDetailsField('description')" ng-model-onblur class="input-95-width" ></textarea>
+                            <textarea ng-model="memberDetails.description.value" ng-change="validateMemberDetailsField('description')" ng-model-onblur class="input-95-width" ></textarea>
                             <span class="orcid-error" ng-show="memberDetails.description.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.description.errors' ng-bind-html="error"></div>
                             </span>
@@ -299,7 +299,9 @@
 	        <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	        <div ng-show="!emailSearchResult.found" >
 	            <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
-	            <p><@orcid.msg 'manage_consortium.add_contacts_must_have_account'/> <@spring.message "manage_consortium.add_contacts_to_add"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="https://support.orcid.org/knowledgebase/articles/148603" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
+	            <p><@orcid.msg 'manage_consortium.add_contacts_no_orcid_text1'/> <@spring.message "manage_consortium.add_contacts_no_orcid_text2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="https://support.orcid.org/knowledgebase/articles/148603" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
+                <p><@spring.message "manage_consortium.add_contacts_no_orcid_text3"/></p>
+                <p><@spring.message "manage_consortium.add_contacts_no_orcid_text4"/> <a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
 	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	        </div>
 	        <div ng-show="emailSearchResult.found">
