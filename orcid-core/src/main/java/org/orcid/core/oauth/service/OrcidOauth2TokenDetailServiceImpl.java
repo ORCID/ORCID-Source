@@ -260,5 +260,10 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID) {
         return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID);
     }
+
+    @Override
+    public void disableAccessTokenByUserOrcid(String userOrcid) {
+        orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid);
+    }
     
 }

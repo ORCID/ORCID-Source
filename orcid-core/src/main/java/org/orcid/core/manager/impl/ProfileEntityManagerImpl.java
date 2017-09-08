@@ -157,6 +157,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     private TransactionTemplate transactionTemplate;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -668,6 +671,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         
         // 
         userConnectionDao.deleteByOrcid(orcid);
+        
+        // Disable any token that belongs to this record
+        orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(orcid);
         
         // Change default visibility to private
         profileDao.updateDefaultVisibility(orcid, Visibility.PRIVATE);

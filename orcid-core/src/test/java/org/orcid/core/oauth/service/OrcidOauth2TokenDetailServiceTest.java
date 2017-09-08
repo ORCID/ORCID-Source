@@ -21,8 +21,10 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -52,7 +54,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";
     private static final String CLIENT_ID_2 = "APP-5555555555555556";
-    private static final String USER_ORCID = "0000-0000-0000-0001";    
+    private static final String USER_ORCID = "0000-0000-0000-0001";
+    private static final String USER_ORCID_2 = "0000-0000-0000-0002";
+    private static final String USER_ORCID_3 = "0000-0000-0000-0003";
     
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
@@ -170,6 +174,44 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         for(OrcidOauth2TokenDetail token : activeTokens) {
             assertThat(token.getId(), allOf(not(token1Id), not(token4Id)));
             assertThat(token.getId(), anyOf(is(token2Id), is(token3Id), is(token5Id), is(token6Id), is(token7Id), is(token8Id)));
+        }
+    }
+    
+    @Test
+    public void disableAccessTokenByUserOrcidTest() {        
+        Date date = new Date(System.currentTimeMillis() + 100000);
+        createToken(CLIENT_ID_1, "active-1", USER_ORCID_2, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-2", USER_ORCID_2, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-3", USER_ORCID_2, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-1", USER_ORCID_3, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-2", USER_ORCID_3, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-3", USER_ORCID_3, date, "/activities/update", false);
+        
+        List<OrcidOauth2TokenDetail> tokensUser1 = orcidOauth2TokenDetailService.findByClientIdAndUserName(CLIENT_ID_1, USER_ORCID_2);
+        assertEquals(3, tokensUser1.size());
+        for(OrcidOauth2TokenDetail token : tokensUser1) {
+            assertFalse(token.getTokenDisabled());
+        }
+        
+        List<OrcidOauth2TokenDetail> tokensUser2 = orcidOauth2TokenDetailService.findByClientIdAndUserName(CLIENT_ID_1, USER_ORCID_3);
+        assertEquals(3, tokensUser2.size());
+        for(OrcidOauth2TokenDetail token : tokensUser2) {
+            assertFalse(token.getTokenDisabled());
+        }
+        
+        orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(USER_ORCID_2);
+        
+        tokensUser1 = orcidOauth2TokenDetailService.findByClientIdAndUserName(CLIENT_ID_1, USER_ORCID_2);
+        assertEquals(3, tokensUser1.size());
+        for(OrcidOauth2TokenDetail token : tokensUser1) {
+            // Tokens for this user MUST be disabled at this point
+            assertTrue(token.getTokenDisabled());
+        }
+        
+        tokensUser2 = orcidOauth2TokenDetailService.findByClientIdAndUserName(CLIENT_ID_1, USER_ORCID_3);
+        assertEquals(3, tokensUser2.size());
+        for(OrcidOauth2TokenDetail token : tokensUser2) {
+            assertFalse(token.getTokenDisabled());
         }
     }
     
