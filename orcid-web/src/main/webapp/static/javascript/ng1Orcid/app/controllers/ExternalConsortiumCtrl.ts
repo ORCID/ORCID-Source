@@ -13,12 +13,14 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
     'externalConsortiumCtrl',
     [
         '$compile', 
-        '$scope', 
+        '$scope',
+        'commonSrvc', 
         'membersListSrvc', 
         'utilsService', 
         function manageConsortiumCtrl(
             $compile, 
             $scope, 
+            commonSrvc,
             membersListSrvc,
             utilsService
         ) { 
@@ -30,6 +32,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
             $scope.input = {};
             $scope.memberDetails = null;
             $scope.membersListSrvc = membersListSrvc;
+            $scope.newSubMember = {website: {errors: [], getRequiredMessage: null, required: false, value: '',  }, name: {errors: [], getRequiredMessage: null, required: false, value: '',  }};
             $scope.realUserOrcid = orcidVar.realOrcidId;
             $scope.showInitLoader = true;
             $scope.updateContactsDisabled = false;
@@ -63,6 +66,59 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 });
             };
 
+            $scope.isValidClass = function (cur) {
+                var valid;
+                if (cur === undefined) {
+                    return '';
+                }
+                valid = true;
+                if (cur.required && (cur.value == null || cur.value.trim() == '')) {
+                    valid = false;
+                }
+                if (cur.errors !== undefined && cur.errors.length > 0) {
+                    valid = false;
+                }
+                return valid ? '' : 'text-error';
+            };
+
+            $scope.validateSubMemberField = function(fieldname) {
+                 $.ajax({
+                      url: getBaseUri()+'/self-service/validate-sub-member-' + fieldname + '.json',
+                      contentType: 'application/json;charset=UTF-8',
+                      type: 'POST',
+                      dataType: 'json',
+                      data: angular.toJson($scope.newSubMember),
+                      success: function(data){
+                        $scope.newSubMember = data
+                        $scope.$apply();
+                    }
+                 }).fail(function(error) {
+                      // something bad is happening!
+                      console.log("Error validating new submember");
+                 });
+            };
+
+            $scope.validateSubMember = function () {
+                $.ajax({
+                    url: getBaseUri()+'/self-service/validate-sub-member.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: angular.toJson($scope.newSubMember),
+                    success: function(data) {
+                        $scope.newSubMember = data
+                        $scope.$apply();                
+                        if ($scope.newSubMember.errors == undefined || $scope.newSubMember.errors.length == 0) {
+                            $scope.addSubMemberShowLoader = true;
+                            $scope.addSubMember();
+                        }
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("validate submember error");
+                });
+            };
+
             $scope.addSubMember = function() {
                 $scope.addSubMemberDisabled = true;
                 $scope.addSubMemberShowLoader = true;
@@ -77,8 +133,8 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                             $scope.getMemberDetails();
                             $scope.addSubMemberShowLoader = false;
                             $scope.addSubMemberDisabled = false;
-                            $scope.newSubMember.name = "";
-                            $scope.newSubMember.website = "";
+                            $scope.newSubMember.name.value = "";
+                            $scope.newSubMember.website.value = "";
                             $scope.$apply();
                         }
                         else{
@@ -114,7 +170,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     onLoad: function() {
                         $('#cboxClose').remove();
                     },
-                    onComplete: function() {$.colorbox.resize();},
+                    onComplete: function() {$.colorbox.resize({width: "500px"});},
                     scrolling: true
                 });
             };
@@ -291,6 +347,44 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 }).fail(function() {
                     // something bad is happening!
                     console.log("$ContactCtrl.update() error");
+                });
+            };
+
+            $scope.validateMemberDetailsField = function(fieldname) {
+                 $.ajax({
+                      url: getBaseUri()+'/self-service/validate-member-details-' + fieldname + '.json',
+                      contentType: 'application/json;charset=UTF-8',
+                      type: 'POST',
+                      dataType: 'json',
+                      data: angular.toJson($scope.memberDetails),
+                      success: function(data){
+                        $scope.memberDetails = data
+                        $scope.$apply();
+                    }
+                 }).fail(function(error) {
+                      // something bad is happening!
+                      console.log("Error validating member details field");
+                 });
+            };
+
+            $scope.validateMemberDetails = function () {
+                $.ajax({
+                    url: getBaseUri()+'/self-service/validate-member-details.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: angular.toJson($scope.memberDetails),
+                    success: function(data) {
+                        $scope.memberDetails = data
+                        $scope.$apply();                
+                        if ($scope.memberDetails.errors == undefined || $scope.memberDetails.errors.length == 0) {
+                            $scope.updateMemberDetailsShowLoader = true;
+                            $scope.updateMemberDetails();
+                        }
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("validate member details error");
                 });
             };
 

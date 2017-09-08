@@ -103,6 +103,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.google.common.collect.Sets;
+
 /**
  * Usually run with -Xmx2g -Dorg.orcid.config.file=classpath:staging-persistence.properties
  * 
@@ -332,6 +334,7 @@ public class SetUpClientsAndUsers {
         }
         
         ClientDetailsEntity publicClient = clientDetailsManager.findByClientId(publicClientId);
+        clientType = ClientType.PUBLIC_CLIENT;
         if (publicClient == null) {
             createClient(publicClientParams, clientType);
         } else {
@@ -349,8 +352,8 @@ public class SetUpClientsAndUsers {
         if (client1 == null) {
             createClient(client1Params, clientType);
         } else {
+            clientDetailsManager.addAuthorizedGrantTypeToClient(Sets.newHashSet("implicit"), client1);
             clientDetailsManager.addScopesToClient(getScopes(client1Params, clientType), client1);
-            
         }
 
         // Create client 2
@@ -664,6 +667,9 @@ public class SetUpClientsAndUsers {
         clientAuthorizedGrantTypes.add("client_credentials");
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
+        if (client1ClientId.equals(params.get(CLIENT_ID))){
+            clientAuthorizedGrantTypes.add("implicit");
+        }
         
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
         RedirectUri redirectUri = new RedirectUri(params.get(REDIRECT_URI));
@@ -695,7 +701,7 @@ public class SetUpClientsAndUsers {
     private Set<String> getScopes(Map<String, String> params, ClientType clientType) {
         Set<String> scopes = null;
         if(clientType.equals(ClientType.PUBLIC_CLIENT)) {
-            scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value()));
+            scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value(),ScopePathType.OPENID.value()));
         } else {
             scopes = ClientType.premiumCreatorScopes();
             if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {

@@ -19,6 +19,7 @@ package org.orcid.core.oauth.service;
 import java.util.Map;
 import java.util.Set;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -31,13 +32,37 @@ import org.springframework.security.oauth2.provider.request.DefaultOAuth2Request
 
 public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
     
+    private static enum ImplicitScopes {
+        OPENID("openid"), AUTHENTICATE("/authenticate");
+    private String value;
+    ImplicitScopes(String v){
+        value=v;
+    }
+    public static boolean isValid(Set<String> test) {
+        for (String t : test){
+            boolean found = false;
+            for (ImplicitScopes scope : ImplicitScopes.values()) {
+                if (scope.value.equals(t)) {
+                    found = true;
+                }
+            }
+            if (!found)
+                return false;
+        }
+        return true;
+    }
+    public String toString(){
+        return value;
+    }
+    };
+
     private ProfileEntityCacheManager profileEntityCacheManager;    
     
     public OrcidOAuth2RequestValidator(ProfileEntityCacheManager profileEntityCacheManager) {
         this.profileEntityCacheManager = profileEntityCacheManager;
     }
 
-    public void validateParameters(Map<String, String> parameters, ClientDetails clientDetails) {
+    public void validateParameters(Map<String, String> parameters, ClientDetails clientDetails, String responseType) {
         if (parameters.containsKey("scope")) {
             if (clientDetails.isScoped()) {
                 Set<String> validScope = clientDetails.getScope();
@@ -55,6 +80,9 @@ public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
                         throw new InvalidScopeException("Invalid scope: " + scope);
                 }
             }
+        }
+        if (responseType!=null && responseType.contains(OrcidOauth2Constants.IMPLICIT_TOKEN_RESPONSE_TYPE) && !ImplicitScopes.isValid(OAuth2Utils.parseParameterList(parameters.get("scope")))){
+            throw new InvalidScopeException("Invalid grant_type/scope combination.  Must use only the "+ImplicitScopes.values()+" scope for implicit OAuth with response_type=token");           
         }
     }
     

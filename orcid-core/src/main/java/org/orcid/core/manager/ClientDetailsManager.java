@@ -91,4 +91,7 @@ public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
     ClientDetailsEntity findByIdP(String idp);    
     
     void addScopesToClient(Set<String> clientScopeStrings, ClientDetailsEntity clientDetails);
+
+    void addAuthorizedGrantTypeToClient(Set<String> types, ClientDetailsEntity clientDetails);
+
 }

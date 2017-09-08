@@ -157,6 +157,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     private TransactionTemplate transactionTemplate;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -190,7 +193,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 // If it was successfully deprecated
                 if (wasDeprecated) {
                     LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
-                    clearRecord(deprecatedOrcid);
+                    clearRecord(deprecatedOrcid, false);
                     // Move all email's to the primary record
                     Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid);
                     if (deprecatedAccountEmails != null) {
@@ -217,7 +220,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             public Boolean doInTransaction(TransactionStatus status) {
                 LOGGER.info("About to deactivate record {}", orcid);
                 if (profileDao.deactivate(orcid)) {
-                    clearRecord(orcid);
+                    clearRecord(orcid, true);
                     emailManager.hideAllEmails(orcid);
                     notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
                     LOGGER.info("Record {} successfully deactivated", orcid);
@@ -619,7 +622,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     /**
      * Clears all record info but the email addresses, that stay unmodified
      * */
-    private void clearRecord(String orcid) {
+    private void clearRecord(String orcid, Boolean disableTokens) {
         // Remove works
         workManager.removeAllWorks(orcid);
 
@@ -669,6 +672,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         // 
         userConnectionDao.deleteByOrcid(orcid);
         
+        if(disableTokens) {
+            // Disable any token that belongs to this record
+            orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(orcid);
+        }
         // Change default visibility to private
         profileDao.updateDefaultVisibility(orcid, Visibility.PRIVATE);
     }

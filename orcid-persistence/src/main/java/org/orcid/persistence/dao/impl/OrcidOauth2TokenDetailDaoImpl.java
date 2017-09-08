@@ -240,4 +240,12 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         int count = query.executeUpdate();
         return count;
     }
+    
+    @Override
+    @Transactional
+    public void disableAccessTokenByUserOrcid(String userOrcid) {
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE where profile.id = :userOrcid");        
+        query.setParameter("userOrcid", userOrcid);
+        query.executeUpdate();        
+    }
 }
