@@ -22,7 +22,7 @@
 
 	<changeSet id="DISABLE-TOKENS-ON-DEACTIVATED-RECORDS" author="Angel Montenegro" dbms="postgresql">
         <sql>DROP TABLE IF EXISTS temp_orcids_to_clean;</sql>
-        <sql>CREATE TEMP TABLE temp_orcids_to_clean AS (SELECT orcid FROM profile WHERE profile_deactivation_date IS NOT NULL);</sql>
+        <sql>CREATE TEMP TABLE temp_orcids_to_clean AS (SELECT orcid FROM profile WHERE profile_deactivation_date IS NOT NULL AND primary_record IS NULL);</sql>
         <sql>UPDATE oauth2_token_detail SET token_disabled = true WHERE user_orcid IN (SELECT orcid FROM temp_orcids_to_clean);</sql>
     </changeSet>
 </databaseChangeLog>	
