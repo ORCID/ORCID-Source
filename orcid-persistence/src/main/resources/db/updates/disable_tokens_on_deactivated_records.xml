@@ -1,0 +1,28 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="DISABLE-TOKENS-ON-DEACTIVATED-RECORDS" author="Angel Montenegro" dbms="postgresql">
+        <sql>DROP TABLE IF EXISTS temp_orcids_to_clean;</sql>
+        <sql>CREATE TEMP TABLE temp_orcids_to_clean AS (SELECT orcid FROM profile WHERE profile_deactivation_date IS NOT NULL AND primary_record IS NULL);</sql>
+        <sql>UPDATE oauth2_token_detail SET token_disabled = true WHERE user_orcid IN (SELECT orcid FROM temp_orcids_to_clean);</sql>
+    </changeSet>
+</databaseChangeLog>	
