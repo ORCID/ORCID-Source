@@ -335,6 +335,7 @@ public class SetUpClientsAndUsers {
         }
         
         ClientDetailsEntity publicClient = clientDetailsManager.findByClientId(publicClientId);
+        clientType = ClientType.PUBLIC_CLIENT;
         if (publicClient == null) {
             createClient(publicClientParams, clientType);
         } else {
@@ -701,7 +702,7 @@ public class SetUpClientsAndUsers {
     private Set<String> getScopes(Map<String, String> params, ClientType clientType) {
         Set<String> scopes = null;
         if(clientType.equals(ClientType.PUBLIC_CLIENT)) {
-            scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value()));
+            scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value(),ScopePathType.OPENID.value()));
         } else {
             scopes = ClientType.premiumCreatorScopes();
             if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
