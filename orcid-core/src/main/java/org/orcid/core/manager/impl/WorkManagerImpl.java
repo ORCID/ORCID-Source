@@ -157,7 +157,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        workEntity.setProfile(profile);
+        workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
         
         // Set source id 
@@ -224,7 +224,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                        workEntity.setProfile(profile);
+                        workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
                         
                         // Set source id 

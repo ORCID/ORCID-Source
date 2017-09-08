@@ -48,9 +48,10 @@ public interface WorkEntityCacheManager {
 
     List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
 
-    List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified);
-
     WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified);
+    
+    @Deprecated
+    List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified);
     
     void evictExpiredElements();
 

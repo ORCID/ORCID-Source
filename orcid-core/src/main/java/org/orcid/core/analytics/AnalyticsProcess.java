@@ -17,10 +17,9 @@
 package org.orcid.core.analytics;
 
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.orcid.core.analytics.client.AnalyticsClient;
-import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -41,10 +40,6 @@ public class AnalyticsProcess implements Runnable {
     private static final String PROFILE_NOT_FOUND = "not-found";
 
     private static final String DEFAULT_CONTENT_TYPE = "default";
-
-    private static final String XML_CONTENT_TYPE = "xml";
-
-    private static final String JSON_CONTENT_TYPE = "json";
 
     private ContainerRequest request;
 
@@ -132,7 +127,7 @@ public class AnalyticsProcess implements Runnable {
         if (HttpMethod.GET.name().equals(request.getMethod())) {
             String accept = request.getHeaderValue(HttpHeaders.ACCEPT);
             if (accept != null && !accept.isEmpty()) {
-                return getSimplifiedContentType(accept);
+                return accept;
             }
         }
 
@@ -141,22 +136,10 @@ public class AnalyticsProcess implements Runnable {
         // For other methods content type will be used anyway
         String contentType = request.getHeaderValue(HttpHeaders.CONTENT_TYPE);
         if (contentType != null && !contentType.isEmpty()) {
-            return getSimplifiedContentType(contentType);
+            return contentType;
         }
 
         return DEFAULT_CONTENT_TYPE;
-    }
-
-    private String getSimplifiedContentType(String contentType) {
-        if (OrcidApiConstants.VND_ORCID_XML.equals(contentType) || OrcidApiConstants.ORCID_XML.equals(contentType) || MediaType.APPLICATION_XML.equals(contentType)) {
-            return XML_CONTENT_TYPE;
-        }
-
-        if (OrcidApiConstants.VND_ORCID_JSON.equals(contentType) || OrcidApiConstants.ORCID_JSON.equals(contentType) || MediaType.APPLICATION_JSON.equals(contentType)) {
-            return JSON_CONTENT_TYPE;
-        }
-
-        return contentType;
     }
 
     private String correctScheme(String url) {
@@ -210,7 +193,7 @@ public class AnalyticsProcess implements Runnable {
             clientDetails.append(client.getClientName());
             clientDetails.append(" - ");
             clientDetails.append(clientDetailsId);
-            return clientDetails.toString();
+            return clientDetails.toString().replaceAll("&", "+");
         } else {
             return UNKNOWN_CLIENT;
         }

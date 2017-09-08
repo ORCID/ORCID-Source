@@ -118,6 +118,9 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
     @XmlTransient
     private Long displayIndex;
 
+    @XmlTransient
+    private boolean modified = false;
+    
     /**
      * Gets the value of the putCode property.
      * 
@@ -593,6 +596,14 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
 
     public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
     }
 
     /**

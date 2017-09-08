@@ -59,9 +59,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * @return the updated profile as it new state dictates
      */
     OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile);
-    
-    OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile, UpdateOptions updateOptions);    
-
+        
     /**
      * Returns true if ORCID exist.
      * 
@@ -205,16 +203,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      */
 
     public void processUnverifiedEmails7Days();
-
-    OrcidProfile deactivateOrcidProfile(OrcidProfile orcidProfile);
-
-    /**
-     * Reactivate a deactivated profile
-     * 
-     * @param orcidProfile
-     * @return
-     * */
-    OrcidProfile reactivateOrcidProfile(OrcidProfile orcidProfile);
     
     boolean lockProfile(String orcid, String lockReason, String description);
 
