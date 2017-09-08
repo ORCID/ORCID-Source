@@ -276,4 +276,33 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         assertEquals(map.get("error_description"),"Unauthorized grant type: implicit");         
     }
     
+    @Test
+    public void testImplicitInvalidScope(){
+        //Live service behaviour is that error does not appear until after login.
+        //Behaves weird anyway - check behaviour on live service.
+        HashMap<String,String> requestParams = new HashMap<String,String>();
+        requestParams.put("nonce", "yesMate");
+        requestParams.put("state", "Boaty McBoatface");
+        String response = getImplicitTokenResponse(Lists.newArrayList("/activities-update"),requestParams);  
+        assertTrue(getWebDriver().getCurrentUrl().contains("error=invalid_grant"));
+    }
+    
+    //broken
+    public void testPromptNoneForLoggedInUser() throws InterruptedException{
+        //log in, then send request again with prompt=none.  Should get new token straight away.
+        HashMap<String,String> requestParams = new HashMap<String,String>();
+        requestParams.put("nonce", "yesMate");
+        requestParams.put("state", "Boaty McBoatface");
+        String response = getImplicitTokenResponse(Lists.newArrayList("openid"),requestParams);     
+        System.out.println(response);
+        requestParams.put("prompt", "none");
+        //check a client without implicit fails
+        String clientId = getClient2ClientId();
+        String clientRedirectUri = getClient2RedirectUri();
+        String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, clientId, "token", "openid", clientRedirectUri);
+        getWebDriver().get(formattedAuthorizationScreen+"&prompt=none&nonce=yesMate");
+        System.out.println(getWebDriver().getCurrentUrl());
+        System.out.println(getWebDriver().getPageSource());
+    }
+    
 }

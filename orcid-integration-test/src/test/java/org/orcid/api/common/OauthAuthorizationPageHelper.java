@@ -30,7 +30,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class OauthAuthorizationPageHelper {
 
-    public static final String authorizationScreenUrl = "%s/oauth/authorize?client_id=%s&response_type=%s&scope=%s&redirect_uri=%s";
+    public static final String authorizationScreenUrl = "%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s";
     public static final String authorizationScreenUrlWithCode = "%s/oauth/authorize?client_id=%s&response_type=%s&scope=%s&redirect_uri=%s";
     public static final String RESPONSE_TYPE_CODE = "code";
     
