@@ -72,7 +72,7 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
                     @RequestParam Map<String, String> requestParameters, SessionStatus sessionStatus, Principal principal) {
         try {
 
-            trimRequestParameters(requestParameters);
+            modifyRequestParameters(requestParameters);
         } catch (InvalidScopeException ise) {
         	String redirectUri = requestParameters.get("redirect_uri");
         	String redirectUriWithParams = "";
@@ -89,7 +89,7 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         return super.authorize(model, requestParameters, sessionStatus, principal);
     }
     
-    private void trimRequestParameters(Map<String, String> requestParameters) throws InvalidScopeException {
+    private void modifyRequestParameters(Map<String, String> requestParameters) throws InvalidScopeException {
     	for(Map.Entry<String,String> entry : requestParameters.entrySet()) {
     		requestParameters.put(entry.getKey(), entry.getValue().trim());
     	}
@@ -97,6 +97,10 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     	if(scopes != null) {
     		requestParameters.put(OAuth2Utils.SCOPE, 
         			trimClientCredentialScopes(scopes.trim().replaceAll(" +", " ")));
+    	}
+    	//if we have an id_token response_type but no token scope, add it in.
+    	if ("id_token".equals(requestParameters.get(OAuth2Utils.RESPONSE_TYPE))){
+    	requestParameters.put(OAuth2Utils.RESPONSE_TYPE, "id_token token");
     	}
 	}
 
