@@ -16,7 +16,10 @@
  */
 package org.orcid.integration.blackbox.oauth;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,7 +27,6 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -33,12 +35,10 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hsqldb.types.Charset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.util.collections.Sets;
 import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
@@ -54,7 +54,6 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
-import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.openid.connect.sdk.claims.AccessTokenHash;
 import com.nimbusds.openid.connect.sdk.validators.AccessTokenValidator;
@@ -219,7 +218,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         HashMap<String,String> requestParams = new HashMap<String,String>();
         requestParams.put("nonce", "yesMate");
         requestParams.put("state", "Boaty McBoatface");
-        String response = getImplicitTokenResponse(Lists.newArrayList("openid"),requestParams);
+        String response = getImplicitTokenResponse(Lists.newArrayList("openid"),requestParams,true);
         assertTrue(response.contains("#")); //check it's got a fragment
         response = response.replace('#', '?'); //switch to query param for ease of parsing
         List<NameValuePair> params = URLEncodedUtils.parse(new URI(response), "UTF-8");
@@ -264,7 +263,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         String userName = getUser1OrcidId();
         String userPassword = getUser1Password();
         List<String> scope = Lists.newArrayList("openid");
-        String nope = super.getImplicitTokenResponse(clientId, scope, userName, userPassword, clientRedirectUri, requestParams, "token");
+        String nope = super.getImplicitTokenResponse(clientId, scope, userName, userPassword, clientRedirectUri, requestParams, "token",true);
         assertTrue(nope.contains("#")); //check it's got a fragment
         nope = nope.replace('#', '?'); //switch to query param for ease of parsing
         List<NameValuePair> params = URLEncodedUtils.parse(new URI(nope), "UTF-8");
@@ -283,26 +282,39 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         HashMap<String,String> requestParams = new HashMap<String,String>();
         requestParams.put("nonce", "yesMate");
         requestParams.put("state", "Boaty McBoatface");
-        String response = getImplicitTokenResponse(Lists.newArrayList("/activities-update"),requestParams);  
+        String response = getImplicitTokenResponse(Lists.newArrayList("/activities-update"),requestParams,true);  
         assertTrue(getWebDriver().getCurrentUrl().contains("error=invalid_grant"));
     }
     
-    //broken
-    public void testPromptNoneForLoggedInUser() throws InterruptedException{
-        //log in, then send request again with prompt=none.  Should get new token straight away.
+    @Test
+    public void testImplicitForLoggedInUser() throws InterruptedException, URISyntaxException{
+        //log in, then send request again.  Should get new token straight away.
         HashMap<String,String> requestParams = new HashMap<String,String>();
         requestParams.put("nonce", "yesMate");
         requestParams.put("state", "Boaty McBoatface");
-        String response = getImplicitTokenResponse(Lists.newArrayList("openid"),requestParams);     
-        System.out.println(response);
-        requestParams.put("prompt", "none");
-        //check a client without implicit fails
-        String clientId = getClient2ClientId();
-        String clientRedirectUri = getClient2RedirectUri();
+        String response = getImplicitTokenResponse(Lists.newArrayList("openid"),requestParams,true);    
+        
+        String clientId = getClient1ClientId();
+        String clientRedirectUri = getClient1RedirectUri();
         String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, clientId, "token", "openid", clientRedirectUri);
-        getWebDriver().get(formattedAuthorizationScreen+"&prompt=none&nonce=yesMate");
-        System.out.println(getWebDriver().getCurrentUrl());
-        System.out.println(getWebDriver().getPageSource());
-    }
+        getWebDriver().get(formattedAuthorizationScreen);
+        assertTrue(getWebDriver().getCurrentUrl().contains("#")); //check it's got a fragment
+        String url = getWebDriver().getCurrentUrl().replace('#', '?'); //switch to query param for ease of parsing
+        List<NameValuePair> params = URLEncodedUtils.parse(new URI(url), "UTF-8");
+        Map<String,String> map = new HashMap<String,String>();
+        for (NameValuePair pair: params){
+            map.put(pair.getName(), pair.getValue());
+        }
+        assertEquals(map.get("access_token").length(),36);
+        assertTrue((map.get("id_token") !=null));
+        
+        //check prompt = none
+        getWebDriver().get(formattedAuthorizationScreen+"&prompt=none");
+        assertTrue(getWebDriver().getCurrentUrl().contains("access_token="));
+
+        //check prompt = confirm
+        getWebDriver().get(formattedAuthorizationScreen+"&prompt=confirm");
+        assertTrue(getWebDriver().getCurrentUrl().contains("oauth/authorize"));
+}
     
 }

@@ -139,8 +139,8 @@ public class WebDriverHelper {
     }
 
     
-    public String obtainImplicitTokenResponse(String clientId, String scopesString, String userName, String userPassword, String clientRedirectUri, Map<String, String> params, String responseType) {
-        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopesString, null, userName, userPassword, true, params,webDriver,responseType);
+    public String obtainImplicitTokenResponse(String clientId, String scopesString, String userName, String userPassword, String clientRedirectUri, Map<String, String> params, String responseType, boolean longlife) {
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopesString, null, userName, userPassword, longlife, params,webDriver,responseType);
         return currentUrl;
     }
 
