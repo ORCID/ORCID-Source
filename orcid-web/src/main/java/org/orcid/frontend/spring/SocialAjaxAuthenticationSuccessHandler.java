@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -59,11 +58,10 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
             String providerId = connectionType.value();
             UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
-                if (!userConnectionEntity.isLinked()) {
-                    OrcidProfile profile = getRealProfile();
+                if (!userConnectionEntity.isLinked()) {                    
                     userConnectionEntity.setLinked(true);
                     userConnectionEntity.setEmail(userMap.get("email"));
-                    userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
+                    userConnectionEntity.setOrcid(getRealUserOrcid());
                     userConnectionManager.update(userConnectionEntity);
                 }
             } else {
@@ -75,7 +73,6 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
     }
 
     private Map<String, String> retrieveUserDetails(SocialType connectionType) {
-
         Map<String, String> userMap = new HashMap<String, String>();
         if (SocialType.FACEBOOK.equals(connectionType)) {
             Facebook facebook = socialContext.getFacebook();
