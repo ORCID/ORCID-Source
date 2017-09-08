@@ -3970,6 +3970,10 @@ ul.sso-options li span {
     width: 25%;
 }
 
+.admin-edit-consortium {
+    clear: both;
+}
+
 .admin-edit-consortium td,
 .admin-edit-consortium th {
     padding: 3px 4px;
