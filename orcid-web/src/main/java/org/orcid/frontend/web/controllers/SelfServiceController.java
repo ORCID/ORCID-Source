@@ -106,6 +106,79 @@ public class SelfServiceController extends BaseController {
         ModelAndView mav = new ModelAndView("self_service");
         return mav;
     }
+    
+    @RequestMapping(value = "/validate-member-details-name", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsName(@RequestBody MemberDetailsForm consortium) {
+        // validate name isn't blank
+        consortium.getName().setErrors(new ArrayList<String>());
+        if (consortium.getName().getValue() == null || consortium.getName().getValue().trim().isEmpty()) {
+            setError(consortium.getName(), "manage_consortium.add_submember_name_required");
+        }
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-website.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsWebsite(@RequestBody MemberDetailsForm consortium) {
+        //validate website url format
+        consortium.getWebsite().setErrors(new ArrayList<String>());
+        if (!super.validateUrl(consortium.getWebsite().getValue())) {
+            setError(consortium.getWebsite(), "manage_consortium.add_submember_website_valid_format");
+        }
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-email.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsEmail(@RequestBody MemberDetailsForm consortium) {
+        //if email address exists validate format
+        consortium.getEmail().setErrors(new ArrayList<String>());
+        if (consortium.getEmail().getValue() != null || !consortium.getEmail().getValue().trim().isEmpty()) {
+            if (!super.validateEmailAddress(consortium.getEmail().getValue())) {
+                setError(consortium.getEmail(), "manage_consortium.email_valid_format");
+            }
+        }
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-description.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsDescription(@RequestBody MemberDetailsForm consortium) {
+        //validate description length
+        consortium.getDescription().setErrors(new ArrayList<String>());
+        super.validateNoLongerThan(600, consortium.getDescription());
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-community.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsCommunity(@RequestBody MemberDetailsForm consortium) {
+        // validate community isn't blank
+        consortium.getCommunity().setErrors(new ArrayList<String>());
+        if (consortium.getCommunity().getValue() == null || consortium.getCommunity().getValue().trim().isEmpty()) {
+            setError(consortium.getCommunity(), "manage_consortium.community_please_choose");
+        }
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetails(@RequestBody MemberDetailsForm consortium) {
+        validateMemberDetailsFields(consortium);
+        return consortium;
+    }
+    
+    public void validateMemberDetailsFields(MemberDetailsForm consortium) {
+        consortium.setErrors(new ArrayList<String>());
+        
+        validateMemberDetailsName(consortium);
+        validateMemberDetailsWebsite(consortium);
+        validateMemberDetailsEmail(consortium);
+        validateMemberDetailsDescription(consortium);
+        validateMemberDetailsCommunity(consortium);
+
+        copyErrors(consortium.getName(), consortium);
+        copyErrors(consortium.getWebsite(), consortium);
+        copyErrors(consortium.getEmail(), consortium);
+        copyErrors(consortium.getDescription(), consortium);
+        copyErrors(consortium.getCommunity(), consortium);
+        
+    }
 
     @RequestMapping(value = "/get-member-details.json", method = RequestMethod.GET)
     public @ResponseBody MemberDetailsForm getConsortium(@RequestParam("accountId") String accountId) {

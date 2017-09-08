@@ -119,27 +119,6 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 });
             };
 
-            /*$scope.serverValidate = function (field) {        
-                if (field === undefined) {
-                    field = '';
-                }
-                $.ajax({
-                    url: getBaseUri() + '/self-service/validate-sub-member-' + field + 'Validate.json',
-                    type: 'POST',
-                    data:  angular.toJson($scope.register),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        commonSrvc.copyErrorsLeft($scope.register, data);
-                        $scope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("RegistrationCtrl.serverValidate() error");
-                });
-                
-            };*/
-
             $scope.addSubMember = function() {
                 $scope.addSubMemberDisabled = true;
                 $scope.addSubMemberShowLoader = true;
@@ -368,6 +347,44 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 }).fail(function() {
                     // something bad is happening!
                     console.log("$ContactCtrl.update() error");
+                });
+            };
+
+            $scope.validateMemberDetailsField = function(fieldname) {
+                 $.ajax({
+                      url: getBaseUri()+'/self-service/validate-member-details-' + fieldname + '.json',
+                      contentType: 'application/json;charset=UTF-8',
+                      type: 'POST',
+                      dataType: 'json',
+                      data: angular.toJson($scope.memberDetails),
+                      success: function(data){
+                        $scope.memberDetails = data
+                        $scope.$apply();
+                    }
+                 }).fail(function(error) {
+                      // something bad is happening!
+                      console.log("Error validating member details field");
+                 });
+            };
+
+            $scope.validateMemberDetails = function () {
+                $.ajax({
+                    url: getBaseUri()+'/self-service/validate-member-details.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: angular.toJson($scope.memberDetails),
+                    success: function(data) {
+                        $scope.memberDetails = data
+                        $scope.$apply();                
+                        if ($scope.memberDetails.errors == undefined || $scope.memberDetails.errors.length == 0) {
+                            $scope.updateMemberDetailsShowLoader = true;
+                            $scope.updateMemberDetails();
+                        }
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("validate member details error");
                 });
             };
 

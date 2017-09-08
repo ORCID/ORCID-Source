@@ -36,7 +36,11 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.org_name'/></label>
-                            <input type="text" ng-model="memberDetails.name.value" class="full-width-input" />
+                            <input type="text" ng-model="memberDetails.name.value" ng-change="validateMemberDetailsField('name')" ng-model-onblur class="input-95-width" />
+                            <span class="required" ng-class="isValidClass(memberDetails.name)" >*</span>
+                            <span class="orcid-error" ng-show="newSubMember.name.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.name.errors' ng-bind-html="error"></div>
+                            </span>
                             <span class="orcid-error" ng-show="memberDetails.name.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.name.errors' ng-bind-html="error"></div>
                             </span>
@@ -46,7 +50,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.website'/></label>
-                            <input type="text" ng-model="memberDetails.website.value" class="full-width-input" />
+                            <input type="text" ng-model="memberDetails.website.value" ng-change="validateMemberDetailsField('website')" ng-model-onblur class="input-95-width" />
                             <span class="orcid-error" ng-show="memberDetails.website.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.website.errors' ng-bind-html="error"></div>
                             </span>
@@ -56,7 +60,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.email'/></label>
-                            <input type="text" ng-model="memberDetails.email.value" class="full-width-input" />
+                            <input type="text" ng-model="memberDetails.email.value" ng-change="validateMemberDetailsField('email')" ng-model-onblur class="input-95-width" />
                             <span class="orcid-error" ng-show="memberDetails.email.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.email.errors' ng-bind-html="error"></div>
                             </span>
@@ -66,7 +70,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.description'/></label>
-                            <textarea ng-model="memberDetails.description.value" class="full-width-input" ></textarea>
+                            <textarea rows="4" cols="50" ng-model="memberDetails.description.value" ng-change="validateMemberDetailsField('description')" ng-model-onblur class="input-95-width" ></textarea>
                             <span class="orcid-error" ng-show="memberDetails.description.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.description.errors' ng-bind-html="error"></div>
                             </span>
@@ -78,7 +82,7 @@
                             <label><@orcid.msg 'manage_consortium.community'/></label>
                              <select id="communities" name="communities"
 								    	class="input-xlarge"
-								     	ng-model="memberDetails.community.value">
+								     	ng-model="memberDetails.community.value" ng-change="validateMemberDetailsField('community')" ng-model-onblur >
 										<#list communityTypes?keys as key>
 											<option value="${key}" ng-selected="contact.community.value === '${key}'">${communityTypes[key]}</option>
 										</#list>
@@ -92,7 +96,7 @@
 	                <div class="row">
 	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateMemberDetailsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button id="bottom-confirm-update-consortium" class="btn btn-primary" ng-click="updateMemberDetails()" ng-disabled="updateMemberDetailsDisabled"><@orcid.msg 'manage_consortium.save_public_info'/></button>
+	                        <button id="bottom-confirm-update-consortium" class="btn btn-primary" ng-click="validateMemberDetails()" ng-disabled="updateMemberDetailsDisabled"><@orcid.msg 'manage_consortium.save_public_info'/></button>
 	                        <a href="" class="cancel-right" ng-click="closeModalReload()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
 	                    </div>
 	                </div> 
@@ -240,7 +244,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label for="new-sub-member-name"><@spring.message "manage_consortium.org_name"/></label>
-                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="input-xlarge" ng-change="validateSubMemberField('name')" ng-model="newSubMember.name.value" ng-model-onblur />
+                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="input-95-width" ng-change="validateSubMemberField('name')" ng-model="newSubMember.name.value" ng-model-onblur />
                             <span class="required" ng-class="isValidClass(newSubMember.name)" >*</span>
                             <span class="orcid-error" ng-show="newSubMember.name.errors.length > 0">
                                 <div ng-repeat='error in newSubMember.name.errors' ng-bind-html="error"></div>
@@ -251,7 +255,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label for="new-sub-member-website"><@spring.message "manage_consortium.website"/></label>
-                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="input-xlarge" ng-model="newSubMember.website.value" ng-model-onblur ng-change="validateSubMemberField('website')" />
+                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="input-95-width" ng-model="newSubMember.website.value" ng-model-onblur ng-change="validateSubMemberField('website')" />
                             <span class="required" ng-class="isValidClass(newSubMember.website)">*</span>
                             <span class="orcid-error" ng-show="newSubMember.website.errors.length > 0">
                                 <div ng-repeat='error in newSubMember.website.errors' ng-bind-html="error"></div>
