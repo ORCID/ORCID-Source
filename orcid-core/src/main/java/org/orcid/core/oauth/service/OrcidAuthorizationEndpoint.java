@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -90,21 +92,20 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     }
     
     private void modifyRequestParameters(Map<String, String> requestParameters) throws InvalidScopeException {
-    	for(Map.Entry<String,String> entry : requestParameters.entrySet()) {
-    		requestParameters.put(entry.getKey(), entry.getValue().trim());
-    	}
-    	String scopes = requestParameters.get(OAuth2Utils.SCOPE);
-    	if(scopes != null) {
-    		requestParameters.put(OAuth2Utils.SCOPE, 
-        			trimClientCredentialScopes(scopes.trim().replaceAll(" +", " ")));
-    	}
-    	//if we have an id_token response_type but no token scope, add it in.
-    	//this is because spring can't cope without the 'token' response type.
-    	if ("id_token".equals(requestParameters.get(OAuth2Utils.RESPONSE_TYPE)) && 
-    	        requestParameters.get(OAuth2Utils.SCOPE).contains("openid")){
-    	    requestParameters.put(OAuth2Utils.RESPONSE_TYPE, "id_token token");
-    	}
-	}
+        for (Map.Entry<String, String> entry : requestParameters.entrySet()) {
+            requestParameters.put(entry.getKey(), entry.getValue().trim());
+        }
+        String scopes = requestParameters.get(OAuth2Utils.SCOPE);
+        if (scopes != null) {
+            requestParameters.put(OAuth2Utils.SCOPE, trimClientCredentialScopes(scopes.trim().replaceAll(" +", " ")));
+        }
+        // if we have an id_token response_type but no token scope, add it in.
+        // this is because spring can't cope without the 'token' response type.
+        if (OrcidOauth2Constants.ID_TOKEN.equals(requestParameters.get(OAuth2Utils.RESPONSE_TYPE))
+                && requestParameters.get(OAuth2Utils.SCOPE).contains(ScopeConstants.OPENID)) {
+            requestParameters.put(OAuth2Utils.RESPONSE_TYPE, "id_token token");
+        }
+    }
 
 	/**
      * Validate if the given client have the defined scope
