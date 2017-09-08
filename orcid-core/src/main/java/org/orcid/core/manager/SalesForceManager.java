@@ -70,6 +70,8 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     String createMember(Member member);
 
     void updateMember(Member member);
+    
+    Optional<Member> checkExistingMember(Member member);
 
     Optional<Member> findBestWebsiteMatch(URL webSiteUrl, Collection<Member> possibleMatches);
 

@@ -16,10 +16,12 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -324,6 +326,12 @@ public class SelfServiceController extends BaseController {
     public @ResponseBody SubMemberForm validateSubMember(@RequestBody SubMemberForm subMember) {
         validateAddSubMemberFields(subMember);
         return subMember;
+    }
+    //TODO modify manager to break up dup check vs add new submember
+    @RequestMapping(value = "/check-existing-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody Optional <Member> checkExistingSubMember(@RequestBody SubMemberForm subMember) { 
+        Optional <Member> member = salesForceManager.checkExistingMember(subMember.toMember());
+        return member; 
     }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)

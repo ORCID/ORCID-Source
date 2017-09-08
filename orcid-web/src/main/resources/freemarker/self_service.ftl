@@ -327,14 +327,31 @@
 	        </div>
 	    </div>
     </script>
-    
+
     <script type="text/ng-template" id="remove-sub-member-modal">
+        <div class="lightbox-container">
+            <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
+            <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
+            <form ng-submit="removeSubMember(subMemberToRemove)">
+                <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
+                <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
+            </form>
+            <div ng-show="errors.length === 0">
+                <br>
+            </div>
+        </div>
+    </script>
+    
+    <!--TODO: update with existing org message-->
+    <script type="text/ng-template" id="add-sub-member-existing-org-modal">
 	    <div class="lightbox-container">
-	        <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
-	        <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
-	        <form ng-submit="removeSubMember(subMemberToRemove)">
-	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
-	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
+	        <h3><@orcid.msg 'manage_consortium.add_submember_existing_org_heading'/></h3>
+	        <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text1'/></p>
+            <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text2'/></p>
+            <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text3'/></p>
+	        <form ng-submit="addSubMember()">
+	            <button class="btn btn-danger"><@orcid.msg 'freemarker.btncontinue'/></button>
+	            <a href="" ng-click="closeModalReload()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">
 	            <br>
