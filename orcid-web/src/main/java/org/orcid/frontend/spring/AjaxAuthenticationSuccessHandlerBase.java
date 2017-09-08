@@ -22,12 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_v2.Locale;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -44,9 +42,6 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
 
     @Resource
     protected SourceManager sourceManager;
-
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
 
     @Resource
     protected LocaleContextResolver localeContextResolver;
@@ -69,11 +64,6 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
         }
 
         return targetUrl;
-    }
-
-    protected OrcidProfile getRealProfile() {
-        String realOrcid = getRealUserOrcid();
-        return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid);
     }
 
     protected String getRealUserOrcid() {
