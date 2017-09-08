@@ -244,6 +244,7 @@
 	<include file="/db/updates/backup_codes.xml" />
 	<include file="/db/updates/add_column_authorization_code_to_oauth2_token_detail.xml" />
 	<include file="/db/updates/clean_deactivated_records.xml" />
-	<include file="/db/updates/notification_sent_date_index.xml" />	
+	<include file="/db/updates/notification_sent_date_index.xml" />
+	<include file="/db/updates/delete_grants_tables.xml" />
 	<include file="/db/updates/disable_tokens_on_deactivated_records.xml" />
 </databaseChangeLog>
