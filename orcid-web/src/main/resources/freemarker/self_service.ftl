@@ -36,7 +36,11 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.org_name'/></label>
-                            <input type="text" ng-model="memberDetails.name.value" class="full-width-input" />
+                            <input type="text" ng-model="memberDetails.name.value" ng-change="validateMemberDetailsField('name')" ng-model-onblur class="input-95-width" />
+                            <span class="required" ng-class="isValidClass(memberDetails.name)" >*</span>
+                            <span class="orcid-error" ng-show="newSubMember.name.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.name.errors' ng-bind-html="error"></div>
+                            </span>
                             <span class="orcid-error" ng-show="memberDetails.name.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.name.errors' ng-bind-html="error"></div>
                             </span>
@@ -46,7 +50,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.website'/></label>
-                            <input type="text" ng-model="memberDetails.website.value" class="full-width-input" />
+                            <input type="text" ng-model="memberDetails.website.value" ng-change="validateMemberDetailsField('website')" ng-model-onblur class="input-95-width" />
                             <span class="orcid-error" ng-show="memberDetails.website.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.website.errors' ng-bind-html="error"></div>
                             </span>
@@ -56,7 +60,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.email'/></label>
-                            <input type="text" ng-model="memberDetails.email.value" class="full-width-input" />
+                            <input type="text" ng-model="memberDetails.email.value" ng-change="validateMemberDetailsField('email')" ng-model-onblur class="input-95-width" />
                             <span class="orcid-error" ng-show="memberDetails.email.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.email.errors' ng-bind-html="error"></div>
                             </span>
@@ -66,7 +70,7 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.description'/></label>
-                            <textarea ng-model="memberDetails.description.value" class="full-width-input" ></textarea>
+                            <textarea ng-model="memberDetails.description.value" ng-change="validateMemberDetailsField('description')" ng-model-onblur class="input-95-width" ></textarea>
                             <span class="orcid-error" ng-show="memberDetails.description.errors.length > 0">
                                 <div ng-repeat='error in memberDetails.description.errors' ng-bind-html="error"></div>
                             </span>
@@ -78,7 +82,7 @@
                             <label><@orcid.msg 'manage_consortium.community'/></label>
                              <select id="communities" name="communities"
 								    	class="input-xlarge"
-								     	ng-model="memberDetails.community.value">
+								     	ng-model="memberDetails.community.value" ng-change="validateMemberDetailsField('community')" ng-model-onblur >
 										<#list communityTypes?keys as key>
 											<option value="${key}" ng-selected="contact.community.value === '${key}'">${communityTypes[key]}</option>
 										</#list>
@@ -92,7 +96,7 @@
 	                <div class="row">
 	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateMemberDetailsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button id="bottom-confirm-update-consortium" class="btn btn-primary" ng-click="updateMemberDetails()" ng-disabled="updateMemberDetailsDisabled"><@orcid.msg 'manage_consortium.save_public_info'/></button>
+	                        <button id="bottom-confirm-update-consortium" class="btn btn-primary" ng-click="validateMemberDetails()" ng-disabled="updateMemberDetailsDisabled"><@orcid.msg 'manage_consortium.save_public_info'/></button>
 	                        <a href="" class="cancel-right" ng-click="closeModalReload()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
 	                    </div>
 	                </div> 
@@ -136,8 +140,21 @@
                         <tbody>
                             <tr ng-repeat="contact in contacts.contactsList">
                                 <td><b>{{contact.name}}</b><br>
-                                {{contact.email}}<br>
-                                <a href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
+                                    {{contact.email}}<br>
+                                    <a ng-if="contact.orcid" href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
+                                    <div ng-if="!contact.orcid">
+                                        <@spring.message "manage_consortium.no_orcid_id"/></span> 
+                                        <div class="popover-help-container">
+                                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                            <div id="voting-contact-help" class="popover bottom">
+                                              <div class="arrow"></div>
+                                              <div class="popover-content">
+                                                <p><@spring.message "manage_consortium.this_contact_does_not_1"/></p>
+                                                <p><@spring.message "manage_consortium.this_contact_does_not_2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="https://support.orcid.org/knowledgebase/articles/148603" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
+                                              </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!memberDetails.allowedFullAccess || !contacts.permissionsByContactRoleId[contact.role.id].allowedEdit"></input></td>
                                 <td>
@@ -227,21 +244,29 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label for="new-sub-member-name"><@spring.message "manage_consortium.org_name"/></label>
-                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="full-width-input" ng-model="newSubMember.name"></input>
+                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="input-95-width" ng-change="validateSubMemberField('name')" ng-model="newSubMember.name.value" ng-model-onblur />
+                            <span class="required" ng-class="isValidClass(newSubMember.name)" >*</span>
+                            <span class="orcid-error" ng-show="newSubMember.name.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.name.errors' ng-bind-html="error"></div>
+                            </span>
                         </div>
                     </div>
                     <!-- website -->
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label for="new-sub-member-website"><@spring.message "manage_consortium.website"/></label>
-                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="full-width-input" ng-model="newSubMember.website"></input>
+                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="input-95-width" ng-model="newSubMember.website.value" ng-model-onblur ng-change="validateSubMemberField('website')" />
+                            <span class="required" ng-class="isValidClass(newSubMember.website)">*</span>
+                            <span class="orcid-error" ng-show="newSubMember.website.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.website.errors' ng-bind-html="error"></div>
+                            </span>
                         </div>
                     </div>
                     <!-- Buttons -->
 	                <div class="row">
 	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
+	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="validateSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                    </div>
 	                </div> 
 	            </div>
@@ -274,7 +299,9 @@
 	        <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	        <div ng-show="!emailSearchResult.found" >
 	            <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
-	            <p><@orcid.msg 'manage_consortium.add_contacts_must_have_account'/></p>
+	            <p><@orcid.msg 'manage_consortium.add_contacts_no_orcid_text1'/> <@spring.message "manage_consortium.add_contacts_no_orcid_text2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="https://support.orcid.org/knowledgebase/articles/148603" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
+                <p><@spring.message "manage_consortium.add_contacts_no_orcid_text3"/></p>
+                <p><@spring.message "manage_consortium.add_contacts_no_orcid_text4"/> <a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
 	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	        </div>
 	        <div ng-show="emailSearchResult.found">

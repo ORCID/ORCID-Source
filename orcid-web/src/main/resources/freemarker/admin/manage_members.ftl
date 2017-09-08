@@ -468,6 +468,9 @@
                         <label for="salesForceId"><@orcid.msg 'manage_consortium.salesforce_id' /></label>
                         <input type="text" id="salesForceId" ng-enter="findConsortium()" ng-model="salesForceId" placeholder="<@orcid.msg 'manage_consortium.salesforce_id' />" class="input-xlarge" />                   
                     </div>  
+                    <span ng-show="findConsortiumError" ng-cloak class="orcid-error">
+                    	<@spring.message "manage_consortium.salesforce_id_not_found"/>
+                	</span>
                     <div class="controls save-btns pull-left">
                         <span id="bottom-search" ng-click="findConsortium()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
                     </div>  
@@ -497,7 +500,7 @@
                         <!-- Buttons -->
                         <div class="row">
                             <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
-                                <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
+                                <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'manage_member.edit_member.btn.update'/></span>
                             </div>
                         </div>
                         <div class="form-group" ng-show="success_edit_member_message != null">
@@ -569,8 +572,8 @@
     <div class="lightbox-container">
         <div class="row">
             <div class="col-md-12 col-xs-12 col-sm-12">
-                <h3><@orcid.msg 'manage_member.edit_member.confirm_update.title' /></h3>    
-                <p><@orcid.msg 'manage_member.edit_memeber.confirm_update.text' /></p>          
+                <h3><@orcid.msg 'manage_member.edit_consortium.confirm_update.title' /></h3>    
+                <p><@orcid.msg 'manage_member.edit_consortium.confirm_update.text' /></p>          
                 <p><strong>{{member.groupName.value}}</strong></p>                      
                 <div class="btn btn-danger" ng-click="updateConsortium()">
                     <@orcid.msg 'manage_member.edit_member.btn.update' />
