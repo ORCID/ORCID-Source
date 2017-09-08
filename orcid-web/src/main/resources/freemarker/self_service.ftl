@@ -240,21 +240,29 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label for="new-sub-member-name"><@spring.message "manage_consortium.org_name"/></label>
-                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="full-width-input" ng-model="newSubMember.name"></input>
+                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="input-xlarge" ng-change="validateSubMemberField('name')" ng-model="newSubMember.name.value" ng-model-onblur />
+                            <span class="required" ng-class="isValidClass(newSubMember.name)" >*</span>
+                            <span class="orcid-error" ng-show="newSubMember.name.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.name.errors' ng-bind-html="error"></div>
+                            </span>
                         </div>
                     </div>
                     <!-- website -->
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label for="new-sub-member-website"><@spring.message "manage_consortium.website"/></label>
-                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="full-width-input" ng-model="newSubMember.website"></input>
+                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="input-xlarge" ng-model="newSubMember.website.value" ng-model-onblur ng-change="validateSubMemberField('website')" />
+                            <span class="required" ng-class="isValidClass(newSubMember.website)">*</span>
+                            <span class="orcid-error" ng-show="newSubMember.website.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.website.errors' ng-bind-html="error"></div>
+                            </span>
                         </div>
                     </div>
                     <!-- Buttons -->
 	                <div class="row">
 	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
+	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="validateSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                    </div>
 	                </div> 
 	            </div>

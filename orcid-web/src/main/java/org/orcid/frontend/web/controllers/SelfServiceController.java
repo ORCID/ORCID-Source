@@ -16,11 +16,13 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
@@ -36,8 +38,12 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.MemberDetailsForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.ContactsForm;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
+import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -212,12 +218,57 @@ public class SelfServiceController extends BaseController {
         }
         return contactsForm;
     }
+    
+    @RequestMapping(value = "/validate-sub-member-name.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMemberName(@RequestBody SubMemberForm subMember) {
+        // validate website isn't blank
+        subMember.getName().setErrors(new ArrayList<String>());
+        if (subMember.getName().getValue() == null || subMember.getName().getValue().trim().isEmpty()) {
+            setError(subMember.getName(), "manage_consortium.add_submember_name_required");
+        }
+
+        return subMember;
+    }
+    
+    @RequestMapping(value = "/validate-sub-member-website.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMemberWebsite(@RequestBody SubMemberForm subMember) {
+
+        // validate website isn't blank
+        subMember.getWebsite().setErrors(new ArrayList<String>());
+        
+        if (subMember.getWebsite().getValue() == null || subMember.getWebsite().getValue().trim().isEmpty()) {
+            setError(subMember.getWebsite(), "manage_consortium.add_submember_website_required");
+        }
+        //validate website url
+        if (!super.validateUrl(subMember.getWebsite().getValue())) {
+            setError(subMember.getWebsite(), "manage_consortium.add_submember_website_valid_format");
+        }
+        
+        return subMember;
+    }
+    
+    @RequestMapping(value = "/validate-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMember(@RequestBody SubMemberForm subMember) {
+        validateAddSubMemberFields(subMember);
+        return subMember;
+    }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
-    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) {
-        checkFullAccess(subMember.getParentAccountId());
-        salesForceManager.createMember(subMember.toMember());
-        return subMember;
+    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) { 
+            checkFullAccess(subMember.getParentAccountId());
+            salesForceManager.createMember(subMember.toMember());
+            return subMember; 
+    }
+    
+    public void validateAddSubMemberFields(SubMemberForm subMember) {
+        subMember.setErrors(new ArrayList<String>());
+        
+        validateSubMemberName(subMember);
+        validateSubMemberWebsite(subMember);
+
+        copyErrors(subMember.getName(), subMember);
+        copyErrors(subMember.getWebsite(), subMember);
+        
     }
 
     @RequestMapping(value = "/remove-sub-member.json", method = RequestMethod.POST)
