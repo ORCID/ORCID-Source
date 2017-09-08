@@ -37,6 +37,7 @@ import org.orcid.core.manager.read_only.impl.ClientDetailsManagerReadOnlyImpl;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.dao.ClientAuthorizedGrantTypeDao;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientScopeDao;
@@ -82,6 +83,9 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     
     @Resource
     private ClientScopeDao clientScopeDao;
+    
+    @Resource
+    private ClientAuthorizedGrantTypeDao clientAuthorizedGrantTypeDao;
     
     /**
      * Creates a new client without any knowledge of the client id or secret.
@@ -391,4 +395,14 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             }
         }
     }
+    
+    @Override
+    public void addAuthorizedGrantTypeToClient(Set<String> types, ClientDetailsEntity clientDetails) {
+        for (String type : types) {
+            if (!clientDetails.getAuthorizedGrantTypes().contains(type)) {
+                clientAuthorizedGrantTypeDao.insertClientAuthorizedGrantType(clientDetails.getId(), type);
+            }
+        }
+    }
+    
 }

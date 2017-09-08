@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -72,7 +74,7 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
                     @RequestParam Map<String, String> requestParameters, SessionStatus sessionStatus, Principal principal) {
         try {
 
-            trimRequestParameters(requestParameters);
+            modifyRequestParameters(requestParameters);
         } catch (InvalidScopeException ise) {
         	String redirectUri = requestParameters.get("redirect_uri");
         	String redirectUriWithParams = "";
@@ -89,29 +91,35 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         return super.authorize(model, requestParameters, sessionStatus, principal);
     }
     
-    private void trimRequestParameters(Map<String, String> requestParameters) throws InvalidScopeException {
-    	for(Map.Entry<String,String> entry : requestParameters.entrySet()) {
-    		requestParameters.put(entry.getKey(), entry.getValue().trim());
-    	}
-    	String scopes = requestParameters.get(OAuth2Utils.SCOPE);
-    	if(scopes != null) {
-    		requestParameters.put(OAuth2Utils.SCOPE, 
-        			trimClientCredentialScopes(scopes.trim().replaceAll(" +", " ")));
-    	}
-	}
+    private void modifyRequestParameters(Map<String, String> requestParameters) throws InvalidScopeException {
+        for (Map.Entry<String, String> entry : requestParameters.entrySet()) {
+            requestParameters.put(entry.getKey(), entry.getValue().trim());
+        }
+        String scopes = requestParameters.get(OAuth2Utils.SCOPE);
+        if (scopes != null) {
+            requestParameters.put(OAuth2Utils.SCOPE, trimClientCredentialScopes(scopes.trim().replaceAll(" +", " ")));
+        }
+        // if we have an id_token response_type but no token scope, add it in.
+        // this is because spring can't cope without the 'token' response type.
+        if (OrcidOauth2Constants.ID_TOKEN.equals(requestParameters.get(OAuth2Utils.RESPONSE_TYPE))
+                && requestParameters.get(OAuth2Utils.SCOPE).contains(ScopeConstants.OPENID)) {
+            requestParameters.put(OAuth2Utils.RESPONSE_TYPE, "id_token token");
+        }
+    }
 
 	/**
      * Validate if the given client have the defined scope
      * @param scopes a space or comma separated list of scopes
      * @param clientDetails
+     * @param responseType
      * @throws InvalidScopeException in case the given client doesnt have any of the given scopes
      * */
-    public void validateScope(String scopes, ClientDetails clientDetails) throws InvalidScopeException {
+    public void validateScope(String scopes, ClientDetails clientDetails, String responseType) throws InvalidScopeException {
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(OAuth2Utils.SCOPE, scopes);
         
         //Check the user have permissions to the other scopes
-        orcidOAuth2RequestValidator.validateParameters(parameters, clientDetails);
+        orcidOAuth2RequestValidator.validateParameters(parameters, clientDetails,responseType);
     }       
     
     private URI buildRedirectUri(ServletWebRequest webRequest) throws URISyntaxException {

@@ -110,7 +110,7 @@ public class WebDriverHelper {
     
     private String obtainFullAuthorizationCodeResponse(String scopes, String clientId, String userId, String password, boolean longLife, Map<String,String> params) {
         BBBUtil.logUserOut(webBaseUrl, webDriver);
-        return OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopes, null, userId, password, longLife, params,webDriver);  
+        return OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopes, null, userId, password, longLife, params,webDriver,OauthAuthorizationPageHelper.RESPONSE_TYPE_CODE);  
     }
 
     public String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {
@@ -136,6 +136,12 @@ public class WebDriverHelper {
     
     public void close() {
         webDriver.close();
+    }
+
+    
+    public String obtainImplicitTokenResponse(String clientId, String scopesString, String userName, String userPassword, String clientRedirectUri, Map<String, String> params, String responseType, boolean longlife) {
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopesString, null, userName, userPassword, longlife, params,webDriver,responseType);
+        return currentUrl;
     }
 
 }

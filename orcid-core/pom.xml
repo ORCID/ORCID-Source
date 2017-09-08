@@ -205,6 +205,11 @@
 		    <artifactId>nimbus-jose-jwt</artifactId>
 		    <version>4.23</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.nimbusds</groupId>
+		    <artifactId>oauth2-oidc-sdk</artifactId>
+		    <version>5.36</version>
+		</dependency>
         <!-- Twitter -->
          <dependency>
             <groupId>org.twitter4j</groupId>
