@@ -219,16 +219,10 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
     
     @Override
-    public String checkExistingMember(Member member) {
+    public Optional<Member> checkExistingMember(Member member) {
         URL websiteUrl = member.getWebsiteUrl();
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
-        String accountId = null;
-        if (firstExistingMember.isPresent()) {
-            accountId = firstExistingMember.get().getId();
-        } else {
-            accountId = "";
-        }
-        return accountId;
+        return firstExistingMember;
     }
 
 

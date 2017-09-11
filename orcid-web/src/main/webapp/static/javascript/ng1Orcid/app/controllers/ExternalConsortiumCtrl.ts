@@ -128,15 +128,18 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     dataType: 'json',
                     data: angular.toJson($scope.newSubMember),
                     success: function(data) {
-                        console.log(data);
-                        $scope.newSubMemberExistingOrg = data
-                        $scope.$apply();
-                        console.log($scope.newSubMemberExistingOrg);
-                        $scope.showExistingOrgColorBox();          
+                        if(data){
+                            $scope.newSubMemberExistingOrg = data
+                            $scope.$apply();
+                            console.log($scope.newSubMemberExistingOrg);
+                            $scope.showExistingOrgColorBox();  
+                        } else {
+                            $scope.addSubMember();
+                        }        
                     }
                 }).fail(function(){
                     // something bad is happening!
-                    console.log("no existing orgs");
+                    console.log("error adding submember");
                     // continue to add submember
                     $scope.addSubMember();
                 });

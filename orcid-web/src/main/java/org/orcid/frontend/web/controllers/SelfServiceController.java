@@ -327,11 +327,14 @@ public class SelfServiceController extends BaseController {
         validateAddSubMemberFields(subMember);
         return subMember;
     }
-    //TODO modify manager to break up dup check vs add new submember
+
     @RequestMapping(value = "/check-existing-sub-member.json", method = RequestMethod.POST)
     public @ResponseBody MemberDetails checkExistingSubMember(@RequestBody SubMemberForm subMember) { 
-        String existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
-        MemberDetails existingMemberDetails = salesForceManager.retrieveDetails(existingMemberId);
+        MemberDetails existingMemberDetails = null;
+        Optional<Member> existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
+        if(existingMemberId.isPresent()){
+            existingMemberDetails = salesForceManager.retrieveDetails(existingMemberId.get().getId());
+        }
         return existingMemberDetails; 
     }
 
@@ -344,6 +347,11 @@ public class SelfServiceController extends BaseController {
     
     public void validateAddSubMemberFields(SubMemberForm subMember) {
         subMember.setErrors(new ArrayList<String>());
+        
+        Optional<Member> existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
+        if(existingMemberId.isPresent()){
+            subMember.getErrors().add(getMessage("manage_consortium.add_submember_member_exists"));
+        }
         
         validateSubMemberName(subMember);
         validateSubMemberWebsite(subMember);

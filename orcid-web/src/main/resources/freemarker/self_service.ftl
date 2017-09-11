@@ -265,6 +265,9 @@
                     <!-- Buttons -->
 	                <div class="row">
 	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
+                            <span class="orcid-error" ng-show="newSubMember.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.errors' ng-bind-html="error"></div>
+                            </span>
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
 	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="validateSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                    </div>
@@ -342,7 +345,6 @@
         </div>
     </script>
     
-    <!--TODO: update with existing org message-->
     <script type="text/ng-template" id="add-sub-member-existing-org-modal">
 	    <div class="lightbox-container">
 	        <h3><@orcid.msg 'manage_consortium.add_submember_existing_org_heading'/></h3>
