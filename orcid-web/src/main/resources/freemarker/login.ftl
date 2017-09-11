@@ -20,8 +20,6 @@
 	<div class="row">
 		<#include "sandbox_warning.ftl"/>
 		<#include "/common/browser-checks.ftl" />
-		<@spring.bind "loginForm" />
-		<@spring.showErrors "<br/>" "error" />								
 		<@orcid.checkFeatureStatus featureName='OAUTH_2SCREENS' enabled=false>
 			<div class="login" ng-controller="LoginLayoutController">
 			   <#if shibbolethEnabled>
