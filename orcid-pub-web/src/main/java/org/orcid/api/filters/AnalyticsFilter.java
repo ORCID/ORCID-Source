@@ -27,6 +27,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.utils.OrcidRequestUtil;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.container.ContainerRequest;
@@ -48,12 +49,16 @@ public class AnalyticsFilter implements ContainerResponseFilter {
     @InjectParam("profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
+    @InjectParam("apiAnalyticsTaskExecutor")
+    private ThreadPoolTaskExecutor apiAnalyticsTaskExecutor;
+    
     @Context
     private HttpServletRequest httpServletRequest;
     
     @Override
     public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
-        new Thread(getAnalyticsProcess(request, response)).start();
+        AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
+        apiAnalyticsTaskExecutor.execute(analyticsProcess);
         return response;
     }
     

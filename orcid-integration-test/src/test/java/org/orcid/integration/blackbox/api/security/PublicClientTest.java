@@ -58,14 +58,14 @@ public class PublicClientTest extends BlackBoxBaseV2Release {
     
     
     @Test
-    public void testAuthenticateIsTheOnlyScopeThatWorksForPublicClient() throws JSONException, InterruptedException {
+    public void testAuthenticateOrOpenIDAreTheOnlyScopesThatWorksForPublicClient() throws JSONException, InterruptedException {
         String clientId = getPublicClientId();
         String clientRedirectUri = getPublicClientRedirectUri();
         String userId = getUser1OrcidId();
         String password = getUser1Password();
         WebDriver webDriver = getWebDriver();
         for (ScopePathType scope : ScopePathType.values()) {
-            if (ScopePathType.AUTHENTICATE.equals(scope)) {
+            if (ScopePathType.AUTHENTICATE.equals(scope) || ScopePathType.OPENID.equals(scope)) {
                 String authCode = getAuthorizationCode(clientId, clientRedirectUri, scope.value(), userId, password, true);
                 assertFalse(PojoUtil.isEmpty(authCode));
             } else {

@@ -18,6 +18,7 @@ export const internalConsortiumCtrl = angular.module('orcidApp').controller(
             $scope
         ){    
             $scope.consortium = null;
+            $scope.findConsortiumError = false;
             $scope.showFindModal = false;
 
             $scope.closeModal = function() {
@@ -37,6 +38,7 @@ export const internalConsortiumCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.findConsortium = function() {
+                $scope.findConsortiumError = false;
                 $scope.success_edit_member_message = null;
                 $scope.consortium = null;
                 $.ajax({
@@ -48,6 +50,8 @@ export const internalConsortiumCtrl = angular.module('orcidApp').controller(
                         $scope.$apply();
                     }
                 }).fail(function(error) {
+                    $scope.findConsortiumError = true;
+                    $scope.$apply();
                     // something bad is happening!
                     console.log("Error finding the consortium");
                 });

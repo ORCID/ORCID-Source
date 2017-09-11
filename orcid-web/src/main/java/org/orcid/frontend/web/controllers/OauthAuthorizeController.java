@@ -92,7 +92,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
 
         // validate client scopes
         try {
-            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);
+            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails,requestInfoForm.getResponseType());
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         } catch (InvalidScopeException | LockedException e) {
             String redirectUriWithParams = requestInfoForm.getRedirectUrl();                
