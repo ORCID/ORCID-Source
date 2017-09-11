@@ -57,7 +57,7 @@
 
 
       <modal-email-un-verified></modal-email-un-verified>
-      <modalngcomponent #modalemailunverified>
+      <modalngcomponent id="modalemailunverified">
       </modalngcomponent>
 
       <div class="qrcode-container">

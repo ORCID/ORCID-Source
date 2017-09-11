@@ -87,14 +87,17 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.biographyForm = data;
+                //console.log('this.biographyForm', this.biographyForm);
 
                 if( this.biographyForm.biography == null  ) {
-                    this.biographyForm = {
-                        biography: {
-                            value: ''
-                        }
-                    };
+                    this.biographyForm.biography = {
+                        errors: [],
+                        getRequiredMessage: null,
+                        required: true,
+                        value: ''
+                    }
                 }
+                //console.log('this.biographyForm 2', this.biographyForm);
             },
             error => {
                 console.log('getBiographyFormError', error);
@@ -114,7 +117,8 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.biographyForm  = data;
+                this.biographyForm = data;
+                //console.log('this.biographyForm response', this.biographyForm);
                 this.close();
             },
             error => {
