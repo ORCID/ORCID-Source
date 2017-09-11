@@ -37,12 +37,21 @@
                             </div>
                         </li>
                         <li>
+                            <div class="relative" id="privacy-bar">
+                                <ul class="privacyToggle" (mouseenter)="return;" (mouseleave)="return;"  ><!-- showTooltip(group.groupId+'-privacy') hideTooltip(group.groupId+'-privacy') -->
+                                    <li class="publicActive" [ngClass]="{publicInActive: biographyForm?.visiblity?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC', $event)"></a></li>
+                                    <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: biographyForm?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED', $event)"></a></li>
+                                    <li class="privateActive privateInActive" [ngClass]="{privateInActive: biographyForm?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE', $event)"></a></li>
+                                </ul>
+                            </div>
+                            <!--
                             <@orcid.privacyToggle2 angularModel="biographyForm.visiblity.visibility"
                                 questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
                                 clickedClassCheck="{'popover-help-container-show':privacyHelp[privacyHelp==true}" 
                                 publicClick="setPrivacy('PUBLIC', $event)" 
                                 limitedClick="setPrivacy('LIMITED', $event)" 
                                 privateClick="setPrivacy('PRIVATE', $event)" />
+                                -->
                         </li>
                     </ul>
                 </div>
