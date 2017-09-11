@@ -346,9 +346,13 @@
     <script type="text/ng-template" id="add-sub-member-existing-org-modal">
 	    <div class="lightbox-container">
 	        <h3><@orcid.msg 'manage_consortium.add_submember_existing_org_heading'/></h3>
-	        <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text1'/></p>
+            <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text1'/></p>
+            <p class="bold">{{newSubMemberExistingOrg.member.name}}<br>
+            <a href="{{newSubMemberExistingOrg.member.websiteUrl}}" target="newSubMemberExistingOrg.member.websiteUrl">{{newSubMemberExistingOrg.member.websiteUrl}}</a>
+            </p>
+	        
             <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text2'/></p>
-            <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text3'/></p>
+            <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text3'/> <a href="" ng-click="closeModalReload()"><@orcid.msg 'freemarker.btncancel'/></a> <@orcid.msg 'manage_consortium.add_submember_existing_org_text4'/> <a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
 	        <form ng-submit="addSubMember()">
 	            <button class="btn btn-danger"><@orcid.msg 'freemarker.btncontinue'/></button>
 	            <a href="" ng-click="closeModalReload()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>

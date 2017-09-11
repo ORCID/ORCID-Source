@@ -329,9 +329,10 @@ public class SelfServiceController extends BaseController {
     }
     //TODO modify manager to break up dup check vs add new submember
     @RequestMapping(value = "/check-existing-sub-member.json", method = RequestMethod.POST)
-    public @ResponseBody Optional <Member> checkExistingSubMember(@RequestBody SubMemberForm subMember) { 
-        Optional <Member> member = salesForceManager.checkExistingMember(subMember.toMember());
-        return member; 
+    public @ResponseBody MemberDetails checkExistingSubMember(@RequestBody SubMemberForm subMember) { 
+        String existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
+        MemberDetails existingMemberDetails = salesForceManager.retrieveDetails(existingMemberId);
+        return existingMemberDetails; 
     }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
