@@ -92,5 +92,13 @@ public interface OrcidOauth2TokenDetailService {
     int findCountByUserName(String userName, long lastModified);
 
     int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID);
-
+    
+    /**
+     * This should NOT delete the row, but merely set it as disabled
+     * 
+     * @param userOrcid
+     *            the id of the user owner of the token
+     */
+    void disableAccessTokenByUserOrcid(String userOrcid);
+    
 }

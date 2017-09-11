@@ -59,7 +59,6 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.Email;
@@ -416,11 +415,6 @@ public class BaseController {
     @ModelAttribute("request")
     public HttpServletRequest getRequest(HttpServletRequest request) {
         return request;
-    }
-
-    @ModelAttribute("loginForm")
-    public LoginForm getLoginForm() {
-        return new LoginForm();
     }
 
     @ModelAttribute("jsMessagesJson")

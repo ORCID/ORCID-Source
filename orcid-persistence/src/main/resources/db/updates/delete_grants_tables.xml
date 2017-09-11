@@ -27,11 +27,11 @@
 		<dropTable cascadeConstraints="true" tableName="grant_contributor"/>							
     </changeSet>
     
-    <changeSet id="DELETE-FUNDING-GRANT" author="Angel Montenegro">
+    <changeSet id="DELETE-PROFILE-GRANT" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
-			<tableExists tableName="funding_grant" />
+			<tableExists tableName="profile_grant" />
 		</preConditions>	
-		<dropTable cascadeConstraints="true" tableName="funding_grant"/>							
+		<dropTable cascadeConstraints="true" tableName="profile_grant"/>							
     </changeSet>
     
     <changeSet id="DELETE-GRANT-SOURCE" author="Angel Montenegro">
@@ -41,10 +41,10 @@
 		<dropTable cascadeConstraints="true" tableName="grant_source"/>							
     </changeSet>
     
-    <changeSet id="DELETE-PROFILE-GRANT" author="Angel Montenegro">
+    <changeSet id="DELETE-FUNDING-GRANT" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
-			<tableExists tableName="profile_grant" />
+			<tableExists tableName="funding_grant" />
 		</preConditions>	
-		<dropTable cascadeConstraints="true" tableName="profile_grant"/>							
-    </changeSet>
+		<dropTable cascadeConstraints="true" tableName="funding_grant"/>							
+    </changeSet>        
 </databaseChangeLog>                   

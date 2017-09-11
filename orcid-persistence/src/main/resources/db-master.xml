@@ -246,4 +246,6 @@
 	<include file="/db/updates/clean_deactivated_records.xml" />
 	<include file="/db/updates/notification_sent_date_index.xml" />
 	<include file="/db/updates/add_url_column_to_org_affiliation_relation.xml" />
+	<include file="/db/updates/delete_grants_tables.xml" />
+	<include file="/db/updates/disable_tokens_on_deactivated_records.xml" />
 </databaseChangeLog>

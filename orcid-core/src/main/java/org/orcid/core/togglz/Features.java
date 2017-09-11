@@ -44,7 +44,10 @@ public enum Features implements Feature {
     SURVEY,
     
     @Label("Two factor authentication")
-    TWO_FACTOR_AUTHENTICATION;
+    TWO_FACTOR_AUTHENTICATION,
+    
+    @Label("API analytics debug logging")
+    API_ANALYTICS_DEBUG;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

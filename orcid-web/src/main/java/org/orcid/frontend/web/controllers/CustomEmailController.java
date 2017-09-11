@@ -26,10 +26,8 @@ import javax.mail.internet.InternetAddress;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.CustomEmailManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.pojo.ajaxForm.CustomEmailForm;
@@ -55,7 +53,6 @@ public class CustomEmailController extends BaseController {
     private static final String DEFAULT_CLAIM_SENDER = "claim@notify.orcid.org";
     private static final int SUBJECT_MAX_LENGTH = 255;
         
-    
     @Resource
     CustomEmailManager customEmailManager;
     @Resource
@@ -81,8 +78,6 @@ public class CustomEmailController extends BaseController {
         }
         
         if(!haveErrors) {
-            OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
-            mav.addObject("profile", profile);
             mav.addObject("client_id", clientId);
         }
                 

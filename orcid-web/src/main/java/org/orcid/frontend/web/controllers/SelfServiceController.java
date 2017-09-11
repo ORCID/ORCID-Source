@@ -16,11 +16,13 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
@@ -36,8 +38,12 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.MemberDetailsForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.ContactsForm;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
+import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,6 +105,79 @@ public class SelfServiceController extends BaseController {
     public ModelAndView getManageConsortiumPage(@PathVariable(required = false) String accountId) {
         ModelAndView mav = new ModelAndView("self_service");
         return mav;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-name", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsName(@RequestBody MemberDetailsForm consortium) {
+        // validate name isn't blank
+        consortium.getName().setErrors(new ArrayList<String>());
+        if (consortium.getName().getValue() == null || consortium.getName().getValue().trim().isEmpty()) {
+            setError(consortium.getName(), "manage_consortium.add_submember_name_required");
+        }
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-website.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsWebsite(@RequestBody MemberDetailsForm consortium) {
+        //validate website url format
+        consortium.getWebsite().setErrors(new ArrayList<String>());
+        if (!super.validateUrl(consortium.getWebsite().getValue())) {
+            setError(consortium.getWebsite(), "manage_consortium.add_submember_website_valid_format");
+        }
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-email.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsEmail(@RequestBody MemberDetailsForm consortium) {
+        //if email address exists validate format
+        consortium.getEmail().setErrors(new ArrayList<String>());
+        if (consortium.getEmail().getValue() != null || !consortium.getEmail().getValue().trim().isEmpty()) {
+            if (!super.validateEmailAddress(consortium.getEmail().getValue())) {
+                setError(consortium.getEmail(), "manage_consortium.email_valid_format");
+            }
+        }
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-description.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsDescription(@RequestBody MemberDetailsForm consortium) {
+        //validate description length
+        consortium.getDescription().setErrors(new ArrayList<String>());
+        super.validateNoLongerThan(600, consortium.getDescription());
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details-community.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetailsCommunity(@RequestBody MemberDetailsForm consortium) {
+        // validate community isn't blank
+        consortium.getCommunity().setErrors(new ArrayList<String>());
+        if (consortium.getCommunity().getValue() == null || consortium.getCommunity().getValue().trim().isEmpty()) {
+            setError(consortium.getCommunity(), "manage_consortium.community_please_choose");
+        }
+        return consortium;
+    }
+    
+    @RequestMapping(value = "/validate-member-details.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm validateMemberDetails(@RequestBody MemberDetailsForm consortium) {
+        validateMemberDetailsFields(consortium);
+        return consortium;
+    }
+    
+    public void validateMemberDetailsFields(MemberDetailsForm consortium) {
+        consortium.setErrors(new ArrayList<String>());
+        
+        validateMemberDetailsName(consortium);
+        validateMemberDetailsWebsite(consortium);
+        validateMemberDetailsEmail(consortium);
+        validateMemberDetailsDescription(consortium);
+        validateMemberDetailsCommunity(consortium);
+
+        copyErrors(consortium.getName(), consortium);
+        copyErrors(consortium.getWebsite(), consortium);
+        copyErrors(consortium.getEmail(), consortium);
+        copyErrors(consortium.getDescription(), consortium);
+        copyErrors(consortium.getCommunity(), consortium);
+        
     }
 
     @RequestMapping(value = "/get-member-details.json", method = RequestMethod.GET)
@@ -212,12 +291,57 @@ public class SelfServiceController extends BaseController {
         }
         return contactsForm;
     }
+    
+    @RequestMapping(value = "/validate-sub-member-name.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMemberName(@RequestBody SubMemberForm subMember) {
+        // validate website isn't blank
+        subMember.getName().setErrors(new ArrayList<String>());
+        if (subMember.getName().getValue() == null || subMember.getName().getValue().trim().isEmpty()) {
+            setError(subMember.getName(), "manage_consortium.add_submember_name_required");
+        }
+
+        return subMember;
+    }
+    
+    @RequestMapping(value = "/validate-sub-member-website.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMemberWebsite(@RequestBody SubMemberForm subMember) {
+
+        // validate website isn't blank
+        subMember.getWebsite().setErrors(new ArrayList<String>());
+        
+        if (subMember.getWebsite().getValue() == null || subMember.getWebsite().getValue().trim().isEmpty()) {
+            setError(subMember.getWebsite(), "manage_consortium.add_submember_website_required");
+        }
+        //validate website url
+        if (!super.validateUrl(subMember.getWebsite().getValue())) {
+            setError(subMember.getWebsite(), "manage_consortium.add_submember_website_valid_format");
+        }
+        
+        return subMember;
+    }
+    
+    @RequestMapping(value = "/validate-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMember(@RequestBody SubMemberForm subMember) {
+        validateAddSubMemberFields(subMember);
+        return subMember;
+    }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
-    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) {
-        checkFullAccess(subMember.getParentAccountId());
-        salesForceManager.createMember(subMember.toMember());
-        return subMember;
+    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) { 
+            checkFullAccess(subMember.getParentAccountId());
+            salesForceManager.createMember(subMember.toMember());
+            return subMember; 
+    }
+    
+    public void validateAddSubMemberFields(SubMemberForm subMember) {
+        subMember.setErrors(new ArrayList<String>());
+        
+        validateSubMemberName(subMember);
+        validateSubMemberWebsite(subMember);
+
+        copyErrors(subMember.getName(), subMember);
+        copyErrors(subMember.getWebsite(), subMember);
+        
     }
 
     @RequestMapping(value = "/remove-sub-member.json", method = RequestMethod.POST)

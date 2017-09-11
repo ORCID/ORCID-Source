@@ -53,4 +53,6 @@ public class OrcidOauth2Constants {
     //OAuth 2 screens
     public static final String OAUTH_2SCREENS = "OAUTH_2SCREENS";
     public static final String OAUTH_QUERY_STRING = "queryString";
+    public static final String IMPLICIT_GRANT_TYPE = "implicit";
+    public static final String IMPLICIT_TOKEN_RESPONSE_TYPE = "token";
 }

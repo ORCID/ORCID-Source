@@ -33,9 +33,9 @@ public class AnalyticsData {
     private Integer responseCode;
 
     private String apiVersion;
-    
+
     private String method;
-    
+
     private String clientId;
 
     public String getUserAgent() {
@@ -101,7 +101,7 @@ public class AnalyticsData {
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
     }
-    
+
     public String getMethod() {
         return method;
     }
@@ -109,7 +109,7 @@ public class AnalyticsData {
     public void setMethod(String method) {
         this.method = method;
     }
-   
+
     public String getClientId() {
         return clientId;
     }
@@ -120,15 +120,16 @@ public class AnalyticsData {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("Analytics:");
-        if (userAgent != null) {
-            builder.append("\n").append(userAgent);
-        }
-        if (contentType != null) {
-            builder.append("\n").append(contentType);
-        }
-        builder.append("\n").append(clientDetailsString).append(" calling ").append(url).append(" from ").append(ipAddress);
-        builder.append("\n").append("Response: ").append(responseCode);
+        StringBuilder builder = new StringBuilder();
+        builder.append("\nAgent: ").append(userAgent);
+        builder.append("\nContent/Accept: ").append(contentType);
+        builder.append("\nClient: ").append(clientDetailsString);
+        builder.append("\nIP: ").append(ipAddress);
+        builder.append("\nMethod: ").append(method);
+        builder.append("\nURL: ").append(url);
+        builder.append("\nResponse: ").append(responseCode);
+        builder.append("\nAPI version: ").append(apiVersion);
+        builder.append("\nCategory: ").append(category);
         return builder.toString();
     }
 

@@ -57,6 +57,8 @@
 
 
       <modal-email-un-verified></modal-email-un-verified>
+      <modalngcomponent id="modalemailunverified">
+      </modalngcomponent>
 
       <div class="qrcode-container">
         <a href="http://qrcode.orcid.org" target="workspace.qrcode.link.text"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
@@ -96,29 +98,157 @@
         </div>
       </div>
 
-      <!-- Country -->            
-      <div ng-controller="CountryCtrl" class="workspace-section country">
-        <div class="workspace-section-header">
-          <div class="workspace-section-title">
-            <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
-              <div class="glyphicon glyphicon-pencil"> 
-                <div class="popover popover-tooltip top"> 
-                  <div class="arrow"></div>
-                  <div class="popover-content">
-                    <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
-                  </div>                
+    <!-- Country -->    
+    <script type="text/ng-template" id="country-ng2-template">
+        <div class="workspace-section country" [hidden]="">
+            <div class="workspace-section-header">
+                <div class="workspace-section-title">
+                    <div id="country-open-edit-modal" class="edit-country edit-option" (click)="modalng2.openModal()" title=""> 
+                        <div class="glyphicon glyphicon-pencil"> 
+                            <div class="popover popover-tooltip top"> 
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
+                                </div>                
+                            </div>
+                        </div>                  
+                    </div>
+                    <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
                 </div>
-              </div>                  
             </div>
-            <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
-          </div>
+            <div class="workspace-section-content">
+                <!--
+                <span ng-repeat="country in countryForm.addresses">                                       
+                    <span *ngIf="country != null && country.countryName != null" ng-bind="country.countryName"></span>
+                </span>
+                -->
+            </div>
+        </div>
+        <div modalngcomponent #modalng2> 
+            
+            <div id="edit-country" class="edit-record <#if RequestParameters['bulkEdit']??>
+            edit-record-bulk-edit
+                </#if> edit-country row">
+
+                <div class="col-md-12 col-sm-12 col-xs-12">           
+                    <div class=""> 
+                        <h1 class="lightbox-title pull-left">
+                            <@orcid.msg 'manage_bio_settings.editCountry'/>
+                        </h1>
+                    </div>          
+                </div>
+                <div class="bottomBuffer" style="margin: 0!important;">                          
+                    <div ng-include="'bulk-edit'"></div>                    
+                </div>              
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class=" padding-right-reset">
+                        <span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>   
+                    </div>
+                </div>      
+                <div class="col-md-12 col-xs-12 col-sm-12">
+                    <div class="" style="position: static">
+                        <div class="fixed-area" scroll>             
+                            <div class="scroll-area">       
+                                <div class="row aka-row" ng-repeat="country in countryForm.addresses">
+                                    <div class="col-md-6">                                  
+                                        <div class="aka">
+                                            <select  name="country" ng-model="country.iso2Country.value" ng-disabled="country.source != orcidId" ng-class="{'not-allowed': country.source != orcidId}" focus-me="newInput">
+                                                <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+                                                <#list isoCountries?keys as key>
+                                                    <option value="${key}">${isoCountries[key]}</option>
+                                                </#list>
+                                            </select>                                       
+                                        </div>         
+                                        <!--                         
+                                        <div class="source" ng-if="country.sourceName || country.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="country.sourceName">{{country.sourceName}}</span><span ng-if="country.sourceName == null">{{orcidId}}</span></div>
+                                        -->
+                                    </div> 
+                                    <div class="col-md-6" style="position: static">
+                                        <ul class="record-settings pull-right">                                                                             
+                                            <li>                                    
+                                                <div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-move-up-'+$index)"></div>
+                                                <@orcid.tooltip elementId="'tooltip-country-move-up-'+$index" message="common.modals.move_up"/>                                         
+                                            </li>
+                                            <li>
+                                                <div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-move-down-'+$index)"></div>
+                                                <@orcid.tooltip elementId="'tooltip-country-move-down-'+$index" message="common.modals.move_down" />
+                                            </li>
+                                            <li>
+                                                <div class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-delete-'+$index)"></div>
+                                                <@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />                                          
+                                            </li>
+                                            <li>
+                                                <@orcid.privacyToggle3  angularModel="country.visibility.visibility"
+                                                    questionClick="toggleClickPrivacyHelp($index)"
+                                                    clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+                                                    publicClick="setPrivacyModal('PUBLIC', $event, country)" 
+                                                    limitedClick="setPrivacyModal('LIMITED', $event, country)" 
+                                                    privateClick="setPrivacyModal('PRIVATE', $event, country)"
+                                                    elementId="$index"/>    
+                                            </li>
+                                        </ul>
+                                        <!--
+                                        <span class="created-date pull-right" ng-show="country.createdDate" ng-class="{'hidden-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+                                        <span class="created-date pull-left" ng-show="country.createdDate" ng-class="{'visible-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+                                        --> 
+                                    </div>                                  
+                                </div>                                          
+                            </div>
+                            <div ng-show="countryForm.errors.length > 0">
+                                <div ng-repeat="error in countryForm.errors">
+                                    <span ng-bind="error" class="red"></span>
+                                </div>
+                            </div>
+                        </div>                  
+                        <div class="record-buttons">                        
+                            <a (click)="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+                                <div class="popover popover-tooltip-add top">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <span><@orcid.msg 'common.modals.add' /></span>
+                                    </div>
+                                </div>
+                            </span></a>                         
+                            <button class="btn btn-primary pull-right" (click)="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+                            <a class="cancel-option pull-right" (click)="console.log('test');closeModal()"><@spring.message "freemarker.btncancel"/></a> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </script>
+
+    <!--
+    Original Code
+    --------------------------
+    -->   
+    <div ng-controller="CountryCtrl" class="workspace-section country">
+        <div class="workspace-section-header">
+            <div class="workspace-section-title">
+                <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
+                    <div class="glyphicon glyphicon-pencil"> 
+                        <div class="popover popover-tooltip top"> 
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
+                            </div>                
+                        </div>
+                    </div>                  
+                </div>
+                <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
+            </div>
         </div>
         <div class="workspace-section-content">
-          <span ng-repeat="country in countryForm.addresses">                                       
-            <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
-          </span>
+            <span ng-repeat="country in countryForm.addresses">                                       
+                <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
+            </span>
         </div>
-      </div>
+    </div>
+    <!--
+    <country-ng2></country-ng2>
+    -->    
 
       <!-- Keywords -->         
       <div ng-controller="KeywordsCtrl" class="workspace-section keywords">

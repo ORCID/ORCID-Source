@@ -3970,6 +3970,10 @@ ul.sso-options li span {
     width: 25%;
 }
 
+.admin-edit-consortium {
+    clear: both;
+}
+
 .admin-edit-consortium td,
 .admin-edit-consortium th {
     padding: 3px 4px;
@@ -5756,6 +5760,10 @@ ul.workspace-private-toolbar .popover-help-container .popover {
     width: 100%;
 }
 
+.input-95-width {
+    width: 95%;
+}
+
 
 /*Angular Multiselect*/
 
@@ -7442,6 +7450,10 @@ ul.comma li:last-child:after {
     width: 100%;
 }
 
+.self-service textarea{
+    height: 8em;
+}
+
 .self-service td,
 .self-service th {
     padding: 8px 20px 8px 0;
@@ -7819,6 +7831,10 @@ ul.comma li:last-child:after {
     select,
     input[type="email"] {
         width: 100%;
+    }
+
+    input[type="text"].input-95-width {
+        width: 95%;
     }
     /* Footer */
     .footer {
@@ -8324,6 +8340,11 @@ ul.comma li:last-child:after {
     .full-width {
         width: 100%;
     }
+
+    .input-95-width {
+        width: 95%;
+    }
+
     .biography-controller .popover-help-container .popover {
         left: -110px !important;
     }

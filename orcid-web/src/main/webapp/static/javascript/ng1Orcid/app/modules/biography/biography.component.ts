@@ -1,11 +1,39 @@
-declare var $scope: any;
-declare var getBaseUri: any;
-declare var logAjaxError: any;
+//Import all the angular components
 
-import * as angular from 'angular';
-import { NgModule } from '@angular/core';
+import { NgFor } 
+    from '@angular/common'; 
 
-export class BiographyCtrl {
+import { AfterViewInit, Component, OnDestroy, OnInit } 
+    from '@angular/core';
+
+import { Observable } 
+    from 'rxjs/Rx';
+
+import { Subject } 
+    from 'rxjs/Subject';
+
+import { Subscription }
+    from 'rxjs/Subscription';
+
+import { BiographyService } 
+    from '../../shared/biographyService.ts'; 
+
+import { ConfigurationService } 
+    from '../../shared/configurationService.ts';
+
+import { EmailService } 
+    from '../../shared/emailService.ts';
+
+import { ModalService } 
+    from '../../shared/modalService.ts'; 
+
+@Component({
+    selector: 'biography-ng2',
+    template:  scriptTmpl("biography-ng2-template")
+})
+export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     biographyForm: any;
     configuration: any;
     emails: any;
@@ -15,288 +43,131 @@ export class BiographyCtrl {
     showEdit: any;
     showElement: any;
 
-    static $inject = [
-        '$compile',
-        '$rootScope',
-        '$scope',
-        'emailSrvc',
-        'initialConfigService',
-    ];
-
     constructor(
-        $compile, 
-        $rootScope, 
-        $scope, 
-        emailSrvc, 
-        initialConfigService 
+        private biographyService: BiographyService,
+        private configurationService: ConfigurationService,
+        private emailService: EmailService,
+        private modalService: ModalService
     ) {
-        //console.log('BiographyCtrl loaded');
-        this.biographyForm = null;
-        this.configuration = initialConfigService.getInitialConfiguration();;
+        this.biographyForm = {
+            biography: {
+                value: ''
+            }
+        };
+        
         this.emails = {};
-        this.emailSrvc = emailSrvc;
-        this.emailVerified = false;
+        this.emailVerified = false; //change to false once service is ready
         this.lengthError = false;
         this.showEdit = false;
         this.showElement = {};
-        
-        /*
-        console.log('emailSrvc', emailSrvc);
-        this.emailSrvc.getEmails(
-            function(data) {
-                console.log('data', data);
-                this.emails = data;//.emails;
-                if( this.emails && this.emails['emails'] ){
-                    this.emails = this.emails['emails'];
-                }
-                console.log( 'this.emails', this.emails );
-                if( this.emailSrvc.getEmailPrimary().verified == true ) {
-                    this.emailVerified = true;
-                }
-            }
-        );*/
-
-        this.getBiographyForm();
     }
-
-    /////////////////////// Begin of verified email logic for work
-    showEmailVerificationModal(): void{
-        /*$rootScope.$broadcast(
-            'emailVerifiedObj', 
-            {
-                flag: emailVerified, 
-                emails: emails
-            }
-        );*/
-    };
 
     cancel(): void {
         this.getBiographyForm();
-        console.log('cancel');
         this.showEdit = false;
     };
 
-    checkLength(): void {
-        if (this.biographyForm != null){
-            if (this.biographyForm.biography != null){
-                if (this.biographyForm.biography.value != null){    
-                    if (this.biographyForm.biography.value.length > 5000) {
-                        this.lengthError = true;
-                    } else {
-                        this.lengthError = false;
-                    }
-                }
-            }
+    checkLength(): any {
+        if ( this.biographyForm.biography.value.length > 5000 ) {
+            this.lengthError = true;
+        } else {
+            this.lengthError = false;
         }
-        return this.lengthError;
+
+        return !this.lengthError; //Negating the error, if error is present will be true and return false to avoid user input
     };
 
     close(): void {
         this.showEdit = false;
     };
 
-    getBiographyForm(): void {
-        console.log('getBiographyForm');
-        $.ajax({
-            url: getBaseUri() + '/account/biographyForm.json',
-            dataType: 'json',
-            success: function(data) {
+    getBiographyForm(): void{
+        this.biographyService.getBiographyData()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
                 this.biographyForm = data;
-                //$scope.$apply();
-            }
-        }).fail(function(e){
-            // something bad is happening!
-            console.log("error fetching BiographyForm");
-            logAjaxError(e);
-        });
+                //console.log('this.biographyForm', this.biographyForm);
+
+                if( this.biographyForm.biography == null  ) {
+                    this.biographyForm.biography = {
+                        errors: [],
+                        getRequiredMessage: null,
+                        required: true,
+                        value: ''
+                    }
+                }
+                //console.log('this.biographyForm 2', this.biographyForm);
+            },
+            error => {
+                console.log('getBiographyFormError', error);
+            } 
+        );
     };
 
     hideTooltip(tp): void{
         this.showElement[tp] = false;
     };
 
-    setBiographyForm(): void{
-        if( this.checkLength() ){    
+    setBiographyForm(): any{
+        if( this.checkLength() == false ){    
             return; // do nothing if there is a length error
-        } 
-        $.ajax({
-            contentType: 'application/json;charset=UTF-8',
-            data:  angular.toJson(this.biographyForm),
-            dataType: 'json',
-            type: 'POST',
-            url: getBaseUri() + '/account/biographyForm.json',
-            success: function(data) {
+        }
+        this.biographyService.setBiographyData( this.biographyForm )
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
                 this.biographyForm = data;
-                if(data.errors.length == 0){
-                    this.close();
-                }
-                //$scope.$apply();
-            }
-        }).fail(function() {
-            // something bad is happening!
-            console.log("BiographyCtrl.serverValidate() error");
-        });
+                //console.log('this.biographyForm response', this.biographyForm);
+                this.close();
+            },
+            error => {
+                console.log('setBiographyFormError', error);
+            } 
+        );
     };
 
-    setPrivacy(priv, $event): void {
+    setPrivacy(priv, $event:any): void {
         $event.preventDefault();
         this.biographyForm.visiblity.visibility = priv;
         this.setBiographyForm();        
     };
 
-    showTooltip(tp): void {
+    showTooltip(tp): void{
         this.showElement[tp] = true;
     };
     
     toggleEdit(): void {
-        if(this.emailVerified === true || this.configuration.showModalManualEditVerificationEnabled == false){
-            this.showEdit = !this.showEdit;
-        }else{
-            this.showEmailVerificationModal();
-        }
+
+        this.emailService.getEmails()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.showEdit = !this.showEdit;
+                }else{
+                    this.modalService.notifyOther('open');
+                }
+            },
+            error => {
+                console.log('getEmails', error);
+            } 
+        );
     };
 
-    //this.getBiographyForm();
-    
-    /////////////////////// End of verified email logic for work
+    //Default init functions provided by Angular Core
+    ngAfterViewInit() {
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+    };
 
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
+
+    ngOnInit() {
+        this.getBiographyForm();
+        this.configuration = this.configurationService.getInitialConfiguration();
+    }; 
 }
-
-export const biographyCmp = {
-    /*
-    template : './biography.component.html',
-    */
-    controller: BiographyCtrl,
-    controllerAs: 'ctrl'
-};
-
-/*
-BiographyModule.controller(
-    'BiographyCtrl',
-    [
-        '$scope',
-        '$rootScope',
-        //'$compile',
-        'emailSrvc',
-        'initialConfigService', 
-        function (
-            $scope, 
-            $rootScope, 
-            //$compile, 
-            emailSrvc, 
-            initialConfigService
-        ) {
-            $scope.biographyForm = null;
-            $scope.emailSrvc = emailSrvc;
-            $scope.lengthError = false;
-            $scope.showEdit = false;
-            $scope.showElement = {};
-
-            /////////////////////// Begin of verified email logic for work
-            var configuration = initialConfigService.getInitialConfiguration();;
-            var emails = {};
-            var emailVerified = false;
-
-            var showEmailVerificationModal = function(){
-                $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
-            };
-            
-            $scope.emailSrvc.getEmails(
-                function(data) {
-                    emails = data.emails;
-                    if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
-                        emailVerified = true;
-                    }
-                }
-            );
-            /////////////////////// End of verified email logic for work
-
-            $scope.cancel = function() {
-                $scope.getBiographyForm();
-                $scope.showEdit = false;
-            };
-
-            $scope.checkLength = function () {
-                if ($scope.biographyForm != null){
-                    if ($scope.biographyForm.biography != null){
-                        if ($scope.biographyForm.biography.value != null){    
-                            if ($scope.biographyForm.biography.value.length > 5000) {
-                                $scope.lengthError = true;
-                            } else {
-                                $scope.lengthError = false;
-                            }
-                        }
-                    }
-                }
-                return $scope.lengthError;
-            };
-
-            $scope.close = function() {
-                $scope.showEdit = false;
-            };
-
-            $scope.getBiographyForm = function(){
-                $.ajax({
-                    url: getBaseUri() + '/account/biographyForm.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        $scope.biographyForm = data;
-                        $scope.$apply();
-                    }
-                }).fail(function(e){
-                    // something bad is happening!
-                    console.log("error fetching BiographyForm");
-                    logAjaxError(e);
-                });
-            };
-
-            $scope.hideTooltip = function(tp){
-                $scope.showElement[tp] = false;
-            };
-
-            $scope.setBiographyForm = function(){
-                if( $scope.checkLength() ){    
-                    return; // do nothing if there is a length error
-                } 
-                $.ajax({
-                    contentType: 'application/json;charset=UTF-8',
-                    data:  angular.toJson($scope.biographyForm),
-                    dataType: 'json',
-                    type: 'POST',
-                    url: getBaseUri() + '/account/biographyForm.json',
-                    success: function(data) {
-                        $scope.biographyForm = data;
-                        if(data.errors.length == 0){
-                            $scope.close();
-                        }
-                        $scope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("BiographyCtrl.serverValidate() error");
-                });
-            };
-
-            $scope.setPrivacy = function(priv, $event) {
-                $event.preventDefault();
-                $scope.biographyForm.visiblity.visibility = priv;
-                $scope.setBiographyForm();        
-            };
-
-            $scope.showTooltip = function(tp){
-                $scope.showElement[tp] = true;
-            };
-            
-            $scope.toggleEdit = function() {
-                if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-                    $scope.showEdit = !$scope.showEdit;
-                }else{
-                    showEmailVerificationModal();
-                }
-            };
-
-            $scope.getBiographyForm();
-        }
-    ]
-);
-*/
