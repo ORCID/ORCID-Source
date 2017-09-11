@@ -1,7 +1,7 @@
 # ORCID API v2.1 Guide
 
 ## Current State (Release Stable)
-v2.1 is the current release of the ORCID API and should be used for all development.
+v2.1 is a current stable release of the ORCID API.
 
 ## XSDs and current state (all stable)
 - [activities-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/activities-2.1.xsd) 
@@ -41,56 +41,18 @@ v2.1 is the current release of the ORCID API and should be used for all developm
 - [work-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/work-2.1.xsd)
 **stable**
 
-##Changes from Release candidate 2.1:
-### Search
-- Addition of search endpoints
+## Changes from Version 2.0:
 
-### Peer-review
-- Change external-id-type 'PEER-REVIEW' to 'peer-review'
-- Addition of 'peer-review service' as a group type for peer-reviews
-- Peer-review groups look-up by name option
+With version 2.1, ORCID iDs are expressed in the cannonical form with the https perfix.
 
-### Email addresses
-- Include primary and verified status when reading an email address
-
-##Changes from Version 1.2
-A number of changes to the ORCID API have been made to improve on the existing 1.2 release, this section highlights the most notable changes.
-
-###Multiple XSD
-The ORCID Messages Schema has been broken down in to multiple files. Namespaces are now used and common elements are reused in multiple sections.
-
-###Per item API
-With version 2.1 the ORCID API information is now added, updated, and read as individual items, as compared to entire sections of a record as was the case with 1.2. Existing items are read, updated or deleted using their put-code, and new items must be posted individually (with the exception of works which can be added up to 100 at a time). To read an entire section of a record the activities summary can be accessed.
-
-###Activities summary:
-When reading the works, funding, and peer-review sections, a summary of each activity is returned. The summary is intended to provide basic information about the item, including title, type, date, organization, source and identifiers. The full item can be retrieved by accessing the individual item using the put-code provided.
-
-###Activities group:
-
-Funding, Works and Peer-review items are grouped together based on a common external identifier. In the schema, the group is the parent of the items and contains a last modified date for the group and the identifier(s) used to create the group.
-
-### New attributes for items
-- *put-code* attribute on the parent field of an item to uniquely identify that item within the ORCID Registry
-- *display-index* indicates the order the researcher has ranked this item within its group or section, higher display indexes appear first. (By deafulat all items added via the API will have their display index set to 0, the display index will update when the order is edited by the researcher.)
-
-### Additional metadata about items on the record 
- - *created date* when the item was first added to the ORCID record
- - *last-modified-date* when the item was changed, such as being edited or having it's visibility changed. 
- - *source*  who added the item to the record. Items added via the API will have the *source-client-id* field to record the client iD, items added by the researcher will use the *source-orcid* field to record the researcher's ORCID iD.
-
-### Additional external identifier fields
-- *external-id-url* indicates how the identifier will resolve
-- *external-id-relationship* indicates the relationship between the item and the identifier
-
-###Peer-review
-A new activities section, peer-review, captures the formal review activity of researchers.
-
-###Non-editable fields
-The 2.1 API can not be used to edit the fields give-name, family-name or biography. 
-
-###Repeatable address field
-With 2.1 the address field can be repeated
-
+Example of a source ORCID iD in 2.1
+~~~~
+<common:source-orcid>
+ <common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+ <common:path>8888-8888-8888-8880</common:path>
+ <common:host>orcid.org</common:host>
+</common:source-orcid>
+~~~~
 
 ## Sample files:
 
@@ -298,6 +260,6 @@ When updating a record item, include the put code as an attribute in the root el
 | Delete a webhook  	| /webhook |```curl -v -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'http://api.sandbox.orcid.org/0000-0002-9227-8514/webhook/http%3A%2F%2Fencoded.url%2F0000-0002-9227-8514'  ```|
 
 ### Search
-| Item               | Scope               |  Example cURL Statement                                         |
-|--------------------|--------------------------|-------------------------------------------------------|----------------------------------------------------------------|
-| Search records     | /read-public             | ```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/search?q=Simpson'```|
+| Item               | Scope               |  Example cURL Statement  |
+|--------------------|---------------------|---------------------------------------|
+| Search records     | /read-public        | ```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/search?q=Simpson'```|
