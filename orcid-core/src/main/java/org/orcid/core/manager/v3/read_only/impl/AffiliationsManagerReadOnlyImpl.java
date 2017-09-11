@@ -150,7 +150,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                if(AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
+                if(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
                 } else {
                     result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));

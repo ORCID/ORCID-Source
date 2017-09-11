@@ -20,15 +20,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.DisambiguatedOrganization;
-import org.orcid.jaxb.model.common_v2.Iso3166Country;
-import org.orcid.jaxb.model.common_v2.Organization;
-import org.orcid.jaxb.model.common_v2.OrganizationAddress;
-import org.orcid.jaxb.model.common_v2.Source;
-import org.orcid.jaxb.model.record_v2.Affiliation;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.dev1.common.Organization;
+import org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.dev1.common.Source;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
+import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.dev1.record.Education;
+import org.orcid.jaxb.model.v3.dev1.record.Employment;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
 
@@ -77,6 +78,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date createdDate;
 
     private Date lastModified;
+    
+    private Text url;
 
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
@@ -139,6 +142,79 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
                 form.setSourceName(source.getSourceName().getContent());
             }
         }
+        
+        if (affiliation.getUrl() != null) {
+            form.setUrl(Text.valueOf(affiliation.getUrl().getValue()));
+        } else {
+            form.setUrl(new Text());
+        }
+
+        form.setCreatedDate(Date.valueOf(affiliation.getCreatedDate()));
+        form.setLastModified(Date.valueOf(affiliation.getLastModifiedDate()));
+        return form;
+    }
+    
+    public static AffiliationForm valueOf(org.orcid.jaxb.model.record_v2.Affiliation affiliation) {
+        AffiliationForm form = new AffiliationForm();
+
+        if (affiliation instanceof org.orcid.jaxb.model.record_v2.Education) {
+            form.setAffiliationType(Text.valueOf(AffiliationType.EDUCATION.value()));
+        } else {
+            form.setAffiliationType(Text.valueOf(AffiliationType.EMPLOYMENT.value()));
+        }
+
+        form.setPutCode(Text.valueOf(affiliation.getPutCode()));
+        form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
+        org.orcid.jaxb.model.common_v2.Organization organization = affiliation.getOrganization();
+
+        form.setDateSortString(PojoUtil.createDateSortString(affiliation.getStartDate(), affiliation.getEndDate()));
+        form.setAffiliationName(Text.valueOf(organization.getName()));
+        org.orcid.jaxb.model.common_v2.OrganizationAddress address = organization.getAddress();
+        form.setCity(Text.valueOf(address.getCity()));
+        if (organization.getDisambiguatedOrganization() != null) {
+            if (organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
+                form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
+                form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
+                form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));
+            }
+        }
+        if (address.getRegion() != null) {
+            form.setRegion(Text.valueOf(address.getRegion()));
+        } else {
+            form.setRegion(new Text());
+        }
+
+        if (address.getCountry() != null) {
+            form.setCountry(Text.valueOf(address.getCountry().value()));
+        } else {
+            form.setCountry(new Text());
+        }
+
+        if (affiliation.getDepartmentName() != null) {
+            form.setDepartmentName(Text.valueOf(affiliation.getDepartmentName()));
+        } else {
+            form.setDepartmentName(new Text());
+        }
+
+        if (affiliation.getRoleTitle() != null) {
+            form.setRoleTitle(Text.valueOf(affiliation.getRoleTitle()));
+        } else {
+            form.setRoleTitle(new Text());
+        }
+
+        if (affiliation.getStartDate() != null) {
+            form.setStartDate(Date.valueOf(affiliation.getStartDate()));
+        }
+        if (affiliation.getEndDate() != null) {
+            form.setEndDate(Date.valueOf(affiliation.getEndDate()));
+        }
+        org.orcid.jaxb.model.common_v2.Source source = affiliation.getSource();
+        if (source != null) {
+            form.setSource(source.retrieveSourcePath());
+            if (source.getSourceName() != null) {
+                form.setSourceName(source.getSourceName().getContent());
+            }
+        }
 
         form.setCreatedDate(Date.valueOf(affiliation.getCreatedDate()));
         form.setLastModified(Date.valueOf(affiliation.getLastModifiedDate()));
@@ -158,7 +234,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             affiliation.setPutCode(Long.valueOf(putCode.getValue()));
         }
         if(visibility != null && visibility.getVisibility() != null) {
-            affiliation.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.getVisibility().value()));
+            affiliation.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.getVisibility().value()));
         }
         Organization organization = new Organization();
         affiliation.setOrganization(organization);
@@ -182,11 +258,15 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             affiliation.setDepartmentName(departmentName.getValue());
         }
         if (!PojoUtil.isEmpty(startDate)) {
-            affiliation.setStartDate(startDate.toFuzzyDate());
+            affiliation.setStartDate(startDate.toV3FuzzyDate());
         }
         if (!PojoUtil.isEmpty(endDate)) {
-            affiliation.setEndDate(endDate.toFuzzyDate());
+            affiliation.setEndDate(endDate.toV3FuzzyDate());
         }
+        if (!PojoUtil.isEmpty(url)) {
+            affiliation.setUrl(new Url(url.getValue()));
+        }
+        
         return affiliation;
     }
 
@@ -365,4 +445,13 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
+
+    public Text getUrl() {
+        return url;
+    }
+
+    public void setUrl(Text url) {
+        this.url = url;
+    }
+    
 }
