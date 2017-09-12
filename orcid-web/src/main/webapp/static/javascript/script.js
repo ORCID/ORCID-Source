@@ -1036,7 +1036,7 @@ function populateWorkAjaxForm(bibJson, work) {
     return work;
 };
 
-/* start bibtexParse 0.0.23 */
+/* start bibtexParse 0.0.24 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -1062,7 +1062,7 @@ function populateWorkAjaxForm(bibJson, work) {
 (function(exports) {
 
   function BibtexParser() {
-      
+
       this.months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
       this.notKey = [',','{','}',' ','='];
       this.pos = 0;
@@ -1214,7 +1214,7 @@ function populateWorkAjaxForm(bibJson, work) {
                   return k.toLowerCase();
               else
                   throw "Value expected:" + this.input.substring(start) + ' for key: ' + k;
-          
+
           };
       };
 
@@ -1244,7 +1244,7 @@ function populateWorkAjaxForm(bibJson, work) {
                   return this.input.substring(start, this.pos);
               } else {
                   this.pos++;
-                  
+
               };
           };
       };
@@ -1254,6 +1254,7 @@ function populateWorkAjaxForm(bibJson, work) {
           if (this.tryMatch("=")) {
               this.match("=");
               var val = this.value();
+              key = key.trim()
               return [ key, val ];
           } else {
               throw "... = value expected, equals sign missing:"
@@ -1281,7 +1282,7 @@ function populateWorkAjaxForm(bibJson, work) {
           this.currentEntry = {};
           this.currentEntry['citationKey'] = this.key(true);
           this.currentEntry['entryType'] = d.substring(1);
-          if (this.currentEntry['citationKey'] != null) {            
+          if (this.currentEntry['citationKey'] != null) {
               this.match(",");
           }
           this.key_value_list();
@@ -1327,11 +1328,11 @@ function populateWorkAjaxForm(bibJson, work) {
           while (this.matchAt()) {
               var d = this.directive();
               this.match("{");
-              if (d == "@STRING") {
+              if (d.toUpperCase() == "@STRING") {
                   this.string();
-              } else if (d == "@PREAMBLE") {
+              } else if (d.toUpperCase() == "@PREAMBLE") {
                   this.preamble();
-              } else if (d == "@COMMENT" || d == "@Comment") {
+              } else if (d.toUpperCase() == "@COMMENT") {
                   this.comment();
               } else {
                   this.entry(d);
@@ -1342,7 +1343,7 @@ function populateWorkAjaxForm(bibJson, work) {
           this.alernativeCitationKey();
       };
   };
-  
+
   exports.toJSON = function(bibtex) {
       var b = new BibtexParser();
       b.setInput(bibtex);
@@ -1372,7 +1373,7 @@ function populateWorkAjaxForm(bibJson, work) {
           out += '}\n\n';
       }
       return out;
-      
+
   };
 
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
