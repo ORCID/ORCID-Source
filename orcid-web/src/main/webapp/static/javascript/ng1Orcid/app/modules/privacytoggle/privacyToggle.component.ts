@@ -28,10 +28,10 @@ import { ModalService }
     from '../../shared/modalService.ts'; 
 
 @Component({
-    selector: 'privacy-toogle-ng2',
-    template:  scriptTmpl("privacy-toogle-ng2-template")
+    selector: 'privacy-toggle-ng2',
+    template:  scriptTmpl("privacy-toggle-ng2-template")
 })
-export class PrivacyToogleComponent implements AfterViewInit, OnDestroy, OnInit {
+export class PrivacytoggleComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     biographyForm: any;
