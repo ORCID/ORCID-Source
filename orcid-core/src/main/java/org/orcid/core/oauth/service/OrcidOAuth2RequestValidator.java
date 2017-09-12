@@ -82,7 +82,7 @@ public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
             }
         }
         if (responseType!=null && responseType.contains(OrcidOauth2Constants.IMPLICIT_TOKEN_RESPONSE_TYPE) && !ImplicitScopes.isValid(OAuth2Utils.parseParameterList(parameters.get("scope")))){
-            throw new InvalidScopeException("Invalid grant_type/scope combination.  Must use only the "+ImplicitScopes.values()+" scope for implicit OAuth with response_type=token");           
+            throw new InvalidScopeException("Invalid response_type/scope combination.");           
         }
     }
     
