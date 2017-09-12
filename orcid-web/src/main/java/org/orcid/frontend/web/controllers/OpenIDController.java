@@ -86,7 +86,7 @@ public class OpenIDController {
                 boolean hasScope = false;
                 Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(tok.getScope());
                 for (ScopePathType scope : requestedScopes) {
-                    if (scope.hasScope(ScopePathType.OPENID)) {
+                    if (scope.hasScope(ScopePathType.AUTHENTICATE)) {
                         hasScope = true;
                     }
                 }

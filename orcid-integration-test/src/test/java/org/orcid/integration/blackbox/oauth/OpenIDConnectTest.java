@@ -125,6 +125,42 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         user = new JSONObject(userInfoString);
         Assert.assertEquals("9999-0000-0000-0004",user.get("sub"));
     }
+    
+    @Test
+    public void checkAuthenticateScopeUserInfo() throws InterruptedException, JSONException{
+      //Get id token
+        String clientId = getClient1ClientId();
+        String clientRedirectUri = getClient1RedirectUri();
+        String clientSecret = getClient1ClientSecret();
+        String userId = getUser1OrcidId();
+        String password = getUser1Password();
+        String scope = "/authenticate";
+        HashMap<String,String> params = new HashMap<String,String>();
+        params.put("nonce", "yesMate");
+        String authorizationCode = getAuthorizationCode(clientId, clientRedirectUri, scope, userId, password, true,params);
+        assertNotNull(authorizationCode);
+        ClientResponse tokenResponse = getAccessTokenResponse(clientId, clientSecret, clientRedirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject tokenJSON = new JSONObject(body);
+
+        WebResource webResource;
+        Client client = Client.create();        
+        
+        //get userinfo
+        webResource = client.resource(baseUri+"/oauth/userinfo");
+        ClientResponse userInfo = webResource
+                .header("Authorization", "Bearer "+tokenJSON.getString("access_token"))
+                .accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        String userInfoString = userInfo.getEntity(String.class);
+        JSONObject user = new JSONObject(userInfoString);
+        Assert.assertTrue(user.get("id").toString().startsWith("http"));
+        Assert.assertTrue(user.get("id").toString().endsWith("9999-0000-0000-0004"));
+        Assert.assertEquals("9999-0000-0000-0004",user.get("sub"));
+        Assert.assertEquals("User One Credit name",user.get("name"));
+        Assert.assertEquals("One",user.get("family_name"));
+        Assert.assertEquals("User",user.get("given_name"));
+    }
 
     private SignedJWT checkJWT(String id) throws ParseException, JOSEException, InvalidHashException {
         SignedJWT signedJWT = SignedJWT.parse(id);  
@@ -229,8 +265,8 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         assertEquals(map.get("access_token").length(), 36); //guid length
         assertTrue(map.get("id_token")!=null);
         assertEquals(map.get("token_type"),"bearer");
-        assertEquals(map.get("name"),"User One Credit name");
-        assertEquals(map.get("orcid"),"9999-0000-0000-0004");
+        assertEquals(map.get("name"),null);
+        assertEquals(map.get("orcid"),null);
         assertEquals(map.get("state"),"Boaty McBoatface");
         //check expiry about 10 minutes
         assertTrue((Integer.parseInt(map.get("expires_in")) <= 600));
