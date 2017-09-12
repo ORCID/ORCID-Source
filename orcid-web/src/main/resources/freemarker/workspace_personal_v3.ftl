@@ -58,14 +58,6 @@
                                     </div>                
                                 </div>                              
                             </div>
-                            <!--
-                            <@orcid.privacyToggle2 angularModel="biographyForm.visiblity.visibility"
-                                questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
-                                clickedClassCheck="{'popover-help-container-show':privacyHelp[privacyHelp==true}" 
-                                publicClick="setPrivacy('PUBLIC', $event)" 
-                                limitedClick="setPrivacy('LIMITED', $event)" 
-                                privateClick="setPrivacy('PRIVATE', $event)" />
-                                -->
                         </li>
                     </ul>
                 </div>
@@ -80,7 +72,7 @@
             <div [hidden]="!showEdit" class="biography-edit">
                 <div class="row">
                     <div class="col-md-12 col-xs-12 col-sm-12">
-                        <textarea id="biography" name="biography" class="input-xlarge" rows="20" (change)="checkLength()" (keypress)="checkLength()" [(ngModel)]="biographyForm.biography.value"></textarea>
+                        <textarea id="biography" name="biography" class="input-xlarge" rows="20" (change)="checkLength()" [(ngModel)]="biographyForm.biography.value"></textarea>
                     </div>
                 </div>
                 <div class="row">
