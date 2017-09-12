@@ -50,19 +50,20 @@ public class OrcidTokenEnhancer implements TokenEnhancer {
             additionalInfo.putAll(result.getAdditionalInformation());
         }
 
-        //TODO: decide if we want these in implicit responses...
-        // If the additional info object already contains the orcid info, leave
-        // it
-        if (!additionalInfo.containsKey("orcid")) {
-            additionalInfo.put("orcid", userOrcid);
-        }
+        if (!OrcidOauth2Constants.IMPLICIT_GRANT_TYPE.equals(authentication.getOAuth2Request().getGrantType())){
+            // If the additional info object already contains the orcid info, leave
+            // it
+            if (!additionalInfo.containsKey("orcid")) {
+                additionalInfo.put("orcid", userOrcid);
+            }
 
-        // If the additional info object already contains the name info, leave
-        // it
-        if (!additionalInfo.containsKey("name")) {
-            if (userOrcid != null) {                
-                String name = profileEntityManager.retrivePublicDisplayName(userOrcid);
-                additionalInfo.put("name", name);
+            // If the additional info object already contains the name info, leave
+            // it
+            if (!additionalInfo.containsKey("name")) {
+                if (userOrcid != null) {                
+                    String name = profileEntityManager.retrivePublicDisplayName(userOrcid);
+                    additionalInfo.put("name", name);
+                }
             }
         }
 
