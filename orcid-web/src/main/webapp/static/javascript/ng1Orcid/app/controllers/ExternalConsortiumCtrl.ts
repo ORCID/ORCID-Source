@@ -110,13 +110,52 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                         $scope.$apply();                
                         if ($scope.newSubMember.errors == undefined || $scope.newSubMember.errors.length == 0) {
                             $scope.addSubMemberShowLoader = true;
-                            $scope.addSubMember();
+                            $scope.checkExistingSubMember();
                         }
                     }
                 }).fail(function() {
                     // something bad is happening!
                     console.log("validate submember error");
                 });
+            };
+
+            $scope.checkExistingSubMember = function () {
+                $scope.addSubMemberShowLoader = true;
+                $.ajax({
+                    url: getBaseUri()+'/self-service/check-existing-sub-member.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: angular.toJson($scope.newSubMember),
+                    success: function(data) {
+                        if(data){
+                            $scope.newSubMemberExistingOrg = data
+                            $scope.$apply();
+                            console.log($scope.newSubMemberExistingOrg);
+                            $scope.showExistingOrgColorBox();  
+                        } else {
+                            $scope.addSubMember();
+                        }        
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("error adding submember");
+                    // continue to add submember
+                    $scope.addSubMember();
+                });
+            };
+
+            $scope.showExistingOrgColorBox = function () {
+                $.colorbox({
+                    html : $compile($('#add-sub-member-existing-org-modal').html())($scope),
+                    escKey:false,
+                    overlayClose:false,
+                    transition: 'fade',
+                    close: '',
+                    scrolling: true
+                    });
+                $scope.$apply();
+                $.colorbox.resize({width:"500px"});
             };
 
             $scope.addSubMember = function() {
@@ -135,6 +174,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                             $scope.addSubMemberDisabled = false;
                             $scope.newSubMember.name.value = "";
                             $scope.newSubMember.website.value = "";
+                            $.colorbox.close();
                             $scope.$apply();
                         }
                         else{

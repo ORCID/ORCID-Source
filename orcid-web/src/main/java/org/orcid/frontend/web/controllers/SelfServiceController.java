@@ -16,10 +16,12 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -326,6 +328,16 @@ public class SelfServiceController extends BaseController {
         return subMember;
     }
 
+    @RequestMapping(value = "/check-existing-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetails checkExistingSubMember(@RequestBody SubMemberForm subMember) { 
+        MemberDetails existingMemberDetails = null;
+        Optional<Member> existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
+        if(existingMemberId.isPresent()){
+            existingMemberDetails = salesForceManager.retrieveDetails(existingMemberId.get().getId());
+        }
+        return existingMemberDetails; 
+    }
+
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) { 
             checkFullAccess(subMember.getParentAccountId());
@@ -335,6 +347,11 @@ public class SelfServiceController extends BaseController {
     
     public void validateAddSubMemberFields(SubMemberForm subMember) {
         subMember.setErrors(new ArrayList<String>());
+        
+        Optional<Member> existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
+        if(existingMemberId.isPresent()){
+            subMember.getErrors().add(getMessage("manage_consortium.add_submember_member_exists"));
+        }
         
         validateSubMemberName(subMember);
         validateSubMemberWebsite(subMember);

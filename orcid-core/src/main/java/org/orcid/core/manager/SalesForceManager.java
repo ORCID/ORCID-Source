@@ -72,7 +72,9 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     void updateMember(Member member);
 
     Optional<Member> findBestWebsiteMatch(URL webSiteUrl, Collection<Member> possibleMatches);
-
+    
+    Optional<Member> checkExistingMember(Member member);
+    
     /**
      * 
      * @return the id of the opportunity
