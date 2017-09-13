@@ -26,7 +26,7 @@
                 <div class="col-md-3 col-sm-4 col-xs-8">
                     <ul class="inline-list bio-edit right">
                         <li>
-                            <div (click)="toggleEdit()" [hidden]="showEdit" class="edit-biography edit-option">
+                            <div (click)="toggleEdit()" *ngIf="!showEdit" class="edit-biography edit-option">
                                 <span class="glyphicon glyphicon-pencil"></span>
                                 <div class="popover popover-tooltip top">
                                     <div class="arrow"></div>
@@ -65,11 +65,11 @@
             
             <div class="row">
                 <div class="col-md-12">   
-                    <div style="white-space: pre-wrap" [hidden]="showEdit" (click)="toggleEdit()">{{biographyForm?.biography?.value}}</div> 
+                    <div style="white-space: pre-wrap" *ngIf="!showEdit" (click)="toggleEdit()">{{biographyForm?.biography?.value}}</div> 
                 </div>
             </div>
             
-            <div [hidden]="!showEdit" class="biography-edit">
+            <div *ngIf="showEdit" class="biography-edit">
                 <div class="row">
                     <div class="col-md-12 col-xs-12 col-sm-12">
                         <textarea id="biography" name="biography" class="input-xlarge" rows="20" (change)="checkLength()" [(ngModel)]="biographyForm.biography.value"></textarea>
@@ -80,7 +80,7 @@
                         <span class="orcid-error" *ngIf="lengthError==true">
                             <div>${springMacroRequestContext.getMessage("Length.changePersonalInfoForm.biography")}</div>
                         </span>
-                        <span class="orcid-error" [hidden]="biographyForm?.biography?.errors?.length == 0">
+                        <span class="orcid-error" *ngIf="biographyForm?.biography?.errors?.length > 0">
                             <div *ngFor='let error of biographyForm?.biography?.errors'>{{error}}</div>
                         </span>
                     </div>
