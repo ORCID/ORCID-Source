@@ -217,6 +217,14 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcid(orcid);
         return connection != null ? connection.getSalesForceAccountId() : null;
     }
+    
+    @Override
+    public Optional<Member> checkExistingMember(Member member) {
+        URL websiteUrl = member.getWebsiteUrl();
+        Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
+        return firstExistingMember;
+    }
+
 
     @Override
     public String createMember(Member member) {

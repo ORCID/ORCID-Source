@@ -265,6 +265,9 @@
                     <!-- Buttons -->
 	                <div class="row">
 	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
+                            <span class="orcid-error" ng-show="newSubMember.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.errors' ng-bind-html="error"></div>
+                            </span>
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
 	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="validateSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                    </div>
@@ -327,14 +330,34 @@
 	        </div>
 	    </div>
     </script>
-    
+
     <script type="text/ng-template" id="remove-sub-member-modal">
+        <div class="lightbox-container">
+            <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
+            <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
+            <form ng-submit="removeSubMember(subMemberToRemove)">
+                <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
+                <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
+            </form>
+            <div ng-show="errors.length === 0">
+                <br>
+            </div>
+        </div>
+    </script>
+    
+    <script type="text/ng-template" id="add-sub-member-existing-org-modal">
 	    <div class="lightbox-container">
-	        <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
-	        <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
-	        <form ng-submit="removeSubMember(subMemberToRemove)">
-	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
-	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
+	        <h3><@orcid.msg 'manage_consortium.add_submember_existing_org_heading'/></h3>
+            <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text1'/></p>
+            <p class="bold">{{newSubMemberExistingOrg.member.name}}<br>
+            <a href="{{newSubMemberExistingOrg.member.websiteUrl}}" target="newSubMemberExistingOrg.member.websiteUrl">{{newSubMemberExistingOrg.member.websiteUrl}}</a>
+            </p>
+	        
+            <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text2'/></p>
+            <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text3'/> <a href="" ng-click="closeModalReload()"><@orcid.msg 'freemarker.btncancel'/></a> <@orcid.msg 'manage_consortium.add_submember_existing_org_text4'/> <a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
+	        <form ng-submit="addSubMember()">
+	            <button class="btn btn-danger"><@orcid.msg 'freemarker.btncontinue'/></button>
+	            <a href="" ng-click="closeModalReload()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">
 	            <br>
