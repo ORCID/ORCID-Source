@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <div [hidden]="!showCode" class="widget-code-container">
+        <div *ngIf="showCode" class="widget-code-container">
             <p class="widget-instructions"><@orcid.msg 'orcid_widget.copy_message'/></p>
             <textarea id="widget-code-nd" name="widget-code" class="form-control widget-code" (click)="inputTextAreaSelectAll($event)" readonly="readonly">{{widgetURLND}}</textarea>
             <p class="bold"><@orcid.msg 'orcid_widget.widget_preview'/></p>

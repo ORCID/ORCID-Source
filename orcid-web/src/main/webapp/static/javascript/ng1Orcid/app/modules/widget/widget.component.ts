@@ -1,4 +1,8 @@
- import { Component, Input, NgModule } from '@angular/core';
+import { NgFor, NgIf } 
+    from '@angular/common'; 
+
+import { Component, Input, NgModule } 
+    from '@angular/core';
 
 @Component({
     selector: 'widget-ng2',
