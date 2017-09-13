@@ -120,7 +120,7 @@
 
     <!-- Country -->    
     <script type="text/ng-template" id="country-ng2-template">
-        <div class="workspace-section country" [hidden]="">
+        <div class="workspace-section country" *ngIf="">
             <div class="workspace-section-header">
                 <div class="workspace-section-title">
                     <div id="country-open-edit-modal" class="edit-country edit-option" (click)="modalng2.openModal()" title=""> 

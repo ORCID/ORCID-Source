@@ -1,7 +1,12 @@
 import * as angular 
     from 'angular';
+
+import { CommonModule } 
+    from '@angular/common'; 
+
 import { NgModule } 
     from '@angular/core';
+
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
@@ -17,8 +22,15 @@ export const WidgetModule = angular.module(
 // This is the Angular 2 part of the module
 @NgModule(
     {
-        declarations: [ WidgetComponent ],
-        entryComponents: [ WidgetComponent ],
+        declarations: [ 
+            WidgetComponent 
+        ],
+        entryComponents: [ 
+            WidgetComponent 
+        ],
+        imports: [
+            CommonModule
+        ]
     }
 )
 export class WidgetNg2Module {}
