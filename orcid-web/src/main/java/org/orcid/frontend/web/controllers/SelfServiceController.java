@@ -329,7 +329,7 @@ public class SelfServiceController extends BaseController {
     }
 
     @RequestMapping(value = "/check-existing-sub-member.json", method = RequestMethod.POST)
-    public @ResponseBody MemberDetails checkExistingSubMember(@RequestBody SubMemberForm subMember) { 
+    public @ResponseBody MemberDetails checkExistingMember(@RequestBody SubMemberForm subMember) { 
         MemberDetails existingMemberDetails = null;
         Optional<Member> existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
         if(existingMemberId.isPresent()){
@@ -347,9 +347,10 @@ public class SelfServiceController extends BaseController {
     
     public void validateAddSubMemberFields(SubMemberForm subMember) {
         subMember.setErrors(new ArrayList<String>());
+        boolean subMemberExists = false;
+        subMemberExists = salesForceManager.checkExistingSubMember(subMember.toMember(), subMember.getParentAccountId());
         
-        Optional<Member> existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
-        if(existingMemberId.isPresent()){
+        if(subMemberExists==true){
             subMember.getErrors().add(getMessage("manage_consortium.add_submember_member_exists"));
         }
         
