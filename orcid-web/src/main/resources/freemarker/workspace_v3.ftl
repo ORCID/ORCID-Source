@@ -55,11 +55,6 @@
 
       <#include "includes/print_record.ftl"/>
 
-
-      <modal-email-un-verified></modal-email-un-verified>
-      <modalngcomponent id="modalemailunverified">
-      </modalngcomponent>
-
       <div class="qrcode-container">
         <a href="http://qrcode.orcid.org" target="workspace.qrcode.link.text"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
           <div class="popover-help-container">
@@ -888,6 +883,9 @@
   </div>
   </#if>
 </script>
+
+<modal-email-un-verified></modal-email-un-verified>
+<modalngcomponent id="modalemailunverified"></modalngcomponent>
 
 <#include "/includes/record/record_modals.ftl">
 <#include "/includes/record/email_settings.ftl">
