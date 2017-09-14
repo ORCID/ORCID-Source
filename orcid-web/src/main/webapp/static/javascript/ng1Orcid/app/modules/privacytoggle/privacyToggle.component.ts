@@ -3,7 +3,7 @@
 import { NgFor } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, Input, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -32,35 +32,25 @@ import { ModalService }
     template:  scriptTmpl("privacy-toggle-ng2-template")
 })
 export class PrivacytoggleComponent implements AfterViewInit, OnDestroy, OnInit {
+    @Input() name: string;
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    biographyForm: any;
-    configuration: any;
-    emails: any;
-    emailSrvc: any;
-    emailVerified: any;
-    lengthError: any;
-    showEdit: any;
     showElement: any;
 
     constructor(
-        private biographyService: BiographyService,
-        private configurationService: ConfigurationService,
-        private emailService: EmailService,
-        private modalService: ModalService
     ) {
-        this.biographyForm = {
-            biography: {
-                value: ''
-            }
-        };
-        
-        this.emails = {};
-        this.emailVerified = false; //change to false once service is ready
-        this.lengthError = false;
-        this.showEdit = false;
         this.showElement = {};
+        console.log('name', this.name);
     }
+
+    hideTooltip(): void{
+        this.showElement[this.name] = false;
+    };
+
+    showTooltip(): void{
+        this.showElement[this.name] = true;
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

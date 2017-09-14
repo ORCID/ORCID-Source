@@ -93,7 +93,7 @@ export class RootCmp {
         BiographyNg2Module,
         CountryNg2Module,
         ModalNg2Module,
-        PrivacytoggleNg2Module,
+        //PrivacytoggleNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
@@ -113,6 +113,6 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.65');
+        console.log('v0.69');
     }
 }

@@ -29,7 +29,7 @@ export const orcidApp = angular.module(
         BiographyModule.name,
         CountryModule.name,
         ModalModule.name,
-        PrivacytoggleModule.name,
+        //PrivacytoggleModule.name,
         WidgetModule.name,
         WorksPrivacyPreferencesModule.name
     ]
