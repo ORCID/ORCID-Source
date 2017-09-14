@@ -249,6 +249,18 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
 
                 return valid ? '' : 'text-error';
             };
+            
+            $scope.isValidStartDate = function (start) {
+                if (start === undefined) {
+                    return '';
+                }
+                
+                if (start.errors !== undefined && start.errors.length > 0) {
+                    return 'text-error';
+                }
+                
+                return '';
+            };
 
             // remove once grouping is live
             $scope.moreInfoMouseEnter = function(key, $event) {
