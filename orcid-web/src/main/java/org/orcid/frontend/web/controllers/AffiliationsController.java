@@ -24,14 +24,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.record_v2.Affiliation;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.dev1.record.Education;
+import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -60,7 +60,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
     
-    @Resource
+    @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
     
     @Resource
@@ -125,6 +125,9 @@ public class AffiliationsController extends BaseWorkspaceController {
                 	}
                 }
                 
+                if (affiliation.getUrl() == null) {
+                    affiliation.setUrl(new Text());
+                }
                 affiliationList.add(affiliation);
             }
         }
@@ -202,6 +205,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         endDate.setYear("");
         
         affiliationForm.setOrgDisambiguatedId(new Text());
+        affiliationForm.setUrl(new Text());
 
         return affiliationForm;
     }
@@ -217,6 +221,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         departmentValidate(affiliationForm);
         roleTitleValidate(affiliationForm);
         datesValidate(affiliationForm);
+        urlValidate(affiliationForm);
 
         copyErrors(affiliationForm.getAffiliationName(), affiliationForm);
         copyErrors(affiliationForm.getCity(), affiliationForm);
@@ -224,6 +229,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         copyErrors(affiliationForm.getCountry(), affiliationForm);
         copyErrors(affiliationForm.getDepartmentName(), affiliationForm);
         copyErrors(affiliationForm.getRoleTitle(), affiliationForm);
+        copyErrors(affiliationForm.getUrl(), affiliationForm);
         if(!PojoUtil.isEmpty(affiliationForm.getStartDate()))
             copyErrors(affiliationForm.getStartDate(), affiliationForm);
         if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
@@ -307,7 +313,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody
     AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
-        org.orcid.jaxb.model.common_v2.Visibility visibility = org.orcid.jaxb.model.common_v2.Visibility.fromValue(affiliation.getVisibility().getVisibility().value());
+        org.orcid.jaxb.model.v3.dev1.common.Visibility visibility = org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(affiliation.getVisibility().getVisibility().value());
         affiliationsManager.updateVisibility(getEffectiveUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()), visibility);
         return affiliation;
     }
@@ -390,6 +396,13 @@ public class AffiliationsController extends BaseWorkspaceController {
         if (affiliationForm.getDepartmentName().getValue() != null && affiliationForm.getDepartmentName().getValue().trim().length() > 1000) {
             setError(affiliationForm.getDepartmentName(), "common.length_less_1000");
         }
+        return affiliationForm;
+    }
+    
+    @RequestMapping(value = "/affiliation/urlValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    AffiliationForm urlValidate(@RequestBody AffiliationForm affiliationForm) {
+        validateUrl(affiliationForm.getUrl());
         return affiliationForm;
     }
 

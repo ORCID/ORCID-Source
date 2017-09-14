@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Organization;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 
 public interface Affiliation {
@@ -63,4 +64,8 @@ public interface Affiliation {
     LastModifiedDate getLastModifiedDate();
 
     void setLastModifiedDate(LastModifiedDate value);
+    
+    Url getUrl();
+    
+    void setUrl(Url url);
 }
