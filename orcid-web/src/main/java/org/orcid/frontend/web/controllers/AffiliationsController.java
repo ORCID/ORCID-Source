@@ -53,36 +53,34 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller("affiliationsController")
 @RequestMapping(value = { "/affiliations" })
-public class AffiliationsController extends BaseWorkspaceController {    
+public class AffiliationsController extends BaseWorkspaceController {
 
     private static final String AFFILIATIONS_MAP = "AFFILIATIONS_MAP";
 
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
-    
+
     @Resource
     private AffiliationsManager affiliationsManager;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     /**
      * Removes a affiliation from a profile
-     * */
+     */
     @RequestMapping(value = "/affiliations.json", method = RequestMethod.DELETE)
-    public @ResponseBody
-    AffiliationForm removeAffiliationJson(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
+    public @ResponseBody AffiliationForm removeAffiliationJson(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
         affiliationsManager.removeAffiliation(getCurrentUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()));
         return affiliation;
     }
 
     /**
      * List affiliations associated with a profile
-     * */
+     */
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/affiliations.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<AffiliationForm> getAffiliationJson(HttpServletRequest request, @RequestParam(value = "affiliationIds") String affiliationIdsStr) {
+    public @ResponseBody List<AffiliationForm> getAffiliationJson(HttpServletRequest request, @RequestParam(value = "affiliationIds") String affiliationIdsStr) {
         List<AffiliationForm> affiliationList = new ArrayList<>();
         AffiliationForm affiliation = null;
         String[] affiliationIds = affiliationIdsStr.split(",");
@@ -96,35 +94,35 @@ public class AffiliationsController extends BaseWorkspaceController {
             }
             for (String affiliationId : affiliationIds) {
                 affiliation = affiliationsMap.get(affiliationId);
-                
-                if(affiliation.getStartDate() == null) {
-                	initializeStartDate(affiliation);
+
+                if (affiliation.getStartDate() == null) {
+                    initializeStartDate(affiliation);
                 } else {
-                	if(affiliation.getStartDate().getDay() == null) {
-                		affiliation.getStartDate().setDay(new String());
-                	}
-                	if(affiliation.getStartDate().getMonth() == null) {
-                		affiliation.getStartDate().setMonth(new String());
-                	}
-                	if(affiliation.getStartDate().getYear() == null) {
-                		affiliation.getStartDate().setYear(new String());
-                	}
+                    if (affiliation.getStartDate().getDay() == null) {
+                        affiliation.getStartDate().setDay(new String());
+                    }
+                    if (affiliation.getStartDate().getMonth() == null) {
+                        affiliation.getStartDate().setMonth(new String());
+                    }
+                    if (affiliation.getStartDate().getYear() == null) {
+                        affiliation.getStartDate().setYear(new String());
+                    }
                 }
-                
-                if(affiliation.getEndDate() == null) {
-                	initializeEndDate(affiliation);
+
+                if (affiliation.getEndDate() == null) {
+                    initializeEndDate(affiliation);
                 } else {
-                	if(affiliation.getEndDate().getDay() == null) {
-                		affiliation.getEndDate().setDay(new String());
-                	}
-                	if(affiliation.getEndDate().getMonth() == null) {
-                		affiliation.getEndDate().setMonth(new String());
-                	}
-                	if(affiliation.getEndDate().getYear() == null) {
-                		affiliation.getEndDate().setYear(new String());
-                	}
+                    if (affiliation.getEndDate().getDay() == null) {
+                        affiliation.getEndDate().setDay(new String());
+                    }
+                    if (affiliation.getEndDate().getMonth() == null) {
+                        affiliation.getEndDate().setMonth(new String());
+                    }
+                    if (affiliation.getEndDate().getYear() == null) {
+                        affiliation.getEndDate().setYear(new String());
+                    }
                 }
-                
+
                 affiliationList.add(affiliation);
             }
         }
@@ -133,35 +131,36 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     private void initializeStartDate(AffiliationForm affiliation) {
-    	if (affiliation.getStartDate() == null) {
+        if (affiliation.getStartDate() == null) {
             affiliation.setStartDate(getEmptyDate());
         }
-	}
-    
+    }
+
     private void initializeEndDate(AffiliationForm affiliation) {
-    	if (affiliation.getEndDate() == null) {
+        if (affiliation.getEndDate() == null) {
             affiliation.setEndDate(getEmptyDate());
         }
-	}
-    
+    }
+
     private Date getEmptyDate() {
-    	Date date = new Date();
+        Date date = new Date();
         date.setDay(new String());
         date.setMonth(new String());
         date.setYear(new String());
         return date;
     }
 
-	/**
+    /**
      * Returns a blank affiliation form
-     * */
+     */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.GET)
-    public @ResponseBody
-    AffiliationForm getAffiliation(HttpServletRequest request) {
+    public @ResponseBody AffiliationForm getAffiliation(HttpServletRequest request) {
         AffiliationForm affiliationForm = new AffiliationForm();
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null ? org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().value()) : profile.getActivitiesVisibilityDefault());
+        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null
+                ? org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().value())
+                : profile.getActivitiesVisibilityDefault());
         affiliationForm.setVisibility(v);
 
         Text affiliationName = new Text();
@@ -200,15 +199,14 @@ public class AffiliationsController extends BaseWorkspaceController {
         endDate.setDay("");
         endDate.setMonth("");
         endDate.setYear("");
-        
+
         affiliationForm.setOrgDisambiguatedId(new Text());
 
         return affiliationForm;
     }
 
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm postAffiliation(HttpServletRequest request, @RequestBody AffiliationForm affiliationForm) throws Exception {
+    public @ResponseBody AffiliationForm postAffiliation(HttpServletRequest request, @RequestBody AffiliationForm affiliationForm) throws Exception {
         // Validate
         affiliationNameValidate(affiliationForm);
         cityValidate(affiliationForm);
@@ -224,12 +222,12 @@ public class AffiliationsController extends BaseWorkspaceController {
         copyErrors(affiliationForm.getCountry(), affiliationForm);
         copyErrors(affiliationForm.getDepartmentName(), affiliationForm);
         copyErrors(affiliationForm.getRoleTitle(), affiliationForm);
-        if(!PojoUtil.isEmpty(affiliationForm.getStartDate()))
+        if (!PojoUtil.isEmpty(affiliationForm.getStartDate()))
             copyErrors(affiliationForm.getStartDate(), affiliationForm);
-        if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
+        if (!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             copyErrors(affiliationForm.getEndDate(), affiliationForm);
         if (affiliationForm.getErrors().isEmpty()) {
-            if(PojoUtil.isEmpty(affiliationForm.getPutCode()))
+            if (PojoUtil.isEmpty(affiliationForm.getPutCode()))
                 addAffiliation(affiliationForm);
             else
                 editAffiliation(affiliationForm);
@@ -240,41 +238,42 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     /**
      * Adds a new affiliations
+     * 
      * @param affiliationForm
-     * */
+     */
     private void addAffiliation(AffiliationForm affiliationForm) {
         Affiliation affiliation = affiliationForm.toAffiliation();
-        if(AffiliationType.EDUCATION.value().equals(affiliationForm.getAffiliationType().getValue())) {
+        if (AffiliationType.EDUCATION.value().equals(affiliationForm.getAffiliationType().getValue())) {
             affiliation = affiliationsManager.createEducationAffiliation(getCurrentUserOrcid(), (Education) affiliation, false);
         } else {
             affiliation = affiliationsManager.createEmploymentAffiliation(getCurrentUserOrcid(), (Employment) affiliation, false);
         }
         affiliationForm.setPutCode(Text.valueOf(affiliation.getPutCode()));
     }
-    
+
     /**
      * Updates an existing affiliation
+     * 
      * @param affiliationForm
-     * @throws Exception 
-     * */
-    private void editAffiliation(AffiliationForm affiliationForm) throws Exception {    	
+     * @throws Exception
+     */
+    private void editAffiliation(AffiliationForm affiliationForm) throws Exception {
         if (!getCurrentUserOrcid().equals(affiliationForm.getSource()))
             throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
-        
+
         Affiliation affiliation = affiliationForm.toAffiliation();
-        if(AffiliationType.EDUCATION.value().equals(affiliationForm.getAffiliationType().getValue())) {
+        if (AffiliationType.EDUCATION.value().equals(affiliationForm.getAffiliationType().getValue())) {
             affiliation = affiliationsManager.updateEducationAffiliation(getCurrentUserOrcid(), (Education) affiliation, false);
         } else {
             affiliation = affiliationsManager.updateEmploymentAffiliation(getCurrentUserOrcid(), (Employment) affiliation, false);
-        }                                
-    }            
+        }
+    }
 
     /**
      * List affiliations associated with a profile
-     * */
+     */
     @RequestMapping(value = "/affiliationIds.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<String> getAffiliationsJson(HttpServletRequest request) {
+    public @ResponseBody List<String> getAffiliationsJson(HttpServletRequest request) {
         // Get cached profile
         List<String> affiliationIds = createAffiliationsIdList(request);
         return affiliationIds;
@@ -303,10 +302,9 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     /**
      * Updates an affiliation visibility
-     * */
+     */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
-    public @ResponseBody
-    AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
+    public @ResponseBody AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
         org.orcid.jaxb.model.common_v2.Visibility visibility = org.orcid.jaxb.model.common_v2.Visibility.fromValue(affiliation.getVisibility().getVisibility().value());
         affiliationsManager.updateVisibility(getEffectiveUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()), visibility);
         return affiliation;
@@ -316,10 +314,9 @@ public class AffiliationsController extends BaseWorkspaceController {
      * Search DB for disambiguated affiliations to suggest to user
      */
     @RequestMapping(value = "/disambiguated/name/{query}", method = RequestMethod.GET)
-    public @ResponseBody
-    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+    public @ResponseBody List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
-        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit,false)) {
+        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit, false)) {
             datums.add(orgDisambiguated.toMap());
         }
         return datums;
@@ -329,15 +326,13 @@ public class AffiliationsController extends BaseWorkspaceController {
      * fetch disambiguated by id
      */
     @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
+    public @ResponseBody Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
         OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(id);
         return orgDisambiguated.toMap();
     }
 
     @RequestMapping(value = "/affiliation/affiliationNameValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm affiliationNameValidate(@RequestBody AffiliationForm affiliationForm) {
+    public @ResponseBody AffiliationForm affiliationNameValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getAffiliationName().setErrors(new ArrayList<String>());
         if (affiliationForm.getAffiliationName().getValue() == null || affiliationForm.getAffiliationName().getValue().trim().length() == 0) {
             setError(affiliationForm.getAffiliationName(), "NotBlank.manualAffiliation.name");
@@ -350,8 +345,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/affiliation/cityValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm cityValidate(@RequestBody AffiliationForm affiliationForm) {
+    public @ResponseBody AffiliationForm cityValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getCity().setErrors(new ArrayList<String>());
         if (affiliationForm.getCity().getValue() == null || affiliationForm.getCity().getValue().trim().length() == 0) {
             setError(affiliationForm.getCity(), "NotBlank.manualAffiliation.city");
@@ -364,8 +358,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/affiliation/regionValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm regionValidate(@RequestBody AffiliationForm affiliationForm) {
+    public @ResponseBody AffiliationForm regionValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getRegion().setErrors(new ArrayList<String>());
         if (affiliationForm.getRegion().getValue() != null && affiliationForm.getRegion().getValue().trim().length() > 1000) {
             setError(affiliationForm.getRegion(), "common.length_less_1000");
@@ -374,8 +367,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/affiliation/countryValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm countryValidate(@RequestBody AffiliationForm affiliationForm) {
+    public @ResponseBody AffiliationForm countryValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getCountry().setErrors(new ArrayList<String>());
         if (affiliationForm.getCountry().getValue() == null || affiliationForm.getCountry().getValue().trim().length() == 0) {
             setError(affiliationForm.getCountry(), "common.country.not_blank");
@@ -384,8 +376,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/affiliation/departmentValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm departmentValidate(@RequestBody AffiliationForm affiliationForm) {
+    public @ResponseBody AffiliationForm departmentValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getDepartmentName().setErrors(new ArrayList<String>());
         if (affiliationForm.getDepartmentName().getValue() != null && affiliationForm.getDepartmentName().getValue().trim().length() > 1000) {
             setError(affiliationForm.getDepartmentName(), "common.length_less_1000");
@@ -394,8 +385,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/affiliation/roleTitleValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm roleTitleValidate(@RequestBody AffiliationForm affiliationForm) {
+    public @ResponseBody AffiliationForm roleTitleValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getRoleTitle().setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(affiliationForm.getRoleTitle()) && affiliationForm.getRoleTitle().getValue().trim().length() > 1000) {
             setError(affiliationForm.getRoleTitle(), "common.length_less_1000");
@@ -404,33 +394,37 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
+    public @ResponseBody AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
         boolean primaryValidation = true;
-    	
-        if(!PojoUtil.isEmpty(affiliationForm.getStartDate()))
+
+        if (!PojoUtil.isEmpty(affiliationForm.getStartDate()))
             affiliationForm.getStartDate().setErrors(new ArrayList<String>());
-        if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
+        if (!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             affiliationForm.getEndDate().setErrors(new ArrayList<String>());
-        if((PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()) && PojoUtil.isEmpty(affiliationForm.getStartDate().getDay()))) {
+        if ((PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth())
+                && PojoUtil.isEmpty(affiliationForm.getStartDate().getDay()))) {
             primaryValidation = false;
             setError(affiliationForm.getStartDate(), "common.dates.start_date_required");
         }
-        if ((PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && (!PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()) || !PojoUtil.isEmpty(affiliationForm.getStartDate().getDay()))) ||
-        		(!PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && !PojoUtil.isEmpty(affiliationForm.getStartDate().getDay()) && PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()))) {
-        	primaryValidation = false;
-        	setError(affiliationForm.getStartDate(), "common.dates.invalid");
-        } 
-        if((PojoUtil.isEmpty(affiliationForm.getEndDate().getYear()) && (!PojoUtil.isEmpty(affiliationForm.getEndDate().getMonth()) || !PojoUtil.isEmpty(affiliationForm.getEndDate().getDay()))) ||
-		(!PojoUtil.isEmpty(affiliationForm.getEndDate().getYear()) && !PojoUtil.isEmpty(affiliationForm.getEndDate().getDay()) && PojoUtil.isEmpty(affiliationForm.getEndDate().getMonth()))) {
-        	primaryValidation = false;
-        	setError(affiliationForm.getEndDate(), "common.dates.invalid");
+        if ((PojoUtil.isEmpty(affiliationForm.getStartDate().getYear())
+                && (!PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()) || !PojoUtil.isEmpty(affiliationForm.getStartDate().getDay())))
+                || (!PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && !PojoUtil.isEmpty(affiliationForm.getStartDate().getDay())
+                        && PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()))) {
+            primaryValidation = false;
+            setError(affiliationForm.getStartDate(), "common.dates.invalid");
+        }
+        if ((PojoUtil.isEmpty(affiliationForm.getEndDate().getYear())
+                && (!PojoUtil.isEmpty(affiliationForm.getEndDate().getMonth()) || !PojoUtil.isEmpty(affiliationForm.getEndDate().getDay())))
+                || (!PojoUtil.isEmpty(affiliationForm.getEndDate().getYear()) && !PojoUtil.isEmpty(affiliationForm.getEndDate().getDay())
+                        && PojoUtil.isEmpty(affiliationForm.getEndDate().getMonth()))) {
+            primaryValidation = false;
+            setError(affiliationForm.getEndDate(), "common.dates.invalid");
         }
         if (primaryValidation && (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
             if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
         }
-       
+
         return affiliationForm;
     }
 
