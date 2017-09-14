@@ -41,8 +41,6 @@ import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -63,7 +61,7 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     protected String departmentName;
     @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "role-title")
     protected String roleTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date")
+    @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "start-date", required = true)
     protected FuzzyDate startDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "end-date")
     protected FuzzyDate endDate;

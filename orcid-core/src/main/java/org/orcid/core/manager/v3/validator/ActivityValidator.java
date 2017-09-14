@@ -326,6 +326,10 @@ public class ActivityValidator {
             Visibility updatedVisibility = employment.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
+        
+        if (employment.getStartDate() == null) {
+            throw new OrcidValidationException("Employment start date is required");
+        }
     }
 
     public void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
@@ -342,6 +346,10 @@ public class ActivityValidator {
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = education.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+        }
+        
+        if (education.getStartDate() == null) {
+            throw new OrcidValidationException("Education start date is required");
         }
     }
 
