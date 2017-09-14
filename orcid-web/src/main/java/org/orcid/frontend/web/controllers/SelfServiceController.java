@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
@@ -39,13 +37,9 @@ import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.ajaxForm.MemberDetailsForm;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Registration;
-import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.ContactsForm;
+import org.orcid.pojo.ajaxForm.MemberDetailsForm;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
-import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
