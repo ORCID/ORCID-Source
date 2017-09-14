@@ -217,7 +217,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcid(orcid);
         return connection != null ? connection.getSalesForceAccountId() : null;
     }
-    
+
     @Override
     public Optional<Member> checkExistingMember(Member member) {
         URL websiteUrl = member.getWebsiteUrl();
@@ -225,20 +225,26 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         return firstExistingMember;
     }
 
-
     @Override
     public String createMember(Member member) {
+        String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        Member consortium = retrieveMember(consortiumLeadId);
+        String consortiumOwnerId = consortium.getOwnerId();
         Opportunity opportunity = new Opportunity();
         URL websiteUrl = member.getWebsiteUrl();
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
         String accountId = null;
+
         if (firstExistingMember.isPresent()) {
             accountId = firstExistingMember.get().getId();
         } else {
+            member.setParentId(consortiumLeadId);
+            member.setOwnerId(consortiumOwnerId);
+            member.setCountry(consortium.getCountry());
             accountId = salesForceDao.createMember(member);
         }
+        opportunity.setOwnerId(consortiumOwnerId);
         opportunity.setTargetAccountId(accountId);
-        String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         opportunity.setConsortiumLeadId(consortiumLeadId);
         opportunity.setType(OPPORTUNITY_TYPE);
         opportunity.setMemberType(getPremiumConsortiumMemberTypeId());

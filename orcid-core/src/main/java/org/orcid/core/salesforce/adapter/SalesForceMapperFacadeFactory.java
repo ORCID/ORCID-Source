@@ -84,6 +84,8 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         converterFactory.registerConverter(new CommunityTypeConverter());
         converterFactory.registerConverter(new ReverseCommunityTypeConverter());
         classMap.field("id", "Id");
+        classMap.field("parentId", "ParentId");
+        classMap.field("ownerId", "OwnerId");
         classMap.field("name", "Name");
         classMap.field("publicDisplayName", "Public_Display_Name__c");
         classMap.field("websiteUrl", "Website");
@@ -118,6 +120,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
     private void registerOpportunityMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Opportunity, JSONObject> classMap = mapperFactory.classMap(Opportunity.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
         classMap.field("id", "Id");
+        classMap.field("ownerId", "OwnerId");
         classMap.field("targetAccountId", "AccountId");
         classMap.field("stageName", "StageName");
         classMap.field("closeDate", "CloseDate");
