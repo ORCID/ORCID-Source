@@ -224,6 +224,21 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
         return firstExistingMember;
     }
+    
+    @Override
+    public boolean checkExistingSubMember(Member member, String parentAccountId) {
+        boolean subMemberExists = false;
+        URL websiteUrl = member.getWebsiteUrl();
+        Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
+        
+        if(firstExistingMember.isPresent()){
+            String subMemberAcccountId = firstExistingMember.get().getId();
+            MemberDetails memberDetails = retrieveDetails(parentAccountId);
+            subMemberExists = memberDetails.getSubMembers().stream().anyMatch(s -> subMemberAcccountId.equals(s.getOpportunity().getTargetAccountId()));  
+        } 
+        
+        return subMemberExists;
+    }
 
 
     @Override

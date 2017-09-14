@@ -77,6 +77,12 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     
     /**
      * 
+     * @return the boolean indicating whether submember exists in member
+     */
+    boolean checkExistingSubMember(Member member, String parentAccountId);
+    
+    /**
+     * 
      * @return the id of the opportunity
      */
     String createOpportunity(Opportunity opportunity);
