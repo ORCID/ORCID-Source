@@ -55,6 +55,7 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
     private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;    
+    private String url;
 
     @Override
     @Id
@@ -141,6 +142,15 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+    
+    @Column(length = 350)
+    public String getUrl() {
+        return url;
+    }
+    
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
