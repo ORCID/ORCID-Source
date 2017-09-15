@@ -61,7 +61,7 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     protected String departmentName;
     @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "role-title")
     protected String roleTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "start-date", required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date", required = true)
     protected FuzzyDate startDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "end-date")
     protected FuzzyDate endDate;
