@@ -26,5 +26,6 @@
 			<common:disambiguated-organization-identifier>2167</common:disambiguated-organization-identifier>
 			<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 		</common:disambiguated-organization>
-	</education:organization>	   	
+	</education:organization>
+	<education:url>http://tempuri.org</education:url>	   	
 </education:education>

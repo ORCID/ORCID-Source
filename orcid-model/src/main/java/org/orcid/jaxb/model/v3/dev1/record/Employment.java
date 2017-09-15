@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Organization;
 import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 
 /**
@@ -52,7 +53,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url" })
 @XmlRootElement(name = "employment", namespace = "http://www.orcid.org/ns/employment")
 public class Employment implements Serializable, Affiliation, Filterable, Activity, OrganizationHolder, SourceAware {
 
@@ -73,6 +74,8 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
+    @XmlElement(namespace = "http://www.orcid.org/ns/employment")
+    protected Url url;
 
     @XmlAttribute(name = "put-code")
     protected Long putCode;
@@ -296,6 +299,27 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     @Override
     public void setLastModifiedDate(LastModifiedDate value) {
         lastModifiedDate = value;
+    }
+   
+    /**
+     * Gets the value of the url property.
+     * 
+     * @return possible object is {@link Url }
+     * 
+     */
+    public Url getUrl() {
+        return url;
+    }
+
+    /**
+     * Sets the value of the url property.
+     * 
+     * @param value
+     *            allowed object is {@link Url }
+     * 
+     */
+    public void setUrl(Url url) {
+        this.url = url;
     }
 
     /**

@@ -32,7 +32,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
             $scope.input = {};
             $scope.memberDetails = null;
             $scope.membersListSrvc = membersListSrvc;
-            $scope.newSubMember = {website: {errors: [], getRequiredMessage: null, required: false, value: '',  }, name: {errors: [], getRequiredMessage: null, required: false, value: '',  }};
+            $scope.newSubMember = {website: {errors: [], getRequiredMessage: null, required: false, value: ''}, name: {errors: [], getRequiredMessage: null, required: false, value: ''}};
             $scope.realUserOrcid = orcidVar.realOrcidId;
             $scope.showInitLoader = true;
             $scope.updateContactsDisabled = false;
@@ -99,6 +99,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.validateSubMember = function () {
+                $scope.newSubMember.parentAccountId = $scope.accountId;
                 $.ajax({
                     url: getBaseUri()+'/self-service/validate-sub-member.json',
                     contentType: 'application/json;charset=UTF-8',

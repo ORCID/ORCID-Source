@@ -27,7 +27,6 @@ import org.orcid.jaxb.model.common_v2.Day;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.Month;
-import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.utils.DateUtils;
 
@@ -51,7 +50,18 @@ public class Date implements ErrorsInterface, Required, Serializable {
         if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
             d.setYear(fuzzyDate.getYear().getValue());
         return d;
-    }        
+    }       
+    
+    public static Date valueOf(org.orcid.jaxb.model.v3.dev1.common.FuzzyDate fuzzyDate) {
+        Date d = new Date();
+        if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
+            d.setDay(fuzzyDate.getDay().getValue());
+        if (fuzzyDate.getMonth() != null && fuzzyDate.getMonth().getValue() !=null)
+            d.setMonth(fuzzyDate.getMonth().getValue());
+        if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
+            d.setYear(fuzzyDate.getYear().getValue());
+        return d;
+    }       
 
     public FuzzyDate toFuzzyDate() {
         FuzzyDate fd = new FuzzyDate();
@@ -63,6 +73,17 @@ public class Date implements ErrorsInterface, Required, Serializable {
             fd.setYear(new Year(new Integer(this.getYear())));
         return fd;
     }        
+    
+    public org.orcid.jaxb.model.v3.dev1.common.FuzzyDate toV3FuzzyDate() {
+        org.orcid.jaxb.model.v3.dev1.common.FuzzyDate fd = new org.orcid.jaxb.model.v3.dev1.common.FuzzyDate();
+        if (!PojoUtil.isEmpty(this.getDay()))
+            fd.setDay(new org.orcid.jaxb.model.v3.dev1.common.Day(new Integer(this.getDay())));
+        if (!PojoUtil.isEmpty(this.getMonth()))
+            fd.setMonth(new org.orcid.jaxb.model.v3.dev1.common.Month(new Integer(this.getMonth())));
+        if (!PojoUtil.isEmpty(this.getYear()))
+            fd.setYear(new org.orcid.jaxb.model.v3.dev1.common.Year(new Integer(this.getYear())));
+        return fd;
+    }       
     
     public static Date valueOf(java.util.Date date) {
         Date newDate = new Date();

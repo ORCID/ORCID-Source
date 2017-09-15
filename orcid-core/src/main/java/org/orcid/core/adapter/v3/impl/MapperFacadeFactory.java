@@ -548,6 +548,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         educationClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         educationClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         educationClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
+        
+        educationClassMap.fieldAToB("url.value", "url");
+        educationClassMap.fieldBToA("url", "url.value");
+        
         educationClassMap.field("departmentName", "department");
         educationClassMap.field("roleTitle", "title");
         educationClassMap.register();
@@ -584,6 +588,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         classMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         classMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
+        
+        classMap.fieldAToB("url.value", "url");
+        classMap.fieldBToA("url", "url.value");
+        
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
         classMap.register();

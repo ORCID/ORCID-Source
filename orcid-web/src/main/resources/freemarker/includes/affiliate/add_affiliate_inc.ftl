@@ -152,6 +152,16 @@
                         </span>
                     </div>
                 </div>
+                <!-- URL -->
+                <div class="form-group">
+                    <label><@orcid.msg 'manual_affiliation_form_contents.url'/></label>
+                    <div>
+                        <input name="url" type="text" class="form-control"  ng-model="editAffiliation.url.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_url'/>" ng-change="serverValidate('affiliations/affiliation/urlValidate.json')" ng-model-onblur/>
+                        <span class="orcid-error" ng-show="editAffiliation.url.errors.length > 0">
+                            <div ng-repeat='error in editAffiliation.url.errors' ng-bind-html="error"></div>
+                        </span>
+                    </div>
+                </div>
 				<!--  -->
                 <div class="form-group">
                     <label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
