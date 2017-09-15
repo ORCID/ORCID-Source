@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -143,7 +144,7 @@ public class OauthControllerBase extends BaseController {
             Matcher redirectUriMatcher = redirectUriPattern.matcher(requestUrl);
             if (redirectUriMatcher.find()) {
                 try {
-                    redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim();
+                    redirectUri = OrcidStringUtils.stripHtml(URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim());
                 } catch (UnsupportedEncodingException e) {
                 }
             }
@@ -151,7 +152,7 @@ public class OauthControllerBase extends BaseController {
             Matcher responseTypeMatcher = responseTypePattern.matcher(requestUrl);
             if (responseTypeMatcher.find()) {
                 try {
-                    responseType = URLDecoder.decode(responseTypeMatcher.group(1), "UTF-8").trim();
+                    responseType = OrcidStringUtils.stripHtml(URLDecoder.decode(responseTypeMatcher.group(1), "UTF-8").trim());
                 } catch (UnsupportedEncodingException e) {
                 }
             }
@@ -159,7 +160,7 @@ public class OauthControllerBase extends BaseController {
             Matcher stateParamMatcher = stateParamPattern.matcher(requestUrl);
             if (stateParamMatcher.find()) {
                 try {
-                    stateParam = URLDecoder.decode(stateParamMatcher.group(1), "UTF-8").trim();
+                    stateParam = OrcidStringUtils.stripHtml(URLDecoder.decode(stateParamMatcher.group(1), "UTF-8").trim());
                 } catch (UnsupportedEncodingException e) {}
             }
             
@@ -167,7 +168,7 @@ public class OauthControllerBase extends BaseController {
             if (emailMatcher.find()) {
                 String tempEmail = emailMatcher.group(1);
                 try {
-                    tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
+                    tempEmail = OrcidStringUtils.stripHtml(URLDecoder.decode(tempEmail, "UTF-8").trim());
                 } catch (UnsupportedEncodingException e) {
                 }
                 if (!PojoUtil.isEmpty(tempEmail)) {
@@ -179,7 +180,7 @@ public class OauthControllerBase extends BaseController {
             if (orcidMatcher.find()) {
                 String tempOrcid = orcidMatcher.group(2);
                 try {
-                    tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8").trim();
+                    tempOrcid = OrcidStringUtils.stripHtml(URLDecoder.decode(tempOrcid, "UTF-8").trim());
                 } catch (UnsupportedEncodingException e) {
                 }
                 if (orcidProfileManager.exists(tempOrcid)) {
@@ -189,22 +190,22 @@ public class OauthControllerBase extends BaseController {
             
             Matcher givenNamesMatcher = RegistrationController.givenNamesPattern.matcher(requestUrl);
             if(givenNamesMatcher.find()) {
-                givenNames = URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8").trim();
+                givenNames = OrcidStringUtils.stripHtml(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8").trim());
             }
             
             Matcher familyNamesMatcher = RegistrationController.familyNamesPattern.matcher(requestUrl);
             if(familyNamesMatcher.find()) {
-                familyNames = URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8").trim();
+                familyNames = OrcidStringUtils.stripHtml(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8").trim());
             }
             
             Matcher nonceMatcher = noncePattern.matcher(requestUrl);
             if(nonceMatcher.find()) {
-                nonce = URLDecoder.decode(nonceMatcher.group(1), "UTF-8").trim();
+                nonce = OrcidStringUtils.stripHtml(URLDecoder.decode(nonceMatcher.group(1), "UTF-8").trim());
             }
             
             Matcher maxAgeMatcher = maxAgePattern.matcher(requestUrl);
             if(maxAgeMatcher.find()) {
-                maxAge = URLDecoder.decode(maxAgeMatcher.group(1), "UTF-8").trim();
+                maxAge = OrcidStringUtils.stripHtml(URLDecoder.decode(maxAgeMatcher.group(1), "UTF-8").trim());
             }
             
             
