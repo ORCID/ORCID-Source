@@ -50,7 +50,7 @@ Pull requests are welcome; See [CONTRIBUTING.md](CONTRIBUTING.md)
 See [DEVSETUP.md](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
 
 # License
-See [LICENSE.md](https://github.com/ORCID/ORCID-Source/blob/master/LICENSE.md)
+See [LICENSE](https://github.com/ORCID/ORCID-Source/blob/master/LICENSE)
 
 # Contributors
 See [CREDITS.md](https://github.com/ORCID/ORCID-Source/blob/master/CREDITS.md)
