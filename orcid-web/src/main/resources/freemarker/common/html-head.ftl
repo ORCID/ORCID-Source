@@ -68,8 +68,8 @@
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
-      orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?string};
-      orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?string};
+      orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
+      orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};
       orcidVar.version = "${ver}";
       orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
       <#if (oauth2Screens)??>

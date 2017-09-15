@@ -109,7 +109,7 @@
                         
                         <div class="account-settings-mobile-menu">
                             <span class="account-settings-mobile"> 
-                                <a ${(nav=="settings")?string('class="active"', '')} href="<@orcid.rootPath '/account'/>">
+                                <a ${(nav=="settings")?then('class="active"', '')} href="<@orcid.rootPath '/account'/>">
                                     <@orcid.msg 'public-layout.account_setting'/>
                                 </a>
                             </span>
@@ -182,33 +182,33 @@
                                     <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
                                 
                                     <@security.authorize access="!hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">                              
-                                        <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
-                                        <li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                              
+                                        <li class="leaf last"><a ${(nav=="signin")?then('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
+                                        <li class="leaf last"><a ${(nav=="register")?then('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                              
                                     </@security.authorize>
                                     <@security.authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">                              
-                                        <li><a ${(nav=="record")?string('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
+                                        <li><a ${(nav=="record")?then('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
                                             <#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
                                         </a></li>
                                         <@security.authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">
                                         <li ng-controller="NotificationsCountCtrl">
-                                            <a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
+                                            <a ${(nav=="notifications")?then('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
                                         </li>
                                         </@security.authorize>
                                     
-                                        <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a></li>
+                                        <li><a ${(nav=="settings")?then('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a></li>
                                     
                                         <#if !inDelegationMode || isDelegatedByAdmin>
                                             <@security.authorize access="hasAnyRole('ROLE_GROUP','ROLE_BASIC','ROLE_BASIC_INSTITUTION','ROLE_PREMIUM','ROLE_PREMIUM_INSTITUTION')">
-                                                <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                                                <li><a ${(nav=="developer-tools")?then('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
                                             </@security.authorize>
                                             <@security.authorize access="hasRole('ROLE_USER')">
-                                                <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                                                <li><a ${(nav=="developer-tools")?then('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
                                             </@security.authorize>
                                         </#if>
                                     
                                         <@security.authorize access="hasRole('ROLE_ADMIN')">
-                                            <li><a ${(nav=="members")?string('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
-                                            <li><a ${(nav=="admin")?string('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
+                                            <li><a ${(nav=="members")?then('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
+                                            <li><a ${(nav=="admin")?then('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
                                         </@security.authorize>
                                             
                                     </@security.authorize>                                                             
