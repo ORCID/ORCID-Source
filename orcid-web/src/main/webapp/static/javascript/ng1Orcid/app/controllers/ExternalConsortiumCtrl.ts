@@ -29,6 +29,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
             $scope.addSubMemberShowLoader = false;
             $scope.contacts = null;
             $scope.effectiveUserOrcid = orcidVar.orcidId;
+            $scope.errorAddingSubMember = false;
             $scope.input = {};
             $scope.memberDetails = null;
             $scope.membersListSrvc = membersListSrvc;
@@ -122,6 +123,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
 
             $scope.checkExistingSubMember = function () {
                 $scope.addSubMemberShowLoader = true;
+                $scope.errorAddingSubMember = false;
                 $.ajax({
                     url: getBaseUri()+'/self-service/check-existing-sub-member.json',
                     contentType: 'application/json;charset=UTF-8',
@@ -129,11 +131,11 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     dataType: 'json',
                     data: angular.toJson($scope.newSubMember),
                     success: function(data) {
-                        if(data){
-                            $scope.newSubMemberExistingOrg = data
-                            $scope.$apply();
-                            console.log($scope.newSubMemberExistingOrg);
+                        $scope.newSubMemberExistingOrg = data
+                        $scope.$apply();
+                        if($scope.newSubMemberExistingOrg.publicDisplayName != null && $scope.newSubMemberExistingOrg.websiteUrl != null && $scope.newSubMemberExistingOrg.id){ 
                             $scope.showExistingOrgColorBox();  
+                            $scope.errorAddingSubMember = true;
                         } else {
                             $scope.addSubMember();
                         }        
@@ -141,8 +143,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 }).fail(function(){
                     // something bad is happening!
                     console.log("error adding submember");
-                    // continue to add submember
-                    $scope.addSubMember();
+                    $scope.errorAddingSubMember = true;
                 });
             };
 
