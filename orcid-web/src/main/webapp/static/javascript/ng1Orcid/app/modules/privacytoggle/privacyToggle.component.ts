@@ -3,7 +3,7 @@
 import { NgFor } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } 
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -31,8 +31,9 @@ import { ModalService }
     selector: 'privacy-toggle-ng2',
     template:  scriptTmpl("privacy-toggle-ng2-template")
 })
-export class PrivacytoggleComponent implements AfterViewInit, OnDestroy, OnInit {
+export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
     @Input() name: string;
+    @Input() data: any;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -41,7 +42,6 @@ export class PrivacytoggleComponent implements AfterViewInit, OnDestroy, OnInit 
     constructor(
     ) {
         this.showElement = {};
-        console.log('name', this.name);
     }
 
     hideTooltip(name): void{
@@ -49,13 +49,20 @@ export class PrivacytoggleComponent implements AfterViewInit, OnDestroy, OnInit 
     };
 
     showTooltip(name): void{
-        console.log('name', name);
         this.showElement[name] = true;
     };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+    };
+
+    ngOnChanges(changes: any) {
+        // only run when property "data" changed
+        if (changes['data']) {
+            this.data = changes['data'].currentValue;
+            console.log(this.data);
+        }
     };
 
     ngOnDestroy() {

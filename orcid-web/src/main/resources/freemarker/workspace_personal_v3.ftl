@@ -37,7 +37,7 @@
                             </div>
                         </li>
                         <li>
-                            <privacy-toggle-ng2 name="bio-privacy-toggle"></privacy-toggle-ng2>
+                            <privacy-toggle-ng2 name="bio-privacy-toggle" [data]="biographyForm"></privacy-toggle-ng2>
                             <!--
                             <div class="relative" id="privacy-bar">
                                 <ul class="privacyToggle" (mouseenter)="showTooltip('biography-privacy')" (mouseleave)="hideTooltip('biography-privacy')"  >showTooltip(group.groupId+'-privacy') hideTooltip(group.groupId+'-privacy')

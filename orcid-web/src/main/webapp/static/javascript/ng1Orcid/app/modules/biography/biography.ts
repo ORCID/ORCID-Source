@@ -35,8 +35,7 @@ export const BiographyModule = angular.module(
         ],
         declarations: [ 
             BiographyComponent,
-            PrivacytoggleComponent,
-            //PrivacytoggleNg2Module
+            PrivacytoggleComponent
         ],
         entryComponents: [ 
             BiographyComponent 
