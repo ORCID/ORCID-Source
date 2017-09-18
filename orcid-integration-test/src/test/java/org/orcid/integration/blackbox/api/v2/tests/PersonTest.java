@@ -179,9 +179,11 @@ public class PersonTest extends BlackBoxBaseV2Release {
         deleteResearcherUrls();
         saveResearcherUrlsModal();
 
-        openEditExternalIdentifiersModal();
-        deleteExternalIdentifiers();
-        saveExternalIdentifiersModal();
+        if(hasExternalIdentifiers()){
+            openEditExternalIdentifiersModal();
+            deleteExternalIdentifiers();
+            saveExternalIdentifiersModal();
+        }
         
         openEditResearcherUrlsModal();
         deleteResearcherUrls();
