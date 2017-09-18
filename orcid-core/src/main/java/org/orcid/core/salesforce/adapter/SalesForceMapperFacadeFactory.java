@@ -136,6 +136,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("id", "Id");
         classMap.field("orcid", "ORCID_iD_Path__c");
         classMap.field("role.votingContact", "Voting_Contact__c");
+        classMap.field("role.current", "Current__c");
         classMap.field("email", "Email");
         classMap.fieldAToB("firstName", "FirstName");
         classMap.fieldAToB("lastName", "LastName");
@@ -160,6 +161,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("accountId", "Organization__c");
         classMap.field("contactId", "Contact__c");
         classMap.field("votingContact", "Voting_Contact__c");
+        classMap.field("current", "Current__c");
         classMap.field("roleType", "Member_Org_Role__c");
         classMap.register();
     }
