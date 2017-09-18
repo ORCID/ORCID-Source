@@ -3,7 +3,7 @@
 import { NgFor } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit } 
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
 import { Observable } 
@@ -32,8 +32,11 @@ import { ModalService }
     template:  scriptTmpl("privacy-toggle-ng2-template")
 })
 export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
-    @Input() name: string;
-    @Input() data: any;
+    @Input() elementId: string;
+    @Input() dataPrivacyObj: any;
+
+    @Output() 
+    privacyUpdate: EventEmitter<any> = new EventEmitter<any>();
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -44,12 +47,17 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
         this.showElement = {};
     }
 
-    hideTooltip(name): void{
-        this.showElement[name] = false;
+    hideTooltip(elementId): void{
+        this.showElement[elementId] = false;
     };
 
-    showTooltip(name): void{
-        this.showElement[name] = true;
+    setPrivacy(priv, $event:any): void {
+        $event.preventDefault();
+        this.privacyUpdate.emit(this.dataPrivacyObj);     
+    };
+
+    showTooltip(elementId): void{
+        this.showElement[elementId] = true;
     };
 
     //Default init functions provided by Angular Core
@@ -59,9 +67,8 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
 
     ngOnChanges(changes: any) {
         // only run when property "data" changed
-        if (changes['data']) {
-            this.data = changes['data'].currentValue;
-            console.log(this.data);
+        if (changes['dataPrivacyObj']) {
+            this.dataPrivacyObj = changes['dataPrivacyObj'].currentValue;
         }
     };
 
@@ -71,7 +78,5 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
     };
 
     ngOnInit() {
-        //this.getBiographyForm();
-        //this.configuration = this.configurationService.getInitialConfiguration();
     }; 
 }

@@ -105,8 +105,14 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    hideTooltip(tp): void{
+    hideTooltip(tp): void {
         this.showElement[tp] = false;
+    };
+
+    privacyChange(event): any {
+        console.log('privacyChange listener', event);
+        this.biographyForm.visiblity.visibility = obj;
+        this.setBiographyForm();   
     };
 
     setBiographyForm(): any{
@@ -125,12 +131,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('setBiographyFormError', error);
             } 
         );
-    };
-
-    setPrivacy(priv, $event:any): void {
-        $event.preventDefault();
-        this.biographyForm.visiblity.visibility = priv;
-        this.setBiographyForm();        
     };
 
     showTooltip(tp): void{
