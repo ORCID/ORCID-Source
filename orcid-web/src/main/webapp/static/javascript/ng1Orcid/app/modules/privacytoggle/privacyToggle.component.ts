@@ -44,12 +44,13 @@ export class PrivacytoggleComponent implements AfterViewInit, OnDestroy, OnInit 
         console.log('name', this.name);
     }
 
-    hideTooltip(): void{
-        this.showElement[this.name] = false;
+    hideTooltip(name): void{
+        this.showElement[name] = false;
     };
 
-    showTooltip(): void{
-        this.showElement[this.name] = true;
+    showTooltip(name): void{
+        console.log('name', name);
+        this.showElement[name] = true;
     };
 
     //Default init functions provided by Angular Core

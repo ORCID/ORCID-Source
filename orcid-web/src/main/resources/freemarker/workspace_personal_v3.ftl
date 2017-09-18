@@ -37,11 +37,10 @@
                             </div>
                         </li>
                         <li>
-                            ------
-                            <privacy-toggle-ng2 name="bio-privacy-toggle" [name]="bio-privacy-toggle2"></privacy-toggle-ng2>
-                            +++++++
+                            <privacy-toggle-ng2 name="bio-privacy-toggle"></privacy-toggle-ng2>
+                            <!--
                             <div class="relative" id="privacy-bar">
-                                <ul class="privacyToggle" (mouseenter)="showTooltip('biography-privacy')" (mouseleave)="hideTooltip('biography-privacy')"  ><!-- showTooltip(group.groupId+'-privacy') hideTooltip(group.groupId+'-privacy') -->
+                                <ul class="privacyToggle" (mouseenter)="showTooltip('biography-privacy')" (mouseleave)="hideTooltip('biography-privacy')"  >showTooltip(group.groupId+'-privacy') hideTooltip(group.groupId+'-privacy')
                                     <li class="publicActive" [ngClass]="{publicInActive: biographyForm?.visiblity?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC', $event)"></a></li>
                                     <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: biographyForm?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED', $event)"></a></li>
                                     <li class="privateActive privateInActive" [ngClass]="{privateInActive: biographyForm?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE', $event)"></a></li>
@@ -61,6 +60,7 @@
                                     </div>                
                                 </div>                              
                             </div>
+                            -->
                         </li>
                     </ul>
                 </div>
@@ -100,7 +100,6 @@
         </div>
         
     </script>
-
     <biography-ng2></biography-ng2>
 
 </#escape>
