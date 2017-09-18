@@ -157,6 +157,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     public String createContactRole(ContactRole contact) {
         return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
     }
+    
+    @Override
+    public void updateContactRole(ContactRole contactRole) {
+        retryConsumer(accessToken -> updateContactRoleInSalesForce(accessToken, contactRole));
+    }
 
     @Override
     public void removeContactRole(String contactRoleId) {
@@ -243,6 +248,20 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating contact role in SalesForce");
         return result.optString("id");
+    }
+    
+    private void updateContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
+        LOGGER.info("About update contact role in SalesForce");
+        String contactRoleId = contactRole.getId();
+        validateSalesForceId(contactRoleId);
+        WebResource resource = createObjectsResource("/Membership_Contact_Role__C/", contactRoleId).queryParam("_HttpMethod", "PATCH");
+        JSONObject contactRoleJson = salesForceAdapter.createSaleForceRecordFromContactRole(contactRole);
+        // SalesForce doesn't allow the Id in the body
+        contactRoleJson.remove("Id");
+        ClientResponse response = doPostRequest(resource, contactRoleJson, accessToken);
+        checkAuthorization(response);
+        checkResponse(response, 204, "Error updating contact role in SalesForce");
+        return;
     }
 
     private void removeContactRoleInSalesForce(String accessToken, String contactRoleId) {
@@ -501,7 +520,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceId(accountId);
         WebResource resource = createQueryResource(
-                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c, Current__c From Membership_Contact_Roles__r Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'",
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c, Current__c From Membership_Contact_Roles__r Where Current__c = True Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'",
                 accountId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);

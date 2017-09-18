@@ -37,7 +37,7 @@ public interface SalesForceDao {
     static final String TECH_LEAD_ROLE = "Tech Lead";
 
     List<Member> retrieveMembers();
-    
+
     Member retrieveMember(String accountId);
 
     List<Member> retrieveMembersByWebsite(String websiteUrl);
@@ -87,7 +87,7 @@ public interface SalesForceDao {
      * @return the contact id
      */
     String createContact(Contact contact);
-    
+
     void updateContact(Contact contact);
 
     /**
@@ -95,6 +95,8 @@ public interface SalesForceDao {
      * @return the contact role id
      */
     String createContactRole(ContactRole contact);
+
+    void updateContactRole(ContactRole contactRole);
 
     void removeContactRole(String contactRoleId);
 
