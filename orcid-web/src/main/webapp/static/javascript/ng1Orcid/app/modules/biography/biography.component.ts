@@ -41,7 +41,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     emailVerified: any;
     lengthError: any;
     showEdit: any;
-    showElement: any;
 
     constructor(
         private biographyService: BiographyService,
@@ -59,7 +58,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emailVerified = false; //change to false once service is ready
         this.lengthError = false;
         this.showEdit = false;
-        this.showElement = {};
     }
 
     cancel(): void {
@@ -104,10 +102,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    hideTooltip(tp): void {
-        this.showElement[tp] = false;
-    };
-
     privacyChange( obj ): any {
         this.biographyForm.visiblity.visibility = obj;
         this.setBiographyForm();   
@@ -129,10 +123,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('setBiographyFormError', error);
             } 
         );
-    };
-
-    showTooltip(tp): void{
-        this.showElement[tp] = true;
     };
     
     toggleEdit(): void {

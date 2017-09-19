@@ -32,8 +32,6 @@ import { CountryNg2Module }
     from './country/country.ts';
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
-import { PrivacytoggleNg2Module }
-    from './privacytoggle/privacyToggle.ts';
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 import { WorksPrivacyPreferencesNg2Module } 
@@ -93,7 +91,6 @@ export class RootCmp {
         BiographyNg2Module,
         CountryNg2Module,
         ModalNg2Module,
-        //PrivacytoggleNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
@@ -113,6 +110,6 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.86');
+        console.log('v0.88');
     }
 }

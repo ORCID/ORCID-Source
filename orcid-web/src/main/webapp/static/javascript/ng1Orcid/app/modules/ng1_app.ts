@@ -15,7 +15,6 @@ import 'angular-route'
 import { BiographyModule } from './biography/biography.ts';
 import { CountryModule } from './country/country.ts';
 import { ModalModule } from './modalNg2/modal-ng.ts';
-import { PrivacytoggleModule } from './privacytoggle/privacyToggle.ts';
 import { WidgetModule } from './widget/widget.ts';
 import { WorksPrivacyPreferencesModule } from './worksPrivacyPreferences/worksPrivacyPreferences.ts'
 
@@ -29,7 +28,6 @@ export const orcidApp = angular.module(
         BiographyModule.name,
         CountryModule.name,
         ModalModule.name,
-        //PrivacytoggleModule.name,
         WidgetModule.name,
         WorksPrivacyPreferencesModule.name
     ]

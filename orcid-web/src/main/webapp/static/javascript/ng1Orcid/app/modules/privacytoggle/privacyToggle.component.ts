@@ -1,31 +1,12 @@
 //Import all the angular components
-
-import { NgFor } 
-    from '@angular/common'; 
-
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
-
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
 
 import { BiographyService } 
     from '../../shared/biographyService.ts'; 
 
 import { ConfigurationService } 
     from '../../shared/configurationService.ts';
-
-import { EmailService } 
-    from '../../shared/emailService.ts';
-
-import { ModalService } 
-    from '../../shared/modalService.ts'; 
 
 @Component({
     selector: 'privacy-toggle-ng2',
@@ -35,10 +16,7 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
     @Input() elementId: string;
     @Input() dataPrivacyObj: any;
 
-    @Output() 
-    privacyUpdate: EventEmitter<any> = new EventEmitter<any>();
-
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    @Output() privacyUpdate: EventEmitter<any> = new EventEmitter<any>();
 
     showElement: any;
 
@@ -74,8 +52,6 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
     };
 
     ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
     };
 
     ngOnInit() {
