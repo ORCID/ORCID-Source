@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "disambiguatedOrganizationIdentifier", "disambiguationSource" })
+@XmlType(propOrder = { "disambiguatedOrganizationIdentifier", "disambiguationSource", "url", "sourceUrl" })
 @XmlRootElement(name = "disambiguatedOrganization", namespace = "http://www.orcid.org/ns/common")
 public class DisambiguatedOrganization implements Serializable {
 
@@ -67,6 +67,8 @@ public class DisambiguatedOrganization implements Serializable {
     protected String disambiguationSource;
     @XmlTransient
     protected Long id;
+    private String url;
+    private String sourceUrl;
 
     /**
      * Gets the value of the disambiguatedOrganizationIdentifier property.
@@ -116,6 +118,22 @@ public class DisambiguatedOrganization implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
+    public String getUrl() {
+        return url;
+    }
+    
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
+    }
+    
+    public String getSourceUrl() {
+        return sourceUrl;
     }
 
     @Override

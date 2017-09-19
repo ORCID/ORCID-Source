@@ -25,6 +25,7 @@ package org.orcid.jaxb.model.common_v2;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -56,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "disambiguatedOrganizationIdentifier", "disambiguationSource" })
+@XmlType(propOrder = { "disambiguatedOrganizationIdentifier", "disambiguationSource", "url", "sourceUrl" })
 @XmlRootElement(name = "disambiguatedOrganization", namespace = "http://www.orcid.org/ns/common")
 public class DisambiguatedOrganization implements Serializable {
 
@@ -67,6 +68,8 @@ public class DisambiguatedOrganization implements Serializable {
     protected String disambiguationSource;
     @XmlTransient
     protected Long id;
+    private String url;
+    private String sourceUrl;
 
     /**
      * Gets the value of the disambiguatedOrganizationIdentifier property.
@@ -116,6 +119,24 @@ public class DisambiguatedOrganization implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Column(length = 350)
+    public String getUrl() {
+        return url;
+    }
+    
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
+    @Column(length = 350)
+    public String getSourceUrl() {
+        return sourceUrl;
+    }
+    
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
     }
 
     @Override
