@@ -16,12 +16,23 @@
  */
 package org.orcid.core.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.WorkContributors;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * 
@@ -138,7 +149,29 @@ public class JsonUtilsTest {
         assertEquals("456", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://orcid.org/updated", extId.getUrl().getValue());
-        assertEquals(org.orcid.jaxb.model.record_rc1.Relationship.SELF, extId.getRelationship());
+        assertEquals(org.orcid.jaxb.model.record_rc1.Relationship.SELF, extId.getRelationship());        
+    }
+    
+    @Test
+    public void testJsonFileToJsonNode() throws URISyntaxException {
+        Path path = Paths.get(getClass().getClassLoader()
+                .getResource("json_object.json").toURI());
+        File test = path.toFile();
+        assertTrue(test.exists());
         
+        JsonNode rootNode = JsonUtils.read(test);        
+        assertEquals("string_value", rootNode.get("string").asText());
+        assertFalse(rootNode.get("boolean").asBoolean());
+        assertEquals(123456, rootNode.get("number").asInt());
+        assertEquals(3, rootNode.get("array").size());
+        assertEquals("element1", rootNode.get("array").get(0).asText());
+        assertEquals("element2", rootNode.get("array").get(1).asText());
+        assertEquals("element3", rootNode.get("array").get(2).asText());
+        assertEquals("id", rootNode.get("object").get("att1").asText());
+        assertEquals("name", rootNode.get("object").get("att2").asText());
+        assertEquals("size", rootNode.get("object").get("att3").asText());
+        assertEquals("object_1", rootNode.get("object_array").get(0).get("id").asText());
+        assertEquals("object_2", rootNode.get("object_array").get(1).get("id").asText());
+        assertEquals("object_3", rootNode.get("object_array").get(2).get("id").asText());
     }
 }
