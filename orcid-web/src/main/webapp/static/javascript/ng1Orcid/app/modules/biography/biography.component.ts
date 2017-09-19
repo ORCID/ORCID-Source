@@ -97,7 +97,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                         value: ''
                     }
                 }
-                //console.log('this.biographyForm 2', this.biographyForm);
             },
             error => {
                 console.log('getBiographyFormError', error);

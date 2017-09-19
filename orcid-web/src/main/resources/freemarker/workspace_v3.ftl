@@ -105,13 +105,13 @@
             <div class="popover top privacy-myorcid3" [ngClass]="showElement[name] == true ? 'block' : ''">
                 <div class="arrow"></div>
                 <div class="popover-content">
-                    <strong>Who can see this? </strong>
+                    <strong><@orcid.msg 'privacyToggle.help.who_can_see' /></strong>
                     <ul class="privacyHelp">
-                        <li class="public" style="color: #009900;">everyone</li>
-                        <li class="limited" style="color: #ffb027;">trusted parties</li>
-                        <li class="private" style="color: #990000;">only me</li>
+                        <li class="public" style="color: #009900;"><@orcid.msg 'privacyToggle.help.everyone' /></li>
+                        <li class="limited" style="color: #ffb027;"><@orcid.msg 'privacyToggle.help.trusted_parties' /></li>
+                        <li class="private" style="color: #990000;"><@orcid.msg 'privacyToggle.help.only_me' /></li>
                     </ul>
-                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">More information on privacy settings</a>
+                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information' /></a>
                 </div>                
             </div>                              
         </div>
