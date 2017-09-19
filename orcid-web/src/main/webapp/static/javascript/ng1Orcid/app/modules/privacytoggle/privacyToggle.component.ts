@@ -56,7 +56,7 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
         console.log('1', _priv, this.dataPrivacyObj);
         this.dataPrivacyObj.visiblity.visibility = _priv;
         console.log('2', this.dataPrivacyObj);  
-        this.privacyUpdate.emit(this.dataPrivacyObj);
+        this.privacyUpdate.emit(_priv);
         /*
         console.log('3', this.dataPrivacyObj);  
         */
