@@ -118,7 +118,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro orcidUrl orcid>
-    ${request.scheme}://${request.serverName}<#if request.serverPort != 80 && request.serverPort != 443>:${request.serverPort?string.computer}</#if>${request.contextPath}/${orcid}
+    ${request.scheme}://${request.serverName}<#if request.serverPort != 80 && request.serverPort != 443>:${request.serverPort?c}</#if>${request.contextPath}/${orcid}
 </#macro>
 
 <#macro absUrl url>
