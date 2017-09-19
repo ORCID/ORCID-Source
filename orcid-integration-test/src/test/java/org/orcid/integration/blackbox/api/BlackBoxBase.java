@@ -295,8 +295,8 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(toggle, webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         
-        String clickXPathStr = "//div[@id='privacy-settings' and contains(text(),'By default, who should')]//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
-        String clickWorkedStr =  "//div[@id='privacy-settings' and contains(text(),'By default, who should ')]//li[@class='" +visibility.value().toLowerCase() + "Active']//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
+        String clickXPathStr = "//div[@id='privacy-settings' and contains(text(),'By default, who should')]//a[contains(@name,'" + visibility.value() + "')]";
+        String clickWorkedStr =  "//div[@id='privacy-settings' and contains(text(),'By default, who should ')]//li[@class='" + visibility.value() + "Active']//a[contains(@name,'" + visibility.value() + "')]";
 
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
@@ -310,17 +310,17 @@ public class BlackBoxBase {
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         
         try {
-            By editBio = By.xpath("//div[@ng-controller='BiographyCtrl']//div[@class='row']//div[2]//div[@ng-click='toggleEdit()']");
+            By editBio = By.xpath("//div[@id='bio-section']//div[@class='row']/div/ul/li[1]/div/span");
             (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(editBio));
             WebElement editBioButton = webDriver.findElement(editBio);
             editBioButton.click();
             
-            By saveBio = By.xpath("//button[@ng-click='setBiographyForm()']");
+            By saveBio = By.xpath("//div[@id='bio-section']//button[text()='Save changes']");
             (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(saveBio));
             
             //Change the content if needed
             if(bioValue != null) {
-                By bioTextArea = By.xpath("//textarea[@ng-model='biographyForm.biography.value']");
+                By bioTextArea = By.xpath("//div[@id='bio-section']//textarea");
                 (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(bioTextArea));
                 WebElement bioTextAreaElement = webDriver.findElement(bioTextArea);
                 bioTextAreaElement.clear();
