@@ -43,6 +43,14 @@
 			<span ng-if="group.getActive().departmentName.value">
 				<span ng-if="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
 			</span>
+            <span ng-if="group.getActive().orgDisambiguatedId.value">
+                <h4>Organization identifiers</h4>
+                <span ng-bind="group.getActive().disambiguationSource.value" ng-cloak></span>:
+                <a ng-if="group.getActive().orgDisambiguatedSourceUrl.value" ng-cloak href="group.getActive().orgDisambiguatedSourceUrl.value" target=""><span ng-bind="group.getActive().orgDisambiguatedId.value" ng-cloak></span></a><br>
+                <span ng-if="group.getActive().orgDisambiguatedUrl.value">
+                    <a href="group.getActive().orgDisambiguatedUrl.value" target=""><span ng-bind="group.getActive().orgDisambiguatedUrl.value" ng-cloak></span></a>
+                </span>
+            </span>
 			
 			
 			
