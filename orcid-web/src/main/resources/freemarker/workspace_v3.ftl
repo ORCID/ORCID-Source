@@ -96,9 +96,9 @@
     <script type="text/ng-template" id="privacy-toggle-ng2-template">
         <div class="relative" id="privacy-bar">
             <ul class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
-                <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj?.visiblity?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC', $event)"></a></li>
-                <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED', $event)"></a></li>
-                <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE', $event)"></a></li>
+                <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj?.visiblity?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC')"></a></li>
+                <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED')"></a></li>
+                <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE')"></a></li>
             </ul>
         </div>
         <div class="popover-help-container">

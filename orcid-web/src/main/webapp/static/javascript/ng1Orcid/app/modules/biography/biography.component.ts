@@ -109,9 +109,9 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[tp] = false;
     };
 
-    privacyChange(event): any {
-        console.log('privacyChange listener', event);
-        this.biographyForm.visiblity.visibility = obj;
+    privacyChange( obj ): any {
+        console.log('privacyChange listener', obj);
+        this.biographyForm.visiblity.visibility = obj.visibility;
         this.setBiographyForm();   
     };
 

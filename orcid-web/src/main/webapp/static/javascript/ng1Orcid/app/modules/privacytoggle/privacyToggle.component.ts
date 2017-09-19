@@ -50,12 +50,18 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
     hideTooltip(elementId): void{
         this.showElement[elementId] = false;
     };
-
-    setPrivacy(priv, $event:any): void {
-        $event.preventDefault();
-        this.privacyUpdate.emit(this.dataPrivacyObj);     
+    
+    setPrivacy(priv): void {
+        let _priv = priv;
+        console.log('1', _priv, this.dataPrivacyObj);
+        this.dataPrivacyObj.visiblity.visibility = _priv;
+        console.log('2', this.dataPrivacyObj);  
+        this.privacyUpdate.emit(this.dataPrivacyObj);
+        /*
+        console.log('3', this.dataPrivacyObj);  
+        */
     };
-
+    
     showTooltip(elementId): void{
         this.showElement[elementId] = true;
     };
@@ -68,7 +74,10 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
     ngOnChanges(changes: any) {
         // only run when property "data" changed
         if (changes['dataPrivacyObj']) {
+            console.log('0a', this.dataPrivacyObj);
+            console.log('changes', changes['dataPrivacyObj']);
             this.dataPrivacyObj = changes['dataPrivacyObj'].currentValue;
+            console.log('0b', this.dataPrivacyObj);
         }
     };
 
