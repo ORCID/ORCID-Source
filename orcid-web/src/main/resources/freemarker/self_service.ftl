@@ -268,6 +268,9 @@
                             <span class="orcid-error" ng-show="newSubMember.errors.length > 0">
                                 <div ng-repeat='error in newSubMember.errors' ng-bind-html="error"></div>
                             </span>
+                            <span class="orcid-error" ng-show="errorAddingSubMember">
+                                <div><@orcid.msg 'manage_consortium.add_submember_error'/></div>
+                            </span>
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
 	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="validateSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                    </div>
@@ -349,8 +352,8 @@
 	    <div class="lightbox-container">
 	        <h3><@orcid.msg 'manage_consortium.add_submember_existing_org_heading'/></h3>
             <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text1'/></p>
-            <p class="bold">{{newSubMemberExistingOrg.member.name}}<br>
-            <a href="{{newSubMemberExistingOrg.member.websiteUrl}}" target="newSubMemberExistingOrg.member.websiteUrl">{{newSubMemberExistingOrg.member.websiteUrl}}</a>
+            <p class="bold">{{newSubMemberExistingOrg.publicDisplayName}}<br>
+            <a href="{{newSubMemberExistingOrg.websiteUrl}}" target="newSubMemberExistingOrg.member.websiteUrl">{{newSubMemberExistingOrg.websiteUrl}}</a>
             </p>
 	        
             <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text2'/></p>

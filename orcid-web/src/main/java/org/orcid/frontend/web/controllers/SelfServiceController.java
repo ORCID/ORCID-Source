@@ -329,13 +329,19 @@ public class SelfServiceController extends BaseController {
     }
 
     @RequestMapping(value = "/check-existing-sub-member.json", method = RequestMethod.POST)
-    public @ResponseBody MemberDetails checkExistingMember(@RequestBody SubMemberForm subMember) { 
-        MemberDetails existingMemberDetails = null;
-        Optional<Member> existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
-        if(existingMemberId.isPresent()){
-            existingMemberDetails = salesForceManager.retrieveDetails(existingMemberId.get().getId());
+    public @ResponseBody Member checkExistingMember(@RequestBody SubMemberForm subMember) { 
+        Optional<Member> existingMember = salesForceManager.checkExistingMember(subMember.toMember());
+        Member tempMember = new Member();
+        if (existingMember.isPresent()){
+            tempMember.setPublicDisplayName(existingMember.get().getPublicDisplayName());
+            tempMember.setWebsiteUrl(existingMember.get().getWebsiteUrl());
+            tempMember.setId(existingMember.get().getId());
+        } else {
+            tempMember.setPublicDisplayName(null);
+            tempMember.setWebsiteUrl(null);
+            tempMember.setId(null);
         }
-        return existingMemberDetails; 
+        return tempMember; 
     }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
