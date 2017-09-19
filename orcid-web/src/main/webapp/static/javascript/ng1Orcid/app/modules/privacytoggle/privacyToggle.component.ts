@@ -8,6 +8,15 @@ import { BiographyService }
 import { ConfigurationService } 
     from '../../shared/configurationService.ts';
 
+/*
+Implementation Example:
+<privacy-toggle-ng2 elementId="bio-privacy-toggle" [dataPrivacyObj]="biographyForm" (privacyUpdate)="privacyChange($event)"></privacy-toggle-ng2>
+
+@Params:
+elementId: Set a unique name, to show/hide the popup
+[dataPrivacyObj]: Pass the object that has the visibility data.
+(privacyUpdate): Pass the function of the parent component that will manage the api call to update the privacy value. This function NEEDS to be implemented in the parent component.
+*/
 @Component({
     selector: 'privacy-toggle-ng2',
     template:  scriptTmpl("privacy-toggle-ng2-template")
