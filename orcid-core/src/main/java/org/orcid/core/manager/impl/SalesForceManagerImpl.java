@@ -419,12 +419,23 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             return false;
         }).findFirst();
         String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
-        ContactRole contactRole = new ContactRole();
-        contactRole.setContactId(contactId);
-        contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
-        contactRole.setAccountId(contact.getAccountId());
-        salesForceDao.createContactRole(contactRole);
-        if (salesForceConnectionDao.findByOrcidAndAccountId(contact.getOrcid(), accountId) == null) {
+        List<Contact> existingContactsWithRoles = salesForceDao.retrieveContactsWithRolesByAccountId(accountId, true);
+        Optional<ContactRole> existingContactRole = existingContactsWithRoles.stream()
+                .filter(c -> contactId.equals(c.getId()) && ContactRoleType.OTHER_CONTACT.equals(c.getRole().getRoleType())).map(c -> c.getRole()).findFirst();
+        if (existingContactRole.isPresent()) {
+            ContactRole contactRole = existingContactRole.get();
+            if (!contactRole.isCurrent()) {
+                contactRole.setCurrent(true);
+                salesForceDao.updateContactRole(contactRole);
+            }
+        } else {
+            ContactRole contactRole = new ContactRole();
+            contactRole.setContactId(contactId);
+            contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
+            contactRole.setAccountId(contact.getAccountId());
+            salesForceDao.createContactRole(contactRole);
+        }
+        if (salesForceConnectionDao.findByOrcid(contact.getOrcid()) == null) {
             salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
         }
         salesForceContactsCache.remove(accountId);

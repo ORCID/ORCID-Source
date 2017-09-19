@@ -51,6 +51,8 @@ public interface SalesForceDao {
     List<Contact> retrieveAllContactsByAccountId(String accountId);
 
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId);
+    
+    List<Contact> retrieveContactsWithRolesByAccountId(String accountId, boolean includeNonCurrent);
 
     List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
 
