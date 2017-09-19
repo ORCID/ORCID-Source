@@ -165,18 +165,19 @@
 				<!--  -->
                 <div class="form-group">
                     <label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
+					<span class="required" ng-class="isValidStartDate(editAffiliation.startDate)">*</span>
 					<div>					
-                    	<select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year">
+                    	<select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
 		                	<#list years?keys as key>
                         		<option value="${key}">${years[key]}</option>
                         	</#list>
                     	</select>					
-                    	<select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month">
+                    	<select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
 	                        <#list months?keys as key>
                            		<option value="${key}">${months[key]}</option>
                         	</#list>
                     	</select>					
-                    	<select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day">
+                    	<select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
 	                        <#list days?keys as key>
                            		<option value="${key}">${days[key]}</option>
                       		</#list>
