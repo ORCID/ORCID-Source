@@ -72,7 +72,7 @@
 		class="org.springframework.security.core.session.SessionRegistryImpl" />
         
     <bean id="localeResolver"
-        class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+        class="org.orcid.frontend.spring.i18n.OrcidCookieLocaleResolver">
         <property name="cookieName" value="locale_v3" /><!-- must match value in AjaxAuthenticationSuccessHandler -->
         <property name="defaultLocale" value="en"/><!-- Note this makes spring ignore the browsers accepts user agent -->
     </bean>
