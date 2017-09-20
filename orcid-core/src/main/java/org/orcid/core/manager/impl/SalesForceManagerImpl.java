@@ -242,18 +242,24 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public String createMember(Member member) {
+        String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        Member consortium = retrieveMember(consortiumLeadId);
+        String consortiumOwnerId = consortium.getOwnerId();
         Opportunity opportunity = new Opportunity();
         URL websiteUrl = member.getWebsiteUrl();
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
         String accountId = null;
+
         if (firstExistingMember.isPresent()) {
             accountId = firstExistingMember.get().getId();
         } else {
+            member.setParentId(consortiumLeadId);
+            member.setOwnerId(consortiumOwnerId);
+            member.setCountry(consortium.getCountry());
             accountId = salesForceDao.createMember(member);
         }
+        opportunity.setOwnerId(consortiumOwnerId);
         opportunity.setTargetAccountId(accountId);
-        String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        Member consortium = retrieveMember(consortiumLeadId);
         opportunity.setConsortiumLeadId(consortiumLeadId);
         opportunity.setType(OPPORTUNITY_TYPE);
         opportunity.setMemberType(getPremiumConsortiumMemberTypeId());
@@ -408,12 +414,23 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             return false;
         }).findFirst();
         String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
-        ContactRole contactRole = new ContactRole();
-        contactRole.setContactId(contactId);
-        contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
-        contactRole.setAccountId(contact.getAccountId());
-        salesForceDao.createContactRole(contactRole);
-        if (salesForceConnectionDao.findByOrcidAndAccountId(contact.getOrcid(), accountId) == null) {
+        List<Contact> existingContactsWithRoles = salesForceDao.retrieveContactsWithRolesByAccountId(accountId, true);
+        Optional<ContactRole> existingContactRole = existingContactsWithRoles.stream()
+                .filter(c -> contactId.equals(c.getId()) && ContactRoleType.OTHER_CONTACT.equals(c.getRole().getRoleType())).map(c -> c.getRole()).findFirst();
+        if (existingContactRole.isPresent()) {
+            ContactRole contactRole = existingContactRole.get();
+            if (!contactRole.isCurrent()) {
+                contactRole.setCurrent(true);
+                salesForceDao.updateContactRole(contactRole);
+            }
+        } else {
+            ContactRole contactRole = new ContactRole();
+            contactRole.setContactId(contactId);
+            contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
+            contactRole.setAccountId(contact.getAccountId());
+            salesForceDao.createContactRole(contactRole);
+        }
+        if (salesForceConnectionDao.findByOrcid(contact.getOrcid()) == null) {
             salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
         }
         salesForceContactsCache.remove(accountId);
@@ -446,7 +463,10 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public void removeContactRole(Contact contact) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
-        contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> salesForceDao.removeContactRole(r.getId()));
+        contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> {
+            r.setCurrent(false);
+            salesForceDao.updateContactRole(r);
+        });
     }
 
     /**

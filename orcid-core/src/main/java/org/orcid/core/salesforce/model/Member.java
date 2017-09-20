@@ -32,6 +32,8 @@ public class Member implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
+    private String parentId;
+    private String ownerId;
     private String name;
     private String publicDisplayName;
     private URL websiteUrl;
@@ -51,6 +53,22 @@ public class Member implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getPublicDisplayName() {
@@ -159,10 +177,10 @@ public class Member implements Serializable {
 
     @Override
     public String toString() {
-        return "Member [id=" + id + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl=" + websiteUrl + ", researchCommunity="
-                + researchCommunity + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", publicDisplayEmail=" + publicDisplayEmail
-                + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId=" + consortiumLeadId + ", lastMembershipStartDate=" + lastMembershipStartDate
-                + ", lastMembershipEndDate=" + lastMembershipEndDate + "]";
+        return "Member [id=" + id + ", parentId=" + parentId + ", ownerId=" + ownerId + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl="
+                + websiteUrl + ", researchCommunity=" + researchCommunity + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl
+                + ", publicDisplayEmail=" + publicDisplayEmail + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId=" + consortiumLeadId
+                + ", lastMembershipStartDate=" + lastMembershipStartDate + ", lastMembershipEndDate=" + lastMembershipEndDate + "]";
     }
 
 }
