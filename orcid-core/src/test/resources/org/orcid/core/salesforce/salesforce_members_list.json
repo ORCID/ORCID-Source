@@ -24,7 +24,8 @@
     "Research_Community__c" : "Research Institute",
     "Public_Display_Description__c" : "This is the public display description for Org 2 Consortium Member",
     "Logo_Description__c" : "https://dl.dropboxusercontent.com/s/yk2tgl9ze7z7y2g/test_logo.png",
-    "Public_Display_Email__c" : "orcid@org2.org"
+    "Public_Display_Email__c" : "orcid@org2.org",
+    "Last_membership_start_date__c" : "2017-02-03"
   }, {
     "attributes" : {
       "type" : "Account",
@@ -48,7 +49,8 @@
     "Research_Community__c" : "Research Institute",
     "Public_Display_Description__c" : "This is the public display description for Org 3 Consortium Member",
     "Logo_Description__c" : "https://dl.dropboxusercontent.com/s/yk2tgl9ze7z7y2g/test_logo.png",
-    "Public_Display_Email__c" : "orcid@org3.org"
+    "Public_Display_Email__c" : "orcid@org3.org",
+    "Last_membership_start_date__c" : null
   }, {
     "attributes" : {
       "type" : "Account",
@@ -72,7 +74,8 @@
     "Research_Community__c" : "Publisher",
     "Public_Display_Description__c" : "This is the public display description for Org 4 NotAConsortium Member",
     "Logo_Description__c" : "https://dl.dropboxusercontent.com/s/yk2tgl9ze7z7y2g/test_logo.png",
-    "Public_Display_Email__c" : "orcid@org4.org"
+    "Public_Display_Email__c" : "orcid@org4.org",
+    "Last_membership_start_date__c" : null
   }, {
     "attributes" : {
       "type" : "Account",
@@ -96,6 +99,7 @@
     "Research_Community__c" : "Government",
     "Public_Display_Description__c" : "This is the public display description for Org 1 Consortium Lead",
     "Logo_Description__c" : "https://dl.dropboxusercontent.com/s/yk2tgl9ze7z7y2g/test_logo.png",
-    "Public_Display_Email__c" : "orcid@org1.org"
+    "Public_Display_Email__c" : "orcid@org1.org",
+    "Last_membership_start_date__c" : null
   } ]
 }

@@ -42,6 +42,7 @@ public class Member implements Serializable {
     private String publicDisplayEmail;
     private String mainOpportunityPath;
     private String consortiumLeadId;
+    private String lastMembershipStartDate;
 
     public String getId() {
         return id;
@@ -139,11 +140,20 @@ public class Member implements Serializable {
         this.consortiumLeadId = consortiumLeadId;
     }
 
+    public String getLastMembershipStartDate() {
+        return lastMembershipStartDate;
+    }
+
+    public void setLastMembershipStartDate(String lastMembershipStartDate) {
+        this.lastMembershipStartDate = lastMembershipStartDate;
+    }
+
     @Override
     public String toString() {
         return "Member [id=" + id + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl=" + websiteUrl + ", researchCommunity="
                 + researchCommunity + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", publicDisplayEmail=" + publicDisplayEmail
-                + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId=" + consortiumLeadId + "]";
+                + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId=" + consortiumLeadId + ", lastMembershipStartDate=" + lastMembershipStartDate
+                + "]";
     }
 
 }
