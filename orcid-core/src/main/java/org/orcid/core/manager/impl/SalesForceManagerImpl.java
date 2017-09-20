@@ -224,19 +224,19 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
         return firstExistingMember;
     }
-    
+
     @Override
     public boolean checkExistingSubMember(Member member, String parentAccountId) {
         boolean subMemberExists = false;
         URL websiteUrl = member.getWebsiteUrl();
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
-        
-        if(firstExistingMember.isPresent()){
+
+        if (firstExistingMember.isPresent()) {
             String subMemberAcccountId = firstExistingMember.get().getId();
             MemberDetails memberDetails = retrieveDetails(parentAccountId);
-            subMemberExists = memberDetails.getSubMembers().stream().anyMatch(s -> subMemberAcccountId.equals(s.getOpportunity().getTargetAccountId()));  
-        } 
-        
+            subMemberExists = memberDetails.getSubMembers().stream().anyMatch(s -> subMemberAcccountId.equals(s.getOpportunity().getTargetAccountId()));
+        }
+
         return subMemberExists;
     }
 
@@ -426,12 +426,23 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             return false;
         }).findFirst();
         String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
-        ContactRole contactRole = new ContactRole();
-        contactRole.setContactId(contactId);
-        contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
-        contactRole.setAccountId(contact.getAccountId());
-        salesForceDao.createContactRole(contactRole);
-        if (salesForceConnectionDao.findByOrcidAndAccountId(contact.getOrcid(), accountId) == null) {
+        List<Contact> existingContactsWithRoles = salesForceDao.retrieveContactsWithRolesByAccountId(accountId, true);
+        Optional<ContactRole> existingContactRole = existingContactsWithRoles.stream()
+                .filter(c -> contactId.equals(c.getId()) && ContactRoleType.OTHER_CONTACT.equals(c.getRole().getRoleType())).map(c -> c.getRole()).findFirst();
+        if (existingContactRole.isPresent()) {
+            ContactRole contactRole = existingContactRole.get();
+            if (!contactRole.isCurrent()) {
+                contactRole.setCurrent(true);
+                salesForceDao.updateContactRole(contactRole);
+            }
+        } else {
+            ContactRole contactRole = new ContactRole();
+            contactRole.setContactId(contactId);
+            contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
+            contactRole.setAccountId(contact.getAccountId());
+            salesForceDao.createContactRole(contactRole);
+        }
+        if (salesForceConnectionDao.findByOrcid(contact.getOrcid()) == null) {
             salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
         }
         salesForceContactsCache.remove(accountId);
@@ -464,7 +475,10 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public void removeContactRole(Contact contact) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
-        contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> salesForceDao.removeContactRole(r.getId()));
+        contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> {
+            r.setCurrent(false);
+            salesForceDao.updateContactRole(r);
+        });
     }
 
     /**
