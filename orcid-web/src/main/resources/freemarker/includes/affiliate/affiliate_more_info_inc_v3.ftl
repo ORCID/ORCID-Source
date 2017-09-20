@@ -16,82 +16,35 @@
     =============================================================================
 
 -->
-<div class="more-info content">
+<div class="more-info content" ng-if="moreInfo[group.groupId]">
 	<div class="row bottomBuffer">
 		<div class="col-md-12"></div>
-	</div>	
+	</div>
+	<span class="dotted-bar"></span>	
 	<div class="row">
-		<div class="col-md-6" ng-if="group.getActive().affiliationName.value" ng-cloak>
-			
-				<div class="bottomBuffer">
-					  <strong ng-if="group.getActive().affiliationType.value == 'education'"><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></strong>  
-					<strong ng-if="group.getActive().affiliationType.value == 'employment'"><@orcid.msg 'manual_affiliation_form_contents.labelinstitutionemployer'/></strong>
-					<strong ng-if="group.getActive().affiliationType.value != 'education' && group.getActive().affiliationType.value != 'employment'"><@orcid.msg 'manual_affiliation_form_contents.labelname'/></strong>
-					<div ng-bind="group.getActive().affiliationName.value"></div>
-				</div>
+		<div class="col-md-6" ng-if="group.getActive().orgDisambiguatedId.value">
+			<div class="bottomBuffer">
+	            <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+	            <span ng-bind="group.getActive().disambiguationSource.value" ng-cloak></span>:
+	            <a ng-if="group.getActive().orgDisambiguatedSourceUrl.value" ng-cloak href="group.getActive().orgDisambiguatedSourceUrl.value" target=""><span ng-bind="group.getActive().orgDisambiguatedId.value" ng-cloak></span></a><br>
+	            <span ng-bind="group.getActive().disambiguatedAffiliation.value"></span>: <span ng-bind="group.getActive().disambiguatedAffiliation.city"></span>, <span ng-if="group.getActive().disambiguatedAffiliation.region" ng-cloak><span ng-bind="group.getActive().disambiguatedAffiliation.region"></span>, </span><span ng-bind="group.getActive().disambiguatedAffiliation.country"></span><br>
+	            <span ng-if="group.getActive().disambiguatedAffiliation.url">
+	                <a href="group.getActive().disambiguatedAffiliation.url" target=""><span ng-bind="group.getActive().disambiguatedAffiliation.url" ng-cloak></span></a>
+	            </span>
+	        </div>
+        </div>
+        <div class="col-md-6" ng-if="group.getActive().url.value" ng-cloak>
+        	<div class="bottomBuffer">
+				<strong><@orcid.msg 'common.url'/></strong><br> 
+				<a href="{{group.getActive().url.value}}" target="affiliation.url.value">{{group.getActive().url.value}}</a>
+			</div>
 		</div>	
-		
-		<div class="col-md-6" ng-if="group.getActive().city.value" ng-cloak>
-			<div class="bottomBuffer">
-				<strong><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></strong>
-				<div ng-bind="group.getActive().city.value"></div>
+        <div class="col-md-12">
+        	<div class="bottomBuffer">
+				<strong><@orcid.msg 'groups.common.created'/></strong><br> 
+				<span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
 			</div>
-		</div>
-		
-		<div class="col-md-6" ng-if="group.getActive().region.value" ng-cloak>
-			<div class="bottomBuffer">
-				<strong><@orcid.msg 'manual_affiliation_form_contents.labelregion'/></strong>
-				<div ng-bind="group.getActive().region.value"></div>
-			</div>
-		</div>
-		
-		<div class="col-md-6"  ng-if="group.getActive().country.value" ng-cloak>
-			<div class="bottomBuffer">
-				<strong><@orcid.msg 'manual_affiliation_form_contents.labelcountry'/></strong>
-				<div ng-bind="group.getActive().country.value"></div>
-			</div>
-		</div>
-		<div class="col-md-6" ng-if="group.getActive().departmentName.value" ng-cloak>
-			<div class="bottomBuffer">
-				<strong><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></strong>
-				<div ng-bind="group.getActive().departmentName.value"></div>
-			</div>
-		</div>
-		
-		<div class="col-md-6"  ng-if="group.getActive().roleTitle.value" ng-cloak>
-			<div class="bottomBuffer">
-				<strong ng-if="group.getActive().affiliationType.value == 'education'"><@orcid.msg 'manual_affiliation_form_contents.labeldegreetitle'/></strong>
-				<strong ng-if="group.getActive().affiliationType.value != 'education'"><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></strong>
-				<div ng-bind="group.getActive().roleTitle.value"></div>
-			</div>
-		</div>
-		
-		
-		<div class="col-md-6" ng-if="group.getActive().affiliationType.value" ng-cloak>
-			<div class="bottomBuffer">
-				<strong><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></strong>
-				<div ng-bind="group.getActive().affiliationType.value"></div>
-			</div>
-		</div>
-		
-		<div class="col-md-6" ng-if="group.getActive().startDate.year" ng-cloak>
-			<div class="bottomBuffer">				
-				<strong><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></strong>
-				<div>		
-					<span ng-if="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-if="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span><span ng-if="group.getActive().startDate.day && group.getActive().startDate.month">-{{group.getActive().startDate.day}}</span>
-				</div>				
-			</div>
-		</div>
-		
-		<div class="col-md-6" ng-if="group.getActive().endDate.year" ng-cloak>
-			<div class="bottomBuffer">				
-				<strong><@orcid.msg 'manual_affiliation_form_contents.labelEndDate'/></strong>
-				<div>									
-					<span ng-if="group.getActive().endDate.year" ng-bind="group.getActive().endDate.year"></span><span ng-if="group.getActive().endDate.month">-</span><span ng-if="group.getActive().endDate.month" ng-bind="group.getActive().endDate.month"></span><span ng-if="group.getActive().endDate.day && group.getActive().endDate.month">-</span><span ng-if="group.getActive().endDate.day && group.getActive().endDate.month" ng-bind="group.getActive().endDate.day"></span>
-				</div>				
-			</div>
-		</div>
-				
-	</div>		
+		</div>	
+	</div>			
 </div>
  
