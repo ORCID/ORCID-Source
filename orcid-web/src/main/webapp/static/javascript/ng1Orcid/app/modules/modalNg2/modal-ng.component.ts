@@ -72,7 +72,6 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('getEmailPrimary()', this.emailService.getEmailPrimary().value);
                 this.emailPrimary = this.emailService.getEmailPrimary().value;
             },
             error => {

@@ -62,7 +62,7 @@ public class Education implements Serializable, Affiliation, Filterable, Activit
     protected String departmentName;
     @XmlElement(namespace = "http://www.orcid.org/ns/education", name = "role-title")
     protected String roleTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date", required = true)
     protected FuzzyDate startDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "end-date")
     protected FuzzyDate endDate;

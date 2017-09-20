@@ -378,4 +378,13 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         assertTrue(getWebDriver().getCurrentUrl().contains("oauth/authorize"));
 }
     
+    public void checkAllowOrigin(){
+        Client client = Client.create();
+        WebResource webResource = client.resource(baseUri+"/oauth/jwks");
+        ClientResponse jwks = webResource
+                .header("Origin", "http://example.com")
+                .accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        assertEquals(jwks.getHeaders().get("Access-Control-Allow-Origin"),"http://example.com");
+    }
+    
 }

@@ -32,6 +32,7 @@ public class ContactRole implements Serializable {
     private String accountId;
     private String contactId;
     private Boolean isVotingContact;
+    private Boolean isCurrent;
     private ContactRoleType roleType;
 
     public ContactRole() {
@@ -73,6 +74,14 @@ public class ContactRole implements Serializable {
         this.isVotingContact = isVotingContact;
     }
 
+    public Boolean isCurrent() {
+        return isCurrent;
+    }
+
+    public void setCurrent(Boolean isCurrent) {
+        this.isCurrent = isCurrent;
+    }
+
     public ContactRoleType getRoleType() {
         return roleType;
     }
@@ -83,8 +92,8 @@ public class ContactRole implements Serializable {
 
     @Override
     public String toString() {
-        return "ContactRole [id=" + id + ", accountId=" + accountId + ", contactId=" + contactId + ", isVotingContact=" + isVotingContact + ", roleType=" + roleType
-                + "]";
+        return "ContactRole [id=" + id + ", accountId=" + accountId + ", contactId=" + contactId + ", isVotingContact=" + isVotingContact + ", isCurrent=" + isCurrent
+                + ", roleType=" + roleType + "]";
     }
 
 }

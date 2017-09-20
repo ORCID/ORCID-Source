@@ -70,6 +70,7 @@ public class SalesForceAdapterTest {
         assertEquals("orcid@org2.org", member.getPublicDisplayEmail());
         assertEquals("006J000000LThfbIAD", member.getMainOpportunityId());
         assertEquals("001J000001pZwWWIA0", member.getConsortiumLeadId());
+        assertEquals("2017-02-03", member.getLastMembershipStartDate());
     }
 
     @Test
@@ -90,6 +91,7 @@ public class SalesForceAdapterTest {
         assertEquals("orcid@org3.org", member.getPublicDisplayEmail());
         assertEquals("006J000000LThfcIAD", member.getMainOpportunityId());
         assertNull(member.getConsortiumLeadId());
+        assertNull(member.getLastMembershipStartDate());
     }
 
     @Test
@@ -110,6 +112,7 @@ public class SalesForceAdapterTest {
         assertEquals("orcid@org2.org", member.getPublicDisplayEmail());
         assertEquals("006J000000LThfbIAD", member.getMainOpportunityId());
         assertEquals("001J000001pZwWWIA0", member.getConsortiumLeadId());
+        assertEquals("2017-02-03", member.getLastMembershipStartDate());
     }
 
     @Test
@@ -154,6 +157,7 @@ public class SalesForceAdapterTest {
         assertEquals("contact1@mailinator.com", contact.getEmail());
         assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
         assertTrue(contact.getRole().isVotingContact());
+        assertTrue(contact.getRole().isCurrent());
     }
 
     @Test
@@ -167,6 +171,7 @@ public class SalesForceAdapterTest {
         assertEquals("contact1@mailinator.com", contact.getEmail());
         assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
         assertTrue(contact.getRole().isVotingContact());
+        assertTrue(contact.getRole().isCurrent());
     }
 
     @Test

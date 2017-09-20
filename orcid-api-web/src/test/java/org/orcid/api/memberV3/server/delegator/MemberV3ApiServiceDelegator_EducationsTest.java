@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
@@ -337,6 +338,14 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
 
         assertTrue(haveOld);
         assertTrue(haveNew);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void testAddEducationNoStartDate() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Education education = Utils.getEducation();
+        education.setStartDate(null);
+        serviceDelegator.createEducation("4444-4444-4444-4442", education);
     }
 
     @Test

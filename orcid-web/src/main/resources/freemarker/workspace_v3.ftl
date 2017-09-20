@@ -93,29 +93,28 @@
         </div>
       </div>
 
-    <script type="text/ng-template" id="privacy-toogle-ng2-template">
-      <div class="relative" id="privacy-bar">
-          <ul class="privacyToggle" (mouseenter)="showTooltip('biography-privacy')" (mouseleave)="hideTooltip('biography-privacy')"  ><!-- showTooltip(group.groupId+'-privacy') hideTooltip(group.groupId+'-privacy') -->
-              <li class="publicActive" [ngClass]="{publicInActive: biographyForm?.visiblity?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC', $event)"></a></li>
-              <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: biographyForm?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED', $event)"></a></li>
-              <li class="privateActive privateInActive" [ngClass]="{privateInActive: biographyForm?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE', $event)"></a></li>
-          </ul>
-      </div>
-      <div class="popover-help-container">
-          <div class="popover top privacy-myorcid3" [ngClass]="showElement['biography-privacy'] == true ? 'block' : ''">
-              <div class="arrow"></div>
-              <div class="popover-content">
-                  <strong>Who can see this? </strong>
-                  <ul class="privacyHelp">
-                      <li class="public" style="color: #009900;">everyone</li>
-                      <li class="limited" style="color: #ffb027;">trusted parties</li>
-                      <li class="private" style="color: #990000;">only me</li>
-                  </ul>
-                  <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">More information on privacy settings</a>
-              </div>                
-          </div>                              
-      </div>
-      
+    <script type="text/ng-template" id="privacy-toggle-ng2-template">
+        <div class="relative" id="privacy-bar">
+            <ul class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
+                <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj?.visiblity?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC')"></a></li>
+                <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED')"></a></li>
+                <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE')"></a></li>
+            </ul>
+        </div>
+        <div class="popover-help-container">
+            <div class="popover top privacy-myorcid3" [ngClass]="showElement[name] == true ? 'block' : ''">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <strong><@orcid.msg 'privacyToggle.help.who_can_see' /></strong>
+                    <ul class="privacyHelp">
+                        <li class="public" style="color: #009900;"><@orcid.msg 'privacyToggle.help.everyone' /></li>
+                        <li class="limited" style="color: #ffb027;"><@orcid.msg 'privacyToggle.help.trusted_parties' /></li>
+                        <li class="private" style="color: #990000;"><@orcid.msg 'privacyToggle.help.only_me' /></li>
+                    </ul>
+                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information' /></a>
+                </div>                
+            </div>                              
+        </div>
     </script>
 
     <!-- Country -->    

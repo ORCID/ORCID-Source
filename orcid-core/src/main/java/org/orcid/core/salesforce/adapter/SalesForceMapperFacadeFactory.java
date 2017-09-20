@@ -84,6 +84,8 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         converterFactory.registerConverter(new CommunityTypeConverter());
         converterFactory.registerConverter(new ReverseCommunityTypeConverter());
         classMap.field("id", "Id");
+        classMap.field("parentId", "ParentId");
+        classMap.field("ownerId", "OwnerId");
         classMap.field("name", "Name");
         classMap.field("publicDisplayName", "Public_Display_Name__c");
         classMap.field("websiteUrl", "Website");
@@ -92,6 +94,8 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("description", "Public_Display_Description__c");
         classMap.field("logoUrl", "Logo_Description__c");
         classMap.field("publicDisplayEmail", "Public_Display_Email__c");
+        classMap.fieldBToA("Last_membership_start_date__c", "lastMembershipStartDate");
+        classMap.fieldBToA("Last_membership_end_date__c", "lastMembershipEndDate");
         classMap.customize(new CustomMapper<Member, JSONObject>() {
             @Override
             public void mapBtoA(JSONObject b, Member a, MappingContext context) {
@@ -118,6 +122,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
     private void registerOpportunityMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Opportunity, JSONObject> classMap = mapperFactory.classMap(Opportunity.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
         classMap.field("id", "Id");
+        classMap.field("ownerId", "OwnerId");
         classMap.field("targetAccountId", "AccountId");
         classMap.field("stageName", "StageName");
         classMap.field("closeDate", "CloseDate");
@@ -136,6 +141,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("id", "Id");
         classMap.field("orcid", "ORCID_iD_Path__c");
         classMap.field("role.votingContact", "Voting_Contact__c");
+        classMap.field("role.current", "Current__c");
         classMap.field("email", "Email");
         classMap.fieldAToB("firstName", "FirstName");
         classMap.fieldAToB("lastName", "LastName");
@@ -160,33 +166,20 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("accountId", "Organization__c");
         classMap.field("contactId", "Contact__c");
         classMap.field("votingContact", "Voting_Contact__c");
+        classMap.field("current", "Current__c");
         classMap.field("roleType", "Member_Org_Role__c");
         classMap.register();
     }
 
     private static class JSONPropertyResolver extends IntrospectorPropertyResolver {
-        /** Add this string to the property name to handle as a JSON Array **/
-        private static final String ARRAY_EXPRESSION_SUFFIX = "_array";
-        /** Use this property name to get the first item from a JSONArray **/
-        private static final String FIRST_ITEM_FROM_ARRAY_EXPRESSION = "first";
-
         protected Property getProperty(java.lang.reflect.Type type, String expr, boolean isNestedLookup, Property owner) throws MappingException {
             Property property = null;
             try {
                 property = super.getProperty(type, expr, isNestedLookup, null);
             } catch (MappingException e) {
                 try {
-                    if (expr.endsWith(ARRAY_EXPRESSION_SUFFIX)) {
-                        String key = expr.substring(0, expr.indexOf('_'));
-                        property = super.resolveInlineProperty(type, expr + ":{optJSONArray(\"" + key + "\")|put(\"" + key + "\",%s)|type="
-                                + (isNestedLookup ? "org.codehaus.jettison.json.JSONArray" : "Object") + "}");
-                    } else if (FIRST_ITEM_FROM_ARRAY_EXPRESSION.equals(expr)) {
-                        property = super.resolveInlineProperty(type,
-                                FIRST_ITEM_FROM_ARRAY_EXPRESSION + ":{opt(0)|put(0, %s)|type=org.codehaus.jettison.json.JSONObject}");
-                    } else {
-                        property = super.resolveInlineProperty(type, expr + ":{opt(\"" + expr + "\")|put(\"" + expr + "\",%s)|type="
-                                + (isNestedLookup ? "org.codehaus.jettison.json.JSONObject" : "Object") + "}");
-                    }
+                    property = super.resolveInlineProperty(type, expr + ":{opt(\"" + expr + "\")|put(\"" + expr + "\",%s)|type="
+                            + (isNestedLookup ? "org.codehaus.jettison.json.JSONObject" : "Object") + "}");
                 } catch (MappingException e2) {
                     throw e; // throw the original exception
                 }

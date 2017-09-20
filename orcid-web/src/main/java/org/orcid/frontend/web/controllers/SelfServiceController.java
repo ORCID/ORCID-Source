@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
@@ -39,13 +37,9 @@ import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.ajaxForm.MemberDetailsForm;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Registration;
-import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.ContactsForm;
+import org.orcid.pojo.ajaxForm.MemberDetailsForm;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
-import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -329,13 +323,19 @@ public class SelfServiceController extends BaseController {
     }
 
     @RequestMapping(value = "/check-existing-sub-member.json", method = RequestMethod.POST)
-    public @ResponseBody MemberDetails checkExistingMember(@RequestBody SubMemberForm subMember) { 
-        MemberDetails existingMemberDetails = null;
-        Optional<Member> existingMemberId = salesForceManager.checkExistingMember(subMember.toMember());
-        if(existingMemberId.isPresent()){
-            existingMemberDetails = salesForceManager.retrieveDetails(existingMemberId.get().getId());
+    public @ResponseBody Member checkExistingMember(@RequestBody SubMemberForm subMember) { 
+        Optional<Member> existingMember = salesForceManager.checkExistingMember(subMember.toMember());
+        Member tempMember = new Member();
+        if (existingMember.isPresent()){
+            tempMember.setPublicDisplayName(existingMember.get().getPublicDisplayName());
+            tempMember.setWebsiteUrl(existingMember.get().getWebsiteUrl());
+            tempMember.setId(existingMember.get().getId());
+        } else {
+            tempMember.setPublicDisplayName(null);
+            tempMember.setWebsiteUrl(null);
+            tempMember.setId(null);
         }
-        return existingMemberDetails; 
+        return tempMember; 
     }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)

@@ -217,50 +217,56 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcid(orcid);
         return connection != null ? connection.getSalesForceAccountId() : null;
     }
-    
+
     @Override
     public Optional<Member> checkExistingMember(Member member) {
         URL websiteUrl = member.getWebsiteUrl();
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
         return firstExistingMember;
     }
-    
+
     @Override
     public boolean checkExistingSubMember(Member member, String parentAccountId) {
         boolean subMemberExists = false;
         URL websiteUrl = member.getWebsiteUrl();
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
-        
-        if(firstExistingMember.isPresent()){
+
+        if (firstExistingMember.isPresent()) {
             String subMemberAcccountId = firstExistingMember.get().getId();
             MemberDetails memberDetails = retrieveDetails(parentAccountId);
-            subMemberExists = memberDetails.getSubMembers().stream().anyMatch(s -> subMemberAcccountId.equals(s.getOpportunity().getTargetAccountId()));  
-        } 
-        
+            subMemberExists = memberDetails.getSubMembers().stream().anyMatch(s -> subMemberAcccountId.equals(s.getOpportunity().getTargetAccountId()));
+        }
+
         return subMemberExists;
     }
 
-
     @Override
     public String createMember(Member member) {
+        String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        Member consortium = retrieveMember(consortiumLeadId);
+        String consortiumOwnerId = consortium.getOwnerId();
         Opportunity opportunity = new Opportunity();
         URL websiteUrl = member.getWebsiteUrl();
         Optional<Member> firstExistingMember = findBestWebsiteMatch(websiteUrl);
         String accountId = null;
+
         if (firstExistingMember.isPresent()) {
             accountId = firstExistingMember.get().getId();
         } else {
+            member.setParentId(consortiumLeadId);
+            member.setOwnerId(consortiumOwnerId);
+            member.setCountry(consortium.getCountry());
             accountId = salesForceDao.createMember(member);
         }
+        opportunity.setOwnerId(consortiumOwnerId);
         opportunity.setTargetAccountId(accountId);
-        String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         opportunity.setConsortiumLeadId(consortiumLeadId);
         opportunity.setType(OPPORTUNITY_TYPE);
         opportunity.setMemberType(getPremiumConsortiumMemberTypeId());
         opportunity.setStageName(OPPORTUNITY_INITIAL_STAGE_NAME);
         opportunity.setCloseDate(calculateCloseDate());
-        opportunity.setMembershipStartDate(calculateMembershipStartDate());
-        opportunity.setMembershipEndDate(calculateMembershipEndDate());
+        opportunity.setMembershipStartDate(consortium.getLastMembershipStartDate());
+        opportunity.setMembershipEndDate(consortium.getLastMembershipEndDate());
         opportunity.setRecordTypeId(getConsortiumMemberRecordTypeId());
         opportunity.setName(OPPORTUNITY_NAME);
         createOpportunity(opportunity);
@@ -342,18 +348,6 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         return DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date()).toXMLFormat();
     }
 
-    private String calculateMembershipStartDate() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        return String.format("%s-01-01", year);
-    }
-
-    private String calculateMembershipEndDate() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        return String.format("%s-12-31", year);
-    }
-
     private String getPremiumConsortiumMemberTypeId() {
         if (premiumConsortiumMemberTypeId == null) {
             premiumConsortiumMemberTypeId = salesForceDao.retrievePremiumConsortiumMemberTypeId();
@@ -420,12 +414,23 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             return false;
         }).findFirst();
         String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
-        ContactRole contactRole = new ContactRole();
-        contactRole.setContactId(contactId);
-        contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
-        contactRole.setAccountId(contact.getAccountId());
-        salesForceDao.createContactRole(contactRole);
-        if (salesForceConnectionDao.findByOrcidAndAccountId(contact.getOrcid(), accountId) == null) {
+        List<Contact> existingContactsWithRoles = salesForceDao.retrieveContactsWithRolesByAccountId(accountId, true);
+        Optional<ContactRole> existingContactRole = existingContactsWithRoles.stream()
+                .filter(c -> contactId.equals(c.getId()) && ContactRoleType.OTHER_CONTACT.equals(c.getRole().getRoleType())).map(c -> c.getRole()).findFirst();
+        if (existingContactRole.isPresent()) {
+            ContactRole contactRole = existingContactRole.get();
+            if (!contactRole.isCurrent()) {
+                contactRole.setCurrent(true);
+                salesForceDao.updateContactRole(contactRole);
+            }
+        } else {
+            ContactRole contactRole = new ContactRole();
+            contactRole.setContactId(contactId);
+            contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
+            contactRole.setAccountId(contact.getAccountId());
+            salesForceDao.createContactRole(contactRole);
+        }
+        if (salesForceConnectionDao.findByOrcid(contact.getOrcid()) == null) {
             salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
         }
         salesForceContactsCache.remove(accountId);
@@ -458,7 +463,10 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public void removeContactRole(Contact contact) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
-        contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> salesForceDao.removeContactRole(r.getId()));
+        contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> {
+            r.setCurrent(false);
+            salesForceDao.updateContactRole(r);
+        });
     }
 
     /**

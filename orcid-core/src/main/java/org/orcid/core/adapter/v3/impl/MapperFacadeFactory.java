@@ -51,6 +51,9 @@ import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.dev1.common.SourceName;
 import org.orcid.jaxb.model.v3.dev1.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.dev1.common.Day;
+import org.orcid.jaxb.model.v3.dev1.common.Month;
+import org.orcid.jaxb.model.v3.dev1.common.Year;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
@@ -571,8 +574,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         educationSummaryClassMap.field("roleTitle", "title");
         educationSummaryClassMap.register();
 
-        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
@@ -611,8 +613,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         employmentSummaryClassMap.field("roleTitle", "title");
         employmentSummaryClassMap.register();
 
-        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
@@ -809,6 +810,96 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("createdDate.value", "dateCreated");
         classMap.field("lastModifiedDate.value", "lastModified");
     }    
+    
+    private void mapFuzzyDateToStartDateEntityAndEndDateEntity(MapperFactory mapperFactory) {
+        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).customize(new CustomMapper<FuzzyDate, StartDateEntity>() {
+            @Override
+            public void mapAtoB(FuzzyDate fuzzyDate, StartDateEntity entity, MappingContext context) {
+                if (fuzzyDate.getYear() != null) {
+                    entity.setYear(Integer.valueOf(fuzzyDate.getYear().getValue()));
+                } else {
+                    entity.setYear(null);
+                }
+
+                if (fuzzyDate.getMonth() != null) {
+                    entity.setMonth(Integer.valueOf(fuzzyDate.getMonth().getValue()));
+                } else {
+                    entity.setMonth(null);
+                }
+
+                if (fuzzyDate.getDay() != null) {
+                    entity.setDay(Integer.valueOf(fuzzyDate.getDay().getValue()));
+                } else {
+                    entity.setDay(null);
+                }
+            }
+
+            @Override
+            public void mapBtoA(StartDateEntity entity, FuzzyDate fuzzyDate, MappingContext context) {
+                if (entity.getYear() != null) {
+                    fuzzyDate.setYear(new Year(entity.getYear()));
+                } else {
+                    fuzzyDate.setYear(null);
+                }
+
+                if (entity.getMonth() != null) {
+                    fuzzyDate.setMonth(new Month(entity.getMonth()));
+                } else {
+                    fuzzyDate.setMonth(null);
+                }
+
+                if (entity.getDay() != null) {
+                    fuzzyDate.setDay(new Day(entity.getDay()));
+                } else {
+                    fuzzyDate.setDay(null);
+                }
+            }
+        }).register();
+
+        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).customize(new CustomMapper<FuzzyDate, EndDateEntity>() {
+            @Override
+            public void mapAtoB(FuzzyDate fuzzyDate, EndDateEntity entity, MappingContext context) {
+                if (fuzzyDate.getYear() != null) {
+                    entity.setYear(Integer.valueOf(fuzzyDate.getYear().getValue()));
+                } else {
+                    entity.setYear(null);
+                }
+
+                if (fuzzyDate.getMonth() != null) {
+                    entity.setMonth(Integer.valueOf(fuzzyDate.getMonth().getValue()));
+                } else {
+                    entity.setMonth(null);
+                }
+
+                if (fuzzyDate.getDay() != null) {
+                    entity.setDay(Integer.valueOf(fuzzyDate.getDay().getValue()));
+                } else {
+                    entity.setDay(null);
+                }
+            }
+
+            @Override
+            public void mapBtoA(EndDateEntity entity, FuzzyDate fuzzyDate, MappingContext context) {
+                if (entity.getYear() != null) {
+                    fuzzyDate.setYear(new Year(entity.getYear()));
+                } else {
+                    fuzzyDate.setYear(null);
+                }
+
+                if (entity.getMonth() != null) {
+                    fuzzyDate.setMonth(new Month(entity.getMonth()));
+                } else {
+                    fuzzyDate.setMonth(null);
+                }
+
+                if (entity.getDay() != null) {
+                    fuzzyDate.setDay(new Day(entity.getDay()));
+                } else {
+                    fuzzyDate.setDay(null);
+                }
+            }
+        }).register();
+    }
     
     @Override
     public Class<?> getObjectType() {

@@ -33,6 +33,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,6 +66,7 @@ public class OpenIDController {
      * @param request
      * @return
      */
+    @CrossOrigin
     @RequestMapping(value = "/oauth/jwks", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody JSONObject getJWKS(HttpServletRequest request) {
         return openIDConnectKeyService.getPublicJWK().toJSONObject();     
@@ -74,6 +76,7 @@ public class OpenIDController {
      * 
      * @return
      */
+    @CrossOrigin
     @RequestMapping(value = "/oauth/userinfo", method = { RequestMethod.GET, RequestMethod.POST }, produces = "application/json")
     public @ResponseBody ResponseEntity<OpenIDConnectUserInfo> getUserInfo(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization"); //note we do not support form post per https://tools.ietf.org/html/rfc6750 because it's a MAY and pointless
@@ -106,6 +109,7 @@ public class OpenIDController {
      * @return
      * @throws JsonProcessingException 
      */
+    @CrossOrigin
     @RequestMapping(value = "/.well-known/openid-configuration", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody String getOpenIDDiscovery(HttpServletRequest request) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();

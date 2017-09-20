@@ -133,9 +133,9 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     private Education getEducation(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Education.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/read_samples/education-2.0.xml";
+        String name = "/record_3.0_dev1/samples/read_samples/education-3.0_dev1.xml";
         if(full) {
-            name = "/record_2.0/samples/read_samples/education-full-2.0.xml";
+            name = "/record_3.0_dev1/samples/read_samples/education-full-3.0_dev1.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Education) unmarshaller.unmarshal(inputStream);

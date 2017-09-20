@@ -16,6 +16,9 @@ import { downgradeComponent, UpgradeModule }
 import { BiographyComponent } 
     from './biography.component.ts';
 
+import { PrivacytoggleComponent } 
+    from './../privacytoggle/privacyToggle.component.ts';
+
 // This is the Angular 1 part of the module
 export const BiographyModule = angular.module(
     'BiographyModule', 
@@ -30,7 +33,8 @@ export const BiographyModule = angular.module(
             FormsModule
         ],
         declarations: [ 
-            BiographyComponent
+            BiographyComponent,
+            PrivacytoggleComponent
         ],
         entryComponents: [ 
             BiographyComponent 

@@ -7,9 +7,6 @@ import { CommonModule }
 import { Directive, NgModule } 
     from '@angular/core';
 
-import { FormsModule }
-    from '@angular/forms'; // <-- NgModel lives here
-
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
@@ -26,17 +23,13 @@ export const PrivacytoggleModule = angular.module(
 @NgModule(
     {
         imports: [
-            CommonModule,
-            FormsModule
+            CommonModule
         ],
         declarations: [ 
             PrivacytoggleComponent
         ],
         entryComponents: [ 
             PrivacytoggleComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

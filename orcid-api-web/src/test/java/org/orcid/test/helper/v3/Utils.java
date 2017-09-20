@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.jaxb.model.v3.dev1.common.Country;
 import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.Filterable;
+import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Organization;
@@ -193,6 +194,7 @@ public class Utils {
         education.setDepartmentName("My department name");
         education.setRoleTitle("My Role");
         education.setOrganization(getOrganization());
+        education.setStartDate(FuzzyDate.valueOf(2017, 1, 1));
         return education;
     }
 
@@ -201,6 +203,7 @@ public class Utils {
         employment.setDepartmentName("My department name");
         employment.setRoleTitle("My Role");
         employment.setOrganization(getOrganization());
+        employment.setStartDate(FuzzyDate.valueOf(2017, 1, 1));
         return employment;
     }
 

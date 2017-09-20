@@ -1,19 +1,6 @@
 //Import all the angular components
-
-import { NgFor } 
-    from '@angular/common'; 
-
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
-
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
 
 import { BiographyService } 
     from '../../shared/biographyService.ts'; 
@@ -21,59 +8,61 @@ import { BiographyService }
 import { ConfigurationService } 
     from '../../shared/configurationService.ts';
 
-import { EmailService } 
-    from '../../shared/emailService.ts';
+/*
+Implementation Example:
+<privacy-toggle-ng2 elementId="bio-privacy-toggle" [dataPrivacyObj]="biographyForm" (privacyUpdate)="privacyChange($event)"></privacy-toggle-ng2>
 
-import { ModalService } 
-    from '../../shared/modalService.ts'; 
-
+@Params:
+elementId: Set a unique name, to show/hide the popup
+[dataPrivacyObj]: Pass the object that has the visibility data.
+(privacyUpdate): Pass the function of the parent component that will manage the api call to update the privacy value. This function NEEDS to be implemented in the parent component.
+*/
 @Component({
     selector: 'privacy-toggle-ng2',
     template:  scriptTmpl("privacy-toggle-ng2-template")
 })
-export class PrivacytoggleComponent implements AfterViewInit, OnDestroy, OnInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
+    @Input() elementId: string;
+    @Input() dataPrivacyObj: any;
 
-    biographyForm: any;
-    configuration: any;
-    emails: any;
-    emailSrvc: any;
-    emailVerified: any;
-    lengthError: any;
-    showEdit: any;
+    @Output() privacyUpdate: EventEmitter<any> = new EventEmitter<any>();
+
     showElement: any;
 
     constructor(
-        private biographyService: BiographyService,
-        private configurationService: ConfigurationService,
-        private emailService: EmailService,
-        private modalService: ModalService
     ) {
-        this.biographyForm = {
-            biography: {
-                value: ''
-            }
-        };
-        
-        this.emails = {};
-        this.emailVerified = false; //change to false once service is ready
-        this.lengthError = false;
-        this.showEdit = false;
         this.showElement = {};
     }
+
+    hideTooltip(elementId): void{
+        this.showElement[elementId] = false;
+    };
+    
+    setPrivacy(priv): void {
+        let _priv = priv;
+        this.dataPrivacyObj.visiblity.visibility = _priv;
+        this.privacyUpdate.emit(_priv);
+    };
+    
+    showTooltip(elementId): void{
+        this.showElement[elementId] = true;
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
     };
 
+    ngOnChanges(changes: any) {
+        // only run when property "data" changed
+        if (changes['dataPrivacyObj']) {
+            this.dataPrivacyObj = changes['dataPrivacyObj'].currentValue;
+        }
+    };
+
     ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
     };
 
     ngOnInit() {
-        //this.getBiographyForm();
-        //this.configuration = this.configurationService.getInitialConfiguration();
     }; 
 }
