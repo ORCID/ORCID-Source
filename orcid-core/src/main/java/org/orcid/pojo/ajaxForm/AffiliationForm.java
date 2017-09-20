@@ -62,10 +62,6 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text disambiguationSource;
 
     private Text orgDisambiguatedId;
-    
-    private Text orgDisambiguatedSourceUrl;
-    
-    private Text orgDisambiguatedUrl;
 
     private String affiliationTypeForDisplay;
 
@@ -107,8 +103,6 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
                 form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
                 form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
                 form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));
-                form.setOrgDisambiguatedSourceUrl(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getSourceUrl())));
-                form.setOrgDisambiguatedUrl(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getUrl())));
             }
         }
         if (address.getRegion() != null) {
@@ -182,8 +176,6 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
                 form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
                 form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
                 form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));
-                form.setOrgDisambiguatedUrl(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getUrl())));
-
             }
         }
         if (address.getRegion() != null) {
@@ -436,22 +428,6 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setOrgDisambiguatedId(Text orgDisambiguatedId) {
         this.orgDisambiguatedId = orgDisambiguatedId;
-    }
-    
-    public Text getOrgDisambiguatedSourceUrl() {
-        return orgDisambiguatedSourceUrl;
-    }
-    
-    public void setOrgDisambiguatedSourceUrl(Text orgDisambiguatedSourceUrl) {
-        this.orgDisambiguatedSourceUrl = orgDisambiguatedSourceUrl;
-    }
-    
-    public Text getOrgDisambiguatedUrl() {
-        return orgDisambiguatedUrl;
-    }
-
-    public void setOrgDisambiguatedUrl(Text orgDisambiguatedUrl) {
-        this.orgDisambiguatedUrl = orgDisambiguatedUrl;
     }
 
     public Date getCreatedDate() {

@@ -548,8 +548,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         educationClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         educationClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         educationClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        educationClassMap.fieldBToA("org.orgDisambiguated.url", "organization.disambiguatedOrganization.url");
-        educationClassMap.fieldBToA("org.orgDisambiguated.sourceUrl", "organization.disambiguatedOrganization.sourceUrl");
         
         educationClassMap.fieldAToB("url.value", "url");
         educationClassMap.fieldBToA("url", "url.value");
@@ -569,8 +567,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         educationSummaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.url", "organization.disambiguatedOrganization.url");
-        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceUrl", "organization.disambiguatedOrganization.sourceUrl");
         educationSummaryClassMap.field("departmentName", "department");
         educationSummaryClassMap.field("roleTitle", "title");
         educationSummaryClassMap.register();
@@ -592,8 +588,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         classMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         classMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        classMap.fieldBToA("org.orgDisambiguated.url", "organization.disambiguatedOrganization.url");
-        classMap.fieldBToA("org.orgDisambiguated.sourceUrl", "organization.disambiguatedOrganization.sourceUrl");
         
         classMap.fieldAToB("url.value", "url");
         classMap.fieldBToA("url", "url.value");
@@ -613,8 +607,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         employmentSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         employmentSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         employmentSummaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        employmentSummaryClassMap.fieldBToA("org.orgDisambiguated.url", "organization.disambiguatedOrganization.url");
-        employmentSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceUrl", "organization.disambiguatedOrganization.sourceUrl");
         employmentSummaryClassMap.field("departmentName", "department");
         employmentSummaryClassMap.field("roleTitle", "title");
         employmentSummaryClassMap.register();

@@ -47,12 +47,6 @@ public class OrgDisambiguatedSolrDocument {
 
     @Field(SolrConstants.ORG_DISAMBIGUATED_POPULARITY)
     private Integer orgDisambiguatedPopularity;
-    
-    @Field(SolrConstants.ORG_DISAMBIGUATED_SOURCE_URL)
-    private String orgDisambiguatedSourceUrl;
-    
-    @Field(SolrConstants.ORG_DISAMBIGUATED_URL)
-    private String orgDisambiguatedUrl;
 
     @Field(SolrConstants.ORG_NAMES)
     private List<String> orgNames;
@@ -114,22 +108,6 @@ public class OrgDisambiguatedSolrDocument {
 
     public void setOrgDisambiguatedPopularity(Integer orgDisambiguatedPopularity) {
         this.orgDisambiguatedPopularity = orgDisambiguatedPopularity;
-    }
-    
-    public String getOrgDisambiguatedSourceUrl() {
-        return orgDisambiguatedSourceUrl;
-    }
-    
-    public void setOrgDisambiguatedSourceUrl(String orgDisambiguatedSourceUrl) {
-        this.orgDisambiguatedSourceUrl = orgDisambiguatedSourceUrl;
-    }
-    
-    public String getOrgDisambiguatedUrl() {
-        return orgDisambiguatedUrl;
-    }
-    
-    public void setOrgDisambiguatedUrl(String orgDisambiguatedUrl) {
-        this.orgDisambiguatedUrl = orgDisambiguatedUrl;
     }
 
     public List<String> getOrgNames() {
