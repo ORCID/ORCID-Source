@@ -94,6 +94,8 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("description", "Public_Display_Description__c");
         classMap.field("logoUrl", "Logo_Description__c");
         classMap.field("publicDisplayEmail", "Public_Display_Email__c");
+        classMap.fieldBToA("Last_membership_start_date__c", "lastMembershipStartDate");
+        classMap.fieldBToA("Last_membership_end_date__c", "lastMembershipEndDate");
         classMap.customize(new CustomMapper<Member, JSONObject>() {
             @Override
             public void mapBtoA(JSONObject b, Member a, MappingContext context) {
