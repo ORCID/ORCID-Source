@@ -129,6 +129,8 @@ public class SalesForceAdapterTest {
         JSONArray inputArray = new JSONArray(inputString);
         Opportunity opportunity = salesForceAdapter.createOpportunityFromSalesForceRecord(inputArray.getJSONObject(1));
         assertEquals("[ORG2 ACCOUNT ID]", opportunity.getTargetAccountId());
+        assertEquals("Another consortium member org", opportunity.getAccountName());
+        assertEquals("Another consortium member org Public Display Name", opportunity.getAccountPublicDisplayName());
         assertEquals("Invoice Paid", opportunity.getStageName());
         assertEquals("2016-12-21", opportunity.getCloseDate());
         assertEquals("New", opportunity.getType());

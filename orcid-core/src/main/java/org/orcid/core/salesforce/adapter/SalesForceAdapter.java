@@ -74,15 +74,7 @@ public class SalesForceAdapter {
             if (opportunities != null) {
                 JSONArray opportunityRecords = opportunities.getJSONArray("records");
                 for (int i = 0; i < opportunityRecords.length(); i++) {
-                    Opportunity salesForceOpportunity = new Opportunity();
-                    JSONObject opportunity = opportunityRecords.getJSONObject(i);
-                    salesForceOpportunity.setId(extractOpportunityId(opportunity));
-                    JSONObject account = extractObject(opportunity, "Account");
-                    salesForceOpportunity.setTargetAccountId(extractAccountId(account));
-                    String accountName = JsonUtils.extractString(account, "Name");
-                    salesForceOpportunity.setAccountName(accountName);
-                    String accountDisplayName = JsonUtils.extractString(account, "Public_Display_Name__c");
-                    salesForceOpportunity.setAccountName(StringUtils.isNotBlank(accountDisplayName) ? accountDisplayName : accountName);
+                    Opportunity salesForceOpportunity = createOpportunityFromSalesForceRecord(opportunityRecords.getJSONObject(i));
                     opportunityList.add(salesForceOpportunity);
                 }
                 return consortium;
@@ -178,19 +170,6 @@ public class SalesForceAdapter {
             throw new RuntimeException("Error getting parent org from SalesForce JSON", e);
         }
         return null;
-    }
-
-    private String extractOpportunityId(JSONObject opportunity) throws JSONException {
-        JSONObject opportunityAttributes = extractObject(opportunity, "attributes");
-        String opportunityUrl = extractString(opportunityAttributes, "url");
-        return extractIdFromUrl(opportunityUrl);
-    }
-
-    private String extractAccountId(JSONObject account) throws JSONException {
-        JSONObject accountAttributes = extractObject(account, "attributes");
-        String accountUrl = extractString(accountAttributes, "url");
-        String accountId = extractIdFromUrl(accountUrl);
-        return accountId;
     }
 
     Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {

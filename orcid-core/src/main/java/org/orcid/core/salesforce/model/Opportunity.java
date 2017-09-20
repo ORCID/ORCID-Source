@@ -18,6 +18,8 @@ package org.orcid.core.salesforce.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 
  * @author Will Simpson
@@ -30,6 +32,7 @@ public class Opportunity implements Serializable {
     private String id;
     private String targetAccountId;
     private String accountName;
+    private String accountPublicDisplayName;
     private String stageName;
     private String closeDate;
     private String type;
@@ -62,6 +65,14 @@ public class Opportunity implements Serializable {
 
     public void setAccountName(String accountName) {
         this.accountName = accountName;
+    }
+
+    public String getAccountPublicDisplayName() {
+        return StringUtils.isNotBlank(accountPublicDisplayName) ? accountPublicDisplayName : accountName;
+    }
+
+    public void setAccountPublicDisplayName(String accountPublicDisplayName) {
+        this.accountPublicDisplayName = accountPublicDisplayName;
     }
 
     public String getStageName() {
@@ -138,9 +149,10 @@ public class Opportunity implements Serializable {
 
     @Override
     public String toString() {
-        return "Opportunity [id=" + id + ", targetAccountId=" + targetAccountId + ", accountName=" + accountName + ", stageName=" + stageName + ", closeDate=" + closeDate
-                + ", type=" + type + ", memberType=" + memberType + ", membershipStartDate=" + membershipStartDate + ", membershipEndDate=" + membershipEndDate
-                + ", consortiumLeadId=" + consortiumLeadId + ", name=" + name + ", recordTypeId=" + recordTypeId + "]";
+        return "Opportunity [id=" + id + ", targetAccountId=" + targetAccountId + ", accountName=" + accountName + ", accountPublicDisplayName="
+                + accountPublicDisplayName + ", stageName=" + stageName + ", closeDate=" + closeDate + ", type=" + type + ", memberType=" + memberType
+                + ", membershipStartDate=" + membershipStartDate + ", membershipEndDate=" + membershipEndDate + ", consortiumLeadId=" + consortiumLeadId + ", name="
+                + name + ", recordTypeId=" + recordTypeId + "]";
     }
 
 }
