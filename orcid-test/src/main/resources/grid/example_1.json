@@ -1,0 +1,144 @@
+{
+	"version": "test#1",
+	"institutes": [{
+		"name": "org_1",
+		"wikipedia_url": "http://en.wikipedia.org/wiki/org_1",
+		"email_address": null,
+		"links": ["http://link1.com", "http://link2.com", "http://link3.com"],
+		"aliases": ["alias 1", "alias 2", "alias 3"],
+		"acronyms": ["ACR_1", "ACR_2", "ACR_3"],
+		"types": ["type_1", "type_2", "type_3"],
+		"ip_addresses": [],
+		"addresses": [{
+			"line_1": "",
+			"line_2": "",
+			"line_3": null,
+			"lat": 0,
+			"lng": 0,
+			"postcode": "",
+			"primary": false,
+			"city": "City One",
+			"state": "Alabama",
+			"state_code": "AL",
+			"country": "United States",
+			"country_code": "US",
+			"geonames_city": {
+				"id": 2172517,
+				"city": "Canberra",
+				"nuts_level1": null,
+				"nuts_level2": null,
+				"nuts_level3": null,
+				"geonames_admin1": {
+					"name": "ACT",
+					"ascii_name": "ACT",
+					"code": "AU.01"
+				},
+				"geonames_admin2": null,
+				"license": {
+					"attribution": "Data from geonames.org under a CC-BY 3.0 license",
+					"license": "http://creativecommons.org/licenses/by/3.0/"
+				}
+			}
+		}, {
+			"line_1": "",
+			"line_2": "",
+			"line_3": null,
+			"lat": 0,
+			"lng": 0,
+			"postcode": "",
+			"primary": false,
+			"city": "City Two",
+			"state": "Alaska",
+			"state_code": "AK",
+			"country": "United States",
+			"country_code": "US",
+			"geonames_city": {
+				"id": 2172517,
+				"city": "Canberra",
+				"nuts_level1": null,
+				"nuts_level2": null,
+				"nuts_level3": null,
+				"geonames_admin1": {
+					"name": "ACT",
+					"ascii_name": "ACT",
+					"code": "AU.01"
+				},
+				"geonames_admin2": null,
+				"license": {
+					"attribution": "Data from geonames.org under a CC-BY 3.0 license",
+					"license": "http://creativecommons.org/licenses/by/3.0/"
+				}
+			}
+		},{
+			"line_1": "",
+			"line_2": "",
+			"line_3": null,
+			"lat": 0,
+			"lng": 0,
+			"postcode": "",
+			"primary": false,
+			"city": "City Three",
+			"state": "Arizona",
+			"state_code": "AZ",
+			"country": "United States",
+			"country_code": "US",
+			"geonames_city": {
+				"id": 2172517,
+				"city": "Canberra",
+				"nuts_level1": null,
+				"nuts_level2": null,
+				"nuts_level3": null,
+				"geonames_admin1": {
+					"name": "ACT",
+					"ascii_name": "ACT",
+					"code": "AU.01"
+				},
+				"geonames_admin2": null,
+				"license": {
+					"attribution": "Data from geonames.org under a CC-BY 3.0 license",
+					"license": "http://creativecommons.org/licenses/by/3.0/"
+				}
+			}
+		}],
+		"labels": [],
+		"id": "grid.1",
+		"status": "active",
+		"established": 1946,
+		"relationships": [{
+			"type": "Related",
+			"label": "Calvary Hospital",
+			"id": "grid.460694.9"
+		}, {
+			"type": "Related",
+			"label": "Canberra Hospital",
+			"id": "grid.413314.0"
+		}, {
+			"type": "Related",
+			"label": "Goulburn Base Hospital",
+			"id": "grid.460721.6"
+		}],
+		"external_ids": {
+			"ISNI": {
+				"preferred": null,
+				"all": ["0000 0001 2180 7477"]
+			},
+			"FundRef": {
+				"preferred": "501100000995",
+				"all": ["501100000995", "100009020", "501100001151"]
+			},
+			"OrgRef": {
+				"preferred": null,
+				"all": ["285106"]
+			},
+			"Wikidata": {
+				"preferred": null,
+				"all": ["Q127990"]
+			}
+		},
+		"weight": 1
+	}, {
+		// Institute 2
+	}, {
+		// Institute 3
+	}]
+}

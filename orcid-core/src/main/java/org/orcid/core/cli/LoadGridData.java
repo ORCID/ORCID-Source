@@ -59,6 +59,34 @@ public class LoadGridData {
     @Option(name = "-f", usage = "Path to JSON file containing GRID info to load into DB")
     private File fileToLoad;
 
+    public void setOrgDisambiguatedExternalIdentifierDao(GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> orgDisambiguatedExternalIdentifierDao) {
+        this.orgDisambiguatedExternalIdentifierDao = orgDisambiguatedExternalIdentifierDao;
+    }
+
+    public void setOrgDisambiguatedDao(OrgDisambiguatedDao orgDisambiguatedDao) {
+        this.orgDisambiguatedDao = orgDisambiguatedDao;
+    }
+    
+    public long getUpdatedOrgs() {
+        return updatedOrgs;
+    }
+
+    public long getAddedDisambiguatedOrgs() {
+        return addedDisambiguatedOrgs;
+    }
+
+    public long getAddedExternalIdentifiers() {
+        return addedExternalIdentifiers;
+    }
+
+    public long getDeprecatedOrgs() {
+        return deprecatedOrgs;
+    }
+
+    public long getObsoletedOrgs() {
+        return obsoletedOrgs;
+    }
+
     public static void main(String[] args) {
         LoadGridData element = new LoadGridData();
         CmdLineParser parser = new CmdLineParser(element);
@@ -142,8 +170,7 @@ public class LoadGridData {
         LOGGER.info("Obsoleted orgs: {}", obsoletedOrgs);
     }
 
-    public void processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
-        // TODO: Add transaction here
+    private void processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
         OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
         if (existingBySourceId != null) {
             if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType)) {
@@ -176,7 +203,7 @@ public class LoadGridData {
      * 
      * @return true if the entity has changed.
      */
-    public boolean entityChanged(OrgDisambiguatedEntity entity, String name, String countryCode, String city, String region, String url, String orgType) {
+    private boolean entityChanged(OrgDisambiguatedEntity entity, String name, String countryCode, String city, String region, String url, String orgType) {
         // Check name
         if (StringUtils.isNotBlank(name)) {
             if (!name.equalsIgnoreCase(entity.getName()))
@@ -233,7 +260,7 @@ public class LoadGridData {
      * 
      * @return true if the source id changed for the given entity
      */
-    public boolean sourceIdChanged(OrgDisambiguatedEntity entity, String sourceId) {
+    private boolean sourceIdChanged(OrgDisambiguatedEntity entity, String sourceId) {
         if (entity.getSourceId().equals(sourceId)) {
             return false;
         }
@@ -244,7 +271,6 @@ public class LoadGridData {
      * Creates a disambiguated ORG in the org_disambiguated table
      */
     private void createDisambiguatedOrg(String sourceId, String name, String orgType, Iso3166Country country, String city, String region, String url) {
-        // TODO: Transaction here
         LOGGER.info("Creating disambiguated org {}", name);
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
         orgDisambiguatedEntity.setName(name);
@@ -264,7 +290,6 @@ public class LoadGridData {
      * org_disambiguated_external_identifier table
      */
     private boolean createExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String identifier) {
-        // TODO: Transaction here
         LOGGER.info("Creating external identifier for {}", disambiguatedOrg.getId());
         Date creationDate = new Date();
         OrgDisambiguatedExternalIdentifierEntity externalIdentifier = new OrgDisambiguatedExternalIdentifierEntity();
@@ -281,8 +306,7 @@ public class LoadGridData {
     /**
      * Mark an existing org as DEPRECATED
      */
-    public void deprecateOrg(String sourceId, String primarySourceId) {
-        // TODO: Transaction here
+    private void deprecateOrg(String sourceId, String primarySourceId) {
         LOGGER.info("Deprecating org {} for {}", sourceId, primarySourceId);
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
         if (existingEntity != null) {
@@ -301,8 +325,7 @@ public class LoadGridData {
     /**
      * Mark an existing org as OBSOLETE
      */
-    public void obsoleteOrg(String sourceId) {
-        // TODO: Transaction here
+    private void obsoleteOrg(String sourceId) {
         LOGGER.info("Marking or as obsolete {}", sourceId);
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
         if (existingEntity != null) {
