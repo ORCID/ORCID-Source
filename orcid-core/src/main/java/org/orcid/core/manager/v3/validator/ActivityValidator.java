@@ -39,6 +39,8 @@ import org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.dev1.common.Day;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Month;
+import org.orcid.jaxb.model.v3.dev1.common.Organization;
+import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
@@ -74,8 +76,8 @@ public class ActivityValidator {
             throw new ActivityTitleValidationException();
         }
 
-        if(work.getCountry() != null) {
-            if(work.getCountry().getValue() == null) {
+        if (work.getCountry() != null) {
+            if (work.getCountry().getValue() == null) {
                 Map<String, String> params = new HashMap<String, String>();
                 String values = Arrays.stream(Iso3166Country.values()).map(element -> element.value()).collect(Collectors.joining(", "));
                 params.put("type", "country");
@@ -83,18 +85,18 @@ public class ActivityValidator {
                 throw new ActivityTypeValidationException(params);
             }
         }
-        
-        //translated title language code
-        if(title != null && title.getTranslatedTitle() != null) {
+
+        // translated title language code
+        if (title != null && title.getTranslatedTitle() != null) {
             String translatedTitle = title.getTranslatedTitle().getContent();
             String languageCode = title.getTranslatedTitle().getLanguageCode();
-            
-            if(PojoUtil.isEmpty(translatedTitle) && !PojoUtil.isEmpty(languageCode)) {
+
+            if (PojoUtil.isEmpty(translatedTitle) && !PojoUtil.isEmpty(languageCode)) {
                 throw new OrcidValidationException("Please specify a translated title or remove the language code");
             }
-            
-            //If translated title language code is null or invalid
-            if(!PojoUtil.isEmpty(translatedTitle) && (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
+
+            // If translated title language code is null or invalid
+            if (!PojoUtil.isEmpty(translatedTitle) && (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
                     || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
                 Map<String, String> params = new HashMap<String, String>();
                 String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
@@ -103,144 +105,144 @@ public class ActivityValidator {
                 throw new ActivityTypeValidationException(params);
             }
         }
-        
-        if(work.getWorkType() == null) {
+
+        if (work.getWorkType() == null) {
             Map<String, String> params = new HashMap<String, String>();
             String values = Arrays.stream(WorkType.values()).map(element -> element.value()).collect(Collectors.joining(", "));
             params.put("type", "work type");
             params.put("values", values);
             throw new ActivityTypeValidationException(params);
         }
-        
-        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
-            if(!Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(work.getLanguageCode()::equals)) {
+
+        if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+            if (!Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(work.getLanguageCode()::equals)) {
                 Map<String, String> params = new HashMap<String, String>();
                 String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
                 params.put("type", "language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
             }
-        }                
-        
-        //publication date
-        if(work.getPublicationDate() != null) {
-            PublicationDate pd = work.getPublicationDate(); 
+        }
+
+        // publication date
+        if (work.getPublicationDate() != null) {
+            PublicationDate pd = work.getPublicationDate();
             Year year = pd.getYear();
             Month month = pd.getMonth();
             Day day = pd.getDay();
-            
-            if(year != null) {                
+
+            if (year != null) {
                 try {
-                    Integer.valueOf(year.getValue());                    
-                } catch(NumberFormatException n) {
+                    Integer.valueOf(year.getValue());
+                } catch (NumberFormatException n) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("type", "publication date -> year");
                     params.put("values", "integers");
                     throw new ActivityTypeValidationException(params);
                 }
-                
-                if(year.getValue().length() != 4) {
+
+                if (year.getValue().length() != 4) {
                     throw new OrcidValidationException("Invalid year " + year.getValue() + " please specify a four digits value");
                 }
             }
-            
-            if(month != null) {
+
+            if (month != null) {
                 try {
                     Integer.valueOf(month.getValue());
-                } catch(NumberFormatException n) {
+                } catch (NumberFormatException n) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("type", "publication date -> month");
                     params.put("values", "integers");
                     throw new ActivityTypeValidationException(params);
                 }
-                
-                if(month.getValue().length() != 2) {
+
+                if (month.getValue().length() != 2) {
                     throw new OrcidValidationException("Invalid month " + month.getValue() + " please specify a two digits value");
                 }
             }
-            
-            if(day != null) {
+
+            if (day != null) {
                 try {
                     Integer.valueOf(day.getValue());
-                } catch(NumberFormatException n) {
+                } catch (NumberFormatException n) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("type", "publication date -> day");
                     params.put("values", "integers");
                     throw new ActivityTypeValidationException(params);
                 }
-                
-                if(day.getValue().length() != 2) {
+
+                if (day.getValue().length() != 2) {
                     throw new OrcidValidationException("Invalid day " + day.getValue() + " please specify a two digits value");
                 }
             }
-            
-            //Check the date is valid
+
+            // Check the date is valid
             boolean isYearEmpty = (year == null || year.getValue() == null) ? true : false;
             boolean isMonthEmpty = (month == null || month.getValue() == null) ? true : false;
             boolean isDayEmpty = (day == null || day.getValue() == null) ? true : false;
-            if(isYearEmpty && (!isMonthEmpty || !isDayEmpty)) {
+            if (isYearEmpty && (!isMonthEmpty || !isDayEmpty)) {
                 throw new OrcidValidationException("Invalid date, please specify a year element");
-            } else if(!isYearEmpty && isMonthEmpty  && !isDayEmpty) {
+            } else if (!isYearEmpty && isMonthEmpty && !isDayEmpty) {
                 throw new OrcidValidationException("Invalid date, please specify a month element");
-            } else if(isYearEmpty && isMonthEmpty && !isDayEmpty) {
+            } else if (isYearEmpty && isMonthEmpty && !isDayEmpty) {
                 throw new OrcidValidationException("Invalid date, please specify a year and month elements");
             }
         }
-        
-        //citation
-        if(work.getWorkCitation() != null) {
+
+        // citation
+        if (work.getWorkCitation() != null) {
             String citation = work.getWorkCitation().getCitation();
             CitationType type = work.getWorkCitation().getWorkCitationType();
-            if(type == null) {
+            if (type == null) {
                 Map<String, String> params = new HashMap<String, String>();
                 String values = Arrays.stream(CitationType.values()).map(element -> element.value()).collect(Collectors.joining(", "));
                 params.put("type", "citation type");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
             }
-            
-            if(PojoUtil.isEmpty(citation)) {
+
+            if (PojoUtil.isEmpty(citation)) {
                 throw new OrcidValidationException("Please specify a citation or remove the parent tag");
             }
         }
-        
+
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
                 || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
 
-        if(work.getWorkContributors() != null) {
+        if (work.getWorkContributors() != null) {
             WorkContributors contributors = work.getWorkContributors();
-            if(!contributors.getContributor().isEmpty()) {
-                for(Contributor contributor : contributors.getContributor()) {
-                    if(contributor.getContributorOrcid() != null) {
+            if (!contributors.getContributor().isEmpty()) {
+                for (Contributor contributor : contributors.getContributor()) {
+                    if (contributor.getContributorOrcid() != null) {
                         ContributorOrcid contributorOrcid = contributor.getContributorOrcid();
-                        if(!PojoUtil.isEmpty(contributorOrcid.getUri())) {
-                            if(!OrcidStringUtils.isValidOrcid2_1Uri(contributorOrcid.getUri())) {
+                        if (!PojoUtil.isEmpty(contributorOrcid.getUri())) {
+                            if (!OrcidStringUtils.isValidOrcid2_1Uri(contributorOrcid.getUri())) {
                                 throw new OrcidValidationException("Invalid contributor URI");
                             }
                         }
-                        
-                        if(!PojoUtil.isEmpty(contributorOrcid.getPath())) {
-                            if(!OrcidStringUtils.isValidOrcid(contributorOrcid.getPath())) {
+
+                        if (!PojoUtil.isEmpty(contributorOrcid.getPath())) {
+                            if (!OrcidStringUtils.isValidOrcid(contributorOrcid.getPath())) {
                                 throw new OrcidValidationException("Invalid contributor ORCID");
                             }
                         }
                     }
-                    if(contributor.getCreditName() != null) {
-                        if(PojoUtil.isEmpty(contributor.getCreditName().getContent())) {
+                    if (contributor.getCreditName() != null) {
+                        if (PojoUtil.isEmpty(contributor.getCreditName().getContent())) {
                             throw new OrcidValidationException("Please specify a contributor credit name or remove the empty tag");
                         }
                     }
-                    if(contributor.getContributorEmail() != null) {
-                        if(PojoUtil.isEmpty(contributor.getContributorEmail().getValue())) {
+                    if (contributor.getContributorEmail() != null) {
+                        if (PojoUtil.isEmpty(contributor.getContributorEmail().getValue())) {
                             throw new OrcidValidationException("Please specify a contributor email or remove the empty tag");
                         }
                     }
                 }
             }
         }
-        
+
         if (work.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -258,16 +260,15 @@ public class ActivityValidator {
         externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
     }
 
-    public void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            Visibility originalVisibility) {
+    public void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
         }
 
-        //translated title language code
-        if(title != null && title.getTranslatedTitle() != null && !PojoUtil.isEmpty(title.getTranslatedTitle().getContent())) {
-            //If translated title language code is null or invalid
+        // translated title language code
+        if (title != null && title.getTranslatedTitle() != null && !PojoUtil.isEmpty(title.getTranslatedTitle().getContent())) {
+            // If translated title language code is null or invalid
             if (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
                     || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -277,7 +278,7 @@ public class ActivityValidator {
                 throw new ActivityTypeValidationException(params);
             }
         }
-        
+
         if (isApiRequest) {
             if (funding.getExternalIdentifiers() == null || funding.getExternalIdentifiers().getExternalIdentifier() == null
                     || funding.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
@@ -285,21 +286,25 @@ public class ActivityValidator {
             }
         }
 
-        if(funding.getAmount() != null) {
+        if (funding.getAmount() != null) {
             Amount amount = funding.getAmount();
-            if(PojoUtil.isEmpty(amount.getCurrencyCode()) && !PojoUtil.isEmpty(amount.getContent())) {
+            if (PojoUtil.isEmpty(amount.getCurrencyCode()) && !PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify a currency code");
-            } else if(!PojoUtil.isEmpty(amount.getCurrencyCode()) && PojoUtil.isEmpty(amount.getContent())) {
+            } else if (!PojoUtil.isEmpty(amount.getCurrencyCode()) && PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify an amount or remove the amount tag");
             }
         }
-        
+
         if (funding.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
                 params.put("clientName", sourceEntity.getSourceName());
             }
             throw new InvalidPutCodeException(params);
+        }
+
+        if (isApiRequest) {
+            validateDisambiguatedOrg(funding);
         }
 
         // Check that we are not changing the visibility
@@ -311,8 +316,23 @@ public class ActivityValidator {
         externalIDValidator.validateFunding(funding.getExternalIdentifiers());
     }
 
-    public void validateEmployment(Employment employment, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            Visibility originalVisibility) {
+    private void validateDisambiguatedOrg(OrganizationHolder organizationHolder) {
+        if (organizationHolder.getOrganization() == null) {
+            throw new OrcidValidationException("organization is required");
+        }
+
+        Organization org = organizationHolder.getOrganization();
+        if (org.getDisambiguatedOrganization() == null) {
+            throw new OrcidValidationException("disambiguated-organization is required");
+        }
+
+        if (org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() == null
+                || org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier().isEmpty()) {
+            throw new OrcidValidationException("disambiguated-organization-identifier is required");
+        }
+    }
+
+    public void validateEmployment(Employment employment, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (employment.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -326,10 +346,13 @@ public class ActivityValidator {
             Visibility updatedVisibility = employment.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
+
+        if (isApiRequest) {
+            validateDisambiguatedOrg(employment);
+        }
     }
 
-    public void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            Visibility originalVisibility) {
+    public void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (education.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -343,10 +366,13 @@ public class ActivityValidator {
             Visibility updatedVisibility = education.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
+
+        if (isApiRequest) {
+            validateDisambiguatedOrg(education);
+        }
     }
 
-    public void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            Visibility originalVisibility) {
+    public void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
@@ -375,6 +401,10 @@ public class ActivityValidator {
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = peerReview.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+        }
+
+        if (isApiRequest) {
+            validateDisambiguatedOrg(peerReview);
         }
     }
 
@@ -441,7 +471,7 @@ public class ActivityValidator {
         }
         return null;
     }
-    
+
     private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
         if (updatedVisibility != null) {
             if (originalVisibility == null) {

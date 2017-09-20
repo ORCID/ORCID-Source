@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.v3.dev1.common.Country;
+import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.Filterable;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
@@ -269,6 +270,10 @@ public class Utils {
         add.setCity("city");
         add.setCountry(Iso3166Country.TT);
         org.setAddress(add);
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        org.setDisambiguatedOrganization(disambiguatedOrg);
         return org;
     }
 

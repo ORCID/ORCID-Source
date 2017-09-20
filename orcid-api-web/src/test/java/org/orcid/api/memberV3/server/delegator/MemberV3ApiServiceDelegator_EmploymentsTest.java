@@ -42,6 +42,7 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
@@ -348,6 +349,12 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
         employment.setDepartmentName("Updated department name");
         employment.setRoleTitle("The updated role title");
+        
+        // disambiguated org is required in API v3
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        employment.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
         response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
         assertNotNull(response);
@@ -407,6 +414,12 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
         assertEquals(Visibility.PRIVATE, employment.getVisibility());
+        
+        // disambiguated org is required in API v3
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
+        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        employment.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
         employment.setVisibility(null);
 

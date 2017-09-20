@@ -40,6 +40,7 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
@@ -353,6 +354,12 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
 
         education.setDepartmentName("Updated department name");
         education.setRoleTitle("The updated role title");
+        
+        // disambiguated org is required in API v3
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        education.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
         response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
         assertNotNull(response);
@@ -412,6 +419,12 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Education education = (Education) response.getEntity();
         assertNotNull(education);
         assertEquals(Visibility.PUBLIC, education.getVisibility());
+        
+        // disambiguated org is required in API v3
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
+        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        education.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
         education.setVisibility(null);
 

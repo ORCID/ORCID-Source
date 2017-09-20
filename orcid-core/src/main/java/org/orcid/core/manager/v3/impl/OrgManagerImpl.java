@@ -154,6 +154,7 @@ public class OrgManagerImpl implements OrgManager {
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
         orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));
+        
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
             orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
                     .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
