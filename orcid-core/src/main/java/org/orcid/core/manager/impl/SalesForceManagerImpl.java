@@ -265,8 +265,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         opportunity.setMemberType(getPremiumConsortiumMemberTypeId());
         opportunity.setStageName(OPPORTUNITY_INITIAL_STAGE_NAME);
         opportunity.setCloseDate(calculateCloseDate());
-        opportunity.setMembershipStartDate(calculateMembershipStartDate());
-        opportunity.setMembershipEndDate(calculateMembershipEndDate());
+        opportunity.setMembershipStartDate(consortium.getLastMembershipStartDate());
+        opportunity.setMembershipEndDate(consortium.getLastMembershipEndDate());
         opportunity.setRecordTypeId(getConsortiumMemberRecordTypeId());
         opportunity.setName(OPPORTUNITY_NAME);
         createOpportunity(opportunity);
@@ -346,18 +346,6 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     private String calculateCloseDate() {
         return DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date()).toXMLFormat();
-    }
-
-    private String calculateMembershipStartDate() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        return String.format("%s-01-01", year);
-    }
-
-    private String calculateMembershipEndDate() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        return String.format("%s-12-31", year);
     }
 
     private String getPremiumConsortiumMemberTypeId() {

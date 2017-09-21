@@ -901,6 +901,12 @@ public class BlackBoxBase {
         Select input = new Select(countryInput);
         input.selectByValue(Iso3166Country.US.value());
         
+        String startDateYearXpath = "//select[@ng-model='editAffiliation.startDate.year']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(startDateYearXpath)), webDriver);
+        WebElement startDateInput = findElement(By.xpath(startDateYearXpath));
+        Select startDate = new Select(startDateInput);
+        startDate.selectByValue("2017");
+        
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         ((JavascriptExecutor)webDriver).executeScript("$('#save-affiliation').click();");
         BBBUtil.noCboxOverlay(webDriver);
@@ -957,6 +963,12 @@ public class BlackBoxBase {
         WebElement countryInput = findElement(By.xpath(countryXpath));
         Select input = new Select(countryInput);
         input.selectByValue(Iso3166Country.US.value());
+        
+        String startDateYearXpath = "//select[@ng-model='editAffiliation.startDate.year']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(startDateYearXpath)), webDriver);
+        WebElement startDateInput = findElement(By.xpath(startDateYearXpath));
+        Select startDate = new Select(startDateInput);
+        startDate.selectByValue("2017");
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         ((JavascriptExecutor)webDriver).executeScript("$('#save-affiliation').click();");
