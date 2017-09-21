@@ -153,7 +153,7 @@
                         <div class="col-md-12 col-sm-12 bottomBuffer">
                             <ul class="id-details clearfix">
                                 <li>
-                                    <span ng-repeat='ei in group.getActive().externalIdentifiers | orderBy:["-relationship.value", "type.value"]'>
+                                    <span ng-repeat='ei in group.getActive().externalIdentifiers | orderBy:["-relationship.value", "type.value"]' class="clearfix">
                                         <span bind-html-compile='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId]' class="url-popover"> 
                                         </span>
                                     </span>
