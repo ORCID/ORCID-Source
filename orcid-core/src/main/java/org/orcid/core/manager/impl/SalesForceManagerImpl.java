@@ -68,7 +68,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     private static final String OPPORTUNITY_TYPE = "New";
 
-    private static final String OPPORTUNITY_INITIAL_STAGE_NAME = "Invoice Paid";
+    private static final String OPPORTUNITY_INITIAL_STAGE_NAME = "Negotiation/Review";
 
     private static final String OPPORTUNITY_NAME = "Opportunity from registry";
 

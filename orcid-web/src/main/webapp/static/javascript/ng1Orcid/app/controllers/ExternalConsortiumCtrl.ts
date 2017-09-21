@@ -216,6 +216,14 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     scrolling: true
                 });
             };
+            
+            $scope.isPendingAddition = function(subMember) {
+                return subMember.opportunity.stageName == 'Negotiation/Review';
+            }
+            
+            $scope.canRemoveSubMember = function(subMember) {
+                return $scope.memberDetails.allowedFullAccess && !$scope.isPendingAddition(subMember);
+            }
 
             $scope.confirmRemoveSubMember = function(subMember) {
                 $scope.subMemberToRemove = subMember;
