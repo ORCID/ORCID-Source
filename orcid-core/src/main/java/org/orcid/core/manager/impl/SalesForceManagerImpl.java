@@ -18,7 +18,6 @@ package org.orcid.core.manager.impl;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -384,17 +383,32 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public void flagOpportunityAsClosed(String opportunityId) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        MemberDetails memberDetails = retrieveDetails(accountId);
-        boolean authorized = memberDetails.getSubMembers().stream().anyMatch(s -> opportunityId.equals(s.getOpportunity().getId()));
-        if (authorized) {
-            Opportunity opportunity = new Opportunity();
-            opportunity.setId(opportunityId);
-            opportunity.setStageName(OPPORTUNITY_CLOSED_LOST);
-            salesForceDao.updateOpportunity(opportunity);
-        }
+        checkOpportunityUpdatePermissions(opportunityId);
+        Opportunity opportunity = new Opportunity();
+        opportunity.setId(opportunityId);
+        opportunity.setStageName(OPPORTUNITY_CLOSED_LOST);
+        salesForceDao.updateOpportunity(opportunity);
         salesForceMembersListCache.removeAll();
         removeMemberDetailsFromCache(accountId);
         salesForceConsortiumCache.remove(accountId);
+    }
+
+    @Override
+    public void removeOpportunity(String opportunityId) {
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        checkOpportunityUpdatePermissions(opportunityId);
+        salesForceDao.removeOpportunity(opportunityId);
+        removeMemberDetailsFromCache(accountId);
+        salesForceConsortiumCache.remove(accountId);
+    }
+
+    private void checkOpportunityUpdatePermissions(String opportunityId) {
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        MemberDetails memberDetails = retrieveDetails(accountId);
+        boolean authorized = memberDetails.getSubMembers().stream().anyMatch(s -> opportunityId.equals(s.getOpportunity().getId()));
+        if (!authorized) {
+            throw new OrcidUnauthorizedException("Insufficient permissions to update opportunity");
+        }
     }
 
     @Override

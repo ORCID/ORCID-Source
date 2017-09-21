@@ -51,7 +51,7 @@ public interface SalesForceDao {
     List<Contact> retrieveAllContactsByAccountId(String accountId);
 
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId);
-    
+
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId, boolean includeNonCurrent);
 
     List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
@@ -83,6 +83,8 @@ public interface SalesForceDao {
     String createOpportunity(Opportunity member);
 
     void updateOpportunity(Opportunity opportunity);
+
+    void removeOpportunity(String opportunityId);
 
     /**
      * 

@@ -292,6 +292,24 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                       console.log("Error getting the member details");
                  });
             };
+            
+            $scope.cancelSubMemberAddition = function (subMember) {
+                subMember.parentAccountId = $scope.accountId;
+                $.ajax({
+                    url: getBaseUri() + '/self-service/cancel-sub-member-addition.json',
+                    type: 'POST',
+                    data:  angular.toJson(subMember),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function(data) {
+                        $scope.getMemberDetails();
+                        $scope.$apply();
+                        $scope.closeModal();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("Problem cancelling sub member addition");
+                });
+            };
 
             $scope.removeSubMember = function () {
                 $scope.subMemberToRemove.parentAccountId = $scope.accountId;

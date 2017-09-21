@@ -367,6 +367,12 @@ public class SelfServiceController extends BaseController {
         checkFullAccess(subMember.getParentAccountId());
         salesForceManager.flagOpportunityAsClosed(subMember.getOpportunity().getId());
     }
+    
+    @RequestMapping(value = "/cancel-sub-member-addition.json", method = RequestMethod.POST)
+    public @ResponseBody void cancelSubMemberAddition(@RequestBody SubMember subMember) {
+        checkFullAccess(subMember.getParentAccountId());
+        salesForceManager.removeOpportunity(subMember.getOpportunity().getId());
+    }
 
     private void checkFullAccess(String memberId) {
         if (!isAllowedFullAccess(memberId)) {

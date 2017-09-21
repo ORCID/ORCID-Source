@@ -192,6 +192,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     public void updateOpportunity(Opportunity opportunity) {
         retryConsumer(accessToken -> updateOpportunityInSalesForce(accessToken, opportunity));
     }
+    
+    @Override
+    public void removeOpportunity(String opportunityId) {
+        retryConsumer(accessToken -> removeOpportunityInSalesForce(accessToken, opportunityId));
+    }
 
     @Override
     public String getAccessToken() {
@@ -321,6 +326,15 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         ClientResponse response = doPostRequest(resource, memberJson, accessToken);
         checkAuthorization(response);
         checkResponse(response, 204, "Error updating opportunity in SalesForce");
+    }
+    
+    private void removeOpportunityInSalesForce(String accessToken, String opportunityId) {
+        LOGGER.info("About to remove opportunity in SalesForce");
+        validateSalesForceId(opportunityId);
+        WebResource resource = createObjectsResource("/Opportunity/", opportunityId);
+        ClientResponse response = doDeleteRequest(resource, accessToken);
+        checkAuthorization(response);
+        checkResponse(response, 204, "Error removing opportunity in SalesForce");
     }
 
     private String validateSalesForceIdsAndConcatenate(Collection<String> salesForceIds) {

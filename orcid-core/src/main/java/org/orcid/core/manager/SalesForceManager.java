@@ -88,6 +88,8 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     String createOpportunity(Opportunity opportunity);
 
     void flagOpportunityAsClosed(String opportunityId);
+    
+    void removeOpportunity(String opportunityId);
 
     void createContact(Contact contact);
 
