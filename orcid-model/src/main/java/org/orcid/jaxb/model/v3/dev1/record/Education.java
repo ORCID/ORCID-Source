@@ -53,7 +53,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "externalIdentifiers" })
 @XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
 public class Education implements Serializable, Affiliation, Filterable, Activity, OrganizationHolder, SourceAware {
 
@@ -76,6 +76,8 @@ public class Education implements Serializable, Affiliation, Filterable, Activit
     protected CreatedDate createdDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/education")
     protected Url url;
+    @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs educationExternalIdentifiers;
 
     @XmlAttribute(name = "put-code")
     protected Long putCode;
@@ -322,6 +324,14 @@ public class Education implements Serializable, Affiliation, Filterable, Activit
     public void setUrl(Url value) {
         this.url = value;
     }
+    
+    public ExternalIDs getEducationExternalIdentifiers() {
+        return educationExternalIdentifiers;
+    }
+
+    public void setEducationExternalIdentifiers(ExternalIDs educationExternalIdentifiers) {
+        this.educationExternalIdentifiers = educationExternalIdentifiers;
+    }
 
     /**
      * 
@@ -340,6 +350,8 @@ public class Education implements Serializable, Affiliation, Filterable, Activit
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + ((educationExternalIdentifiers == null) ? 0 : educationExternalIdentifiers.hashCode());
         return result;
     }
 
@@ -389,6 +401,16 @@ public class Education implements Serializable, Affiliation, Filterable, Activit
         } else if (!startDate.equals(other.startDate))
             return false;
         if (visibility != other.visibility)
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        if (educationExternalIdentifiers == null) {
+            if (other.educationExternalIdentifiers != null)
+                return false;
+        } else if (!educationExternalIdentifiers.equals(other.educationExternalIdentifiers))
             return false;
 
         /*

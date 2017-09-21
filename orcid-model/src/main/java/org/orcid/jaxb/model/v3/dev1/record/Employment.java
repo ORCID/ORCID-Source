@@ -53,7 +53,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "externalIdentifiers" })
 @XmlRootElement(name = "employment", namespace = "http://www.orcid.org/ns/employment")
 public class Employment implements Serializable, Affiliation, Filterable, Activity, OrganizationHolder, SourceAware {
 
@@ -76,6 +76,8 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     protected CreatedDate createdDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/employment")
     protected Url url;
+    @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs employmentExternalIdentifiers;
 
     @XmlAttribute(name = "put-code")
     protected Long putCode;
@@ -321,6 +323,14 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     public void setUrl(Url url) {
         this.url = url;
     }
+    
+    public ExternalIDs getEmploymentExternalIdentifiers() {
+        return employmentExternalIdentifiers;
+    }
+
+    public void setEmploymentExternalIdentifiers(ExternalIDs employmentExternalIdentifiers) {
+        this.employmentExternalIdentifiers = employmentExternalIdentifiers;
+    }
 
     /**
      * 
@@ -339,6 +349,8 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + ((employmentExternalIdentifiers == null) ? 0 : employmentExternalIdentifiers.hashCode());
         return result;
     }
 
@@ -389,7 +401,17 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
             return false;
         if (visibility != other.visibility)
             return false;
-
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        if (employmentExternalIdentifiers == null) {
+            if (other.employmentExternalIdentifiers != null)
+                return false;
+        } else if (!employmentExternalIdentifiers.equals(other.employmentExternalIdentifiers))
+            return false;
+        
         /*
          * Breaks our deduping if (lastModifiedDate != other.lastModifiedDate)
          * return false; if (createdDate != other.createdDate) return false;
