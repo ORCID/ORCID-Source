@@ -501,8 +501,8 @@ $(function() {
                         if ($('form#loginForm').attr('disabled')) {
                             return false;
                         }
-                        $('#form-sign-in-button').prop('disabled', true);
-                        $('form#loginForm').attr('disabled', 'disabled');
+
+                        disableSignin();
                         
                         if (basePath.startsWith(baseUrl + 'oauth')) {
                             var clientName = $(
@@ -572,9 +572,13 @@ $(function() {
                                                     orcidGA
                                                             .windowLocationHrefDelay(data.url
                                                                     + window.location.hash);
+
+                                                    enableSignin(); 
                                                 } else if (data.verificationCodeRequired && !data.badVerificationCode) {
+                                                    enableSignin(); 
                                                     show2FA();
                                                 } else {
+                                                    enableSignin(); 
                                                     var message;
                                                     if (data.deprecated) {
                                                         if (data.primary)
@@ -618,12 +622,6 @@ $(function() {
                                                         message = om
                                                                .get('orcid.frontend.security.bad_credentials');
                                                     }
-
-                                                    orcidGA.gaPush(function() { 
-                                                        $('#ajax-loader').hide();
-                                                        $('form#loginForm').removeAttr('disabled');
-                                                        $('#form-sign-in-button').prop('disabled', false);
-                                                    });    
 
                                                     showLoginError(message);
                                                 }; 
@@ -706,6 +704,19 @@ $(function() {
                         $('form#loginForm #login-deactivated-error').fadeIn('fast');
                      });
         }
+    }
+
+    function disableSignin() {
+        $('#form-sign-in-button').prop('disabled', true);
+        $('form#loginForm').attr('disabled', 'disabled');
+    }
+
+    function enableSignin() {
+        orcidGA.gaPush(function() { 
+            $('#ajax-loader').hide();
+            $('form#loginForm').removeAttr('disabled');
+            $('#form-sign-in-button').prop('disabled', false);
+        }); 
     }
     
     function show2FA() {
