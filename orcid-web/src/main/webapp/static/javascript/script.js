@@ -495,14 +495,13 @@ $(function() {
     $('form#loginForm')
             .submit(
                     function() {
-                        $('#form-sign-in-button').prop('disabled', true);
                         
                         var loginUrl = baseUrl + 'signin/auth.json';
 
                         if ($('form#loginForm').attr('disabled')) {
                             return false;
                         }
-
+                        $('#form-sign-in-button').prop('disabled', true);
                         $('form#loginForm').attr('disabled', 'disabled');
                         
                         if (basePath.startsWith(baseUrl + 'oauth')) {
