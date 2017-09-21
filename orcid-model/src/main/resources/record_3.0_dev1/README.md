@@ -41,7 +41,15 @@ v3.0_dev1 is the current development release of the ORCID API and is only for in
 - [work-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/work-3.0_dev1.xsd)
 **unstable**
 
-##Changes from Release candidate 2.1:
+## Changes from Release candidate 2.1:
+
+### Works
+- *work:journal-title* is included in the activities-summary
+
+### Education and Employment
+- *common:start-date* is required when writing items
+- Addition of *education:url* and *employment:url* fields
+
 ### WorkSummary
 - Addition of journal title field
 
