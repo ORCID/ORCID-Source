@@ -1333,7 +1333,7 @@
 	
 	<!-- CDN config path -->
 	<bean id="cdnConfigFile" class="java.lang.String">
-		<constructor-arg value="cdn_url.txt"/>
+		<constructor-arg value="cdn_active_url.txt"/>
 	</bean>
 	
 	<bean id="jpaJaxbEntityAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEntityAdapterImpl">

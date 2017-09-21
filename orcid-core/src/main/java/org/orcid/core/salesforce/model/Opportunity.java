@@ -30,6 +30,7 @@ public class Opportunity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
+    private String ownerId;
     private String targetAccountId;
     private String accountName;
     private String accountPublicDisplayName;
@@ -49,6 +50,14 @@ public class Opportunity implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getTargetAccountId() {
@@ -149,7 +158,7 @@ public class Opportunity implements Serializable {
 
     @Override
     public String toString() {
-        return "Opportunity [id=" + id + ", targetAccountId=" + targetAccountId + ", accountName=" + accountName + ", accountPublicDisplayName="
+        return "Opportunity [id=" + id + ", ownerId=" + ownerId + ", targetAccountId=" + targetAccountId + ", accountName=" + accountName + ", accountPublicDisplayName="
                 + accountPublicDisplayName + ", stageName=" + stageName + ", closeDate=" + closeDate + ", type=" + type + ", memberType=" + memberType
                 + ", membershipStartDate=" + membershipStartDate + ", membershipEndDate=" + membershipEndDate + ", consortiumLeadId=" + consortiumLeadId + ", name="
                 + name + ", recordTypeId=" + recordTypeId + "]";

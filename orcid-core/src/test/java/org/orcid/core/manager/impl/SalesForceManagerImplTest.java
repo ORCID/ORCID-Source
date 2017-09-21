@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -187,10 +186,13 @@ public class SalesForceManagerImplTest {
         role.setId("contact2Idrole1Id");
         contact.setRole(role);
         ((SalesForceManagerImpl) salesForceManager).updateContact(contact);
+        verify(salesForceDao, times(1)).updateContactRole(argThat(r -> {
+            return "contact2Idrole1Id".equals(r.getId()) && "contact2Id".equals(r.getContactId()) && ContactRoleType.MAIN_CONTACT.equals(r.getRoleType())
+                    && !r.isCurrent();
+        }));
         verify(salesForceDao, times(1)).createContactRole(argThat(r -> {
             return "contact2Id".equals(r.getContactId()) && "account1Id".equals(r.getAccountId()) && ContactRoleType.TECHNICAL_CONTACT.equals(r.getRoleType());
         }));
-        verify(salesForceDao, times(1)).removeContactRole(eq("contact2Idrole1Id"));
     }
 
     @Test

@@ -93,7 +93,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     public List<Member> retrieveMembers() {
         return retry(accessToken -> retrieveMembersFromSalesForce(accessToken));
     }
-    
+
     @Override
     public Member retrieveMember(String accountId) {
         return retry(accessToken -> retrieveMemberFromSalesForce(accessToken, accountId));
@@ -125,7 +125,12 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public List<Contact> retrieveContactsWithRolesByAccountId(String accountId) {
-        return retry(accessToken -> retrieveContactsWithRolesFromSalesForceByAccountId(accessToken, accountId));
+        return retrieveContactsWithRolesByAccountId(accountId, false);
+    }
+
+    @Override
+    public List<Contact> retrieveContactsWithRolesByAccountId(String accountId, boolean includeNonCurrent) {
+        return retry(accessToken -> retrieveContactsWithRolesFromSalesForceByAccountId(accessToken, accountId, includeNonCurrent));
     }
 
     @Override
@@ -156,6 +161,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     @Override
     public String createContactRole(ContactRole contact) {
         return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
+    }
+
+    @Override
+    public void updateContactRole(ContactRole contactRole) {
+        retryConsumer(accessToken -> updateContactRoleInSalesForce(accessToken, contactRole));
     }
 
     @Override
@@ -245,6 +255,20 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return result.optString("id");
     }
 
+    private void updateContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
+        LOGGER.info("About update contact role in SalesForce");
+        String contactRoleId = contactRole.getId();
+        validateSalesForceId(contactRoleId);
+        WebResource resource = createObjectsResource("/Membership_Contact_Role__C/", contactRoleId).queryParam("_HttpMethod", "PATCH");
+        JSONObject contactRoleJson = salesForceAdapter.createSaleForceRecordFromContactRole(contactRole);
+        // SalesForce doesn't allow the Id in the body
+        contactRoleJson.remove("Id");
+        ClientResponse response = doPostRequest(resource, contactRoleJson, accessToken);
+        checkAuthorization(response);
+        checkResponse(response, 204, "Error updating contact role in SalesForce");
+        return;
+    }
+
     private void removeContactRoleInSalesForce(String accessToken, String contactRoleId) {
         LOGGER.info("About to remove contact role in SalesForce");
         validateSalesForceId(contactRoleId);
@@ -325,7 +349,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         } while (nextRecordsUrl != null);
         return membersList;
     }
-    
+
     /**
      * 
      * @throws SalesForceUnauthorizedException
@@ -347,10 +371,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private JSONObject retrieveMembersObject(String accessToken, String accountId) {
         StringBuffer query = new StringBuffer();
-        query.append("SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+        query.append("SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
         query.append(
                 "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
-        query.append("Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
+        query.append(
+                "Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c, Account.Last_membership_start_date__c, Account.Last_membership_end_date__c from Account WHERE Active_Member__c=TRUE");
         if (accountId != null) {
             validateSalesForceId(accountId);
             query.append(" AND Account.Id = '");
@@ -497,12 +522,17 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      *             expired.
      * 
      */
-    private List<Contact> retrieveContactsWithRolesFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
+    private List<Contact> retrieveContactsWithRolesFromSalesForceByAccountId(String accessToken, String accountId, boolean includeNonCurrent)
+            throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceId(accountId);
-        WebResource resource = createQueryResource(
-                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c From Membership_Contact_Roles__r Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'",
-                accountId);
+        StringBuilder query = new StringBuilder(
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c, Current__c From Membership_Contact_Roles__r");
+        if (!includeNonCurrent) {
+            query.append(" Where Current__c = True");
+        }
+        query.append(" Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'");
+        WebResource resource = createQueryResource(query.toString(), accountId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
