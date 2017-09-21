@@ -18,24 +18,20 @@ package org.orcid.core.cli;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.orcid.persistence.constants.OrganizationStatus;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
-import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
-import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 
 public class LoadGridDataTest {
 
@@ -54,10 +50,27 @@ public class LoadGridDataTest {
     }
 
     @Test
-    public void execute_Create3Institutes_Test() {
-        fail();
+    public void execute_Stats_Test_1() throws URISyntaxException {
+        Path path = Paths.get(getClass().getClassLoader()
+                .getResource("grid/grid_1_orgs_4_external_identifiers.json").toURI());
+        File testFile = path.toFile();
+        loadGridData.setFileToLoad(testFile);
+        loadGridData.execute();
+        assertEquals(1L, loadGridData.getAddedDisambiguatedOrgs());
+        assertEquals(4L, loadGridData.getAddedExternalIdentifiers());                        
     }
 
+    @Test
+    public void execute_Stats_Test_2() throws URISyntaxException {
+        Path path = Paths.get(getClass().getClassLoader()
+                .getResource("grid/grid_4_orgs_24_external_identifiers.json").toURI());
+        File testFile = path.toFile();
+        loadGridData.setFileToLoad(testFile);
+        loadGridData.execute();
+        assertEquals(4L, loadGridData.getAddedDisambiguatedOrgs());
+        assertEquals(24L, loadGridData.getAddedExternalIdentifiers());
+    }
+    
     @Test
     public void execute_Create0Institutes_Test() {
         fail();

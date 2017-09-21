@@ -63,6 +63,10 @@ public class LoadGridData {
     @Option(name = "-f", usage = "Path to JSON file containing GRID info to load into DB")
     private File fileToLoad;
 
+    public void setFileToLoad(File fileToLoad) {
+        this.fileToLoad = fileToLoad;
+    }
+
     public void setOrgDisambiguatedExternalIdentifierDao(OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao) {
         this.orgDisambiguatedExternalIdentifierDao = orgDisambiguatedExternalIdentifierDao;
     }
@@ -120,7 +124,7 @@ public class LoadGridData {
 
     }
 
-    private void execute() {
+    public void execute() {
         JsonNode rootNode = JsonUtils.read(fileToLoad);
         ArrayNode institutes = (ArrayNode) rootNode.get("institutes");
         institutes.forEach(institute -> {
