@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.impl.JsonOrikaConverter;
 import org.orcid.core.adapter.impl.WorkEntityFactory;
 import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.v3.impl.jsonidentifiers.EmploymentExternalIDsConverter;
 import org.orcid.core.adapter.v3.impl.jsonidentifiers.FundingExternalIDsConverter;
 import org.orcid.core.adapter.v3.impl.jsonidentifiers.PeerReviewWorkExternalIDConverter;
 import org.orcid.core.adapter.v3.impl.jsonidentifiers.SingleWorkExternalIdentifierFromJsonConverter;
@@ -541,6 +542,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getEducationMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("educationExternalIdentifiersConverterId", new EmploymentExternalIDsConverter());
+        
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
         addV3CommonFields(educationClassMap);
         registerSourceConverters(mapperFactory, educationClassMap);                
@@ -554,6 +559,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         educationClassMap.fieldAToB("url.value", "url");
         educationClassMap.fieldBToA("url", "url.value");
+        
+        educationClassMap.fieldMap("educationExternalIdentifiers", "externalIdentifiersJson").converter("educationExternalIdentifiersConverterId").add();
         
         educationClassMap.field("departmentName", "department");
         educationClassMap.field("roleTitle", "title");
@@ -580,6 +587,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getEmploymentMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("employmentExternalIdentifiersConverterId", new EmploymentExternalIDsConverter());
+        
         ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
         addV3CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);
@@ -593,6 +604,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         classMap.fieldAToB("url.value", "url");
         classMap.fieldBToA("url", "url.value");
+        
+        classMap.fieldMap("employmentExternalIdentifiers", "externalIdentifiersJson").converter("employmentExternalIdentifiersConverterId").add();
         
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
