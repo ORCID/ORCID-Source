@@ -119,7 +119,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         document.setOrgNames(new ArrayList<>(orgNames));
 
-        if (FUNDING_ORG_TYPE.equals(entity.getSourceType()) || hasFundrefExternalIdentifier(entity.getExternalIdentifiers())) {
+        if (FUNDING_ORG_TYPE.equals(entity.getSourceType())) {
             document.setFundingOrg(true);
         } else {
             document.setFundingOrg(false);
@@ -129,7 +129,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     }
 
     /**
-     * Checks a list of external identifiers and return true is any of those is
+     * Checks a list of external identifiers and return true if any of those is
      * a funding organizations
      * 
      * @param externalIdentifiers

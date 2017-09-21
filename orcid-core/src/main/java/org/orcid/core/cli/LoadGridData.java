@@ -35,6 +35,7 @@ import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -123,33 +124,39 @@ public class LoadGridData {
         JsonNode rootNode = JsonUtils.read(fileToLoad);
         ArrayNode institutes = (ArrayNode) rootNode.get("institutes");
         institutes.forEach(institute -> {
-            String sourceId = institute.get("id") == null ? null : institute.get("id").asText();
-            String status = institute.get("status") == null ? null : institute.get("status").asText();
+            String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
+            
+            //Case that should never happen
+            if(PojoUtil.isEmpty(sourceId)) {
+                LOGGER.error("Invalid institute with null id found {}", institute.toString());
+            }
+            
+            String status = institute.get("status").isNull() ? null : institute.get("status").asText();
             if ("active".equals(status)) {
-                String name = institute.get("name") == null ? null : institute.get("name").asText();
+                String name = institute.get("name").isNull() ? null : institute.get("name").asText();
                 StringJoiner sj = new StringJoiner(",");
                 String orgType = null;
-                if (institute.get("types") != null) {
+                if (!institute.get("types").isNull()) {
                     ((ArrayNode) institute.get("types")).forEach(x -> sj.add(x.textValue()));
                     orgType = sj.toString();
                 }
 
-                ArrayNode addresses = institute.get("addresses") == null ? null : (ArrayNode) institute.get("addresses");
+                ArrayNode addresses = institute.get("addresses").isNull() ? null : (ArrayNode) institute.get("addresses");
                 String city = null;
                 String region = null;
                 Iso3166Country country = null;
                 if (addresses != null) {
                     for (JsonNode address : addresses) {
                         if (addresses.size() == 1 || (address.get("primary") != null && address.get("primary").asBoolean())) {
-                            city = address.get("city").asText();
-                            region = address.get("state").asText();
-                            String countryCode = address.get("country_code").asText();
+                            city = address.get("city").isNull() ? null : address.get("city").asText();
+                            region = address.get("state").isNull() ? null : address.get("state").asText();
+                            String countryCode = address.get("country_code").isNull() ? null : address.get("country_code").asText();
                             country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
                         }
                     }
                 }
 
-                ArrayNode urls = institute.get("links") == null ? null : (ArrayNode) institute.get("links");
+                ArrayNode urls = institute.get("links").isNull() ? null : (ArrayNode) institute.get("links");
                 // TODO: Am assuming we are going to use the first URL
                 String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
                 
@@ -159,7 +166,7 @@ public class LoadGridData {
                 // Creates external identifiers
                 processExternalIdentifiers(entity, institute);
             } else if ("redirected".equals(status)) {
-                String primaryId = institute.get("redirect") == null ? null : institute.get("redirect").asText();
+                String primaryId = institute.get("redirect").isNull() ? null : institute.get("redirect").asText();
                 deprecateOrg(sourceId, primaryId);
             } else if ("obsolete".equals(status)) {
                 obsoleteOrg(sourceId);
