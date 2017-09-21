@@ -152,8 +152,7 @@ public class LoadGridData {
                 ArrayNode urls = institute.get("links") == null ? null : (ArrayNode) institute.get("links");
                 // TODO: Am assuming we are going to use the first URL
                 String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
-                // TODO: Am ignoring all external identifiers for now
-
+                
                 // Creates or updates an institute
                 OrgDisambiguatedEntity entity = processInstitute(sourceId, name, country, city, region, url, orgType);
 
