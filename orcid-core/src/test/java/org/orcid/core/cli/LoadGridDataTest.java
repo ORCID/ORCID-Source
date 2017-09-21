@@ -33,25 +33,26 @@ import org.mockito.stubbing.Answer;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 
 public class LoadGridDataTest {
 
     @Mock
-    private GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> orgDisambiguatedExternalIdentifierDao;
+    private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     @Mock
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     private LoadGridData loadGridData = new LoadGridData();
-    
+
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
         loadGridData.setOrgDisambiguatedDao(orgDisambiguatedDao);
         loadGridData.setOrgDisambiguatedExternalIdentifierDao(orgDisambiguatedExternalIdentifierDao);
     }
-    
+
     @Test
     public void execute_Create3Institutes_Test() {
         fail();
@@ -61,39 +62,39 @@ public class LoadGridDataTest {
     public void execute_Create0Institutes_Test() {
         fail();
     }
-    
+
     @Test
     public void execute_Update3Institutes_Test() {
         fail();
     }
-    
+
     @Test
     public void execute_Update0Institutes_Test() {
         fail();
     }
-    
+
     @Test
     public void execute_Update1Institutes_Test() {
         fail();
     }
-    
+
     @Test
     public void execute_Deprecated1Institutes_Test() {
         fail();
     }
-    
+
     @Test
     public void execute_Obsolete1Institutes_Test() {
         fail();
     }
-    
+
     @Test
     public void execute_Create1ExternalIdentifier_Test() {
         fail();
     }
-    
+
     @Test
     public void execute_Create1Insitute_Update1Institute_Deprecate1Insitute_Obsolete1Insitute_Create1ExternalIdentifier_Test() {
         fail();
-    }
+    }    
 }

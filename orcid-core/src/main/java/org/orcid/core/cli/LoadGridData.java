@@ -18,6 +18,9 @@ package org.orcid.core.cli;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringJoiner;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,8 +30,8 @@ import org.kohsuke.args4j.Option;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
@@ -45,7 +48,7 @@ public class LoadGridData {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadGridData.class);
     private static final String GRID_SOURCE_TYPE = "GRID";
 
-    private GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> orgDisambiguatedExternalIdentifierDao;
+    private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
     // Statistics
@@ -59,14 +62,14 @@ public class LoadGridData {
     @Option(name = "-f", usage = "Path to JSON file containing GRID info to load into DB")
     private File fileToLoad;
 
-    public void setOrgDisambiguatedExternalIdentifierDao(GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> orgDisambiguatedExternalIdentifierDao) {
+    public void setOrgDisambiguatedExternalIdentifierDao(OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao) {
         this.orgDisambiguatedExternalIdentifierDao = orgDisambiguatedExternalIdentifierDao;
     }
 
     public void setOrgDisambiguatedDao(OrgDisambiguatedDao orgDisambiguatedDao) {
         this.orgDisambiguatedDao = orgDisambiguatedDao;
     }
-    
+
     public long getUpdatedOrgs() {
         return updatedOrgs;
     }
@@ -108,11 +111,11 @@ public class LoadGridData {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes", "resource" })
+    @SuppressWarnings({ "resource" })
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
-        orgDisambiguatedExternalIdentifierDao = (GenericDao) context.getBean("orgDisambiguatedExternalIdentifierEntityDao");
+        orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
 
     }
 
@@ -152,7 +155,10 @@ public class LoadGridData {
                 // TODO: Am ignoring all external identifiers for now
 
                 // Creates or updates an institute
-                processInstitute(sourceId, name, country, city, region, url, orgType);
+                OrgDisambiguatedEntity entity = processInstitute(sourceId, name, country, city, region, url, orgType);
+
+                // Creates external identifiers
+                processExternalIdentifiers(entity, institute);
             } else if ("redirected".equals(status)) {
                 String primaryId = institute.get("redirect") == null ? null : institute.get("redirect").asText();
                 deprecateOrg(sourceId, primaryId);
@@ -170,7 +176,7 @@ public class LoadGridData {
         LOGGER.info("Obsoleted orgs: {}", obsoletedOrgs);
     }
 
-    private void processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
+    private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
         OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
         if (existingBySourceId != null) {
             if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType)) {
@@ -184,16 +190,33 @@ public class LoadGridData {
                 existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
                 orgDisambiguatedDao.merge(existingBySourceId);
                 updatedOrgs++;
+                return existingBySourceId;
             }
-        } else {
-            OrgDisambiguatedEntity existingByNameAndAddress = orgDisambiguatedDao.findByNameCityRegionCountryAndSourceType(name, city, region, country, GRID_SOURCE_TYPE);
-            if (existingByNameAndAddress != null) {
-                if (sourceIdChanged(existingByNameAndAddress, sourceId)) {
-                    createExternalIdentifier(existingByNameAndAddress, sourceId);
+        }
+
+        // Create a new disambiguated org
+        return createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
+    }
+
+    private void processExternalIdentifiers(OrgDisambiguatedEntity org, JsonNode institute) {
+        JsonNode externalIdsContainer = institute.get("external_ids") == null ? null : institute.get("external_ids");
+        if (externalIdsContainer != null) {
+
+            Iterator<Entry<String, JsonNode>> nodes = externalIdsContainer.fields();
+
+            while (nodes.hasNext()) {
+                Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) nodes.next();
+                String identifierTypeName = entry.getKey().toUpperCase();
+                ArrayNode elements = (ArrayNode) entry.getValue().get("all");
+                for (JsonNode extId : elements) {
+                    // If the external identifier doesn't exists yet
+                    if (orgDisambiguatedExternalIdentifierDao.findByDetails(org.getId(), extId.asText(), identifierTypeName) == null) {
+                        createExternalIdentifier(org, extId.asText(), identifierTypeName);
+                    } else {
+                        LOGGER.info("External identifier for {} with ext id {} and type {} already exists",
+                                new Object[] { org.getId(), extId.asText(), identifierTypeName });
+                    }
                 }
-            } else {
-                // Create a new disambiguated org
-                createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
             }
         }
     }
@@ -256,21 +279,9 @@ public class LoadGridData {
     }
 
     /**
-     * Indicates if an exiting entity changed its source id
-     * 
-     * @return true if the source id changed for the given entity
-     */
-    private boolean sourceIdChanged(OrgDisambiguatedEntity entity, String sourceId) {
-        if (entity.getSourceId().equals(sourceId)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Creates a disambiguated ORG in the org_disambiguated table
      */
-    private void createDisambiguatedOrg(String sourceId, String name, String orgType, Iso3166Country country, String city, String region, String url) {
+    private OrgDisambiguatedEntity createDisambiguatedOrg(String sourceId, String name, String orgType, Iso3166Country country, String city, String region, String url) {
         LOGGER.info("Creating disambiguated org {}", name);
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
         orgDisambiguatedEntity.setName(name);
@@ -283,18 +294,19 @@ public class LoadGridData {
         orgDisambiguatedEntity.setSourceType(GRID_SOURCE_TYPE);
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
         addedDisambiguatedOrgs++;
+        return orgDisambiguatedEntity;
     }
 
     /**
      * Creates an external identifier in the
      * org_disambiguated_external_identifier table
      */
-    private boolean createExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String identifier) {
+    private boolean createExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String identifier, String externalIdType) {
         LOGGER.info("Creating external identifier for {}", disambiguatedOrg.getId());
         Date creationDate = new Date();
         OrgDisambiguatedExternalIdentifierEntity externalIdentifier = new OrgDisambiguatedExternalIdentifierEntity();
         externalIdentifier.setIdentifier(identifier);
-        externalIdentifier.setIdentifierType(GRID_SOURCE_TYPE);
+        externalIdentifier.setIdentifierType(externalIdType);
         externalIdentifier.setOrgDisambiguated(disambiguatedOrg);
         externalIdentifier.setDateCreated(creationDate);
         externalIdentifier.setLastModified(creationDate);
