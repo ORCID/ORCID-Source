@@ -495,10 +495,15 @@ $(function() {
     $('form#loginForm')
             .submit(
                     function() {
+                        
                         var loginUrl = baseUrl + 'signin/auth.json';
+
                         if ($('form#loginForm').attr('disabled')) {
                             return false;
                         }
+                        $('#form-sign-in-button').prop('disabled', true);
+                        $('form#loginForm').attr('disabled', 'disabled');
+                        
                         if (basePath.startsWith(baseUrl + 'oauth')) {
                             var clientName = $(
                                     'form#loginForm input[name="client_name"]')
@@ -525,7 +530,7 @@ $(function() {
                         else if (basePath.startsWith(baseUrl + 'social')) {
                             loginUrl = baseUrl + 'social/signin/auth.json';
                         }
-                        $('form#loginForm').attr('disabled', 'disabled');
+
                         $('#login-error-mess, #login-deactivated-error').hide();
                         $('#ajax-loader').css('display', 'block');
                         $
@@ -536,9 +541,6 @@ $(function() {
                                             data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()),
                                             dataType : 'json',
                                             success : function(data) {
-                                                $('#ajax-loader').hide();
-                                                $('form#loginForm').removeAttr(
-                                                        'disabled');
                                                 if (data.success) {
                                                     if (basePath
                                                             .startsWith(baseUrl
@@ -616,8 +618,15 @@ $(function() {
                                                         message = om
                                                                .get('orcid.frontend.security.bad_credentials');
                                                     }
+
+                                                    orcidGA.gaPush(function() { 
+                                                        $('#ajax-loader').hide();
+                                                        $('form#loginForm').removeAttr('disabled');
+                                                        $('#form-sign-in-button').prop('disabled', false);
+                                                    });    
+
                                                     showLoginError(message);
-                                                };
+                                                }; 
                                             }
                                         }).fail(function(e) {
                                     // something bad is happening!
