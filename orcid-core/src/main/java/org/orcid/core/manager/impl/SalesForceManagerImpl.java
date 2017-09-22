@@ -69,6 +69,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     private static final String OPPORTUNITY_INITIAL_STAGE_NAME = "Negotiation/Review";
 
+    private static final String OPPORTUNITY_PUBLIC_STAGE_NAME = "Invoice Paid";
+
     private static final String OPPORTUNITY_NAME = "Opportunity from registry";
 
     private static final Pattern SUBDOMAIN_PATTERN = Pattern.compile("^www\\.");
@@ -133,18 +135,34 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public MemberDetails retrieveDetailsBySlug(String memberSlug) {
+        return retrieveDetailsBySlug(memberSlug, false);
+    }
+
+    @Override
+    public MemberDetails retrieveDetailsBySlug(String memberSlug, boolean publicOnly) {
         String memberId = SlugUtils.extractIdFromSlug(memberSlug);
-        return retrieveDetails(memberId);
+        return retrieveDetails(memberId, publicOnly);
     }
 
     @Override
     public MemberDetails retrieveDetails(String memberId) {
+        return retrieveDetails(memberId, false);
+    }
+
+    @Override
+    public MemberDetails retrieveDetails(String memberId, boolean publicOnly) {
         Member salesForceMember = retrieveMember(memberId);
         if (salesForceMember != null) {
             MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
                     .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
             details.setMember(salesForceMember);
-            details.setSubMembers(findSubMembers(memberId));
+            List<SubMember> allSubMembers = findSubMembers(memberId);
+            if (publicOnly) {
+                details.setSubMembers(
+                        allSubMembers.stream().filter(m -> OPPORTUNITY_PUBLIC_STAGE_NAME.equals(m.getOpportunity().getStageName())).collect(Collectors.toList()));
+            } else {
+                details.setSubMembers(allSubMembers);
+            }
             return details;
         }
         throw new IllegalArgumentException("No member details found for " + memberId);

@@ -65,7 +65,7 @@ public class MembersListController extends BaseController {
 
     @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
     public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
-        return salesForceManager.retrieveDetailsBySlug(memberSlug);
+        return salesForceManager.retrieveDetailsBySlug(memberSlug, true);
     }
 
     @RequestMapping(value = "/members/communityTypes.json", method = RequestMethod.GET)

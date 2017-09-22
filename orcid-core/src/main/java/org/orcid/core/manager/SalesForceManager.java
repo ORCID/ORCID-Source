@@ -47,12 +47,16 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
 
     MemberDetails retrieveDetailsBySlug(String memberSlug);
 
+    MemberDetails retrieveDetailsBySlug(String memberSlug, boolean publicOnly);
+
     MemberDetails retrieveDetails(String memberId);
+
+    MemberDetails retrieveDetails(String memberId, boolean publicOnly);
 
     MemberDetails retrieveFreshDetails(String memberId);
 
     List<Contact> retrieveContactsByAccountId(String accountId);
-    
+
     List<Contact> retrieveFreshContactsByAccountId(String accountId);
 
     void addOrcidsToContacts(List<Contact> contacts);
@@ -72,15 +76,15 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     void updateMember(Member member);
 
     Optional<Member> findBestWebsiteMatch(URL webSiteUrl, Collection<Member> possibleMatches);
-    
+
     Optional<Member> checkExistingMember(Member member);
-    
+
     /**
      * 
      * @return the boolean indicating whether submember exists in member
      */
     boolean checkExistingSubMember(Member member, String parentAccountId);
-    
+
     /**
      * 
      * @return the id of the opportunity
@@ -88,7 +92,7 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     String createOpportunity(Opportunity opportunity);
 
     void flagOpportunityAsClosed(String opportunityId);
-    
+
     void removeOpportunity(String opportunityId);
 
     void createContact(Contact contact);
