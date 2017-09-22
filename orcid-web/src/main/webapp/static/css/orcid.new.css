@@ -1897,17 +1897,17 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .workspace-accordion-header {
-    position: relative;
     background: #494A4C;
     height: 30px;
     padding: 0 0 0 15px;
+    position: relative;
 }
 
 .workspace-accordion-header a.action-option,
 .workspace-accordion-header a.action-option:active {
+    border-left: 1px solid #FFF;
     display: block;
     min-height: 30px;
-    border-left: 1px solid #FFF;
 }
 
 .workspace-accordion-header a.action-option:hover {
@@ -8861,20 +8861,15 @@ ul.comma li:last-child:after {
 
 
 /*************************** Right to left styles*/
+.lang-rl #idpSelectInput {
+    margin-left: 5px;
+}
+
 .lang-rl *{
     text-align: right;
 }
 
-/*
-.lang-rl .flexbox-container {
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: row-reverse;
-    flex-wrap: wrap-reverse;
-} 
-*/
-.lang-rl ul.id-details/*,*/ 
-/*.lang-rl ul.id-details li*/ {
+.lang-rl ul.id-details {
     padding-right: 15px;
 }
 
@@ -8906,6 +8901,9 @@ ul.comma li:last-child:after {
 
 .lang-rl .container .header .search form .bar {
     float: right;
+}
+.lang-rl .fixed-area ul.record-settings {
+    margin-right: 0;
 }
 
 .lang-rl .fixed-area ul.record-settings.pull-right,
@@ -8940,6 +8938,15 @@ ul.comma li:last-child:after {
     float: right!important;
 }
 
+.lang-rl .btn.btn-primary {
+    text-align: center;
+}
+
+.lang-rl .id-details .popover-pos{
+    left:100%;
+    margin-left: -250px;
+}
+
 .lang-rl .lhs {
     float: right;
     padding-left: 20px!important;
@@ -8966,6 +8973,10 @@ ul.comma li:last-child:after {
     top: 40px;
 }
 
+.lang-rl .settings-table .checkbox{
+    padding-right: 20px;
+}
+
 .lang-rl .source-line {
     padding-right: 15px;
 }
@@ -8977,6 +8988,19 @@ ul.comma li:last-child:after {
 .lang-rl .table th, 
 .lang-rl .table td {
     text-align: right;
+}
+
+.lang-rl .url-popover .popover.bottom .arrow {
+    right: 20px;
+}
+
+.lang-rl .id-details .url-work .id-details li span span {
+    float: right;
+    margin-right: -15px;
+}
+
+.lang-rl .workspace-accordion-header .toggle-text {
+    margin-right: 20px;
 }
 
 .lang-rl .workspace-affiliations ul.sources-options {
