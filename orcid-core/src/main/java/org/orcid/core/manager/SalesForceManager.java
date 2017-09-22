@@ -71,7 +71,7 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
      * 
      * @return the accountId of the member
      */
-    String createMember(Member member);
+    String createMember(Member member, Contact initialContact);
 
     void updateMember(Member member);
 

@@ -37,6 +37,7 @@ import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,6 +124,10 @@ public class SalesForceAdapter {
     }
 
     public JSONObject createSaleForceRecordFromContactRole(ContactRole contactRole) {
+        return mapperFacade.map(contactRole, JSONObject.class);
+    }
+
+    public JSONObject createSaleForceRecordFromOpportunityContactRole(OpportunityContactRole contactRole) {
         return mapperFacade.map(contactRole, JSONObject.class);
     }
 

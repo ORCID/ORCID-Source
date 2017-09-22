@@ -46,6 +46,7 @@ import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -258,7 +259,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
-    public String createMember(Member member) {
+    public String createMember(Member member, Contact initialContact) {
         String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         Member consortium = retrieveMember(consortiumLeadId);
         String consortiumOwnerId = consortium.getOwnerId();
@@ -286,7 +287,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         opportunity.setMembershipEndDate(consortium.getLastMembershipEndDate());
         opportunity.setRecordTypeId(getConsortiumMemberRecordTypeId());
         opportunity.setName(OPPORTUNITY_NAME);
-        createOpportunity(opportunity);
+        String opportunityId = createOpportunity(opportunity);
+        initialContact.setAccountId(accountId);
+        createOpportunityContact(initialContact, opportunityId);
         removeMemberDetailsFromCache(consortiumLeadId);
         salesForceConsortiumCache.remove(consortiumLeadId);
         return accountId;
@@ -466,6 +469,32 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
         }
         salesForceContactsCache.remove(accountId);
+    }
+
+    private void createOpportunityContact(Contact contact, String opportunityId) {
+        String accountId = contact.getAccountId();
+        String contactOrcid = contact.getOrcid();
+        if (StringUtils.isBlank(contact.getEmail())) {
+            Email primaryEmail = emailManager.getEmails(contactOrcid).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
+            contact.setEmail(primaryEmail.getEmail());
+        }
+
+        List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);
+        Optional<Contact> existingContact = existingContacts.stream().filter(c -> {
+            if ((contact.getOrcid() != null && contact.getOrcid().equals(c.getOrcid())) || (contact.getEmail() != null && contact.getEmail().equals(c.getEmail()))) {
+                return true;
+            }
+            return false;
+        }).findFirst();
+        String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
+        OpportunityContactRole contactRole = new OpportunityContactRole();
+        contactRole.setContactId(contactId);
+        contactRole.setRoleType(ContactRoleType.MAIN_CONTACT);
+        contactRole.setOpportunityId(opportunityId);
+        salesForceDao.createOpportunityContactRole(contactRole);
+        if (contactOrcid != null && salesForceConnectionDao.findByOrcid(contact.getOrcid()) == null) {
+            salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
+        }
     }
 
     @Override

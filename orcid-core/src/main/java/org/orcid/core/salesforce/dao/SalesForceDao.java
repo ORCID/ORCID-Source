@@ -24,6 +24,7 @@ import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OpportunityContactRole;
 
 /**
  * 
@@ -103,6 +104,8 @@ public interface SalesForceDao {
     void updateContactRole(ContactRole contactRole);
 
     void removeContactRole(String contactRoleId);
+
+    String createOpportunityContactRole(OpportunityContactRole contactRole);
 
     String getAccessToken();
 

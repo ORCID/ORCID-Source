@@ -28,6 +28,7 @@ import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomConverter;
@@ -75,6 +76,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         registerOpportunityMap(mapperFactory);
         registerContactMap(mapperFactory);
         registerContactRoleMap(mapperFactory);
+        registerOpportunityContactRoleMap(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
@@ -170,6 +172,16 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("votingContact", "Voting_Contact__c");
         classMap.field("current", "Current__c");
         classMap.field("roleType", "Member_Org_Role__c");
+        classMap.register();
+    }
+
+    private void registerOpportunityContactRoleMap(MapperFactory mapperFactory) {
+        ClassMapBuilder<OpportunityContactRole, JSONObject> classMap = mapperFactory.classMap(OpportunityContactRole.class, JSONObject.class).mapNulls(false)
+                .mapNullsInReverse(false);
+        classMap.field("id", "Id");
+        classMap.field("opportunityId", "OpportunityId");
+        classMap.field("contactId", "ContactId");
+        classMap.field("roleType", "Role");
         classMap.register();
     }
 

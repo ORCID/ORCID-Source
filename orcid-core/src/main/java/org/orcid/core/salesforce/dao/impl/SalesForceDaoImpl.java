@@ -37,6 +37,7 @@ import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
@@ -174,6 +175,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
+    public String createOpportunityContactRole(OpportunityContactRole contactRole) {
+        return retry(accessToken -> createOpportunityContactRoleInSalesForce(accessToken, contactRole));
+    }
+
+    @Override
     public String createMember(Member member) {
         return retry(accessToken -> createMemberInSalesForce(accessToken, member));
     }
@@ -192,7 +198,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     public void updateOpportunity(Opportunity opportunity) {
         retryConsumer(accessToken -> updateOpportunityInSalesForce(accessToken, opportunity));
     }
-    
+
     @Override
     public void removeOpportunity(String opportunityId) {
         retryConsumer(accessToken -> removeOpportunityInSalesForce(accessToken, opportunityId));
@@ -257,6 +263,18 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         ClientResponse response = doPostRequest(resource, contactJson, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating contact role in SalesForce");
+        return result.optString("id");
+    }
+
+    private String createOpportunityContactRoleInSalesForce(String accessToken, OpportunityContactRole contactRole) {
+        LOGGER.info("About to create opportunity contact role in SalesForce");
+        validateSalesForceId(contactRole.getOpportunityId());
+        validateSalesForceId(contactRole.getContactId());
+        WebResource resource = createObjectsResource("/OpportunityContactRole/");
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromOpportunityContactRole(contactRole);
+        ClientResponse response = doPostRequest(resource, contactJson, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 201, "Error creating opportunity contact role in SalesForce");
         return result.optString("id");
     }
 
@@ -327,7 +345,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         checkResponse(response, 204, "Error updating opportunity in SalesForce");
     }
-    
+
     private void removeOpportunityInSalesForce(String accessToken, String opportunityId) {
         LOGGER.info("About to remove opportunity in SalesForce");
         validateSalesForceId(opportunityId);
@@ -385,7 +403,8 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private JSONObject retrieveMembersObject(String accessToken, String accountId) {
         StringBuffer query = new StringBuffer();
-        query.append("SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+        query.append(
+                "SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
         query.append(
                 "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
         query.append(

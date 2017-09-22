@@ -102,7 +102,7 @@ public class SelfServiceController extends BaseController {
         ModelAndView mav = new ModelAndView("self_service");
         return mav;
     }
-    
+
     @RequestMapping(value = "/validate-member-details-name", method = RequestMethod.POST)
     public @ResponseBody MemberDetailsForm validateMemberDetailsName(@RequestBody MemberDetailsForm consortium) {
         // validate name isn't blank
@@ -112,20 +112,20 @@ public class SelfServiceController extends BaseController {
         }
         return consortium;
     }
-    
+
     @RequestMapping(value = "/validate-member-details-website.json", method = RequestMethod.POST)
     public @ResponseBody MemberDetailsForm validateMemberDetailsWebsite(@RequestBody MemberDetailsForm consortium) {
-        //validate website url format
+        // validate website url format
         consortium.getWebsite().setErrors(new ArrayList<String>());
         if (!super.validateUrl(consortium.getWebsite().getValue())) {
             setError(consortium.getWebsite(), "manage_consortium.add_submember_website_valid_format");
         }
         return consortium;
     }
-    
+
     @RequestMapping(value = "/validate-member-details-email.json", method = RequestMethod.POST)
     public @ResponseBody MemberDetailsForm validateMemberDetailsEmail(@RequestBody MemberDetailsForm consortium) {
-        //if email address exists validate format
+        // if email address exists validate format
         consortium.getEmail().setErrors(new ArrayList<String>());
         if (consortium.getEmail().getValue() != null || !consortium.getEmail().getValue().trim().isEmpty()) {
             if (!super.validateEmailAddress(consortium.getEmail().getValue())) {
@@ -134,15 +134,15 @@ public class SelfServiceController extends BaseController {
         }
         return consortium;
     }
-    
+
     @RequestMapping(value = "/validate-member-details-description.json", method = RequestMethod.POST)
     public @ResponseBody MemberDetailsForm validateMemberDetailsDescription(@RequestBody MemberDetailsForm consortium) {
-        //validate description length
+        // validate description length
         consortium.getDescription().setErrors(new ArrayList<String>());
         super.validateNoLongerThan(600, consortium.getDescription());
         return consortium;
     }
-    
+
     @RequestMapping(value = "/validate-member-details-community.json", method = RequestMethod.POST)
     public @ResponseBody MemberDetailsForm validateMemberDetailsCommunity(@RequestBody MemberDetailsForm consortium) {
         // validate community isn't blank
@@ -152,16 +152,16 @@ public class SelfServiceController extends BaseController {
         }
         return consortium;
     }
-    
+
     @RequestMapping(value = "/validate-member-details.json", method = RequestMethod.POST)
     public @ResponseBody MemberDetailsForm validateMemberDetails(@RequestBody MemberDetailsForm consortium) {
         validateMemberDetailsFields(consortium);
         return consortium;
     }
-    
+
     public void validateMemberDetailsFields(MemberDetailsForm consortium) {
         consortium.setErrors(new ArrayList<String>());
-        
+
         validateMemberDetailsName(consortium);
         validateMemberDetailsWebsite(consortium);
         validateMemberDetailsEmail(consortium);
@@ -173,7 +173,7 @@ public class SelfServiceController extends BaseController {
         copyErrors(consortium.getEmail(), consortium);
         copyErrors(consortium.getDescription(), consortium);
         copyErrors(consortium.getCommunity(), consortium);
-        
+
     }
 
     @RequestMapping(value = "/get-member-details.json", method = RequestMethod.GET)
@@ -287,7 +287,7 @@ public class SelfServiceController extends BaseController {
         }
         return contactsForm;
     }
-    
+
     @RequestMapping(value = "/validate-sub-member-name.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberName(@RequestBody SubMemberForm subMember) {
         // validate website isn't blank
@@ -298,24 +298,24 @@ public class SelfServiceController extends BaseController {
 
         return subMember;
     }
-    
+
     @RequestMapping(value = "/validate-sub-member-website.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberWebsite(@RequestBody SubMemberForm subMember) {
 
         // validate website isn't blank
         subMember.getWebsite().setErrors(new ArrayList<String>());
-        
+
         if (subMember.getWebsite().getValue() == null || subMember.getWebsite().getValue().trim().isEmpty()) {
             setError(subMember.getWebsite(), "manage_consortium.add_submember_website_required");
         }
-        //validate website url
+        // validate website url
         if (!super.validateUrl(subMember.getWebsite().getValue())) {
             setError(subMember.getWebsite(), "manage_consortium.add_submember_website_valid_format");
         }
-        
+
         return subMember;
     }
-    
+
     @RequestMapping(value = "/validate-sub-member.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMember(@RequestBody SubMemberForm subMember) {
         validateAddSubMemberFields(subMember);
@@ -323,10 +323,10 @@ public class SelfServiceController extends BaseController {
     }
 
     @RequestMapping(value = "/check-existing-sub-member.json", method = RequestMethod.POST)
-    public @ResponseBody Member checkExistingMember(@RequestBody SubMemberForm subMember) { 
+    public @ResponseBody Member checkExistingMember(@RequestBody SubMemberForm subMember) {
         Optional<Member> existingMember = salesForceManager.checkExistingMember(subMember.toMember());
         Member tempMember = new Member();
-        if (existingMember.isPresent()){
+        if (existingMember.isPresent()) {
             tempMember.setPublicDisplayName(existingMember.get().getPublicDisplayName());
             tempMember.setWebsiteUrl(existingMember.get().getWebsiteUrl());
             tempMember.setId(existingMember.get().getId());
@@ -335,31 +335,31 @@ public class SelfServiceController extends BaseController {
             tempMember.setWebsiteUrl(null);
             tempMember.setId(null);
         }
-        return tempMember; 
+        return tempMember;
     }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
-    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) { 
-            checkFullAccess(subMember.getParentAccountId());
-            salesForceManager.createMember(subMember.toMember());
-            return subMember; 
+    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) {
+        checkFullAccess(subMember.getParentAccountId());
+        salesForceManager.createMember(subMember.toMember(), subMember.toContact());
+        return subMember;
     }
-    
+
     public void validateAddSubMemberFields(SubMemberForm subMember) {
         subMember.setErrors(new ArrayList<String>());
         boolean subMemberExists = false;
         subMemberExists = salesForceManager.checkExistingSubMember(subMember.toMember(), subMember.getParentAccountId());
-        
-        if(subMemberExists==true){
+
+        if (subMemberExists == true) {
             subMember.getErrors().add(getMessage("manage_consortium.add_submember_member_exists"));
         }
-        
+
         validateSubMemberName(subMember);
         validateSubMemberWebsite(subMember);
 
         copyErrors(subMember.getName(), subMember);
         copyErrors(subMember.getWebsite(), subMember);
-        
+
     }
 
     @RequestMapping(value = "/remove-sub-member.json", method = RequestMethod.POST)
@@ -367,7 +367,7 @@ public class SelfServiceController extends BaseController {
         checkFullAccess(subMember.getParentAccountId());
         salesForceManager.flagOpportunityAsClosed(subMember.getOpportunity().getId());
     }
-    
+
     @RequestMapping(value = "/cancel-sub-member-addition.json", method = RequestMethod.POST)
     public @ResponseBody void cancelSubMemberAddition(@RequestBody SubMember subMember) {
         checkFullAccess(subMember.getParentAccountId());
