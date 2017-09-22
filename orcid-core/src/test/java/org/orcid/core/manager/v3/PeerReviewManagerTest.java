@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Organization;
 import org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress;
@@ -460,7 +461,10 @@ public class PeerReviewManagerTest extends BaseTest {
         address.setCity("city");
         address.setCountry(Iso3166Country.US);
         org.setAddress(address);
-        
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
+        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        org.setDisambiguatedOrganization(disambiguatedOrg);
         peerReview.setOrganization(org);
         peerReview.setType(PeerReviewType.EVALUATION);
         peerReview.setVisibility(Visibility.PUBLIC);
