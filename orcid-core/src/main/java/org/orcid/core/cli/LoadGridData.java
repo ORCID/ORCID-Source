@@ -129,12 +129,12 @@ public class LoadGridData {
         ArrayNode institutes = (ArrayNode) rootNode.get("institutes");
         institutes.forEach(institute -> {
             String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
-            
-            //Case that should never happen
-            if(PojoUtil.isEmpty(sourceId)) {
+
+            // Case that should never happen
+            if (PojoUtil.isEmpty(sourceId)) {
                 LOGGER.error("Invalid institute with null id found {}", institute.toString());
             }
-            
+
             String status = institute.get("status").isNull() ? null : institute.get("status").asText();
             if ("active".equals(status)) {
                 String name = institute.get("name").isNull() ? null : institute.get("name").asText();
@@ -163,7 +163,7 @@ public class LoadGridData {
                 ArrayNode urls = institute.get("links").isNull() ? null : (ArrayNode) institute.get("links");
                 // TODO: Am assuming we are going to use the first URL
                 String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
-                
+
                 // Creates or updates an institute
                 OrgDisambiguatedEntity entity = processInstitute(sourceId, name, country, city, region, url, orgType);
 
@@ -200,8 +200,8 @@ public class LoadGridData {
                 existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
                 orgDisambiguatedDao.merge(existingBySourceId);
                 updatedOrgs++;
-                return existingBySourceId;
             }
+            return existingBySourceId;
         }
 
         // Create a new disambiguated org
