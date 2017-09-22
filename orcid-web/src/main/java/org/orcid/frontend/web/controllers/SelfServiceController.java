@@ -365,7 +365,13 @@ public class SelfServiceController extends BaseController {
     @RequestMapping(value = "/remove-sub-member.json", method = RequestMethod.POST)
     public @ResponseBody void removeSubMember(@RequestBody SubMember subMember) {
         checkFullAccess(subMember.getParentAccountId());
-        salesForceManager.flagOpportunityAsClosed(subMember.getOpportunity().getId());
+        salesForceManager.flagOpportunityAsRemovalRequested(subMember.getOpportunity().getId());
+    }
+
+    @RequestMapping(value = "/cancel-sub-member-removal.json", method = RequestMethod.POST)
+    public @ResponseBody void cancelSubMemberRemoval(@RequestBody SubMember subMember) {
+        checkFullAccess(subMember.getParentAccountId());
+        salesForceManager.flagOpportunityAsRemovalNotRequested(subMember.getOpportunity().getId());
     }
 
     @RequestMapping(value = "/cancel-sub-member-addition.json", method = RequestMethod.POST)

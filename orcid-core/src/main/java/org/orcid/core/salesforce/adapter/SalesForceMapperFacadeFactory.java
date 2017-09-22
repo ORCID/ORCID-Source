@@ -135,6 +135,8 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("consortiumLeadId", "Consortia_Lead__c");
         classMap.field("name", "Name");
         classMap.field("recordTypeId", "RecordTypeId");
+        classMap.field("nextStep", "NextStep");
+        classMap.field("removalRequested", "Consortium_member_removal_requested__c");
         classMap.fieldBToA("Account.Name", "accountName");
         classMap.fieldBToA("Account.Public_Display_Name__c", "accountPublicDisplayName");
         classMap.register();

@@ -221,8 +221,12 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 return subMember.opportunity.stageName == 'Negotiation/Review';
             }
             
+            $scope.isPendingRemoval = function(subMember) {
+                return subMember.opportunity.removalRequested;
+            }
+            
             $scope.canRemoveSubMember = function(subMember) {
-                return $scope.memberDetails.allowedFullAccess && !$scope.isPendingAddition(subMember);
+                return $scope.memberDetails.allowedFullAccess && !$scope.isPendingAddition(subMember) && !$scope.isPendingRemoval(subMember);
             }
 
             $scope.confirmRemoveSubMember = function(subMember) {
@@ -326,6 +330,24 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 }).fail(function() {
                     // something bad is happening!
                     console.log("Problem removing sub member");
+                });
+            };
+            
+            $scope.cancelSubMemberRemoval = function (subMember) {
+                subMember.parentAccountId = $scope.accountId;
+                $.ajax({
+                    url: getBaseUri() + '/self-service/cancel-sub-member-removal.json',
+                    type: 'POST',
+                    data:  angular.toJson(subMember),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function(data) {
+                        $scope.getMemberDetails();
+                        $scope.$apply();
+                        $scope.closeModal();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("Problem cancelling sub member removal");
                 });
             };
 

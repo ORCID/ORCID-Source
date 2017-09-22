@@ -43,6 +43,8 @@ public class Opportunity implements Serializable {
     private String consortiumLeadId;
     private String name;
     private String recordTypeId;
+    private Boolean removalRequested;
+    private String nextStep;
 
     public String getId() {
         return id;
@@ -156,12 +158,28 @@ public class Opportunity implements Serializable {
         this.recordTypeId = recordTypeId;
     }
 
+    public Boolean isRemovalRequested() {
+        return removalRequested;
+    }
+
+    public void setRemovalRequested(Boolean removalRequested) {
+        this.removalRequested = removalRequested;
+    }
+
+    public String getNextStep() {
+        return nextStep;
+    }
+
+    public void setNextStep(String nextStep) {
+        this.nextStep = nextStep;
+    }
+
     @Override
     public String toString() {
         return "Opportunity [id=" + id + ", ownerId=" + ownerId + ", targetAccountId=" + targetAccountId + ", accountName=" + accountName + ", accountPublicDisplayName="
                 + accountPublicDisplayName + ", stageName=" + stageName + ", closeDate=" + closeDate + ", type=" + type + ", memberType=" + memberType
                 + ", membershipStartDate=" + membershipStartDate + ", membershipEndDate=" + membershipEndDate + ", consortiumLeadId=" + consortiumLeadId + ", name="
-                + name + ", recordTypeId=" + recordTypeId + "]";
+                + name + ", recordTypeId=" + recordTypeId + ", removalRequested=" + removalRequested + ", nextStep=" + nextStep + "]";
     }
 
 }
