@@ -219,10 +219,11 @@
                 <h2><@spring.message "manage_consortium.submembers_heading"/></h2>
                 <p><@spring.message "manage_consortium.submembers_text"/></p>
                 <hr></hr>
-            	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountName'">
-					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountName}}</a></span>
-					<span class="tooltip-container pull-right">
-						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)" ng-show="memberDetails.allowedFullAccess"
+            	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountPublicDisplayName'">
+					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountPublicDisplayName}}</a></span>
+					<span class="pull-right" ng-show="isPendingAddition(subMember)">Pending addition <a ng-click="cancelSubMemberAddition(subMember)">cancel</a></span>
+					<span class="tooltip-container pull-right" ng-show="canRemoveSubMember(subMember)">
+						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)"
 	                        class="glyphicon glyphicon-trash grey">
 	                        <div class="popover popover-tooltip top">
 	                            <div class="arrow"></div>
@@ -257,6 +258,22 @@
                             <label for="new-sub-member-website"><@spring.message "manage_consortium.website"/></label>
                             <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="input-95-width" ng-model="newSubMember.website.value" ng-model-onblur ng-change="validateSubMemberField('website')" />
                             <span class="required" ng-class="isValidClass(newSubMember.website)">*</span>
+                            <span class="orcid-error" ng-show="newSubMember.website.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.website.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- initial contact -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label for="new-sub-member-website"><@spring.message "manage_consortium.initial_contact_heading"/></label>
+                            <div><@spring.message "manage_consortium.initial_contact_description"/></div>
+                            <input id="initial-contact-first-name" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_first_name"/>" class="input-xlarge"" ng-model="newSubMember.initialContactFirstName.value" ng-model-onblur ng-change="validateSubMemberField('intial-contact-first-name')" />
+                            <span class="required" ng-class="isValidClass(newSubMember.initialContact.firstName)">*</span>
+                            <input id="initial-contact-last-name" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_last_name"/>" class="input-xlarge" ng-model="newSubMember.initialContactLastName.value" ng-model-onblur ng-change="validateSubMemberField('initial-contact-last-name')" />
+                            <span class="required" ng-class="isValidClass(newSubMember.initialContact.lastName)">*</span>
+                            <input id="initial-contact-email" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_email"/>" class="input-xlarge" ng-model="newSubMember.initialContactEmail.value" ng-model-onblur ng-change="validateSubMemberField('initial-contact-email')" />
+                            <span class="required" ng-class="isValidClass(newSubMember.initialContact.email)">*</span>
                             <span class="orcid-error" ng-show="newSubMember.website.errors.length > 0">
                                 <div ng-repeat='error in newSubMember.website.errors' ng-bind-html="error"></div>
                             </span>
@@ -337,7 +354,7 @@
     <script type="text/ng-template" id="remove-sub-member-modal">
         <div class="lightbox-container">
             <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
-            <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
+            <p> {{subMemberToRemove.opportunity.accountPublicDisplayName}} ({{subMemberToRemove.opportunity.id}})</p>
             <form ng-submit="removeSubMember(subMemberToRemove)">
                 <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
                 <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>

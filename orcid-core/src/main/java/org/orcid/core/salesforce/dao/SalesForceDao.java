@@ -24,6 +24,7 @@ import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OpportunityContactRole;
 
 /**
  * 
@@ -51,7 +52,7 @@ public interface SalesForceDao {
     List<Contact> retrieveAllContactsByAccountId(String accountId);
 
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId);
-    
+
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId, boolean includeNonCurrent);
 
     List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
@@ -84,6 +85,8 @@ public interface SalesForceDao {
 
     void updateOpportunity(Opportunity opportunity);
 
+    void removeOpportunity(String opportunityId);
+
     /**
      * 
      * @return the contact id
@@ -101,6 +104,8 @@ public interface SalesForceDao {
     void updateContactRole(ContactRole contactRole);
 
     void removeContactRole(String contactRoleId);
+
+    String createOpportunityContactRole(OpportunityContactRole contactRole);
 
     String getAccessToken();
 
