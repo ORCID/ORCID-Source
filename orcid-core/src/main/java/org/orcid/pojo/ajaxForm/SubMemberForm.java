@@ -38,6 +38,9 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
     private List<String> errors = new ArrayList<String>();
     private Text name;
     private Text website;
+    private Text initialContactFirstName;
+    private Text initialContactLastName;
+    private Text initialContactEmail;
 
     public String getAccountId() {
         return accountId;
@@ -79,6 +82,30 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
 
     public void setWebsite(Text website) {
         this.website = website;
+    }
+
+    public Text getInitialContactFirstName() {
+        return initialContactFirstName;
+    }
+
+    public void setInitialContactFirstName(Text initialContactFirstName) {
+        this.initialContactFirstName = initialContactFirstName;
+    }
+
+    public Text getInitialContactLastName() {
+        return initialContactLastName;
+    }
+
+    public void setInitialContactLastName(Text initialContactLastName) {
+        this.initialContactLastName = initialContactLastName;
+    }
+
+    public Text getInitialContactEmail() {
+        return initialContactEmail;
+    }
+
+    public void setInitialContactEmail(Text initialContactEmail) {
+        this.initialContactEmail = initialContactEmail;
     }
 
     public static SubMemberForm fromMemberDetails(MemberDetails memberDetails) {
