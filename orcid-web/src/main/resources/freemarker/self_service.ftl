@@ -222,8 +222,9 @@
                 <hr></hr>
             	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountPublicDisplayName'">
 					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountPublicDisplayName}}</a></span>
+                    <!-- Pending addition -->
 					<span class="tooltip-container pull-right pending-addition" ng-show="isPendingAddition(subMember)"><@orcid.msg 'manage_consortium.add_submember_pending_addition'/>
-                        <a id="cancelRemoveSubmember" name="{{subMember.opportunity.accountPublicDisplayName}}" ng-click="cancelSubMemberAddition(subMember)" class="glyphicon glyphicon-remove-circle">
+                        <a id="cancelAddSubmember" name="{{subMember.opportunity.accountPublicDisplayName}}" ng-click="cancelSubMemberAddition(subMember)" class="glyphicon glyphicon-remove-circle">
                             <div class="popover popover-tooltip top">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
@@ -232,7 +233,19 @@
                             </div>
                         </a>
                     </span>
-					<span class="tooltip-container pull-right" ng-show="canRemoveSubMember(subMember)">
+                    <!-- Pending removal -->
+                    <span class="tooltip-container pull-right pending-removal" ng-show="isPendingRemoval(subMember)"><@orcid.msg 'manage_consortium.add_submember_pending_removal'/> 
+                        <a id="cancelRemoveSubmember" name="{{subMember.opportunity.accountPublicDisplayName}}" ng-click="cancelSubMemberRemoval(subMember)" class="glyphicon glyphicon-remove-circle">
+                            <div class="popover popover-tooltip top">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <span><@orcid.msg "manage_consortium.add_submember_pending_removal_cancel"/></span>
+                                </div>
+                            </div>
+                        </a>
+                    </span>
+					<!-- Request removal -->
+                    <span class="tooltip-container pull-right" ng-show="canRemoveSubMember(subMember)">
 						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)"
 	                        class="glyphicon glyphicon-trash grey">
 	                        <div class="popover popover-tooltip top">
@@ -352,6 +365,7 @@
     <script type="text/ng-template" id="revoke-contact-modal">
 	    <div class="lightbox-container">
 	        <h3><@orcid.msg 'manage_consortium.remove_contact_confirm_heading'/></h3>
+            <p><@orcid.msg 'manage_consortium.remove_contact_confirm_text1'/></p>
 	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
 	        <form ng-submit="revoke(contactToRevoke)">
 	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
@@ -366,7 +380,8 @@
     <script type="text/ng-template" id="remove-sub-member-modal">
         <div class="lightbox-container">
             <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
-            <p> {{subMemberToRemove.opportunity.accountPublicDisplayName}} ({{subMemberToRemove.opportunity.id}})</p>
+            <p><strong>{{subMemberToRemove.opportunity.accountPublicDisplayName}}</strong> <@orcid.msg 'manage_consortium.remove_consortium_member_confirm_text1'/></p>
+            <p><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_text2'/></p>
             <form ng-submit="removeSubMember(subMemberToRemove)">
                 <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
                 <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>

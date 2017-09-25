@@ -238,7 +238,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     onLoad: function() {
                         $('#cboxClose').remove();
                     },
-                    onComplete: function() {$.colorbox.resize();},
+                    onComplete: function() {$.colorbox.resize({width: "500px"});},
                     scrolling: true
 
                 });

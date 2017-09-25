@@ -7454,8 +7454,18 @@ ul.comma li:last-child:after {
     color: green;
 }
 
-.self-service .pending-addition a:hover{
+.self-service .pending-addition a:hover,
+.self-service .pending-removal a:hover {
     color: #494a4c;
+}
+
+.self-service .pending-removal{
+    color: red;
+    font-style: italic;
+}
+
+.self-service .pending-removal a{
+    color: red;
 }
 
 .self-service select{
