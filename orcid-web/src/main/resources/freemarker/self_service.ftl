@@ -222,6 +222,7 @@
             	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountPublicDisplayName'">
 					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountPublicDisplayName}}</a></span>
 					<span class="pull-right" ng-show="isPendingAddition(subMember)">Pending addition <a ng-click="cancelSubMemberAddition(subMember)">cancel</a></span>
+					<span class="pull-right" ng-show="isPendingRemoval(subMember)">Pending removal <a ng-click="cancelSubMemberRemoval(subMember)">cancel</a></span>
 					<span class="tooltip-container pull-right" ng-show="canRemoveSubMember(subMember)">
 						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)"
 	                        class="glyphicon glyphicon-trash grey">

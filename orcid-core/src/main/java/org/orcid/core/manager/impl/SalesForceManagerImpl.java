@@ -415,6 +415,36 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
+    public void flagOpportunityAsRemovalRequested(String opportunityId) {
+        String userOrcid = sourceManager.retrieveRealUserOrcid();
+        String accountId = retrieveAccountIdByOrcid(userOrcid);
+        checkOpportunityUpdatePermissions(opportunityId);
+        Opportunity opportunity = new Opportunity();
+        opportunity.setId(opportunityId);
+        opportunity.setRemovalRequested(true);
+        opportunity.setNextStep("Removal requested by " + userOrcid);
+        salesForceDao.updateOpportunity(opportunity);
+        salesForceMembersListCache.removeAll();
+        removeMemberDetailsFromCache(accountId);
+        salesForceConsortiumCache.remove(accountId);
+    }
+
+    @Override
+    public void flagOpportunityAsRemovalNotRequested(String opportunityId) {
+        String userOrcid = sourceManager.retrieveRealUserOrcid();
+        String accountId = retrieveAccountIdByOrcid(userOrcid);
+        checkOpportunityUpdatePermissions(opportunityId);
+        Opportunity opportunity = new Opportunity();
+        opportunity.setId(opportunityId);
+        opportunity.setRemovalRequested(false);
+        opportunity.setNextStep("Removal request cancelled by " + userOrcid);
+        salesForceDao.updateOpportunity(opportunity);
+        salesForceMembersListCache.removeAll();
+        removeMemberDetailsFromCache(accountId);
+        salesForceConsortiumCache.remove(accountId);
+    }
+
+    @Override
     public void removeOpportunity(String opportunityId) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         checkOpportunityUpdatePermissions(opportunityId);

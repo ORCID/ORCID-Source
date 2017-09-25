@@ -48,7 +48,9 @@
     "Membership_Start_Date__c": "2017-01-01",
     "Membership_End_Date__c": "2017-12-31",
     "RecordTypeId": "[CONSORTIUM MEMBER RECORD TYPE ID]",
-    "Consortia_Lead__c": "[ORG1 ACCOUNT ID]"
+    "Consortia_Lead__c": "[ORG1 ACCOUNT ID]",
+    "NextStep" : "Next step description",
+    "Consortium_member_removal_requested__c" : true
 },
 {
     "attributes" : {
