@@ -1,0 +1,9 @@
+{
+	"version": "test#1",
+	"institutes": [
+		{"id":"grid.r.1","status":"redirected","redirect":"grid.1"},
+		{"id":"grid.r.2","status":"redirected","redirect":"grid.2"},
+		{"id":"grid.o.1","status":"obsolete"},
+		{"id":"grid.o.2","status":"obsolete"}
+	]
+}

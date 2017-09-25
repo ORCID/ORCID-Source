@@ -14,13 +14,11 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.constants;
+package org.orcid.persistence.dao;
 
-/**
- * 
- * @author Angel Montenegro
- * 
- */
-public enum OrganizationStatus {
-    DEPRECATED, OBSOLETE;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+
+public interface OrgDisambiguatedExternalIdentifierDao extends GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> {
+
+    OrgDisambiguatedExternalIdentifierEntity findByDetails(Long orgDisambiguatedId, String identifier, String identifierType);
 }

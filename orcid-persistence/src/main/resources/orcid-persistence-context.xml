@@ -236,9 +236,7 @@
     	<property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     
-	<bean id="orgDisambiguatedExternalIdentifierEntityDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity" />
-    </bean>                
+	<bean id="orgDisambiguatedExternalIdentifierDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedExternalIdentifierDaoImpl" />
                 
 	<bean id="customEmailDao" class="org.orcid.persistence.dao.impl.CustomEmailDaoImpl" />	
 

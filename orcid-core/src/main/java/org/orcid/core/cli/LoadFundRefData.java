@@ -38,8 +38,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
@@ -84,7 +84,7 @@ public class LoadFundRefData {
     private File fileToLoad;
 
     // Resources
-    private GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> orgDisambiguatedExternalIdentifierDao;
+    private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private String apiUser;
     // Cache
@@ -130,7 +130,7 @@ public class LoadFundRefData {
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
-        orgDisambiguatedExternalIdentifierDao = (GenericDao) context.getBean("orgDisambiguatedExternalIdentifierEntityDao");
+        orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
