@@ -7291,20 +7291,23 @@ a:hover .mozilla-badge {
     color: #494a4c;
 }
 
-.tooltip-container a.glyphicon-trash .popover-tooltip {
+.tooltip-container a.glyphicon-trash .popover-tooltip,
+.tooltip-container a.glyphicon-remove-circle .popover-tooltip {
     display: none;
     min-width: 30px;
     top: -43px;
     left: -27px;
 }
 
-.tooltip-container a.glyphicon-trash:hover .popover-tooltip {
+.tooltip-container a.glyphicon-trash:hover .popover-tooltip,
+.tooltip-container a.glyphicon-remove-circle:hover .popover-tooltip  {
     display: block;
     cursor: normal;
     color: #494a4c;
 }
 
-.tooltip-container a.glyphicon-trash:hover .arrow {
+.tooltip-container a.glyphicon-trash:hover .arrow,
+.tooltip-container a.glyphicon-remove-circle:hover .arrow {
     left: 34px;
 }
 
@@ -7440,6 +7443,19 @@ ul.comma li:last-child:after {
 
 .self-service .input-md  {
     width: 160px;
+}
+
+.self-service .pending-addition{
+    color: green;
+    font-style: italic;
+}
+
+.self-service .pending-addition a{
+    color: green;
+}
+
+.self-service .pending-addition a:hover{
+    color: #494a4c;
 }
 
 .self-service select{
