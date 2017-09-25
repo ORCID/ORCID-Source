@@ -70,6 +70,7 @@ public class SalesForceAdapterTest {
         assertEquals("orcid@org2.org", member.getPublicDisplayEmail());
         assertEquals("006J000000LThfbIAD", member.getMainOpportunityId());
         assertEquals("001J000001pZwWWIA0", member.getConsortiumLeadId());
+        assertEquals("2017-02-03", member.getLastMembershipStartDate());
     }
 
     @Test
@@ -90,6 +91,7 @@ public class SalesForceAdapterTest {
         assertEquals("orcid@org3.org", member.getPublicDisplayEmail());
         assertEquals("006J000000LThfcIAD", member.getMainOpportunityId());
         assertNull(member.getConsortiumLeadId());
+        assertNull(member.getLastMembershipStartDate());
     }
 
     @Test
@@ -110,6 +112,7 @@ public class SalesForceAdapterTest {
         assertEquals("orcid@org2.org", member.getPublicDisplayEmail());
         assertEquals("006J000000LThfbIAD", member.getMainOpportunityId());
         assertEquals("001J000001pZwWWIA0", member.getConsortiumLeadId());
+        assertEquals("2017-02-03", member.getLastMembershipStartDate());
     }
 
     @Test
@@ -129,6 +132,8 @@ public class SalesForceAdapterTest {
         JSONArray inputArray = new JSONArray(inputString);
         Opportunity opportunity = salesForceAdapter.createOpportunityFromSalesForceRecord(inputArray.getJSONObject(1));
         assertEquals("[ORG2 ACCOUNT ID]", opportunity.getTargetAccountId());
+        assertEquals("Another consortium member org", opportunity.getAccountName());
+        assertEquals("Another consortium member org Public Display Name", opportunity.getAccountPublicDisplayName());
         assertEquals("Invoice Paid", opportunity.getStageName());
         assertEquals("2016-12-21", opportunity.getCloseDate());
         assertEquals("New", opportunity.getType());

@@ -1179,8 +1179,8 @@
         <property name="timeToLiveSeconds" value="3600" />
         <property name="timeToIdleSeconds" value="3600" />
         <property name="strategy" value="NONE" />
-        <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnRead" value="true" />
+        <property name="copyOnWrite" value="true" />
         <property name="cacheEntryFactory">
             <bean class="org.orcid.core.salesforce.cache.MemberDetailsCacheEntryFactory" />
         </property>
@@ -1333,7 +1333,7 @@
 	
 	<!-- CDN config path -->
 	<bean id="cdnConfigFile" class="java.lang.String">
-		<constructor-arg value="cdn_url.txt"/>
+		<constructor-arg value="cdn_active_url.txt"/>
 	</bean>
 	
 	<bean id="jpaJaxbEntityAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEntityAdapterImpl">

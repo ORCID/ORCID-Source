@@ -110,38 +110,18 @@ public class OrgManagerImpl implements OrgManager {
     	return orgDao.getOrgsByName(searchTerm);
     }            
     
-    @Override
-    public OrgEntity createUpdate(OrgEntity org) {
-        OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(org.getName(), org.getCity(), org.getRegion(), org.getCountry());
-        if (existingOrg != null) {
-            return existingOrg;
+    private OrgEntity matchOrCreateOrg(OrgEntity org) {
+        OrgEntity match = orgDao.findByAddressAndDisambiguatedOrg(org.getName(), org.getCity(), org.getRegion(), org.getCountry(), org.getOrgDisambiguated());
+        if (match != null) {
+            return match;
         }
+        
         String sourceId = sourceManager.retrieveSourceOrcid();
         org.setSource(new SourceEntity(sourceId));
         orgDao.persist(org);
         return org;
     }
 
-    @Override
-    public OrgEntity createUpdate(OrgEntity org, Long orgDisambiguatedId) {
-        OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(org.getName(), org.getCity(), org.getRegion(), org.getCountry());
-        if (existingOrg != null) {
-            org = existingOrg;
-        }
-        if (org.getOrgDisambiguated() == null) {
-            OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.find(orgDisambiguatedId);
-            if (disambiguatedOrg == null) {
-                throw new IllegalArgumentException("No such disambiguated org with id=" + orgDisambiguatedId);
-            }
-            org.setOrgDisambiguated(disambiguatedOrg);
-        }
-        if (org.getSource() == null) {
-            org.setSource(new SourceEntity(sourceManager.retrieveSourceOrcid()));
-        }
-        return orgDao.merge(org);
-    }
-    
-    
     @Override
     public OrgEntity getOrgEntity(OrganizationHolder holder) {
         if(holder == null)
@@ -154,11 +134,12 @@ public class OrgManagerImpl implements OrgManager {
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
         orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));
+        
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
             orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
                     .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
         }
-        return createUpdate(orgEntity);        
+        return matchOrCreateOrg(orgEntity);        
     }
     
     @Override

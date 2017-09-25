@@ -43,6 +43,7 @@ import org.orcid.jaxb.model.v3.dev1.common.ContributorRole;
 import org.orcid.jaxb.model.v3.dev1.common.Country;
 import org.orcid.jaxb.model.v3.dev1.common.CreditName;
 import org.orcid.jaxb.model.v3.dev1.common.Day;
+import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Month;
@@ -426,6 +427,27 @@ public class ActivityValidatorTest {
         activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
     }
     
+    @Test(expected = OrcidValidationException.class)
+    public void validateFundingWithoutOrg() {
+        Funding f = getFunding();
+        f.setOrganization(null);
+        activityValidator.validateFunding(f, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateFundingWithoutDisambiguatedOrg() {
+        Funding f = getFunding();
+        f.getOrganization().setDisambiguatedOrganization(null);
+        activityValidator.validateFunding(f, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateFundingWithoutDisambiguatedOrgId() {
+        Funding f = getFunding();
+        f.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
+        activityValidator.validateFunding(f, null, false, true, Visibility.PUBLIC);
+    }
+    
     public Funding getFunding() {
         Funding funding = new Funding();
         Amount amount = new Amount();
@@ -492,6 +514,27 @@ public class ActivityValidatorTest {
         activityValidator.validateEmployment(employment, null, false, true, Visibility.PUBLIC);
     }
     
+    @Test(expected = OrcidValidationException.class)
+    public void validateEmploymentWithoutOrg() {
+        Employment e = getEmployment();
+        e.setOrganization(null);
+        activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateEmploymentWithoutDisambiguatedOrg() {
+        Employment e = getEmployment();
+        e.getOrganization().setDisambiguatedOrganization(null);
+        activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateEmploymentWithoutDisambiguatedOrgId() {
+        Employment e = getEmployment();
+        e.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
+        activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
+    }
+    
     @Test
     public void validateEducation_validEducationTest() {
         Education education = getEducation();
@@ -510,6 +553,27 @@ public class ActivityValidatorTest {
         Education education = getEducation();
         education.setVisibility(Visibility.LIMITED);
         activityValidator.validateEducation(education, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateEducationWithoutOrg() {
+        Education e = getEducation();
+        e.setOrganization(null);
+        activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateEducationWithoutDisambiguatedOrg() {
+        Education e = getEducation();
+        e.getOrganization().setDisambiguatedOrganization(null);
+        activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateEducationWithoutDisambiguatedOrgId() {
+        Education e = getEducation();
+        e.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
+        activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
     }
     
     public Employment getEmployment() {
@@ -591,6 +655,27 @@ public class ActivityValidatorTest {
     public void validatePeerReview_dontChangeVisibilityTest() {        
         PeerReview pr = getPeerReview();
         pr.setVisibility(Visibility.LIMITED);
+        activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validatePeerReviewWithoutOrg() {
+        PeerReview pr = getPeerReview();
+        pr.setOrganization(null);
+        activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validatePeerReviewWithoutDisambiguatedOrg() {
+        PeerReview pr = getPeerReview();
+        pr.getOrganization().setDisambiguatedOrganization(null);
+        activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validatePeerReviewWithoutDisambiguatedOrgId() {
+        PeerReview pr = getPeerReview();
+        pr.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
@@ -728,6 +813,14 @@ public class ActivityValidatorTest {
         address.setRegion("region");
         org.setAddress(address);
         org.setName("name");
+        org.setDisambiguatedOrganization(getDisambiguatedOrganization());
         return org;
+    }
+
+    private DisambiguatedOrganization getDisambiguatedOrganization() {
+        DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
+        disambiguatedOrganization.setDisambiguatedOrganizationIdentifier("some-identifier");
+        disambiguatedOrganization.setDisambiguationSource("FUNDREF");
+        return disambiguatedOrganization;
     }
 }
