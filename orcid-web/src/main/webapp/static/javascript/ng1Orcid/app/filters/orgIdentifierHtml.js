@@ -13,28 +13,28 @@ angular.module('orcidApp').filter('orgIdentifierHtml', ['affiliationsSrvc', '$fi
         if (type != null) {
             if (type == 'TEST') {
                 link = TEST_BASE_URL + value;
-                output += '<div class="col-md-2 no-padding-right">Test Id:</div>';
+                output += 'Test Id: ';
             } else if (type == 'FUNDREF') {
                 link = value;
-                output += '<div class="col-md-2 no-padding-right">' + om.get('affiliation.org_id.value.label.fundref') + ": </div>";
-            } else if (type.value == 'GRID') {
+                output += om.get('affiliation.org_id.value.label.fundref') + ": </div>";
+            } else if (type == 'GRID') {
                 link = GRID_BASE_URL + value;
-                output += '<div class="col-md-2 no-padding-right">' + om.get('affiliation.org_id.value.label.grid') + ": </div>";
+                output += om.get('affiliation.org_id.value.label.grid') + ": ";
             } else if (type == 'RINGGOLD') {
-                output += '<div class="col-md-2 no-padding-right">' + om.get('affiliation.org_id.value.label.ringgold') + ": </div>";
+                output += om.get('affiliation.org_id.value.label.ringgold') + ": ";
             } else {
                 link = null;
-                output += '<div class="col-md-2 no-padding-right">' + type + ": </div>";
+                output += type + ": ";
             }
             
         }         
         
         if(link != null) {
             if(value != null) {
-                output += '<div class="col-md-10  no-padding"><a href=' + link + "' class='truncate-anchor' target='orcid.blank' ng-mouseenter='showURLPopOver(" + putCode + ")' ng-mouseleave='hideURLPopOver(" + putCode + ")'>" + value.escapeHtml() + "</a>";
+                output += '<a href=' + link + "' class='truncate-anchor' target='orcid.blank' ng-mouseenter='showURLPopOver(" + putCode + ")' ng-mouseleave='hideURLPopOver(" + putCode + ")'>" + value.escapeHtml() + "</a>";
             }
         } else if(value != null) {
-            output = output + " " + value.escapeHtml();
+            output = output + ' ' + value.escapeHtml();
         }
         
         if( link != null ) {            

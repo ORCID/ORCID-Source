@@ -18,7 +18,7 @@
 -->
 <div class="row"> 
     <!-- Privacy Settings -->
-    <div class="col-md-3 col-sm-3 col-xs-6 right padding-left-fix">          
+    <div class="col-md-3 col-sm-3 col-xs-5 right padding-left-fix">          
         <div class="workspace-toolbar">         
             <ul class="workspace-private-toolbar"> 
                 <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'> 
