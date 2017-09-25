@@ -7482,8 +7482,16 @@ ul.comma li:last-child:after {
     font-size: 12px;
 }
 
+.no-padding {
+    padding: 0;
+}
+
 .no-padding-left {
     padding-left: 0px;
+}
+
+.no-padding-right{
+    padding-right: 0;
 }
 
 .footer-main {

@@ -91,7 +91,7 @@
     					<@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
     				</div>
                 </@orcid.checkFeatureStatus>			
-				<div class="col-md-2 col-sm-2 col-xs-6">
+				<div class="col-md-2 col-sm-2 col-xs-6 pull-right">
 					<ul class="sources-options">
 						<#if !(isPublicProfile??)>
 							<li ng-if="group.getActive().source == '${effectiveUserOrcid}'">

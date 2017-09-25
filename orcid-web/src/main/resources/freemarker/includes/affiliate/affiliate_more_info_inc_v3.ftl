@@ -22,15 +22,20 @@
 	</div>
 	<span class="dotted-bar"></span>	
 	<div class="row">
-		<div class="col-md-6" ng-if="group.getActive().orgDisambiguatedId.value">
+		<div ng-if="group.getActive().orgDisambiguatedId.value">
 			<div class="bottomBuffer">
-	            <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
-	            <span ng-bind="group.getActive().disambiguationSource.value" ng-cloak></span>:
-	            <a ng-if="group.getActive().orgDisambiguatedSourceUrl.value" ng-cloak href="group.getActive().orgDisambiguatedSourceUrl.value" target=""><span ng-bind="group.getActive().orgDisambiguatedId.value" ng-cloak></span></a><br>
-	            <span ng-bind="group.getActive().disambiguatedAffiliation.value"></span>: <span ng-bind="group.getActive().disambiguatedAffiliation.city"></span>, <span ng-if="group.getActive().disambiguatedAffiliation.region" ng-cloak><span ng-bind="group.getActive().disambiguatedAffiliation.region"></span>, </span><span ng-bind="group.getActive().disambiguatedAffiliation.country"></span><br>
-	            <span ng-if="group.getActive().disambiguatedAffiliation.url">
-	                <a href="group.getActive().disambiguatedAffiliation.url" target=""><span ng-bind="group.getActive().disambiguatedAffiliation.url" ng-cloak></span></a>
-	            </span>
+	            <div class="col-md-12">   
+                    <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+                </div>
+                    <span bind-html-compile='group.getActive().orgDisambiguatedId.value | orgIdentifierHtml:group.getActive().disambiguationSource.value:group.getActive().putCode.value:group.getActive().disambiguationSource' class="url-popover"> 
+                    </span>
+                
+                <div class="cold-md-10 col-md-offset-2">
+    	            <span ng-bind="group.getActive().disambiguatedAffiliation.value"></span>: <span ng-bind="group.getActive().disambiguatedAffiliation.city"></span>, <span ng-if="group.getActive().disambiguatedAffiliation.region" ng-cloak><span ng-bind="group.getActive().disambiguatedAffiliation.region"></span>, </span><span ng-bind="group.getActive().disambiguatedAffiliation.country"></span><br>
+                    <span ng-if="group.getActive().disambiguatedAffiliation.url">
+    	                <a href="group.getActive().disambiguatedAffiliation.url" target=""><span ng-bind="group.getActive().disambiguatedAffiliation.url" ng-cloak></span></a>
+    	            </span>
+                </div>
 	        </div>
         </div>
         <div class="col-md-6" ng-if="group.getActive().url.value" ng-cloak>
