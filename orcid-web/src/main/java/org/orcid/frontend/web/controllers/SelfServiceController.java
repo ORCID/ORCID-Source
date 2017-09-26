@@ -287,6 +287,38 @@ public class SelfServiceController extends BaseController {
         }
         return contactsForm;
     }
+    
+    @RequestMapping(value = "/validate-sub-member-initial-contact-email.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMemberInitialContactEmail(@RequestBody SubMemberForm subMember) {
+        // validate initial contact email is correct format
+        subMember.getInitialContactEmail().setErrors(new ArrayList<String>());
+        if (!super.validateEmailAddress(subMember.getInitialContactEmail().getValue())) {
+            setError(subMember.getInitialContactEmail(), "manage_consortium.email_valid_format");
+        }
+        return subMember;
+    }
+    
+    @RequestMapping(value = "/validate-sub-member-initial-contact-first-name.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMemberInitialContactFirstName(@RequestBody SubMemberForm subMember) {
+        // validate initial contact first name isn't blank
+        subMember.getInitialContactFirstName().setErrors(new ArrayList<String>());
+        if (subMember.getInitialContactFirstName().getValue() == null || subMember.getInitialContactFirstName().getValue().trim().isEmpty()) {
+            setError(subMember.getInitialContactFirstName(), "manage_consortium.add_submember_error_initial_contact_first_name");
+        }
+
+        return subMember;
+    }
+    
+    @RequestMapping(value = "/validate-sub-member-initial-contact-last-name.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm validateSubMemberInitialContactLastName(@RequestBody SubMemberForm subMember) {
+        // validate initial contact last name isn't blank
+        subMember.getInitialContactLastName().setErrors(new ArrayList<String>());
+        if (subMember.getInitialContactLastName().getValue() == null || subMember.getInitialContactLastName().getValue().trim().isEmpty()) {
+            setError(subMember.getInitialContactLastName(), "manage_consortium.add_submember_error_initial_contact_last_name");
+        }
+
+        return subMember;
+    }
 
     @RequestMapping(value = "/validate-sub-member-name.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberName(@RequestBody SubMemberForm subMember) {
@@ -356,9 +388,15 @@ public class SelfServiceController extends BaseController {
 
         validateSubMemberName(subMember);
         validateSubMemberWebsite(subMember);
+        validateSubMemberInitialContactEmail(subMember);
+        validateSubMemberInitialContactFirstName(subMember);
+        validateSubMemberInitialContactLastName(subMember);
 
         copyErrors(subMember.getName(), subMember);
         copyErrors(subMember.getWebsite(), subMember);
+        copyErrors(subMember.getInitialContactEmail(), subMember);
+        copyErrors(subMember.getInitialContactFirstName(), subMember);
+        copyErrors(subMember.getInitialContactLastName(), subMember);
 
     }
 

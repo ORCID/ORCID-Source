@@ -100,6 +100,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.validateSubMember = function () {
+                $scope.addSubMemberShowLoader = true;
                 $scope.newSubMember.parentAccountId = $scope.accountId;
                 $.ajax({
                     url: getBaseUri()+'/self-service/validate-sub-member.json',
@@ -118,6 +119,9 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 }).fail(function() {
                     // something bad is happening!
                     console.log("validate submember error");
+                    $scope.errorAddingSubMember = true;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
 
@@ -144,6 +148,8 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     // something bad is happening!
                     console.log("error adding submember");
                     $scope.errorAddingSubMember = true;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
 
@@ -176,16 +182,29 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                             $scope.addSubMemberDisabled = false;
                             $scope.newSubMember.name.value = "";
                             $scope.newSubMember.website.value = "";
+                            $scope.newSubMember.initialContactEmail.value = "";
+                            $scope.newSubMember.initialContactFirstName.value = "";
+                            $scope.newSubMember.initialContactLastName.value = "";
+                            $scope.newSubMember.errors = [];
+                            $scope.newSubMember.name.errors = [];
+                            $scope.newSubMember.website.errors = [];
+                            $scope.newSubMember.initialContactEmail.errors = [];
+                            $scope.newSubMember.initialContactFirstName.errors = [];
+                            $scope.newSubMember.initialContactLastName.errors = [];
                             $.colorbox.close();
                             $scope.$apply();
                         }
                         else{
                             $scope.errors = data.errors;
+                            $scope.addSubMemberShowLoader = false;
                             $scope.$apply();
                         }
                     }
                 }).fail(function() {
                     console.log("Error adding submember.");
+                    $scope.errorAddingSubMember = true;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
 
@@ -238,7 +257,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     onLoad: function() {
                         $('#cboxClose').remove();
                     },
-                    onComplete: function() {$.colorbox.resize();},
+                    onComplete: function() {$.colorbox.resize({width: "500px"});},
                     scrolling: true
 
                 });
