@@ -295,12 +295,18 @@
                             <div><@spring.message "manage_consortium.initial_contact_description"/></div>
                             <input id="initial-contact-first-name" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_first_name"/>" class="input-95-width" ng-model="newSubMember.initialContactFirstName.value" ng-model-onblur ng-change="validateSubMemberField('intial-contact-first-name')" />
                             <span class="required" ng-class="isValidClass(newSubMember.initialContact.firstName)">*</span>
+                            <span class="orcid-error" ng-show="newSubMember.initialContactFirstName.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.initialContactFirstName.errors' ng-bind-html="error"></div>
+                            </span>
                             <input id="initial-contact-last-name" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_last_name"/>" class="input-95-width" ng-model="newSubMember.initialContactLastName.value" ng-model-onblur ng-change="validateSubMemberField('initial-contact-last-name')" />
                             <span class="required" ng-class="isValidClass(newSubMember.initialContact.lastName)">*</span>
+                            <span class="orcid-error" ng-show="newSubMember.initialContactLastName.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.initialContactLastName.errors' ng-bind-html="error"></div>
+                            </span>
                             <input id="initial-contact-email" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_email"/>" class="input-95-width" ng-model="newSubMember.initialContactEmail.value" ng-model-onblur ng-change="validateSubMemberField('initial-contact-email')" />
                             <span class="required" ng-class="isValidClass(newSubMember.initialContact.email)">*</span>
-                            <span class="orcid-error" ng-show="newSubMember.website.errors.length > 0">
-                                <div ng-repeat='error in newSubMember.website.errors' ng-bind-html="error"></div>
+                            <span class="orcid-error" ng-show="newSubMember.initialContactEmail.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.initialContactEmail.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
                     </div>

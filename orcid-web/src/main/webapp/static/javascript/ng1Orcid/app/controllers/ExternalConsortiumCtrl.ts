@@ -100,6 +100,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.validateSubMember = function () {
+                $scope.addSubMemberShowLoader = true;
                 $scope.newSubMember.parentAccountId = $scope.accountId;
                 $.ajax({
                     url: getBaseUri()+'/self-service/validate-sub-member.json',
@@ -176,6 +177,9 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                             $scope.addSubMemberDisabled = false;
                             $scope.newSubMember.name.value = "";
                             $scope.newSubMember.website.value = "";
+                            $scope.newSubMember.initialContactEmail.value = "";
+                            $scope.newSubMember.initialContactFirstName.value = "";
+                            $scope.newSubMember.initialContactLastName.value = "";
                             $.colorbox.close();
                             $scope.$apply();
                         }
