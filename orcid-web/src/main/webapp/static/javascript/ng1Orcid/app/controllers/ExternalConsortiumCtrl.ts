@@ -180,6 +180,12 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                             $scope.newSubMember.initialContactEmail.value = "";
                             $scope.newSubMember.initialContactFirstName.value = "";
                             $scope.newSubMember.initialContactLastName.value = "";
+                            $scope.newSubMember.errors = [];
+                            $scope.newSubMember.name.errors = [];
+                            $scope.newSubMember.website.errors = [];
+                            $scope.newSubMember.initialContactEmail.errors = [];
+                            $scope.newSubMember.initialContactFirstName.errors = [];
+                            $scope.newSubMember.initialContactLastName.errors = [];
                             $.colorbox.close();
                             $scope.$apply();
                         }
