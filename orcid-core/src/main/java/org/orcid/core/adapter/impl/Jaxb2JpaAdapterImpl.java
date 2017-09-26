@@ -134,6 +134,7 @@ import org.springframework.util.Assert;
  * @author Declan Newman (declan)
  */
 
+@Deprecated
 public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource(name = "securityQuestionDao")
@@ -327,7 +328,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             
             workEntity.setAddedToProfileDate(new Date());
             //Set source
-            setSource(orcidWork.getSource(), workEntity);
+            SourceEntity source = sourceManager.retrieveSourceEntity();                    
+            setSource(source, workEntity);
                         
             if(workEntity.getDisplayIndex() == null) {
                 workEntity.setDisplayIndex(0L);
@@ -1197,7 +1199,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
                         
             //Set source
-            setSource(affiliation.getSource(), orgRelationEntity);
+            SourceEntity source = sourceManager.retrieveSourceEntity();                    
+            setSource(source, orgRelationEntity);
             
             orgRelationEntity.setDepartment(affiliation.getDepartmentName());
             orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
@@ -1235,7 +1238,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 }
                 profileFundingEntity = new ProfileFundingEntity();
                 //Set source
-                setSource(funding.getSource(), profileFundingEntity);                
+                SourceEntity source = sourceManager.retrieveSourceEntity();                    
+                setSource(source, profileFundingEntity);
             } else {
                 profileFundingEntity = exisitingProfileFundingEntity;
                 profileFundingEntity.clean();
@@ -1379,18 +1383,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private void setSource(Source source, SourceAwareEntity<?> entity) {
-        if (source != null) {
-            if(source.getSourceOrcid() != null) {
-                entity.setSourceId(source.getSourceOrcid().getPath());
-            }
-            
-            if(source.getSourceClientId() != null) {
-                entity.setClientSourceId(source.getSourceClientId().getPath());
-            }
-        }
-    }
-    
     private void setSource(SourceEntity source, SourceAwareEntity<?> entity) {
         if(source != null){
             if(source.getSourceProfile() != null) {
