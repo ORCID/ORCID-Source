@@ -31,11 +31,35 @@ export const PublicEduAffiliation = angular.module('orcidApp').controller(
             $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
             $scope.utilsService = utilsService;
             $scope.workspaceSrvc = workspaceSrvc;
-         
+            $scope.showElement = {};
             $scope.printView = $scope.utilsService.isPrintView(window.location.pathname);
 
             $scope.closeMoreInfo = function(key) {
                 $scope.moreInfo[key]=false;
+            };
+
+            $scope.getDisambiguatedAffiliation = function(id) {
+                $.ajax({
+                    url: getBaseUri() + '/affiliations/disambiguated/id/' + id,
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function(data) {
+                        if (data != null) {
+                            console.log(data);
+                            $scope.disambiguatedAffiliation = data;
+                            $scope.editAffiliation.orgDisambiguatedId.value = id;
+                            $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
+                            $scope.editAffiliation.disambiguationSource = data.sourceType;
+                            $scope.$apply();
+                        }
+                    }
+                }).fail(function(){
+                    console.log("error getDisambiguatedAffiliation(id)");
+                });
+            };
+
+            $scope.hideTooltip = function (element){        
+                $scope.showElement[element] = false;
             };
 
             // remove once grouping is live
@@ -46,9 +70,13 @@ export const PublicEduAffiliation = angular.module('orcidApp').controller(
                 }
             };
 
-            $scope.showDetailsMouseClick = function(key, $event) {
+            $scope.showDetailsMouseClick = function(group, $event) {
                 $event.stopPropagation();
-                $scope.moreInfo[key] = !$scope.moreInfo[key];
+                $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];   
+            };
+
+            $scope.showTooltip = function (element){        
+                $scope.showElement[element] = true;
             };
 
             $scope.sort = function(key) {       
