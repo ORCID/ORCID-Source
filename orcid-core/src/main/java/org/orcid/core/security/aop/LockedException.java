@@ -16,6 +16,9 @@
  */
 package org.orcid.core.security.aop;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.orcid.core.exception.ApplicationException;
 
 /**
@@ -35,7 +38,10 @@ public class LockedException extends ApplicationException {
 
     public LockedException(String msg, String orcid) {
         super(msg);
-        this.orcid=orcid;
+        this.orcid=orcid;        
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("orcid", orcid);
+        this.params = params;
     }
 
     public String getOrcid() {
@@ -44,5 +50,8 @@ public class LockedException extends ApplicationException {
 
     public void setOrcid(String orcid) {
         this.orcid = orcid;
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("orcid", orcid);
+        this.params = params;
     }
 }

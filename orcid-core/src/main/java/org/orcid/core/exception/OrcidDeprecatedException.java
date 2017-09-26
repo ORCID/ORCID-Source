@@ -28,6 +28,7 @@ public class OrcidDeprecatedException extends ApplicationException {
     
     public static final String ORCID = "orcid";
     public static final String DEPRECATED_DATE = "deprecated_date";
+    public static final String DEPRECATED_ORCID = "deprecated_orcid";
 
     public OrcidDeprecatedException() {
     	super();
