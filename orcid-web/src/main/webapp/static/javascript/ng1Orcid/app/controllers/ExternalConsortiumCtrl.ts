@@ -119,6 +119,9 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 }).fail(function() {
                     // something bad is happening!
                     console.log("validate submember error");
+                    $scope.errorAddingSubMember = false;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
 
@@ -145,6 +148,8 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     // something bad is happening!
                     console.log("error adding submember");
                     $scope.errorAddingSubMember = true;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
 
@@ -196,6 +201,9 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     }
                 }).fail(function() {
                     console.log("Error adding submember.");
+                    $scope.errorAddingSubMember = true;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
 
