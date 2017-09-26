@@ -119,7 +119,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 }).fail(function() {
                     // something bad is happening!
                     console.log("validate submember error");
-                    $scope.errorAddingSubMember = false;
+                    $scope.errorAddingSubMember = true;
                     $scope.addSubMemberShowLoader = false;
                     $scope.$apply();
                 });
@@ -196,6 +196,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                         }
                         else{
                             $scope.errors = data.errors;
+                            $scope.addSubMemberShowLoader = false;
                             $scope.$apply();
                         }
                     }

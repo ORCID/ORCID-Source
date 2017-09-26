@@ -221,7 +221,7 @@
                 <p><@spring.message "manage_consortium.submembers_text"/></p>
                 <hr></hr>
             	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountPublicDisplayName'">
-					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountPublicDisplayName}}</a></span>
+					<span><a ng-class="{ 'disabled': isPendingAddition(subMember)}" " ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountPublicDisplayName}}</a></span>
                     <!-- Pending addition -->
 					<span class="tooltip-container pull-right pending-addition" ng-show="isPendingAddition(subMember)"><@orcid.msg 'manage_consortium.add_submember_pending_addition'/>
                         <a id="cancelAddSubmember" name="{{subMember.opportunity.accountPublicDisplayName}}" ng-click="cancelSubMemberAddition(subMember)" class="glyphicon glyphicon-remove-circle">
