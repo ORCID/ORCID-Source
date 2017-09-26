@@ -22,7 +22,7 @@ public class ApplicationException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
     
-    private Map<String, String> params; 
+    protected Map<String, String> params; 
 
     public ApplicationException() {
         super();
