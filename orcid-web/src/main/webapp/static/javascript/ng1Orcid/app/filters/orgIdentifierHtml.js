@@ -31,7 +31,7 @@ angular.module('orcidApp').filter('orgIdentifierHtml', ['affiliationsSrvc', '$fi
         
         if(link != null) {
             if(value != null) {
-                output += '<a href=' + link + "' class='truncate-anchor' target='orcid.blank' ng-mouseenter='showURLPopOver(" + putCode + ")' ng-mouseleave='hideURLPopOver(" + putCode + ")'>" + value.escapeHtml() + "</a>";
+                output += '<a href=' + link + " class='truncate-anchor' target='orcid.blank' ng-mouseenter='showURLPopOver(" + putCode + ")' ng-mouseleave='hideURLPopOver(" + putCode + ")'>" + value.escapeHtml() + "</a>";
             }
         } else if(value != null) {
             output = output + ' ' + value.escapeHtml();
