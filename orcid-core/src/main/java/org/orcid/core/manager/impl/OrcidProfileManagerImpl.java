@@ -122,6 +122,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
@@ -401,6 +402,20 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     setAffiliationPrivacy(orcidProfile, defaultVisibility);
                     setFundingPrivacy(orcidProfile, defaultVisibility);
                 }
+                
+                //Set source id on Works to allow the dedup process work
+                if(orcidProfile.getOrcidActivities() != null && orcidProfile.getOrcidActivities().getOrcidWorks() != null 
+                        && orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork() != null) {
+                    for(OrcidWork orcidWork : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
+                        // If it is a new work
+                        if(PojoUtil.isEmpty(orcidWork.getPutCode())) {
+                            String sourceId = sourceManager.retrieveSourceOrcid();
+                            // We assume this is not used from the UI
+                            //TODO!!!!!!!
+                        }
+                    }
+                }
+                
                 dedupeWorks(orcidProfile);
                 dedupeAffiliations(orcidProfile);
                 dedupeFundings(orcidProfile);
