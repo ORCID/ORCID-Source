@@ -16,7 +16,6 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                     success: function(data) {
                         for (i in data) {
                             if (data[i].orgDisambiguatedId != undefined && data[i].orgDisambiguatedId != null) {
-                                serv.getDisambiguatedAffiliation(data[i]);
                             }
                             if (data[i].affiliationType != null && data[i].affiliationType.value != null
                                     && data[i].affiliationType.value == 'education'){
@@ -62,7 +61,6 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                 url: getBaseUri() + '/' + path,
                 dataType: 'json',
                 success: function(data) {
-                    console.log(data);
                     serv.affiliationsToAddIds = data;
                     serv.addAffiliationToScope('affiliations/affiliations.json');
                     $rootScope.$apply();
@@ -71,21 +69,6 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                 // something bad is happening!
                 console.log("error fetching affiliations");
                 logAjaxError(e);
-            });
-        },
-        getDisambiguatedAffiliation: function(affiliation) {
-            $.ajax({
-                url: getBaseUri() + '/affiliations/disambiguated/id/' + affiliation.orgDisambiguatedId.value,
-                dataType: 'json',
-                type: 'GET',
-                success: function(data) {
-                    if (data != null) {
-                        affiliation.disambiguatedAffiliation = data;
-                    }
-                    $rootScope.$apply();
-                }
-            }).fail(function(){
-                console.log("error getDisambiguatedAffiliation(id)");
             });
         },
         updateProfileAffiliation: function(aff) {
