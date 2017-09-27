@@ -74,7 +74,7 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
 
     @Mock
     private SourceManager mockSourceManager;
-    
+
     @Resource
     private SourceManager sourceManager;
 
@@ -111,11 +111,11 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
         when(mockSourceManager.retrieveSourceOrcid()).thenReturn(clientDetails.getId());
     }
-    
+
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
-        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
     }
 
     @Test
@@ -367,8 +367,8 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
         assertTrue(publicFound);
         assertTrue(limitedFound);
         assertTrue(privateFound);
-    }    
-    
+    }
+
     @Test
     public void testDedupeWorks() {
         OrcidWorks orcidWorks = new OrcidWorks();
@@ -391,7 +391,7 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
 
         assertEquals(1, dedupedOrcidWorks.getOrcidWork().size());
     }
-    
+
     private OrcidHistory getHistory(boolean claimed) {
         OrcidHistory history = new OrcidHistory();
         history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
