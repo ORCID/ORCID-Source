@@ -39,26 +39,6 @@ export const PublicEduAffiliation = angular.module('orcidApp').controller(
                 $scope.moreInfo[key]=false;
             };
 
-            $scope.getDisambiguatedAffiliation = function(id) {
-                $.ajax({
-                    url: getBaseUri() + '/affiliations/disambiguated/id/' + id,
-                    dataType: 'json',
-                    type: 'GET',
-                    success: function(data) {
-                        if (data != null) {
-                            console.log(data);
-                            $scope.disambiguatedAffiliation = data;
-                            $scope.editAffiliation.orgDisambiguatedId.value = id;
-                            $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
-                            $scope.editAffiliation.disambiguationSource = data.sourceType;
-                            $scope.$apply();
-                        }
-                    }
-                }).fail(function(){
-                    console.log("error getDisambiguatedAffiliation(id)");
-                });
-            };
-
             $scope.hideTooltip = function (element){        
                 $scope.showElement[element] = false;
             };
