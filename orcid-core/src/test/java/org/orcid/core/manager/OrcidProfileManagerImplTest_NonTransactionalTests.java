@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -55,8 +56,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Will Simpson
@@ -75,6 +74,9 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
 
     @Mock
     private SourceManager mockSourceManager;
+    
+    @Resource
+    private SourceManager sourceManager;
 
     @Before
     public void before() {
@@ -108,6 +110,12 @@ public class OrcidProfileManagerImplTest_NonTransactionalTests extends OrcidProf
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
         when(mockSourceManager.retrieveSourceOrcid()).thenReturn(clientDetails.getId());
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);        
     }
 
     @Test

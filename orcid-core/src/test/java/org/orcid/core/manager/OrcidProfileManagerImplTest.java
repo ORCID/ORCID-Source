@@ -190,6 +190,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Mock
     private SourceManager mockSourceManager;
     
+    @Resource
+    private SourceManager sourceManager;
+    
     @Before
     @Transactional
     @Rollback
@@ -266,6 +269,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profileDao.remove(DELEGATE_ORCID);
         profileDao.remove(APPLICATION_ORCID);
         orcidProfileManager.clearOrcidProfileCache();
+    
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);                
     }
 
     @Test
