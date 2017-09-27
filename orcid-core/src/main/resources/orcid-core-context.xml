@@ -1546,4 +1546,9 @@
         <property name="maxPoolSize" value="10" />
         <property name="WaitForTasksToCompleteOnShutdown" value="true" />
     </bean>
+    
+    <bean id="namespacedRandomCodeGenerator" class="org.orcid.core.oauth.service.NamespacedRandomCodeGenerator">
+	   <constructor-arg value="${org.orcid.core.node:1}" />
+	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
+	</bean>
 </beans>
