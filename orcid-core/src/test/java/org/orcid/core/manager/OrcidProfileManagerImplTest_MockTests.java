@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -49,48 +51,48 @@ import org.springframework.test.context.ContextConfiguration;
 public class OrcidProfileManagerImplTest_MockTests {
     @Resource
     public OrcidProfileManager orcidProfileManager;
-    
+
     @Mock
     public ProfileDao mockProfileDaoReadOnly;
-    
+
     @Resource
     public ProfileDao profileDaoReadOnly;
-    
+
     @Mock
     public EmailDao mockEmailDao;
-    
+
     @Resource
     public EmailDao emailDao;
-    
+
     @Mock
     public NotificationManager mockNotificationManager;
-    
+
     @Resource
     public NotificationManager notificationManager;
-    
+
     @Mock
     public GenericDao<EmailEventEntity, Long> mockEmailEventDao;
-    
+
     @Resource
     public GenericDao<EmailEventEntity, Long> emailEventDao;
-    
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "profileDaoReadOnly", mockProfileDaoReadOnly);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "emailDao", mockEmailDao);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "notificationManager", mockNotificationManager);
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "emailEventDao", mockEmailEventDao);        
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "emailEventDao", mockEmailEventDao);
     }
-    
+
     @After
     public void resetMocks() {
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "profileDaoReadOnly", profileDaoReadOnly);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "emailDao", emailDao);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "notificationManager", notificationManager);
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "emailEventDao", emailEventDao);        
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "emailEventDao", emailEventDao);
     }
-    
+
     @Test
     public void processUnverifiedEmails7DaysTest() {
         List<Pair<String, Date>> emails = new ArrayList<Pair<String, Date>>();
@@ -102,8 +104,9 @@ public class OrcidProfileManagerImplTest_MockTests {
         emails.add(ok2);
         emails.add(tooOld1);
         emails.add(tooOld2);
-        
-        when(mockProfileDaoReadOnly.findEmailsUnverfiedDays(Matchers.anyInt(), Matchers.anyInt(), Matchers.any())).thenReturn(emails).thenReturn(new ArrayList<Pair<String, Date>>());
+
+        when(mockProfileDaoReadOnly.findEmailsUnverfiedDays(Matchers.anyInt(), Matchers.anyInt(), Matchers.any())).thenReturn(emails)
+                .thenReturn(new ArrayList<Pair<String, Date>>());
         orcidProfileManager.processUnverifiedEmails7Days();
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("ok1@test.orcid.org", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("ok2@test.orcid.org", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));

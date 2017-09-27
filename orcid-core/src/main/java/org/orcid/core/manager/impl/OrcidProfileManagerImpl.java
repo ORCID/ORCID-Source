@@ -408,10 +408,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         && orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork() != null) {
                     for(OrcidWork orcidWork : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
                         // If it is a new work
-                        if(PojoUtil.isEmpty(orcidWork.getPutCode())) {
-                            String sourceId = sourceManager.retrieveSourceOrcid();
+                        if(PojoUtil.isEmpty(orcidWork.getPutCode())) {                            
                             // We assume this is not used from the UI
-                            //TODO!!!!!!!
+                            Source source = new Source();
+                            source.setSourceClientId(new SourceClientId(amenderOrcid));
+                            source.setSourceOrcid(null);
+                            orcidWork.setSource(source);                            
                         }
                     }
                 }
@@ -996,7 +998,18 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
-        addSourceToWorks(updatedOrcidWorks, amenderOrcid);
+        
+        for(OrcidWork orcidWork : updatedOrcidWorks.getOrcidWork()) {
+            // If it is a new work
+            if(PojoUtil.isEmpty(orcidWork.getPutCode())) {                            
+                // We assume this is not used from the UI
+                Source source = new Source();
+                source.setSourceClientId(new SourceClientId(amenderOrcid));
+                source.setSourceOrcid(null);
+                orcidWork.setSource(source);                            
+            }
+        }
+        
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
 

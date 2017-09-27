@@ -102,7 +102,6 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
@@ -144,6 +143,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     protected static final String APPLICATION_ORCID = "2222-2222-2222-2228";
+    
+    protected static final String APPLICATION_ORCID_2 = "2222-2222-2222-2229";
 
     protected static final String DELEGATE_ORCID = "1111-1111-1111-1115";
 
@@ -253,9 +254,11 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetails);
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);    
+        when(mockSourceManager.retrieveSourceOrcid()).thenReturn(clientDetails.getId());
     }
 
     @After
@@ -620,10 +623,19 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertTrue(found2);
         assertTrue(found3);
         
-        //Test using work source
-        Source source = new Source();
-        source.setSourceOrcid(new SourceOrcid(APPLICATION_ORCID));
-        work1.setSource(source);
+        //Test using another source
+        OrcidProfile applicationProfile = new OrcidProfile();
+        applicationProfile.setOrcidIdentifier(APPLICATION_ORCID);
+        ClientDetailsEntity clientDetails = new ClientDetailsEntity();
+        clientDetails.setId(APPLICATION_ORCID_2);
+        ProfileEntity applicationProfileEntity = profileDao.find(applicationProfile.getOrcidIdentifier().getPath());
+        profileDao.refresh(applicationProfileEntity);
+        clientDetails.setGroupProfileId(applicationProfileEntity.getId());
+        clientDetailsManager.merge(clientDetails);
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(clientDetails);
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);    
+        when(mockSourceManager.retrieveSourceOrcid()).thenReturn(clientDetails.getId());
         
         // Add work1 again, since it have a different source, it should be added
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work1);
@@ -660,20 +672,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidWork workB = createWork1();
         assertEquals(workA, workB);
         assertEquals(workA.hashCode(), workB.hashCode());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testDedupeWorks() {
-        OrcidWorks orcidWorks = new OrcidWorks();
-        orcidWorks.getOrcidWork().add(createWork1());
-        orcidWorks.getOrcidWork().add(createWork1());
-        assertEquals(2, orcidWorks.getOrcidWork().size());
-
-        OrcidWorks dedupedOrcidWorks = orcidProfileManager.dedupeWorks(orcidWorks);
-
-        assertEquals(1, dedupedOrcidWorks.getOrcidWork().size());
     }
 
     @Test
@@ -734,59 +732,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(IndexingStatus.PENDING, profileDao.find(TEST_ORCID).getIndexingStatus());
     }
 
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testAddOrcidWorks() {
-        OrcidProfile profile1 = createBasicProfile();
-        OrcidHistory history = new OrcidHistory();
-        history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        profile1.setOrcidHistory(history);
-        history.setClaimed(new Claimed(true));
-        profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
-        String originalPutCode = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
-
-        OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcidIdentifier(TEST_ORCID);
-        OrcidWorks orcidWorks = new OrcidWorks();
-        profile2.setOrcidWorks(orcidWorks);
-
-        WorkTitle workTitle1 = new WorkTitle();
-        workTitle1.setTitle(new Title("Another Title"));
-        workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
-        OrcidWork work1 = createWork1(workTitle1);
-        Source source = new Source(TEST_ORCID);
-        work1.setSource(source);
-        orcidWorks.getOrcidWork().add(work1);
-
-        WorkTitle workTitle2 = new WorkTitle();
-        workTitle2.setTitle(new Title("New Title"));
-        workTitle2.setSubtitle(new Subtitle("Another New subtitle"));
-        OrcidWork work2 = createWork2(workTitle2);
-        orcidWorks.getOrcidWork().add(work2);
-
-        // Try to add a duplicate
-        WorkTitle workTitle3 = new WorkTitle();
-        workTitle3.setTitle(new Title("New Title"));
-        workTitle3.setSubtitle(new Subtitle("Another New subtitle"));
-        OrcidWork work3 = createWork2(workTitle3);
-        work3.setVisibility(Visibility.LIMITED);
-        orcidWorks.getOrcidWork().add(work3);
-
-        orcidProfileManager.addOrcidWorks(profile2);
-
-        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
-        assertEquals(3, works.size());
-
-        assertEquals("Another Title", works.get(0).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(0).getWorkTitle().getSubtitle().getContent());
-        for (OrcidWork work : works) {
-            assertEquals(Visibility.PRIVATE, work.getVisibility());
-        }
-        assertEquals("Put code of original work should not have changed", originalPutCode, works.get(2).getPutCode());
-    }
+    
     
     @Test
     @Transactional
@@ -797,233 +743,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         ProfileEntity persisted = profileDao.find(profile.getOrcidIdentifier().getPath());
         assertNotNull(persisted.getHashedOrcid());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testAddOrcidWorksWhenDefaultVisibilityIsPublic() {
-
-        OrcidProfile profile1 = createBasicProfile();
-        OrcidHistory history = new OrcidHistory();
-        history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        profile1.setOrcidHistory(history);
-        history.setClaimed(new Claimed(true));
-        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
-        orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcidIdentifier(TEST_ORCID);
-        OrcidWorks orcidWorks = new OrcidWorks();
-        profile2.setOrcidWorks(orcidWorks);
-
-        WorkTitle workTitle1 = new WorkTitle();
-        workTitle1.setTitle(new Title("Another Title"));
-        workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
-        OrcidWork work1 = createWork1(workTitle1);
-        Source source = new Source(TEST_ORCID);
-        work1.setSource(source);
-        orcidWorks.getOrcidWork().add(work1);
-
-        WorkTitle workTitle2 = new WorkTitle();
-        workTitle2.setTitle(new Title("New Title"));
-        workTitle2.setSubtitle(new Subtitle("Another New subtitle"));
-        OrcidWork work2 = createWork2(workTitle2);
-        orcidWorks.getOrcidWork().add(work2);
-
-        // Try to add a duplicate
-        WorkTitle workTitle3 = new WorkTitle();
-        workTitle3.setTitle(new Title("Further Title"));
-        workTitle3.setSubtitle(new Subtitle("Further subtitle"));
-        OrcidWork work3 = createWork3(workTitle3);
-        work3.setVisibility(Visibility.LIMITED);
-        orcidWorks.getOrcidWork().add(work3);
-
-        orcidProfileManager.addOrcidWorks(profile2);
-
-        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
-        assertEquals(4, works.size());
-
-        assertEquals("Another Title", works.get(0).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(0).getWorkTitle().getSubtitle().getContent());
-        for (OrcidWork work : works) {
-            if ("Test Title".equals(work.getWorkTitle().getTitle().getContent()))
-                assertEquals(Visibility.PRIVATE, work.getVisibility());
-            else
-                assertEquals(Visibility.PUBLIC, work.getVisibility());
-        }
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testAddOrcidWorksWhenDefaultVisibilityIsLimited() {
-
-        OrcidProfile profile1 = createBasicProfile();
-        OrcidHistory history = new OrcidHistory();
-        history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        profile1.setOrcidHistory(history);
-        history.setClaimed(new Claimed(true));
-        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.LIMITED));
-        orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcidIdentifier(TEST_ORCID);
-        OrcidWorks orcidWorks = new OrcidWorks();
-        profile2.setOrcidWorks(orcidWorks);
-
-        WorkTitle workTitle1 = new WorkTitle();
-        workTitle1.setTitle(new Title("Another Title"));
-        workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
-        OrcidWork work1 = createWork1(workTitle1);
-        Source source = new Source(TEST_ORCID);
-        work1.setSource(source);
-        orcidWorks.getOrcidWork().add(work1);
-
-        WorkTitle workTitle2 = new WorkTitle();
-        workTitle2.setTitle(new Title("New Title"));
-        workTitle2.setSubtitle(new Subtitle("Another New subtitle"));
-        OrcidWork work2 = createWork2(workTitle2);
-        orcidWorks.getOrcidWork().add(work2);
-
-        // Try to add a duplicate
-        WorkTitle workTitle3 = new WorkTitle();
-        workTitle3.setTitle(new Title("Further Title"));
-        workTitle3.setSubtitle(new Subtitle("Further subtitle"));
-        OrcidWork work3 = createWork3(workTitle3);
-        work3.setVisibility(Visibility.LIMITED);
-        orcidWorks.getOrcidWork().add(work3);
-
-        orcidProfileManager.addOrcidWorks(profile2);
-
-        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
-        assertEquals(4, works.size());
-
-        assertEquals("Another Title", works.get(0).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(0).getWorkTitle().getSubtitle().getContent());
-        for (OrcidWork work : works) {
-            if ("Test Title".equals(work.getWorkTitle().getTitle().getContent()))
-                assertEquals(Visibility.PRIVATE, work.getVisibility());
-            else
-                assertEquals(Visibility.LIMITED, work.getVisibility());
-        }
-    }
-
-    @Test
-    @Transactional    
-    public void testAddOrcidWorksWhenDefaultVisibilityIsPrivate() {
-
-        OrcidProfile profile1 = createBasicProfile();
-        OrcidHistory history = new OrcidHistory();
-        history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        profile1.setOrcidHistory(history);
-        history.setClaimed(new Claimed(true));
-        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PRIVATE));
-        orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcidIdentifier(TEST_ORCID);
-        OrcidWorks orcidWorks = new OrcidWorks();
-        profile2.setOrcidWorks(orcidWorks);
-
-        WorkTitle workTitle1 = new WorkTitle();
-        workTitle1.setTitle(new Title("Another Title"));
-        workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
-        OrcidWork work1 = createWork1(workTitle1);
-        Source source = new Source(TEST_ORCID);
-        work1.setSource(source);
-        orcidWorks.getOrcidWork().add(work1);
-
-        WorkTitle workTitle2 = new WorkTitle();
-        workTitle2.setTitle(new Title("New Title"));
-        workTitle2.setSubtitle(new Subtitle("Another New subtitle"));
-        OrcidWork work2 = createWork2(workTitle2);
-        orcidWorks.getOrcidWork().add(work2);
-
-        // Try to add a duplicate
-        WorkTitle workTitle3 = new WorkTitle();
-        workTitle3.setTitle(new Title("Further Title"));
-        workTitle3.setSubtitle(new Subtitle("Further subtitle"));
-        OrcidWork work3 = createWork3(workTitle3);
-        work3.setVisibility(Visibility.LIMITED);
-        orcidWorks.getOrcidWork().add(work3);
-
-        orcidProfileManager.addOrcidWorks(profile2);
-
-        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
-        assertEquals(4, works.size());
-
-        assertEquals("Another Title", works.get(0).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(0).getWorkTitle().getSubtitle().getContent());
-        for (OrcidWork work : works) {
-            if ("Test Title".equals(work.getWorkTitle().getTitle().getContent()))
-                assertEquals(Visibility.PRIVATE, work.getVisibility());
-            else
-                assertEquals(Visibility.PRIVATE, work.getVisibility());
-        }
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testAddOrcidWorkToUnclaimedProfile() {
-
-        OrcidProfile profile1 = createBasicProfile();
-        orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcidIdentifier(TEST_ORCID);
-        OrcidWorks orcidWorks = new OrcidWorks();
-        profile2.setOrcidWorks(orcidWorks);
-
-        WorkTitle workTitle1 = new WorkTitle();
-        workTitle1.setTitle(new Title("Another Title"));
-        workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
-        OrcidWork work1 = createWork1(workTitle1);
-        Source source = new Source(TEST_ORCID);
-        work1.setSource(source);
-        orcidWorks.getOrcidWork().add(work1);
-
-        WorkTitle workTitle2 = new WorkTitle();
-        workTitle2.setTitle(new Title("New Title"));
-        workTitle2.setSubtitle(new Subtitle("Another New subtitle"));
-        OrcidWork work2 = createWork2(workTitle2);
-        work2.setVisibility(Visibility.PUBLIC);
-        orcidWorks.getOrcidWork().add(work2);
-
-        // Try to add a duplicate
-        WorkTitle workTitle3 = new WorkTitle();
-        workTitle3.setTitle(new Title("Further Title"));
-        workTitle3.setSubtitle(new Subtitle("Further subtitle"));
-        OrcidWork work3 = createWork3(workTitle3);
-        work3.setVisibility(Visibility.LIMITED);
-        orcidWorks.getOrcidWork().add(work3);
-
-        orcidProfileManager.addOrcidWorks(profile2);
-
-        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
-        assertEquals(4, works.size());
-
-        assertEquals("Another Title", works.get(0).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(0).getWorkTitle().getSubtitle().getContent());
-        for (OrcidWork work : works) {
-            if ("Further Title".equals(work.getWorkTitle().getTitle().getContent()))
-                assertEquals(Visibility.LIMITED, work.getVisibility());
-            else if ("New Title".equals(work.getWorkTitle().getTitle().getContent()))
-                assertEquals(Visibility.PUBLIC, work.getVisibility());
-            else
-                assertEquals(Visibility.PRIVATE, work.getVisibility());
-        }
-    }
-
+    }    
+    
     @Test
     @Transactional
     @Rollback(true)
