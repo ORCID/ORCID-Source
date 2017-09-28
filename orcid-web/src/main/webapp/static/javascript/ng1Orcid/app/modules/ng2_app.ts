@@ -30,6 +30,8 @@ import { BiographyNg2Module }
     from './biography/biography.ts';
 import { CountryNg2Module } 
     from './country/country.ts';
+import { EmailUnverifiedWarningNg2Module } from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
+import { EmailVerificationSentMesssageNg2Module } from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 import { WidgetNg2Module } 
@@ -90,6 +92,8 @@ export class RootCmp {
         /* User Generated Modules */
         BiographyNg2Module,
         CountryNg2Module,
+        EmailUnverifiedWarningNg2Module,
+        EmailVerificationSentMesssageNg2Module,
         ModalNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module

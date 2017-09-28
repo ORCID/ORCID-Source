@@ -3,7 +3,7 @@ declare var $: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
  
-import { AfterViewInit, Component, ElementRef, Input, OnInit, OnDestroy, Output/*Component, EventEmitter, Input, NgModule, */ } 
+import { AfterViewInit, Component, ElementRef, Input, OnInit, OnDestroy, Output } 
     from '@angular/core';
 
 import { Subject } 
@@ -22,10 +22,35 @@ import { ModalService }
     {
         selector: '[modalngcomponent]',
         template: `
-            <div class="lightbox-container">
-                ++{{elementId}}++
-                <ng-content></ng-content>
-            </div>
+          <div [hidden]="!showModal" >
+              <div
+                  
+                  id="colorbox" 
+                  role="dialog" 
+                  tabindex="-1" 
+                  style="display: block; visibility: visible; top: 127px; left: 703px; position: absolute; width: 500px; height: 247px;"
+              >
+                <div id="cboxWrapper" style="height: 247px; width: 500px;">
+                  <div>
+                    <div id="cboxTopLeft" style="float: left;"></div>
+                    <div id="cboxTopCenter" style="float: left; width: 500px;"></div>
+                    <div id="cboxTopRight" style="float: left;"></div>
+                  </div>
+                  <div style="clear: left;">
+                    <div id="cboxMiddleLeft" style="float: left; height: 247px;"></div>
+                    <div id="cboxContent" style="float: left; width: 500px; height: 247px;">
+                      <div id="cboxLoadedContent" style="width: 500px; overflow: auto; height: 247px;">
+                        <div class="lightbox-container">
+
+                          <ng-content></ng-content>
+                
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div> 
         `
     }
 )
@@ -36,11 +61,13 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    emailPrimary: string;
     showModal: boolean;
     
-    constructor( private elementRef: ElementRef, private emailService: EmailService, private modalService: ModalService ){
-        this.emailPrimary = '';
+    constructor( 
+        private elementRef: ElementRef, 
+        private emailService: EmailService, 
+        private modalService: ModalService 
+    ){
         this.elementId = elementRef.nativeElement.getAttribute('elementId');
         this.elementWidth = elementRef.nativeElement.getAttribute('elementWidth');
         this.showModal = false;
@@ -48,7 +75,8 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
 
     closeModal(): void{
         console.log('close modal');
-        $.colorbox.close();
+        //$.colorbox.close();
+        this.showModal = false;
     };
 
     formColorBoxWidth(): string {
@@ -77,22 +105,8 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    getEmails(): any {
-        this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.emailPrimary = this.emailService.getEmailPrimary().value;
-            },
-            error => {
-                console.log('getEmails', error);
-            } 
-        );
-    }
-
     openModal(): void{
         this.showModal = true;
-        console.log('showmodal');
         /*
         console.log('elementId', this.elementId);
         $.colorbox({
@@ -117,14 +131,20 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         this.subscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
                 //console.log('res.value',res, this.elementId);
-                if ( res.action === "open" 
-                    && res.moduleId == this.elementId ) {
-                    this.openModal();
+                if ( res.moduleId == this.elementId ) {
+                    if ( res.action === "close") {
+                        this.closeModal();
+                    }
+
+                    if ( res.action === "open") {
+                        this.openModal();
+                    }
+
                 }
             }
         );
         
-        this.getEmails();
+        
     };
 
     ngOnInit() {
