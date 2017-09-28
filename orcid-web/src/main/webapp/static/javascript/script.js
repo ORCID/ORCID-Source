@@ -572,8 +572,6 @@ $(function() {
                                                     orcidGA
                                                             .windowLocationHrefDelay(data.url
                                                                     + window.location.hash);
-
-                                                    enableSignin(); 
                                                 } else if (data.verificationCodeRequired && !data.badVerificationCode) {
                                                     enableSignin(); 
                                                     show2FA();
