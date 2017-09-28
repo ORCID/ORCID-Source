@@ -16,7 +16,11 @@
  */
 package org.orcid.core.cli;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,13 +64,12 @@ public class LoadGridDataTest {
 
     @Test
     public void execute_Stats_Test_1() throws URISyntaxException {
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("grid/grid_1_org_4_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_4_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
         assertEquals(1L, loadGridData.getAddedDisambiguatedOrgs());
-        assertEquals(4L, loadGridData.getAddedExternalIdentifiers());     
+        assertEquals(4L, loadGridData.getAddedExternalIdentifiers());
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(0L, loadGridData.getDeprecatedOrgs());
         assertEquals(0L, loadGridData.getObsoletedOrgs());
@@ -74,8 +77,7 @@ public class LoadGridDataTest {
 
     @Test
     public void execute_Stats_Test_2() throws URISyntaxException {
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("grid/grid_4_orgs_24_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_4_orgs_24_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
@@ -85,16 +87,15 @@ public class LoadGridDataTest {
         assertEquals(0L, loadGridData.getDeprecatedOrgs());
         assertEquals(0L, loadGridData.getObsoletedOrgs());
     }
-    
+
     @Test
     public void execute_Stats_Test_3() throws URISyntaxException {
         when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", "GRID")).thenReturn(new OrgDisambiguatedEntity());
         when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", "GRID")).thenReturn(new OrgDisambiguatedEntity());
         when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", "GRID")).thenReturn(new OrgDisambiguatedEntity());
         when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", "GRID")).thenReturn(new OrgDisambiguatedEntity());
-                
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
@@ -104,7 +105,7 @@ public class LoadGridDataTest {
         assertEquals(2L, loadGridData.getDeprecatedOrgs());
         assertEquals(2L, loadGridData.getObsoletedOrgs());
     }
-    
+
     @SuppressWarnings("deprecation")
     @Test
     public void execute_JustAddOneExeternalIdentifier_Test() throws URISyntaxException {
@@ -118,25 +119,24 @@ public class LoadGridDataTest {
                 entity.setCity("City One");
                 entity.setCountry(Iso3166Country.US);
                 entity.setOrgType("type_1");
-                entity.setRegion("Alabama");                
+                entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
-                entity.setUrl("http://link1.com");                
+                entity.setUrl("http://link1.com");
                 return entity;
-            }            
+            }
         });
         OrgDisambiguatedExternalIdentifierEntity extId = new OrgDisambiguatedExternalIdentifierEntity();
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
-    
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
-        
-        verify(orgDisambiguatedDao, times(0)).persist(Matchers.any(OrgDisambiguatedEntity.class));        
+
+        verify(orgDisambiguatedDao, times(0)).persist(Matchers.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedDao, times(0)).merge(Matchers.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, times(1)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
         assertEquals(0L, loadGridData.getAddedDisambiguatedOrgs());
@@ -158,40 +158,39 @@ public class LoadGridDataTest {
                 entity.setCity("City One");
                 entity.setCountry(Iso3166Country.US);
                 entity.setOrgType("type_1");
-                entity.setRegion("Alabama");                
+                entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
                 entity.setStatus("active");
-                entity.setUrl("http://link1.com");                
+                entity.setUrl("http://link1.com");
                 return entity;
-            }            
+            }
         });
         OrgDisambiguatedExternalIdentifierEntity extId = new OrgDisambiguatedExternalIdentifierEntity();
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
-    
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("grid/grid_1_org_updated_4_external_identifiers.json").toURI());
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_updated_4_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
-        
+
         assertEquals(0L, loadGridData.getAddedDisambiguatedOrgs());
         assertEquals(0L, loadGridData.getAddedExternalIdentifiers());
         assertEquals(1L, loadGridData.getUpdatedOrgs());
         assertEquals(0L, loadGridData.getDeprecatedOrgs());
         assertEquals(0L, loadGridData.getObsoletedOrgs());
-        
+
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        
+
         verify(orgDisambiguatedDao).merge(captor.capture());
-        
+
         OrgDisambiguatedEntity orgToBeUpdated = captor.getValue();
         assertEquals(Iso3166Country.CR, orgToBeUpdated.getCountry());
         assertEquals(Long.valueOf(1), orgToBeUpdated.getId());
         assertEquals("City One Updated", orgToBeUpdated.getCity());
-        assertEquals(IndexingStatus.PENDING, orgToBeUpdated.getIndexingStatus());               
+        assertEquals(IndexingStatus.PENDING, orgToBeUpdated.getIndexingStatus());
         assertEquals("org_1_updated", orgToBeUpdated.getName());
         assertEquals("type_1,type_2", orgToBeUpdated.getOrgType());
         assertEquals("San Jose", orgToBeUpdated.getRegion());
@@ -214,24 +213,23 @@ public class LoadGridDataTest {
                 entity.setCity("City One");
                 entity.setCountry(Iso3166Country.US);
                 entity.setOrgType("type_1");
-                entity.setRegion("Alabama");                
+                entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
-                entity.setUrl("http://link1.com");                
+                entity.setUrl("http://link1.com");
                 return entity;
-            }            
+            }
         });
         OrgDisambiguatedExternalIdentifierEntity extId = new OrgDisambiguatedExternalIdentifierEntity();
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
-    
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("grid/grid_1_org_4_external_identifiers.json").toURI());
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_4_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
-        
+
         verify(orgDisambiguatedDao, times(0)).persist(Matchers.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedDao, times(0)).merge(Matchers.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -244,86 +242,125 @@ public class LoadGridDataTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void execute_DeprecatedInstitutes_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+    public void execute_DeprecatedObsoleteInstitutes_1_Test() throws URISyntaxException {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(1L);
-                entity.setSourceId("grid.r.1");
+                entity.setSourceId("grid.o.1");
                 return entity;
-            }            
+            }
         });
-        
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(2L);
+                entity.setSourceId("grid.o.2");
+                return entity;
+            }
+        });
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+            @Override
+            public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
+                OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
+                entity.setId(3L);
+                entity.setSourceId("grid.r.1");
+                return entity;
+            }
+        });
+
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+            @Override
+            public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
+                OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
+                entity.setId(4L);
                 entity.setSourceId("grid.r.2");
                 return entity;
-            }            
+            }
         });
-        
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
-        
+
         assertEquals(0L, loadGridData.getAddedDisambiguatedOrgs());
         assertEquals(0L, loadGridData.getAddedExternalIdentifiers());
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(2L, loadGridData.getDeprecatedOrgs());
-        assertEquals(0L, loadGridData.getObsoletedOrgs());
+        assertEquals(2L, loadGridData.getObsoletedOrgs());
         verify(orgDisambiguatedDao, times(0)).persist(Matchers.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedDao, times(2)).merge(Matchers.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));   
-        
+        verify(orgDisambiguatedDao, times(4)).merge(Matchers.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
+
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        
-        verify(orgDisambiguatedDao, times(2)).merge(captor.capture());
-        
+
+        verify(orgDisambiguatedDao, times(4)).merge(captor.capture());
+
+        int obsoleteCount = 0;
+        int deprecatedCount = 0;
         List<OrgDisambiguatedEntity> orgsToBeUpdated = captor.getAllValues();
-        for(OrgDisambiguatedEntity entity : orgsToBeUpdated) {
-            assertEquals("DEPRECATED", entity.getStatus());
-            if(entity.getId() == 1L) {
-                assertEquals("grid.1", entity.getSourceParentId());
-            } else {
-                assertEquals("grid.2", entity.getSourceParentId());
+        for (OrgDisambiguatedEntity entity : orgsToBeUpdated) {
+            if ("OBSOLETE".equals(entity.getStatus())) {
+                if (entity.getId() == 1L) {
+                    assertEquals("grid.o.1", entity.getSourceId());
+                } else if (entity.getId() == 2L) {
+                    assertEquals("grid.o.2", entity.getSourceId());
+                } else {
+                    fail("Invalid obsolete org id: " + entity.getId());
+                }
+                obsoleteCount++;
+            } else if ("DEPRECATED".equals(entity.getStatus())) {
+                if (entity.getId() == 3L) {
+                    assertEquals("grid.1", entity.getSourceParentId());
+                } else if (entity.getId() == 4L) {
+                    assertEquals("grid.2", entity.getSourceParentId());
+                } else {
+                    fail("Invalid deprecated org id: " + entity.getId());
+                }
+                deprecatedCount++;
             }
         }
+        assertEquals(2, deprecatedCount);
+        assertEquals(2, obsoleteCount);
     }
 
     @SuppressWarnings("deprecation")
     @Test
-    public void execute_Obsolete1Institutes_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", "GRID")).thenReturn(new OrgDisambiguatedEntity());
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", "GRID")).thenReturn(new OrgDisambiguatedEntity());
-                
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
+    public void execute_DeprecatedObsoleteInstitutes_2_Test() throws URISyntaxException {
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
-        
+
         assertEquals(0L, loadGridData.getAddedDisambiguatedOrgs());
         assertEquals(0L, loadGridData.getAddedExternalIdentifiers());
         assertEquals(0L, loadGridData.getUpdatedOrgs());
-        assertEquals(0L, loadGridData.getDeprecatedOrgs());
+        assertEquals(2L, loadGridData.getDeprecatedOrgs());
         assertEquals(2L, loadGridData.getObsoletedOrgs());
-        verify(orgDisambiguatedDao, times(0)).persist(Matchers.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedDao, times(2)).merge(Matchers.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));        
-    
-        ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        
-        verify(orgDisambiguatedDao, times(2)).merge(captor.capture());
-        
-        List<OrgDisambiguatedEntity> orgsToBeUpdated = captor.getAllValues();
-        for(OrgDisambiguatedEntity entity : orgsToBeUpdated) {
-            assertEquals("OBSOLETE", entity.getStatus());
-        }
-    }
+        verify(orgDisambiguatedDao, times(4)).persist(Matchers.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedDao, times(0)).merge(Matchers.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
 
+        ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
+
+        verify(orgDisambiguatedDao, times(4)).persist(captor.capture());
+
+        int obsoleteCount = 0;
+        int deprecatedCount = 0;
+        List<OrgDisambiguatedEntity> orgsToBeUpdated = captor.getAllValues();
+        for (OrgDisambiguatedEntity entity : orgsToBeUpdated) {
+            if ("OBSOLETE".equals(entity.getStatus())) {
+                assertThat(entity.getSourceId(), anyOf(is("grid.o.1"), is("grid.o.2")));
+                obsoleteCount++;
+            } else if ("DEPRECATED".equals(entity.getStatus())) {
+                assertThat(entity.getSourceId(), anyOf(is("grid.r.1"), is("grid.r.2")));
+                deprecatedCount++;
+            }
+        }
+        assertEquals(2, deprecatedCount);
+        assertEquals(2, obsoleteCount);
+    }
 }
