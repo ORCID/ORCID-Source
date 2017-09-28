@@ -161,7 +161,8 @@ public class ValidationManagerImpl implements ValidationManager {
             try {
                 validator.validate(orcidMessage.toSource());
             } catch (SAXException e) {
-                handleError("ORCID message is invalid", e, orcidMessage);
+                //Lets not log SAX exceptions since they are consuming a lot of room in our logs
+                //handleError("ORCID message is invalid", e, orcidMessage);
             } catch (IOException e) {
                 handleError("Unable to read ORCID message", e, orcidMessage);
             }
