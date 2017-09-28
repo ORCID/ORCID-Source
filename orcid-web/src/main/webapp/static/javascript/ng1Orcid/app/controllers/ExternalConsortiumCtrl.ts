@@ -226,7 +226,6 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 $scope.newSubMember.initialContactEmail.errors = [];
                 $scope.newSubMember.initialContactFirstName.errors = [];
                 $scope.newSubMember.initialContactLastName.errors = [];
-                //$scope.$apply();
             }
 
             $scope.buildOrcidUri = function(orcid){
