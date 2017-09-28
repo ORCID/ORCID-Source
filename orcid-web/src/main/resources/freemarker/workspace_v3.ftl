@@ -883,8 +883,65 @@
   </#if>
 </script>
 
+<!-- Ng1 directive -->
+<!-- 
 <modal-email-un-verified></modal-email-un-verified>
-<modalngcomponent id="modalemailunverified"></modalngcomponent>
+-->
+
+<modalngcomponent elementId="modalemailunverified" elementWidth="500">
+    
+    this is ng2 modal {{this.elementId}} [(elementId)] [(this.elementId)] {{2+2}} -{{showModal}}- 
+    
+    <div *ngIf="showModal" id="colorbox" role="dialog" tabindex="-1" style="display: block; visibility: visible; top: 127px; left: 703px; position: absolute; width: 500px; height: 247px;">
+        <div id="cboxWrapper" style="height: 247px; width: 500px;">
+            <div>
+                <div id="cboxTopLeft" style="float: left;"></div>
+                <div id="cboxTopCenter" style="float: left; width: 500px;"></div>
+                <div id="cboxTopRight" style="float: left;"></div>
+            </div>
+            <div style="clear: left;">
+                <div id="cboxMiddleLeft" style="float: left; height: 247px;"></div>
+                <div id="cboxContent" style="float: left; width: 500px; height: 247px;">
+                    <div id="cboxLoadedContent" style="width: 500px; overflow: auto; height: 247px;">
+                        <div class="lightbox-container">
+                            <div class="row">
+                                <div class="col-md-12 col-xs-12 col-sm-12">
+                                    <h4><@orcid.msg 'orcid.frontend.workspace.your_primary_email'/></h4>
+                                    <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access'/></p>
+                                    <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access2'/><br /><strong>' + this.emailPrimary + '</strong></p>
+                                    <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access3'/> <a target="orcid.frontend.link.url.knowledgebase" href="<@orcid.msg 'orcid.frontend.link.url.knowledgebase'/>"><@orcid.msg 'orcid.frontend.workspace.ensure_future_access4'/></a> <@orcid.msg 'orcid.frontend.workspace.ensure_future_access5'/> <a target="orcid.frontend.link.email.support" href="mailto:<@orcid.msg 'orcid.frontend.link.email.support'/>"><@orcid.msg 'orcid.frontend.link.email.support'/></a>.</p>
+                                    <div class="topBuffer">
+                                        <button class="btn btn-primary" id="modal-close" (click)="console.log('clicked')" ng-click="verifyEmail()" (click)="console.log('test');"><@orcid.msg 'orcid.frontend.workspace.send_verification'/></button>onClick="$.colorbox.close()"
+                                        <a class="cancel-option inner-row" (click)="this.closeModal(); console.log("closemodalbtn");" onClick="$.colorbox.close()"><@orcid.msg 'orcid.frontend.freemarker.btncancel'/></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</modalngcomponent><!-- Ng2 component --> 
+
+<div syle="display:none">
+    <div id="modal-email-unverified">
+        <div class="lightbox-container">
+            <div class="row">
+                <div class="col-md-12 col-xs-12 col-sm-12">
+                    <h4><@orcid.msg 'orcid.frontend.workspace.your_primary_email'/></h4>
+                    <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access'/></p>
+                    <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access2'/><br /><strong>' + this.emailPrimary + '</strong></p>
+                    <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access3'/> <a target="orcid.frontend.link.url.knowledgebase" href="<@orcid.msg 'orcid.frontend.link.url.knowledgebase'/>"><@orcid.msg 'orcid.frontend.workspace.ensure_future_access4'/></a> <@orcid.msg 'orcid.frontend.workspace.ensure_future_access5'/> <a target="orcid.frontend.link.email.support" href="mailto:<@orcid.msg 'orcid.frontend.link.email.support'/>"><@orcid.msg 'orcid.frontend.link.email.support'/></a>.</p>
+                    <div class="topBuffer">
+                        <button class="btn btn-primary" id="modal-close" (click)="console.log('clicked')" ng-click="verifyEmail()" >onClick="$.colorbox.close()"<@orcid.msg 'orcid.frontend.workspace.send_verification'/></button>
+                        <a class="cancel-option inner-row" (click)="this.closeModal(); console.log("closemodalbtn");" onClick="$.colorbox.close()"><@orcid.msg 'orcid.frontend.freemarker.btncancel'/></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <#include "/includes/record/record_modals.ftl">
 <#include "/includes/record/email_settings.ftl">
