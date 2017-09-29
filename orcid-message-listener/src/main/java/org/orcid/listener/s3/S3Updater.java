@@ -229,7 +229,7 @@ public class S3Updater {
         try {
             if(activities) {
                 String bucket = getBucketName("api-2-0-activities", "xml", orcid);
-                s3MessagingService.send(bucket, orcid + "_activities.xml", toJson(error), MediaType.APPLICATION_XML);
+                s3MessagingService.send(bucket, orcid + "_activities.xml", toXML(error), MediaType.APPLICATION_XML);
             } else {
                 String bucket = getBucketName("api-2-0", "xml", orcid);                
                 s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
