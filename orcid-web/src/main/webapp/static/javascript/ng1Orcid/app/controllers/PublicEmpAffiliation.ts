@@ -26,7 +26,9 @@ export const PublicEmpAffiliation = angular.module('orcidApp').controller(
             workspaceSrvc 
         ){
             $scope.affiliationsSrvc = affiliationsSrvc;
+            $scope.displayURLPopOver = {};
             $scope.moreInfo = {};
+            $scope.showElement = {};
             $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
             $scope.utilsService = utilsService;
             $scope.workspaceSrvc = workspaceSrvc;
@@ -37,6 +39,14 @@ export const PublicEmpAffiliation = angular.module('orcidApp').controller(
                 $scope.moreInfo[key]=false;
             };
 
+            $scope.hideTooltip = function (element){        
+                $scope.showElement[element] = false;
+            };
+
+            $scope.hideURLPopOver = function(id){
+                $scope.displayURLPopOver[id] = false;
+            };
+
             // remove once grouping is live
             $scope.moreInfoMouseEnter = function(key, $event) {
                 $event.stopPropagation();
@@ -45,11 +55,19 @@ export const PublicEmpAffiliation = angular.module('orcidApp').controller(
                 }
             };
 
-            // remove once grouping is live
-            $scope.showDetailsMouseClick = function(key, $event) {
+            $scope.showDetailsMouseClick = function(group, $event) {
                 $event.stopPropagation();
-                $scope.moreInfo[key]=!$scope.moreInfo[key];
+                $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
             };
+
+            $scope.showTooltip = function (element){        
+                $scope.showElement[element] = true;
+            };
+
+            $scope.showURLPopOver = function(id){
+                $scope.displayURLPopOver[id] = true;
+            };
+
 
             $scope.sort = function(key) {
                 $scope.sortState.sortBy(key);

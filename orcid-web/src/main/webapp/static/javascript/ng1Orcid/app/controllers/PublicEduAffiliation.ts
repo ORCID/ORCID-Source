@@ -27,15 +27,24 @@ export const PublicEduAffiliation = angular.module('orcidApp').controller(
             workspaceSrvc 
         ){
             $scope.affiliationsSrvc = affiliationsSrvc;
+            $scope.displayURLPopOver = {};
             $scope.moreInfo = {};
             $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
             $scope.utilsService = utilsService;
             $scope.workspaceSrvc = workspaceSrvc;
-         
+            $scope.showElement = {};
             $scope.printView = $scope.utilsService.isPrintView(window.location.pathname);
 
             $scope.closeMoreInfo = function(key) {
                 $scope.moreInfo[key]=false;
+            };
+
+            $scope.hideTooltip = function (element){        
+                $scope.showElement[element] = false;
+            };
+
+            $scope.hideURLPopOver = function(id){
+                $scope.displayURLPopOver[id] = false;
             };
 
             // remove once grouping is live
@@ -46,10 +55,19 @@ export const PublicEduAffiliation = angular.module('orcidApp').controller(
                 }
             };
 
-            $scope.showDetailsMouseClick = function(key, $event) {
+            $scope.showDetailsMouseClick = function(group, $event) {
                 $event.stopPropagation();
-                $scope.moreInfo[key] = !$scope.moreInfo[key];
+                $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];   
             };
+
+            $scope.showTooltip = function (element){        
+                $scope.showElement[element] = true;
+            };
+
+            $scope.showURLPopOver = function(id){
+                $scope.displayURLPopOver[id] = true;
+            };
+
 
             $scope.sort = function(key) {       
                 $scope.sortState.sortBy(key);

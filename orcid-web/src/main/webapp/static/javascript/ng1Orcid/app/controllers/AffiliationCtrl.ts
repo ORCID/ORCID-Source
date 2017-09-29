@@ -370,9 +370,6 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
             $scope.showDetailsMouseClick = function(group, $event) {
                 $event.stopPropagation();
                 $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
-                /*for (var idx in group.activities){
-                    $scope.loadDetails(group.activities[idx].putCode.value, $event);
-                }*/
             };
 
             $scope.showTooltip = function (element){        
