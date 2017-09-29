@@ -216,7 +216,7 @@ public class S3Updater {
                 String bucket = getBucketName("api-2-0-activities", "json", orcid);
                 s3MessagingService.send(bucket, orcid + "_activities.json", toJson(error), MediaType.APPLICATION_JSON);
             } else {
-                String bucket = getBucketName("api-2-0", "xml", orcid);                
+                String bucket = getBucketName("api-2-0", "json", orcid);                
                 s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
             }            
         } catch (AmazonServiceException e) {
