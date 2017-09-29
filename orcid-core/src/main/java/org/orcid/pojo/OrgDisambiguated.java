@@ -19,7 +19,6 @@ package org.orcid.pojo;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.orcid.core.adapter.impl.jsonidentifiers.JSONIdentifierAdapter.Url;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 
 public class OrgDisambiguated {
