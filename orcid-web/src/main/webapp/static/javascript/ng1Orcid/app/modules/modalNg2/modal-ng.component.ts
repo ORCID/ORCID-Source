@@ -23,23 +23,51 @@ import { ModalService }
         selector: '[modalngcomponent]',
         template: `
           <div [hidden]="!showModal" >
+              <div class="popover-ng2-bck"></div>
               <div
-                  
+                  class="popover-ng2-content"
                   id="colorbox" 
                   role="dialog" 
+                  style="transition: width 2s, height 2s;"
                   tabindex="-1" 
-                  style="display: block; visibility: visible; top: 127px; left: 703px; position: absolute; width: 500px; height: 247px;"
+                  [ngStyle]="{
+                      'height': this.elementHeight + 'px',
+                      'left': 'calc(50% - ' + this.elementWidth/2 + 'px)',
+                      'top': 'calc(50% - ' + this.elementHeight/2 + 'px)',
+                      'width': this.elementWidth + 'px'
+                  }"
               >
-                <div id="cboxWrapper" style="height: 247px; width: 500px;">
+                <div id="cboxWrapper" 
+                [ngStyle]="{
+                      'height': this.elementHeight + 'px',
+                      'width': this.elementWidth + 'px'
+                  }">
                   <div>
                     <div id="cboxTopLeft" style="float: left;"></div>
-                    <div id="cboxTopCenter" style="float: left; width: 500px;"></div>
+                    <div id="cboxTopCenter" style="float: left;"
+                        [ngStyle]="{
+                              'width': this.elementWidth + 'px'
+                          }"
+                    ></div>
                     <div id="cboxTopRight" style="float: left;"></div>
                   </div>
                   <div style="clear: left;">
-                    <div id="cboxMiddleLeft" style="float: left; height: 247px;"></div>
-                    <div id="cboxContent" style="float: left; width: 500px; height: 247px;">
-                      <div id="cboxLoadedContent" style="width: 500px; overflow: auto; height: 247px;">
+                    <div id="cboxMiddleLeft" style="float: left;"
+                        [ngStyle]="{
+                              'height': this.elementHeight + 'px'
+                          }"
+                    ></div>
+                    <div id="cboxContent" style="float: left;"
+                        [ngStyle]="{
+                              'height': this.elementHeight + 'px',
+                              'width': this.elementWidth + 'px'
+                          }">
+                      <div id="cboxLoadedContent" style=" overflow: auto;"
+                          [ngStyle]="{
+                              'height': this.elementHeight + 'px',
+                              'width': this.elementWidth + 'px'
+                          }"
+                      >
                         <div class="lightbox-container">
 
                           <ng-content></ng-content>
@@ -56,6 +84,7 @@ import { ModalService }
 )
 export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() elementId: any;
+    @Input() elementHeight: any;
     @Input() elementWidth: any;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -68,6 +97,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         private emailService: EmailService, 
         private modalService: ModalService 
     ){
+        this.elementHeight = elementRef.nativeElement.getAttribute('elementHeight');
         this.elementId = elementRef.nativeElement.getAttribute('elementId');
         this.elementWidth = elementRef.nativeElement.getAttribute('elementWidth');
         this.showModal = false;
@@ -75,7 +105,6 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
 
     closeModal(): void{
         console.log('close modal');
-        //$.colorbox.close();
         this.showModal = false;
     };
 
@@ -107,22 +136,6 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openModal(): void{
         this.showModal = true;
-        /*
-        console.log('elementId', this.elementId);
-        $.colorbox({
-            html: $('#modal-email-unverified').html(),
-            onComplete: function() {   
-            },
-            onClosed: function() {
-            },            
-            onLoad: function() {
-                $('#cboxClose').remove();           
-            },
-            scrolling: true,
-            width: this.elementWidth + 'px'
-        });
-        $.colorbox.resize();
-        */
     };
 
     //Default init functions provided by Angular Core
@@ -143,8 +156,6 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             }
         );
-        
-        
     };
 
     ngOnInit() {

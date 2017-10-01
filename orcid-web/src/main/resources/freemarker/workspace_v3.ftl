@@ -907,11 +907,11 @@
     </div>
 </script>
 
-<modalngcomponent elementId="modalemailunverified" elementWidth="500">
+<modalngcomponent elementHeight="248" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<modalngcomponent elementId="emailSentConfirmation" elementWidth="500">
+<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
