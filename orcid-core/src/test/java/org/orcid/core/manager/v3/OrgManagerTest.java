@@ -86,40 +86,4 @@ public class OrgManagerTest extends BaseTest {
         assertEquals("Another Institution", orgs.get(1).resolveName());
     }
 
-    @Test
-    @Transactional
-    public void testCreateUpdateWhenAlreadyExists() {
-        OrgEntity inputOrg = new OrgEntity();
-        inputOrg.setName("An institution");
-        inputOrg.setCity("London");
-        inputOrg.setCountry(Iso3166Country.GB);
-
-        OrgEntity resultOrg = orgManager.createUpdate(inputOrg);
-
-        assertNotNull(resultOrg);
-        assertEquals(inputOrg.getName(), resultOrg.getName());
-        assertEquals(inputOrg.getCity(), resultOrg.getCity());
-        assertEquals(inputOrg.getRegion(), resultOrg.getRegion());
-        assertEquals(inputOrg.getCountry(), resultOrg.getCountry());
-        assertEquals(1, resultOrg.getId().longValue());
-    }
-
-    @Test
-    @Transactional
-    public void testCreateUpdateWhenDoesNotAlreadyExists() {
-        OrgEntity inputOrg = new OrgEntity();
-        inputOrg.setName("Le Institution");
-        inputOrg.setCity("Paris");
-        inputOrg.setCountry(Iso3166Country.FR);
-
-        OrgEntity resultOrg = orgManager.createUpdate(inputOrg);
-
-        assertNotNull(resultOrg);
-        assertEquals(inputOrg.getName(), resultOrg.getName());
-        assertEquals(inputOrg.getCity(), resultOrg.getCity());
-        assertEquals(inputOrg.getRegion(), resultOrg.getRegion());
-        assertEquals(inputOrg.getCountry(), resultOrg.getCountry());
-        assertFalse(resultOrg.getId().equals(1));
-    }
-
 }

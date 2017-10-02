@@ -36,6 +36,7 @@ angular.module('orcidApp').directive(
             };
 
             var verifyEmail = function( scope ){
+                console.log('resend email directive');
                 var colorboxHtml = null;
                 $.ajax({
                     url: getBaseUri() + '/account/verifyEmail.json',

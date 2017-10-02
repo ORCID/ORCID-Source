@@ -24,6 +24,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,6 +87,20 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         Query query = entityManager.createNativeQuery("delete from org where client_source_id=:clientSourceId");
         query.setParameter("clientSourceId", clientSourceId);
         query.executeUpdate();
+    }
+
+    @Override
+    public OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, Iso3166Country country, OrgDisambiguatedEntity orgDisambiguated) {
+        TypedQuery<OrgEntity> query = entityManager.createQuery(
+                "from OrgEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and (orgDisambiguated.id = :orgDisambiguatedId or (orgDisambiguated is null and :orgDisambiguatedId is null))",
+                OrgEntity.class);
+        query.setParameter("name", name);
+        query.setParameter("city", city);
+        query.setParameter("region", region);
+        query.setParameter("country", country);
+        query.setParameter("orgDisambiguatedId", orgDisambiguated != null ? orgDisambiguated.getId() : null);
+        List<OrgEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
 }

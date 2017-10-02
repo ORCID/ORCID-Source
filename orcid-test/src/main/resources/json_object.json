@@ -1,0 +1,12 @@
+{
+	"string": "string_value",
+	"boolean": false,
+	"number": 123456,
+	"array": ["element1","element2","element3"],
+	"object": {"att1": "id", "att2": "name", "att3": "size"},
+	"object_array": [
+		{"id": "object_1"}, 
+		{"id": "object_2"},
+		{"id": "object_3"}
+	]	
+}

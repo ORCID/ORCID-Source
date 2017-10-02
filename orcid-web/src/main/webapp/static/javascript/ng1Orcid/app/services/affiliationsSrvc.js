@@ -15,6 +15,8 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                     method: 'GET',
                     success: function(data) {
                         for (i in data) {
+                            if (data[i].orgDisambiguatedId != undefined && data[i].orgDisambiguatedId != null) {
+                            }
                             if (data[i].affiliationType != null && data[i].affiliationType.value != null
                                     && data[i].affiliationType.value == 'education'){
                                 groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);

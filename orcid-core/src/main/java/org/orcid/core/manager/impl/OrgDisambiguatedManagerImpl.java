@@ -90,7 +90,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     private void processDisambiguatedOrg(OrgDisambiguatedEntity entity) {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
         OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
-        if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus())) {
+        if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(entity.getStatus())) {
             orgDisambiguatedSolrDao.remove(document.getOrgDisambiguatedId());            
         } else {
             orgDisambiguatedSolrDao.persist(document);
@@ -119,7 +119,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         document.setOrgNames(new ArrayList<>(orgNames));
 
-        if (FUNDING_ORG_TYPE.equals(entity.getSourceType()) || hasFundrefExternalIdentifier(entity.getExternalIdentifiers())) {
+        if (FUNDING_ORG_TYPE.equals(entity.getSourceType())) {
             document.setFundingOrg(true);
         } else {
             document.setFundingOrg(false);
@@ -129,7 +129,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     }
 
     /**
-     * Checks a list of external identifiers and return true is any of those is
+     * Checks a list of external identifiers and return true if any of those is
      * a funding organizations
      * 
      * @param externalIdentifiers
@@ -189,7 +189,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setCountry(orgDisambiguatedEntity.getCountry().value());
         org.setOrgType(orgDisambiguatedEntity.getOrgType());
         org.setSourceId(orgDisambiguatedEntity.getSourceId());
-        org.setSourceType(orgDisambiguatedEntity.getSourceType());        
+        org.setSourceType(orgDisambiguatedEntity.getSourceType()); 
+        org.setUrl(orgDisambiguatedEntity.getUrl());
         return org;
     }
 

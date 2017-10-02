@@ -64,7 +64,7 @@ public class ExceptionHandler {
     }
 
     /**
-     * If the record is deprecated:
+     * If the record is deprecated or locked:
      *
      * - blank it in 2.0 bucket
      * 
@@ -76,6 +76,22 @@ public class ExceptionHandler {
         // Update 2.0 buckets
         if (is20IndexingEnabled) {
             s3Updater.updateS3(orcid, orcidError);
+        }
+    }
+    
+    /**
+     * If the record is deprecated or locked:
+     *
+     * - blank it in 2.0 bucket
+     * 
+     * @throws JAXBException
+     * @throws IOException
+     * 
+     */
+    public void handle20ActivitiesException(String orcid, OrcidError orcidError) throws IOException, JAXBException {
+        // Update 2.0 buckets
+        if (is20IndexingEnabled) {
+            s3Updater.setErrorOnActivitiesBucket(orcid, orcidError);
         }
     }
 }

@@ -41,10 +41,6 @@ public interface OrgManager {
     
     List<OrgEntity> getOrgsByName(String searchTerm);
 
-    OrgEntity createUpdate(OrgEntity org);
-
-    OrgEntity createUpdate(OrgEntity org, Long orgDisambiguatedId);
-    
     OrgEntity getOrgEntity(OrganizationHolder holder);
     
     OrgEntity getOrgEntity(Organization org);

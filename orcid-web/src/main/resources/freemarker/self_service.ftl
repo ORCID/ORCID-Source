@@ -215,14 +215,38 @@
                 <div id="invalid-email-alert" class="orcid-hide orcid-error"><@spring.message "Email.resetPasswordForm.invalidEmail"/></div>
                 </div>
             </div>
+            <!-- Consortium members-->
             <div class="topBuffer" ng-show="memberDetails.consortiumLead">
                 <h2><@spring.message "manage_consortium.submembers_heading"/></h2>
                 <p><@spring.message "manage_consortium.submembers_text"/></p>
                 <hr></hr>
-            	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountName'">
-					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountName}}</a></span>
-					<span class="tooltip-container pull-right">
-						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)" ng-show="memberDetails.allowedFullAccess"
+            	<div ng-cloak ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountPublicDisplayName'">
+					<span><a ng-class="{ 'disabled': isPendingAddition(subMember)}" " ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountPublicDisplayName}}</a></span>
+                    <!-- Pending addition -->
+					<span class="tooltip-container pull-right pending-addition" ng-show="isPendingAddition(subMember)"><@orcid.msg 'manage_consortium.add_submember_pending_addition'/>
+                        <a id="cancelAddSubmember" name="{{subMember.opportunity.accountPublicDisplayName}}" ng-click="cancelSubMemberAddition(subMember)" class="glyphicon glyphicon-remove-circle">
+                            <div class="popover popover-tooltip top">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <span><@orcid.msg "manage_consortium.add_submember_pending_addition_cancel"/></span>
+                                </div>
+                            </div>
+                        </a>
+                    </span>
+                    <!-- Pending removal -->
+                    <span class="tooltip-container pull-right pending-removal" ng-show="isPendingRemoval(subMember)"><@orcid.msg 'manage_consortium.add_submember_pending_removal'/> 
+                        <a id="cancelRemoveSubmember" name="{{subMember.opportunity.accountPublicDisplayName}}" ng-click="cancelSubMemberRemoval(subMember)" class="glyphicon glyphicon-remove-circle">
+                            <div class="popover popover-tooltip top">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <span><@orcid.msg "manage_consortium.add_submember_pending_removal_cancel"/></span>
+                                </div>
+                            </div>
+                        </a>
+                    </span>
+					<!-- Request removal -->
+                    <span class="tooltip-container pull-right" ng-show="canRemoveSubMember(subMember)">
+						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)"
 	                        class="glyphicon glyphicon-trash grey">
 	                        <div class="popover popover-tooltip top">
 	                            <div class="arrow"></div>
@@ -238,13 +262,15 @@
 					<p>This consortium does not have any members yet.</p>
 					<hr></hr>
                 </div>
+                <!-- Add consortium member-->
                 <div ng-show="memberDetails.allowedFullAccess">
 	                <h3><@spring.message "manage_consortium.add_submember_heading"/></h3>
+                    <p><@orcid.msg "manage_consortium.add_submember_text"/></p>
                     <!-- Name -->
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label for="new-sub-member-name"><@spring.message "manage_consortium.org_name"/></label>
-                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="input-95-width" ng-change="validateSubMemberField('name')" ng-model="newSubMember.name.value" ng-model-onblur />
+                            <input id="new-sub-member-name" type="text" placeholder="<@spring.message "manage_consortium.org_name"/>" class="input-95-width" ng-model="newSubMember.name.value" ng-blur="validateSubMemberField('name')" />
                             <span class="required" ng-class="isValidClass(newSubMember.name)" >*</span>
                             <span class="orcid-error" ng-show="newSubMember.name.errors.length > 0">
                                 <div ng-repeat='error in newSubMember.name.errors' ng-bind-html="error"></div>
@@ -255,24 +281,47 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label for="new-sub-member-website"><@spring.message "manage_consortium.website"/></label>
-                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="input-95-width" ng-model="newSubMember.website.value" ng-model-onblur ng-change="validateSubMemberField('website')" />
+                            <input id="new-sub-member-website" type="text" placeholder="<@spring.message "manage_consortium.website"/>" class="input-95-width" ng-model="newSubMember.website.value" ng-blur="validateSubMemberField('website')" />
                             <span class="required" ng-class="isValidClass(newSubMember.website)">*</span>
                             <span class="orcid-error" ng-show="newSubMember.website.errors.length > 0">
                                 <div ng-repeat='error in newSubMember.website.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
                     </div>
+                    <!-- initial contact -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label for="new-sub-member-initial-contact"><@spring.message "manage_consortium.initial_contact_heading"/></label>
+                            <div><@spring.message "manage_consortium.initial_contact_description"/></div>
+                            <input id="initial-contact-first-name" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_first_name"/>" class="input-95-width" ng-model="newSubMember.initialContactFirstName.value" ng-blur="validateSubMemberField('initial-contact-first-name')" />
+                            <span class="required" ng-class="isValidClass(newSubMember.initialContact.firstName)">*</span>
+                            <span class="orcid-error" ng-show="newSubMember.initialContactFirstName.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.initialContactFirstName.errors' ng-bind-html="error"></div>
+                            </span>
+                            <input id="initial-contact-last-name" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_last_name"/>" class="input-95-width" ng-model="newSubMember.initialContactLastName.value" ng-blur="validateSubMemberField('initial-contact-last-name')" />
+                            <span class="required" ng-class="isValidClass(newSubMember.initialContact.lastName)">*</span>
+                            <span class="orcid-error" ng-show="newSubMember.initialContactLastName.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.initialContactLastName.errors' ng-bind-html="error"></div>
+                            </span>
+                            <input id="initial-contact-email" type="text" placeholder="<@spring.message "manage_consortium.initial_contact_email"/>" class="input-95-width" ng-model="newSubMember.initialContactEmail.value" ng-blur="validateSubMemberField('initial-contact-email')" />
+                            <span class="required" ng-class="isValidClass(newSubMember.initialContact.email)">*</span>
+                            <span class="orcid-error" ng-show="newSubMember.initialContactEmail.errors.length > 0">
+                                <div ng-repeat='error in newSubMember.initialContactEmail.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
+                    </div>
                     <!-- Buttons -->
 	                <div class="row">
 	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
-                            <span class="orcid-error" ng-show="newSubMember.errors.length > 0">
-                                <div ng-repeat='error in newSubMember.errors' ng-bind-html="error"></div>
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="validateSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
+                            <a href="" class="cancel-right" ng-click="addSubMemberClear()"><@orcid.msg 'manual_work_form_contents.btnclear' /></a>
+                            <span class="orcid-error" ng-show="errorSubMemberExists">
+                                <div><@orcid.msg 'manage_consortium.add_submember_member_exists'/></div>
                             </span>
                             <span class="orcid-error" ng-show="errorAddingSubMember">
                                 <div><@orcid.msg 'manage_consortium.add_submember_error'/></div>
                             </span>
-	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="validateSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                    </div>
 	                </div> 
 	            </div>
@@ -323,6 +372,7 @@
     <script type="text/ng-template" id="revoke-contact-modal">
 	    <div class="lightbox-container">
 	        <h3><@orcid.msg 'manage_consortium.remove_contact_confirm_heading'/></h3>
+            <p><@orcid.msg 'manage_consortium.remove_contact_confirm_text1'/></p>
 	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
 	        <form ng-submit="revoke(contactToRevoke)">
 	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
@@ -337,7 +387,8 @@
     <script type="text/ng-template" id="remove-sub-member-modal">
         <div class="lightbox-container">
             <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
-            <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
+            <p><strong>{{subMemberToRemove.opportunity.accountPublicDisplayName}}</strong> <@orcid.msg 'manage_consortium.remove_consortium_member_confirm_text1'/></p>
+            <p><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_text2'/></p>
             <form ng-submit="removeSubMember(subMemberToRemove)">
                 <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
                 <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>

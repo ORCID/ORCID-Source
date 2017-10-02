@@ -135,7 +135,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( this.emailService.getEmailPrimary().verified ){
                     this.showEdit = !this.showEdit;
                 }else{
-                    this.modalService.notifyOther('open');
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
             },
             error => {

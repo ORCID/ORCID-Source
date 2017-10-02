@@ -74,7 +74,17 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
-
+    
+    @Resource 
+    private NamespacedRandomCodeGenerator generator;
+    
+    @Override
+    public String createAuthorizationCode(OAuth2Authentication authentication) {
+        String code = generator.nextRandomCode();
+        store(code, authentication);
+        return code;
+    }
+    
     @Override
     protected void store(String code, OAuth2Authentication authentication) {
         OrcidOauth2AuthoriziationCodeDetail detail = getDetailFromAuthorization(code, authentication);

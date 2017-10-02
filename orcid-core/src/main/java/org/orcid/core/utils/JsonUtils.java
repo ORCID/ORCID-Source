@@ -16,12 +16,15 @@
  */
 package org.orcid.core.utils;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -83,6 +86,14 @@ public class JsonUtils {
             return record.getInt(key);
         } catch (JSONException e) {
             throw new RuntimeException("Error extracting int from json", e);
+        }
+    }
+    
+    public static JsonNode read(File file) {
+        try {
+            return mapper.readTree(file);
+        } catch (IOException e) {
+            throw new RuntimeException("Error extracting JsonNode from file", e);
         }
     }
 

@@ -30,7 +30,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV1;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV1;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -477,8 +478,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         funding.setFundingContributors(getFundingContributors(profileFundingEntity));
         
         if (profileFundingEntity.getExternalIdentifiersJson() != null){
-            FundingExternalIdentifiers ids = FundingExternalIdentifiers.fromDBJSONString(profileFundingEntity.getExternalIdentifiersJson());
-            funding.setFundingExternalIdentifiers(ids.toMessagePojo());
+            JSONFundingExternalIdentifiersConverterV1 converter = new JSONFundingExternalIdentifiersConverterV1();
+            funding.setFundingExternalIdentifiers(converter.convertFrom(profileFundingEntity.getExternalIdentifiersJson()));
         }
 
         // Set organization
@@ -802,8 +803,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkCitation(getWorkCitation(work));
         orcidWork.setWorkContributors(getWorkContributors(work));
         if (work.getExternalIdentifiersJson() != null){
-            org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers extIds = org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers.fromDBJSONString(work.getExternalIdentifiersJson());        
-            orcidWork.setWorkExternalIdentifiers(extIds.toMessagePojo());            
+            JSONWorkExternalIdentifiersConverterV1 converter = new JSONWorkExternalIdentifiersConverterV1();
+            orcidWork.setWorkExternalIdentifiers(converter.convertFrom(work.getExternalIdentifiersJson()));            
         }
         orcidWork.setSource(getSource(work));
         orcidWork.setWorkTitle(getWorkTitle(work));

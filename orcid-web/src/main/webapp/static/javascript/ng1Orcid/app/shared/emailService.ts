@@ -145,10 +145,6 @@ export class EmailService {
                     this.unverifiedSetPrimary = false;
                 }
 
-                /*callback = function(){
-                    $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
-                }*/
-
             } else {
                 this.emails.emails[i].primary = false;
             }
@@ -156,9 +152,9 @@ export class EmailService {
         this.saveEmail();
     }
 
-    verifyEmail(email, callback): Observable<any>  {
+    verifyEmail(): Observable<any>  {
         return this.http.get(
-            getBaseUri() + '/account/verifyEmail.json'
+            getBaseUri() + '/account/verifyEmail.json&email=' + this.primaryEmail
         )
         .map(
             (res:Response) => res.json()

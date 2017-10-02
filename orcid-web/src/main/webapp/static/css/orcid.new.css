@@ -7158,20 +7158,23 @@ a:hover .mozilla-badge {
     color: #494a4c;
 }
 
-.tooltip-container a.glyphicon-trash .popover-tooltip {
+.tooltip-container a.glyphicon-trash .popover-tooltip,
+.tooltip-container a.glyphicon-remove-circle .popover-tooltip {
     display: none;
     min-width: 30px;
     top: -43px;
     left: -27px;
 }
 
-.tooltip-container a.glyphicon-trash:hover .popover-tooltip {
+.tooltip-container a.glyphicon-trash:hover .popover-tooltip,
+.tooltip-container a.glyphicon-remove-circle:hover .popover-tooltip  {
     display: block;
     cursor: normal;
     color: #494a4c;
 }
 
-.tooltip-container a.glyphicon-trash:hover .arrow {
+.tooltip-container a.glyphicon-trash:hover .arrow,
+.tooltip-container a.glyphicon-remove-circle:hover .arrow {
     left: 34px;
 }
 
@@ -7284,6 +7287,12 @@ ul.comma li:last-child:after {
     margin: 10px 0;
 }
 
+.self-service .disabled{
+    color: #494a4c;
+    font-style: italic;
+    pointer-events: none; 
+}
+
 .self-service label,
 .self-service h3 {
     display: block;
@@ -7307,6 +7316,29 @@ ul.comma li:last-child:after {
 
 .self-service .input-md  {
     width: 160px;
+}
+
+.self-service .pending-addition{
+    color: green;
+    font-style: italic;
+}
+
+.self-service .pending-addition a{
+    color: green;
+}
+
+.self-service .pending-addition a:hover,
+.self-service .pending-removal a:hover {
+    color: #494a4c;
+}
+
+.self-service .pending-removal{
+    color: red;
+    font-style: italic;
+}
+
+.self-service .pending-removal a{
+    color: red;
 }
 
 .self-service select{
@@ -7348,8 +7380,16 @@ ul.comma li:last-child:after {
     font-size: 12px;
 }
 
+.no-padding {
+    padding: 0;
+}
+
 .no-padding-left {
     padding-left: 0px;
+}
+
+.no-padding-right{
+    padding-right: 0;
 }
 
 .footer-main {
@@ -8723,6 +8763,24 @@ ul.comma li:last-child:after {
     }
 }
 
+
+/***************** Modalng2 syles */
+.popover-ng2-bck {
+    background: #ddd;
+    height: 100%;
+    left: 0;
+    opacity: 0.9;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 9000;
+}
+
+.popover-ng2-content {
+    display: block; 
+    visibility: visible; 
+    position: absolute; 
+}
 
 /*************************** Right to left styles*/
 .lang-rl #idpSelectInput {

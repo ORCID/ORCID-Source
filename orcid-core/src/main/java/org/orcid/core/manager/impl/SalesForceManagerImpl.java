@@ -18,7 +18,6 @@ package org.orcid.core.manager.impl;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -47,6 +46,7 @@ import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -68,7 +68,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     private static final String OPPORTUNITY_TYPE = "New";
 
-    private static final String OPPORTUNITY_INITIAL_STAGE_NAME = "Invoice Paid";
+    private static final String OPPORTUNITY_INITIAL_STAGE_NAME = "Negotiation/Review";
+
+    private static final String OPPORTUNITY_PUBLIC_STAGE_NAME = "Invoice Paid";
 
     private static final String OPPORTUNITY_NAME = "Opportunity from registry";
 
@@ -134,18 +136,34 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public MemberDetails retrieveDetailsBySlug(String memberSlug) {
+        return retrieveDetailsBySlug(memberSlug, false);
+    }
+
+    @Override
+    public MemberDetails retrieveDetailsBySlug(String memberSlug, boolean publicOnly) {
         String memberId = SlugUtils.extractIdFromSlug(memberSlug);
-        return retrieveDetails(memberId);
+        return retrieveDetails(memberId, publicOnly);
     }
 
     @Override
     public MemberDetails retrieveDetails(String memberId) {
+        return retrieveDetails(memberId, false);
+    }
+
+    @Override
+    public MemberDetails retrieveDetails(String memberId, boolean publicOnly) {
         Member salesForceMember = retrieveMember(memberId);
         if (salesForceMember != null) {
             MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
                     .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
             details.setMember(salesForceMember);
-            details.setSubMembers(findSubMembers(memberId));
+            List<SubMember> allSubMembers = findSubMembers(memberId);
+            if (publicOnly) {
+                details.setSubMembers(
+                        allSubMembers.stream().filter(m -> OPPORTUNITY_PUBLIC_STAGE_NAME.equals(m.getOpportunity().getStageName())).collect(Collectors.toList()));
+            } else {
+                details.setSubMembers(allSubMembers);
+            }
             return details;
         }
         throw new IllegalArgumentException("No member details found for " + memberId);
@@ -241,7 +259,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
-    public String createMember(Member member) {
+    public String createMember(Member member, Contact initialContact) {
         String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         Member consortium = retrieveMember(consortiumLeadId);
         String consortiumOwnerId = consortium.getOwnerId();
@@ -269,7 +287,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         opportunity.setMembershipEndDate(consortium.getLastMembershipEndDate());
         opportunity.setRecordTypeId(getConsortiumMemberRecordTypeId());
         opportunity.setName(OPPORTUNITY_NAME);
-        createOpportunity(opportunity);
+        String opportunityId = createOpportunity(opportunity);
+        initialContact.setAccountId(accountId);
+        createOpportunityContact(initialContact, opportunityId);
         removeMemberDetailsFromCache(consortiumLeadId);
         salesForceConsortiumCache.remove(consortiumLeadId);
         return accountId;
@@ -384,17 +404,62 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public void flagOpportunityAsClosed(String opportunityId) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        MemberDetails memberDetails = retrieveDetails(accountId);
-        boolean authorized = memberDetails.getSubMembers().stream().anyMatch(s -> opportunityId.equals(s.getOpportunity().getId()));
-        if (authorized) {
-            Opportunity opportunity = new Opportunity();
-            opportunity.setId(opportunityId);
-            opportunity.setStageName(OPPORTUNITY_CLOSED_LOST);
-            salesForceDao.updateOpportunity(opportunity);
-        }
+        checkOpportunityUpdatePermissions(opportunityId);
+        Opportunity opportunity = new Opportunity();
+        opportunity.setId(opportunityId);
+        opportunity.setStageName(OPPORTUNITY_CLOSED_LOST);
+        salesForceDao.updateOpportunity(opportunity);
         salesForceMembersListCache.removeAll();
         removeMemberDetailsFromCache(accountId);
         salesForceConsortiumCache.remove(accountId);
+    }
+
+    @Override
+    public void flagOpportunityAsRemovalRequested(String opportunityId) {
+        String userOrcid = sourceManager.retrieveRealUserOrcid();
+        String accountId = retrieveAccountIdByOrcid(userOrcid);
+        checkOpportunityUpdatePermissions(opportunityId);
+        Opportunity opportunity = new Opportunity();
+        opportunity.setId(opportunityId);
+        opportunity.setRemovalRequested(true);
+        opportunity.setNextStep("Removal requested by " + userOrcid);
+        salesForceDao.updateOpportunity(opportunity);
+        salesForceMembersListCache.removeAll();
+        removeMemberDetailsFromCache(accountId);
+        salesForceConsortiumCache.remove(accountId);
+    }
+
+    @Override
+    public void flagOpportunityAsRemovalNotRequested(String opportunityId) {
+        String userOrcid = sourceManager.retrieveRealUserOrcid();
+        String accountId = retrieveAccountIdByOrcid(userOrcid);
+        checkOpportunityUpdatePermissions(opportunityId);
+        Opportunity opportunity = new Opportunity();
+        opportunity.setId(opportunityId);
+        opportunity.setRemovalRequested(false);
+        opportunity.setNextStep("Removal request cancelled by " + userOrcid);
+        salesForceDao.updateOpportunity(opportunity);
+        salesForceMembersListCache.removeAll();
+        removeMemberDetailsFromCache(accountId);
+        salesForceConsortiumCache.remove(accountId);
+    }
+
+    @Override
+    public void removeOpportunity(String opportunityId) {
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        checkOpportunityUpdatePermissions(opportunityId);
+        salesForceDao.removeOpportunity(opportunityId);
+        removeMemberDetailsFromCache(accountId);
+        salesForceConsortiumCache.remove(accountId);
+    }
+
+    private void checkOpportunityUpdatePermissions(String opportunityId) {
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        MemberDetails memberDetails = retrieveDetails(accountId);
+        boolean authorized = memberDetails.getSubMembers().stream().anyMatch(s -> opportunityId.equals(s.getOpportunity().getId()));
+        if (!authorized) {
+            throw new OrcidUnauthorizedException("Insufficient permissions to update opportunity");
+        }
     }
 
     @Override
@@ -434,6 +499,32 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
         }
         salesForceContactsCache.remove(accountId);
+    }
+
+    private void createOpportunityContact(Contact contact, String opportunityId) {
+        String accountId = contact.getAccountId();
+        String contactOrcid = contact.getOrcid();
+        if (StringUtils.isBlank(contact.getEmail())) {
+            Email primaryEmail = emailManager.getEmails(contactOrcid).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
+            contact.setEmail(primaryEmail.getEmail());
+        }
+
+        List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);
+        Optional<Contact> existingContact = existingContacts.stream().filter(c -> {
+            if ((contact.getOrcid() != null && contact.getOrcid().equals(c.getOrcid())) || (contact.getEmail() != null && contact.getEmail().equals(c.getEmail()))) {
+                return true;
+            }
+            return false;
+        }).findFirst();
+        String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
+        OpportunityContactRole contactRole = new OpportunityContactRole();
+        contactRole.setContactId(contactId);
+        contactRole.setRoleType(ContactRoleType.MAIN_CONTACT);
+        contactRole.setOpportunityId(opportunityId);
+        salesForceDao.createOpportunityContactRole(contactRole);
+        if (contactOrcid != null && salesForceConnectionDao.findByOrcid(contact.getOrcid()) == null) {
+            salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
+        }
     }
 
     @Override

@@ -22,6 +22,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
     
+    @Label("Affiliation org ID in UI")
+    AFFILIATION_ORG_ID,
+    
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
     
