@@ -122,6 +122,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
@@ -401,6 +402,22 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     setAffiliationPrivacy(orcidProfile, defaultVisibility);
                     setFundingPrivacy(orcidProfile, defaultVisibility);
                 }
+                
+                //Set source id on Works to allow the dedup process work
+                if(orcidProfile.getOrcidActivities() != null && orcidProfile.getOrcidActivities().getOrcidWorks() != null 
+                        && orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork() != null) {
+                    for(OrcidWork orcidWork : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
+                        // If it is a new work
+                        if(PojoUtil.isEmpty(orcidWork.getPutCode())) {                            
+                            // We assume this is not used from the UI
+                            Source source = new Source();
+                            source.setSourceClientId(new SourceClientId(amenderOrcid));
+                            source.setSourceOrcid(null);
+                            orcidWork.setSource(source);                            
+                        }
+                    }
+                }
+                
                 dedupeWorks(orcidProfile);
                 dedupeAffiliations(orcidProfile);
                 dedupeFundings(orcidProfile);
@@ -981,7 +998,18 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
-        addSourceToWorks(updatedOrcidWorks, amenderOrcid);
+        
+        for(OrcidWork orcidWork : updatedOrcidWorks.getOrcidWork()) {
+            // If it is a new work
+            if(PojoUtil.isEmpty(orcidWork.getPutCode())) {                            
+                // We assume this is not used from the UI
+                Source source = new Source();
+                source.setSourceClientId(new SourceClientId(amenderOrcid));
+                source.setSourceOrcid(null);
+                orcidWork.setSource(source);                            
+            }
+        }
+        
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
 
