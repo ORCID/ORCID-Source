@@ -30,19 +30,21 @@ public class JSONFundingExternalIdentifiersConverterV1 {
 
     public String convertTo(FundingExternalIdentifiers messagePojo) {
         JSONFundingExternalIdentifiers fundingExternalIdentifiers = new JSONFundingExternalIdentifiers();
-        for (FundingExternalIdentifier fundingExternalIdentifier : messagePojo.getFundingExternalIdentifier()) {
-            JSONExternalIdentifier jsonExternalIdentifier = new JSONExternalIdentifier();
-            if (fundingExternalIdentifier.getType() != null) {
-                jsonExternalIdentifier.setType(fundingExternalIdentifier.getType().value());
+        if (messagePojo != null) {
+            for (FundingExternalIdentifier fundingExternalIdentifier : messagePojo.getFundingExternalIdentifier()) {
+                JSONExternalIdentifier jsonExternalIdentifier = new JSONExternalIdentifier();
+                if (fundingExternalIdentifier.getType() != null) {
+                    jsonExternalIdentifier.setType(fundingExternalIdentifier.getType().value());
+                }
+                if (fundingExternalIdentifier.getUrl() != null) {
+                    jsonExternalIdentifier.setUrl(new JSONUrl(fundingExternalIdentifier.getUrl().getValue()));
+                }
+                if (!PojoUtil.isEmpty(fundingExternalIdentifier.getValue())) {
+                    jsonExternalIdentifier.setValue(fundingExternalIdentifier.getValue());
+                }
+                jsonExternalIdentifier.setRelationship(Relationship.SELF.value());
+                fundingExternalIdentifiers.getFundingExternalIdentifier().add(jsonExternalIdentifier);
             }
-            if (fundingExternalIdentifier.getUrl() != null) {
-                jsonExternalIdentifier.setUrl(new JSONUrl(fundingExternalIdentifier.getUrl().getValue()));
-            }
-            if (!PojoUtil.isEmpty(fundingExternalIdentifier.getValue())) {
-                jsonExternalIdentifier.setValue(fundingExternalIdentifier.getValue());
-            }
-            jsonExternalIdentifier.setRelationship(Relationship.SELF.value());
-            fundingExternalIdentifiers.getFundingExternalIdentifier().add(jsonExternalIdentifier);
         }
         return JsonUtils.convertToJsonString(fundingExternalIdentifiers);
     }
