@@ -8943,8 +8943,18 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .id-details .popover-pos{
-    left:100%;
-    margin-left: -250px;
+    margin-left: 0;
+    position: absolute;
+    top: 15px;
+    right: 0;
+    width: -moz-max-content;
+    width: max-content;
+    z-index: 1;
+}
+
+.lang-rl .id-details .url-work .id-details li span span {
+    float: right;
+    margin-right: -15px;
 }
 
 .lang-rl .lhs {
@@ -8990,13 +9000,18 @@ ul.comma li:last-child:after {
     text-align: right;
 }
 
+.lang-rl .url-popover > span {
+    position: relative;
+}
+
 .lang-rl .url-popover .popover.bottom .arrow {
     right: 20px;
 }
 
-.lang-rl .id-details .url-work .id-details li span span {
-    float: right;
-    margin-right: -15px;
+.lang-rl .url-popover .popover-help-container .popover {
+    left: initial;
+    top: initial;
+    position: relative;
 }
 
 .lang-rl .workspace-accordion-header .toggle-text {
