@@ -90,7 +90,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     private void processDisambiguatedOrg(OrgDisambiguatedEntity entity) {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
         OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
-        if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus())) {
+        if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(entity.getStatus())) {
             orgDisambiguatedSolrDao.remove(document.getOrgDisambiguatedId());            
         } else {
             orgDisambiguatedSolrDao.persist(document);

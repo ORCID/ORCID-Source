@@ -161,7 +161,7 @@ public class LoadGridData {
                 }
 
                 ArrayNode urls = institute.get("links").isNull() ? null : (ArrayNode) institute.get("links");
-                // TODO: Am assuming we are going to use the first URL
+                // Use the first URL
                 String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
 
                 // Creates or updates an institute
@@ -331,16 +331,29 @@ public class LoadGridData {
     private void deprecateOrg(String sourceId, String primarySourceId) {
         LOGGER.info("Deprecating org {} for {}", sourceId, primarySourceId);
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
+        Date now = new Date();
         if (existingEntity != null) {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.DEPRECATED.name())
                     || !existingEntity.getSourceParentId().equals(primarySourceId)) {
                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
                 existingEntity.setSourceParentId(primarySourceId);
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                existingEntity.setLastModified(new Date());
+                existingEntity.setLastModified(now);
                 orgDisambiguatedDao.merge(existingEntity);
                 deprecatedOrgs++;
             }
+        } else {
+            OrgDisambiguatedEntity deprecatedEntity = new OrgDisambiguatedEntity();
+            deprecatedEntity.setSourceType(GRID_SOURCE_TYPE);
+            deprecatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
+            deprecatedEntity.setSourceId(sourceId);
+            deprecatedEntity.setSourceParentId(primarySourceId);
+            deprecatedEntity.setDateCreated(now);
+            deprecatedEntity.setLastModified(now);
+            //We don't need to index it
+            deprecatedEntity.setIndexingStatus(IndexingStatus.DONE);
+            orgDisambiguatedDao.persist(deprecatedEntity);
+            deprecatedOrgs++;
         }
     }
 
@@ -350,14 +363,26 @@ public class LoadGridData {
     private void obsoleteOrg(String sourceId) {
         LOGGER.info("Marking or as obsolete {}", sourceId);
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
+        Date now = new Date();
         if (existingEntity != null) {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.OBSOLETE.name())) {
                 existingEntity.setStatus(OrganizationStatus.OBSOLETE.name());
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                existingEntity.setLastModified(new Date());
+                existingEntity.setLastModified(now);
                 orgDisambiguatedDao.merge(existingEntity);
                 obsoletedOrgs++;
             }
+        } else {
+            OrgDisambiguatedEntity obsoletedEntity = new OrgDisambiguatedEntity();
+            obsoletedEntity.setSourceType(GRID_SOURCE_TYPE);
+            obsoletedEntity.setStatus(OrganizationStatus.OBSOLETE.name());
+            obsoletedEntity.setSourceId(sourceId);            
+            obsoletedEntity.setDateCreated(now);
+            obsoletedEntity.setLastModified(now);            
+            //We don't need to index it
+            obsoletedEntity.setIndexingStatus(IndexingStatus.DONE);
+            orgDisambiguatedDao.persist(obsoletedEntity);
+            obsoletedOrgs++;
         }
     }
 }
