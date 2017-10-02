@@ -2420,18 +2420,15 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     margin-right: 0;
 }
 
-.settings-table .settings-table td,
-.settings-table th {
-    width: 50%;
-    position: relative;
-}
-
 .settings-table,
-.settings-table th,
-.settings-table td {
+.settings-table td, 
+.settings-table th {
     border-left: 0 none !important;
     border-right: 0 none !important;
     padding-left: 0;
+    padding-right: 5px;
+    position: relative;
+    width: 50%;
 }
 
 .settings-table.table-bordered>tbody>tr>td {
@@ -3091,15 +3088,6 @@ header overrides
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-collapse: none;
-}
-
-.settings-table,
-.settings-table th,
-.settings-table td {
-    border-left: 0;
-    border-right: 0;
-    padding-left: 0;
-    padding-right: 5px;
 }
 
 .account-settings {
@@ -7240,6 +7228,10 @@ a:hover .mozilla-badge {
     display: block;
 }
 
+.edit-biography .popover {
+    top: -40px;
+}
+
 #register p,
 #register .dark-label {
     color: #494A4C;
@@ -8912,6 +8904,11 @@ ul.comma li:last-child:after {
 .lang-rl .container .header .search form .bar {
     float: right;
 }
+
+.lang-rl .edit-biography .popover {
+    right: 55px;
+}
+
 .lang-rl .fixed-area ul.record-settings {
     margin-right: 0;
 }
