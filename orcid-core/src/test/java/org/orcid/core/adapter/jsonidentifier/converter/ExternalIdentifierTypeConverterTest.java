@@ -16,33 +16,26 @@
  */
 package org.orcid.core.adapter.jsonidentifier.converter;
 
-import org.junit.Ignore;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-import ma.glasnost.orika.converter.BidirectionalConverter;
-import ma.glasnost.orika.metadata.Type;
-
-
-@RunWith(OrcidJUnit4ClassRunner.class)
-@Ignore
 public final class ExternalIdentifierTypeConverterTest {
+   
+    ExternalIdentifierTypeConverter converter = new ExternalIdentifierTypeConverter();
 
     @Test
-    public void testConvertTo(String source, Type<String> destinationType) {
-//        return source.toUpperCase().replace("-", "_");
+    public void testConvertTo() {
+        assertEquals("SOMETHING", converter.convertTo("something", null));
+        assertEquals("GRANT_NUMBER", converter.convertTo("grant_number", null));
+        assertEquals("ERM_WHAT_ELSE", converter.convertTo("erm-what-else", null));
     }
 
     @Test
-    public void testConvertFrom(String source, Type<String> destinationType) {
-//        if (source == null)
-//            return null;
-//        // annoying hack because grant_number does it different.
-//        if (source.equals("GRANT_NUMBER"))
-//            return "grant_number";
-//        return source.toLowerCase().replace("_", "-");
+    public void testConvertFrom() {
+        assertEquals("something", converter.convertFrom("SOMETHING", null));
+        assertEquals("grant_number", converter.convertFrom("GRANT_NUMBER", null));
+        assertEquals("erm-what-else", converter.convertFrom("ERM_WHAT_ELSE", null));
     }
 
 }

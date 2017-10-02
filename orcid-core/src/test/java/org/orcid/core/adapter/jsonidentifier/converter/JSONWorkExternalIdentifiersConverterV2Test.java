@@ -1,78 +1,86 @@
 package org.orcid.core.adapter.jsonidentifier.converter;
 
-import org.junit.Ignore;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.InputStream;
+import java.util.Date;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.orcid.core.adapter.jsonidentifier.JSONUrl;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
-import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.common_v2.Url;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
-import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.utils.DateUtils;
 
-import ma.glasnost.orika.converter.BidirectionalConverter;
-import ma.glasnost.orika.metadata.Type;
-
-@RunWith(OrcidJUnit4ClassRunner.class)
-@Ignore
 public class JSONWorkExternalIdentifiersConverterV2Test {
-    
-    private ExternalIdentifierTypeConverter conv = new ExternalIdentifierTypeConverter();
+
+    private JSONWorkExternalIdentifiersConverterV2 converter = new JSONWorkExternalIdentifiersConverterV2();
 
     @Test
-    public void testConvertTo(ExternalIDs source, Type<String> destinationType) {
-//        JSONWorkExternalIdentifiers jsonWorkExternalIdentifiers = new JSONWorkExternalIdentifiers();
-//        for (ExternalID externalID : source.getExternalIdentifier()) {
-//            JSONWorkExternalIdentifier jsonWorkExternalIdentifier = new JSONWorkExternalIdentifier();
-//            if (externalID.getType() != null) {
-//                jsonWorkExternalIdentifier.setWorkExternalIdentifierType(conv.convertTo(externalID.getType(), null));
-//            }
-//
-//            if (externalID.getUrl() != null) {
-//                jsonWorkExternalIdentifier.setUrl(new JSONUrl(externalID.getUrl().getValue()));
-//            }
-//
-//            if (!PojoUtil.isEmpty(externalID.getValue())) {
-//                jsonWorkExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId(externalID.getValue()));
-//            }
-//
-//            if (externalID.getRelationship() != null) {
-//                jsonWorkExternalIdentifier.setRelationship(conv.convertTo(externalID.getRelationship().value(), null));
-//            }
-//            jsonWorkExternalIdentifiers.getWorkExternalIdentifier().add(jsonWorkExternalIdentifier);
-//        }
-//        return JsonUtils.convertToJsonString(jsonWorkExternalIdentifiers);
+    public void testConvertTo() throws JAXBException {
+        Work work = getWork();
+        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
+                converter.convertTo(work.getExternalIdentifiers(), null));
     }
 
     @Test
-    public void testConvertFrom(String source, Type<ExternalIDs> destinationType) {
-//        JSONWorkExternalIdentifiers workExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, JSONWorkExternalIdentifiers.class);
-//        ExternalIDs externalIDs = new ExternalIDs();
-//        for (JSONWorkExternalIdentifier workExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier()) {
-//            ExternalID id = new ExternalID();
-//            if (workExternalIdentifier.getWorkExternalIdentifierType() == null) {
-//                id.setType(WorkExternalIdentifierType.OTHER_ID.value());
-//            } else {
-//                id.setType(conv.convertFrom(workExternalIdentifier.getWorkExternalIdentifierType(), null));
-//            }
-//            if (workExternalIdentifier.getWorkExternalIdentifierId() != null) {
-//                id.setValue(workExternalIdentifier.getWorkExternalIdentifierId().content);
-//            } 
-//            if (workExternalIdentifier.getUrl() != null) {
-//                id.setUrl(new Url(workExternalIdentifier.getUrl().getValue()));
-//            }
-//            if (workExternalIdentifier.getRelationship() != null) {
-//                id.setRelationship(Relationship.fromValue(conv.convertFrom(workExternalIdentifier.getRelationship(), null)));
-//            }
-//            externalIDs.getExternalIdentifier().add(id);
-//        }
-//        return externalIDs;
+    public void testConvertFrom() {
+        WorkEntity workEntity = getWorkEntity();
+        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
+        assertEquals(1, entityIDs.getExternalIdentifier().size());
+        
+        ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
+        assertEquals("123", externalID.getValue());
+        assertNotNull(externalID.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), externalID.getType());
+    }
+
+    private Work getWork() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        String name = "/record_2.0/samples/read_samples/work-full-2.0.xml";
+        InputStream inputStream = getClass().getResourceAsStream(name);
+        return (Work) unmarshaller.unmarshal(inputStream);
+    }
+
+    private WorkEntity getWorkEntity() {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
+        WorkEntity work = new WorkEntity();
+        work.setDateCreated(date);
+        work.setLastModified(date);
+        work.setOrcid("0000-0000-0000-0001");
+        work.setVisibility(Visibility.LIMITED);
+        work.setDisplayIndex(1234567890L);
+        work.setClientSourceId("APP-5555555555555555");
+        work.setCitation("work:citation");
+        work.setCitationType(CitationType.BIBTEX);
+        work.setDateCreated(date);
+        work.setDescription("work:description");
+        work.setId(12345L);
+        work.setIso2Country(Iso3166Country.CR);
+        work.setJournalTitle("work:journalTitle");
+        work.setLanguageCode("EN");
+        work.setLastModified(date);
+        work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
+        work.setSubtitle("work:subtitle");
+        work.setTitle("work:title");
+        work.setTranslatedTitle("work:translatedTitle");
+        work.setTranslatedTitleLanguageCode("ES");
+        work.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        work.setWorkUrl("work:url");
+        work.setContributorsJson("{\"contributor\":[]}");
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
+        return work;
     }
 
 }

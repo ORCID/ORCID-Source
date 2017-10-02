@@ -1,76 +1,65 @@
 package org.orcid.core.adapter.jsonidentifier.converter;
 
-import org.junit.Ignore;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import javax.xml.bind.JAXBException;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@Ignore
 public class JSONWorkExternalIdentifiersConverterV1Test {
 
-    private ExternalIdentifierTypeConverter conv = new ExternalIdentifierTypeConverter();
+    private JSONWorkExternalIdentifiersConverterV1 converter = new JSONWorkExternalIdentifiersConverterV1();
 
     @Test
-    public void testConvertTo(WorkExternalIdentifiers messagePojo, WorkType workType) {
-//        JSONWorkExternalIdentifiers workExternalIdentifiers = new JSONWorkExternalIdentifiers();
-//        for (WorkExternalIdentifier workExternalIdentifier : messagePojo.getWorkExternalIdentifier()) {
-//            JSONWorkExternalIdentifier jsonWorkExternalIdentifier = new JSONWorkExternalIdentifier();
-//            if (workExternalIdentifier.getWorkExternalIdentifierType() != null) {
-//                jsonWorkExternalIdentifier.setWorkExternalIdentifierType(workExternalIdentifier.getWorkExternalIdentifierType().value());
-//            }
-//            if (workExternalIdentifier.getWorkExternalIdentifierId() != null && !PojoUtil.isEmpty(workExternalIdentifier.getWorkExternalIdentifierId().getContent())) {
-//                jsonWorkExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId(workExternalIdentifier.getWorkExternalIdentifierId().getContent()));
-//            }
-//            WorkExternalIdentifierType type = WorkExternalIdentifierType.valueOf(jsonWorkExternalIdentifier.getWorkExternalIdentifierType());
-//
-//            if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(type)) {
-//                if (!workType.equals(org.orcid.jaxb.model.message.WorkType.BOOK)) {
-//                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF.value());
-//                } else {
-//                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
-//                }
-//            } else if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(type)) {
-//                if (workType.equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || workType.equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
-//                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF.value());
-//                } else {
-//                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
-//                }
-//            } else {
-//                jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
-//            }
-//            workExternalIdentifiers.getWorkExternalIdentifier().add(jsonWorkExternalIdentifier);
-//        }
-//        return JsonUtils.convertToJsonString(workExternalIdentifiers);
+    public void testConvertTo() throws JAXBException {
+        WorkExternalIdentifiers workExternalIdentifiers = getWorkIdentifiers();
+        assertEquals(
+                "{\"workExternalIdentifier\":[{\"relationship\":\"self\",\"url\":null,\"workExternalIdentifierType\":\"doi\",\"workExternalIdentifierId\":{\"content\":\"work1-doi1\"}},{\"relationship\":\"self\",\"url\":null,\"workExternalIdentifierType\":\"pmid\",\"workExternalIdentifierId\":{\"content\":\"work1-pmid\"}},{\"relationship\":\"self\",\"url\":null,\"workExternalIdentifierType\":\"source-work-id\",\"workExternalIdentifierId\":{\"content\":\"work1-source-id\"}}]}",
+                converter.convertTo(workExternalIdentifiers, WorkType.BOOK));
+
     }
 
     @Test
-    public void testConvertFrom(String source) {
-//        JSONWorkExternalIdentifiers jsonWorkExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, JSONWorkExternalIdentifiers.class);
-//        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
-//        for (JSONWorkExternalIdentifier jsonWorkExternalIdentifier : jsonWorkExternalIdentifiers.getWorkExternalIdentifier()) {
-//            WorkExternalIdentifier workExternalIdentifier = new WorkExternalIdentifier();
-//            try {
-//                workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(conv.convertFrom(jsonWorkExternalIdentifier.getWorkExternalIdentifierType(), null)));
-//            } catch (Exception e) {
-//                workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID);
-//            }
-//            workExternalIdentifier.setWorkExternalIdentifierId(new org.orcid.jaxb.model.message.WorkExternalIdentifierId());
-//            if (jsonWorkExternalIdentifier.getWorkExternalIdentifierId() != null) {
-//                workExternalIdentifier.getWorkExternalIdentifierId().setContent(jsonWorkExternalIdentifier.getWorkExternalIdentifierId().content);
-//            }
-//            workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
-//        }
-//        return workExternalIdentifiers;
+    public void testConvertFrom() {
+        WorkExternalIdentifiers externalIdentifiers = converter.convertFrom(
+                "{\"workExternalIdentifier\":[{\"relationship\":\"self\",\"url\":null,\"workExternalIdentifierType\":\"doi\",\"workExternalIdentifierId\":{\"content\":\"work1-doi1\"}},{\"relationship\":\"self\",\"url\":null,\"workExternalIdentifierType\":\"pmid\",\"workExternalIdentifierId\":{\"content\":\"work1-pmid\"}},{\"relationship\":\"self\",\"url\":null,\"workExternalIdentifierType\":\"source-work-id\",\"workExternalIdentifierId\":{\"content\":\"work1-source-id\"}}]}");
+        assertNotNull(externalIdentifiers);
+        assertEquals(3, externalIdentifiers.getWorkExternalIdentifier().size());
+        
+        WorkExternalIdentifier workExternalIdentifier = externalIdentifiers.getWorkExternalIdentifier().get(0);
+        assertEquals(WorkExternalIdentifierType.DOI, workExternalIdentifier.getWorkExternalIdentifierType());
+        assertEquals("work1-doi1", workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+        
+        workExternalIdentifier = externalIdentifiers.getWorkExternalIdentifier().get(1);
+        assertEquals(WorkExternalIdentifierType.PMID, workExternalIdentifier.getWorkExternalIdentifierType());
+        assertEquals("work1-pmid", workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+        
+        workExternalIdentifier = externalIdentifiers.getWorkExternalIdentifier().get(2);
+        assertEquals(WorkExternalIdentifierType.SOURCE_WORK_ID, workExternalIdentifier.getWorkExternalIdentifierType());
+        assertEquals("work1-source-id", workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+    }
+
+    private WorkExternalIdentifiers getWorkIdentifiers() {
+        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
+        WorkExternalIdentifier workExternalIdentifier1 = new WorkExternalIdentifier();
+        workExternalIdentifier1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        workExternalIdentifier1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work1-doi1"));
+        WorkExternalIdentifier workExternalIdentifier2 = new WorkExternalIdentifier();
+        workExternalIdentifier2.setWorkExternalIdentifierType(WorkExternalIdentifierType.PMID);
+        workExternalIdentifier2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work1-pmid"));
+        WorkExternalIdentifier workExternalIdentifier3 = new WorkExternalIdentifier();
+        workExternalIdentifier3.setWorkExternalIdentifierType(WorkExternalIdentifierType.SOURCE_WORK_ID);
+        workExternalIdentifier3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work1-source-id"));
+        workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier1);
+        workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier2);
+        workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier3);
+        return workExternalIdentifiers;
     }
 
 }
