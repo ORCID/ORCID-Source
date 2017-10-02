@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter.impl.jsonidentifiers;
+package org.orcid.core.adapter.jsonidentifier.converter;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
