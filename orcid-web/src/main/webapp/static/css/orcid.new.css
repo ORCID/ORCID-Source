@@ -464,11 +464,6 @@ input[type=submit][disabled] {
     *background-color: #d9d9d9;
 }
 
-input[type=submit]:active,
-input[type=submit].active {
-    background-color: #cccccc \9;
-}
-
 input[type=submit]:first-child {
     *margin-left: 0;
 }
@@ -535,11 +530,6 @@ input[type=submit][disabled] {
     color: #ffffff;
     background-color: #0044cc;
     *background-color: #003bb3;
-}
-
-input[type=submit]:active,
-input[type=submit].active {
-    background-color: #003399 \9;
 }
 
 input[type=submit] .caret {
@@ -2124,8 +2114,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     background: #fff;
     border: 1px solid #c9c9c9;
     color: #494a4c;
-    text-shadow: 0;
     font-weight: normal;
+    text-shadow: none;
 }
 
 .italic {
@@ -3087,7 +3077,6 @@ header overrides
     border-radius: 0;
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
-    border-collapse: none;
 }
 
 .account-settings {
@@ -3514,7 +3503,6 @@ ul.personal-inf-display li:last-child {
 
 .table-container {
     overflow-y: scroll;
-    overflow-x: normal;
     margin-top: 15px;
 }
 
@@ -4186,15 +4174,15 @@ ul.sso-options li span {
 }
 
 .id-banner .id-banner-container a.id-banner-switch {
-    display: block;
     background: #338caf;
-    width: 100%;
-    padding: 5px;
-    text-align: right;
     color: #FFF;
-    text-decoration: none;
+    display: block;
     float: left;
     margin-bottom: 5px;
+    padding: 5px;
+    text-align: right;
+    text-decoration: none;
+    width: 100%;
 }
 
 .id-banner .id-banner-container a.id-banner-switch:hover {
@@ -4202,9 +4190,8 @@ ul.sso-options li span {
 }
 
 .id-banner .id-banner-container a.id-banner-switch span {
-    margin: 0 5px;
-    line-height: -1px;
     font-size: 11px;
+    margin: 0 5px;
 }
 
 .id-banner .id-banner-container ul.id-banner-dropdown {
@@ -7458,10 +7445,9 @@ ul.comma li:last-child:after {
 
 .self-service td,
 .self-service th {
-    padding: 8px 20px 8px 0;
-    //vertical-align: top;
     font-size: 12px;
     line-height: normal;
+    padding: 8px 20px 8px 0;
 }
 
 .self-service td.tooltip-container {
@@ -8071,7 +8057,7 @@ ul.comma li:last-child:after {
         width: 100%;
     }
     #manage-bio .lightbox-title {
-        font-size: 30 px;
+        font-size: 30px;
     }
     .emailVisibility .popover-help-container .popover,
     #password-edit .popover-help-container .popover {
@@ -8511,25 +8497,24 @@ ul.comma li:last-child:after {
         width: 100%;
     }
     .login .login-left-column {
-        border-right: none;
         border-bottom: 1px solid #C9CACB;
-        padding-bottom: 30px;
+        border-right: none;
         margin-bottom: 30px;
+        padding-bottom: 30px;
     }
     .login .login-left-column .or {
-        display: block;
-        width: 70px;
-        height: 60px;
         background: #FFF;
-        position: absolute;
         bottom: -30px;
-        left: calc(50% - 35px);
-        right: quto;
-        top: auto;
+        display: block;
+        height: 60px;
         font-size: 25px;
-        text-transform: uppercase;
-        vertical-align: middle;
+        left: calc(50% - 35px);
         padding: 15px;
+        position: absolute;
+        text-transform: uppercase;
+        top: auto;
+        vertical-align: middle;
+        width: 70px;
     }
     .form-social-sign-in .social-signin-btn {
         width: 100%;
@@ -8813,7 +8798,6 @@ ul.comma li:last-child:after {
         position: absolute;
         bottom: -30px;
         left: calc(50% - 35px);
-        right: quto;
         top: auto;
         font-size: 25px;
         text-transform: uppercase;
