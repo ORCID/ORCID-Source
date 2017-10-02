@@ -49,6 +49,7 @@ v3.0_dev1 is the current development release of the ORCID API and is only for in
 ### Education and Employment
 - *common:start-date* is required when writing items
 - Addition of *education:url* and *employment:url* fields
+- Disambiguated organization identifier is now required.
 
 ### WorkSummary
 - Addition of journal title field
