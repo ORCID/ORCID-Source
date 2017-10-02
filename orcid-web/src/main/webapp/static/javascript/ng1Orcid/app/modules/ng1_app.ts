@@ -12,11 +12,20 @@ import * as vcRecaptcha from 'angular-recaptcha'
 import 'angular-route'
 
 //User generated imports
-import { BiographyModule } from './biography/biography.ts';
-import { CountryModule } from './country/country.ts';
-import { ModalModule } from './modalNg2/modal-ng.ts';
-import { WidgetModule } from './widget/widget.ts';
-import { WorksPrivacyPreferencesModule } from './worksPrivacyPreferences/worksPrivacyPreferences.ts'
+import { BiographyModule } 
+    from './biography/biography.ts';
+import { CountryModule } 
+    from './country/country.ts';
+import { EmailUnverifiedWarningModule } 
+    from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
+import { EmailVerificationSentMesssageModule } 
+    from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+import { ModalModule } 
+    from './modalNg2/modal-ng.ts';
+import { WidgetModule } 
+    from './widget/widget.ts';
+import { WorksPrivacyPreferencesModule } 
+    from './worksPrivacyPreferences/worksPrivacyPreferences.ts'
 
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -27,6 +36,8 @@ export const orcidApp = angular.module(
         uibootstraptypeahead,
         BiographyModule.name,
         CountryModule.name,
+        EmailUnverifiedWarningModule.name,
+        EmailVerificationSentMesssageModule.name,
         ModalModule.name,
         WidgetModule.name,
         WorksPrivacyPreferencesModule.name

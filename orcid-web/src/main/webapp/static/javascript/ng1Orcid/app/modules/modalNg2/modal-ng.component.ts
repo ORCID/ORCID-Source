@@ -1,6 +1,9 @@
 declare var $: any;
+
+import { NgFor, NgIf } 
+    from '@angular/common'; 
  
-import { AfterViewInit, Component, OnInit, OnDestroy/*Component, EventEmitter, Input, NgModule, Output*/ } 
+import { AfterViewInit, Component, ElementRef, Input, OnInit, OnDestroy, Output } 
     from '@angular/core';
 
 import { Subject } 
@@ -19,26 +22,90 @@ import { ModalService }
     {
         selector: '[modalngcomponent]',
         template: `
-            <div class="lightbox-container">
-                <ng-content></ng-content>
-            </div>
+          <div [hidden]="!showModal" >
+              <div class="popover-ng2-bck"></div>
+              <div
+                  class="popover-ng2-content"
+                  id="colorbox" 
+                  role="dialog" 
+                  style="transition: width 2s, height 2s;"
+                  tabindex="-1" 
+                  [ngStyle]="{
+                      'height': this.elementHeight + 'px',
+                      'left': 'calc(50% - ' + this.elementWidth/2 + 'px)',
+                      'top': 'calc(50% - ' + this.elementHeight/2 + 'px)',
+                      'width': this.elementWidth + 'px'
+                  }"
+              >
+                <div id="cboxWrapper" 
+                [ngStyle]="{
+                      'height': this.elementHeight + 'px',
+                      'width': this.elementWidth + 'px'
+                  }">
+                  <div>
+                    <div id="cboxTopLeft" style="float: left;"></div>
+                    <div id="cboxTopCenter" style="float: left;"
+                        [ngStyle]="{
+                              'width': this.elementWidth + 'px'
+                          }"
+                    ></div>
+                    <div id="cboxTopRight" style="float: left;"></div>
+                  </div>
+                  <div style="clear: left;">
+                    <div id="cboxMiddleLeft" style="float: left;"
+                        [ngStyle]="{
+                              'height': this.elementHeight + 'px'
+                          }"
+                    ></div>
+                    <div id="cboxContent" style="float: left;"
+                        [ngStyle]="{
+                              'height': this.elementHeight + 'px',
+                              'width': this.elementWidth + 'px'
+                          }">
+                      <div id="cboxLoadedContent" style=" overflow: auto;"
+                          [ngStyle]="{
+                              'height': this.elementHeight + 'px',
+                              'width': this.elementWidth + 'px'
+                          }"
+                      >
+                        <div class="lightbox-container">
+
+                          <ng-content></ng-content>
+                
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div> 
         `
     }
 )
 export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
-    //@Output() onOpen = new EventEmitter<void>();
+    @Input() elementId: any;
+    @Input() elementHeight: any;
+    @Input() elementWidth: any;
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    emailPrimary: string;
+    showModal: boolean;
     
-    constructor( private emailService: EmailService, private modalService: ModalService ){
-        this.emailPrimary = '';
+    constructor( 
+        private elementRef: ElementRef, 
+        private emailService: EmailService, 
+        private modalService: ModalService 
+    ){
+        this.elementHeight = elementRef.nativeElement.getAttribute('elementHeight');
+        this.elementId = elementRef.nativeElement.getAttribute('elementId');
+        this.elementWidth = elementRef.nativeElement.getAttribute('elementWidth');
+        this.showModal = false;
     }
 
     closeModal(): void{
         console.log('close modal');
-        $.colorbox.close();
+        this.showModal = false;
     };
 
     formColorBoxWidth(): string {
@@ -67,53 +134,31 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    getEmails(): any {
-        this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.emailPrimary = this.emailService.getEmailPrimary().value;
-            },
-            error => {
-                console.log('getEmails', error);
-            } 
-        );
-    }
-
     openModal(): void{
-        $.colorbox({
-            //html: $('#edit-country').html(),
-            html: '<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") + '<br /><strong>' + this.emailPrimary + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="orcid.frontend.link.url.knowledgebase" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="orcid.frontend.link.email.support" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><div class="topBuffer"><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()" onClick="$.colorbox.close()">' + om.get("orcid.frontend.workspace.send_verification") + '</button><a class="cancel-option inner-row" (click)="this.closeModal(); console.log("closemodalbtn");" onClick="$.colorbox.close()">' + om.get("orcid.frontend.freemarker.btncancel") + '</a></div></div></div></div>',
-            onComplete: function() {   
-            },
-            onClosed: function() {
-            },            
-            onLoad: function() {
-                $('#cboxClose').remove();           
-            },
-            scrolling: true,
-            //width: this.formColorBoxWidth(),
-            width: '500px'
-        });
-        $.colorbox.resize();
+        this.showModal = true;
     };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-    };
-
-    ngOnInit() {
         this.subscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
-                console.log('res.value',res);
-                if ( res === "open") {
-                    this.openModal();
+                //console.log('res.value',res, this.elementId);
+                if ( res.moduleId == this.elementId ) {
+                    if ( res.action === "close") {
+                        this.closeModal();
+                    }
+
+                    if ( res.action === "open") {
+                        this.openModal();
+                    }
+
                 }
             }
         );
-        
-        this.getEmails();
+    };
+
+    ngOnInit() {
     }
 
     ngOnDestroy() {

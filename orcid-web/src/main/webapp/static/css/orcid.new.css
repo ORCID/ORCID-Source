@@ -8910,6 +8910,24 @@ ul.comma li:last-child:after {
 }
 
 
+/***************** Modalng2 syles */
+.popover-ng2-bck {
+    background: #ddd;
+    height: 100%;
+    left: 0;
+    opacity: 0.9;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 9000;
+}
+
+.popover-ng2-content {
+    display: block; 
+    visibility: visible; 
+    position: absolute; 
+}
+
 /*************************** Right to left styles*/
 .lang-rl #idpSelectInput {
     margin-left: 5px;
