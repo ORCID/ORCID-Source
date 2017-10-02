@@ -35,8 +35,6 @@ audio,
 canvas,
 video {
     display: inline-block;
-    *display: inline;
-    *zoom: 1;
 }
 
 audio:not ([controls]) {
@@ -168,8 +166,6 @@ input[type="submit"] {
 }
 
 input[type="search"] {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
     box-sizing: content-box;
     -webkit-appearance: textfield;
 }
@@ -490,24 +486,19 @@ input[type=submit]:focus {
 input[type=submit].active,
 input[type=submit]:active {
     background-color: #e6e6e6;
-    background-color: #d9d9d9 \9;
     background-image: none;
     outline: 0;
-    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 input[type=submit].disabled,
 input[type=submit][disabled] {
-    cursor: default;
+    box-shadow: none;
     background-color: #e6e6e6;
     background-image: none;
-    opacity: 0.65;
+    cursor: default;
     filter: alpha(opacity=65);
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
+    opacity: 0.65;
 }
 
 input[type=submit] .label,
@@ -555,12 +546,7 @@ input[type="color"],
 .uneditable-input {
     background-color: #ffffff;
     border: 1px solid #cccccc;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
-    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
-    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s;
 }
 
@@ -581,12 +567,8 @@ input[type="tel"]:focus,
 input[type="color"]:focus,
 .uneditable-input:focus {
     border-color: rgba(82, 168, 236, 0.8);
-    outline: 0;
-    outline: thin dotted \9;
-    /* IE6-9 */
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    outline: 0;
 }
 
 select,
@@ -655,21 +637,19 @@ select {
 }
 
 .header .search form#form-search input[type="search"] {
-    float: left;
     background: #C9CACB;
     border: none;
-    width: 210px;
-    height: 22px;
-    padding: 0 0 0 10px;
-    margin: 0;
-    color: #939598;
-    font-weight: bold;
-    font-style: normal;
-    font-size: 12px;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
     border-radius: 0;
+    box-shadow: none;
+    color: #939598;
+    float: left;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: bold;
+    height: 22px;
+    margin: 0;
+    padding: 0 0 0 10px;
+    width: 210px;
 }
 
 .container .header .search form .bar {
@@ -803,19 +783,17 @@ select {
 }
 
 .header .language-selector select#language-codes {
-    width: 165px;
-    height: 24px;
+    background: #A6CE39;
     border: none;
     border-radius: 0;
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    margin: 3px;
     color: #FFF;
     font-size: 12px;
-    font-weight: bold;
     font-style: normal;
-    background: #A6CE39;
+    font-weight: bold;
+    height: 24px;
     line-height: 20px;
+    margin: 3px;
+    width: 165px;
 }
 
 .header .logo {
@@ -1500,8 +1478,6 @@ ul.privacyHelp li.private {
     left: 100%;
     margin-top: -6px;
     margin-left: -1px;
-    -webkit-border-radius: 0 6px 6px 6px;
-    -moz-border-radius: 0 6px 6px 6px;
     border-radius: 0 6px 6px 6px;
 }
 
@@ -1614,13 +1590,11 @@ ul.privacyHelp li.private {
 }
 
 .dropdown-submenu>.dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: -6px;
-    margin-left: -1px;
-    -webkit-border-radius: 0 6px 6px 6px;
-    -moz-border-radius: 0 6px 6px 6px;
     border-radius: 0 6px 6px 6px;
+    left: 100%;
+    margin-left: -1px;
+    margin-top: -6px;
+    top: 0;
 }
 
 .dropdown-submenu:hover>.dropdown-menu {
@@ -2217,7 +2191,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 #colorbox {
     background: #fff;
     border-top: 10px solid #A3CD39;
-    -webkit-box-shadow: 0px 5px 20px 0px #aaa;
     box-shadow: 0px 5px 20px 0px #aaa;
 }
 
@@ -2388,12 +2361,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .just-changed {
     background: #fff;
-    -webkit-transition: background 0.5s ease-out;
-    /* Safari 3.2+, Chrome */
-    -moz-transition: background 0.5s ease-out;
-    /* Firefox 4-15 */
-    -o-transition: background 0.5s ease-out;
-    /* Opera 10.5 12.00 */
     transition: background 0.5s ease-out;
     /* Firefox 16+, Opera 12.50+ */
 }
@@ -3075,8 +3042,6 @@ header overrides
 
 .settings-table {
     border-radius: 0;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
 }
 
 .account-settings {
@@ -3375,7 +3340,6 @@ ul.personal-inf-display li:last-child {
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
     background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-    background-image: -o-linear-gradient(top, #0088cc, #0077b3);
     background-image: linear-gradient(to bottom, #0088cc, #0077b3);
     background-repeat: repeat-x;
     filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
@@ -3389,7 +3353,6 @@ ul.personal-inf-display li:last-child {
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
     background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-    background-image: -o-linear-gradient(top, #0088cc, #0077b3);
     background-image: linear-gradient(to bottom, #0088cc, #0077b3);
     background-repeat: repeat-x;
     filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
@@ -3470,12 +3433,12 @@ ul.personal-inf-display li:last-child {
 }
 
 .more-info .lightbox-container {
+    -webkit-overflow-scrolling: touch;
+    height: 345px;
+    overflow-x: hidden;
+    overflow-y: scroll;
     position: absolute;
     top: 0;
-    -webkit-overflow-scrolling: touch;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    height: 345px;
     width: 100%;
 }
 
@@ -3874,14 +3837,13 @@ ul.sso-options li span {
 }
 
 .developer-tools .sso-options a {
-    display: block;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
     background: #494a4c;
+    border-radius: 50%;
     color: #FFF;
-    width: 35px;
+    display: block;
     height: 35px;
     padding: 9px 10px;
+    width: 35px;
 }
 
 .developer-tools .sso-options-light {
@@ -4083,14 +4045,13 @@ ul.sso-options li span {
 }
 
 .custom-email .actions a {
-    display: block;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
     background: #494a4c;
+    border-radius: 50%;
     color: #FFF;
-    width: 35px;
+    display: block;
     height: 35px;
     padding: 9px 10px;
+    width: 35px;
 }
 
 .custom-email .actions a:HOVER {
@@ -5282,29 +5243,26 @@ ul.toggle-menu li:hover ul {
 }
 
 .bulk-edit #custom-control-x {
-    -webkit-border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 2px;
+    color: #444;
     cursor: default;
+    display: block;
+    float: left;
     font-size: 11px;
     font-weight: bold;
-    text-align: center;
-    white-space: nowrap;
-    margin-right: 16px;
     height: 30px;
     line-height: 27px;
-    min-width: 60px;
-    width: 62px;
-    outline: 0;
-    padding: 0 8px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    color: #444;
-    padding: 0;
     margin: 0;
+    min-width: 60px;
+    outline: 0;
+    padding: 0;
+    text-align: center;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
     user-select: none;
-    display: block;
-    float: left;
+    white-space: nowrap;
+    width: 62px;
 }
 
 .bulk-edit .custom-control-active {
@@ -5316,7 +5274,6 @@ ul.toggle-menu li:hover ul {
 }
 
 .bulk-edit .custom-control-hover {
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     border-color: #CaCaCa;
 }
@@ -5324,7 +5281,6 @@ ul.toggle-menu li:hover ul {
 .bulk-edit .custom-checkbox-parent {
     height: 12px;
     width: 12px;
-    -webkit-border-radius: 2px;
     border-radius: 2px;
     background-color: #E0E0E0;
     border: 1px solid #c6c6c6;
@@ -5451,8 +5407,6 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before {
     color: #494A4C;
     background: #C9CACB;
     border-radius: 50%;
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
     padding: 15px;
 }
 
