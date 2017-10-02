@@ -119,11 +119,16 @@ public class S3Updater {
         // API 2.0 Error
         if (OrcidError.class.isAssignableFrom(object.getClass())) {
             OrcidError error = (OrcidError) object;
-            putJsonElement(orcid, error);
-            putXmlElement(orcid, error);
+            putJsonElement(orcid, error, false);
+            putXmlElement(orcid, error, false);
             return;
         }
     }
+    
+    public void setErrorOnActivitiesBucket(String orcid, OrcidError error) throws IOException, JAXBException {
+        putJsonElement(orcid, error, true);
+        putXmlElement(orcid, error, true);        
+    }    
 
     private void putJsonElement(String orcid, OrcidMessage profile) throws JsonProcessingException {
         try {
@@ -205,20 +210,30 @@ public class S3Updater {
         }
     }
 
-    private void putJsonElement(String orcid, OrcidError error) throws JsonProcessingException {
-        try {
-            String bucket = getBucketName("api-2-0", "json", orcid);
-            s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
+    private void putJsonElement(String orcid, OrcidError error, boolean activities) throws JsonProcessingException {
+        try {            
+            if(activities) {
+                String bucket = getBucketName("api-2-0-activities", "json", orcid);
+                s3MessagingService.send(bucket, orcid + "_activities.json", toJson(error), MediaType.APPLICATION_JSON);
+            } else {
+                String bucket = getBucketName("api-2-0", "json", orcid);                
+                s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
+            }            
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
             throw e;
         }
     }
 
-    private void putXmlElement(String orcid, OrcidError error) throws IOException, JAXBException {
+    private void putXmlElement(String orcid, OrcidError error, boolean activities) throws IOException, JAXBException {
         try {
-            String bucket = getBucketName("api-2-0", "xml", orcid);
-            s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
+            if(activities) {
+                String bucket = getBucketName("api-2-0-activities", "xml", orcid);
+                s3MessagingService.send(bucket, orcid + "_activities.xml", toXML(error), MediaType.APPLICATION_XML);
+            } else {
+                String bucket = getBucketName("api-2-0", "xml", orcid);                
+                s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
+            }            
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
             throw e;

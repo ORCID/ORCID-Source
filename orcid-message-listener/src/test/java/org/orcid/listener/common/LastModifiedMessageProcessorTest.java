@@ -113,7 +113,8 @@ public class LastModifiedMessageProcessorTest {
         when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyString())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));        
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
-        verify(mock_exceptionHandler, times(2)).handle20Exception(Matchers.any(), Matchers.any());
+        verify(mock_exceptionHandler, times(1)).handle20Exception(Matchers.any(), Matchers.any());
+        verify(mock_exceptionHandler, times(1)).handle20ActivitiesException(Matchers.any(), Matchers.any());
     }
     
     @Test
@@ -123,7 +124,8 @@ public class LastModifiedMessageProcessorTest {
         when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyString())).thenThrow(new LockedRecordException(new OrcidError()));
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
-        verify(mock_exceptionHandler, times(2)).handle20Exception(Matchers.any(), Matchers.any());
+        verify(mock_exceptionHandler, times(1)).handle20Exception(Matchers.any(), Matchers.any());
+        verify(mock_exceptionHandler, times(1)).handle20ActivitiesException(Matchers.any(), Matchers.any());
     }
     
     @Test
