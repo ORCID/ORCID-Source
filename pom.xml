@@ -272,6 +272,7 @@ the software.
                             <exclude>**.lock</exclude>
                             <exclude>atlassian-ide-plugin.xml</exclude>
                             <exclude>**/src/main/resources/**/*escape_bibtex.txt</exclude>
+                            <exclude>**/src/main/webapp/static/css/idpselect.xsl</exclude>
                         </excludes>
                     </configuration>
                     <executions>
