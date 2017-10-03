@@ -26,6 +26,9 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopeConstants;
+import org.springframework.beans.factory.annotation.Value;
+
+import com.sun.jersey.api.provider.jaxb.XmlHeader;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +42,8 @@ import io.swagger.annotations.AuthorizationScope;
 @Path("/v2.0" + OrcidApiConstants.IDENTIFIER_PATH)
 public class IdentifierApiServiceImplV2_0 {
 
+    public final String xmllocation = "<?xml-stylesheet type=\"text/xsl\" href=\"https://orcid.org/static/css/identifierTypes.xsl\"?>";
+    
     private IdentifierApiServiceDelegator serviceDelegator;
     
     public void setServiceDelegator(IdentifierApiServiceDelegator serviceDelegator) {
@@ -53,6 +58,7 @@ public class IdentifierApiServiceImplV2_0 {
     @Path("")
     @ApiOperation(value = "Fetch identifier type map.  Defaults to English descriptions", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "")})
+    @XmlHeader(xmllocation)
     public Response viewIdentifierTypes(@ApiParam() @QueryParam("locale") String locale) {
         if (locale == null || locale.isEmpty())
             locale = "en";
