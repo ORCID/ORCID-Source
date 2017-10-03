@@ -83,6 +83,7 @@
       	orcidVar.originalOauth2Process = false;
       </#if>     
       orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
+      orcidVar.memberSlug = "${(memberSlug?js_string)!}";
     </script>
 
 	<#include "/macros/orcid_ga.ftl">
