@@ -365,6 +365,10 @@ textarea {
     max-width: none;
 }
 
+#verificationCodeFor2FA {
+    display: none;
+}
+
 .aside ul,
 .footer ul,
 .header ul,
@@ -423,10 +427,41 @@ textarea {
     padding-left: 0;
 }
 
+.divider {
+    border-top: 1px dotted;
+    display: block;
+    height: 10px;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.divisor {
+    height: 1px;
+    margin-bottom: 14px;
+    width: 100%;
+}
+
 .edit-icons {
     position: absolute;
     right: 5px;
     top: 0;
+}
+
+.icon-inside-input {
+    float: left;
+    height: auto;
+    position: relative;
+    width: 100%;
+}
+
+.icon-inside-input input {
+    padding-right: 23px;
+}
+
+.icon-inside-input .icon-inside {
+    position: absolute;
+    right: 5px;
+    top: 8px;
 }
 
 .left {
@@ -487,6 +522,14 @@ textarea {
 
 .row:after {
     clear: both;
+}
+
+.small-chevron {
+    font-size: 11px;
+}
+
+.small-missing-info {
+    font-size: 11px;
 }
 
 .submitted {
@@ -3203,7 +3246,7 @@ ul.personal-inf-display li:last-child {
 
 /*0.11.1 support */
 .tt-suggestion:hover{
-	color: #fff;
+    color: #fff;
     background-color: #0081c2;
     background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
@@ -3803,7 +3846,7 @@ ul.sso-options li span {
 }
 
 #bottom-confirm-update-consortium {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .developer-tools .create-client .ruri {
@@ -4635,10 +4678,6 @@ ul.sources-options li {
 
 a.toggle-tag-option {
     font-size: 12px;
-}
-
-.small-chevron {
-    font-size: 11px;
 }
 
 ul.sources-edit-list {
@@ -5831,31 +5870,6 @@ ul.oauth-scopes li {
 
 /* GLobal classes */
 
-.icon-inside-input {
-    position: relative;
-    float: left;
-    width: 100%;
-    height: auto;
-}
-
-.icon-inside-input .icon-inside {
-    position: absolute;
-    top: 8px;
-    right: 5px;
-}
-
-.icon-inside-input input {
-    padding-right: 23px;
-}
-
-.divider {
-    width: 100%;
-    border-top: 1px dotted;
-    margin-top: 5px;
-    display: block;
-    height: 10px;
-}
-
 .journaltitle {
     font-size: 16px;
     font-weight: normal;
@@ -5888,11 +5902,6 @@ ul.oauth-scopes li {
     float: left;
     margin: 0 5px 5px 0;
 }
-
-.small-missing-info {
-    font-size: 11px;
-}
-
 
 /* Import Wizards */
 
@@ -6194,12 +6203,6 @@ textarea.form-control,
 .workspace-top .country .popover-help-container > .popover.privacy-myorcid3,
 .workspace-top .other-names .popover-help-container > .popover.privacy-myorcid3 {
     top: -178px;
-}
-
-.divisor {
-    width: 100%;
-    height: 1px;
-    margin-bottom: 14px;
 }
 
 .add-peer-review input[type="radio"] {
@@ -7745,10 +7748,10 @@ ul.comma li:last-child:after {
     }
     /* Public Profile */
     /*
-	.public-profile .workspace-inner > *{
-	 	padding-left: 0;
-	}
-	*/
+    .public-profile .workspace-inner > *{
+        padding-left: 0;
+    }
+    */
     .public-profile .workspace-inner .alert {
         margin: 10px 0;
     }
@@ -8731,20 +8734,20 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .action-button-bar {
-	padding-left: 0;
+    padding-left: 0;
 }
 
 .lang-rl .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item * {
-	text-align: center;
+    text-align: center;
 }
 
 .lang-rl .bulk-edit ul.bulk-edit-toolbar {
-	float: left;
+    float: left;
 }
 
 .lang-rl .bulk-edit .bulk-edit-delete {
-	float: left;
-	padding-left: 15px;
+    float: left;
+    padding-left: 15px;
 }
 
 .lang-rl .bulk-edit-toolbar {
@@ -8770,7 +8773,7 @@ ul.comma li:last-child:after {
 
 .lang-rl .fixed-area ul.record-settings.pull-right,
 .lang-rl .fixed-area ul.record-settings.pull-right + span {
-	float: left!important;
+    float: left!important;
     text-align: left;
 }
 
@@ -8837,7 +8840,7 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .see-more {
-	float: left;
+    float: left;
     left: -235px;
     position: relative;
     text-align: left;
@@ -8880,7 +8883,7 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .workspace-affiliations ul.sources-options {
-	margin-left: -10px;
+    margin-left: -10px;
 }
 
 .lang-rl .workspace-body-list > li {
@@ -8888,11 +8891,11 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .workspace-body-list.workspace-affiliations > li {
-	padding-left: 15px;
+    padding-left: 15px;
 }
 
 .lang-rl .workspace-private-toolbar{
-	text-align: left;
+    text-align: left;
     padding-left: 15px;
 }
 
@@ -8917,6 +8920,3 @@ ul.comma li:last-child:after {
     right: -73px;
 }
 
-#verificationCodeFor2FA {
-	display: none;
-}
