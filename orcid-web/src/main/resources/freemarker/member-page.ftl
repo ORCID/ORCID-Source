@@ -17,7 +17,7 @@
 
 -->
 <@public classes=['home']>
-    <div class="row member-list" ng-controller="MemberPageController" ng-init="membersListSrvc.getCurrentMemberDetailsBySlug('${memberSlug}')">
+    <div class="row member-list" ng-controller="MemberPageController">
     	
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
         	<p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> All members</a></p>

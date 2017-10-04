@@ -1,3 +1,5 @@
+declare var orcidVar: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -19,7 +21,7 @@ export const MemberPageController = angular.module('orcidApp').controller(
             $scope.renderHtml = function (htmlCode) {
                 return $sce.trustAsHtml(htmlCode);
             };
-            
+            membersListSrvc.getCurrentMemberDetailsBySlug(orcidVar.memberSlug);   
         }
     ]
 );
