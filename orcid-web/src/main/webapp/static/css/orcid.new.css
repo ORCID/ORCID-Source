@@ -1999,6 +1999,9 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     padding-left: 0;
     padding-right: 5px;
     position: relative;
+}
+
+.settings-table td,.settings-table th {
     width: 50%
 }
 
@@ -2093,17 +2096,23 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .privacyToggle+.popover-help-container {
-    bottom: 60px;
+    bottom: 45px;
     left: initial;
     position: absolute;
     right: -70px;
     top: initial
 }
-
+/*
 .privacyToggle+.popover-help-container .popover {
     left: initial;
     position: relative;
     right: initial
+}
+*/
+
+.workspace-top .privacyToggle+.popover-help-container .popover.privacy-myorcid3, 
+.workspace-top .privacyToggle+.popover-help-container .popover.privacy-myorcid3:hover {
+    bottom: 0;
 }
 
 .oauth-login .control-group label.checkbox input[type=checkbox],.popover-help-container,.popover-pos {
@@ -3971,6 +3980,10 @@ ul.workspace-submenu-options li a {
     margin: 0 -6px
 }
 
+.sources-container-header {
+    font-size: 12px;
+}
+
 .sources-container-header .source {
     margin-right: 5px;
     cursor: pointer
@@ -4643,8 +4656,17 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 }
 
 .workspace-top .popover-help-container .popover.privacy-myorcid3,.workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
+    bottom: 45px;
+    left: initial;
     min-width: 242px;
-    width: auto
+    right: -5px;
+    top: initial;
+    width: auto;
+}
+
+.popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3,
+.popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
+    bottom: inherit;
 }
 
 .popover-help-container>.privacy-myorcid3>.arrow {
@@ -5837,6 +5859,10 @@ a:hover .mozilla-badge {
 
 .edit-external-identifiers .aka p {
     margin-bottom: 0
+}
+
+.external-identifier {
+    font-size: 14px;
 }
 
 #cboxOverlay,#cboxWrapper,#colorbox {
@@ -7683,6 +7709,10 @@ ul.comma li:last-child:after {
     text-align: left
 }
 
+.lang-rl .header {
+    margin-bottom: 55px;
+}
+
 .lang-rl .header .language-selector {
     float: left
 }
@@ -7743,7 +7773,7 @@ ul.comma li:last-child:after {
     left: -235px;
     position: relative;
     text-align: left;
-    top: 40px
+    top: 55px
 }
 
 .lang-rl .settings-table .checkbox {
@@ -7772,6 +7802,10 @@ ul.comma li:last-child:after {
     position: relative
 }
 
+.lang-rl .url-popover .popover-help-container .popover+.block {
+    display: inline-block!important;
+}
+
 .lang-rl .workspace-accordion-header .toggle-text {
     margin-right: 20px
 }
@@ -7793,11 +7827,22 @@ ul.comma li:last-child:after {
     float: right
 }
 
+.lang-rl .workspace-section-title .edit-option .popover-tooltip {
+    left: initial;
+    right: -35px;
+}
+
 .lang-rl .workspace-title,.lang-rl .workspace-title+.clear-fix.left,.lang-rl .workspace-title+.clear-fix.left+.info-detail,.lang-rl .workspace-title+.info-detail {
     float: right;
     margin-right: 15px
 }
 
+.lang-rl .workspace-top .popover-help-container .popover.privacy-myorcid3, 
+.lang-rl .workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
+    left: -80px;
+    right: initial;
+}
+
 .lang-rl .privacyToggle+.popover-help-container {
-    right: -73px
+    right: 90px;
 }
