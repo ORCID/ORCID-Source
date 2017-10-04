@@ -57,7 +57,6 @@ public class JsonpCallbackFilter extends OncePerRequestFilter {
 
 		if (parms.containsKey("callback")) {
 			HttpServletRequestWrapper requestWrapper = new AcceptHeaderRequestWrapper(httpRequest, "application/json");
-			OutputStream out = httpResponse.getOutputStream();
 			GenericResponseWrapper responseWrapper = new GenericResponseWrapper(httpResponse);
 			filterChain.doFilter(requestWrapper, responseWrapper);
 	                /*
@@ -65,7 +64,8 @@ public class JsonpCallbackFilter extends OncePerRequestFilter {
 	                 * https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/ServletResponse.html
 	                 */
                         responseWrapper.setContentType("application/javascript;charset=UTF-8");
-			out.write(new String(parms.get("callback")[0] + "(").getBytes());
+                        OutputStream out = httpResponse.getOutputStream();
+                        out.write(new String(parms.get("callback")[0] + "(").getBytes());
 			out.write(responseWrapper.getData());
 			out.write(new String(");").getBytes());
 
