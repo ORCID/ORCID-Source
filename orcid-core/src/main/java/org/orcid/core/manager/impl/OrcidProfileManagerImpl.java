@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -80,6 +82,7 @@ import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdBase;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -122,6 +125,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
@@ -234,6 +238,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Value("${org.orcid.core.email.verify.tooOld:15}")
     private int emailTooOld;
 
+    @Value("${org.orcid.core.baseUri:http://orcid.org}")
+    private String baseUri = null;
+    
     public NotificationManager getNotificationManager() {
         return notificationManager;
     }
@@ -262,13 +269,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
 
-        // Add source to works and affiliations
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();
-
-        addSourceToEmails(orcidProfile, amenderOrcid);
-        addSourceToWorks(orcidProfile, amenderOrcid);
-        addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToFundings(orcidProfile, amenderOrcid);
+        // Add source to emails, works and affiliations
+        addSourceToEmails(orcidProfile, sourceManager.retrieveSourceOrcid());
+        if(orcidProfile.getOrcidActivities() != null) {
+            addSourceToNewActivities(orcidProfile.getOrcidActivities());
+        }               
 
         Visibility defaultVisibility = null;
         if (orcidProfile.getOrcidInternal() != null && orcidProfile.getOrcidInternal().getPreferences() != null
@@ -401,6 +406,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     setAffiliationPrivacy(orcidProfile, defaultVisibility);
                     setFundingPrivacy(orcidProfile, defaultVisibility);
                 }
+                
+                
+                //TODO
+                addSourceToNewActivities(orcidProfile.getOrcidActivities());
+                
                 dedupeWorks(orcidProfile);
                 dedupeAffiliations(orcidProfile);
                 dedupeFundings(orcidProfile);
@@ -488,8 +498,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      *            The orcid of the user or client that add the email to the
      *            profile user
      */
-    private void addSourceToBioElements(OrcidProfile orcidProfile, String amenderOrcid) {
-        Source source = createSource(amenderOrcid);
+    private void addSourceToBioElements(OrcidProfile orcidProfile) {
+        Source source = getSource();
         if (orcidProfile != null && orcidProfile.getOrcidBio() != null) {
             OrcidBio bio = orcidProfile.getOrcidBio();
             // Other names
@@ -563,87 +573,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             }
         }
     }
-
-    /**
-     * Add source to the profile works
-     * 
-     * @param orcidProfile
-     *            The profile
-     * @param amenderOrcid
-     *            The orcid of the user or client that add the work to the
-     *            profile user
-     */
-    private void addSourceToWorks(OrcidProfile orcidProfile, String amenderOrcid) {
-        OrcidWorks orcidWorks = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getOrcidWorks();
-        addSourceToWorks(orcidWorks, amenderOrcid);
-    }
-
-    private void addSourceToWorks(OrcidWorks orcidWorks, String amenderOrcid) {
-        if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty() && amenderOrcid != null) {
-            for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                Source source = createSource(amenderOrcid);
-                orcidWork.setSource(source);
-            }
-        }
-    }
-
-    private Source createSource(String amenderOrcid) {
-        Source source = new Source();
-        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-            source.setSourceOrcid(new SourceOrcid(amenderOrcid));
-            source.setSourceClientId(null);
-        } else {
-            source.setSourceClientId(new SourceClientId(amenderOrcid));
-            source.setSourceOrcid(null);
-        }
-        return source;
-    }
-
-    /**
-     * Add source to the affiliations
-     * 
-     * @param orcidProfile
-     *            The profile
-     * @param amenderOrcid
-     *            The orcid of the user or client that is adding the affiliation
-     *            to the profile user
-     */
-    private void addSourceToAffiliations(OrcidProfile orcidProfile, String amenderOrcid) {
-        Affiliations affiliations = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getAffiliations();
-
-        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
-            for (Affiliation affiliation : affiliations.getAffiliation()) {
-                if (affiliation.getSource() == null || StringUtils.isEmpty(affiliation.retrieveSourcePath()))
-                    affiliation.setSource(new Source(amenderOrcid));
-            }
-        }
-
-    }
-
+    
     @Deprecated
     public boolean exists(String orcid) {
         return profileDao.exists(orcid);
-    }
-
-    /**
-     * Add source to the fundings
-     * 
-     * @param orcidProfile
-     *            The profile
-     * @param amenderOrcid
-     *            The orcid of the user or client that is adding the fundings to
-     *            the profile user
-     */
-    private void addSourceToFundings(OrcidProfile orcidProfile, String amenderOrcid) {
-        FundingList fundings = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getFundings();
-
-        if (fundings != null && !fundings.getFundings().isEmpty()) {
-            for (Funding funding : fundings.getFundings()) {
-                if (funding.getSource() == null || StringUtils.isEmpty(funding.retrieveSourcePath()))
-                    funding.setSource(new Source(amenderOrcid));
-            }
-        }
-
     }
 
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
@@ -803,7 +736,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Deprecated
     @Override    
     public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {
-        addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid());
+        addSourceToBioElements(updatedOrcidProfile);
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
             return null;
@@ -979,9 +912,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         OrcidWorks updatedOrcidWorks = updatedOrcidProfile.retrieveOrcidWorks();
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
-        setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();
-        addSourceToWorks(updatedOrcidWorks, amenderOrcid);
+        setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);        
+        if(updatedOrcidWorks != null) {
+            addSourceToWorks(updatedOrcidWorks, getSource());
+        }
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
 
@@ -1454,8 +1388,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setAffiliationPrivacy(updatedAffiliations, workVisibilityDefault, claimed == null ? false : claimed);
         updatedAffiliations = dedupeAffiliations(updatedAffiliations);
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();
-        addSourceToAffiliations(updatedAffiliations, amenderOrcid);
+        addSourceToAffiliations(updatedAffiliations, getSource());
         List<Affiliation> updatedAffiliationsList = updatedAffiliations.getAffiliation();
         checkAndUpdateDisambiguatedOrganization(updatedAffiliationsList);
         checkForAlreadyExistingAffiliations(existingAffiliations, updatedAffiliationsList);
@@ -1513,7 +1446,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setFundingPrivacy(updatedFundingList, workVisibilityDefault, claimed == null ? false : claimed);
         updatedFundingList = dedupeFundings(updatedFundingList);
-        addSourceToFundings(updatedFundingList, amenderOrcid);
+        addSourceToFundings(updatedFundingList, getSource());
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
         persistAddedFundings(orcid, updatedList);
@@ -1599,22 +1532,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         for (Funding incomingFunding : incomingFundings.getFundings()) {
             if (StringUtils.isBlank(incomingFunding.getPutCode())) {
                 choosePrivacy(incomingFunding, defaultVisibility, isClaimed);
-            }
-        }
-    }
-
-    private void addSourceToAffiliations(Affiliations affiliations, String amenderOrcid) {
-        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
-            for (Affiliation affiliation : affiliations.getAffiliation()) {
-                affiliation.setSource(createSource(amenderOrcid));
-            }
-        }
-    }
-
-    private void addSourceToFundings(FundingList fundings, String amenderOrcid) {
-        if (fundings != null && !fundings.getFundings().isEmpty()) {
-            for (Funding funding : fundings.getFundings()) {
-                funding.setSource(createSource(amenderOrcid));
             }
         }
     }
@@ -2047,5 +1964,102 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
             }
         }
+    }
+    
+    /**
+     * Add source to the works
+     * 
+     * @param orcidWorks
+     *            The list of works
+     * @param source
+     *            The source element
+     */
+    private void addSourceToWorks(OrcidWorks orcidWorks, Source source) {
+        for(OrcidWork work : orcidWorks.getOrcidWork()) {
+            if(PojoUtil.isEmpty(work.getPutCode())) {
+                work.setSource(source);
+            }
+        }
+    }
+
+    /**
+     * Add source to the affiliations
+     * 
+     * @param affiliations
+     *            The list of affiliations
+     * @param source
+     *            The source element
+     */
+    private void addSourceToAffiliations(Affiliations affiliations, Source source) {
+        for (Affiliation affiliation : affiliations.getAffiliation()) {
+            if (PojoUtil.isEmpty(affiliation.getPutCode())) {
+                affiliation.setSource(source);
+            }
+        }
+    }
+    
+    /**
+     * Add source to the funding
+     * 
+     * @param fundings
+     *            The list of fundin
+     * @param source
+     *            The source element
+     */
+    private void addSourceToFundings(FundingList fundings, Source source) {
+        for (Funding funding : fundings.getFundings()) {
+            if (PojoUtil.isEmpty(funding.getPutCode())) {
+                funding.setSource(source);
+            }
+        }
+    }
+    
+    private void addSourceToNewActivities(OrcidActivities activities) {
+        Source source = getSource();
+        if(activities != null) {
+            if(activities.getAffiliations() != null) {
+                addSourceToAffiliations(activities.getAffiliations(), source);
+            }
+            
+            if(activities.getFundings() != null) {
+                addSourceToFundings(activities.getFundings(), source);
+            }
+            
+            if(activities.getOrcidWorks() != null) {
+                addSourceToWorks(activities.getOrcidWorks(), source);
+            }
+        }
+    }
+    
+    private Source getSource() {
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        
+        Source source = new Source();        
+        if (sourceEntity.getSourceProfile() != null && !PojoUtil.isEmpty(sourceEntity.getSourceProfile().getId())) {
+            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceProfile().getId())));                
+        } 
+        
+        if (sourceEntity.getSourceClient() != null && !PojoUtil.isEmpty(sourceEntity.getSourceClient().getId())) {
+            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceClient().getId())));            
+        }
+                
+        return source;
+    }
+    
+    public OrcidIdBase getOrcidIdBase(String id) {
+        OrcidIdBase orcidId = new OrcidIdBase();
+        String correctedBaseUri = baseUri.replace("https", "http");
+        try {
+            URI uri = new URI(correctedBaseUri);
+            orcidId.setHost(uri.getHost());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Error parsing base uri", e);
+        }
+        if (OrcidStringUtils.isClientId(id)) {
+            correctedBaseUri += "/client";
+        }
+        orcidId.setUri(correctedBaseUri + "/" + id);
+        orcidId.setPath(id);
+        return orcidId;
     }
 }
