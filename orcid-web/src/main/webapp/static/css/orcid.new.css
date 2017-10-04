@@ -2555,6 +2555,21 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 /* Do not modify */
 
+
+.privacyToggle + .popover-help-container {
+    bottom: 60px;
+    left: initial;
+    position: absolute;
+    right: -70px;
+    top: initial;
+}
+
+.privacyToggle + .popover-help-container .popover {
+    left: initial;
+    position: relative;
+    right: initial;
+}
+
 .popover-help-container {
     display: inline;
 }
@@ -2589,7 +2604,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .workspace-top .popover-help-container .popover {
-    left: -245px;
+    /*left: -245px;*/
 }
 
 .workspace-top .popover.bottom .arrow {
@@ -4589,14 +4604,8 @@ ul.id-details li {
     overflow: visible;
 }
 
-.bio-edit .popover-help-container > .popover.privacy-myorcid3 {
-    left: -276px !important;
-    top: -177px !important;
-    min-width: 242px;
-}
-
 .bio-edit .popover-help-container > .privacy-myorcid3 > .arrow {
-    left: 226px !important;
+    left: 120px !important;
 }
 
 .dotted-bar {
@@ -5575,8 +5584,11 @@ ul.sources-actions > li .popover-tooltip > .arrow {
 
 .workspace-top .popover-help-container .popover.privacy-myorcid3,
 .workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
-    top: -143px;
-    left: -138px;
+    /*
+    left: inherit;
+    right: 30px;
+    top: -175px;
+    */
     min-width: 242px;
     width: auto;
 }
@@ -7217,8 +7229,6 @@ a:hover .mozilla-badge {
 }
 
 #bio-section .popover {
-    top: -40px;
-    left: -4px;
     display: none;
 }
 
@@ -8900,6 +8910,24 @@ ul.comma li:last-child:after {
 }
 
 
+/***************** Modalng2 syles */
+.popover-ng2-bck {
+    background: #ddd;
+    height: 100%;
+    left: 0;
+    opacity: 0.9;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 9000;
+}
+
+.popover-ng2-content {
+    display: block; 
+    visibility: visible; 
+    position: absolute; 
+}
+
 /*************************** Right to left styles*/
 .lang-rl #idpSelectInput {
     margin-left: 5px;
@@ -8983,8 +9011,18 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .id-details .popover-pos{
-    left:100%;
-    margin-left: -250px;
+    margin-left: 0;
+    position: absolute;
+    top: 15px;
+    right: 0;
+    width: -moz-max-content;
+    width: max-content;
+    z-index: 1;
+}
+
+.lang-rl .id-details .url-work .id-details li span span {
+    float: right;
+    margin-right: -15px;
 }
 
 .lang-rl .lhs {
@@ -9030,13 +9068,18 @@ ul.comma li:last-child:after {
     text-align: right;
 }
 
+.lang-rl .url-popover > span {
+    position: relative;
+}
+
 .lang-rl .url-popover .popover.bottom .arrow {
     right: 20px;
 }
 
-.lang-rl .id-details .url-work .id-details li span span {
-    float: right;
-    margin-right: -15px;
+.lang-rl .url-popover .popover-help-container .popover {
+    left: initial;
+    top: initial;
+    position: relative;
 }
 
 .lang-rl .workspace-accordion-header .toggle-text {
@@ -9075,6 +9118,10 @@ ul.comma li:last-child:after {
 .lang-rl .workspace-title + .info-detail{
     float: right;
     margin-right: 15px;
+}
+
+.lang-rl .privacyToggle + .popover-help-container {
+    right: -73px;
 }
 
 #verificationCodeFor2FA {

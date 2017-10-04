@@ -18,7 +18,7 @@ package org.orcid.core.adapter.impl;
 
 import java.util.Date;
 
-import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.pojo.IdentifierType;
 

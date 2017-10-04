@@ -100,20 +100,20 @@
                 <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED')"></a></li>
                 <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE')"></a></li>
             </ul>
-        </div>
-        <div class="popover-help-container">
-            <div class="popover top privacy-myorcid3" [ngClass]="showElement[name] == true ? 'block' : ''">
-                <div class="arrow"></div>
-                <div class="popover-content">
-                    <strong><@orcid.msg 'privacyToggle.help.who_can_see' /></strong>
-                    <ul class="privacyHelp">
-                        <li class="public" style="color: #009900;"><@orcid.msg 'privacyToggle.help.everyone' /></li>
-                        <li class="limited" style="color: #ffb027;"><@orcid.msg 'privacyToggle.help.trusted_parties' /></li>
-                        <li class="private" style="color: #990000;"><@orcid.msg 'privacyToggle.help.only_me' /></li>
-                    </ul>
-                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information' /></a>
-                </div>                
-            </div>                              
+            <div class="popover-help-container">
+                <div class="popover top privacy-myorcid3" [ngClass]="showElement[name] == true ? 'block' : ''">
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <strong><@orcid.msg 'privacyToggle.help.who_can_see' /></strong>
+                        <ul class="privacyHelp">
+                            <li class="public" style="color: #009900;"><@orcid.msg 'privacyToggle.help.everyone' /></li>
+                            <li class="limited" style="color: #ffb027;"><@orcid.msg 'privacyToggle.help.trusted_parties' /></li>
+                            <li class="private" style="color: #990000;"><@orcid.msg 'privacyToggle.help.only_me' /></li>
+                        </ul>
+                        <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information' /></a>
+                    </div>                
+                </div>                              
+            </div>
         </div>
     </script>
 
@@ -883,8 +883,42 @@
   </#if>
 </script>
 
+<script type="text/ng-template" id="email-unverified-warning-ng2-template">
+    <div class="row">
+        <div class="col-md-12 col-xs-12 col-sm-12">
+            <h4><@orcid.msg 'orcid.frontend.workspace.your_primary_email'/></h4>
+            <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access'/></p>
+            <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access2'/><br /><strong>{{emailPrimary}}</strong></p>
+            <p><@orcid.msg 'orcid.frontend.workspace.ensure_future_access3'/> <a target="orcid.frontend.link.url.knowledgebase" href="<@orcid.msg 'orcid.frontend.link.url.knowledgebase'/>"><@orcid.msg 'orcid.frontend.workspace.ensure_future_access4'/></a> <@orcid.msg 'orcid.frontend.workspace.ensure_future_access5'/> <a target="orcid.frontend.link.email.support" href="mailto:<@orcid.msg 'orcid.frontend.link.email.support'/>"><@orcid.msg 'orcid.frontend.link.email.support'/></a>.</p>
+            <div class="topBuffer">
+                <button class="btn btn-primary" id="modal-close" (click)="verifyEmail()"><@orcid.msg 'orcid.frontend.workspace.send_verification'/></button>
+                <a class="cancel-option inner-row" (click)="close()"><@orcid.msg 'orcid.frontend.freemarker.btncancel'/></a>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="email-verification-sent-messsage-ng2-template">
+    <div style="padding: 20px;">
+        <h4><@orcid.msg 'manage.email.verificationEmail'/> {{emailPrimary}}</h4>
+        <p><@orcid.msg 'workspace.check_your_email'/></p>
+        <br />
+        <button class="btn" (click)="close()"><@orcid.msg 'freemarker.btnclose'/></button>
+    </div>
+</script>
+
+<modalngcomponent elementHeight="248" elementId="modalemailunverified" elementWidth="500">
+    <email-unverified-warning-ng2></email-unverified-warning-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
+    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+
+
+<!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
-<modalngcomponent id="modalemailunverified"></modalngcomponent>
 
 <#include "/includes/record/record_modals.ftl">
 <#include "/includes/record/email_settings.ftl">
