@@ -22,6 +22,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.OrgManager;
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -136,8 +138,13 @@ public class OrgManagerImpl implements OrgManager {
         orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));
         
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
-            orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
-                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
+            // if disambiguated org is present (must be for v3 API, but not UI) it must be valid
+            OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
+                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource());
+            if (disambiguatedOrg == null) {
+                throw new InvalidDisambiguatedOrgException();
+            }
+            orgEntity.setOrgDisambiguated(disambiguatedOrg);
         }
         return matchOrCreateOrg(orgEntity);        
     }

@@ -429,12 +429,6 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(education);
         assertEquals(Visibility.PUBLIC, education.getVisibility());
         
-        // disambiguated org is required in API v3
-        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
-        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
-        education.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
-
         education.setVisibility(null);
 
         response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
