@@ -475,9 +475,4 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     public void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
     }
-
-	public void setSourceManager(SourceManager sourceManager) {
-		this.sourceManager = sourceManager;
-	}
-
 }

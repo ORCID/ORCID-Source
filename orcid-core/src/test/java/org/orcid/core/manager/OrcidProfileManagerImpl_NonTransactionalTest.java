@@ -75,6 +75,9 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
 
     @Resource
     private SourceManager sourceManager;
+    
+    @Resource
+    private OrcidJaxbCopyManager orcidJaxbCopyManager;
 
     @Mock
     private SourceManager mockSourceManager;
@@ -88,7 +91,8 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
     public void before() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidJaxbCopyManager, "sourceManager", mockSourceManager);
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(new ClientDetailsEntity(CLIENT_1));
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
@@ -148,6 +152,7 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
         workManager.removeAllWorks(TEST_ORCID);
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidJaxbCopyManager, "sourceManager", sourceManager);        
     }
 
     private void addDataToTestRecord() {
