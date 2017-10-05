@@ -194,8 +194,11 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         SourceEntity entity = sourceManager.retrieveSourceEntity();
         Source source = new Source();
         if (entity.getSourceClient() != null && !PojoUtil.isEmpty(entity.getSourceClient().getId())) {
-            source.setSourceClientId(new SourceClientId(entity.getSourceClient().getId()));
-            source.setSourceOrcid(null);
+            if(OrcidStringUtils.isValidOrcid(entity.getSourceClient().getId())) {
+                source.setSourceOrcid(new SourceOrcid(entity.getSourceClient().getId()));
+            } else {
+                source.setSourceClientId(new SourceClientId(entity.getSourceClient().getId()));                
+            }            
         } else if(entity.getSourceProfile() != null && !PojoUtil.isEmpty(entity.getSourceProfile().getId())) {
             source.setSourceClientId(null);
             source.setSourceOrcid(new SourceOrcid(entity.getSourceProfile().getId()));

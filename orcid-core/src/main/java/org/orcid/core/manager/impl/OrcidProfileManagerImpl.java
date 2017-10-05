@@ -407,8 +407,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     setFundingPrivacy(orcidProfile, defaultVisibility);
                 }
                 
-                
-                //TODO
                 addSourceToNewActivities(orcidProfile.getOrcidActivities());
                 
                 dedupeWorks(orcidProfile);
@@ -1231,8 +1229,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
     }
 
-    private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {
-        ProfileEntity profileEntity = profileDao.find(orcid);
+    private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {        
         Set<String> titles = new HashSet<String>();
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
@@ -1437,8 +1434,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (existingProfile == null) {
             throw new IllegalArgumentException("No record found for " + orcid);
         }
-
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();
+       
         FundingList existingFundingList = existingProfile.retrieveFundings();
         // updates the amount format to the right format according to the
         // current locale
@@ -2042,7 +2038,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         } 
         
         if (sourceEntity.getSourceClient() != null && !PojoUtil.isEmpty(sourceEntity.getSourceClient().getId())) {
-            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceClient().getId())));            
+            if(OrcidStringUtils.isValidOrcid(sourceEntity.getSourceClient().getId())) {
+                source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceClient().getId())));
+            } else {
+                source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceClient().getId())));
+            }           
         }
                 
         return source;
