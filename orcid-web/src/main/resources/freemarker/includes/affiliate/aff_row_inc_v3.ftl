@@ -17,8 +17,35 @@
 
 -->
 <div class="row"> 
+         
+  	<!-- Information -->
+	<div class="col-md-9 col-sm-9 col-xs-7">
+	    <h3 class="workspace-title">	    	
+        	<span ng-bind="group.getActive().affiliationName.value"></span>:
+        	<span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
+        </h3>
+        <div class="info-detail">
+        	<div class="info-date">        	        	
+	        	<span class="affiliation-date" ng-if="group.getActive().startDate">
+	        	    <span ng-if="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-if="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span><span ng-if="group.getActive().startDate.day">-{{group.getActive().startDate.day}}</span>
+	        	    <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
+	        	    <span ng-hide="group.getActive().endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+	        		<span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
+	            </span>
+	            <span class="affiliation-date" ng-if="!group.getActive().startDate && group.getActive().endDate">
+	        	     <span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
+	        	</span>
+        	</div>
+        	<span class="divisor" ng-if="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>        	
+        	<span class="role" ng-if="group.getActive().roleTitle.value" ng-bind="group.getActive().roleTitle.value"></span>       	
+			<span ng-if="group.getActive().departmentName.value">
+				<span ng-if="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
+			</span>
+        </div>
+    </div>
+
     <!-- Privacy Settings -->
-    <div class="col-md-3 col-sm-3 col-xs-5 right padding-left-fix">          
+    <div class="col-md-3 col-sm-3 col-xs-5 padding-left-fix">          
         <div class="workspace-toolbar">         
             <ul class="workspace-private-toolbar"> 
                 <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'> 
@@ -48,32 +75,7 @@
                 </#if>
             </ul>
         </div>
-   </div>       
-  	<!-- Information -->
-	<div class="col-md-9 col-sm-9 col-xs-7">
-	    <h3 class="workspace-title">	    	
-        	<span ng-bind="group.getActive().affiliationName.value"></span>:
-        	<span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
-        </h3>
-        <div class="info-detail">
-        	<div class="info-date">        	        	
-	        	<span class="affiliation-date" ng-if="group.getActive().startDate">
-	        	    <span ng-if="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-if="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span><span ng-if="group.getActive().startDate.day">-{{group.getActive().startDate.day}}</span>
-	        	    <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-	        	    <span ng-hide="group.getActive().endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-	        		<span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
-	            </span>
-	            <span class="affiliation-date" ng-if="!group.getActive().startDate && group.getActive().endDate">
-	        	     <span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
-	        	</span>
-        	</div>
-        	<span class="divisor" ng-if="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>        	
-        	<span class="role" ng-if="group.getActive().roleTitle.value" ng-bind="group.getActive().roleTitle.value"></span>       	
-			<span ng-if="group.getActive().departmentName.value">
-				<span ng-if="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
-			</span>
-        </div>
-    </div>
+    </div>  
 </div><!--row-->
 <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'>
     <!-- more info -->

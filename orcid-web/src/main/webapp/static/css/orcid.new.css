@@ -3886,7 +3886,6 @@ ul#body-work-list>li {
 .divisor,.info-date {
     display: block;
     float: left;
-    width: 100%
 }
 
 .bulk-edit ul.bulk-edit-toolbar>li.bulk-edit-toolbar-item>div.privacy-options>.privacy-options-popover,.role {
@@ -7678,6 +7677,12 @@ ul.comma li:last-child:after {
     text-align: center
 }
 
+.lang-rl .bulk-edit ul.bulk-edit-toolbar>li.bulk-edit-toolbar-item .popover-help-container {
+    left: 0px!important;
+    text-align: right;
+    top: 0;
+} 
+
 .lang-rl .bulk-edit ul.bulk-edit-toolbar {
     float: left
 }
@@ -7685,6 +7690,10 @@ ul.comma li:last-child:after {
 .lang-rl .bulk-edit .bulk-edit-delete {
     float: left;
     padding-left: 15px
+}
+
+.lang-rl .bulk-edit .bulk-edit-delete .edit-option-toolbar {
+    left: -3px;
 }
 
 .lang-rl .bulk-edit-toolbar {
@@ -7734,6 +7743,10 @@ ul.comma li:last-child:after {
 
 .lang-rl .btn.btn-primary {
     text-align: center
+}
+
+.lang-rl .bulk-edit .custom-checkbox-active {
+    right: -5px;
 }
 
 .lang-rl .id-details .popover-pos {
