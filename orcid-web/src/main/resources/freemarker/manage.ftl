@@ -47,7 +47,7 @@
         <#assign open = "" />
         <modal-unverified-email-set-primary></modal-unverified-email-set-primary>
         <table class="table table-bordered settings-table account-settings"
-            ng-controller="EditTableCtrl" style="margin: 0px, padding:  0px;">
+            ng-controller="EditTableCtrl" style="margin:0; padding:0;">
             <tbody>
                 <tr>
                     <!-- Email header -->
