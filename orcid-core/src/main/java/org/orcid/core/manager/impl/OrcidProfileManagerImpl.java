@@ -270,7 +270,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
 
         // Add source to emails, works and affiliations
-        addSourceToEmails(orcidProfile, sourceManager.retrieveSourceOrcid());
+        addSourceToEmails(orcidProfile);
         if(orcidProfile.getOrcidActivities() != null) {
             addSourceToNewActivities(orcidProfile.getOrcidActivities());
         }               
@@ -472,13 +472,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (orcidBio != null) {
             ContactDetails contactDetails = orcidBio.getContactDetails();
             if (contactDetails != null) {
+                SourceEntity entity = sourceManager.retrieveSourceEntity();
                 for (Email email : contactDetails.getEmail()) {
                     EmailEntity existingEmail = existingMap.get(email.getValue().toLowerCase());
                     if (existingEmail == null) {
-                        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-                            email.setSourceClientId(amenderOrcid);
-                        } else {
-                            email.setSource(amenderOrcid);
+                        if (entity.getSourceClient() != null && !PojoUtil.isEmpty(entity.getSourceClient().getId())) {
+                            email.setSourceClientId(entity.getSourceClient().getId());
+                        } else if(entity.getSourceProfile() != null && !PojoUtil.isEmpty(entity.getSourceProfile().getId())) {
+                            email.setSource(entity.getSourceProfile().getId());
                         }
                     } else {
                         email.setSource(existingEmail.getSourceId());
@@ -561,14 +562,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      *            The orcid of the user or client that add the email to the
      *            profile user
      */
-    private void addSourceToEmails(OrcidProfile orcidProfile, String amenderOrcid) {
+    private void addSourceToEmails(OrcidProfile orcidProfile) {
         if (orcidProfile != null && orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
                 && orcidProfile.getOrcidBio().getContactDetails().getEmail() != null) {
+            SourceEntity entity = sourceManager.retrieveSourceEntity();
             for (Email email : orcidProfile.getOrcidBio().getContactDetails().getEmail()) {
-                if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-                    email.setSource(amenderOrcid);
-                } else {
-                    email.setSourceClientId(amenderOrcid);
+                if (entity.getSourceClient() != null && !PojoUtil.isEmpty(entity.getSourceClient().getId())) {
+                    email.setSourceClientId(entity.getSourceClient().getId());                    
+                } else if(entity.getSourceProfile() != null && !PojoUtil.isEmpty(entity.getSourceProfile().getId())) {
+                    email.setSource(entity.getSourceProfile().getId());
                 }
             }
         }
