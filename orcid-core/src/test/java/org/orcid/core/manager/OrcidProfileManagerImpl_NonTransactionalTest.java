@@ -146,7 +146,6 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
     @After
     public void after() {
         workManager.removeAllWorks(TEST_ORCID);
-
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
     }

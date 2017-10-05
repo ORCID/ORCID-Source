@@ -187,6 +187,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Resource
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
 
+    @Resource
+    private SourceManager sourceManager;
+    
     @Mock
     private SourceManager mockSourceManager;
     
@@ -277,6 +280,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profileDao.remove(DELEGATE_ORCID);
         profileDao.remove(APPLICATION_ORCID);
         orcidProfileManager.clearOrcidProfileCache();
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);        
     }
 
     @Test
