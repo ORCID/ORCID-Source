@@ -74,6 +74,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     private Text orgDisambiguatedId;
     
+    private String orgDisambiguatedName;
+    
     private String orgDisambiguatedRegion;
     
     private String orgDisambiguatedUrl;
@@ -459,6 +461,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setOrgDisambiguatedId(Text orgDisambiguatedId) {
         this.orgDisambiguatedId = orgDisambiguatedId;
+    }
+    
+    public String getOrgDisambiguatedName() {
+        return orgDisambiguatedName;
+    }
+
+    public void setOrgDisambiguatedName(String orgDisambiguatedName) {
+        this.orgDisambiguatedName = orgDisambiguatedName;
     }
     
     public String getOrgDisambiguatedRegion() {

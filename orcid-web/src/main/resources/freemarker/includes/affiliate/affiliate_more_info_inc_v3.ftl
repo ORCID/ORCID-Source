@@ -28,6 +28,12 @@
                 <span bind-html-compile='group.getActive().disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.getActive().disambiguationSource.value:group.getActive().putCode.value:group.getActive().disambiguationSource' class="url-popover"> 
                 </span>
             </div>
+            <div class="col-md-11 col-md-offset-1 bottomBuffer">
+                <span ng-bind="group.getActive().orgDisambiguatedValue"></span>: <span ng-bind="group.getActive().orgDisambiguatedCity"></span>, <span ng-if="group.getActive().orgDisambiguatedRegion" ng-cloak><span ng-bind="group.getActive().disambiguatedAffiliationRegion"></span>, </span><span ng-bind="group.getActive().orgDisambiguatedCountry"></span><br>
+                <span ng-if="group.getActive().orgDisambiguatedUrl">
+                <a href="group.getActive().orgDisambiguatedUrl" target=""><span ng-bind="group.getActive().orgDisambiguatedUrl" ng-cloak></span></a>
+                </span>
+            </div>
         </div>
         <div class="col-md-6" ng-if="group.getActive().url.value" ng-cloak>
         	<div class="bottomBuffer">
