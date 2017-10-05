@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Organization;
@@ -30,8 +33,12 @@ import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.pojo.OrgDisambiguated;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
+    
+    @Resource
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     private static final long serialVersionUID = 1L;
 
@@ -60,8 +67,16 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text disambiguatedAffiliationSourceId;
 
     private Text disambiguationSource;
+    
+    private String orgDisambiguatedCity;
+    
+    private String orgDisambiguatedCountry;
 
     private Text orgDisambiguatedId;
+    
+    private String orgDisambiguatedRegion;
+    
+    private String orgDisambiguatedUrl;
 
     private String affiliationTypeForDisplay;
 
@@ -80,7 +95,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date lastModified;
     
     private Text url;
-
+    
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
 
@@ -102,7 +117,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             if (organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
                 form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
                 form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
-                form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));
+                form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));  
             }
         }
         if (address.getRegion() != null) {
@@ -421,6 +436,22 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     public void setSource(String source) {
         this.source = source;
     }
+    
+    public String getOrgDisambiguatedCity() {
+        return orgDisambiguatedCity;
+    }
+
+    public void setOrgDisambiguatedCity(String orgDisambiguatedCity) {
+        this.orgDisambiguatedCity = orgDisambiguatedCity;
+    }
+    
+    public String getOrgDisambiguatedCountry() {
+        return orgDisambiguatedCountry;
+    }
+
+    public void setOrgDisambiguatedCountry(String orgDisambiguatedCountry) {
+        this.orgDisambiguatedCountry = orgDisambiguatedCountry;
+    }
 
     public Text getOrgDisambiguatedId() {
         return orgDisambiguatedId;
@@ -428,6 +459,22 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setOrgDisambiguatedId(Text orgDisambiguatedId) {
         this.orgDisambiguatedId = orgDisambiguatedId;
+    }
+    
+    public String getOrgDisambiguatedRegion() {
+        return orgDisambiguatedRegion;
+    }
+
+    public void setOrgDisambiguatedRegion(String orgDisambiguatedRegion) {
+        this.orgDisambiguatedRegion = orgDisambiguatedRegion;
+    }
+    
+    public String getOrgDisambiguatedUrl() {
+        return orgDisambiguatedUrl;
+    }
+
+    public void setOrgDisambiguatedUrl(String orgDisambiguatedUrl) {
+        this.orgDisambiguatedUrl = orgDisambiguatedUrl;
     }
 
     public Date getCreatedDate() {

@@ -47,6 +47,7 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -82,6 +83,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -135,6 +137,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private PersonalDetailsManager personalDetailsManager;
+    
+    @Resource
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
@@ -559,6 +564,13 @@ public class PublicProfileController extends BaseWorkspaceController {
             validateVisibility(aff.getVisibility());
             AffiliationForm form = AffiliationForm.valueOf(aff);
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
+            if(form.getDisambiguatedAffiliationSourceId() != null){
+                OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
+                form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
+                form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
+                form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
+                form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
+            }
             affs.add(form);            
         }
 
