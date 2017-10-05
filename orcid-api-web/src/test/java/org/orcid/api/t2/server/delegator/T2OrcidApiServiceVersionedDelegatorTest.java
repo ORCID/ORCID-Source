@@ -203,7 +203,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc6");
+        orcidMessage.setMessageVersion("1.2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -367,7 +367,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc6");
+        orcidMessage.setMessageVersion("1.2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();
@@ -494,7 +494,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void addAffiliationTest() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc6");
+        orcidMessage.setMessageVersion("1.2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -603,7 +603,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     
     private OrcidMessage buildMessageWithAffiliation(AffiliationType type, String dept, String role, String orcid) {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc6");
+        orcidMessage.setMessageVersion("1.2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier(orcid));
