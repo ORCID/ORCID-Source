@@ -564,7 +564,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             validateVisibility(aff.getVisibility());
             AffiliationForm form = AffiliationForm.valueOf(aff);
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
-            if(form.getOrgDisambiguatedId().getValue() != null){
+            if(form.getOrgDisambiguatedId() != null){
                 OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
                 form.setOrgDisambiguatedName(orgDisambiguated.getValue());
                 form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
