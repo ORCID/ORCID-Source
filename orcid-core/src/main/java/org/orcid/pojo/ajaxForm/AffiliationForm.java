@@ -20,9 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Organization;
@@ -35,9 +32,6 @@ import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
-    
-    @Resource
-    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     private static final long serialVersionUID = 1L;
 
