@@ -57,6 +57,7 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -134,6 +135,9 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
     
     @Resource
+    private OrgManager orgManager;
+    
+    @Resource
     private SourceManager sourceManager;
     
     @Mock
@@ -162,6 +166,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orgManager, "sourceManager", mockSourceManager);        
 
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         unmarshaller = context.createUnmarshaller();
@@ -179,6 +184,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orgManager, "sourceManager", sourceManager);        
     }
 
     @AfterClass
