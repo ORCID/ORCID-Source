@@ -257,6 +257,22 @@ if (!("ontouchstart" in document.documentElement)) {
     document.documentElement.className += " no-touch";
 }
 
+var signinLocked = false;
+function disableSignin() {
+    signinLocked = true;
+    $('#form-sign-in-button').prop('disabled', true);
+    $('form#loginForm').attr('disabled', 'disabled');
+}
+
+function enableSignin() {
+    orcidGA.gaPush(function() { 
+        $('#ajax-loader').hide();
+        $('form#loginForm').removeAttr('disabled');
+        $('#form-sign-in-button').prop('disabled', false);
+        signinLocked = false;
+    }); 
+}
+
 // function for javascript cookies
 var OrcidCookie = new function() {
     this.getCookie = function(c_name) {
@@ -704,22 +720,6 @@ $(function() {
         }
     }
 
-    var signinLocked = false;
-    function disableSignin() {
-        signinLocked = true;
-        $('#form-sign-in-button').prop('disabled', true);
-        $('form#loginForm').attr('disabled', 'disabled');
-    }
-
-    function enableSignin() {
-        orcidGA.gaPush(function() { 
-            $('#ajax-loader').hide();
-            $('form#loginForm').removeAttr('disabled');
-            $('#form-sign-in-button').prop('disabled', false);
-            signinLocked = false;
-        }); 
-    }
-    
     function show2FA() {
         $('#verificationCodeFor2FA').attr("style", "display: block");
         $('#form-sign-in-button').html(om.get('orcid.frontend.security.2fa.authenticate'));
