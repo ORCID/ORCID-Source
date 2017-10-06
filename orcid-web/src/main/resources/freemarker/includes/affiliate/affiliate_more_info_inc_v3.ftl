@@ -29,9 +29,9 @@
                 </span>
             </div>
             <div class="col-md-11 col-md-offset-1 bottomBuffer">
-                <span ng-bind="group.getActive().orgDisambiguatedName"></span>: <span ng-bind="group.getActive().orgDisambiguatedCity"></span>, <span ng-if="group.getActive().orgDisambiguatedRegion" ng-cloak><span ng-bind="group.getActive().disambiguatedAffiliationRegion"></span>, </span><span ng-bind="group.getActive().orgDisambiguatedCountry"></span><br>
-                <span ng-if="group.getActive().orgDisambiguatedUrl">
-                <a href="group.getActive().orgDisambiguatedUrl" target=""><span ng-bind="group.getActive().orgDisambiguatedUrl" ng-cloak></span></a>
+                <span ng-if="group.getActive().orgDisambiguatedName">{{group.getActive().orgDisambiguatedName}}</span><span ng-if="group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion || group.getActive().orgDisambiguatedCountry">: </span><span ng-if="group.getActive().orgDisambiguatedCity" ng-cloak>{{group.getActive().orgDisambiguatedCity}}</span><span ng-if="group.getActive().orgDisambiguatedCity && group.getActive().orgDisambiguatedRegion">, </span><span ng-if="group.getActive().orgDisambiguatedRegion" ng-cloak>{{group.getActive().orgDisambiguatedRegion}}</span><span ng-if="group.getActive().orgDisambiguatedCountry && (group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion)">, </span><span ng-if="group.getActive().orgDisambiguatedCountry" ng-cloak>{{group.getActive().orgDisambiguatedCountry}}</span>
+                <span ng-if="group.getActive().orgDisambiguatedUrl"><br>
+                <a href="{{group.getActive().orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span ng-bind="group.getActive().orgDisambiguatedUrl" ng-cloak></span></a>
                 </span>
             </div>
         </div>

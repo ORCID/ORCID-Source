@@ -66,12 +66,12 @@
 	            <span class="affiliation-date" ng-if="!group.getActive().startDate && group.getActive().endDate">
 	        	     <span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
 	        	</span>
+                <span ng-if="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"> | </span>           
+            <span ng-if="group.getActive().roleTitle.value" ng-bind="group.getActive().roleTitle.value"></span>        
+            <span ng-if="group.getActive().departmentName.value">
+                <span ng-if="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
+            </span>
         	</div>
-        	<span class="divisor" ng-if="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>        	
-        	<span class="role" ng-if="group.getActive().roleTitle.value" ng-bind="group.getActive().roleTitle.value"></span>       	
-			<span ng-if="group.getActive().departmentName.value">
-				<span ng-if="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
-			</span>
         </div>
     </div>
 </div><!--row-->
