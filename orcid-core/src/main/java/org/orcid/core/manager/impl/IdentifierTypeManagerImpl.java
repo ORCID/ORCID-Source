@@ -32,7 +32,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.jena.ext.com.google.common.collect.ImmutableList;
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
-import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.OrcidSecurityManager;

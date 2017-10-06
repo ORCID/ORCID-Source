@@ -100,7 +100,7 @@
                 <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED')"></a></li>
                 <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE')"></a></li>
             </ul>
-        
+
             <div class="popover-help-container">
                 <div class="popover top privacy-myorcid3" [ngClass]="showElement[name] == true ? 'block' : ''">
                     <div class="arrow"></div>

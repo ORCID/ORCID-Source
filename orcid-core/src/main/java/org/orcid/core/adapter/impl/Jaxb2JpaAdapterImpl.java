@@ -36,8 +36,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
-import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
-import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV1;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV1;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.locale.LocaleManager;
@@ -373,9 +373,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private String getWorkExternalIdsJson(OrcidWork work) {
         if (work == null || work.getWorkExternalIdentifiers() == null) {
             return null;
-        }        
-        WorkExternalIdentifiers recordExternalIdentifiers = new WorkExternalIdentifiers(work.getWorkExternalIdentifiers(), work.getWorkType());        
-        return recordExternalIdentifiers.toDBJSONString();
+        }       
+        
+        JSONWorkExternalIdentifiersConverterV1 converter = new JSONWorkExternalIdentifiersConverterV1();
+        return converter.convertTo(work.getWorkExternalIdentifiers(),  work.getWorkType());
     }
     
     
@@ -1262,8 +1263,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
-            FundingExternalIdentifiers recordExternalIdentifiers = new FundingExternalIdentifiers(funding.getFundingExternalIdentifiers());        
-            profileFundingEntity.setExternalIdentifiersJson(recordExternalIdentifiers.toDBJSONString());
+            
+            JSONFundingExternalIdentifiersConverterV1 fundingExternalIDConverter = new JSONFundingExternalIdentifiersConverterV1();
+            String fundingExternalIdentifiersJSONString = fundingExternalIDConverter.convertTo(funding.getFundingExternalIdentifiers());
+
+            profileFundingEntity.setExternalIdentifiersJson(fundingExternalIdentifiersJSONString);
             profileFundingEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
 
             FundingTitle fundingTitle = funding.getTitle();

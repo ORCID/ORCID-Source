@@ -29,11 +29,10 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.impl.JsonOrikaConverter;
 import org.orcid.core.adapter.impl.WorkEntityFactory;
-import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
-import org.orcid.core.adapter.v3.impl.jsonidentifiers.FundingExternalIDsConverter;
-import org.orcid.core.adapter.v3.impl.jsonidentifiers.PeerReviewWorkExternalIDConverter;
-import org.orcid.core.adapter.v3.impl.jsonidentifiers.SingleWorkExternalIdentifierFromJsonConverter;
-import org.orcid.core.adapter.v3.impl.jsonidentifiers.WorkExternalIDsConverter;
+import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV3;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV3;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -41,30 +40,25 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.client.Client;
 import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
 import org.orcid.jaxb.model.v3.dev1.client.ClientSummary;
+import org.orcid.jaxb.model.v3.dev1.common.Day;
 import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.dev1.common.Month;
 import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.dev1.common.SourceName;
 import org.orcid.jaxb.model.v3.dev1.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
 import org.orcid.jaxb.model.v3.dev1.common.Year;
-import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
@@ -80,8 +74,13 @@ import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.SourceAware;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkContributors;
-import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.model.record_correction.RecordCorrection;
+import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -159,7 +158,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         // Register converters
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("singleWorkExternalIdentifierFromJsonConverter", new SingleWorkExternalIdentifierFromJsonConverter());
         converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
 
         // Register factories
@@ -410,7 +408,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3());
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
         
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
@@ -489,7 +487,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getFundingMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new FundingExternalIDsConverter());
+        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV3());
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
@@ -621,8 +619,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
-        converterFactory.registerConverter("workExternalIdentifierConverterId", new PeerReviewWorkExternalIDConverter());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3());
+        converterFactory.registerConverter("workExternalIdentifierConverterId", new JSONPeerReviewWorkExternalIdentifierConverterV3());
         //do same as work
         
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);

@@ -322,13 +322,14 @@ public class SelfServiceController extends BaseController {
 
     @RequestMapping(value = "/validate-sub-member-name.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberName(@RequestBody SubMemberForm subMember) {
-        // validate website isn't blank
+        // validate name isn't blank
         subMember.getName().setErrors(new ArrayList<String>());
         if (subMember.getName().getValue() == null || subMember.getName().getValue().trim().isEmpty()) {
             setError(subMember.getName(), "manage_consortium.add_submember_name_required");
         }
 
         return subMember;
+        
     }
 
     @RequestMapping(value = "/validate-sub-member-website.json", method = RequestMethod.POST)

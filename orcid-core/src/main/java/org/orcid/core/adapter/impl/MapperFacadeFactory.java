@@ -27,11 +27,10 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
-import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIDsConverter;
-import org.orcid.core.adapter.impl.jsonidentifiers.PeerReviewWorkExternalIDConverter;
-import org.orcid.core.adapter.impl.jsonidentifiers.SingleWorkExternalIdentifierFromJsonConverter;
-import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIDsConverter;
+import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV2;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV2;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV2;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -171,7 +170,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         // Register converters
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("singleWorkExternalIdentifierFromJsonConverter", new SingleWorkExternalIdentifierFromJsonConverter());
         converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
 
         // Register factories
@@ -419,7 +417,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = getNewMapperFactory();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV2());
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
@@ -497,7 +495,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getFundingMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new FundingExternalIDsConverter());
+        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV2());
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
@@ -620,8 +618,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = getNewMapperFactory();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
-        converterFactory.registerConverter("workExternalIdentifierConverterId", new PeerReviewWorkExternalIDConverter());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV2());
+        converterFactory.registerConverter("workExternalIdentifierConverterId", new JSONPeerReviewWorkExternalIdentifierConverterV2());
         // do same as work
 
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
