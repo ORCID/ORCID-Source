@@ -498,10 +498,7 @@ $(function() {
                         
                         var loginUrl = baseUrl + 'signin/auth.json';
 
-                        if ($('form#loginForm').attr('disabled')) {
-                            return false;
-                        }
-
+                        if (signinLocked) return false;
                         disableSignin();
                         
                         if (basePath.startsWith(baseUrl + 'oauth')) {
@@ -704,7 +701,9 @@ $(function() {
         }
     }
 
+    var signinLocked = false;
     function disableSignin() {
+        signinLocked = true;
         $('#form-sign-in-button').prop('disabled', true);
         $('form#loginForm').attr('disabled', 'disabled');
     }
@@ -714,6 +713,7 @@ $(function() {
             $('#ajax-loader').hide();
             $('form#loginForm').removeAttr('disabled');
             $('#form-sign-in-button').prop('disabled', false);
+            signinLocked = false;
         }); 
     }
     
