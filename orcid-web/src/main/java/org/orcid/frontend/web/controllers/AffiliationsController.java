@@ -298,7 +298,7 @@ public class AffiliationsController extends BaseWorkspaceController {
             for (Affiliation affiliation : affiliationsList) {
                 AffiliationForm form = AffiliationForm.valueOf(affiliation);
                 form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, form.getCountry().getValue())));
-                if(form.getDisambiguatedAffiliationSourceId() != null){
+                if(form.getOrgDisambiguatedId().getValue() != null){
                     OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
                     form.setOrgDisambiguatedName(orgDisambiguated.getValue());
                     form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());

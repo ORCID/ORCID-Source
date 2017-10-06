@@ -33,7 +33,6 @@ import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.pojo.OrgDisambiguated;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
     
