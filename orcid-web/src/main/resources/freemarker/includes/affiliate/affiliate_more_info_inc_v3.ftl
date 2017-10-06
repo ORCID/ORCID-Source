@@ -23,13 +23,13 @@
 	<span class="dotted-bar"></span>	
 	<div class="row">
 		<div ng-if="group.getActive().orgDisambiguatedId.value">
-            <div class="col-md-12 bottomBuffer">   
+            <div class="col-md-12">   
                 <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
                 <span bind-html-compile='group.getActive().disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.getActive().disambiguationSource.value:group.getActive().putCode.value:group.getActive().disambiguationSource' class="url-popover"> 
                 </span>
             </div>
             <div class="col-md-11 col-md-offset-1 bottomBuffer">
-                <span ng-bind="group.getActive().orgDisambiguatedValue"></span>: <span ng-bind="group.getActive().orgDisambiguatedCity"></span>, <span ng-if="group.getActive().orgDisambiguatedRegion" ng-cloak><span ng-bind="group.getActive().disambiguatedAffiliationRegion"></span>, </span><span ng-bind="group.getActive().orgDisambiguatedCountry"></span><br>
+                <span ng-bind="group.getActive().orgDisambiguatedName"></span>: <span ng-bind="group.getActive().orgDisambiguatedCity"></span>, <span ng-if="group.getActive().orgDisambiguatedRegion" ng-cloak><span ng-bind="group.getActive().disambiguatedAffiliationRegion"></span>, </span><span ng-bind="group.getActive().orgDisambiguatedCountry"></span><br>
                 <span ng-if="group.getActive().orgDisambiguatedUrl">
                 <a href="group.getActive().orgDisambiguatedUrl" target=""><span ng-bind="group.getActive().orgDisambiguatedUrl" ng-cloak></span></a>
                 </span>
