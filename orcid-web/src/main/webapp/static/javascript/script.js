@@ -342,7 +342,10 @@ function checkOrcidLoggedIn() {
                 console.log("error with loggin check on :"
                         + window.location.href);
                 logAjaxError(e);
-                window.location.reload(true);
+                // for some slow OAuth code redirects this is hit while 
+                // people are signing in. Ingore if singing in.
+                if (!signinLocked)
+                     window.location.reload(true);
             });
             
         }
