@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-jersey-jaxrs</artifactId>
-                        <version>${swagger.version}</version>
+            <version>${swagger.version}</version>
 		</dependency>
 
 
