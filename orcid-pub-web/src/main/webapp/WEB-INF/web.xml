@@ -156,6 +156,10 @@
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
             <param-value>org.orcid.api.filters.AnalyticsFilter</param-value>
         </init-param>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
+			<param-value>/static/.*</param-value>
+		</init-param>
     </filter>
 
     <filter-mapping>
