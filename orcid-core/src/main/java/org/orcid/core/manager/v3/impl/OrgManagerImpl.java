@@ -31,8 +31,10 @@ import org.orcid.jaxb.model.message.Organization;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -118,8 +120,19 @@ public class OrgManagerImpl implements OrgManager {
             return match;
         }
         
-        String sourceId = sourceManager.retrieveSourceOrcid();
-        org.setSource(new SourceEntity(sourceId));
+        SourceEntity entity = sourceManager.retrieveSourceEntity();
+        if (entity != null) {
+            SourceEntity newEntity = new SourceEntity();
+            if(entity.getSourceClient() != null) {
+                newEntity.setSourceClient(new ClientDetailsEntity(entity.getSourceClient().getId()));
+            }
+            if(entity.getSourceProfile() != null) {
+                newEntity.setSourceProfile(new ProfileEntity(entity.getSourceProfile().getId()));
+            }
+                
+            org.setSource(newEntity);
+        }
+        
         orgDao.persist(org);
         return org;
     }

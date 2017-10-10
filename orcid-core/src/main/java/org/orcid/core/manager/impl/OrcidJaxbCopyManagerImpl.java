@@ -53,6 +53,7 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceClientId;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
@@ -126,7 +127,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         }
 
         Map<String, ? extends Activity> updatedActivitiesMap = updatedActivities.retrieveActivitiesAsMap();
-        Source targetSource = createSource(sourceManager.retrieveSourceOrcid());
+        Source targetSource = createSource();
         for (Iterator<? extends Activity> existingActivitiesIterator = existingActivities.retrieveActivities().iterator(); existingActivitiesIterator.hasNext();) {
             Activity existingActivity = existingActivitiesIterator.next();
             Activity updatedActivity = updatedActivitiesMap.get(existingActivity.getPutCode());
@@ -189,14 +190,18 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
     }
     
-    private Source createSource(String amenderOrcid) {
+    private Source createSource() {
+        SourceEntity entity = sourceManager.retrieveSourceEntity();
         Source source = new Source();
-        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-            source.setSourceOrcid(new SourceOrcid(amenderOrcid));
+        if (entity.getSourceClient() != null && !PojoUtil.isEmpty(entity.getSourceClient().getId())) {
+            if(OrcidStringUtils.isValidOrcid(entity.getSourceClient().getId())) {
+                source.setSourceOrcid(new SourceOrcid(entity.getSourceClient().getId()));
+            } else {
+                source.setSourceClientId(new SourceClientId(entity.getSourceClient().getId()));                
+            }            
+        } else if(entity.getSourceProfile() != null && !PojoUtil.isEmpty(entity.getSourceProfile().getId())) {
             source.setSourceClientId(null);
-        } else {
-            source.setSourceClientId(new SourceClientId(amenderOrcid));
-            source.setSourceOrcid(null);
+            source.setSourceOrcid(new SourceOrcid(entity.getSourceProfile().getId()));
         }
         return source;
     }
@@ -470,9 +475,4 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     public void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
     }
-
-	public void setSourceManager(SourceManager sourceManager) {
-		this.sourceManager = sourceManager;
-	}
-
 }

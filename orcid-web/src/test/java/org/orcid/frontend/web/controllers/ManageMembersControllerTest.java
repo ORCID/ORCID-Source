@@ -24,19 +24,24 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -44,6 +49,7 @@ import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -51,6 +57,7 @@ import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -80,10 +87,21 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Resource
     ClientDetailsDao clientDetailsDao;
     
+    @Resource
+    SourceManager sourceManager;
+    
+    @Resource
+    OrcidProfileManager orcidProfileManager;
+    
+    @Mock
+    SourceManager mockSourceManager;
+    
     @Before
     public void beforeInstance() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager); 
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity());
     }
     
     @BeforeClass
@@ -91,6 +109,11 @@ public class ManageMembersControllerTest extends DBUnitTest {
         initDBUnitData(Arrays.asList("/data/EmptyEntityData.xml", "/data/PremiumInstitutionMemberData.xml"));
     }    
 
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
+    }
+    
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/PremiumInstitutionMemberData.xml"));
