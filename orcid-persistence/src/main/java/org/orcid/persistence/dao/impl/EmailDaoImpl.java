@@ -253,6 +253,19 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    public boolean isPrimaryEmail(String email) {
+        Query query = entityManager.createNativeQuery("select is_primary from email where email=:email");
+        query.setParameter("email", email);
+        try {
+            Boolean result = (Boolean) query.getSingleResult();
+            return result == null ? false : result;
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+    
+    @Override
     public boolean isPrimaryEmail(String orcid, String email) {
         Query query = entityManager.createNativeQuery("select is_primary from email where orcid=:orcid and email=:email");
         query.setParameter("orcid", orcid);
