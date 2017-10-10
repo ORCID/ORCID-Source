@@ -16,12 +16,12 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.pojo.ajaxForm.Client;
+import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.pojo.ajaxForm.Member;
 
 public interface MembersManager {
 
-    Member createMember(Member newMember);
+    Member createMember(String memberName, String email, String salesforceId);
     
     Member updateMemeber(Member member);
     

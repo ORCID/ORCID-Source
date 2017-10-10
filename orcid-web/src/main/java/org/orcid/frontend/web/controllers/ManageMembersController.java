@@ -69,8 +69,7 @@ public class ManageMembersController extends BaseController {
 
     @RequestMapping
     public ModelAndView getManageMembersPage() {
-        ModelAndView mav = new ModelAndView("/admin/manage_members");
-        return mav;
+        return new ModelAndView("/admin/manage_members");        
     }
 
     /**

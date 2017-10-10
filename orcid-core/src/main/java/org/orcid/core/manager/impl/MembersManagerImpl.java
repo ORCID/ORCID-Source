@@ -16,14 +16,17 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ClientManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.MembersManager;
@@ -31,18 +34,16 @@ import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
+import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,8 +80,15 @@ public class MembersManagerImpl implements MembersManager {
     @Resource
     private ProfileDao profileDao;
     
+    @Resource
+    private ClientManager clientManager;
+    
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
+    
     @Override
-    public Member createMember(Member newMember) {
+    public Member createMember(String memberName, String email, String salesforceId) {
+        //TODO: Refactor 
         OrcidClientGroup orcidClientGroup = newMember.toOrcidClientGroup();
         orcidClientGroup = orcidClientGroupManager.createGroup(orcidClientGroup);
         newMember.setGroupOrcid(Text.valueOf(orcidClientGroup.getGroupOrcid()));
@@ -89,6 +97,7 @@ public class MembersManagerImpl implements MembersManager {
 
     @Override
     public Member updateMemeber(Member member) {
+        //TODO: Refactor
         OrcidClientGroup orcidClientGroup = member.toOrcidClientGroup();
         orcidClientGroupManager.updateGroup(orcidClientGroup);
         clearCache();
@@ -124,8 +133,10 @@ public class MembersManagerImpl implements MembersManager {
                 if (groupType != null) {
                     ProfileEntity memberProfile = profileDao.find(orcid);                    
                     member = Member.fromProfileEntity(memberProfile);
-                    List<ClientDetailsEntity> clients = clientDetailsManager.findByGroupId(orcid);
-                    member.setClients(Client.valueOf(clients));
+                    Set<Client> clients = clientManagerReadOnly.getClients(orcid);
+                    List<org.orcid.pojo.ajaxForm.Client> clientsList = new ArrayList<org.orcid.pojo.ajaxForm.Client>();
+                    clients.forEach(c -> {clientsList.add(org.orcid.pojo.ajaxForm.Client.fromModelObject(c));});
+                    member.setClients(clientsList);
                 } else {
                     member.getErrors().add(getMessage("manage_members.orcid_is_not_a_member"));
                 }
@@ -138,39 +149,20 @@ public class MembersManagerImpl implements MembersManager {
 
     @Override
     public Client getClient(String clientId) {
-        Client result = new Client();
-        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientId);        
-        if (clientDetailsEntity != null) {            
-            result = Client.valueOf(clientDetailsEntity);
-            //Set member name
-            result.setMemberName(Text.valueOf(clientDetailsManager.getMemberName(clientId)));
-            //Set client secret
-            if(clientDetailsEntity.getClientSecrets() != null) {
-                for(ClientSecretEntity secret : clientDetailsEntity.getClientSecrets()) {
-                    if(secret.isPrimary()) {
-                        result.setClientSecret(Text.valueOf(encryptionManager.decryptForInternalUse(secret.getClientSecret())));
-                    }
-                }                
-            }    
-        } else {
-            result.getErrors().add(getMessage("admin.edit_client.invalid_orcid"));
-        }
-        return result;
+        return clientManagerReadOnly.get(clientId);                       
     }
 
     @Override
     public Client updateClient(Client client) {
-        OrcidClient result = null;
         try {
-            result = orcidClientGroupManager.updateClient(client.toOrcidClient());
+            client = clientManager.edit(client);
             clearCache();
         } catch (OrcidClientGroupManagementException e) {
             LOGGER.error(e.getMessage());
-            result = new OrcidClient();
-            result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.unable_to_update")));
+            throw new IllegalArgumentException(e);
         }
 
-        return Client.valueOf(result);
+        return client;
     }    
     
     private String getMessage(String message) {
