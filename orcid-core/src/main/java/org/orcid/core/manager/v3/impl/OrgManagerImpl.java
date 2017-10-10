@@ -22,6 +22,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.OrgManager;
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -29,8 +31,10 @@ import org.orcid.jaxb.model.message.Organization;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -116,8 +120,19 @@ public class OrgManagerImpl implements OrgManager {
             return match;
         }
         
-        String sourceId = sourceManager.retrieveSourceOrcid();
-        org.setSource(new SourceEntity(sourceId));
+        SourceEntity entity = sourceManager.retrieveSourceEntity();
+        if (entity != null) {
+            SourceEntity newEntity = new SourceEntity();
+            if(entity.getSourceClient() != null) {
+                newEntity.setSourceClient(new ClientDetailsEntity(entity.getSourceClient().getId()));
+            }
+            if(entity.getSourceProfile() != null) {
+                newEntity.setSourceProfile(new ProfileEntity(entity.getSourceProfile().getId()));
+            }
+                
+            org.setSource(newEntity);
+        }
+        
         orgDao.persist(org);
         return org;
     }
@@ -136,8 +151,13 @@ public class OrgManagerImpl implements OrgManager {
         orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));
         
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
-            orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
-                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
+            // if disambiguated org is present (must be for v3 API, but not UI) it must be valid
+            OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
+                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource());
+            if (disambiguatedOrg == null) {
+                throw new InvalidDisambiguatedOrgException();
+            }
+            orgEntity.setOrgDisambiguated(disambiguatedOrg);
         }
         return matchOrCreateOrg(orgEntity);        
     }

@@ -50,6 +50,7 @@
                 	<a href="<@orcid.rootPath '/reset-password'/>"><@orcid.msg 'oauth_sign_in.forgottenpassword'/></a>
                 </div>
             </div>
+            <div id="loginErrors" />
         </form>	
 	</div>	   
 	

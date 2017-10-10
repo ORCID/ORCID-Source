@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -66,6 +67,9 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
     
     @Resource
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
+    
+    @Resource
+    private SourceManager sourceManager;
 
     @Mock
     private SourceManager mockSourceManager;
@@ -86,11 +90,18 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         orcidProfileManager.clearOrcidProfileCache();        
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(new ClientDetailsEntity("APP-5555555555555555"));
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
     }
-
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
+    }
+    
     @Test
     @Transactional
     public void emailProvidedButDoesNotExistInDb() {

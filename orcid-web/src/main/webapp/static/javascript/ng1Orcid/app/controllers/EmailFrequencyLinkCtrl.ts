@@ -15,7 +15,7 @@ export const EmailFrequencyLinkCtrl = angular.module('orcidApp').controller(
                     dataType: 'json',
                     type: 'GET',
                     url: window.location.href + '/email-frequencies.json',
-                    success: function(data) {
+                    success: function(data) {                    	
                         $scope.emailFrequency = data;
                         $rootScope.$apply();
                     }
@@ -26,12 +26,12 @@ export const EmailFrequencyLinkCtrl = angular.module('orcidApp').controller(
             
             $scope.saveEmailFrequencies = function() {
                 $.ajax({
-                    contentType: 'application/json;charset=UTF-8',
-                    data: angular.toJson($scope.emailFrequency),
+                    contentType: 'plain/text;charset=UTF-8',
+                    data: $scope.emailFrequency.sendEmailFrequencyDays,
                     dataType: 'json',
                     type: 'POST',
                     url: window.location.href + '/email-frequencies.json',
-                    success: function(data) {
+                    success: function(data) {                    	
                         $scope.emailFrequency = data;
                         $rootScope.$apply();
                     }

@@ -29,13 +29,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.PreferenceManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.helper.UserSession;
+import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.jaxb.model.common_v2.Source;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -44,6 +46,8 @@ import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,6 +74,15 @@ public class NotificationController extends BaseController {
     
     @Resource
     private UserSession userSession;
+    
+    @Resource
+    private PreferenceManager preferenceManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private EmailManagerReadOnly emailManagerReadOnly;
     
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -248,36 +261,61 @@ public class NotificationController extends BaseController {
     }
     
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.GET)
-    public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
-    	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_AND_INTERNAL_ONLY);
-    	response.addHeader("X-Robots-Tag", "noindex");
-    	Preferences pref = profile.getOrcidInternal().getPreferences();
-        return pref != null ? pref : new Preferences();
+    public @ResponseBody PreferencesForm getDefaultPreference(HttpServletRequest request, HttpServletResponse response,
+            @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
+        response.addHeader("X-Robots-Tag", "noindex");
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        PreferencesForm preferences = new PreferencesForm();
+        String orcid = emailManagerReadOnly.findOrcidIdByEmail(decryptedEmail);
+
+        if (PojoUtil.isEmpty(orcid)) {
+            throw new IllegalArgumentException("Invalid email provided");
+        }
+
+        ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
+        preferences.setOrcid(orcid);
+        preferences.setSendEmailFrequencyDays(String.valueOf(entity.getSendEmailFrequencyDays()));
+        return preferences;
     }
     
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.POST)
-    public @ResponseBody Preferences setPreference(HttpServletRequest request, HttpServletResponse response, @RequestBody Preferences preferences, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
-    	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_AND_INTERNAL_ONLY);
-    	orcidProfileManager.updatePreferences(profile.getOrcidIdentifier().getPath(), preferences);
-    	response.addHeader("X-Robots-Tag", "noindex");
+    public @ResponseBody PreferencesForm setPreference(HttpServletRequest request, HttpServletResponse response, @RequestBody String emailFrequencyDays,
+            @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
+        response.addHeader("X-Robots-Tag", "noindex");
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        String orcid = emailManagerReadOnly.findOrcidIdByEmail(decryptedEmail);
+        SendEmailFrequency newFrequency = null;
+        for (SendEmailFrequency f : SendEmailFrequency.values()) {
+            if (f.value().equals(emailFrequencyDays)) {
+                newFrequency = f;
+                break;
+            }
+        }
+
+        if (newFrequency == null) {
+            throw new IllegalArgumentException("Invalid value: " + emailFrequencyDays);
+        }
+        PreferencesForm preferences = new PreferencesForm();
+        preferences.setOrcid(orcid);
+        if (!preferenceManager.updateEmailFrequencyDays(orcid, newFrequency)) {
+            ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
+            preferences.setSendEmailFrequencyDays(String.valueOf(entity.getSendEmailFrequencyDays()));
+        } else {
+            preferences.setSendEmailFrequencyDays(emailFrequencyDays);
+        }
+
         return preferences;
     }
     
     @RequestMapping(value = "/frequencies/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView getNotificationFrequenciesWindow(HttpServletRequest request, 
-    		@PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
+    public ModelAndView getNotificationFrequenciesWindow(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail, LoadOptions.BIO_AND_INTERNAL_ONLY);
 
-        String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-
-        if (decryptedEmail.equals(primaryEmail)) {
-        	result = new ModelAndView("email_frequency");
-        	result.addObject("primaryEmail", primaryEmail);
-        	result.addObject("noIndex", true);
+        if (emailManagerReadOnly.isPrimaryEmail(decryptedEmail)) {
+            result = new ModelAndView("email_frequency");
+            result.addObject("primaryEmail", decryptedEmail);
+            result.addObject("noIndex", true);
         }
 
         return result;

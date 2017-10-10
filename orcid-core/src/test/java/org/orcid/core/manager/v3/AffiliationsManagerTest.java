@@ -197,8 +197,8 @@ public class AffiliationsManagerTest extends BaseTest {
         address.setCountry(Iso3166Country.US);
         org.setAddress(address);
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
-        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
         org.setDisambiguatedOrganization(disambiguatedOrg);
         education.setOrganization(org);
         education.setStartDate(new FuzzyDate(new Year(2016), new Month(3), new Day(29)));
@@ -215,8 +215,8 @@ public class AffiliationsManagerTest extends BaseTest {
         address.setCountry(Iso3166Country.US);
         org.setAddress(address);
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
-        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
         org.setDisambiguatedOrganization(disambiguatedOrg);
         employment.setOrganization(org);
         employment.setStartDate(new FuzzyDate(new Year(2016), new Month(3), new Day(29)));
