@@ -144,9 +144,9 @@
                      <!-- Active Row Identifiers / URL / Validations / Versions -->
                      <div class="row" ng-if="group.activePutCode == work.putCode.value">
                          <div class="col-md-12 col-sm-12 bottomBuffer">
-                             <ul class="id-details">
-                                 <li class="url-work">
-                                    <ul class="id-details">
+                             <ul class="id-details clearfix">
+                                 <li class="url-work clearfix">
+                                    <ul class="id-details clearfix">
                                         <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
                                             <span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
                                         </li>

@@ -1,4 +1,17 @@
 [{
+    "attributes" : {
+      "type" : "Opportunity",
+      "url" : "/services/data/v20.0/sobjects/Opportunity/006J000000SOwLAIA1"
+    },
+    "Id" : "006J000000SOwLAIA1",
+    "Account" : {
+      "attributes" : {
+        "type" : "Account",
+        "url" : "/services/data/v20.0/sobjects/Account/[ORG1 ACCOUNT ID]"
+      },
+      "Name" : "2017 Membership-Org 1 Consortium Lead",
+      "Public_Display_Name__c" : "2017 Membership-Org 1 Consortium Lead Public Display Name"
+    },
     "AccountId": "[ORG1 ACCOUNT ID]",
     "Owner": "",
     "Name": "2017 Membership-Org 1 Consortium Lead",
@@ -11,7 +24,21 @@
     "ORCID_Classification__c": "Consortium",
     "RecordTypeId": "[MEMBERSHIP RECORD TYPE ID]",
     "Membership_Discount__c": "[NONE MEMBERSHIP DISCOUNT ID]"
-}, {
+},
+{
+    "attributes" : {
+      "type" : "Opportunity",
+      "url" : "/services/data/v20.0/sobjects/Opportunity/006J000000R3KSSIA3"
+    },
+    "Id" : "006J000000R3KSSIA3",
+    "Account" : {
+      "attributes" : {
+        "type" : "Account",
+        "url" : "/services/data/v20.0/sobjects/Account/[ORG2 ACCOUNT ID]"
+      },
+      "Name" : "Another consortium member org",
+      "Public_Display_Name__c" : "Another consortium member org Public Display Name"
+    },
     "AccountId": "[ORG2 ACCOUNT ID]",
     "Name": "2017 Membership-Org 2 Consortium Member",
     "StageName": "Invoice Paid",
@@ -21,8 +48,24 @@
     "Membership_Start_Date__c": "2017-01-01",
     "Membership_End_Date__c": "2017-12-31",
     "RecordTypeId": "[CONSORTIUM MEMBER RECORD TYPE ID]",
-    "Consortia_Lead__c": "[ORG1 ACCOUNT ID]"
-}, {
+    "Consortia_Lead__c": "[ORG1 ACCOUNT ID]",
+    "NextStep" : "Next step description",
+    "Consortium_member_removal_requested__c" : true
+},
+{
+    "attributes" : {
+      "type" : "Opportunity",
+      "url" : "/services/data/v20.0/sobjects/Opportunity/006J000000SOSv1IAH"
+    },
+    "Id" : "[ORG3 ACCOUNT ID]",
+    "Account" : {
+      "attributes" : {
+        "type" : "Account",
+        "url" : "/services/data/v20.0/sobjects/Account/[ORG3 ACCOUNT ID]"
+      },
+      "Name" : "2017 Membership-Org 3 Consortium Member",
+      "Public_Display_Name__c" : "2017 Membership-Org 3 Consortium Member Public Display Name"
+    },
     "AccountId": "[ORG3 ACCOUNT ID]",
     "Name": "2017 Membership-Org 3 Consortium Member",
     "StageName": "Invoice Paid",
@@ -33,7 +76,21 @@
     "Membership_End_Date__c": "2017-12-31",
     "RecordTypeId": "[CONSORTIUM MEMBER RECORD TYPE ID]",
     "Consortia_Lead__c": "[ORG1 ACCOUNT ID]"
-}, {
+},
+{
+    "attributes" : {
+      "type" : "Opportunity",
+      "url" : "/services/data/v20.0/sobjects/Opportunity/006J000000SOEYrIAP"
+    },
+    "Id" : "006J000000SOEYrIAP",
+    "Account" : {
+      "attributes" : {
+        "type" : "Account",
+        "url" : "/services/data/v20.0/sobjects/Account/[ORG4 ACCOUNT ID]"
+      },
+      "Name" : "2017 Membership-Org 4 NotAConsortium Member",
+      "Public_Display_Name__c" : "2017 Membership-Org 4 NotAConsortium Member Public Display Name"
+    },
     "AccountId": "[ORG4 ACCOUNT ID]",
     "Name": "2017 Membership-Org 4 NotAConsortium Member",
     "StageName": "Invoice Paid",
@@ -44,4 +101,5 @@
     "Membership_End_Date__c": "2017-12-31",
     "RecordTypeId": "[MEMBERSHIP RECORD TYPE ID]",
     "Membership_Discount__c": "[NONE MEMBERSHIP DISCOUNT ID]"
-}]
+}
+]

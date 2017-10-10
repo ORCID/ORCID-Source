@@ -179,7 +179,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                         LOG.error("Record " + orcid + " is deprecated");
                         error = ((DeprecatedRecordException) e).getOrcidError();
                     }
-                    exceptionHandler.handle20Exception(orcid, error);
+                    exceptionHandler.handle20ActivitiesException(orcid, error);
                     recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
                 } catch (Exception e1) {
                     LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);

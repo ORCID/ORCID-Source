@@ -31,6 +31,7 @@ public class OrgDisambiguated {
     public String countryForDisplay;
     public String sourceId;
     public String sourceType;
+    public String url;
     public String disambiguatedAffiliationIdentifier;
     
     public String getDisambiguatedAffiliationIdentifier() {
@@ -84,6 +85,12 @@ public class OrgDisambiguated {
     public void setSourceType(String sourceType) {
         this.sourceType = sourceType;
     }
+    public String getUrl() {
+        return url;
+    }
+    public void setUrl(String url) {
+        this.url = url;
+    }
     
     public Map<String,String> toMap(){
         HashMap<String,String> datum = new HashMap<String,String>();
@@ -94,6 +101,7 @@ public class OrgDisambiguated {
         datum.put("orgType", this.getOrgType());
         datum.put("sourceId", this.getSourceId());
         datum.put("sourceType", this.getSourceType());
+        datum.put("url", this.getUrl());
         datum.put("countryForDisplay", this.getCountryForDisplay());
         datum.put("disambiguatedAffiliationIdentifier", this.getDisambiguatedAffiliationIdentifier());
         return datum;

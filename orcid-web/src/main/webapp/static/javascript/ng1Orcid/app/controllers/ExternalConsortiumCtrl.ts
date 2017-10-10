@@ -30,10 +30,11 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
             $scope.contacts = null;
             $scope.effectiveUserOrcid = orcidVar.orcidId;
             $scope.errorAddingSubMember = false;
+            $scope.errorSubMemberExists = false;
             $scope.input = {};
             $scope.memberDetails = null;
             $scope.membersListSrvc = membersListSrvc;
-            $scope.newSubMember = {website: {errors: [], getRequiredMessage: null, required: false, value: ''}, name: {errors: [], getRequiredMessage: null, required: false, value: ''}};
+            $scope.newSubMember = {website: {errors: [], getRequiredMessage: null, required: false, value: ''}, name: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactFirstName: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactLastName: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactEmail: {errors: [], getRequiredMessage: null, required: false, value: ''}};
             $scope.realUserOrcid = orcidVar.realOrcidId;
             $scope.showInitLoader = true;
             $scope.updateContactsDisabled = false;
@@ -95,11 +96,12 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     }
                  }).fail(function(error) {
                       // something bad is happening!
-                      console.log("Error validating new submember");
+                      console.log("Error validating new submember field: " + fieldname);
                  });
             };
 
             $scope.validateSubMember = function () {
+                $scope.addSubMemberShowLoader = true;
                 $scope.newSubMember.parentAccountId = $scope.accountId;
                 $.ajax({
                     url: getBaseUri()+'/self-service/validate-sub-member.json',
@@ -111,13 +113,20 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                         $scope.newSubMember = data
                         $scope.$apply();                
                         if ($scope.newSubMember.errors == undefined || $scope.newSubMember.errors.length == 0) {
-                            $scope.addSubMemberShowLoader = true;
                             $scope.checkExistingSubMember();
+                        } else {
+                            if($scope.newSubMember.errors.indexOf("This member already exists in your consortium") !== -1) {
+                              $scope.errorSubMemberExists = true;
+                            }
+                            $scope.addSubMemberShowLoader = false;
                         }
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("validate submember error");
+                    console.log("Error validating submember");
+                    $scope.errorAddingSubMember = true;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
 
@@ -135,15 +144,16 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                         $scope.$apply();
                         if($scope.newSubMemberExistingOrg.publicDisplayName != null && $scope.newSubMemberExistingOrg.websiteUrl != null && $scope.newSubMemberExistingOrg.id){ 
                             $scope.showExistingOrgColorBox();  
-                            $scope.errorAddingSubMember = true;
                         } else {
                             $scope.addSubMember();
                         }        
                     }
                 }).fail(function(){
                     // something bad is happening!
-                    console.log("error adding submember");
+                    console.log("Error adding submember");
                     $scope.errorAddingSubMember = true;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
 
@@ -176,18 +186,47 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                             $scope.addSubMemberDisabled = false;
                             $scope.newSubMember.name.value = "";
                             $scope.newSubMember.website.value = "";
+                            $scope.newSubMember.initialContactEmail.value = "";
+                            $scope.newSubMember.initialContactFirstName.value = "";
+                            $scope.newSubMember.initialContactLastName.value = "";
+                            $scope.newSubMember.errors = [];
+                            $scope.newSubMember.name.errors = [];
+                            $scope.newSubMember.website.errors = [];
+                            $scope.newSubMember.initialContactEmail.errors = [];
+                            $scope.newSubMember.initialContactFirstName.errors = [];
+                            $scope.newSubMember.initialContactLastName.errors = [];
                             $.colorbox.close();
                             $scope.$apply();
                         }
                         else{
                             $scope.errors = data.errors;
+                            $scope.addSubMemberShowLoader = false;
                             $scope.$apply();
                         }
                     }
                 }).fail(function() {
                     console.log("Error adding submember.");
+                    $scope.errorAddingSubMember = true;
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.$apply();
                 });
             };
+
+            $scope.addSubMemberClear = function(){
+                $scope.addSubMemberShowLoader = false;
+                $scope.addSubMemberDisabled = false;
+                $scope.newSubMember.name.value = "";
+                $scope.newSubMember.website.value = "";
+                $scope.newSubMember.initialContactEmail.value = "";
+                $scope.newSubMember.initialContactFirstName.value = "";
+                $scope.newSubMember.initialContactLastName.value = "";
+                $scope.newSubMember.errors = [];
+                $scope.newSubMember.name.errors = [];
+                $scope.newSubMember.website.errors = [];
+                $scope.newSubMember.initialContactEmail.errors = [];
+                $scope.newSubMember.initialContactFirstName.errors = [];
+                $scope.newSubMember.initialContactLastName.errors = [];
+            }
 
             $scope.buildOrcidUri = function(orcid){
                 return orcidVar.baseUri + '/' + orcid;
@@ -216,6 +255,18 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     scrolling: true
                 });
             };
+            
+            $scope.isPendingAddition = function(subMember) {
+                return subMember.opportunity.stageName == 'Negotiation/Review';
+            }
+            
+            $scope.isPendingRemoval = function(subMember) {
+                return subMember.opportunity.removalRequested;
+            }
+            
+            $scope.canRemoveSubMember = function(subMember) {
+                return $scope.memberDetails.allowedFullAccess && !$scope.isPendingAddition(subMember) && !$scope.isPendingRemoval(subMember);
+            }
 
             $scope.confirmRemoveSubMember = function(subMember) {
                 $scope.subMemberToRemove = subMember;
@@ -226,7 +277,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                     onLoad: function() {
                         $('#cboxClose').remove();
                     },
-                    onComplete: function() {$.colorbox.resize();},
+                    onComplete: function() {$.colorbox.resize({width: "500px"});},
                     scrolling: true
 
                 });
@@ -284,6 +335,24 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                       console.log("Error getting the member details");
                  });
             };
+            
+            $scope.cancelSubMemberAddition = function (subMember) {
+                subMember.parentAccountId = $scope.accountId;
+                $.ajax({
+                    url: getBaseUri() + '/self-service/cancel-sub-member-addition.json',
+                    type: 'POST',
+                    data:  angular.toJson(subMember),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function(data) {
+                        $scope.getMemberDetails();
+                        $scope.$apply();
+                        $scope.closeModal();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("Problem cancelling sub member addition");
+                });
+            };
 
             $scope.removeSubMember = function () {
                 $scope.subMemberToRemove.parentAccountId = $scope.accountId;
@@ -300,6 +369,24 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
                 }).fail(function() {
                     // something bad is happening!
                     console.log("Problem removing sub member");
+                });
+            };
+            
+            $scope.cancelSubMemberRemoval = function (subMember) {
+                subMember.parentAccountId = $scope.accountId;
+                $.ajax({
+                    url: getBaseUri() + '/self-service/cancel-sub-member-removal.json',
+                    type: 'POST',
+                    data:  angular.toJson(subMember),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function(data) {
+                        $scope.getMemberDetails();
+                        $scope.$apply();
+                        $scope.closeModal();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("Problem cancelling sub member removal");
                 });
             };
 

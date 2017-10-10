@@ -20,7 +20,7 @@
     <div>
         <img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo">
         <br><br><br>
-        <table class="table table-bordered settings-table" style="margin: 0px, padding:  0px;">
+        <table class="table table-bordered settings-table" style="margin:0; padding:0;">
             <!-- Email frequency -->
             <tr>
                 <th><a name="editEmailFrequency"></a>${springMacroRequestContext.getMessage("unsubscribe.email_frequency")}</th>

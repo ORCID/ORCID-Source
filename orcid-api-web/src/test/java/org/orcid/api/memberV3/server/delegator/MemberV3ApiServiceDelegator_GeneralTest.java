@@ -599,13 +599,14 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
         // Test education
-        response = serviceDelegator.createEducation(orcid, Utils.getEducation());
+        Education education = Utils.getEducation();
+        response = serviceDelegator.createEducation(orcid, education);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         putCode = Utils.getPutCode(response);
         response = serviceDelegator.viewEducation(orcid, putCode);
         assertNotNull(response);
-        Education education = (Education) response.getEntity();
+        education = (Education) response.getEntity();
         assertNotNull(education);
         education.setDepartmentName("Updated department name");
         response = serviceDelegator.updateEducation(orcid, putCode, education);

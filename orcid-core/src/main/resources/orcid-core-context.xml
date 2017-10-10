@@ -1179,8 +1179,8 @@
         <property name="timeToLiveSeconds" value="3600" />
         <property name="timeToIdleSeconds" value="3600" />
         <property name="strategy" value="NONE" />
-        <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
+        <property name="copyOnRead" value="true" />
+        <property name="copyOnWrite" value="true" />
         <property name="cacheEntryFactory">
             <bean class="org.orcid.core.salesforce.cache.MemberDetailsCacheEntryFactory" />
         </property>
@@ -1546,4 +1546,9 @@
         <property name="maxPoolSize" value="10" />
         <property name="WaitForTasksToCompleteOnShutdown" value="true" />
     </bean>
+    
+    <bean id="namespacedRandomCodeGenerator" class="org.orcid.core.oauth.service.NamespacedRandomCodeGenerator">
+	   <constructor-arg value="${org.orcid.core.node:1}" />
+	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
+	</bean>
 </beans>

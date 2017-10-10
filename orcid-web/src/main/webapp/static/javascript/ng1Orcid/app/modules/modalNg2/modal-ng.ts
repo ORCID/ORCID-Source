@@ -1,6 +1,9 @@
 import * as angular 
     from 'angular';
 
+import { CommonModule } 
+    from '@angular/common'; 
+
 import { NgModule } 
     from '@angular/core';
 
@@ -19,18 +22,14 @@ export const ModalModule = angular.module(
 @NgModule(
     {
         imports: [
+            CommonModule
         ],
-        
         declarations: [ 
             ModalNgComponent
         ],
         entryComponents: [ 
             ModalNgComponent 
-        ]/*,
-        exports: [
-            ModalNgComponent,
-            ModalNg2Module
-        ]*/
+        ]
     }
 )
 export class ModalNg2Module {}

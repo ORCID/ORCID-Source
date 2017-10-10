@@ -72,7 +72,7 @@
 		class="org.springframework.security.core.session.SessionRegistryImpl" />
         
     <bean id="localeResolver"
-        class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+        class="org.orcid.frontend.spring.i18n.OrcidCookieLocaleResolver">
         <property name="cookieName" value="locale_v3" /><!-- must match value in AjaxAuthenticationSuccessHandler -->
         <property name="defaultLocale" value="en"/><!-- Note this makes spring ignore the browsers accepts user agent -->
     </bean>
@@ -130,8 +130,8 @@
 	<sec:http pattern="/home" security="none" />
 	<sec:http pattern="/error" security="none" />
 	<sec:http pattern="/not-found" security="none" />
-	<sec:http pattern="/favicon.ico" security="none" />
-	<sec:http pattern="/static/**" security="none" />
+	<sec:http pattern="/favicon.ico" security="none" create-session="stateless" />
+	<sec:http pattern="/static/**" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
 	<sec:http pattern="/.well-known/**" security="none" />

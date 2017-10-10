@@ -26,6 +26,7 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,7 +55,7 @@ public class MembersListController extends BaseController {
     @RequestMapping("/members/{memberSlug}")
     public ModelAndView memberPage(@PathVariable("memberSlug") String memberSlug) {
         ModelAndView mav = new ModelAndView("member-page");
-        mav.addObject("memberSlug", memberSlug);
+        mav.addObject("memberSlug", OrcidStringUtils.stripHtml(memberSlug.trim()));
         return mav;
     }
 
@@ -65,7 +66,7 @@ public class MembersListController extends BaseController {
 
     @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
     public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
-        return salesForceManager.retrieveDetailsBySlug(memberSlug);
+        return salesForceManager.retrieveDetailsBySlug(memberSlug, true);
     }
 
     @RequestMapping(value = "/members/communityTypes.json", method = RequestMethod.GET)
