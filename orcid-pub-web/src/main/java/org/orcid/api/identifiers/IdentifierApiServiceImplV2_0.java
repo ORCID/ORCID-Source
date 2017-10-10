@@ -16,6 +16,8 @@
  */
 package org.orcid.api.identifiers;
 
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,6 +25,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopeConstants;
@@ -42,14 +46,34 @@ import io.swagger.annotations.AuthorizationScope;
 @Path("/v2.0" + OrcidApiConstants.IDENTIFIER_PATH)
 public class IdentifierApiServiceImplV2_0 {
 
-    public final String xmllocation = "<?xml-stylesheet type=\"text/xsl\" href=\"https://orcid.org/static/css/identifierTypes.xsl\"?>";
+    public final String xslFileName = "identifierTypes.xsl";
+    public final String xslFilePath = "/org/orcid/api/identifiers/xsl/" + xslFileName;
+    public final String xslWebPath = "identifiers/" +xslFileName;
+    public final String xmllocation = "<?xml-stylesheet type=\"text/xsl\" href=\""+xslWebPath+"\"?>";
+    public final String xsl;
     
     private IdentifierApiServiceDelegator serviceDelegator;
+    
+    public IdentifierApiServiceImplV2_0(){
+        try {
+            xsl = IOUtils.toString(IdentifierApiServiceImplV2_0.class.getClassLoader().getResourceAsStream(xslFilePath),"UTF-8");
+        } catch (IOException e) {
+           throw new RuntimeException(e);
+        }
+    }
     
     public void setServiceDelegator(IdentifierApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    @Path("/"+xslFileName)
+    public Response getIdentifierTypeXSL(){
+        return Response.ok(xsl).build();
+    }
+    
+    
     /**
      * @return Available external-id types in the ORCID registry
      */
