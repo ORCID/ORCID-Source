@@ -88,7 +88,7 @@
 			                           ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
 			                           </span>
 			                        </div>
-			                        <div id="loginErrors" />
+			                        <div id="loginErrors"></div>
 			                     </form>
 			                  </div>
 			                  <!-- RESET PASSWORD -->
@@ -260,7 +260,7 @@
 										        ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
 										        </span>
 										    </div>
-										    <div id="loginErrors" />
+										    <div id="loginErrors"></div>
 									  	</form>
 									</div>
 									<!-- RESET PASSWORD -->
