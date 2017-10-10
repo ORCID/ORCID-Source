@@ -462,8 +462,8 @@ public class PeerReviewManagerTest extends BaseTest {
         address.setCountry(Iso3166Country.US);
         org.setAddress(address);
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
-        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
         org.setDisambiguatedOrganization(disambiguatedOrg);
         peerReview.setOrganization(org);
         peerReview.setType(PeerReviewType.EVALUATION);

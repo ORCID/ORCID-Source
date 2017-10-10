@@ -59,4 +59,20 @@
             city="Berlin"
             country="DE"
             />
+            
+    <org
+            id="4"
+            name="Yet Another Institution"
+            city="Slough"
+            country="GB"
+            org_disambiguated_id="1"
+            />
+            
+    <org
+            id="5"
+            name="Kleine Institution"
+            city="Berlin"
+            country="DE"
+            org_disambiguated_id="2"
+            />
 </dataset>            
