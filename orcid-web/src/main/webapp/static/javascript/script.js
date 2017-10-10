@@ -257,6 +257,22 @@ if (!("ontouchstart" in document.documentElement)) {
     document.documentElement.className += " no-touch";
 }
 
+var signinLocked = false;
+function disableSignin() {
+    signinLocked = true;
+    $('#form-sign-in-button').prop('disabled', true);
+    $('form#loginForm').attr('disabled', 'disabled');
+}
+
+function enableSignin() {
+    orcidGA.gaPush(function() { 
+        $('#ajax-loader').hide();
+        $('form#loginForm').removeAttr('disabled');
+        $('#form-sign-in-button').prop('disabled', false);
+        signinLocked = false;
+    }); 
+}
+
 // function for javascript cookies
 var OrcidCookie = new function() {
     this.getCookie = function(c_name) {
@@ -342,7 +358,10 @@ function checkOrcidLoggedIn() {
                 console.log("error with loggin check on :"
                         + window.location.href);
                 logAjaxError(e);
-                window.location.reload(true);
+                // for some slow OAuth code redirects this is hit while 
+                // people are signing in. Ingore if singing in.
+                if (!signinLocked)
+                     window.location.reload(true);
             });
             
         }
@@ -498,10 +517,7 @@ $(function() {
                         
                         var loginUrl = baseUrl + 'signin/auth.json';
 
-                        if ($('form#loginForm').attr('disabled')) {
-                            return false;
-                        }
-
+                        if (signinLocked) return false;
                         disableSignin();
                         
                         if (basePath.startsWith(baseUrl + 'oauth')) {
@@ -704,19 +720,6 @@ $(function() {
         }
     }
 
-    function disableSignin() {
-        $('#form-sign-in-button').prop('disabled', true);
-        $('form#loginForm').attr('disabled', 'disabled');
-    }
-
-    function enableSignin() {
-        orcidGA.gaPush(function() { 
-            $('#ajax-loader').hide();
-            $('form#loginForm').removeAttr('disabled');
-            $('#form-sign-in-button').prop('disabled', false);
-        }); 
-    }
-    
     function show2FA() {
         $('#verificationCodeFor2FA').attr("style", "display: block");
         $('#form-sign-in-button').html(om.get('orcid.frontend.security.2fa.authenticate'));
