@@ -4156,6 +4156,10 @@ this.w3cLatexCharMap = {
        return 'http://identifiers.org/rrid/' + encodeURIComponent(id);
    };
 
+   typeMap['authenticusid'] = function (id) {
+       return 'https://www.authenticus.pt/' + encodeURIComponent(id);
+   };
+
    exports.getLink = function(id, type) {
       if (id == null) id = "";//return null;
       id = id.trim();
