@@ -53,7 +53,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "externalIdentifiers" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "employmentExternalIdentifiers" })
 @XmlRootElement(name = "employment", namespace = "http://www.orcid.org/ns/employment")
 public class Employment implements Serializable, Affiliation, Filterable, Activity, OrganizationHolder, SourceAware {
 

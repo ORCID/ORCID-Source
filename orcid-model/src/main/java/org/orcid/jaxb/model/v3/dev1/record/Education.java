@@ -53,7 +53,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "externalIdentifiers" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "educationExternalIdentifiers" })
 @XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
 public class Education implements Serializable, Affiliation, Filterable, Activity, OrganizationHolder, SourceAware {
 

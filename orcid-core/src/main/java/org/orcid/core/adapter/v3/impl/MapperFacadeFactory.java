@@ -30,10 +30,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.impl.JsonOrikaConverter;
 import org.orcid.core.adapter.impl.WorkEntityFactory;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
-import org.orcid.core.adapter.v3.impl.jsonidentifiers.EmploymentExternalIDsConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -542,7 +542,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("educationExternalIdentifiersConverterId", new EmploymentExternalIDsConverter());
+        converterFactory.registerConverter("educationExternalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
         
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
         addV3CommonFields(educationClassMap);
@@ -587,7 +587,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("employmentExternalIdentifiersConverterId", new EmploymentExternalIDsConverter());
+        converterFactory.registerConverter("employmentExternalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
         
         ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
         addV3CommonFields(classMap);
