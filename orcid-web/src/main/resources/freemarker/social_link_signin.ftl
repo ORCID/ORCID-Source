@@ -108,8 +108,11 @@
         	            </div>
         	                         
                     </div>              
-                </div>                
-                
+                </div>
+                <div class="row">                
+                    <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6" id="loginErrors">
+                    </div>
+                </div>
             </form>
             <!-- RESET PASSWORD -->
         	<div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getRequestResetPassword()" class="row">

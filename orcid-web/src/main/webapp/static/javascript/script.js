@@ -664,23 +664,23 @@ $(function() {
     };
     
     function showLoginError(message) {
-        if ($('form#loginForm #login-error-mess, form#loginForm #login-deactivated-error:visible').length == 0) {
+        if ($('form#loginForm #loginErrors #login-error-mess, form#loginForm #loginErrors #login-deactivated-error:visible').length == 0) {
              $(
                 "<div class='orcid-error' id='login-error-mess'>"
                         + message
                         + "</div>")
                 .hide()
                 .appendTo(
-                        'form#loginForm')
+                        'form#loginForm #loginErrors')
                 .fadeIn('fast');
         } 
         else {
              $(
-             'form#loginForm #login-error-mess, form#loginForm #login-deactivated-error:visible')
+             'form#loginForm #loginErrors #login-error-mess, form#loginForm #loginErrors #login-deactivated-error:visible')
              .fadeOut(
                     'fast',
                      function() {
-                        $('form#loginForm #login-error-mess').html(message);
+                        $('form#loginForm #loginErrors #login-error-mess').html(message);
                          $(
                                  $('form#loginForm #login-error-mess'))
                                  .fadeIn(

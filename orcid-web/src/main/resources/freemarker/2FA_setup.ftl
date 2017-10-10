@@ -28,17 +28,17 @@
                     <a href="${knowledgeBaseUri}/articles/580410"
                         target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                 </p>
-                <ol id="2FASetupSteps">
-                    <li>${springMacroRequestContext.getMessage("2FA.setup.step1")}</li>
+                <ul id="2FASetupSteps" class="twoFactorAuthSetup">
+                    <li class="twoFactorAuthSetupHeading">${springMacroRequestContext.getMessage("2FA.setup.step1")}</li>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details")}</p>
-                    <li>${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
+                    <li class="twoFactorAuthSetupHeading">${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.cannot.scan")}</p>
                     <img id="2FA-QR-code" ng-show="showQRCode" />
                     <p ng-bind="textCodeFor2FA" ng-show="showTextCode" />
-                    <li>${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>
+                    <li class="twoFactorAuthSetupHeading">${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step3.details")}</p>
-                </ol>
+                </ul>
                 <form>
                     <div id="invalidCodeError" class="orcid-error" ng-show="showInvalidCodeError" ng-cloak">${springMacroRequestContext.getMessage("2FA.setup.invalidCode")}</div>
                     <input ng-model="twoFactorAuthRegistration.verificationCode" />
@@ -54,12 +54,16 @@
                     <a href="${knowledgeBaseUri}/articles/580410" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                 </p>
                 <div id="recoveryCodes">
-                    <p ng-repeat="recoveryCode in recoveryCodes" ng-bind-html="recoveryCode"></p>
+                    <div class="halfwidth form-group" ng-repeat="recoveryCode in recoveryCodes" ng-bind-html="recoveryCode"></div>
                 </div>
-                <button ng-click="downloadRecoveryCodes()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.recoveryCodes.download")}</button>
-                <button ng-click="copyRecoveryCodes()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.recoveryCodes.copy")}</button>
-                <p><span>${springMacroRequestContext.getMessage("2FA.recoveryCodes.warning.heading")}</span>&nbsp;${springMacroRequestContext.getMessage("2FA.recoveryCodes.warning.details")}</p>
-                <button ng-click="done()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.recoveryCodes.done")}</button>
+                <div class="form-group">
+                    <button ng-click="downloadRecoveryCodes()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.recoveryCodes.download")}</button>
+                    <button ng-click="copyRecoveryCodes()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.recoveryCodes.copy")}</button>
+                </div>
+                <div class="form-group">
+                    <p><span>${springMacroRequestContext.getMessage("2FA.recoveryCodes.warning.heading")}</span>&nbsp;${springMacroRequestContext.getMessage("2FA.recoveryCodes.warning.details")}</p>
+                    <button ng-click="done()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.recoveryCodes.done")}</button>
+                </div>
              </div>
         </div>
     </div>
