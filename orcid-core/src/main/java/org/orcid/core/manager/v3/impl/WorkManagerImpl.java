@@ -213,7 +213,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         //Validate it is not duplicated
                         if(work.getExternalIdentifiers() != null) {
                             for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                                if(existingExternalIdentifiers.contains(extId)) {
+                                // If the external id exists and is a SELF identifier, then mark it as duplicated                                
+                                if(existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();
                                     params.put("clientName", sourceEntity.getSourceName());
                                     throw new OrcidDuplicatedActivityException(params);
