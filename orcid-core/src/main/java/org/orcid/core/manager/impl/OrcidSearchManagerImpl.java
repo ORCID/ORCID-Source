@@ -85,15 +85,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private static String DB = "DB";
 
     private OrcidProfileCacheManager orcidProfileCacheManager;
-    
-    public SolrDao getSolrDao() {
-        return solrDao;
-    }
-
-    public void setSolrDao(SolrDao solrDao) {
-        this.solrDao = solrDao;
-    }
-
+        
     @Required
     public void setOrcidProfileCacheManager(OrcidProfileCacheManager orcidProfileCacheManager) {
         this.orcidProfileCacheManager = orcidProfileCacheManager;
