@@ -147,7 +147,7 @@
 		id="6"
 		orcid="4444-4444-4444-4447"
 		external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#2&quot;}}]}"
-		org_id="2"
+		org_id="4"
 		peer_review_role="REVIEWER"
 		peer_review_type="REVIEW"
 		completion_day="2"

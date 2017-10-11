@@ -43,7 +43,6 @@ export const _2FASetupCtrl = angular.module('orcidApp').controller(
                     selection.addRange(range);
                     
                     var copied = document.execCommand('copy', false, null);
-                    alert(recoveryCodesString);
                     if (!copied) {
                         console.log("An error occurred copying recovery codes");
                     }

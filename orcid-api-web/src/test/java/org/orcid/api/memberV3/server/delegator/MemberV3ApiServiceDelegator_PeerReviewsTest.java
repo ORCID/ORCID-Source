@@ -357,12 +357,6 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
         
-        // disambiguated org is required in API v3
-        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
-        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
-        peerReview.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
-        
         response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -436,12 +430,6 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 
         peerReview.setVisibility(null);
 
-        // disambiguated org is required in API v3
-        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
-        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
-        peerReview.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
-        
         response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         peerReview = (PeerReview) response.getEntity();

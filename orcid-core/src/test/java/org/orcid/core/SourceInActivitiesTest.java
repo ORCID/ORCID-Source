@@ -26,6 +26,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -112,8 +113,11 @@ public class SourceInActivitiesTest extends BaseTest {
     @Resource
     private OrgManager orgManager;
 
-    @Mock
+    @Resource
     private SourceManager sourceManager;
+    
+    @Mock
+    private SourceManager mockSourceManager;
 
     static String userOrcid = null;
     static Organization organization = null;
@@ -125,24 +129,35 @@ public class SourceInActivitiesTest extends BaseTest {
 
     @Before
     public void before() {   
+        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
+        if (PojoUtil.isEmpty(userOrcid)) {
+            when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+            OrcidProfile newUser = getMinimalOrcidProfile();
+            userOrcid = newUser.getOrcidIdentifier().getPath();
+        }                
+    }
+
+    @After
+    public void after() {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", sourceManager);        
-        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", sourceManager);        
-        if (PojoUtil.isEmpty(userOrcid)) {
-            OrcidProfile newUser = getMinimalOrcidProfile();
-            userOrcid = newUser.getOrcidIdentifier().getPath();
-        }
+        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", sourceManager);                
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);        
     }
-
+    
     @AfterClass
-    public static void after() throws Exception {
+    public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Test
     public void sourceDoesntChange_Work_Test() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         Work work1 = getWork(userOrcid);
         assertNotNull(work1);
         assertNotNull(work1.getWorkTitle());
@@ -152,7 +167,7 @@ public class SourceInActivitiesTest extends BaseTest {
         assertNotNull(work1.getSource().retrieveSourcePath());
         assertEquals(userOrcid, work1.getSource().retrieveSourcePath());
         
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work work2 = getWork(userOrcid);
         assertNotNull(work2);
         assertNotNull(work2.getWorkTitle());
@@ -162,7 +177,7 @@ public class SourceInActivitiesTest extends BaseTest {
         assertNotNull(work2.getSource().retrieveSourcePath());
         assertEquals(CLIENT_1_ID, work2.getSource().retrieveSourcePath());
 
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
         Work work3 = getWork(userOrcid);
         assertNotNull(work3);
         assertNotNull(work3.getWorkTitle());
@@ -172,7 +187,7 @@ public class SourceInActivitiesTest extends BaseTest {
         assertNotNull(work3.getSource().retrieveSourcePath());
         assertEquals(CLIENT_2_ID, work3.getSource().retrieveSourcePath());
 
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         Work work4 = getWork(userOrcid);
         assertNotNull(work4);
         assertNotNull(work4.getWorkTitle());
@@ -217,7 +232,7 @@ public class SourceInActivitiesTest extends BaseTest {
     @Test
     @Transactional
     public void sourceDoesntChange_Funding_Test() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         Funding funding1 = getFunding(userOrcid);
         assertNotNull(funding1);
         assertNotNull(funding1.getTitle());
@@ -225,21 +240,21 @@ public class SourceInActivitiesTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(funding1.getTitle().getTitle().getContent()));
         assertEquals(userOrcid, funding1.getSource().retrieveSourcePath());
 
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Funding funding2 = getFunding(userOrcid);
         assertNotNull(funding2.getTitle());
         assertNotNull(funding2.getTitle().getTitle());        
         assertFalse(PojoUtil.isEmpty(funding2.getTitle().getTitle().getContent()));
         assertEquals(CLIENT_1_ID, funding2.getSource().retrieveSourcePath());
 
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
         Funding funding3 = getFunding(userOrcid);
         assertNotNull(funding3.getTitle());
         assertNotNull(funding3.getTitle().getTitle());        
         assertFalse(PojoUtil.isEmpty(funding3.getTitle().getTitle().getContent()));
         assertEquals(CLIENT_2_ID, funding3.getSource().retrieveSourcePath());
 
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         Funding funding4 = getFunding(userOrcid);
         assertNotNull(funding4.getTitle());
         assertNotNull(funding4.getTitle().getTitle());        
@@ -325,7 +340,7 @@ public class SourceInActivitiesTest extends BaseTest {
 
     @Test
     public void sourceDoesntChange_PeerReview_Test() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         PeerReview peerReview1 = getPeerReview(userOrcid);
         assertNotNull(peerReview1);
         assertNotNull(peerReview1.getSubjectName());
@@ -333,7 +348,7 @@ public class SourceInActivitiesTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(peerReview1.getSubjectName().getTitle().getContent()));
         assertEquals(userOrcid, peerReview1.retrieveSourcePath());
         
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         PeerReview peerReview2 = getPeerReview(userOrcid);
         assertNotNull(peerReview2);
         assertNotNull(peerReview2.getSubjectName());
@@ -341,7 +356,7 @@ public class SourceInActivitiesTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(peerReview2.getSubjectName().getTitle().getContent()));
         assertEquals(CLIENT_1_ID, peerReview2.retrieveSourcePath());
         
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
         PeerReview peerReview3 = getPeerReview(userOrcid);
         assertNotNull(peerReview3);
         assertNotNull(peerReview3.getSubjectName());
@@ -349,7 +364,7 @@ public class SourceInActivitiesTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(peerReview3.getSubjectName().getTitle().getContent()));
         assertEquals(CLIENT_2_ID, peerReview3.retrieveSourcePath());
         
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         PeerReview peerReview4 = getPeerReview(userOrcid);
         assertNotNull(peerReview4);
         assertNotNull(peerReview4.getSubjectName());
@@ -376,22 +391,22 @@ public class SourceInActivitiesTest extends BaseTest {
 
     @Test
     public void sourceDoesntChange_Affiliation_Test() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         Education education1 = getEducation(userOrcid);
         assertNotNull(education1);        
         assertEquals(userOrcid, education1.retrieveSourcePath());
         
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Education education2 = getEducation(userOrcid);
         assertNotNull(education2);        
         assertEquals(CLIENT_1_ID, education2.retrieveSourcePath());
         
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
         Education education3 = getEducation(userOrcid);
         assertNotNull(education3);        
         assertEquals(CLIENT_2_ID, education3.retrieveSourcePath());
         
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         Education education4 = getEducation(userOrcid);
         assertNotNull(education4);        
         assertEquals(userOrcid, education4.retrieveSourcePath());

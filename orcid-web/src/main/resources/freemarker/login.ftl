@@ -55,8 +55,9 @@
 			                           <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>					                    
 			                           <input type="password" id="password" name="password" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.password")}">					                    					                    
 			                        </div>
+			                        
 			                        <div class="form-group" id="verificationCodeFor2FA">
-                                        ${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}
+                                        <p class="title">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}</p>
                                         <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                                       
                                         <input id="verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">     
                                     </div>
@@ -70,8 +71,8 @@
 			                           <div class="alert"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
 			                           </#if>
 			                           <div id="2FAInstructions" style="display:none">
-                                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
-                                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device")}</p>
+                                            <label>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</label>
+                                            <div class="title">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device")}</div>
 										</div>
 										<div id="recoveryCodeSignin" class="form-group" style="display:none">
 										    <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
@@ -87,6 +88,7 @@
 			                           ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
 			                           </span>
 			                        </div>
+			                        <div id="loginErrors"></div>
 			                     </form>
 			                  </div>
 			                  <!-- RESET PASSWORD -->
@@ -258,6 +260,7 @@
 										        ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
 										        </span>
 										    </div>
+										    <div id="loginErrors"></div>
 									  	</form>
 									</div>
 									<!-- RESET PASSWORD -->
