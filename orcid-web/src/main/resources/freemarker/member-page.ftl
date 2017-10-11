@@ -64,7 +64,7 @@
                         <@orcid.checkFeatureStatus 'BADGES'>
                             <div ng-if="integration.badgeAwarded">
                                 <div class="cc-badge collect popover-help-container" ng-if="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
-                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_collect.png" height="34" width="34"/></a>
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" /></a>
                                     <div id="cc-collect-help" class="popover bottom">
                                       <div class="asrrow"></div>
                                       <div class="popover-content">
@@ -73,7 +73,7 @@
                                     </div>
                                 </div>
                                 <div class="cc-badge display popover-help-container" ng-if="integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
-                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_display.png" height="34" width="34"/></a>
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_display.png" height="34" width="34" alt="ORCID Display badge" /></a>
                                     <div id="cc-display-help" class="popover bottom">
                                       <div class="arrow"></div>
                                       <div class="popover-content">
@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
                                 <div class="cc-badge connect popover-help-container" ng-if="integration.level=='Connect'||integration.level=='Sync'">
-                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_connect.png" height="34" width="34"/></a>
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_connect.png" height="34" width="34" alt="ORCID Connect badge" /></a>
                                     <div id="cc-connect-help" class="popover bottom">
                                       <div class="arrow"></div>
                                       <div class="popover-content">
@@ -91,7 +91,7 @@
                                     </div>
                                 </div>
                                 <div class="cc-badge sync popover-help-container" ng-if="integration.level=='Sync'">
-                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_sync.png" height="34" width="34"/></a>
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_sync.png" height="34" width="34" alt="ORCID Sync badge" /></a>
                                     <div id="cc-sync-help" class="popover bottom">
                                       <div class="arrow"></div>
                                       <div class="popover-content">
