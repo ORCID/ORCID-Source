@@ -60,8 +60,48 @@
 	            <div class="col-md-12 col-sm-12 col-xs-12">   
 	                <h3>Integrations</h3>
 	                <div ng-if="membersListSrvc.currentMemberDetails.integrations" ng-repeat="integration in membersListSrvc.currentMemberDetails.integrations" ng-cloak>
-	                    <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
-	                    <ul>
+                        <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
+                        <@orcid.checkFeatureStatus 'BADGES'>
+                            <div ng-if="integration.badgeAwarded">
+                                <div class="cc-badge collect popover-help-container" ng-if="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_collect.png" height="34" width="34"/></a>
+                                    <div id="cc-collect-help" class="popover bottom">
+                                      <div class="asrrow"></div>
+                                      <div class="popover-content">
+                                        <p><@orcid.msg 'member_list.details.collect_help_text'/></p>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="cc-badge display popover-help-container" ng-if="integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_display.png" height="34" width="34"/></a>
+                                    <div id="cc-display-help" class="popover bottom">
+                                      <div class="arrow"></div>
+                                      <div class="popover-content">
+                                        <p><@orcid.msg 'member_list.details.display_help_text'/></p>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="cc-badge connect popover-help-container" ng-if="integration.level=='Connect'||integration.level=='Sync'">
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_connect.png" height="34" width="34"/></a>
+                                    <div id="cc-connect-help" class="popover bottom">
+                                      <div class="arrow"></div>
+                                      <div class="popover-content">
+                                        <p><@orcid.msg 'member_list.details.connect_help_text'/></p>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="cc-badge sync popover-help-container" ng-if="integration.level=='Sync'">
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_sync.png" height="34" width="34"/></a>
+                                    <div id="cc-sync-help" class="popover bottom">
+                                      <div class="arrow"></div>
+                                      <div class="popover-content">
+                                        <p><@orcid.msg 'member_list.details.sync_help_text'/></p>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </@orcid.checkFeatureStatus>
+	                    <ul class="clearfix">
 	                        <li ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
 	                        </li>
 	                        <li ng-if="integration.resourceUrl" >
