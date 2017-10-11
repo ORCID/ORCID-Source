@@ -33,6 +33,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.OrgDisambiguatedExternalIdentifier;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,7 +182,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Override
     public OrgDisambiguated findInDB(Long id) {
-        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.find(id);
         OrgDisambiguated org = new OrgDisambiguated();
         org.setValue(orgDisambiguatedEntity.getName());
         org.setCity(orgDisambiguatedEntity.getCity());
@@ -191,6 +192,27 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setSourceId(orgDisambiguatedEntity.getSourceId());
         org.setSourceType(orgDisambiguatedEntity.getSourceType()); 
         org.setUrl(orgDisambiguatedEntity.getUrl());
+        
+        if(orgDisambiguatedEntity.getExternalIdentifiers() != null && !orgDisambiguatedEntity.getExternalIdentifiers().isEmpty()) {            
+            for(OrgDisambiguatedExternalIdentifierEntity extIdEntity : orgDisambiguatedEntity.getExternalIdentifiers()) {
+                String type = extIdEntity.getIdentifierType();
+                String identifier = extIdEntity.getIdentifier();
+                Boolean preferred = extIdEntity.getPreferred();
+                
+                OrgDisambiguatedExternalIdentifier extId = new OrgDisambiguatedExternalIdentifier();
+                extId.setIdentifier(identifier);
+                extId.setPreferred(preferred);
+                extId.setType(type);
+                
+                if(org.getExternalIdentifiers().containsKey(type)) {
+                    org.getExternalIdentifiers().get(type).add(extId);
+                } else {
+                    List<OrgDisambiguatedExternalIdentifier> elements = new ArrayList<OrgDisambiguatedExternalIdentifier>();
+                    elements.add(extId);
+                    org.getExternalIdentifiers().put(type, elements);
+                }
+            }
+        }
         return org;
     }
 

@@ -17,6 +17,7 @@
 package org.orcid.pojo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
@@ -33,6 +34,7 @@ public class OrgDisambiguated {
     public String sourceType;
     public String url;
     public String disambiguatedAffiliationIdentifier;
+    private Map<String, List<OrgDisambiguatedExternalIdentifier>> externalIdentifiers;
     
     public String getDisambiguatedAffiliationIdentifier() {
         return disambiguatedAffiliationIdentifier;
@@ -92,6 +94,16 @@ public class OrgDisambiguated {
         this.url = url;
     }
     
+    public Map<String, List<OrgDisambiguatedExternalIdentifier>> getExternalIdentifiers() {
+        if(externalIdentifiers == null) {
+            externalIdentifiers = new HashMap<String, List<OrgDisambiguatedExternalIdentifier>>();
+        }
+        
+        return externalIdentifiers;
+    }
+    public void setExternalIdentifiers(Map<String, List<OrgDisambiguatedExternalIdentifier>> externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
+    }
     public Map<String,String> toMap(){
         HashMap<String,String> datum = new HashMap<String,String>();
         datum.put("value", this.getValue());

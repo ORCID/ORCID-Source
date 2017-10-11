@@ -18,7 +18,9 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
@@ -30,6 +32,7 @@ import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.pojo.OrgDisambiguatedExternalIdentifier;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
 
@@ -90,6 +93,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date lastModified;
     
     private Text url;
+    
+    private Map<String, List<OrgDisambiguatedExternalIdentifier>> externalIdentifiers;
     
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
@@ -504,4 +509,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         this.url = url;
     }
     
+    public Map<String, List<OrgDisambiguatedExternalIdentifier>> getExternalIdentifiers() {
+        if(externalIdentifiers == null) {
+            externalIdentifiers = new HashMap<String, List<OrgDisambiguatedExternalIdentifier>>();
+        }
+        
+        return externalIdentifiers;
+    }
+    public void setExternalIdentifiers(Map<String, List<OrgDisambiguatedExternalIdentifier>> externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
+    }
 }
