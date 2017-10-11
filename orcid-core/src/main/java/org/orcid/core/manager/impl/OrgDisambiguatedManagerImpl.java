@@ -186,7 +186,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setValue(orgDisambiguatedEntity.getName());
         org.setCity(orgDisambiguatedEntity.getCity());
         org.setRegion(orgDisambiguatedEntity.getRegion());        
-        org.setCountry(orgDisambiguatedEntity.getCountry().value());
+        org.setCountry(orgDisambiguatedEntity.getCountry() != null ? orgDisambiguatedEntity.getCountry().value() : null);
         org.setOrgType(orgDisambiguatedEntity.getOrgType());
         org.setSourceId(orgDisambiguatedEntity.getSourceId());
         org.setSourceType(orgDisambiguatedEntity.getSourceType()); 
