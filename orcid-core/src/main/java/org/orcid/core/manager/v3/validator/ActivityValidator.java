@@ -29,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
+import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
@@ -318,17 +320,17 @@ public class ActivityValidator {
 
     private void validateDisambiguatedOrg(OrganizationHolder organizationHolder) {
         if (organizationHolder.getOrganization() == null) {
-            throw new OrcidValidationException("organization is required");
+            throw new InvalidOrgException();
         }
 
         Organization org = organizationHolder.getOrganization();
         if (org.getDisambiguatedOrganization() == null) {
-            throw new OrcidValidationException("disambiguated-organization is required");
+            throw new InvalidDisambiguatedOrgException();
         }
 
         if (org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() == null
                 || org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier().isEmpty()) {
-            throw new OrcidValidationException("disambiguated-organization-identifier is required");
+            throw new InvalidDisambiguatedOrgException();
         }
     }
 

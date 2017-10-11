@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,7 +37,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -48,6 +51,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
@@ -74,8 +78,17 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Resource
     private ClientDetailsManager clientDetailsManager;
 
+    @Resource
+    private SourceManager sourceManager;
+    
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
+    
     @Mock
     private OrcidIndexManager orcidIndexManager;
+    
+    @Mock
+    private SourceManager mockSourceManager;
 
     private OrcidClientGroup group = null;
     private final String email = "orcid-admin@elsevier.com"; 
@@ -124,11 +137,19 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "orcidIndexManager", orcidIndexManager);         
         SecurityContextTestUtils.setUpSecurityContextForAnonymous();
         group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);                
+        SourceEntity sourceEntity = new SourceEntity();        
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
     }
 
     @After
     public void after() {
         group.setEmail(email);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);            
     }
     
     @Test    

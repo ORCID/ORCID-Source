@@ -216,7 +216,7 @@
 		<sec:intercept-url pattern="/shibboleth/registerConfirm.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/shibboleth/.*" access="ROLE_USER" />		
-		<sec:form-login login-processing-url="/shibboleth/signin/auth.json"
+		<sec:form-login login-processing-url="/shibboleth/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 			login-page="${org.orcid.core.baseUri}/shibboleth/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerShibboleth"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerShibboleth"
 			username-parameter="userId" password-parameter="password" 
@@ -237,7 +237,7 @@
 		<sec:intercept-url pattern="/social/access(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/social/.*" access="ROLE_USER" />		
-		<sec:form-login login-processing-url="/social/signin/auth.json"
+		<sec:form-login login-processing-url="/social/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 			login-page="${org.orcid.core.baseUri}/social/access" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerSocial"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerSocial"
 			username-parameter="userId" password-parameter="password" 

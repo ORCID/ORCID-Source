@@ -43,6 +43,8 @@ public class ProcessDisambiguatedOrgsForIndexing {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
         }
+        
+        System.exit(0);
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {

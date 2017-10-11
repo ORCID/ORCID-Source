@@ -343,8 +343,7 @@
                         <th><a name="edit2FA"></a>${springMacroRequestContext.getMessage("manage.2FA")}</th>
                         <td><a href="" ng-click="toggle2FAEdit()" ng-bind="twoFAToggleText"></a></td>
                     </tr>
-                    <tr ng-controller="2FAStateCtrl" ng-init="check2FAState()"
-                        ng-show="showEdit2FA" ng-cloak>
+                    <tr ng-controller="2FAStateCtrl" ng-init="check2FAState()" ng-show="showEdit2FA" ng-cloak>
                         <td colspan="2">
                             <p>
                                 ${springMacroRequestContext.getMessage("2FA.details")}
@@ -352,16 +351,23 @@
                                 <a href="${knowledgeBaseUri}/articles/580410"
                                     target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                             </p>
-                        
                             <div ng-show="showEnabled2FA" ng-cloak>
-                                <span>${springMacroRequestContext.getMessage("2FA.state.on.heading")}</span>
-                                <label>${springMacroRequestContext.getMessage("2FA.state.on.description")}</label>
-                                <a id="disable2FA" ng-click="disable2FA()" href="#">${springMacroRequestContext.getMessage("2FA.disable")}</a>
+                                <div class="halfwidth">
+                                    <span class="on">${springMacroRequestContext.getMessage("2FA.state.on.heading")}</span>
+                                    <span class="twoFactorAuthenticationInfo">${springMacroRequestContext.getMessage("2FA.state.on.description")}</span>
+                                </div>
+                                <div class="halfwidth">
+                                    <a id="disable2FA" ng-click="disable2FA()" href="#">${springMacroRequestContext.getMessage("2FA.disable")}</a>
+                                </div>
                             </div>
-                             <div ng-show="showDisabled2FA" ng-cloak>
-                                <span>${springMacroRequestContext.getMessage("2FA.state.off.heading")}</span>
-                                <label>${springMacroRequestContext.getMessage("2FA.state.off.description")}</label>
-                                <button ng-click="enable2FA()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.enable")}</button>
+                            <div ng-show="showDisabled2FA" ng-cloak>
+                                <div class="halfwidth">
+                                    <span class="off">${springMacroRequestContext.getMessage("2FA.state.off.heading")}</span>
+                                    <span class="twoFactorAuthenticationInfo">${springMacroRequestContext.getMessage("2FA.state.off.description")}</span>
+                                </div>
+                                <div class="halfwidth">
+                                    <button ng-click="enable2FA()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.enable")}</button>
+                                </div>
                             </div>
                         </td>
                     </tr>

@@ -30,6 +30,8 @@ import org.junit.runner.RunWith;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
+import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
@@ -427,21 +429,21 @@ public class ActivityValidatorTest {
         activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidOrgException.class)
     public void validateFundingWithoutOrg() {
         Funding f = getFunding();
         f.setOrganization(null);
         activityValidator.validateFunding(f, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateFundingWithoutDisambiguatedOrg() {
         Funding f = getFunding();
         f.getOrganization().setDisambiguatedOrganization(null);
         activityValidator.validateFunding(f, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateFundingWithoutDisambiguatedOrgId() {
         Funding f = getFunding();
         f.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
@@ -514,21 +516,21 @@ public class ActivityValidatorTest {
         activityValidator.validateEmployment(employment, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidOrgException.class)
     public void validateEmploymentWithoutOrg() {
         Employment e = getEmployment();
         e.setOrganization(null);
         activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateEmploymentWithoutDisambiguatedOrg() {
         Employment e = getEmployment();
         e.getOrganization().setDisambiguatedOrganization(null);
         activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateEmploymentWithoutDisambiguatedOrgId() {
         Employment e = getEmployment();
         e.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
@@ -555,21 +557,21 @@ public class ActivityValidatorTest {
         activityValidator.validateEducation(education, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidOrgException.class)
     public void validateEducationWithoutOrg() {
         Education e = getEducation();
         e.setOrganization(null);
         activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateEducationWithoutDisambiguatedOrg() {
         Education e = getEducation();
         e.getOrganization().setDisambiguatedOrganization(null);
         activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateEducationWithoutDisambiguatedOrgId() {
         Education e = getEducation();
         e.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
@@ -658,21 +660,21 @@ public class ActivityValidatorTest {
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidOrgException.class)
     public void validatePeerReviewWithoutOrg() {
         PeerReview pr = getPeerReview();
         pr.setOrganization(null);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validatePeerReviewWithoutDisambiguatedOrg() {
         PeerReview pr = getPeerReview();
         pr.getOrganization().setDisambiguatedOrganization(null);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
-    @Test(expected = OrcidValidationException.class)
+    @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validatePeerReviewWithoutDisambiguatedOrgId() {
         PeerReview pr = getPeerReview();
         pr.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);

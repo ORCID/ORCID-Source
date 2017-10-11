@@ -19,6 +19,7 @@ package org.orcid.integration.whitebox;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,9 +32,12 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.BiographyManager;
@@ -43,6 +47,7 @@ import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -97,7 +102,9 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -287,9 +294,18 @@ public class SetUpClientsAndUsers {
     protected RecordNameManager recordNameManager;    
     @Resource
     protected ClientDetailsDao clientDetailsDao;
+    @Resource
+    protected SourceManager sourceManager;
+    @Mock 
+    protected SourceManager mockSourceManager;
     
     @Before
     public void before() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity());    
+
+        
         // Create admin user
         Map<String, String> adminParams = getParams(adminOrcidId);
         OrcidProfile adminProfile = orcidProfileManager.retrieveOrcidProfile(adminOrcidId);
@@ -374,6 +390,11 @@ public class SetUpClientsAndUsers {
         clientDetailsDao.changePersistenceTokensProperty(client2ClientId, false);  
         
         setUpDelegates(user1OrcidId, user2OrcidId);
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
     }
 
     private Map<String, String> getParams(String userId) {

@@ -51,11 +51,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -114,7 +116,8 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml");
 
     private static final String ORCID = "0000-0000-0000-0000";
-    private static final String CLIENT_ID = "APP-0000000000000001";
+    private static final String CLIENT_ID = "APP-5555555555555555";
+    private static final String CLIENT_ID_2 = "APP-5555555555555556";
     
     @Resource(name = "t2OrcidApiServiceDelegatorV1_2")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV2_1;
@@ -128,6 +131,15 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource
     private OrgAffiliationRelationDao orgAffiliationRelationDao;
     
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
+    
+    @Resource
+    private OrgManager orgManager;
+    
+    @Resource
+    private SourceManager sourceManager;
+    
     @Mock
     private UriInfo mockedUriInfo;
 
@@ -138,7 +150,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     protected ProfileEntityCacheManager profileEntityCacheManagerMock;
 
     @Mock
-    protected SourceManager sourceManagerMock;
+    protected SourceManager mockSourceManager;
     
     private Unmarshaller unmarshaller;
 
@@ -151,15 +163,28 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void before() throws JAXBException {
         MockitoAnnotations.initMocks(this);
         when(mockedUriInfo.getBaseUriBuilder()).thenReturn(new UriBuilderImpl());
+        TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orgManager, "sourceManager", mockSourceManager);        
 
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         unmarshaller = context.createUnmarshaller();
+        
+        SourceEntity source = new SourceEntity();
+        source.setSourceClient(new ClientDetailsEntity(CLIENT_ID));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(source);  
+        when(mockSourceManager.retrieveSourceOrcid()).thenReturn(CLIENT_ID);  
     }
 
     @After
     public void after() {
         SecurityContextHolder.clearContext();
         orcidProfileManager.clearOrcidProfileCache();
+        TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orgManager, "sourceManager", sourceManager);        
     }
 
     @AfterClass
@@ -170,11 +195,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "profileEntityCacheManager", profileEntityCacheManagerMock);
-        TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "sourceManager", sourceManagerMock);
-        SourceEntity source = new SourceEntity();
-        source.setSourceClient(new ClientDetailsEntity(CLIENT_ID));
-        when(sourceManagerMock.retrieveSourceEntity()).thenReturn(source);        
+        TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "profileEntityCacheManager", profileEntityCacheManagerMock);        
     }
     
     @Test
@@ -188,7 +209,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc6");
+        orcidMessage.setMessageVersion("1.2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -293,8 +314,15 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(location);
         String orcid = location.substring(1, 20);
 
-        setUpSecurityContextForClientOnly("4444-4444-4444-4448");
-
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(ScopePathType.ORCID_PROFILE_CREATE.value());
+        setUpSecurityContextForClientOnly(CLIENT_ID_2, scopes);
+        // Set the source manager with other client id
+        SourceEntity source = new SourceEntity();
+        source.setSourceClient(new ClientDetailsEntity(CLIENT_ID_2));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(source);  
+        when(mockSourceManager.retrieveSourceOrcid()).thenReturn(CLIENT_ID_2); 
+        
         Response readResponse = t2OrcidApiServiceDelegatorLatest.findFullDetails(orcid);
         assertNotNull(readResponse);
         assertEquals(HttpStatus.SC_OK, readResponse.getStatus());
@@ -336,7 +364,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(source);
         String sourceOrcid = source.retrieveSourcePath();
         assertNotNull(sourceOrcid);
-        assertEquals("4444-4444-4444-4445", sourceOrcid);
+        assertEquals("APP-5555555555555555", sourceOrcid);
     }
 
     private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {
@@ -345,7 +373,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc6");
+        orcidMessage.setMessageVersion("1.2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();
@@ -382,13 +410,9 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
 
     private void setUpSecurityContextForClientOnly() {
-        setUpSecurityContextForClientOnly("4444-4444-4444-4445");
-    }
-
-    private void setUpSecurityContextForClientOnly(String clientId) {
         Set<String> scopes = new HashSet<String>();
         scopes.add(ScopePathType.ORCID_PROFILE_CREATE.value());
-        setUpSecurityContextForClientOnly(clientId, scopes);
+        setUpSecurityContextForClientOnly(CLIENT_ID, scopes);
     }
 
     private void setUpSecurityContextForClientOnly(String clientId, Set<String> scopes) {
@@ -476,7 +500,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void addAffiliationTest() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc6");
+        orcidMessage.setMessageVersion("1.2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -585,7 +609,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     
     private OrcidMessage buildMessageWithAffiliation(AffiliationType type, String dept, String role, String orcid) {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc6");
+        orcidMessage.setMessageVersion("1.2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier(orcid));
