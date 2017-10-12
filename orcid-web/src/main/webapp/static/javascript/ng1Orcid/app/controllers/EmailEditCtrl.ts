@@ -245,7 +245,7 @@ export const EmailEditCtrl = angular.module('orcidApp').controller(
             //init            
             $scope.emailSrvc.getEmails();
             $scope.emailSrvc.initInputEmail();            
-            $scope.asianEmailTableStyleFix(); 
+            //$scope.asianEmailTableStyleFix(); 
             
         }
     ]
