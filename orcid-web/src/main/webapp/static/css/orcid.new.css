@@ -7859,3 +7859,48 @@ ul.comma li:last-child:after {
 .lang-rl .privacyToggle+.popover-help-container {
     right: 90px;
 }
+
+#verificationCodeFor2FA {
+	display: none;
+}
+
+.twoFactorAuthSetupHeading {
+	font-weight: bold;
+}
+
+.on {
+	color: green;
+	font-weight: bold;
+	margin-right: 10px;
+}
+
+.on::after {
+	content: "\2713";
+}
+
+
+.off {
+    color: crimson;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.off::after {
+    content: "\2717";
+}
+
+.twoFactorAuthenticationInfo {
+	font-weight: bold;
+	font-size: 11px;
+}
+
+.halfwidth {
+	width: 50%;
+	float: left;
+}
+
+ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}

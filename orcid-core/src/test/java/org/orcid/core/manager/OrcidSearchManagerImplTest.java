@@ -20,9 +20,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +32,17 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.solr.common.SolrDocument;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -63,7 +70,9 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
+import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
 import org.springframework.test.annotation.Rollback;
@@ -87,20 +96,50 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     private OrcidSearchManagerImpl orcidSearchManager;
 
     @Mock
-    private SolrDao solrDao;
+    private SolrDao mockSolrDao;
 
     @Mock
-    private OrcidProfileCacheManager orcidProfileCacheManager;
+    private OrcidProfileCacheManager mockOrcidProfileCacheManager;
+    
+    @Mock
+    private OrcidSecurityManager mockOrcidSecurityManager;
+    
+    @Mock
+    private ProfileDao mockProfileDao;
 
+    @Resource
+    private SolrDao solrDao;
+
+    @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+        
+    @Resource
+    private ProfileDao profileDaoReadOnly;
+    
     @Before
     public void initMocks() {
-        orcidSearchManager.setSolrDao(solrDao);
-        orcidSearchManager.setOrcidProfileCacheManager(orcidProfileCacheManager);
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "solrDao", mockSolrDao);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidProfileCacheManager", mockOrcidProfileCacheManager);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSecurityManager", mockOrcidSecurityManager);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "profileDaoReadOnly", mockProfileDao);
+        when(mockProfileDao.retrieveLastModifiedDate(Matchers.anyString())).thenReturn(new Date());
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "solrDao", solrDao);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidProfileCacheManager", orcidProfileCacheManager);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSecurityManager", orcidSecurityManager);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "profileDaoReadOnly", profileDaoReadOnly);
     }
     
     @Test
     public void testFindOrcidIds() {
-        when(solrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(multipleResultsForQuery());
+        when(mockSolrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
         assertEquals(2, search.getResults().size());
@@ -111,7 +150,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     
     @Test
     public void testFindOrcidIdsNoResults() {
-        when(solrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(new OrcidSolrResults());
+        when(mockSolrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(new OrcidSolrResults());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
         assertEquals(Long.valueOf(0), search.getNumFound());
@@ -121,8 +160,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     @Test
     @Rollback
     public void orcidRetrievalAllDataPresentInDb() throws Exception {
-        when(solrDao.findByOrcid("1434")).thenReturn(getSolrRes5678());
-        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfileAllIndexFieldsPopulated());
+        when(mockSolrDao.findByOrcid("1434")).thenReturn(getOrcidSolrResult("5678", new Float(37.2)));
+        when(mockOrcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfileAllIndexFieldsPopulated());
 
         String orcid = "1434";
 
@@ -182,8 +221,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     @Rollback
     public void orcidRetrievalMandatoryFieldsOnly() {
 
-        when(solrDao.findByOrcid("1434")).thenReturn(getSolrRes5678());
-        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(mockSolrDao.findByOrcid("1434")).thenReturn(getOrcidSolrResult("5678", new Float(37.2)));
+        when(mockOrcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById("1434");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
@@ -200,8 +239,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     @Rollback
     public void orcidInIndexButNotinDb() {
 
-        when(solrDao.findByOrcid("1434")).thenReturn(getSolrRes5678());
-        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(null);
+        when(mockSolrDao.findByOrcid("1434")).thenReturn(getOrcidSolrResult("5678", new Float(37.2)));
+        when(mockOrcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(null);
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById("1434");
         assertNotNull(retrievedOrcidMessage);
         assertNotNull(retrievedOrcidMessage.getOrcidSearchResults());
@@ -212,9 +251,9 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     @Rollback
     public void oneOrcidInDbOtherMissing() {
 
-        when(solrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
-        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
-        when(orcidProfileCacheManager.retrievePublicBio("6789")).thenReturn(null);
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
+        when(mockOrcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(mockOrcidProfileCacheManager.retrievePublicBio("6789")).thenReturn(null);
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults() != null && retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
@@ -264,9 +303,9 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     @Test
     public void orcidMultipleOrcidsIndexed() {
 
-        when(solrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
-        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
-        when(orcidProfileCacheManager.retrievePublicBio("6789")).thenReturn(getOrcidProfile6789MandatoryOnly());
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
+        when(mockOrcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(mockOrcidProfileCacheManager.retrievePublicBio("6789")).thenReturn(getOrcidProfile6789MandatoryOnly());
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 2);
@@ -289,18 +328,11 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertNotNull(orcidBio2.getContactDetails());
         assertEquals("don@semantico.com", orcidBio2.getContactDetails().retrievePrimaryEmail().getValue());
     }
-
-    private OrcidSolrResult getSolrRes5678() {
+       
+    private OrcidSolrResult getOrcidSolrResult(String orcid, Float relevancy) {
         OrcidSolrResult solrResult = new OrcidSolrResult();
-        solrResult.setOrcid("5678");
-        solrResult.setRelevancyScore(new Float(37.2));
-        return solrResult;
-    }
-
-    private OrcidSolrResult getSolrRes6789() {
-        OrcidSolrResult solrResult = new OrcidSolrResult();
-        solrResult.setOrcid("6789");
-        solrResult.setRelevancyScore(new Float(52.2));
+        solrResult.setOrcid(orcid);
+        solrResult.setRelevancyScore(relevancy);
         return solrResult;
     }
 
@@ -308,8 +340,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
         List<OrcidSolrResult> resultsList = new ArrayList<>();
         orcidSolrResults.setResults(resultsList);
-        resultsList.add(getSolrRes5678());
-        resultsList.add(getSolrRes6789());
+        resultsList.add(getOrcidSolrResult("5678", new Float(37.2)));
+        resultsList.add(getOrcidSolrResult("6789", new Float(52.2)));
         orcidSolrResults.setNumFound(2);
         return orcidSolrResults;
     }
@@ -390,5 +422,67 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidWork2.setWorkExternalIdentifiers(work2ExternalIdentifiers);
 
     }
-
+    
+    @Test
+    public void recordLockedTest() {
+        OrcidProfile orcidProfile = getOrcidProfileAllIndexFieldsPopulated();
+        orcidProfile.getOrcidIdentifier().setPath("0000");
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(invalidRecordSearchResult());
+        when(mockOrcidProfileCacheManager.retrievePublicBio("0000")).thenReturn(orcidProfile);
+        doThrow(new LockedException()).when(mockOrcidSecurityManager).checkProfile("0000");
+        OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
+        assertNotNull(retrievedOrcidMessage);
+        assertTrue(retrievedOrcidMessage.getOrcidSearchResults() != null && retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
+        OrcidSearchResult searchResult = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0);
+        OrcidProfile profileReturnedFromSearch = searchResult.getOrcidProfile();
+        assertEquals("0000", profileReturnedFromSearch.getOrcidIdentifier().getPath());
+        assertNotNull(profileReturnedFromSearch.getOrcidHistory().getLastModifiedDate().getValue());
+        assertNull(profileReturnedFromSearch.getOrcidActivities());
+        assertNull(profileReturnedFromSearch.getOrcidBio());           
+    }
+    
+    @Test
+    public void recordDeactivatedTest() {
+        OrcidProfile orcidProfile = getOrcidProfileAllIndexFieldsPopulated();
+        orcidProfile.getOrcidIdentifier().setPath("0000");
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(invalidRecordSearchResult());
+        when(mockOrcidProfileCacheManager.retrievePublicBio("0000")).thenReturn(orcidProfile);
+        doThrow(new DeactivatedException()).when(mockOrcidSecurityManager).checkProfile("0000");
+        OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
+        assertNotNull(retrievedOrcidMessage);
+        assertTrue(retrievedOrcidMessage.getOrcidSearchResults() != null && retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
+        OrcidSearchResult searchResult = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0);
+        OrcidProfile profileReturnedFromSearch = searchResult.getOrcidProfile();
+        assertEquals("0000", profileReturnedFromSearch.getOrcidIdentifier().getPath());
+        assertNotNull(profileReturnedFromSearch.getOrcidHistory().getLastModifiedDate().getValue());
+        assertNull(profileReturnedFromSearch.getOrcidActivities());
+        assertNull(profileReturnedFromSearch.getOrcidBio());           
+    }
+    
+    @Test
+    public void recordDeprecatedTest() {
+        OrcidProfile orcidProfile = getOrcidProfileAllIndexFieldsPopulated();
+        orcidProfile.getOrcidIdentifier().setPath("0000");
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(invalidRecordSearchResult());
+        when(mockOrcidProfileCacheManager.retrievePublicBio("0000")).thenReturn(orcidProfile);
+        doThrow(new OrcidDeprecatedException()).when(mockOrcidSecurityManager).checkProfile("0000");
+        OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
+        assertNotNull(retrievedOrcidMessage);
+        assertTrue(retrievedOrcidMessage.getOrcidSearchResults() != null && retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
+        OrcidSearchResult searchResult = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0);
+        OrcidProfile profileReturnedFromSearch = searchResult.getOrcidProfile();
+        assertEquals("0000", profileReturnedFromSearch.getOrcidIdentifier().getPath());
+        assertNotNull(profileReturnedFromSearch.getOrcidHistory().getLastModifiedDate().getValue());
+        assertNull(profileReturnedFromSearch.getOrcidActivities());
+        assertNull(profileReturnedFromSearch.getOrcidBio());           
+    }
+    
+    private OrcidSolrResults invalidRecordSearchResult() {
+        OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
+        List<OrcidSolrResult> resultsList = new ArrayList<>();
+        orcidSolrResults.setResults(resultsList);
+        resultsList.add(getOrcidSolrResult("0000", new Float(37.2)));        
+        orcidSolrResults.setNumFound(2);
+        return orcidSolrResults;
+    }
 }

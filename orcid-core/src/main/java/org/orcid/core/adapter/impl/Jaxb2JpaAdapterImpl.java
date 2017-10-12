@@ -284,6 +284,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 }
                 workEntity = new WorkEntity();
                 workEntity.setOrcid(orcid);
+                setSource(sourceManager.retrieveSourceEntity(), workEntity);                
             } else {
                 workEntity.clean();
             }
@@ -326,9 +327,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             
             workEntity.setAddedToProfileDate(new Date());
-            //Set source
-            setSource(orcidWork.getSource(), workEntity);
-                        
             if(workEntity.getDisplayIndex() == null) {
                 workEntity.setDisplayIndex(0L);
             }
@@ -1181,6 +1179,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     throw new IllegalArgumentException("Invalid put-code was supplied for an affiliation: " + putCode);
                 }
                 orgRelationEntity = new OrgAffiliationRelationEntity();
+                setSource(sourceManager.retrieveSourceEntity(), orgRelationEntity);                
             } else {
                 orgRelationEntity = exisitingOrgAffiliationEntity;
                 orgRelationEntity.clean();
@@ -1197,9 +1196,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 orgRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
             }
                         
-            //Set source
-            setSource(affiliation.getSource(), orgRelationEntity);
-            
             orgRelationEntity.setDepartment(affiliation.getDepartmentName());
             orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
             orgRelationEntity.setOrg(orgEntity);
@@ -1236,7 +1232,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 }
                 profileFundingEntity = new ProfileFundingEntity();
                 //Set source
-                setSource(funding.getSource(), profileFundingEntity);                
+                setSource(sourceManager.retrieveSourceEntity(), profileFundingEntity);                
             } else {
                 profileFundingEntity = exisitingProfileFundingEntity;
                 profileFundingEntity.clean();
@@ -1299,7 +1295,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value()));
             }
             
-
             if (funding.getCreatedDate() != null && funding.getCreatedDate().getValue() != null)
                 profileFundingEntity.setDateCreated(funding.getCreatedDate().getValue().toGregorianCalendar().getTime());
             if (funding.getLastModifiedDate() != null && funding.getLastModifiedDate().getValue() != null)
@@ -1383,18 +1378,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private void setSource(Source source, SourceAwareEntity<?> entity) {
-        if (source != null) {
-            if(source.getSourceOrcid() != null) {
-                entity.setSourceId(source.getSourceOrcid().getPath());
-            }
-            
-            if(source.getSourceClientId() != null) {
-                entity.setClientSourceId(source.getSourceClientId().getPath());
-            }
-        }
-    }
-    
     private void setSource(SourceEntity source, SourceAwareEntity<?> entity) {
         if(source != null){
             if(source.getSourceProfile() != null) {

@@ -53,7 +53,6 @@ public class SolrIndexUpdater {
         } catch (IOException ioe) {
             throw new NonTransientDataAccessResourceException("IOException when persisting to SOLR", ioe);
         }
-
     } 
 
     public Date retrieveLastModified(String orcid) {
@@ -74,16 +73,10 @@ public class SolrIndexUpdater {
         }
     }
 
-    /** Updates solr with just the ORCID and lastUpdated, blanking the record.
-     * 
-     * @param orcid
-     * @param lastUpdated
-     */
-    public void updateSolrIndexForLockedOrDeprecatedRecord(String orcid, Date lastUpdated) {
-        OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
-        profileIndexDocument.setOrcid(orcid);        
-        profileIndexDocument.setProfileLastModifiedDate(lastUpdated); 
-        this.persist(profileIndexDocument);
+    public void processInvalidRecord(String orcid) {
+        OrcidSolrDocument doc = new OrcidSolrDocument();
+        doc.setOrcid(orcid);
+        doc.setProfileLastModifiedDate(retrieveLastModified(orcid));
+        this.persist(doc);
     }
-
 }

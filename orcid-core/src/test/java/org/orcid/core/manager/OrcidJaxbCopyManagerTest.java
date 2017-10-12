@@ -32,11 +32,12 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
-import org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -67,12 +68,17 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.GivenNames;
+import org.orcid.test.TargetProxyHelper;
 
 /**
  * @author Declan Newman (declan) Date: 13/03/2012
  */
 public class OrcidJaxbCopyManagerTest extends BaseTest {
+    
+    private static final String CLIENT_1 = "0000-0000-0000-0000";
 
     private Unmarshaller unmarshaller;
 
@@ -80,6 +86,9 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
     private OrcidMessage publicOrcidMessage;
 
     @Mock
+    private SourceManager mockSourceManager;
+    
+    @Resource
     private SourceManager sourceManager;
     
     @Resource
@@ -94,12 +103,17 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
     public void init() throws JAXBException {
         protectedOrcidMessage = getOrcidMessage("/orcid-protected-full-message-latest.xml");
         publicOrcidMessage = getOrcidMessage("/orcid-full-message-no-visibility-latest.xml");
+    
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(orcidJaxbCopyManager, "sourceManager", mockSourceManager);        
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(new ClientDetailsEntity(CLIENT_1));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
     }
     
-    @Before
-    public void initMockObject() throws Exception {
-    	OrcidJaxbCopyManagerImpl copyManagerImpl = getTargetObject(orcidJaxbCopyManager, OrcidJaxbCopyManagerImpl.class);
-    	copyManagerImpl.setSourceManager(sourceManager);
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(orcidJaxbCopyManager, "sourceManager", sourceManager);
     }
 
     @Test
@@ -316,7 +330,11 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
 
     @Test
     public void testUpdatedContactDetailsToExistingPreservingVisibility() throws Exception {
-    	when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-0000000000000000");
+    	when(mockSourceManager.retrieveSourceOrcid()).thenReturn("APP-0000000000000000");
+        
+    	SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(new ClientDetailsEntity("APP-0000000000000000"));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
         
     	OrcidBio existingOrcidBioProtected = protectedOrcidMessage.getOrcidProfile().getOrcidBio();
         OrcidBio updatedOrcidBioPublic = publicOrcidMessage.getOrcidProfile().getOrcidBio();

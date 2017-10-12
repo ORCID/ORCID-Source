@@ -365,6 +365,7 @@
                                             <@orcid.msg 'confirm-oauth-access.Authorize' />
                                         </button>   
                                 </div>
+                                <div id="loginErrors"></div>
                             </div>
                         </div>
                     </div>

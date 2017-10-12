@@ -21,18 +21,27 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.LastModifiedDate;
+import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
@@ -42,7 +51,9 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.RelevancyScore;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
 import org.springframework.beans.factory.annotation.Required;
@@ -58,22 +69,23 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private SolrDao solrDao;
     
     @Resource
+    private ProfileDao profileDaoReadOnly;
+    
+    @Resource
     private RecordManagerReadOnly recordManagerReadOnly;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    protected Jpa2JaxbAdapter jpaJaxbAdapter;
 
     private static String SOLR = "SOLR";
 
     private static String DB = "DB";
 
     private OrcidProfileCacheManager orcidProfileCacheManager;
-    
-    public SolrDao getSolrDao() {
-        return solrDao;
-    }
-
-    public void setSolrDao(SolrDao solrDao) {
-        this.solrDao = solrDao;
-    }
-
+        
     @Required
     public void setOrcidProfileCacheManager(OrcidProfileCacheManager orcidProfileCacheManager) {
         this.orcidProfileCacheManager = orcidProfileCacheManager;
@@ -102,6 +114,25 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         for (OrcidSolrResult solrResult : solrResults) {
             OrcidMessage orcidMessage = null;
             String orcid = solrResult.getOrcid();
+            
+            try {
+                orcidSecurityManager.checkProfile(orcid);
+            } catch(DeactivatedException | LockedException | OrcidDeprecatedException x) {
+                OrcidSearchResult orcidSearchResult = new OrcidSearchResult();
+                RelevancyScore relevancyScore = new RelevancyScore();
+                relevancyScore.setValue(solrResult.getRelevancyScore());
+                orcidSearchResult.setRelevancyScore(relevancyScore);
+                OrcidProfile orcidProfile = new OrcidProfile();                
+                orcidProfile.setOrcidIdentifier(new OrcidIdentifier(jpaJaxbAdapter.getOrcidIdBase(orcid)));
+                OrcidHistory history = new OrcidHistory();
+                Date recordLastModified = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
+                history.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(recordLastModified)));
+                orcidProfile.setOrcidHistory(history);
+                orcidSearchResult.setOrcidProfile(orcidProfile);
+                orcidSearchResults.add(orcidSearchResult);
+                continue;
+            }
+            
             if (cachingSource.equals(SOLR)) {
                 try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
                     if (reader != null) {

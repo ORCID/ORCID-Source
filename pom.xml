@@ -271,8 +271,9 @@ the software.
                             <exclude>**.xjb</exclude>
                             <exclude>**.lock</exclude>
                             <exclude>atlassian-ide-plugin.xml</exclude>
+                            <exclude>**/src/main/webapp/static/identifierTypes.xsl</exclude>
                             <exclude>**/src/main/resources/**/*escape_bibtex.txt</exclude>
-                            <exclude>**/src/main/webapp/static/css/identifierTypes.xsl</exclude>
+                            <exclude>**/src/main/resources/org/orcid/api/identifiers/xsl/identifierTypes.xsl</exclude>
                         </excludes>
                     </configuration>
                     <executions>
