@@ -16,11 +16,8 @@ import { downgradeComponent, UpgradeModule }
 import { CountryComponent } 
     from './country.component.ts';
 
-import { CommonService } 
-    from '../../shared/commonService.ts';
-
-import { CountryService } 
-    from '../../shared/countryService.ts';
+import { PrivacytoggleComponent } 
+    from './../privacytoggle/privacyToggle.component.ts';
 
 // This is the Angular 1 part of the module
 export const CountryModule = angular.module(
@@ -32,17 +29,18 @@ export const CountryModule = angular.module(
 
 @NgModule(
     {
-        imports: [
-        ],
-        
-        declarations: [ 
-            CountryComponent
+        declarations: [
+            CountryComponent,
+            //PrivacytoggleComponent
         ],
         entryComponents: [ 
             CountryComponent 
         ],
+        imports: [
+            CommonModule,
+            FormsModule
+        ],
         providers: [
-            CommonService
         ]
     }
 )
@@ -52,7 +50,7 @@ export class CountryNg2Module {}
 //Must convert as much as possible of our code to directives
 
 CountryModule.directive(
-    'countryNg2test', 
+    'countryNg2', 
     <any>downgradeComponent(
         {
             component: CountryComponent

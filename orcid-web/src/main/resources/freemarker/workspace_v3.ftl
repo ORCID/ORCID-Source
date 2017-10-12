@@ -118,7 +118,7 @@
         </div>
     </script>
 
-    <!-- Country -->    
+    <!-- Country -->
     <script type="text/ng-template" id="country-ng2-template">
         <div class="workspace-section country">
             <div class="workspace-section-header">
@@ -138,14 +138,19 @@
             </div>
             <div class="workspace-section-content">
                 
+                <!--
                 <span *ngFor="let country of countryForm.addresses">                                       
                     <span *ngIf="country != null && country.countryName != null" ng-bind="country.countryName"></span>
                 </span>
-            
+                -->
             </div>
         </div>
+    </script>
+    <script type="text/ng-template" id="country-form-ng2-template">
+        testmjc
         
-        <div id="edit-country" class="edit-record <#if RequestParameters['bulkEdit']??>
+        
+        <div class="edit-record <#if RequestParameters['bulkEdit']??>
             edit-record-bulk-edit
                 </#if> edit-country row">
 
@@ -208,16 +213,16 @@
                     <div class="" style="position: static">
                         <div class="fixed-area" scroll>             
                             <div class="scroll-area">       
+                                            <!--
                                 <div class="row aka-row" *ngFor="let country of countryForm.addresses">
                                     <div class="col-md-6">                                  
                                         <div class="aka">
-                                            <!--
                                             <select  name="country" ng-model="country.iso2Country.value" ng-disabled="country.source != orcidId" ng-class="{'not-allowed': country.source != orcidId}" focus-me="newInput">
                                                 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
                                                 <#list isoCountries?keys as key>
                                                     <option value="${key}">${isoCountries[key]}</option>
                                                 </#list>
-                                            </select>                                   -->    
+                                            </select>                                      
                                         </div>         
                                                                 
                                         <div class="source" *ngIf="country.sourceName || country.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="country.sourceName">{{country.sourceName}}</span><span *ngIf="country.sourceName == null">{{orcidId}}</span></div>
@@ -238,8 +243,8 @@
                                                 <@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />                                          
                                             </li>
                                             <li>
-                                                <privacy-toggle-ng2 elementId="bio-privacy-toggle" [dataPrivacyObj]="country.visibility.visibility" (privacyUpdate)="privacyChange($event)"></privacy-toggle-ng2>
                                                 <!--
+                                                <privacy-toggle-ng2 elementId="bio-privacy-toggle" [dataPrivacyObj]="country.visibility.visibility" (privacyUpdate)="privacyChange($event)"></privacy-toggle-ng2>
                                                 <@orcid.privacyToggle3  angularModel="country.visibility.visibility"
                                                     questionClick="toggleClickPrivacyHelp($index)"
                                                     clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -247,19 +252,21 @@
                                                     limitedClick="setPrivacyModal('LIMITED', $event, country)" 
                                                     privateClick="setPrivacyModal('PRIVATE', $event, country)"
                                                     elementId="$index"/>   
-                                                    --> 
+                                                    
                                             </li>
                                         </ul>
                                         <span class="created-date pull-right" *ngIf="country.createdDate" ng-class="{'hidden-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
                                         <span class="created-date pull-left" *ngIf="country.createdDate" ng-class="{'visible-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
                                     </div>                                  
-                                </div>                                          
+                                </div> -->                                          
                             </div>
+                            <!--
                             <div *ngIf="countryForm.errors.length > 0">
                                 <div *ngFor="let error of countryForm.errors">
                                     <span ng-bind="error" class="red"></span>
                                 </div>
                             </div>
+                            -->
                         </div>                  
                         <div class="record-buttons">                        
                             <a (click)="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
@@ -282,7 +289,8 @@
     <!--
     Original Code
     --------------------------
-    -->   
+    -->
+    <country-ng2></country-ng2>
     <div ng-controller="CountryCtrl" class="workspace-section country">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
@@ -305,11 +313,9 @@
             </span>
         </div>
     </div>
-    <!--
-    <country-ng2></country-ng2>
-    -->
+    
     <modalngcomponent elementHeight="500" elementId="countryForm" elementWidth="800">
-        <country-ng2></country-ng2>
+        <country-form-ng2></country-form-ng2>
     </modalngcomponent><!-- Ng2 component --> 
 
       <!-- Keywords -->         
