@@ -17,11 +17,15 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
@@ -33,7 +37,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.pojo.OrgDisambiguated;
-import org.orcid.pojo.OrgDisambiguatedExternalIdentifier;
+import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,26 +133,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         return document;
     }
 
-    /**
-     * Checks a list of external identifiers and return true if any of those is
-     * a funding organizations
-     * 
-     * @param externalIdentifiers
-     *            a list of external identifiers
-     * @return true if any of those external identifiers is a funding
-     *         organization
-     * */
-    private boolean hasFundrefExternalIdentifier(Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers) {
-        if (externalIdentifiers == null || externalIdentifiers.size() == 0)
-            return false;
-        for (OrgDisambiguatedExternalIdentifierEntity extId : externalIdentifiers) {
-            if (FUNDING_ORG_TYPE.equals(extId.getIdentifierType()))
-                return true;
-        }
-
-        return false;
-    }
-
     @Override
     synchronized public void processOrgsWithIncorrectPopularity() {
         LOGGER.info("About to process disambiguated orgs with incorrect popularity");
@@ -181,6 +165,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     }
 
     @Override
+    @Transactional
     public OrgDisambiguated findInDB(Long id) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.find(id);
         OrgDisambiguated org = new OrgDisambiguated();
@@ -192,26 +177,36 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setSourceId(orgDisambiguatedEntity.getSourceId());
         org.setSourceType(orgDisambiguatedEntity.getSourceType()); 
         org.setUrl(orgDisambiguatedEntity.getUrl());
-        
-        if(orgDisambiguatedEntity.getExternalIdentifiers() != null && !orgDisambiguatedEntity.getExternalIdentifiers().isEmpty()) {            
-            for(OrgDisambiguatedExternalIdentifierEntity extIdEntity : orgDisambiguatedEntity.getExternalIdentifiers()) {
+        Map<String, OrgDisambiguatedExternalIdentifiers> externalIdsMap = new HashMap<String, OrgDisambiguatedExternalIdentifiers>();
+        if (orgDisambiguatedEntity.getExternalIdentifiers() != null && !orgDisambiguatedEntity.getExternalIdentifiers().isEmpty()) {
+            for (OrgDisambiguatedExternalIdentifierEntity extIdEntity : orgDisambiguatedEntity.getExternalIdentifiers()) {
                 String type = extIdEntity.getIdentifierType();
                 String identifier = extIdEntity.getIdentifier();
                 Boolean preferred = extIdEntity.getPreferred();
-                
-                OrgDisambiguatedExternalIdentifier extId = new OrgDisambiguatedExternalIdentifier();
-                extId.setIdentifier(identifier);
-                extId.setPreferred(preferred);
-                extId.setType(type);
-                
-                if(org.getExternalIdentifiers().containsKey(type)) {
-                    org.getExternalIdentifiers().get(type).add(extId);
+
+                OrgDisambiguatedExternalIdentifiers extId = null;
+
+                if (externalIdsMap.containsKey(type)) {
+                    extId = externalIdsMap.get(type);
                 } else {
-                    List<OrgDisambiguatedExternalIdentifier> elements = new ArrayList<OrgDisambiguatedExternalIdentifier>();
-                    elements.add(extId);
-                    org.getExternalIdentifiers().put(type, elements);
+                    extId = new OrgDisambiguatedExternalIdentifiers();
+                    extId.setIdentifierType(type);
+                    externalIdsMap.put(type, extId);
                 }
+
+                if (preferred) {
+                    extId.setPreferred(identifier);
+                }
+
+                extId.getAll().add(identifier);
             }
+
+            if (!externalIdsMap.isEmpty()) {
+                List<OrgDisambiguatedExternalIdentifiers> extIds = new ArrayList<OrgDisambiguatedExternalIdentifiers>();
+                externalIdsMap.keySet().stream().sorted().collect(Collectors.toList()).forEach(k -> {extIds.add(externalIdsMap.get(k));});                
+                org.setOrgDisambiguatedExternalIdentifiers(extIds);
+            }
+
         }
         return org;
     }
