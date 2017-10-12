@@ -368,6 +368,13 @@ textarea {
     top: 0
 }
 
+.glyphicon-question-sign{
+    background-color: #fff;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
 .icon-inside-input {
     float: left;
     height: auto;
@@ -1551,7 +1558,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .work-title a.toggle-text,.workspace-accordion-header a.toggle-text,.workspace-title a.toggle-text {
     color: #fff;
-    display: inline-block;
+    //display: inline-block;
     font-size: 16px;
     font-weight: 700;
     height: 30px;
@@ -4059,12 +4066,29 @@ ul.sources-edit-list>li {
     display: none
 }
 
-#bio-section .edit-biography:hover .popover,.spinner span,.workspace-profile span>span {
+#bio-section .edit-biography:hover .popover,#bio-section .popover-help-container:hover .popover,.spinner span,.workspace-profile span>span {
     display: block
+}
+
+#bio-section .popover-help-container {
+    margin-left: 4px;
+}
+
+#bio-section .popover-help-container .popover {
+    left: -50px;
 }
 
 .id-banner .row .col-md-3 {
     margin-top: 15px
+}
+
+#workspace-education .workspace-accordion-header .popover-help-container .popover,
+#workspace-employment .workspace-accordion-header .popover-help-container .popover,
+#workspace-fundings .workspace-accordion-header .popover-help-container .popover,
+#workspace-publications .workspace-accordion-header .popover-help-container .popover,
+#workspace-peer-review .workspace-accordion-header .popover-help-container .popover,
+.print-orcid-record .popover-help-container .popover {
+    left: -246px;
 }
 
 #workspace-personal span.glyphicon-pencil,.workspace-section-title div.glyphicon-pencil {
@@ -6252,6 +6276,22 @@ ul.comma li:last-child:after {
     font-size: 12px;
     line-height: normal;
     padding: 8px 20px 8px 0
+}
+
+#settings h1{
+    float: left;
+    clear: both;
+}
+
+#settings .popover-help-container{
+    display: block;
+    margin-top: 20px;
+    float: left;
+}
+
+#settings .section-heading{
+    clear: both;
+    margin-top: 1em;
 }
 
 .footer-main .inline-list li,.self-service #communities {
