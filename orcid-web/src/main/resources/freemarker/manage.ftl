@@ -433,7 +433,7 @@
         </div>
         <div ng-controller="revokeApplicationFormCtrl" class="clearfix">
             <div ng-show="!applicationSummaryList.length > 0" ng-cloak>
-                <p>No trusted organizations have been added yet.</p>
+                <p><@orcid.msg 'manage.none_added.trustedOrganizations'/></p>
             </div>
             <div ng-show="applicationSummaryList.length > 0" ng-cloak>
                 <table class="table table-bordered settings-table normal-width">
@@ -596,7 +596,7 @@
         </div>
         <div ng-controller="SocialCtrl" class="clearfix" id="SocialCtrl" ng-cloak>
             <div ng-show="!socialAccounts.length > 0" ng-cloak>
-                <p>No alternate sign in accounts have been added yet.</p>
+                <p><@orcid.msg 'manage.none_added.alternateSigninAccounts'/></p>
             </div>
             <div ng-show="socialAccounts.length > 0" ng-cloak>
                 <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts">
