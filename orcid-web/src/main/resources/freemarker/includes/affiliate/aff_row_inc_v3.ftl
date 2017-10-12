@@ -81,6 +81,19 @@
     <!-- more info -->
     <#include "affiliate_more_info_inc_v3.ftl"/>
 </@orcid.checkFeatureStatus>
+<div class="row" ng-if="group.activePutCode == group.getActive().putCode.value">
+    <div class="col-md-12 col-sm-12 bottomBuffer">
+        <ul class="id-details">
+            <li class="url-work">
+                <ul class="id-details">
+                    <li ng-repeat='extID in group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                        <span ng-if="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:$first:$last:group.getActive().affiliationExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                    </li>
+                </ul>                                   
+            </li>
+        </ul>
+    </div>
+</div>      
 <div class="row source-line">
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="sources-container-header">          

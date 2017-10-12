@@ -41,6 +41,6 @@
 				<span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
 			</div>
 		</div>	
-	</div>			
+	</div>
 </div>
  

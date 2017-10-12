@@ -331,6 +331,16 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     public void setEmploymentExternalIdentifiers(ExternalIDs employmentExternalIdentifiers) {
         this.employmentExternalIdentifiers = employmentExternalIdentifiers;
     }
+    
+    @Override
+    public ExternalIDs getExternalIDs() {
+        return employmentExternalIdentifiers;
+    }
+    
+    @Override
+    public void setExternalIDs(ExternalIDs externalIDs) {
+        this.employmentExternalIdentifiers = externalIDs;
+    }
 
     /**
      * 

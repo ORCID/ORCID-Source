@@ -332,6 +332,16 @@ public class Education implements Serializable, Affiliation, Filterable, Activit
     public void setEducationExternalIdentifiers(ExternalIDs educationExternalIdentifiers) {
         this.educationExternalIdentifiers = educationExternalIdentifiers;
     }
+    
+    @Override
+    public ExternalIDs getExternalIDs() {
+        return educationExternalIdentifiers;
+    }
+    
+    @Override
+    public void setExternalIDs(ExternalIDs externalIDs) {
+        this.educationExternalIdentifiers = externalIDs;
+    }
 
     /**
      * 
