@@ -30,8 +30,7 @@ export const CountryModule = angular.module(
 @NgModule(
     {
         declarations: [
-            CountryComponent,
-            //PrivacytoggleComponent
+            CountryComponent
         ],
         entryComponents: [ 
             CountryComponent 

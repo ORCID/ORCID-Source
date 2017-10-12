@@ -15,26 +15,17 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { CommonService } 
-    from '../../shared/commonService.ts'; 
-
 import { ConfigurationService } 
     from '../../shared/configurationService.ts';
 
+import { CountryService } 
+    from '../../shared/countryService.ts';
+
+import { EmailService } 
+    from '../../shared/emailService.ts';
+
 import { ModalService } 
     from '../../shared/modalService.ts'; 
-
-/*
-import * as angular from 'angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common'; 
-import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef } from '@angular/core';
-import { NgModule } from '@angular/core';
-
-
-*/
-
-
 
 @Component({
     selector: 'country-form-ng2',
@@ -45,6 +36,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     bulkEditShow: any;
     countryForm: any;
+    countryFormAddresses: any;
     defaultVisibility: any;
     emailSrvc: any;
     newElementDefaultVisibility: any;
@@ -54,18 +46,15 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showEdit: any;
     showElement: any;
 
-    constructor( 
-        private commonService: CommonService,
+    constructor(
+        private countryService: CountryService,
+        private emailService: EmailService,
         private modalService: ModalService
     ) {
-        //console.log('this.commonSrvc', this.commonSrvc2);
-        //console.log('test service ', commonService.getHeroes()); 
-
-
         this.bulkEditShow = false;
         this.countryForm = null;
+        this.countryFormAddresses = [];
         this.defaultVisibility = null;
-        //this.emailSrvc = emailSrvc;
         this.newElementDefaultVisibility = null;
         this.newInput = false;    
         this.orcidId = orcidVar.orcidId;
@@ -74,22 +63,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement = {};
     }
 
-    /*
-    showEmailVerificationModal(): void{
-        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
-    };
-
-    $scope.emailSrvc.getEmails(
-        function(data) {
-            emails = data.emails;
-            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
-                emailVerified = true;
-            }
-        }
-    );
-    */
-
-    addNewModal(): void {       
+    addNewCountry(): void {       
         var tmpObj = {
             "errors":[],
             "iso2Country": null,
@@ -111,11 +85,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     closeEditModal(): void{
-        $.colorbox.close();
-    };
-
-    closeModal(): void{     
-        $.colorbox.close();
+        this.modalService.notifyOther({action:'close', moduleId: 'modalCountryForm'});
     };
 
     deleteCountry(country): void{
@@ -130,6 +100,20 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getCountryForm(): void{
+        this.countryService.getCountryData()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.countryForm = data;
+                this.countryFormAddresses = this.countryForm.addresses;
+                console.log('this.countryForm', this.countryForm);
+            },
+            error => {
+                console.log('getCountryFormError', error);
+            } 
+        );
+
+        /*
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
@@ -156,7 +140,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                          *  - If the item visibility is not null, set the default visibility to the item visibility
                          * - If the default visibility is not null:
                          *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-                         * */
+                         * * /
                         if(this.defaultVisibility == null) {
                             if(itemVisibility != null) {
                                 this.defaultVisibility = itemVisibility;
@@ -192,6 +176,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
             console.log("error fetching external identifiers");
             logAjaxError(e);
         });
+        */
     };
 
     /*
@@ -342,7 +327,8 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        console.log('country init');
+        console.log('country form init');
+        this.getCountryForm();
     };
 
 }
