@@ -19,8 +19,6 @@ package org.orcid.core.cli;
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -99,6 +97,10 @@ public class LoadGridData {
 
     public long getObsoletedOrgs() {
         return obsoletedOrgs;
+    }        
+
+    public long getUpdatedExternalIdentifiers() {
+        return updatedExternalIdentifiers;
     }
 
     public static void main(String[] args) {
