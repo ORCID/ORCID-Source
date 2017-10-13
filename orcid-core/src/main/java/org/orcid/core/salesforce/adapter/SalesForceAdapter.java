@@ -18,6 +18,7 @@ package org.orcid.core.salesforce.adapter;
 
 import static org.orcid.core.utils.JsonUtils.extractObject;
 import static org.orcid.core.utils.JsonUtils.extractString;
+import static org.orcid.core.utils.JsonUtils.extractBoolean;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -189,7 +190,9 @@ public class SalesForceAdapter {
         Integration integration = new Integration();
         String name = extractString(integrationRecord, "Name");
         integration.setName(name);
+        integration.setBadgeAwarded(extractBoolean(integrationRecord, "BadgeAwarded__c"));
         integration.setDescription(extractString(integrationRecord, "Description__c"));
+        integration.setLevel(extractString(integrationRecord, "Level__c"));
         integration.setStage(extractString(integrationRecord, "Integration_Stage__c"));
         try {
             integration.setResourceUrl(extractURL(integrationRecord, "Integration_URL__c"));

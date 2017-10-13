@@ -522,7 +522,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
         WebResource resource = createQueryResource(
-                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'",
+                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'",
                 memberId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);

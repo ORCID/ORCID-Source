@@ -5924,6 +5924,17 @@ a:hover .mozilla-badge {
     padding-left: 10px
 }
 
+.member-list .cc-badge{
+    float: left;
+    margin: .2em;
+    padding: 0;
+}
+
+.cc-badge.popover-help-container .popover {
+    left: -116px;
+}
+
+
 .member-list h1 a,.member-list h1 a:visited,.member-list h2 a,.member-list h2 a:visited {
     color: #a6ce39;
     text-decoration: none;

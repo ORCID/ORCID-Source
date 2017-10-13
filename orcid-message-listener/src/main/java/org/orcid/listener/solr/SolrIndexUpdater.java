@@ -73,14 +73,10 @@ public class SolrIndexUpdater {
         }
     }
 
-    public void deleteById(String orcid) {
-        try {
-            solrServer.deleteById(orcid);
-            solrServer.commit();
-        } catch (SolrServerException e) {
-            throw new NonTransientDataAccessResourceException("Error removing element from SOLR Server", e);
-        } catch (IOException e) {
-            throw new NonTransientDataAccessResourceException("IOException when removing element from SOLR", e);
-        }   
-    }        
+    public void processInvalidRecord(String orcid) {
+        OrcidSolrDocument doc = new OrcidSolrDocument();
+        doc.setOrcid(orcid);
+        doc.setProfileLastModifiedDate(retrieveLastModified(orcid));
+        this.persist(doc);
+    }
 }
