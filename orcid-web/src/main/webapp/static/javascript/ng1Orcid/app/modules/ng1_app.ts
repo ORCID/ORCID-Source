@@ -16,6 +16,8 @@ import { BiographyModule }
     from './biography/biography.ts';
 import { CountryModule } 
     from './country/country.ts';
+import { CountryFormModule } 
+    from './countryForm/countryForm.ts';
 import { EmailUnverifiedWarningModule } 
     from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
 import { EmailVerificationSentMesssageModule } 
@@ -36,6 +38,7 @@ export const orcidApp = angular.module(
         uibootstraptypeahead,
         BiographyModule.name,
         CountryModule.name,
+        CountryFormModule.name,
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
         ModalModule.name,

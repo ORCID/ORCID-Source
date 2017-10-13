@@ -30,6 +30,8 @@ import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
@@ -89,11 +91,13 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date createdDate;
 
     private Date lastModified;
-    
+
     private Text url;
-    
+
     private List<OrgDisambiguatedExternalIdentifiers> orgDisambiguatedExternalIdentifiers;
-    
+
+    private List<AffiliationExternalIdentifier> affiliationExternalIdentifiers;
+
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
 
@@ -155,18 +159,26 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
                 form.setSourceName(source.getSourceName().getContent());
             }
         }
-        
+
         if (affiliation.getUrl() != null) {
             form.setUrl(Text.valueOf(affiliation.getUrl().getValue()));
         } else {
             form.setUrl(new Text());
         }
 
+        if (affiliation.getExternalIDs() != null) {
+            List<AffiliationExternalIdentifier> affiliationExternalIdentifiers = new ArrayList<>();
+            for (ExternalID externalID : affiliation.getExternalIDs().getExternalIdentifier()) {
+                affiliationExternalIdentifiers.add(AffiliationExternalIdentifier.valueOf(externalID));
+            }
+            form.setAffiliationExternalIdentifiers(affiliationExternalIdentifiers);
+        }
+
         form.setCreatedDate(Date.valueOf(affiliation.getCreatedDate()));
         form.setLastModified(Date.valueOf(affiliation.getLastModifiedDate()));
         return form;
     }
-    
+
     public static AffiliationForm valueOf(org.orcid.jaxb.model.record_v2.Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
 
@@ -246,7 +258,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(putCode)) {
             affiliation.setPutCode(Long.valueOf(putCode.getValue()));
         }
-        if(visibility != null && visibility.getVisibility() != null) {
+        if (visibility != null && visibility.getVisibility() != null) {
             affiliation.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.getVisibility().value()));
         }
         Organization organization = new Organization();
@@ -280,6 +292,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             affiliation.setUrl(new Url(url.getValue()));
         }
         
+        if (affiliationExternalIdentifiers != null) {
+            ExternalIDs externalIDs = new ExternalIDs();
+            for (AffiliationExternalIdentifier affiliationExternalIdentifier : affiliationExternalIdentifiers) {
+                externalIDs.getExternalIdentifier().add(affiliationExternalIdentifier.toExternalID());
+            }
+            affiliation.setExternalIDs(externalIDs);
+        }
+
         return affiliation;
     }
 
@@ -514,4 +534,13 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     public void setOrgDisambiguatedExternalIdentifiers(List<OrgDisambiguatedExternalIdentifiers> orgDisambiguatedExternalIdentifiers) {
         this.orgDisambiguatedExternalIdentifiers = orgDisambiguatedExternalIdentifiers;
     }        
+
+    public List<AffiliationExternalIdentifier> getAffiliationExternalIdentifiers() {
+        return affiliationExternalIdentifiers;
+    }
+
+    public void setAffiliationExternalIdentifiers(List<AffiliationExternalIdentifier> affiliationExternalIdentifiers) {
+        this.affiliationExternalIdentifiers = affiliationExternalIdentifiers;
+    }
+
 }

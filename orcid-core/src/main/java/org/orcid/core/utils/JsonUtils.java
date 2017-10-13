@@ -89,6 +89,18 @@ public class JsonUtils {
         }
     }
     
+    public static Boolean extractBoolean(JSONObject record, String key) {
+        //this should not happen
+        if (record.isNull(key)) {
+            return null;
+        }
+        try {
+            return record.getBoolean(key);
+        } catch (JSONException e) {
+            throw new RuntimeException("Error extracting boolean from json", e);
+        }
+    }
+    
     public static JsonNode read(File file) {
         try {
             return mapper.readTree(file);
