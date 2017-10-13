@@ -1458,6 +1458,11 @@ ul.privacyHelp li.private {
     height: auto
 }
 
+.more-info .org-ids .ng-binding {
+    min-height: 0;
+    height: auto
+}
+
 .workspace-toolbar {
     margin-top: 0;
     padding-left: 0;
