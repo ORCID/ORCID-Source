@@ -68,4 +68,9 @@ public interface Affiliation {
     Url getUrl();
     
     void setUrl(Url url);
+    
+    ExternalIDs getExternalIDs();
+    
+    void setExternalIDs(ExternalIDs externalIDs);
+   
 }

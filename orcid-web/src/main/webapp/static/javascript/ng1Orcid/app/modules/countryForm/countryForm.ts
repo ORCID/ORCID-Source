@@ -13,15 +13,15 @@ import { FormsModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-import { CountryComponent } 
-    from './country.component.ts';
+import { CountryFormComponent } 
+    from './countryForm.component.ts';
 
 import { PrivacytoggleComponent } 
     from './../privacytoggle/privacyToggle.component.ts';
 
 // This is the Angular 1 part of the module
-export const CountryModule = angular.module(
-    'CountryModule', 
+export const CountryFormModule = angular.module(
+    'CountryFormModule', 
     []
 );
 
@@ -30,10 +30,11 @@ export const CountryModule = angular.module(
 @NgModule(
     {
         declarations: [
-            CountryComponent
+            CountryFormComponent,
+            //PrivacytoggleComponent
         ],
         entryComponents: [ 
-            CountryComponent 
+            CountryFormComponent 
         ],
         imports: [
             CommonModule,
@@ -43,16 +44,16 @@ export const CountryModule = angular.module(
         ]
     }
 )
-export class CountryNg2Module {}
+export class CountryFormNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
-CountryModule.directive(
-    'countryNg2', 
+CountryFormModule.directive(
+    'countryFormNg2', 
     <any>downgradeComponent(
         {
-            component: CountryComponent
+            component: CountryFormComponent
         }
     )
 );

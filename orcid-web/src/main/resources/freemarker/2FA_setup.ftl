@@ -51,7 +51,7 @@
                 <p>
                     ${springMacroRequestContext.getMessage("2FA.recoveryCodes.details")}
                     <br />
-                    <a href="${knowledgeBaseUri}/articles/580410" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
+                    <a href="${knowledgeBaseUri}/articles/1190068" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                 </p>
                 <div id="recoveryCodes">
                     <div class="halfwidth form-group" ng-repeat="recoveryCode in recoveryCodes" ng-bind-html="recoveryCode"></div>

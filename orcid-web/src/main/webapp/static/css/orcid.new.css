@@ -368,6 +368,13 @@ textarea {
     top: 0
 }
 
+.glyphicon-question-sign{
+    background-color: #fff;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
 .icon-inside-input {
     float: left;
     height: auto;
@@ -1551,7 +1558,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .work-title a.toggle-text,.workspace-accordion-header a.toggle-text,.workspace-title a.toggle-text {
     color: #fff;
-    display: inline-block;
+    //display: inline-block;
     font-size: 16px;
     font-weight: 700;
     height: 30px;
@@ -2013,12 +2020,19 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     word-break: normal
 }
 
-.settings-table .table td:nth-child(1),.settings-table .table td:nth-child(2) {
-    width: 100%
+.settings-table .table td:nth-child(1) {
+    width: 160%
 }
 
-.settings-table .table td:nth-child(3),.settings-table .table td:nth-child(4) {
-    width: 1%
+.settings-table .table td:nth-child(2) {
+    width: 50%
+}
+
+.settings-table .table td:nth-child(3) {
+    width: 60%
+}
+.settings-table .table td:nth-child(4) {
+    width: 45%
 }
 
 .settings-table .table>tbody>tr>td {
@@ -4059,12 +4073,29 @@ ul.sources-edit-list>li {
     display: none
 }
 
-#bio-section .edit-biography:hover .popover,.spinner span,.workspace-profile span>span {
+#bio-section .edit-biography:hover .popover,#bio-section .popover-help-container:hover .popover,.spinner span,.workspace-profile span>span {
     display: block
+}
+
+#bio-section .popover-help-container {
+    margin-left: 4px;
+}
+
+#bio-section .popover-help-container .popover {
+    left: -50px;
 }
 
 .id-banner .row .col-md-3 {
     margin-top: 15px
+}
+
+#workspace-education .workspace-accordion-header .popover-help-container .popover,
+#workspace-employment .workspace-accordion-header .popover-help-container .popover,
+#workspace-fundings .workspace-accordion-header .popover-help-container .popover,
+#workspace-publications .workspace-accordion-header .popover-help-container .popover,
+#workspace-peer-review .workspace-accordion-header .popover-help-container .popover,
+.print-orcid-record .popover-help-container .popover {
+    left: -246px;
 }
 
 #workspace-personal span.glyphicon-pencil,.workspace-section-title div.glyphicon-pencil {
@@ -4656,10 +4687,10 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 
 .workspace-top .popover-help-container .popover.privacy-myorcid3,.workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
     bottom: 45px;
-    left: initial;
+    left: auto;
     min-width: 242px;
     right: -5px;
-    top: initial;
+    top: auto;
     width: auto;
 }
 
@@ -4694,10 +4725,6 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 ul.sources-actions .combine-activeDuplicates-popover,ul.sources-actions .combine-inactiveDuplicates-popover,ul.sources-options .combine-duplicates-popover {
     top: -41px;
     left: -57px
-}
-
-ul.workspace-private-toolbar .popover-help-container {
-    position: static
 }
 
 ul.workspace-private-toolbar .popover-help-container .popover {
@@ -5795,6 +5822,10 @@ a:hover .mozilla-badge {
     margin-left: -20px
 }
 
+.email-pop-up .table-responsive .table {
+    table-layout: fixed;
+}
+
 .email-pop-up .col-md-12,.email-pop-up .control-group {
     margin-right: -15px;
     margin-left: -15px
@@ -5899,6 +5930,17 @@ a:hover .mozilla-badge {
 .member-list [class*=col] {
     padding-left: 10px
 }
+
+.member-list .cc-badge{
+    float: left;
+    margin: .2em;
+    padding: 0;
+}
+
+.cc-badge.popover-help-container .popover {
+    left: -116px;
+}
+
 
 .member-list h1 a,.member-list h1 a:visited,.member-list h2 a,.member-list h2 a:visited {
     color: #a6ce39;
@@ -6252,6 +6294,26 @@ ul.comma li:last-child:after {
     font-size: 12px;
     line-height: normal;
     padding: 8px 20px 8px 0
+}
+
+#settings h1{
+    float: left;
+    clear: both;
+}
+
+#settings .popover-help-container{
+    display: block;
+    margin: 30px 0 0 4px;
+    float: left;
+}
+
+#settings .popover-help-container .popover{
+    left: -128px;
+}
+
+#settings .section-heading{
+    clear: both;
+    margin-top: 1em;
 }
 
 .footer-main .inline-list li,.self-service #communities {
@@ -7853,7 +7915,7 @@ ul.comma li:last-child:after {
 .lang-rl .workspace-top .popover-help-container .popover.privacy-myorcid3, 
 .lang-rl .workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
     left: -80px;
-    right: initial;
+    right: auto;
 }
 
 .lang-rl .privacyToggle+.popover-help-container {
