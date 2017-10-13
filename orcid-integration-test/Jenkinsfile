@@ -1,0 +1,122 @@
+node {
+
+    properties([
+        buildDiscarder(
+            logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '2', daysToKeepStr: '', numToKeepStr: '3')
+        ),
+        [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
+        parameters([
+            string(
+                defaultValue: 'master', 
+                description: 'Branch or Tag to checkout and build', 
+                name: 'release_name'),
+            string(
+                defaultValue: "file://${WORKSPACE}/orcid-persistence/src/main/resources/staging-persistence.properties,classpath:test-client.properties,classpath:test-web.properties", 
+                description: 'Persistence properties file', 
+                name: 'org_orcid_config_file'),
+            string(
+                defaultValue: "classpath:test-client.properties,classpath:test-web.properties", 
+                description: 'Test properties file', 
+                name: 'org_orcid_config_test_file'),
+            string(
+                name: 'test_class_name',
+                defaultValue: 'org.orcid.integration.blackbox.BlackBoxTestSuite',
+                description: '')
+
+        ]),
+        disableConcurrentBuilds(),
+        pipelineTriggers([cron('0 H/4 * * 1-5')])
+    ])
+    
+    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${release_name}"
+    
+    def firefox_home = '/usr/bin/firefox'
+    
+    def gecko_home = '/usr/local/bin/geckodriver'
+    
+    stage('Deploy release'){
+        orcid_tomcat_sh "cp ~/cdn_url_cf.txt ~/git/ORCID-Source/orcid-web/src/main/resources/cdn_url_cf.txt"
+        orcid_tomcat_sh "python ~/bin/scripts/deployment/deploy-app.py --cdn cdn_url_cf --release ${release_name} web-and-solr"
+    }
+    
+    stage('Prepare test data'){
+        sh "psql -U jenkins -d orcid -f ~/clean_all_tables.sql"
+        def setup_users = false
+        try {
+            timeout(time:10,unit:'SECONDS'){
+                setup_users = input message: 'Would you like to STOP setup clients and users ?', 
+                                         ok: 'Skip',
+                                 parameters: [booleanParam(defaultValue: false, description: '', name: 'Skip ?')]
+            }
+        } catch(err){
+            echo err.toString()
+        }
+        if (setup_users) {
+            echo "Skiping users setup."
+        } else {
+            echo "Installing required users for blackbox tests"
+            do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -DfailIfNoTests=false -Dorg.orcid.config.file='${org_orcid_config_file}'")
+        }
+        sh "psql -U jenkins -d orcid -f ~/add_disambiguated_orgs.sql"
+        try {
+            echo "Including disambiguated orgs for indexing"
+            sh "mkdir ${WORKSPACE}/temp"
+            do_maven("exec:java -f orcid-core/pom.xml -Djava.io.tmpdir=${WORKSPACE}/temp -Dorg.orcid.config.file='${org_orcid_config_file}' -Dexec.mainClass='org.orcid.core.cli.ProcessDisambiguatedOrgsForIndexing'")            
+        } catch(err){
+            echo err.toString()
+        }
+    }
+    
+    stage('Execute blackbox tests') {
+        try {
+            echo "Creating xvfb..."
+            sh "Xvfb :1 -screen 0 1024x758x16 -fbdir /var/lib/jenkins/xvfb_jenkins & > /dev/null 2>&1 && echo \$! > /tmp/xvfb_jenkins.pid"
+            sh "cat /tmp/xvfb_jenkins.pid"        
+            echo "Running BB tests..."
+            sh "sleep 260"
+            do_maven("test -f orcid-integration-test/pom.xml -Dtest='${test_class_name},!*.ShibbolethTest*' -Dorg.orcid.config.file='${org_orcid_config_test_file}' -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=$firefox_home  -Dwebdriver.gecko.driver=$gecko_home")
+            orcid_notify("BlackBoxTest ${release_name}#$BUILD_NUMBER OK [${JOB_URL}]", 'SUCCESS')
+        } catch(Exception err) {
+            def err_msg = err.getMessage()
+            echo "Tests problem: $err_msg"
+            orcid_notify("BlackBoxTest ${release_name}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            throw err
+        } finally {
+            echo "Saving tests results"
+            junit '**/target/surefire-reports/*.xml'
+            test_cleanup()
+        }
+    }
+}
+
+def test_cleanup(){
+    echo "Stoping tomcat..."
+    orcid_tomcat_sh "sh /home/orcid_tomcat/bin/tomcat/bin/shutdown.sh"
+    echo "Destroying xvfb..."
+    sh "XVFB_PID=\$(cat /tmp/xvfb_jenkins.pid) ; kill \$XVFB_PID"    
+}
+
+def orcid_tomcat_sh(cmd){
+    sh "sudo -H -u orcid_tomcat bash  -c '${cmd}'"
+}
+
+def do_maven(mvn_task){
+    def MAVEN = tool 'ORCID_MAVEN'
+    try{
+        sh "export MAVEN_OPTS=' -Xms32m -Xmx2048m' ; export DISPLAY=:1.0 ; $MAVEN/bin/mvn $mvn_task"
+    } catch(Exception err) {
+        throw err
+    }
+} 
+
+def orcid_notify(message, level){
+    def color = "#d00000"
+    if(level == 'SUCCESS'){
+        color = "#36a64f"
+    }
+    try{
+        slackSend color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid', channel: '#tech-ci-blackbox'
+    } catch(Exception err) {
+        echo err.toString()
+    }
+}
