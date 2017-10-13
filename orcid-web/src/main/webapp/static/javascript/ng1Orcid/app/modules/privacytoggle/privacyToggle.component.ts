@@ -2,8 +2,10 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
+/*
 import { BiographyService } 
     from '../../shared/biographyService.ts'; 
+*/
 
 import { ConfigurationService } 
     from '../../shared/configurationService.ts';

@@ -148,7 +148,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri one = new RedirectUri();
         one.setType(Text.valueOf("default"));
-        one.setValue(Text.valueOf("http://test.orcid.org"));
+        one.setValue(Text.valueOf(""));
         redirectUris.add(one);
         client.setRedirectUris(redirectUris);
                
@@ -200,7 +200,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri one = new RedirectUri();
         one.setType(Text.valueOf("default"));
-        one.setValue(Text.valueOf("http://test.orcid.org"));
+        one.setValue(Text.valueOf(""));
         redirectUris.add(one);
         client.setRedirectUris(redirectUris);
         
