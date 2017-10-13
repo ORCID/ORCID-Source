@@ -2013,12 +2013,19 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     word-break: normal
 }
 
-.settings-table .table td:nth-child(1),.settings-table .table td:nth-child(2) {
-    width: 100%
+.settings-table .table td:nth-child(1) {
+    width: 160%
 }
 
-.settings-table .table td:nth-child(3),.settings-table .table td:nth-child(4) {
-    width: 1%
+.settings-table .table td:nth-child(2) {
+    width: 50%
+}
+
+.settings-table .table td:nth-child(3) {
+    width: 60%
+}
+.settings-table .table td:nth-child(4) {
+    width: 45%
 }
 
 .settings-table .table>tbody>tr>td {
@@ -4656,10 +4663,10 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 
 .workspace-top .popover-help-container .popover.privacy-myorcid3,.workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
     bottom: 45px;
-    left: initial;
+    left: auto;
     min-width: 242px;
     right: -5px;
-    top: initial;
+    top: auto;
     width: auto;
 }
 
@@ -4694,10 +4701,6 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 ul.sources-actions .combine-activeDuplicates-popover,ul.sources-actions .combine-inactiveDuplicates-popover,ul.sources-options .combine-duplicates-popover {
     top: -41px;
     left: -57px
-}
-
-ul.workspace-private-toolbar .popover-help-container {
-    position: static
 }
 
 ul.workspace-private-toolbar .popover-help-container .popover {
@@ -5793,6 +5796,10 @@ a:hover .mozilla-badge {
 .email-pop-up .table-responsive {
     margin-right: -20px;
     margin-left: -20px
+}
+
+.email-pop-up .table-responsive .table {
+    table-layout: fixed;
 }
 
 .email-pop-up .col-md-12,.email-pop-up .control-group {
@@ -7864,7 +7871,7 @@ ul.comma li:last-child:after {
 .lang-rl .workspace-top .popover-help-container .popover.privacy-myorcid3, 
 .lang-rl .workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
     left: -80px;
-    right: initial;
+    right: auto;
 }
 
 .lang-rl .privacyToggle+.popover-help-container {
