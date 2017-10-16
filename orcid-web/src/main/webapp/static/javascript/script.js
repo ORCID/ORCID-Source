@@ -247,7 +247,7 @@ if (typeof String.prototype.trim != 'function') {
 }
 
 // This is to prevent IE from caching ajax request via jquery
-$.ajaxSetup({ 
+$.ajaxSetup({
     cache : false
 });
 
