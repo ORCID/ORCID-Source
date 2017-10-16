@@ -247,7 +247,7 @@ if (typeof String.prototype.trim != 'function') {
 }
 
 // This is to prevent IE from caching ajax request via jquery
-$.ajaxSetup({
+$.ajaxSetup({ 
     cache : false
 });
 
@@ -1040,10 +1040,10 @@ function populateWorkAjaxForm(bibJson, work) {
 
         if (lowerKeyTags.hasOwnProperty('year'))
             if (!isNaN(lowerKeyTags['year']))
-                work.publicationDate.year = lowerKeyTags['year'];
+                work.publicationDate.year = lowerKeyTags['year'].trim();
 
         if (lowerKeyTags.hasOwnProperty('month')) {
-            var month = lowerKeyTags['month'];
+            var month = lowerKeyTags['month'].trim();
             if (bibMonths.indexOf(month.trim().substring(0,3)) >= 0) 
                 month = bibMonths.indexOf(month.trim().substring(0,3)) + 1;
             if (!isNaN(month) && month > 0 && month <= 12)
