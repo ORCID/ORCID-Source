@@ -2085,6 +2085,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #494a4c
 }
 
+.overflow-hidden,
 .popover-content {
     overflow: hidden
 }
