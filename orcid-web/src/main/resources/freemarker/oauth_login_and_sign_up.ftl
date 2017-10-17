@@ -61,14 +61,17 @@
                                 <form>
                                     <p class="title">${springMacroRequestContext.getMessage("login.signinwithyourorcidaccount")}</p>
                                     <div class="row personal-login">
+                                        <!-- Email or iD -->
                                         <div class="form-group">
                                             <label for="userId" class="control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/> *</label>                     
                                             <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
                                         </div>
+                                        <!-- Password -->
                                         <div class="form-group">
                                             <label for="password" class="control-label"><@orcid.msg 'login.password'/></label>
                                             <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="<@orcid.msg 'login.password'/>" class="form-control">
                                         </div>  
+                                        <!-- 2FA -->
                                         <div class="form-group" ng-show="showVerificationCodeFor2FA">
                                             ${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}
                                             <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                                       
@@ -85,6 +88,7 @@
                                                 ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                                             </span>
                                         </div>
+                                         <!-- Buttons -->
                                         <div class="form-group oauth-buttons">     
                                             <a class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
                                             <@orcid.msg 'confirm-oauth-access.Deny' />
@@ -403,8 +407,7 @@
                                     <span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
                                 </div>
                                 <!-- Buttons  -->
-                                <!--<div class="row col-md-12 oauth-buttons">-->
-                                <div class="bottomBuffer col-xs-12 col-sm-3">
+                                <div class="form-group oauth-buttons">
                                     <a id="register-form-deny" class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
                                         <@orcid.msg 'confirm-oauth-access.Deny' />
                                     </a>
