@@ -5833,7 +5833,8 @@ a:hover .mozilla-badge {
 
 html[lang=ko] .email-pop-up .table-responsive .table,
 html[lang=ja] .email-pop-up .table-responsive .table,
-html[lang=zh_CN] .email-pop-up .table-responsive .table {
+html[lang=zh_CN] .email-pop-up .table-responsive .table,
+html[lang=zh_TW] .email-pop-up .table-responsive .table, {
     table-layout: fixed;
 }
 
