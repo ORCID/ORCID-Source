@@ -20,7 +20,7 @@
 
 <#include "includes/peer_review/add_peer_review_inc.ftl"/>
 <div>
-    <div class="workspace-accordion accordion-peer-review" id="workspace-accordion">
+    <div class="workspace-accordion accordion-peer-review clearfix" id="workspace-accordion">
         <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active">
             <div class="workspace-accordion-header"><a name='workspace-peer-review'></a>
                 <div class="row">
@@ -34,7 +34,7 @@
                                 <div id="peer-review-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="${knowledgeBaseUri}/articles/1807594" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></p>
+                                        <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="${knowledgeBaseUri}/articles/1807594" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div>                               
