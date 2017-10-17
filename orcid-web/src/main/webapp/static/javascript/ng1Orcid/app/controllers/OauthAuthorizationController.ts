@@ -187,7 +187,8 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.registrationForm = data;                            
+                        $scope.registrationForm = data;
+                        $scope.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                             
                         if($scope.registrationForm.email.value && !$scope.isOrcidPresent){
                             $scope.showRegisterForm = true;
                         }
@@ -198,6 +199,15 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
                             $scope.showReactivationSent = false;
                         }); // initialize the watch
+
+                        // special handling of deactivation error for additional emails
+                        $scope.$watch('registrationForm.emailsAdditional', function(newValue, oldValue) {
+                            for (var index in $scope.registrationForm.emailsAdditional) {
+                                $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.emailsAdditional[index].errors) != -1));
+                                $scope.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                            }                              
+                        }, true); // initialize the watch
+                    }
 
                     }
                 }).fail(function() {
