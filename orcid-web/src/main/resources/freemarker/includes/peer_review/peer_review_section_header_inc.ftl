@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="workspace-accordion-header">
+<div class="workspace-accordion-header clearfix">
     <div class="row">
         <div class="col-md-3 col-sm-2 col-xs-12">
             <div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
@@ -30,7 +30,7 @@
                         <div id="peer-review-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">
-                                <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="${knowledgeBaseUri}/articles/1807594" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></p>
+                                <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="${knowledgeBaseUri}/articles/1807594" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
                             </div>
                         </div>
                     </div>
