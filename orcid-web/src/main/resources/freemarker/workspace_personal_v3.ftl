@@ -21,7 +21,16 @@
         <div class="biography-controller" id="bio-section">
             <div class="row">
                 <div class="col-md-9 col-sm-8 col-xs-4">
-                    <h3 (click)="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h3>      
+                    <h3 (click)="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h3>  
+                    <div class="popover-help-container">
+                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <div id="bio-help" class="popover bottom">
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <p><@orcid.msg 'manage_bio_settings.helpPopoverBio'/></p>
+                            </div>
+                        </div>
+                    </div>   
                 </div>
                 <div class="col-md-3 col-sm-4 col-xs-8">
                     <ul class="inline-list bio-edit right">

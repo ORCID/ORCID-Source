@@ -28,6 +28,9 @@ public enum Features implements Feature {
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
     
+    @Label("Badges on member details")
+    BADGES,
+    
     @Label("Last modified")
     LAST_MOD,
     
