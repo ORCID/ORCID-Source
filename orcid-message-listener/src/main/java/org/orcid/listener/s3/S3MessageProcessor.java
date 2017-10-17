@@ -76,7 +76,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         String orcid = m.getOrcid();
         update_1_2_API(orcid);
         update_2_0_API(m);
-        update_2_0_Activities_API(orcid);
+        update_2_0_Activities_API(m);
     }
 
     public void accept(RetryMessage m) {
@@ -87,7 +87,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         } else if (AvailableBroker.DUMP_STATUS_2_0_API.equals(destinationBroker)) {
             update_2_0_API(m);
         } else if (AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API.equals(destinationBroker)) {
-            update_2_0_Activities_API(orcid);
+            update_2_0_Activities_API(m);
         }
     }
 
@@ -162,11 +162,12 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         }
     }
 
-    private void update_2_0_Activities_API(String orcid) {
+    private void update_2_0_Activities_API(BaseMessage message) {
+        String orcid = message.getOrcid();
         if (is20ActivitiesIndexingEnabled) {
             // Update API 2.0
             try {
-                ActivitiesSummary as = orcid20ApiClient.fetchPublicActivities(orcid);
+                ActivitiesSummary as = orcid20ApiClient.fetchPublicActivities(message);
                 if (as != null) {
                     s3Updater.updateS3(orcid, as);
                     recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);

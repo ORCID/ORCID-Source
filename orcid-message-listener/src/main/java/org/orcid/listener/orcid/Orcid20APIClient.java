@@ -30,7 +30,6 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.BaseMessage;
-import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +64,8 @@ public class Orcid20APIClient {
 
     /**
      * Fetches the public record from the ORCID API v2.0
+     * 
+     * Caches based on message.
      * 
      * @param orcid
      * @return Record
@@ -103,26 +104,8 @@ public class Orcid20APIClient {
      * @param orcid
      * @return Record
      */
-    public ActivitiesSummary fetchPublicActivities(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/activities");
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
-        if (response.getStatus() != 200) {
-            OrcidError orcidError = null;
-            switch (response.getStatus()) {
-            case 301:
-                orcidError = response.getEntity(OrcidError.class);
-                throw new DeprecatedRecordException(orcidError);
-            case 409:
-                orcidError = response.getEntity(OrcidError.class);
-                throw new LockedRecordException(orcidError);
-            default:
-                LOG.error("Unable to fetch public activities for " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
-                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-            }
-        }
-        return response.getEntity(ActivitiesSummary.class);
+    public ActivitiesSummary fetchPublicActivities(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
+        return this.fetchPublicRecord(message).getActivitiesSummary();
     }
     
     public Funding fetchFunding(String orcid, Long putCode){
