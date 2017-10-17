@@ -507,7 +507,7 @@
           </div>
         </div>
         <div ng-controller="PeerReviewCtrl">
-          <div ng-cloak>
+          <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
             <#include "workspace_peer_review_body_list.ftl"/>
           </div>
         </div>
