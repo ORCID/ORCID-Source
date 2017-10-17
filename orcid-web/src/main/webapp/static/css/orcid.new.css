@@ -4081,7 +4081,7 @@ ul.sources-edit-list>li {
     margin-left: 4px;
 }
 
-#bio-section .popover-help-container .popover {
+#bio-section .popover-help-container #bio-help {
     left: -50px;
 }
 
