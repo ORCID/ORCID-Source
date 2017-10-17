@@ -6721,6 +6721,10 @@ ul.comma li:last-child:after {
         border-bottom: none
     }
 
+    .login .login-box {
+        padding: 15px 0;
+    }
+
     #uvTabLabel {
         display: none!important
     }
