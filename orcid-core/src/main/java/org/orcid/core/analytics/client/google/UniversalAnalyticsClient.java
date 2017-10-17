@@ -108,7 +108,9 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
             if (response != 200) {
                 String responseBody = null;
                 try (InputStream errorStream = connection.getErrorStream()) {
-                    responseBody = IOUtils.toString(errorStream);
+                    if (errorStream != null) {
+                        responseBody = IOUtils.toString(errorStream);
+                    }
                 }
                 LOGGER.warn("Analytics: received response code {}, payload was {}, response body is {}", new Object[] { response, payload, responseBody });
             }
@@ -135,4 +137,5 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
         payload.append("&").append(CLIENT_PARAM).append("=").append(data.getClientDetailsString());
         return UriEncoder.encode(payload.toString());
     }
+
 }
