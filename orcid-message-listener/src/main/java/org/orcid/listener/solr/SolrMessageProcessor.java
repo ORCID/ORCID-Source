@@ -87,6 +87,8 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             // Remove deactivated records from SOLR index
             if (record.getHistory() != null && record.getHistory().getDeactivationDate() != null && record.getHistory().getDeactivationDate().getValue() != null) {
                 solrUpdater.processInvalidRecord(orcid);
+                recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
+                return;
             }
             
             //get detailed funding so we can discover org name and id

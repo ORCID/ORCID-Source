@@ -27,6 +27,15 @@
 		</div>
 		<div class="col-md-9 col-sm-9">
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</h1>
+			<div class="popover-help-container">
+                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <div id="bio-help" class="popover bottom">
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <p><@orcid.msg 'manage.help_popover.accountSettings'/></p>
+                    </div>
+                </div>
+            </div>
 			<table class="table table-bordered table-settings">
 				<tbody>
 					<tr>
@@ -52,6 +61,7 @@
 				</tbody>
 			</table>
 			<h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</h1>
+			
 			<h4>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</h4>
 			<p>${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br /> 
 			<a href="${knowledgeBaseUri}/articles/131598">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>

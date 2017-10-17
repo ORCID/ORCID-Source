@@ -16,6 +16,7 @@
  */
 package org.orcid.core.adapter.jsonidentifier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JSONExternalIdentifiers {
@@ -23,6 +24,9 @@ public class JSONExternalIdentifiers {
     private List<JSONExternalIdentifier> externalIdentifier;
 
     public List<JSONExternalIdentifier> getExternalIdentifier() {
+        if (externalIdentifier == null) {
+            externalIdentifier = new ArrayList<>();
+        }
         return externalIdentifier;
     }
 

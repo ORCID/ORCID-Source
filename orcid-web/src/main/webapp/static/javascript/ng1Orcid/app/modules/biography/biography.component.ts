@@ -79,7 +79,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showEdit = false;
     };
 
-    getBiographyForm(): void{
+    getBiographyForm(): void {
         this.biographyService.getBiographyData()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
