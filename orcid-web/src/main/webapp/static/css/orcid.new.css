@@ -5831,7 +5831,9 @@ a:hover .mozilla-badge {
     margin-left: -20px
 }
 
-.email-pop-up .table-responsive .table {
+html[lang=ko] .email-pop-up .table-responsive .table,
+html[lang=ja] .email-pop-up .table-responsive .table,
+html[lang=zh_CN] .email-pop-up .table-responsive .table {
     table-layout: fixed;
 }
 
