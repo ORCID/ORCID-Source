@@ -5332,7 +5332,7 @@ ul.oauth-scopes li {
 }
 
 .workspace-peer-review span.title {
-    font-size: 14px;
+    font-size: 17px;
     color: #494a4c;
     font-weight: 400;
     cursor: pointer
@@ -5353,7 +5353,8 @@ ul.oauth-scopes li {
 }
 
 .workspace-peer-review ul.sources-edit-list>li:first-child {
-    box-shadow: none
+    box-shadow: none;
+    font-size: 12px;
 }
 
 .truncate {
@@ -5383,6 +5384,14 @@ ul.oauth-scopes li {
 
 .peer-review-group .workspace-toolbar .vis-issue {
     margin-bottom: 5px
+}
+
+.source-line-peer-review {
+    font-size: 14px;
+}
+
+.source-line-peer-review>div:last-child {
+    font-size: 12px;
 }
 
 ul.sources-edit-list>li.peer-review-group {
@@ -7664,6 +7673,10 @@ ul.comma li:last-child:after {
     position: absolute
 }
 
+.lang-rl #cboxLoadedContent {
+    overflow: hidden!important;
+}
+
 .lang-rl #idpSelectInput {
     margin-left: 5px
 }
@@ -7774,6 +7787,10 @@ ul.comma li:last-child:after {
 .lang-rl .lhs {
     float: right;
     padding-left: 20px!important
+}
+
+.lang-rl .lightbox-container {
+    padding: 0 30px 0 0; 
 }
 
 .lang-rl .menu-container,.lang-rl .workspace-bar-menu {
