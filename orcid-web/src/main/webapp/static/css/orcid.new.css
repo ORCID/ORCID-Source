@@ -132,6 +132,13 @@ html {
     overflow-y: scroll
 }
 
+html[lang=ko] .email-pop-up .table-responsive .table,
+html[lang=ja] .email-pop-up .table-responsive .table,
+html[lang=zh_CN] .email-pop-up .table-responsive .table,
+html[lang=zh_TW] .email-pop-up .table-responsive .table {
+    table-layout: fixed;
+}
+
 img {
     -ms-interpolation-mode: bicubic;
     border: 0;
@@ -5829,13 +5836,6 @@ a:hover .mozilla-badge {
 .email-pop-up .table-responsive {
     margin-right: -20px;
     margin-left: -20px
-}
-
-html[lang=ko] .email-pop-up .table-responsive .table,
-html[lang=ja] .email-pop-up .table-responsive .table,
-html[lang=zh_CN] .email-pop-up .table-responsive .table,
-html[lang=zh_TW] .email-pop-up .table-responsive .table, {
-    table-layout: fixed;
 }
 
 .email-pop-up .col-md-12,.email-pop-up .control-group {
