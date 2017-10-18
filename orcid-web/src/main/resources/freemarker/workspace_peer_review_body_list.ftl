@@ -20,7 +20,7 @@
 
 <#include "includes/peer_review/add_peer_review_inc.ftl"/>
 <div>
-    <div class="workspace-accordion accordion-peer-review" id="workspace-accordion">
+    <div class="workspace-accordion accordion-peer-review clearfix" id="workspace-accordion">
         <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active">
             <div class="workspace-accordion-header"><a name='workspace-peer-review'></a>
                 <div class="row">
@@ -28,7 +28,16 @@
                          <div class="workspace-title">                                          
                             <a ng-click="workspaceSrvc.togglePeerReview()" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.peerReviewCount()"></span>)
-                            </a>                                
+                            </a>  
+                            <div class="popover-help-container">
+                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <div id="peer-review-help" class="popover bottom">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="${knowledgeBaseUri}/articles/1807594" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
+                                    </div>
+                                </div>
+                            </div>                               
                         </div>
                     </div>
                     <div class="col-md-7 col-sm-10 col-xs-12 action-button-bar">

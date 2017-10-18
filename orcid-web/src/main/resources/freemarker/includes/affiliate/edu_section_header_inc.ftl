@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="workspace-accordion-header">
+<div class="workspace-accordion-header clearfix">
     <div class="row">
         <div class="col-md-3 col-sm-3 col-xs-12">
             <a name='workspace-educations' />
@@ -24,15 +24,17 @@
                 <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
             </a>
-            <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                <div id="education-help" class="popover bottom">
-                    <div class="arrow"></div>
-                    <div class="popover-content">
-                        <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="${knowledgeBaseUri}/topics/1807522" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></p>
+            <#if !(isPublicProfile??)> 
+                <div class="popover-help-container">
+                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <div id="education-help" class="popover bottom">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></a></p>
+                        </div>
                     </div>
-                </div>
-            </div>  
+                </div>  
+            </#if>
         </div>
         <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEducation">
             <#include "../workspace/workspace_act_sort_menu.ftl"/>                    

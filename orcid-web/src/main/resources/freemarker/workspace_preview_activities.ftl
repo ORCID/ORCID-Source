@@ -55,7 +55,6 @@
 	    </div>
 	</div>
 </#if>
-
 <!-- Works -->
 <#if !(worksEmpty)??>		
 	<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-cloack>
