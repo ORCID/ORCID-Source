@@ -33,6 +33,7 @@
         <th>Primary use</th>
       </tr>
       <xsl:for-each select="identifierTypes/identifierType">
+      <xsl:sort select="name"/>
       <tr>
         <td><xsl:value-of select="name"/></td>
         <td><xsl:value-of select="description"/></td>

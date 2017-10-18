@@ -42,8 +42,17 @@
         <#include "admin_menu.ftl"/>
     </div>
     <!-- Right side -->
-    <div class="col-md-9 col-sm-12 col-xs-12">
+    <div class="col-md-9 col-sm-12 col-xs-12" id="settings">
         <h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
+        <div class="popover-help-container">
+            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+            <div id="account-settings-help" class="popover bottom">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <p><@orcid.msg 'manage.help_popover.accountSettings'/> <a href="${knowledgeBaseUri}/topics/141844" target="manage.help_popover.accountSettings"><@orcid.msg 'common.learn_more'/></a></p>
+                </div>
+            </div>
+        </div>
         <#assign open = "" />
         <modal-unverified-email-set-primary></modal-unverified-email-set-primary>
         <table class="table table-bordered settings-table account-settings"
@@ -408,16 +417,24 @@
                 </#if>
             </tbody>
         </table>
-        
-        <h1 id="manage-permissions">
-            ${springMacroRequestContext.getMessage("manage.trusted_organisations")}
-        </h1>
-        <p>
-            ${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br />
-            <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedOrganizations.url")}"
-                target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
-        </p>
-        <div ng-controller="revokeApplicationFormCtrl" >
+        <div class="section-heading">
+            <h1 id="manage-permissions">
+                ${springMacroRequestContext.getMessage("manage.trusted_organisations")}
+            </h1>
+            <div class="popover-help-container">
+                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <div id="trusted-organizations-help" class="popover bottom">
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <p><@orcid.msg 'manage.help_popover.trustedOrganizations'/> <a href="${knowledgeBaseUri}/articles/131598" target="manage.help_popover.trustedOrganizations"><@orcid.msg 'common.learn_more'/></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-controller="revokeApplicationFormCtrl" class="clearfix">
+            <div ng-show="!applicationSummaryList.length > 0" ng-cloak>
+                <p><@orcid.msg 'manage.none_added.trustedOrganizations'/></p>
+            </div>
             <div ng-show="applicationSummaryList.length > 0" ng-cloak>
                 <table class="table table-bordered settings-table normal-width">
                     <thead>
@@ -458,52 +475,65 @@
                 </table>
             </div>
         </div>
-        <h1>
-            ${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
-        </h1>
-        <p>
-            ${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
-            <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedIndividual.url")}"
-                target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
-        </p>
-        <div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
-            <div class="ng-hide" ng-show="showInitLoader == true;">
+        <div class="section-heading">
+            <h1>
+                ${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
+            </h1>
+            <div class="popover-help-container">
+                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <div id="trusted-individuals-help" class="popover bottom">
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <p><@orcid.msg 'manage.help_popover.trustedIndividuals'/> <a href="${knowledgeBaseUri}/articles/217659" target="manage.help_popover.trustedIndividuals"><@orcid.msg 'common.learn_more'/></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-controller="DelegatesCtrl" class="clearfix" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
+            <div ng-show="delegation.length > 0" ng-cloak>
+                <div class="ng-hide" ng-show="showInitLoader == true;">
                 <i id="delegates-spinner" class="glyphicon glyphicon-refresh spin x4 green"></i>
                 <!--[if lt IE 8]>    
                     <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                 <![endif]-->
             </div>
-            <table class="table table-bordered settings-table normal-width" ng-show="delegation" ng-cloak>
-                <thead>
-                    <tr>
-                        <th width="40%" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
-                        <th width="30%" ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-                        <th width="20%" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-                        <td width="10%"></td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="delegationDetails in delegation | orderBy:sort.column:sort.descending">
-                        <td width="40%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
-                        <td width="30%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
-                        <td width="20%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
-                        <td width="10%" class="tooltip-container">
-                            <a
-                            ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
-                            ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
-                            class="glyphicon glyphicon-trash grey">
-                                <div class="popover popover-tooltip top">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <span><@spring.message "manage.revokeaccess"/></span>
-                                    </div>
-                                </div>                            
-                            </a>
-                            <span ng-show="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                <table class="table table-bordered settings-table normal-width" ng-show="delegation" ng-cloak>
+                    <thead>
+                        <tr>
+                            <th width="40%" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
+                            <th width="30%" ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+                            <th width="20%" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+                            <td width="10%"></td>
+                        </tr>
+                    </thead>
+                    <tbody ng-show="!delegation.length > 0" ng-cloak>
+                        <tr>
+                            <td>No trusted individuals added yet</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-show="delegation.length > 0" ng-cloak>
+                        <tr ng-repeat="delegationDetails in delegation | orderBy:sort.column:sort.descending">
+                            <td width="40%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                            <td width="30%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
+                            <td width="20%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
+                            <td width="10%" class="tooltip-container">
+                                <a
+                                ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
+                                ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
+                                class="glyphicon glyphicon-trash grey">
+                                    <div class="popover popover-tooltip top">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <span><@spring.message "manage.revokeaccess"/></span>
+                                        </div>
+                                    </div>                            
+                                </a>
+                                <span ng-show="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <#if isPasswordConfirmationRequired>
                 ${springMacroRequestContext.getMessage("manage_delegation.notallowed")}
             <#else>
@@ -550,17 +580,25 @@
                 <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
             </#if>
         </div>
-        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-cloak>
+        <div class="section-heading">
             <h1>
                 <@orcid.msg 'manage_signin_title' />
             </h1>
-            <p>
-                <@orcid.msg 'manage_signin_subtitle' />
-                <br>
-                <a href="${knowledgeBaseUri}/articles/892920"
-            target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
-            </p>
-            <div>
+            <div class="popover-help-container">
+                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <div id="alternative-signin-accounts-help" class="popover bottom">
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <p><@orcid.msg 'manage.help_popover.alternateSigninAccounts'/>  <a href="${knowledgeBaseUri}/articles/892920" target="manage.help_popover.alternateSigninAccounts"><@orcid.msg 'common.learn_more'/></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-controller="SocialCtrl" class="clearfix" id="SocialCtrl" ng-cloak>
+            <div ng-show="!socialAccounts.length > 0" ng-cloak>
+                <p><@orcid.msg 'manage.none_added.alternateSigninAccounts'/></p>
+            </div>
+            <div ng-show="socialAccounts.length > 0" ng-cloak>
                 <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts">
                     <thead>
                         <tr>

@@ -86,7 +86,9 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             
             // Remove deactivated records from SOLR index
             if (record.getHistory() != null && record.getHistory().getDeactivationDate() != null && record.getHistory().getDeactivationDate().getValue() != null) {
-                solrUpdater.deleteById(orcid);
+                solrUpdater.processInvalidRecord(orcid);
+                recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
+                return;
             }
             
             //get detailed funding so we can discover org name and id
@@ -104,11 +106,11 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
         } catch(LockedRecordException lre) {
             LOG.error("Record " + orcid + " is locked");
-            solrUpdater.deleteById(orcid);
+            solrUpdater.processInvalidRecord(orcid);
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
         } catch(DeprecatedRecordException dre) {
             LOG.error("Record " + orcid + " is deprecated");
-            solrUpdater.deleteById(orcid);
+            solrUpdater.processInvalidRecord(orcid);
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
         } catch (Exception e){
             LOG.error("Unable to fetch record " + orcid + " for SOLR");

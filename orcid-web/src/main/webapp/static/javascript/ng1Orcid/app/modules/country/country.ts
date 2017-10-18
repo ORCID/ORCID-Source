@@ -1,12 +1,23 @@
-import * as angular from 'angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { Component, Inject, Injector, Input, ViewChild, Directive, ElementRef, NgModule } from '@angular/core';
-import { downgradeComponent, UpgradeModule } from '@angular/upgrade/static';
+import * as angular 
+    from 'angular';
 
-import { CountryComponent } from './country.component.ts';
-import { ModalNgComponent } from '../modalNg2/modal-ng.component.ts';
+import { CommonModule } 
+    from '@angular/common'; 
 
-import { CommonService } from '../../shared/commonService.ts';
+import { Directive, NgModule } 
+    from '@angular/core';
+
+import { FormsModule }
+    from '@angular/forms'; // <-- NgModel lives here
+
+import { downgradeComponent, UpgradeModule } 
+    from '@angular/upgrade/static';
+
+import { CountryComponent } 
+    from './country.component.ts';
+
+import { PrivacytoggleComponent } 
+    from './../privacytoggle/privacyToggle.component.ts';
 
 // This is the Angular 1 part of the module
 export const CountryModule = angular.module(
@@ -18,17 +29,17 @@ export const CountryModule = angular.module(
 
 @NgModule(
     {
-        imports: [
-        ],
-        
-        declarations: [ 
+        declarations: [
             CountryComponent
         ],
         entryComponents: [ 
             CountryComponent 
         ],
+        imports: [
+            CommonModule,
+            FormsModule
+        ],
         providers: [
-            CommonService
         ]
     }
 )
@@ -38,7 +49,7 @@ export class CountryNg2Module {}
 //Must convert as much as possible of our code to directives
 
 CountryModule.directive(
-    'countryNg2test', 
+    'countryNg2', 
     <any>downgradeComponent(
         {
             component: CountryComponent

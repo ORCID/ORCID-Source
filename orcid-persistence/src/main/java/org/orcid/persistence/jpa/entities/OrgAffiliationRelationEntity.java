@@ -56,6 +56,7 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
     private EndDateEntity endDate;
     private Visibility visibility;    
     private String url;
+    private String externalIdentifiersJson;
 
     @Override
     @Id
@@ -151,6 +152,15 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
     
     public void setUrl(String url) {
         this.url = url;
+    }
+    
+    @Column(name = "external_ids_json")
+    public String getExternalIdentifiersJson() {
+        return externalIdentifiersJson;
+    }
+
+    public void setExternalIdentifiersJson(String externalIdentifiersJson) {
+        this.externalIdentifiersJson = externalIdentifiersJson;
     }
 
     @Override

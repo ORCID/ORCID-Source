@@ -29,7 +29,9 @@ public class Integration implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String name;
+    private Boolean badgeAwarded;
     private String description;
+    private String level;
     private String stage;
     private URL resourceUrl;
 
@@ -40,6 +42,14 @@ public class Integration implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public Boolean getBadgeAwarded() {
+        return badgeAwarded;
+    }
+
+    public void setBadgeAwarded(Boolean badgeAwarded) {
+        this.badgeAwarded = badgeAwarded;
+    }
 
     public String getDescription() {
         return description;
@@ -47,6 +57,14 @@ public class Integration implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 
     public String getStage() {

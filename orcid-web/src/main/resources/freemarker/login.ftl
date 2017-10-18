@@ -88,7 +88,7 @@
 			                           ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
 			                           </span>
 			                        </div>
-			                        <div id="loginErrors" />
+			                        <div id="loginErrors"></div>
 			                     </form>
 			                  </div>
 			                  <!-- RESET PASSWORD -->
@@ -222,7 +222,8 @@
 										<form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
 										    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 										    <div class="form-group">
-										        <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>				  					<input type="text" id="userId" name="userId" ng-model="authorizationForm.userName.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">
+										        <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
+										        <input type="text" id="userId" name="userId" ng-model="authorizationForm.userName.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">
 										    </div>
 										    <div class="form-group">
 										        <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>					
@@ -254,13 +255,13 @@
 										    </div>
 										    <div id="login-deactivated-error" class="orcid-error" style="display:none">
 										        <span ng-show="showDeactivatedError">
-										        ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+										        ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail(authorizationForm.userName.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
 										        </span>
 										        <span ng-show="showReactivationSent">
 										        ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
 										        </span>
 										    </div>
-										    <div id="loginErrors" />
+										    <div id="loginErrors"></div>
 									  	</form>
 									</div>
 									<!-- RESET PASSWORD -->

@@ -26,7 +26,6 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopeConstants;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.sun.jersey.api.provider.jaxb.XmlHeader;
 
@@ -42,14 +41,14 @@ import io.swagger.annotations.AuthorizationScope;
 @Path("/v2.0" + OrcidApiConstants.IDENTIFIER_PATH)
 public class IdentifierApiServiceImplV2_0 {
 
-    public final String xmllocation = "<?xml-stylesheet type=\"text/xsl\" href=\"https://orcid.org/static/css/identifierTypes.xsl\"?>";
+    public final String xmllocation = "<?xml-stylesheet type=\"text/xsl\" href=\"../static/identifierTypes.xsl\"?>";
     
     private IdentifierApiServiceDelegator serviceDelegator;
     
     public void setServiceDelegator(IdentifierApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
-
+    
     /**
      * @return Available external-id types in the ORCID registry
      */

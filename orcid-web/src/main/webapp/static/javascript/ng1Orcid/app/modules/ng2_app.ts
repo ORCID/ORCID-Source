@@ -30,6 +30,8 @@ import { BiographyNg2Module }
     from './biography/biography.ts';
 import { CountryNg2Module } 
     from './country/country.ts';
+import { CountryFormNg2Module } 
+    from './countryForm/countryForm.ts';
 import { EmailUnverifiedWarningNg2Module } from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
 import { EmailVerificationSentMesssageNg2Module } from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 import { ModalNg2Module }
@@ -41,7 +43,9 @@ import { WorksPrivacyPreferencesNg2Module }
 
 //User generated services
 import { BiographyService } 
-    from '../shared/biographyService.ts'; 
+    from '../shared/biographyService.ts';
+import { CountryService } 
+    from '../shared/countryService.ts'; 
 import { CommonService }
     from '../shared/commonService.ts'
 import { ConfigurationService } 
@@ -92,6 +96,7 @@ export class RootCmp {
         /* User Generated Modules */
         BiographyNg2Module,
         CountryNg2Module,
+        CountryFormNg2Module,
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         ModalNg2Module,
@@ -106,6 +111,7 @@ export class RootCmp {
         BiographyService,
         CommonService,
         ConfigurationService,
+        CountryService,
         EmailService,
         ModalService
     ]
@@ -114,6 +120,6 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.93');
+        console.log('v0.94');
     }
 }
