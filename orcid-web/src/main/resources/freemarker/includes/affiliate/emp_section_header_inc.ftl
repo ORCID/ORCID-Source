@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="workspace-accordion-header">
+<div class="workspace-accordion-header clearfix">
     <div class="row">
         <div class="col-md-3 col-sm-3 col-xs-12">
             <a name='workspace-employments' />
@@ -30,7 +30,7 @@
                     <div id="employment-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">
-                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="${knowledgeBaseUri}/articles/1807525" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></p>
+                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="${knowledgeBaseUri}/articles/1807525" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                         </div>
                     </div>
                 </div>
