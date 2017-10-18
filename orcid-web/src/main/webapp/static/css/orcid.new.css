@@ -4088,11 +4088,9 @@ ul.sources-edit-list>li {
     margin-left: 4px;
 }
 
-/* This is causing issues in all browsers.
-#bio-section .popover-help-container .popover {
+#bio-section .popover-help-container #bio-help {
     left: -50px;
 }
-*/
 
 .id-banner .row .col-md-3 {
     margin-top: 15px
