@@ -34,7 +34,7 @@
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details")}</p>
                     <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
-                    <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a href="#" id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
+                    <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a href="javascript:void(0);" id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
                     <img id="2FA-QR-code" ng-show="showQRCode" />
                     <pre ng-bind="textCodeFor2FA" ng-show="showTextCode"></pre>
                     <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>
@@ -45,7 +45,7 @@
                     <div id="invalidCodeError" class="orcid-error" ng-show="showInvalidCodeError" ng-cloak">${springMacroRequestContext.getMessage("2FA.setup.invalidCode")}</div>
                     <hr>
                     <button ng-click="sendVerificationCode()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.continue")}</button>
-                    <a class="leftBuffer" id="cancel2FASetup" ng-click="cancel2FASetup()" href="#">${springMacroRequestContext.getMessage("2FA.cancel")}</a>
+                    <a class="leftBuffer" id="cancel2FASetup" ng-click="cancel2FASetup()" href="javascript:void(0);">${springMacroRequestContext.getMessage("2FA.cancel")}</a>
                 </form>
              </div>
              <div ng-show="show2FARecoveryCodes" ng-cloak>

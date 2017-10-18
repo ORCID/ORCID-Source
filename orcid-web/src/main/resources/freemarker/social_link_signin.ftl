@@ -85,7 +85,7 @@
                         </div>
                         <div id="2FAInstructions" style="display:none">
                             <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
-                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device")}</p>
+                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device1")} <a href='#' id='enterRecoveryCode'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device2")}</a></p>
                         </div>
                         <div id="recoveryCodeSignin" class="form-group" style="display:none">
                             <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
