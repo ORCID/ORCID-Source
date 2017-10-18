@@ -49,16 +49,14 @@
                 </form>
              </div>
              <div ng-show="show2FARecoveryCodes" ng-cloak>
-                <h2>${springMacroRequestContext.getMessage("2FA.recoveryCodes.heading")}</h1>
+                <h2 id="saveRecoveryCodesHeading">${springMacroRequestContext.getMessage("2FA.recoveryCodes.heading")}</h2>
                 <p>
                     ${springMacroRequestContext.getMessage("2FA.recoveryCodes.details")}
                     <br />
                     <a href="${knowledgeBaseUri}/articles/1190068" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                 </p>
                 <div id="recoveryCodes">
-                    <pre class="col-count-4">
-                        <p ng-repeat="recoveryCode in recoveryCodes">{{recoveryCode}}</p>
-                    </pre>
+                    <span ng-repeat="recoveryCode in recoveryCodes">{{recoveryCode}}<br></span>
                 </div>
                 <div class="form-group">
                     <button ng-click="downloadRecoveryCodes()" class="btn btn-white"><span class="glyphicon glyphicon-download-alt"></span> ${springMacroRequestContext.getMessage("2FA.recoveryCodes.download")}</button>
