@@ -315,6 +315,17 @@ textarea {
 .bottomBuffer {
     margin-bottom: 1em
 }
+.btn-white {
+    background-color: #fff;
+    border: 1px solid #338caf;
+    color: #338caf;
+    margin-bottom: 10px;
+}
+
+.btn-white:hover {
+    background-color: #338caf;
+    color: #fff;
+}
 
 .btn-white-no-border {
     background-color: #fff;
@@ -1842,6 +1853,20 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     padding: 20px;
     overflow: hidden
 }
+
+.col-count-4 {
+    -webkit-column-count: 4;
+    -moz-column-count: 4;
+    column-count: 4;
+}
+
+/*.col-count-4 p {
+    display: block;
+    text-align: left;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;           
+    break-inside: avoid-column;
+}*/
 
 .alert {
     border-color: #f5c120;
@@ -7951,39 +7976,14 @@ ul.comma li:last-child:after {
 	display: none;
 }
 
-.twoFactorAuthSetupHeading {
-	font-weight: bold;
-}
-
 .on {
 	color: green;
 	font-weight: bold;
-	margin-right: 10px;
 }
-
-.on::after {
-	content: "\2713";
-}
-
 
 .off {
-    color: crimson;
+    color: red;
     font-weight: bold;
-    margin-right: 10px;
-}
-
-.off::after {
-    content: "\2717";
-}
-
-.twoFactorAuthenticationInfo {
-	font-weight: bold;
-	font-size: 11px;
-}
-
-.halfwidth {
-	width: 50%;
-	float: left;
 }
 
 ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
