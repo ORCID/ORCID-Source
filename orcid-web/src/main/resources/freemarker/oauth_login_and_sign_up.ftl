@@ -70,10 +70,18 @@
                                             <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="<@orcid.msg 'login.password'/>" class="form-control">
                                         </div>  
                                         <div class="form-group" ng-show="showVerificationCodeFor2FA">
-                                            ${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}
+                                            <p class="bold">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}</p>
                                             <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                                       
                                             <input id="verificationCode" ng-model="authorizationForm.verificationCode.value" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">     
-                                        </div>  
+                                        </div> 
+                                        <div id="2FAInstructions" style="display:none">
+                                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
+                                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device")}</p>
+                                        </div>
+                                        <div id="recoveryCodeSignin" class="form-group" style="display:none">
+                                            <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
+                                            <input id="recoveryCode" name="recoveryCode" ng-model="authorizationForm.recoveryCode.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">                                               
+                                        </div> 
                                         <div class="form-group">
                                             <span class="orcid-error" ng-show="authorizationForm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
                                                 <div ng-repeat='error in authorizationForm.errors' ng-bind-html="error"></div>
@@ -92,15 +100,6 @@
                                             <button class="btn btn-primary" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
                                             <@orcid.msg 'confirm-oauth-access.Authorize' />
                                             </button>
-                                            <div id="2FAInstructions" style="display:none">
-                                                <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
-                                                <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device")}</p>
-                                            </div>
-                                            <div id="recoveryCodeSignin" class="form-group" style="display:none">
-                                                <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
-                                                <input id="recoveryCode" name="recoveryCode" ng-model="authorizationForm.recoveryCode.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">        
-                                                <button class="btn btn-primary" ng-click="loginAndAuthorize()" class="form-control">${springMacroRequestContext.getMessage("confirm-oauth-access.Authorize")}</button>                                       
-                                            </div>
                                         </div>                        
                                     </div> 
                                 </form>                 

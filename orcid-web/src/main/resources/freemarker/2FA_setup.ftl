@@ -36,7 +36,7 @@
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
                     <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a href="#" id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
                     <img id="2FA-QR-code" ng-show="showQRCode" />
-                    <p ng-bind="textCodeFor2FA" ng-show="showTextCode" />
+                    <pre ng-bind="textCodeFor2FA" ng-show="showTextCode"></pre>
                     <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step3.details")}</p>
                 </ul>
@@ -57,12 +57,12 @@
                 </p>
                 <div id="recoveryCodes">
                     <pre class="col-count-4">
-                        <p ng-repeat="recoveryCode in recoveryCodes" ng-bind-html="recoveryCode"></p>
+                        <p ng-repeat="recoveryCode in recoveryCodes">{{recoveryCode}}</p>
                     </pre>
                 </div>
                 <div class="form-group">
                     <button ng-click="downloadRecoveryCodes()" class="btn btn-white"><span class="glyphicon glyphicon-download-alt"></span> ${springMacroRequestContext.getMessage("2FA.recoveryCodes.download")}</button>
-                    <button ng-click="copyRecoveryCodes()" class="btn btn-white"><span class="glyphicon glyphicon-copy"></span> ${springMacroRequestContext.getMessage("2FA.recoveryCodes.copy")}</button>
+                    <button ng-click="copyRecoveryCodes()" class="btn btn-white"><span class="glyphicon glyphicon-file"></span> ${springMacroRequestContext.getMessage("2FA.recoveryCodes.copy")}</button>
                 </div>
                 <div class="form-group">
                     <p><span>${springMacroRequestContext.getMessage("2FA.recoveryCodes.warning.heading")}</span>&nbsp;${springMacroRequestContext.getMessage("2FA.recoveryCodes.warning.details")}</p>

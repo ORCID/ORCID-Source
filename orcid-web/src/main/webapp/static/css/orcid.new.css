@@ -315,14 +315,16 @@ textarea {
 .bottomBuffer {
     margin-bottom: 1em
 }
-.btn-white {
+.btn-white,
+.btn-white:visited {
     background-color: #fff;
     border: 1px solid #338caf;
     color: #338caf;
     margin-bottom: 10px;
 }
 
-.btn-white:hover {
+.btn-white:hover,
+.btn-white:active {
     background-color: #338caf;
     color: #fff;
 }
