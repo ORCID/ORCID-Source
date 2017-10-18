@@ -4088,9 +4088,11 @@ ul.sources-edit-list>li {
     margin-left: 4px;
 }
 
+/* This is causing issues in all browsers.
 #bio-section .popover-help-container .popover {
     left: -50px;
 }
+*/
 
 .id-banner .row .col-md-3 {
     margin-top: 15px
@@ -5359,7 +5361,7 @@ ul.oauth-scopes li {
 
 .workspace-peer-review .peer-review-title {
     color: #338caf;
-    font-size: 20px
+    font-size: 17px
 }
 
 .workspace-peer-review span.title {
@@ -5436,7 +5438,7 @@ ul.sources-edit-list>li.group-details {
 
 .group-summary-details {
     padding-bottom: 15px;
-    font-size: 15px
+    font-size: 14px
 }
 
 .shibboleth-container {
@@ -6320,7 +6322,8 @@ ul.comma li:last-child:after {
 }
 
 #settings .popover-help-container .popover{
-    left: -128px;
+    left: -145px;
+    top: -200px;
 }
 
 #settings .section-heading{
@@ -7737,6 +7740,10 @@ ul.comma li:last-child:after {
 
 .lang-rl #idpSelectInput {
     margin-left: 5px
+}
+
+.lang-rl #settings .popover-help-container .popover{
+    left: 465px;
 }
 
 .lang-rl *,.lang-rl .table td,.lang-rl .table th {
