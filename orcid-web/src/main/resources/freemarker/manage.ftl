@@ -357,7 +357,7 @@
                             <p>
                                 ${springMacroRequestContext.getMessage("2FA.details")}
                                 <br />
-                                <a href="${knowledgeBaseUri}/articles/580410"
+                                <a href="${knowledgeBaseUri}/articles/1190068"
                                     target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                             </p>
                             <div ng-show="showEnabled2FA" ng-cloak>
