@@ -315,6 +315,19 @@ textarea {
 .bottomBuffer {
     margin-bottom: 1em
 }
+.btn-white,
+.btn-white:visited {
+    background-color: #fff;
+    border: 1px solid #338caf;
+    color: #338caf;
+    margin-bottom: 10px;
+}
+
+.btn-white:hover,
+.btn-white:active {
+    background-color: #338caf;
+    color: #fff;
+}
 
 .btn-white-no-border {
     background-color: #fff;
@@ -1847,6 +1860,20 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     padding: 20px;
     overflow: hidden
 }
+
+.col-count-4 {
+    -webkit-column-count: 4;
+    -moz-column-count: 4;
+    column-count: 4;
+}
+
+/*.col-count-4 p {
+    display: block;
+    text-align: left;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;           
+    break-inside: avoid-column;
+}*/
 
 .alert {
     border-color: #f5c120;
@@ -7965,43 +7992,37 @@ ul.comma li:last-child:after {
 	display: none;
 }
 
-.twoFactorAuthSetupHeading {
-	font-weight: bold;
-}
-
 .on {
 	color: green;
 	font-weight: bold;
-	margin-right: 10px;
 }
-
-.on::after {
-	content: "\2713";
-}
-
 
 .off {
-    color: crimson;
+    color: red;
     font-weight: bold;
-    margin-right: 10px;
-}
-
-.off::after {
-    content: "\2717";
-}
-
-.twoFactorAuthenticationInfo {
-	font-weight: bold;
-	font-size: 11px;
-}
-
-.halfwidth {
-	width: 50%;
-	float: left;
 }
 
 ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+#recoveryCodes {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+#saveRecoverCodesHeading {
+    color: red;
 }

@@ -361,22 +361,14 @@
                                     target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
                             </p>
                             <div ng-show="showEnabled2FA" ng-cloak>
-                                <div class="halfwidth">
-                                    <span class="on">${springMacroRequestContext.getMessage("2FA.state.on.heading")}</span>
-                                    <span class="twoFactorAuthenticationInfo">${springMacroRequestContext.getMessage("2FA.state.on.description")}</span>
-                                </div>
-                                <div class="halfwidth">
-                                    <a id="disable2FA" ng-click="disable2FA()" href="#">${springMacroRequestContext.getMessage("2FA.disable")}</a>
-                                </div>
+                                <span class="on">${springMacroRequestContext.getMessage("2FA.state.on.heading")} <span class="glyphicon glyphicon-ok"></span></span>
+                                <span class="small bold leftBuffer">${springMacroRequestContext.getMessage("2FA.state.on.description")}</span>
+                                <a class="leftBuffer" id="disable2FA" ng-click="disable2FA()" href="#">${springMacroRequestContext.getMessage("2FA.disable")}</a>
                             </div>
                             <div ng-show="showDisabled2FA" ng-cloak>
-                                <div class="halfwidth">
-                                    <span class="off">${springMacroRequestContext.getMessage("2FA.state.off.heading")}</span>
-                                    <span class="twoFactorAuthenticationInfo">${springMacroRequestContext.getMessage("2FA.state.off.description")}</span>
-                                </div>
-                                <div class="halfwidth">
-                                    <button ng-click="enable2FA()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.enable")}</button>
-                                </div>
+                                <span class="off">${springMacroRequestContext.getMessage("2FA.state.off.heading")} <span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="small bold leftBuffer">${springMacroRequestContext.getMessage("2FA.state.off.description")}</span>
+                                <button ng-click="enable2FA()" class="btn btn-primary leftBuffer">${springMacroRequestContext.getMessage("2FA.enable")}</button>
                             </div>
                         </td>
                     </tr>

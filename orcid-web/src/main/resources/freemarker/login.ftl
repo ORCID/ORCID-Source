@@ -57,10 +57,18 @@
 			                        </div>
 			                        
 			                        <div class="form-group" id="verificationCodeFor2FA">
-                                        <p class="title">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}</p>
+                                        <p class="bold">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}</p>
                                         <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                                       
                                         <input id="verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">     
                                     </div>
+                                    <div id="2FAInstructions" style="display:none">
+                                        <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
+                                        <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device1")} <a href='#' id='enterRecoveryCode'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device2")}</a></p>
+									</div>
+									<div id="recoveryCodeSignin" class="form-group" style="display:none">
+									    <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
+									    <input id="recoveryCode" name="recoveryCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">                                        
+                            		</div>
 			                        <div class="form-group">
 			                           <button id='form-sign-in-button' class="btn btn-primary" type="submit" class="form-control">${springMacroRequestContext.getMessage("login.signin")}</button>					                    
 			                           <span id="ajax-loader" class="no-visible"><i id="ajax-loader-icon" class="glyphicon glyphicon-refresh spin x2 green"></i></span>					                    
@@ -70,15 +78,6 @@
 			                           <#if (RequestParameters['invalidClaimUrl'])??>
 			                           <div class="alert"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
 			                           </#if>
-			                           <div id="2FAInstructions" style="display:none">
-                                            <label>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</label>
-                                            <div class="title">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device")}</div>
-										</div>
-										<div id="recoveryCodeSignin" class="form-group" style="display:none">
-										    <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
-										    <input id="recoveryCode" name="recoveryCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">        
-										    <button class="btn btn-primary" type="submit" class="form-control">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.authenticate")}</button>                                       
-                                        </div>
 			                        </div>
 			                        <div id="login-deactivated-error" class="orcid-error" style="display:none">
 			                           <span ng-show="showDeactivatedError">
@@ -204,8 +203,8 @@
 		<@orcid.checkFeatureStatus 'OAUTH_2SCREENS'>
 			<div class="col-md-6 col-md-offset-3" ng-controller="OauthAuthorizationController">
 				<div class="login">			
-					<p class="title" ng-show="!showRegisterForm" ng-cloak>${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a href="#" id="switch-to-register-form" ng-click="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
-					<p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
+					<p class="title" ng-show="!showRegisterForm" ng-cloak>${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a href="javascript:void(0);" id="switch-to-register-form" ng-click="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
+					<p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="javascript:void(0);" id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
 					<div ng-show="!showRegisterForm">
 						<div class="personal-login" ng-cloak>
 							<#if shibbolethEnabled>
@@ -230,10 +229,18 @@
 										        <input type="password" id="password" name="password" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.password")}">
 										    </div>
 										    <div class="form-group" id="verificationCodeFor2FA">
-		                                        ${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}
-		                                        <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                                       
-		                                        <input id="verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">     
+		                                        <p class="bold">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}<p>
+		                                        <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                      
+		                                        <input id="verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">  
 		                                    </div>
+		                                    <div id="2FAInstructions" style="display:none">
+	                                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
+	                                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device1")} <a href='#' id='enterRecoveryCode'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device2")}</a></p>
+											</div>
+											<div id="recoveryCodeSignin" class="form-group" style="display:none">
+											    <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
+											    <input id="recoveryCode" name="recoveryCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">                                        
+                                    		</div>
 										    <div class="form-group">
 										        <button id='form-sign-in-button' class="btn btn-primary" type="submit" class="form-control">${springMacroRequestContext.getMessage("login.signin")}</button>					                    
 										        <span id="ajax-loader" class="no-visible"><i id="ajax-loader-icon" class="glyphicon glyphicon-refresh spin x2 green"></i></span>					                    
@@ -243,15 +250,6 @@
 										        <#if (RequestParameters['invalidClaimUrl'])??>
 										        <div class="alert"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
 										        </#if>
-										        <div id="2FAInstructions" style="display:none">
-		                                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
-		                                            <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device")}</p>
-												</div>
-												<div id="recoveryCodeSignin" class="form-group" style="display:none">
-												    <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
-												    <input id="recoveryCode" name="recoveryCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">        
-												    <button class="btn btn-primary" type="submit" class="form-control">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.authenticate")}</button>                                    
-                                        		</div>
 										    </div>
 										    <div id="login-deactivated-error" class="orcid-error" style="display:none">
 										        <span ng-show="showDeactivatedError">
