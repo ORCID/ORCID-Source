@@ -36,6 +36,8 @@ import { EmailUnverifiedWarningNg2Module } from './emailUnverifiedWarning/emailU
 import { EmailVerificationSentMesssageNg2Module } from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
+import { NameNg2Module } 
+    from './name/name.ts';
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 import { WorksPrivacyPreferencesNg2Module } 
@@ -53,7 +55,9 @@ import { ConfigurationService }
 import { EmailService } 
     from '../shared/emailService.ts'; 
 import { ModalService } 
-    from '../shared/modalService.ts'; 
+    from '../shared/modalService.ts';
+import { NameService } 
+    from '../shared/nameService.ts'; 
 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
@@ -100,6 +104,7 @@ export class RootCmp {
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         ModalNg2Module,
+        //NameNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
@@ -113,13 +118,14 @@ export class RootCmp {
         ConfigurationService,
         CountryService,
         EmailService,
-        ModalService
+        ModalService,
+        //NameService
     ]
 
 })
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.94');
+        console.log('v0.96');
     }
 }

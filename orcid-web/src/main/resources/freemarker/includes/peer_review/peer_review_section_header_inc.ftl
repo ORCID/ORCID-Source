@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="workspace-accordion-header">
+<div class="workspace-accordion-header clearfix">
     <div class="row">
         <div class="col-md-3 col-sm-2 col-xs-12">
             <div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
@@ -24,15 +24,17 @@
                    <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i>
                    <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.peerReviewCount()"></span>)
                 </a>
-                <div class="popover-help-container">
-                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                    <div id="peer-review-help" class="popover bottom">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                            <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="${knowledgeBaseUri}/topics/1807594" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></p>
+                <#if !(isPublicProfile??)> 
+                    <div class="popover-help-container">
+                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <div id="peer-review-help" class="popover bottom">
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="${knowledgeBaseUri}/articles/1807594" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
+                            </div>
                         </div>
                     </div>
-                </div> 
+                </#if>
             </div>
         </div>
         <div ng-show="workspaceSrvc.displayWorks" class="col-md-9 col-sm-10 col-xs-12 action-button-bar">

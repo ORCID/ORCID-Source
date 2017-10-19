@@ -18,6 +18,7 @@ package org.orcid.listener.orcid;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -28,12 +29,15 @@ import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.utils.listener.BaseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -48,6 +52,7 @@ public class Orcid20APIClient {
     protected Client jerseyClient;
     protected final URI baseUri;
     protected final String accessToken;
+    private final Cache<BaseMessage, Record> v2PerMessageQueue = CacheBuilder.newBuilder().expireAfterAccess(300, TimeUnit.SECONDS).maximumSize(100).build();    
 
     @Autowired
     public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri,
@@ -60,11 +65,17 @@ public class Orcid20APIClient {
     /**
      * Fetches the public record from the ORCID API v2.0
      * 
+     * Caches based on message.
+     * 
      * @param orcid
      * @return Record
      */
-    public Record fetchPublicRecord(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/record");
+    public Record fetchPublicRecord(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
+        Record cached = v2PerMessageQueue.getIfPresent(message);
+        if (cached != null){
+            return cached;
+        }
+        WebResource webResource = jerseyClient.resource(baseUri).path(message.getOrcid() + "/record");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
         Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
         ClientResponse response = builder.get(ClientResponse.class);
@@ -78,11 +89,13 @@ public class Orcid20APIClient {
                 orcidError = response.getEntity(OrcidError.class);
                 throw new LockedRecordException(orcidError);
             default:
-                LOG.error("Unable to fetch public record " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
+                LOG.error("Unable to fetch public record " + message.getOrcid() + " on API 2.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
         }
-        return response.getEntity(Record.class);
+        cached = response.getEntity(Record.class);
+        v2PerMessageQueue.put(message, cached);
+        return cached;
     }
     
     /**
@@ -91,26 +104,8 @@ public class Orcid20APIClient {
      * @param orcid
      * @return Record
      */
-    public ActivitiesSummary fetchPublicActivities(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/activities");
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
-        if (response.getStatus() != 200) {
-            OrcidError orcidError = null;
-            switch (response.getStatus()) {
-            case 301:
-                orcidError = response.getEntity(OrcidError.class);
-                throw new DeprecatedRecordException(orcidError);
-            case 409:
-                orcidError = response.getEntity(OrcidError.class);
-                throw new LockedRecordException(orcidError);
-            default:
-                LOG.error("Unable to fetch public activities for " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
-                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-            }
-        }
-        return response.getEntity(ActivitiesSummary.class);
+    public ActivitiesSummary fetchPublicActivities(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
+        return this.fetchPublicRecord(message).getActivitiesSummary();
     }
     
     public Funding fetchFunding(String orcid, Long putCode){

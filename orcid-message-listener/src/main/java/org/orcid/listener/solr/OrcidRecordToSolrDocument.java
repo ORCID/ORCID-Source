@@ -205,10 +205,10 @@ public class OrcidRecordToSolrDocument {
             Map<String, List<String>> organisationIds = new HashMap<String,List<String>>();
             organisationIds.put(SolrConstants.FUNDREF_ORGANISATION_ID, new ArrayList<String>());
             organisationIds.put(SolrConstants.RINGGOLD_ORGANISATION_ID, new ArrayList<String>());
+            organisationIds.put(SolrConstants.GRID_ORGANISATION_ID, new ArrayList<String>());
             Map<String, List<String>> organisationNames = new HashMap<String,List<String>>();
             organisationNames.put(SolrConstants.AFFILIATION_ORGANISATION_NAME, new ArrayList<String>()); 
             organisationNames.put(SolrConstants.FUNDING_ORGANISATION_NAME, new ArrayList<String>()); 
-
             
             if (!fundings.isEmpty()){
 
@@ -245,8 +245,14 @@ public class OrcidRecordToSolrDocument {
                 for (EducationSummary e : record.getActivitiesSummary().getEducations().getSummaries()){
                     if (e.getOrganization() !=null){                        
                         organisationNames.get(SolrConstants.AFFILIATION_ORGANISATION_NAME).add(e.getOrganization().getName());
-                        if (e.getOrganization().getDisambiguatedOrganization() != null)
-                            organisationIds.get(SolrConstants.RINGGOLD_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                        if (e.getOrganization().getDisambiguatedOrganization() != null) {
+                            String sourceType = e.getOrganization().getDisambiguatedOrganization().getDisambiguationSource();
+                            if(SolrConstants.RINGGOLD_ORG_TYPE.equals(sourceType)) {
+                                organisationIds.get(SolrConstants.RINGGOLD_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                            } else if(SolrConstants.GRID_ORG_TYPE.equals(sourceType)) {
+                                organisationIds.get(SolrConstants.GRID_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                            }                            
+                        }                            
                     }
                 }
             }
@@ -255,8 +261,14 @@ public class OrcidRecordToSolrDocument {
                 for (EmploymentSummary e: record.getActivitiesSummary().getEmployments().getSummaries()){
                     if (e.getOrganization() !=null){                        
                         organisationNames.get(SolrConstants.AFFILIATION_ORGANISATION_NAME).add(e.getOrganization().getName());
-                        if (e.getOrganization().getDisambiguatedOrganization() != null)
-                            organisationIds.get(SolrConstants.RINGGOLD_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                        if (e.getOrganization().getDisambiguatedOrganization() != null) {
+                            String sourceType = e.getOrganization().getDisambiguatedOrganization().getDisambiguationSource();
+                            if(SolrConstants.RINGGOLD_ORG_TYPE.equals(sourceType)) {
+                                organisationIds.get(SolrConstants.RINGGOLD_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                            } else if(SolrConstants.GRID_ORG_TYPE.equals(sourceType)) {
+                                organisationIds.get(SolrConstants.GRID_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                            } 
+                        }                            
                     }
                 }
             }

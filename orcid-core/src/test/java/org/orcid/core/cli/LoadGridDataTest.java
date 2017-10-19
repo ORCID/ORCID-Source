@@ -46,6 +46,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 
+@SuppressWarnings("deprecation")
 public class LoadGridDataTest {
 
     @Mock
@@ -64,28 +65,30 @@ public class LoadGridDataTest {
 
     @Test
     public void execute_Stats_Test_1() throws URISyntaxException {
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_4_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
         assertEquals(1L, loadGridData.getAddedDisambiguatedOrgs());
-        assertEquals(4L, loadGridData.getAddedExternalIdentifiers());
+        assertEquals(5L, loadGridData.getAddedExternalIdentifiers());
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(0L, loadGridData.getDeprecatedOrgs());
         assertEquals(0L, loadGridData.getObsoletedOrgs());
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
     }
 
     @Test
     public void execute_Stats_Test_2() throws URISyntaxException {
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_4_orgs_24_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_4_orgs_27_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
         assertEquals(4L, loadGridData.getAddedDisambiguatedOrgs());
-        assertEquals(24L, loadGridData.getAddedExternalIdentifiers());
+        assertEquals(27L, loadGridData.getAddedExternalIdentifiers());
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(0L, loadGridData.getDeprecatedOrgs());
         assertEquals(0L, loadGridData.getObsoletedOrgs());
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
     }
 
     @Test
@@ -104,6 +107,7 @@ public class LoadGridDataTest {
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(2L, loadGridData.getDeprecatedOrgs());
         assertEquals(2L, loadGridData.getObsoletedOrgs());
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
     }
 
     @SuppressWarnings("deprecation")
@@ -126,12 +130,16 @@ public class LoadGridDataTest {
             }
         });
         OrgDisambiguatedExternalIdentifierEntity extId = new OrgDisambiguatedExternalIdentifierEntity();
+        extId.setPreferred(Boolean.FALSE);
+        OrgDisambiguatedExternalIdentifierEntity extIdPreferred = new OrgDisambiguatedExternalIdentifierEntity();
+        extIdPreferred.setPreferred(Boolean.TRUE);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extId);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extIdPreferred);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_6_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
@@ -144,6 +152,7 @@ public class LoadGridDataTest {
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(0L, loadGridData.getDeprecatedOrgs());
         assertEquals(0L, loadGridData.getObsoletedOrgs());
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
     }
 
     @Test
@@ -166,12 +175,16 @@ public class LoadGridDataTest {
             }
         });
         OrgDisambiguatedExternalIdentifierEntity extId = new OrgDisambiguatedExternalIdentifierEntity();
+        extId.setPreferred(Boolean.FALSE);
+        OrgDisambiguatedExternalIdentifierEntity extIdPreferred = new OrgDisambiguatedExternalIdentifierEntity();
+        extIdPreferred.setPreferred(Boolean.TRUE);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extId);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extIdPreferred);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_updated_4_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_updated_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
@@ -181,7 +194,8 @@ public class LoadGridDataTest {
         assertEquals(1L, loadGridData.getUpdatedOrgs());
         assertEquals(0L, loadGridData.getDeprecatedOrgs());
         assertEquals(0L, loadGridData.getObsoletedOrgs());
-
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
+        
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
 
         verify(orgDisambiguatedDao).merge(captor.capture());
@@ -220,12 +234,16 @@ public class LoadGridDataTest {
             }
         });
         OrgDisambiguatedExternalIdentifierEntity extId = new OrgDisambiguatedExternalIdentifierEntity();
+        extId.setPreferred(Boolean.FALSE);
+        OrgDisambiguatedExternalIdentifierEntity extIdPreferred = new OrgDisambiguatedExternalIdentifierEntity();
+        extIdPreferred.setPreferred(Boolean.TRUE);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extId);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extIdPreferred);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_4_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         loadGridData.setFileToLoad(testFile);
         loadGridData.execute();
@@ -238,6 +256,7 @@ public class LoadGridDataTest {
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(0L, loadGridData.getDeprecatedOrgs());
         assertEquals(0L, loadGridData.getObsoletedOrgs());
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
     }
 
     @SuppressWarnings("deprecation")
@@ -291,6 +310,7 @@ public class LoadGridDataTest {
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(2L, loadGridData.getDeprecatedOrgs());
         assertEquals(2L, loadGridData.getObsoletedOrgs());
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
         verify(orgDisambiguatedDao, times(0)).persist(Matchers.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedDao, times(4)).merge(Matchers.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -340,6 +360,7 @@ public class LoadGridDataTest {
         assertEquals(0L, loadGridData.getUpdatedOrgs());
         assertEquals(2L, loadGridData.getDeprecatedOrgs());
         assertEquals(2L, loadGridData.getObsoletedOrgs());
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
         verify(orgDisambiguatedDao, times(4)).persist(Matchers.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedDao, times(0)).merge(Matchers.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -363,4 +384,120 @@ public class LoadGridDataTest {
         assertEquals(2, deprecatedCount);
         assertEquals(2, obsoleteCount);
     }
+    
+    @Test
+    public void execute_AddMissingWikipediaExtId_Test() throws URISyntaxException {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+            @Override
+            public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
+                OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
+                entity.setId(1L);
+                entity.setName("org_1");
+                entity.setSourceId("grid.1");
+                entity.setCity("City One");
+                entity.setCountry(Iso3166Country.US);
+                entity.setOrgType("type_1");
+                entity.setRegion("Alabama");
+                entity.setSourceType("GRID");
+                entity.setStatus("active");
+                entity.setUrl("http://link1.com");
+                return entity;
+            }
+        });
+        OrgDisambiguatedExternalIdentifierEntity extId = new OrgDisambiguatedExternalIdentifierEntity();
+        extId.setPreferred(false);
+        
+        OrgDisambiguatedExternalIdentifierEntity extIdPreferred = new OrgDisambiguatedExternalIdentifierEntity();
+        extIdPreferred.setPreferred(true);
+        
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extIdPreferred);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);        
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
+        File testFile = path.toFile();
+        loadGridData.setFileToLoad(testFile);
+        loadGridData.execute();
+
+        assertEquals(0L, loadGridData.getAddedDisambiguatedOrgs());
+        assertEquals(1L, loadGridData.getAddedExternalIdentifiers());
+        assertEquals(0L, loadGridData.getUpdatedOrgs());
+        assertEquals(0L, loadGridData.getDeprecatedOrgs());
+        assertEquals(0L, loadGridData.getObsoletedOrgs());
+        assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
+        
+        ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
+
+        verify(orgDisambiguatedExternalIdentifierDao).persist(captor.capture());
+
+        OrgDisambiguatedExternalIdentifierEntity orgToBeUpdated = captor.getValue();
+        assertEquals("http://en.wikipedia.org/wiki/org_1", orgToBeUpdated.getIdentifier());
+        assertEquals("WIKIPEDIA_URL", orgToBeUpdated.getIdentifierType());
+        assertEquals(Boolean.TRUE, orgToBeUpdated.getPreferred());
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void execute_UpdatePreferredIndicator_Test() throws URISyntaxException {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+            @Override
+            public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
+                OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
+                entity.setId(1L);
+                entity.setName("org_1");
+                entity.setSourceId("grid.1");
+                entity.setCity("City One");
+                entity.setCountry(Iso3166Country.US);
+                entity.setOrgType("type_1");
+                entity.setRegion("Alabama");
+                entity.setSourceType("GRID");
+                entity.setUrl("http://link1.com");
+                return entity;
+            }
+        });
+        // On DB WIKIDATA1 is preferred, but in the file WIKIDATA2 is the preferred one
+        OrgDisambiguatedExternalIdentifierEntity wikidata1 = new OrgDisambiguatedExternalIdentifierEntity();
+        wikidata1.setIdentifier("WIKIDATA1");
+        wikidata1.setIdentifierType("WIKIDATA");
+        wikidata1.setPreferred(Boolean.TRUE);
+        
+        OrgDisambiguatedExternalIdentifierEntity wikidata2 = new OrgDisambiguatedExternalIdentifierEntity();
+        wikidata2.setIdentifier("WIKIDATA2");
+        wikidata2.setIdentifierType("WIKIDATA");
+        wikidata2.setPreferred(Boolean.FALSE);
+        
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(wikidata1);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA2", "WIKIDATA")).thenReturn(wikidata2);
+        
+        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_2_ext_ids_#2_preferred.json").toURI());
+        File testFile = path.toFile();
+        loadGridData.setFileToLoad(testFile);
+        loadGridData.execute();
+
+        verify(orgDisambiguatedDao, times(0)).persist(Matchers.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedDao, times(0)).merge(Matchers.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
+        assertEquals(0L, loadGridData.getAddedDisambiguatedOrgs());
+        assertEquals(0L, loadGridData.getAddedExternalIdentifiers());
+        assertEquals(0L, loadGridData.getUpdatedOrgs());
+        assertEquals(0L, loadGridData.getDeprecatedOrgs());
+        assertEquals(0L, loadGridData.getObsoletedOrgs());
+        assertEquals(2L, loadGridData.getUpdatedExternalIdentifiers());        
+        
+        ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
+        verify(orgDisambiguatedExternalIdentifierDao, times(2)).merge(captor.capture());
+        
+        List<OrgDisambiguatedExternalIdentifierEntity> extIdsToBeUpdated = captor.getAllValues();
+        
+        OrgDisambiguatedExternalIdentifierEntity wikidata1ExtId = extIdsToBeUpdated.get(0);
+        assertEquals("WIKIDATA1", wikidata1ExtId.getIdentifier());
+        assertEquals("WIKIDATA", wikidata1ExtId.getIdentifierType());
+        assertEquals(Boolean.FALSE, wikidata1ExtId.getPreferred());
+        
+        OrgDisambiguatedExternalIdentifierEntity wikidata2ExtId = extIdsToBeUpdated.get(1);
+        assertEquals("WIKIDATA2", wikidata2ExtId.getIdentifier());
+        assertEquals("WIKIDATA", wikidata2ExtId.getIdentifierType());
+        assertEquals(Boolean.TRUE, wikidata2ExtId.getPreferred());
+    }          
 }

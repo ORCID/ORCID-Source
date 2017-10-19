@@ -13,8 +13,8 @@ import { FormsModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-import { BiographyComponent } 
-    from './biography.component.ts';
+import { NameComponent } 
+    from './name.component.ts';
 
 import { PrivacytoggleComponent } 
     from './../privacytoggle/privacyToggle.component.ts';
@@ -23,8 +23,8 @@ import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
 // This is the Angular 1 part of the module
-export const BiographyModule = angular.module(
-    'BiographyModule', 
+export const NameModule = angular.module(
+    'NameModule', 
     []
 );
 
@@ -37,26 +37,26 @@ export const BiographyModule = angular.module(
             //PrivacytoggleNg2Module
         ],
         declarations: [ 
-            BiographyComponent,
-            PrivacytoggleComponent
+            NameComponent,
+            //PrivacytoggleComponent
         ],
         entryComponents: [ 
-            BiographyComponent 
+            NameComponent 
         ],
         providers: [
             
         ]
     }
 )
-export class BiographyNg2Module {}
+export class NameNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-BiographyModule.directive(
-    'biographyNg2', 
+NameModule.directive(
+    'nameNg2', 
     <any>downgradeComponent(
         {
-            component: BiographyComponent,
+            component: NameComponent,
         }
     )
 );
