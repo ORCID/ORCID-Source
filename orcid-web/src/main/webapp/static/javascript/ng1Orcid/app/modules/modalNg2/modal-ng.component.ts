@@ -104,7 +104,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     closeModal(): void{
-        console.log('close modal');
+        $('body').removeClass('overflow-hidden');
         this.showModal = false;
     };
 
@@ -135,6 +135,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openModal(): void{
+        $('body').addClass('overflow-hidden');
         this.showModal = true;
     };
 

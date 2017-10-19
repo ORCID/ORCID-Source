@@ -45,6 +45,8 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             $scope.showClientDescription = false;
             $scope.showCreateIcon = false;
             $scope.showDeactivatedError = false;
+            $scope.showEmailsAdditionalDeactivatedError = [false];
+            $scope.showEmailsAdditionalReactivationSent = [false];
             $scope.showLimitedIcon = false;    
             $scope.showLongDescription = {};
             $scope.showReactivationSent = false;
@@ -185,7 +187,8 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.registrationForm = data;                            
+                        $scope.registrationForm = data;
+                        $scope.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                             
                         if($scope.registrationForm.email.value && !$scope.isOrcidPresent){
                             $scope.showRegisterForm = true;
                         }
@@ -196,6 +199,16 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
                             $scope.showReactivationSent = false;
                         }); // initialize the watch
+
+                        // special handling of deactivation error for additional emails
+                        $scope.$watch('registrationForm.emailsAdditional', function(newValue, oldValue) {
+                            for (var index in $scope.registrationForm.emailsAdditional) {
+                                $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.emailsAdditional[index].errors) != -1));
+                                $scope.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                            }                              
+                        }, true); // initialize the watch
+                    }
+
                     }
                 }).fail(function() {
                     console.log("An error occured initializing the registration form.");
@@ -350,6 +363,20 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     url: getBaseUri() + '/sendReactivation.json',
                     type: "POST",
                     data: { email: email },
+                    dataType: 'json',
+                }).fail(function(){
+                // something bad is happening!
+                    console.log("error sending reactivation email");
+                });
+            };
+
+            $scope.sendEmailsAdditionalReactivationEmail = function (index) {
+                $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, false);
+                $scope.showEmailsAdditionalReactivationSent.splice(index, 1, true);
+                $.ajax({
+                    url: getBaseUri() + '/sendReactivation.json',
+                    type: "POST",
+                    data: { email: $scope.registrationForm.emailsAdditional[index].value },
                     dataType: 'json',
                 }).fail(function(){
                 // something bad is happening!
@@ -524,6 +551,15 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
                 $scope.registrationForm.activitiesVisibilityDefault.visibility = priv;
             };
+
+            $scope.addEmailField = function () {
+                $scope.registrationForm.emailsAdditional.push({value: ''});
+                $scope.focusIndex = $scope.registrationForm.emailsAdditional.length-1;
+            };  
+
+            $scope.removeEmailField = function (index) {
+                $scope.registrationForm.emailsAdditional.splice(index, 1);
+            }; 
             
             window.onkeydown = function(e) {
                 if (e.keyCode == 13) {     
@@ -551,7 +587,8 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.registrationForm = data;                            
+                        $scope.registrationForm = data;  
+                        $scope.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
                         
                         $scope.$apply();
                                         
@@ -560,6 +597,14 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
                             $scope.showReactivationSent = false;
                         }); // initialize the watch
+
+                        // special handling of deactivation error for additional emails
+                        $scope.$watch('registrationForm.emailsAdditional', function(newValue, oldValue) {
+                            for (var index in $scope.registrationForm.emailsAdditional) {
+                                $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.emailsAdditional[index].errors) != -1));
+                                $scope.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                            }                              
+                        }, true); // initialize the watch
                     }
                 }).fail(function() {
                     console.log("An error occured initializing the registration form.");

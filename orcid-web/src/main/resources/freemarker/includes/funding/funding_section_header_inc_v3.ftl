@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="workspace-accordion-header">
+<div class="workspace-accordion-header clearfix">
     <div class="row">
         
         <div class="col-md-4 col-sm-4 col-xs-12">
@@ -24,15 +24,17 @@
                 <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
                 <@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.groups.length"></span>)
             </a>
-            <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                <div id="funding-help" class="popover bottom">
-                    <div class="arrow"></div>
-                    <div class="popover-content">
-                        <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="${knowledgeBaseUri}/topics/326033" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></p>
+            <#if !(isPublicProfile??)> 
+                <div class="popover-help-container">
+                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <div id="funding-help" class="popover bottom">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="${knowledgeBaseUri}/articles/326033" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
+                        </div>
                     </div>
-                </div>
-            </div>  
+                </div> 
+            </#if> 
         </div>
         <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayFunding">
             <!-- Sort -->

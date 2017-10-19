@@ -30,11 +30,14 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidAccessControlException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OrcidVisibilityException;
@@ -45,15 +48,19 @@ import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
@@ -343,7 +350,49 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         employment.setStartDate(null);
         serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
     }
-    
+
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void testAddEmploymentsDuplicateExternalIDs() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        ExternalID e1 = new ExternalID();
+        e1.setRelationship(Relationship.SELF);
+        e1.setType("erm");
+        e1.setUrl(new Url("https://orcid.org"));
+        e1.setValue("err");
+
+        ExternalID e2 = new ExternalID();
+        e2.setRelationship(Relationship.SELF);
+        e2.setType("err");
+        e2.setUrl(new Url("http://bbc.co.uk"));
+        e2.setValue("erm");
+
+        ExternalIDs externalIDs = new ExternalIDs();
+        externalIDs.getExternalIdentifier().add(e1);
+        externalIDs.getExternalIdentifier().add(e2);
+
+        Employment employment = Utils.getEmployment();
+        employment.setExternalIDs(externalIDs);
+
+        Response response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+
+        Map<?, ?> map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        try {
+            Employment duplicate = Utils.getEmployment();
+            duplicate.setExternalIDs(externalIDs);
+            serviceDelegator.createEmployment("4444-4444-4444-4447", duplicate);
+        } finally {
+            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode);
+        }
+    }
+
     @Test
     public void testUpdateEmployment() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -358,7 +407,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
         employment.setDepartmentName("Updated department name");
         employment.setRoleTitle("The updated role title");
-        
+
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
@@ -385,6 +434,60 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void testUpdateEmploymentDuplicateExternalIDs() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        ExternalID e1 = new ExternalID();
+        e1.setRelationship(Relationship.SELF);
+        e1.setType("erm");
+        e1.setUrl(new Url("https://orcid.org"));
+        e1.setValue("err");
+
+        ExternalID e2 = new ExternalID();
+        e2.setRelationship(Relationship.SELF);
+        e2.setType("err");
+        e2.setUrl(new Url("http://bbc.co.uk"));
+        e2.setValue("erm");
+
+        ExternalIDs externalIDs = new ExternalIDs();
+        externalIDs.getExternalIdentifier().add(e1);
+        externalIDs.getExternalIdentifier().add(e2);
+
+        Employment employment = Utils.getEmployment();
+        employment.setExternalIDs(externalIDs);
+
+        Response response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+        
+        Map<?, ?> map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        Employment another = Utils.getEmployment();
+        response = serviceDelegator.createEmployment("4444-4444-4444-4447", another);
+        
+        map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        
+        response = serviceDelegator.viewEmployment("4444-4444-4444-4447", putCode2);
+        another = (Employment) response.getEntity();
+        another.setExternalIDs(externalIDs);
+        
+        try {
+            serviceDelegator.updateEmployment("4444-4444-4444-4447", putCode2, another);
+        } finally {
+            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode1);
+            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode2);
+        }
     }
 
     @Test(expected = WrongSourceException.class)
@@ -423,7 +526,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
         assertEquals(Visibility.PRIVATE, employment.getVisibility());
-        
+
         employment.setVisibility(null);
 
         response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);

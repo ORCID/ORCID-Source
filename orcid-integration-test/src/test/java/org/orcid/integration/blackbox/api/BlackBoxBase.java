@@ -785,6 +785,9 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
+            // Click away from privacy help pop-over
+            ngAwareClick(webElement.findElement(By.xpath("//div[@class='record-buttons']")));
+            // Delete the ext id
             ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteExternalIdentifier(externalIdentifier)']")));
         }          
     }
