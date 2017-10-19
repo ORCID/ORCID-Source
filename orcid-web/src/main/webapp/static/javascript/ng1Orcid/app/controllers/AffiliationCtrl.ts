@@ -33,6 +33,7 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
             workspaceSrvc
         ){
             $scope.affiliationsSrvc = affiliationsSrvc;
+            $scope.displayAffiliationExtIdPopOver = {};
             $scope.displayURLPopOver = {};
             $scope.editAffiliation;
             $scope.emailSrvc = emailSrvc;
@@ -238,6 +239,10 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                 $scope.displayURLPopOver[id] = false;
             };
 
+            $scope.hideAffiliationExtIdPopOver = function(id){
+                $scope.displayAffiliationExtIdPopOver[id] = false;
+            };
+
 
             $scope.isValidClass = function (cur) {
                 var valid = true;
@@ -396,6 +401,10 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
 
             $scope.showURLPopOver = function(id){
                 $scope.displayURLPopOver[id] = true;
+            };
+
+            $scope.showAffiliationExtIdPopOver = function(id){
+                $scope.displayAffiliationExtIdPopOver[id] = true;
             };
 
             $scope.toggleClickPrivacyHelp = function(key) {

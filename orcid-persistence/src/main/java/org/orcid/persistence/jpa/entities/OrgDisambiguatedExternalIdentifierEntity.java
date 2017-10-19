@@ -41,6 +41,7 @@ public class OrgDisambiguatedExternalIdentifierEntity extends BaseEntity<Long> {
     private Long id;
     private String identifier;
     private String identifierType;
+    private Boolean preferred;
     private OrgDisambiguatedEntity orgDisambiguated;
 
     @Override
@@ -80,6 +81,15 @@ public class OrgDisambiguatedExternalIdentifierEntity extends BaseEntity<Long> {
 
     public void setOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguated) {
         this.orgDisambiguated = orgDisambiguated;
+    }
+    
+    @Column(name = "preferred")
+    public Boolean getPreferred() {
+        return preferred;
+    }
+
+    public void setPreferred(Boolean preferred) {
+        this.preferred = preferred;
     }
 
 }
