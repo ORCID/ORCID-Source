@@ -133,7 +133,7 @@ public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl i
      * @return the list of fundings that belongs to this user
      * */
     @Override
-    public List<Funding> getFundingList(String userOrcid, long lastModified) {
+    public List<Funding> getFundingList(String userOrcid) {
         List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid, getLastModified(userOrcid));
         return jpaJaxbFundingAdapter.toFunding(fundingEntities);
     }

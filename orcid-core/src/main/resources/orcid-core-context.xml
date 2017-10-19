@@ -395,13 +395,13 @@
 	<!-- Utilities -->
 	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
 		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
-		<property name="cacheManager" ref="ActivityCacheManager" />
+		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
 	</bean>
 	
 	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
 		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
-		<property name="cacheManager" ref="ActivityCacheManager" />
+		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
 	</bean>
 	
@@ -415,13 +415,13 @@
 	
 	<bean id="contributorUtilsV3" class="org.orcid.core.utils.v3.ContributorUtils">
         <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
-        <property name="cacheManager" ref="activityCacheManagerV3" />
+        <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
     </bean>
     
     <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
         <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
-        <property name="cacheManager" ref="activityCacheManagerV3" />
+        <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
     </bean>
 	
@@ -450,7 +450,7 @@
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
     </bean>
 	
-    <bean id="activityCacheManagerV3" class="org.orcid.core.manager.v3.impl.ActivityCacheManagerImpl" />
+    <bean id="activityManagerV3" class="org.orcid.core.manager.v3.impl.ActivityManagerImpl" />
     
     <bean id="addressManagerV3" class="org.orcid.core.manager.v3.impl.AddressManagerImpl">
         <property name="addressDao" ref="addressDao" />
@@ -893,7 +893,7 @@
 
     <bean id="orcidUrlManager" class="org.orcid.core.manager.impl.OrcidUrlManager" />	
 	
-	<bean id="ActivityCacheManager" class="org.orcid.core.manager.impl.ActivityCacheManagerImpl" />
+	<bean id="activityManager" class="org.orcid.core.manager.impl.ActivityManagerImpl" />
 	
 	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />		
 	

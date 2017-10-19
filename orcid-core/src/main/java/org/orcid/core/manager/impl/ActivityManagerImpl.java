@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.v3.impl;
+package org.orcid.core.manager.impl;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,37 +22,35 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.manager.v3.ActivityCacheManager;
-import org.orcid.core.manager.v3.AffiliationsManager;
-import org.orcid.core.manager.v3.PeerReviewManager;
-import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.ActivityManager;
+import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.RecordNameUtils;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Affiliation;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WorkForm;
-import org.springframework.cache.annotation.Cacheable;
 
-public class ActivityCacheManagerImpl extends Object implements ActivityCacheManager {
+public class ActivityManagerImpl extends Object implements ActivityManager {
     
-    @Resource(name = "peerReviewManagerV3")
+    @Resource
     private PeerReviewManager peerReviewManager;
     
-    @Resource(name = "profileFundingManagerV3")
+    @Resource
     private ProfileFundingManager profileFundingManager;
     
-    @Resource(name = "workManagerV3")
+    @Resource
     private WorkManager workManager;
     
-    @Resource(name = "affiliationsManagerV3")
+    @Resource
     private AffiliationsManager affiliationsManager;
 
-    @Cacheable(value = "pub-min-works-maps", key = "#orcid.concat('-').concat(#lastModified)")
     public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid) {
         LinkedHashMap<Long, WorkForm> workMap = new LinkedHashMap<>();
         List<Work> works = workManager.findPublicWorks(orcid);
@@ -62,8 +60,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return workMap;
     }
     
-    @Cacheable(value = "pub-peer-reviews-maps", key = "#orcid.concat('-').concat(#lastModified)")
-    public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid, long lastModified) {
+    public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid) {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid);
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         if (peerReviews != null) {
@@ -78,9 +75,8 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return peerReviewMap;
     }
     
-    @Cacheable(value = "pub-funding-maps", key = "#orcid.concat('-').concat(#lastModified)")
-    public LinkedHashMap<Long, Funding> fundingMap(String orcid, long lastModified) {
-    	List<Funding> fundings = profileFundingManager.getFundingList(orcid, lastModified);
+    public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
+    	List<Funding> fundings = profileFundingManager.getFundingList(orcid);
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
 		if (fundings != null) {
 			for (Funding funding : fundings) {
@@ -91,8 +87,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return fundingMap;
     }
 
-    @Cacheable(value = "pub-affiliation-maps", key = "#orcid.concat('-').concat(#lastModified)")
-    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid, long lastModified) {
+    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
         List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcid);        
         for(Affiliation affiliation : affiliations) {
@@ -103,7 +98,6 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return affiliationMap;
     }
 
-    @Cacheable(value = "credit-name", key = "#profile.getCacheKey()")
     public String getCreditName(ProfileEntity profile) {
         String creditName = null;
         if (profile != null) {
@@ -122,7 +116,6 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return creditName;
     }
     
-    @Cacheable(value = "pub-credit-name", key = "#profile.getCacheKey()")
     public String getPublicCreditName(ProfileEntity profile) {
         String publicCreditName = null;
         if(profile != null && profile.getRecordNameEntity() != null) {

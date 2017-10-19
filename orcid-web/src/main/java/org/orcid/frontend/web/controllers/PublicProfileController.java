@@ -40,47 +40,47 @@ import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ActivitiesSummaryManager;
-import org.orcid.core.manager.ActivityCacheManager;
-import org.orcid.core.manager.AddressManager;
-import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.v3.ActivitiesSummaryManager;
+import org.orcid.core.manager.v3.ActivityManager;
+import org.orcid.core.manager.v3.AddressManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ExternalIdentifierManager;
-import org.orcid.core.manager.GroupIdRecordManager;
+import org.orcid.core.manager.v3.ExternalIdentifierManager;
+import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
-import org.orcid.core.manager.OtherNameManager;
-import org.orcid.core.manager.PersonalDetailsManager;
+import org.orcid.core.manager.v3.OtherNameManager;
+import org.orcid.core.manager.v3.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileKeywordManager;
-import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileKeywordManager;
+import org.orcid.core.manager.v3.ResearcherUrlManager;
+import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.core.utils.SourceUtils;
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Addresses;
-import org.orcid.jaxb.model.record_v2.Affiliation;
-import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.Keywords;
-import org.orcid.jaxb.model.record_v2.Name;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.OtherNames;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_v2.PersonalDetails;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.ResearcherUrls;
-import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.Addresses;
+import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
+import org.orcid.jaxb.model.v3.dev1.record.Biography;
+import org.orcid.jaxb.model.v3.dev1.record.Email;
+import org.orcid.jaxb.model.v3.dev1.record.Emails;
+import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.Keyword;
+import org.orcid.jaxb.model.v3.dev1.record.Keywords;
+import org.orcid.jaxb.model.v3.dev1.record.Name;
+import org.orcid.jaxb.model.v3.dev1.record.OtherName;
+import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
+import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -111,14 +111,14 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
+    @Resource(name = "workManagerV3")
     private WorkManager workManager;
 
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
-    private ActivityCacheManager activityCacheManager;
+    @Resource(name = "activityManagerV3")
+    private ActivityManager activityManager;
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
@@ -126,16 +126,16 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntManager;
     
-    @Resource
+    @Resource(name = "groupIdRecordManagerV3")
     private GroupIdRecordManager groupIdRecordManager;
 
-    @Resource
+    @Resource(name = "addressManagerV3")
     private AddressManager addressManager;
 
-    @Resource
+    @Resource(name = "personalDetailsManagerV3")
     private PersonalDetailsManager personalDetailsManager;
     
     @Resource
@@ -144,25 +144,25 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
-    @Resource
+    @Resource(name = "otherNameManagerV3")
     private OtherNameManager otherNameManager;
 
-    @Resource
+    @Resource(name = "profileKeywordManagerV3")
     private ProfileKeywordManager keywordManager;
 
-    @Resource
+    @Resource(name = "researcherUrlManagerV3")
     private ResearcherUrlManager researcherUrlManager;
 
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
-    @Resource
+    @Resource(name = "externalIdentifierManagerV3")
     private ExternalIdentifierManager externalIdentifierManager;
 
-    @Resource
+    @Resource(name = "sourceUtilsV3")
     private SourceUtils sourceUtils;
 
-    @Resource
+    @Resource(name = "activitiesSummaryManagerV3")
     private ActivitiesSummaryManager activitiesSummaryManager;
 
     public static int ORCID_HASH_LENGTH = 8;
@@ -358,28 +358,28 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
 
-        minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid));
+        minimizedWorksMap = activityManager.pubMinWorksMap(orcid);
         if (minimizedWorksMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
             mav.addObject("worksEmpty", true);
         }
 
-        affiliationMap = affiliationMap(orcid, lastModifiedTime);
+        affiliationMap = activityManager.affiliationMap(orcid);
         if (affiliationMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
             mav.addObject("affiliationsEmpty", true);
         }
 
-        fundingMap = fundingMap(orcid, lastModifiedTime);
+        fundingMap = activityManager.fundingMap(orcid);
         if (fundingMap.size() > 0)
             isProfileEmtpy = false;
         else {
             mav.addObject("fundingEmpty", true);
         }
 
-        peerReviewMap = peerReviewMap(orcid, lastModifiedTime);
+        peerReviewMap = activityManager.pubPeerReviewsMap(orcid);
         if (peerReviewMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
@@ -557,7 +557,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
             @RequestParam(value = "affiliationIds") String workIdsStr) {
         List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
-        Map<Long, Affiliation> affMap = affiliationMap(orcid, profileEntManager.getLastModified(orcid));
+        Map<Long, Affiliation> affMap = activityManager.affiliationMap(orcid);
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
             Affiliation aff = affMap.get(Long.valueOf(id));
@@ -583,7 +583,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             @RequestParam(value = "fundingIds") String fundingIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<FundingForm> fundings = new ArrayList<FundingForm>();
-        Map<Long, Funding> fundingMap = fundingMap(orcid, getLastModifiedTime(orcid));
+        Map<Long, Funding> fundingMap = activityManager.fundingMap(orcid);
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(Long.valueOf(id));
@@ -618,7 +618,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
-        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid));
+        HashMap<Long, WorkForm> minimizedWorksMap = activityManager.pubMinWorksMap(orcid);
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -626,7 +626,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         for (String workId : workIds) {
             if (minimizedWorksMap.containsKey(Long.valueOf(workId))) {
                 WorkForm work = minimizedWorksMap.get(Long.valueOf(workId));                
-                validateVisibility(work.getVisibility());                
+                validateVisibility(Visibility.valueOf(work.getVisibility().name()));                
                 if (!PojoUtil.isEmpty(work.getCountryCode())) {
                     Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
                     work.setCountryName(countryName);
@@ -688,7 +688,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                         String contributorOrcid = contributor.getOrcid().getValue();
                         if (profileEntManager.orcidExists(contributorOrcid)) {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                            String publicContributorCreditName = activityCacheManager.getPublicCreditName(profileEntity);
+                            String publicContributorCreditName = activityManager.getPublicCreditName(profileEntity);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                         }
                     }
@@ -705,7 +705,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<PeerReviewForm> peerReviews = new ArrayList<PeerReviewForm>();
-        Map<Long, PeerReview> peerReviewMap = peerReviewMap(orcid, getLastModifiedTime(orcid));
+        Map<Long, PeerReview> peerReviewMap = activityManager.pubPeerReviewsMap(orcid);
         String[] peerReviewIds = peerReviewIdsStr.split(",");
         for (String id : peerReviewIds) {
             PeerReview peerReview = peerReviewMap.get(Long.valueOf(id));            
@@ -743,18 +743,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/public/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") Long groupId) {
         return groupIdRecordManager.getGroupIdRecord(groupId);
-    }
-
-    public LinkedHashMap<Long, Funding> fundingMap(String orcid, Long lastModified) {       
-        return activityCacheManager.fundingMap(orcid, lastModified);
-    }
-
-    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid, Long lastModified) {
-        return activityCacheManager.affiliationMap(orcid, lastModified);
-    }
-
-    public LinkedHashMap<Long, PeerReview> peerReviewMap(String orcid, Long lastModified) {
-        return activityCacheManager.pubPeerReviewsMap(orcid, lastModified);
     }
 
     /**
