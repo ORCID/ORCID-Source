@@ -11,7 +11,7 @@ module.exports = {
         ]
     },
     output: {
-        path: "/opt/tomcat/apache-tomcat-8.0.21/webapps/orcid-web/static/javascript",
+        path: "../.",
         filename: "angular_orcid_generated.js"
     },
     plugins: [
