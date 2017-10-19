@@ -30,11 +30,13 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidAccessControlException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OrcidVisibilityException;
@@ -43,6 +45,7 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -52,11 +55,14 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
@@ -347,6 +353,49 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         education.setStartDate(null);
         serviceDelegator.createEducation("4444-4444-4444-4442", education);
     }
+    
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void testAddEducationsDuplicateExternalIDs() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        ExternalID e1 = new ExternalID();
+        e1.setRelationship(Relationship.SELF);
+        e1.setType("erm");
+        e1.setUrl(new Url("https://orcid.org"));
+        e1.setValue("err");
+
+        ExternalID e2 = new ExternalID();
+        e2.setRelationship(Relationship.SELF);
+        e2.setType("err");
+        e2.setUrl(new Url("http://bbc.co.uk"));
+        e2.setValue("erm");
+
+        ExternalIDs externalIDs = new ExternalIDs();
+        externalIDs.getExternalIdentifier().add(e1);
+        externalIDs.getExternalIdentifier().add(e2);
+
+        Education education = Utils.getEducation();
+        education.setExternalIDs(externalIDs);
+
+        Response response = serviceDelegator.createEducation("4444-4444-4444-4447", education);
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+
+        Map<?, ?> map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        try {
+            Education duplicate = Utils.getEducation();
+            duplicate.setExternalIDs(externalIDs);
+            serviceDelegator.createEducation("4444-4444-4444-4447", duplicate);
+        } finally {
+            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode);
+        }
+    }
+
 
     @Test
     public void testUpdateEducation() {
@@ -437,6 +486,60 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         education = (Education) response.getEntity();
         assertNotNull(education);
         assertEquals(Visibility.PUBLIC, education.getVisibility());
+    }
+    
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void testUpdateEducationDuplicateExternalIDs() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        ExternalID e1 = new ExternalID();
+        e1.setRelationship(Relationship.SELF);
+        e1.setType("erm");
+        e1.setUrl(new Url("https://orcid.org"));
+        e1.setValue("err");
+
+        ExternalID e2 = new ExternalID();
+        e2.setRelationship(Relationship.SELF);
+        e2.setType("err");
+        e2.setUrl(new Url("http://bbc.co.uk"));
+        e2.setValue("erm");
+
+        ExternalIDs externalIDs = new ExternalIDs();
+        externalIDs.getExternalIdentifier().add(e1);
+        externalIDs.getExternalIdentifier().add(e2);
+
+        Education education = Utils.getEducation();
+        education.setExternalIDs(externalIDs);
+
+        Response response = serviceDelegator.createEducation("4444-4444-4444-4447", education);
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+        
+        Map<?, ?> map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        Education another = Utils.getEducation();
+        response = serviceDelegator.createEducation("4444-4444-4444-4447", another);
+        
+        map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        
+        response = serviceDelegator.viewEducation("4444-4444-4444-4447", putCode2);
+        another = (Education) response.getEntity();
+        another.setExternalIDs(externalIDs);
+        
+        try {
+            serviceDelegator.updateEducation("4444-4444-4444-4447", putCode2, another);
+        } finally {
+            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode1);
+            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode2);
+        }
     }
 
     @Test(expected = NoResultException.class)

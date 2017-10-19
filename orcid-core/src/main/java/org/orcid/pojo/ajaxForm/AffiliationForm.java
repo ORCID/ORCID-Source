@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
+import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
 
@@ -92,6 +93,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date lastModified;
 
     private Text url;
+
+    private List<OrgDisambiguatedExternalIdentifiers> orgDisambiguatedExternalIdentifiers;
 
     private List<AffiliationExternalIdentifier> affiliationExternalIdentifiers;
 
@@ -523,6 +526,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     public void setUrl(Text url) {
         this.url = url;
     }
+
+    public List<OrgDisambiguatedExternalIdentifiers> getOrgDisambiguatedExternalIdentifiers() {
+        return orgDisambiguatedExternalIdentifiers;
+    }
+
+    public void setOrgDisambiguatedExternalIdentifiers(List<OrgDisambiguatedExternalIdentifiers> orgDisambiguatedExternalIdentifiers) {
+        this.orgDisambiguatedExternalIdentifiers = orgDisambiguatedExternalIdentifiers;
+    }        
 
     public List<AffiliationExternalIdentifier> getAffiliationExternalIdentifiers() {
         return affiliationExternalIdentifiers;

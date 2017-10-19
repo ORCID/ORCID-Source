@@ -30,6 +30,9 @@ export const PrivacytoggleModule = angular.module(
         ],
         entryComponents: [ 
             PrivacytoggleComponent 
+        ],
+        exports: [
+            //PrivacytoggleComponent
         ]
     }
 )
