@@ -524,6 +524,8 @@ public class BlackBoxBase {
      * */
     public static void openEditOtherNamesModal() {
         waitForElementVisibility(By.id("open-edit-other-names"));
+        // Click away from pop-overs
+        ngAwareClick(findElementById("noop"));
         ngAwareClick(findElementById("open-edit-other-names"));
         waitForCboxComplete();
     }
@@ -786,7 +788,8 @@ public class BlackBoxBase {
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
             // Click away from privacy help pop-over
-            ngAwareClick(webElement.findElement(By.xpath("//div[@class='record-buttons']")));
+            By by = By.id("modal-noop");
+            ngAwareClick(findElement(by));
             // Delete the ext id
             ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteExternalIdentifier(externalIdentifier)']")));
         }          

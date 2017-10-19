@@ -57,10 +57,10 @@ import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
 import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -507,7 +507,10 @@ public class BlackBoxBaseV3 {
      *  OTHER NAMES
      * */
     public static void openEditOtherNamesModal() {
-        waitForElementVisibility(By.id("open-edit-other-names"));
+        By by = By.id("open-edit-other-names");
+        waitForElementVisibility(by);
+        // Click away from pop-overs
+        ngAwareClick(findElementById("noop"));
         ngAwareClick(findElementById("open-edit-other-names"));
         waitForCboxComplete();
     }
