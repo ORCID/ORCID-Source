@@ -131,6 +131,13 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error parsing website", e);
         }
+        String initialContactEmailValue = getInitialContactEmail().getValue();
+        
+        if (initialContactEmailValue.indexOf("@") > -1) {
+            String emailDomainValue = initialContactEmailValue.substring(initialContactEmailValue.indexOf("@") + 1);
+            member.setPublicDisplayEmail(emailDomainValue);
+        } 
+        
         return member;
     }
 
