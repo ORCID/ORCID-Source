@@ -43,7 +43,6 @@ import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
@@ -281,9 +280,7 @@ public class SetUpClientsAndUsers {
     @Resource
     protected ResearcherUrlDao researcherUrlDao;
     @Resource
-    protected ClientDetailsManager clientDetailsManager;
-    @Resource
-    protected OrcidClientGroupManager orcidClientGroupManager;
+    protected ClientDetailsManager clientDetailsManager;    
     @Resource
     protected ProfileEntityManager profileEntityManager;
     @Resource

@@ -39,7 +39,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -77,9 +76,6 @@ public class ManageMembersControllerTest extends DBUnitTest {
 
     @Resource
     private ProfileDao profileDao;
-
-    @Resource
-    OrcidClientGroupManager orcidClientGroupManager;
 
     @Resource
     ClientsController groupAdministratorController;

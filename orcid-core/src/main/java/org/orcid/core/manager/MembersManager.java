@@ -17,12 +17,11 @@
 package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.client_v2.Client;
-import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.pojo.ajaxForm.Member;
 
 public interface MembersManager {
 
-    Member createMember(String memberName, String email, String salesforceId, MemberType memberType);
+    Member createMember(Member member) throws IllegalArgumentException;
     
     Member updateMemeber(Member member);
     
