@@ -17,12 +17,14 @@
 package org.orcid.core.analytics.client.google;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.ws.rs.HttpMethod;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.analytics.AnalyticsData;
 import org.orcid.core.analytics.client.AnalyticsClient;
@@ -104,7 +106,13 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
             int response = connection.getResponseCode();
 
             if (response != 200) {
-                LOGGER.warn("Analytics: received response code {}, payload was {}", new Object[] { response, payload });
+                String responseBody = null;
+                try (InputStream errorStream = connection.getErrorStream()) {
+                    if (errorStream != null) {
+                        responseBody = IOUtils.toString(errorStream);
+                    }
+                }
+                LOGGER.warn("Analytics: received response code {}, payload was {}, response body is {}", new Object[] { response, payload, responseBody });
             }
             connection.disconnect();
         } catch (IOException e) {
@@ -129,4 +137,5 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
         payload.append("&").append(CLIENT_PARAM).append("=").append(data.getClientDetailsString());
         return UriEncoder.encode(payload.toString());
     }
+
 }

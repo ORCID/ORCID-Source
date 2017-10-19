@@ -58,7 +58,7 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.countryForm = data;
                 this.countryFormAddresses = this.countryForm.addresses;
-                console.log('this.countryForm', this.countryForm);
+                //console.log('this.countryForm', this.countryForm);
             },
             error => {
                 console.log('getCountryFormError', error);
