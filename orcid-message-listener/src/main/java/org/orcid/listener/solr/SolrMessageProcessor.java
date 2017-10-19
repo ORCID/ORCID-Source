@@ -31,6 +31,7 @@ import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
+import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
@@ -68,21 +69,22 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
     
     @Override
     public void accept(LastModifiedMessage t) {
-        updateSolrIndex(t.getOrcid());
+        updateSolrIndex(t);
     }
     
     public void accept(RetryMessage m) {
-        updateSolrIndex(m.getOrcid());
+        updateSolrIndex(m);
     }
 
-    private void updateSolrIndex(String orcid) {        
+    private void updateSolrIndex(BaseMessage message) {
+        String orcid = message.getOrcid();
         LOG.info("Updating using Record " + orcid + " in SOLR index");
         if(!isSolrIndexingEnabled) {
             LOG.info("Solr indexing is disabled");
             return;
         }
         try{
-            org.orcid.jaxb.model.record_v2.Record record = orcid20ApiClient.fetchPublicRecord(orcid); 
+            org.orcid.jaxb.model.record_v2.Record record = orcid20ApiClient.fetchPublicRecord(message); 
             
             // Remove deactivated records from SOLR index
             if (record.getHistory() != null && record.getHistory().getDeactivationDate() != null && record.getHistory().getDeactivationDate().getValue() != null) {
