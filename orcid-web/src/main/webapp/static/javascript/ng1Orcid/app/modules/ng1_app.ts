@@ -44,7 +44,7 @@ export const orcidApp = angular.module(
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
         ModalModule.name,
-        NameModule.name,
+        //NameModule.name,
         WidgetModule.name,
         WorksPrivacyPreferencesModule.name
     ]

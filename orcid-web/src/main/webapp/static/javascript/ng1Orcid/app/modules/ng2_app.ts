@@ -104,7 +104,7 @@ export class RootCmp {
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         ModalNg2Module,
-        NameNg2Module,
+        //NameNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
@@ -119,7 +119,7 @@ export class RootCmp {
         CountryService,
         EmailService,
         ModalService,
-        NameService
+        //NameService
     ]
 
 })
