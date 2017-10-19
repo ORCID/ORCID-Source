@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,12 +43,11 @@ import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.ErrorDesc;
+import org.orcid.jaxb.model.v3.dev1.groupid.GroupType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -57,7 +55,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
@@ -105,13 +102,13 @@ public class MembersManagerImpl implements MembersManager {
     private OrcidGenerationManager orcidGenerationManager;
     
     @Override
-    public Member createMember(String memberName, String email, String salesforceId, ) {
-        String memberOrcidId = createMemberProfile(memberName, email, salesforceId); 
+    public Member createMember(String memberName, String email, String salesforceId, MemberType type) {
+        String memberOrcidId = createMemberProfile(memberName, email, salesforceId, type); 
         Member member = new Member();
         member.setEmail(Text.valueOf(email));
         member.setGroupName(Text.valueOf(memberName));
         member.setGroupOrcid(Text.valueOf(memberOrcidId));
-        
+        return member;
     }
 
     @Override
@@ -204,7 +201,7 @@ public class MembersManagerImpl implements MembersManager {
     
     
     
-    private String createMemberProfile(String memberName, String email, String salesforceId) {
+    private String createMemberProfile(String memberName, String email, String salesforceId, MemberType memberType) {
         Date now = new Date();
         String orcid = orcidGenerationManager.createNewOrcid();
         ProfileEntity newRecord = new ProfileEntity();
@@ -217,6 +214,7 @@ public class MembersManagerImpl implements MembersManager {
         }
         
         newRecord.setOrcidType(OrcidType.GROUP);
+        newRecord.setGroupType(memberType);
         newRecord.setDateCreated(now);
         newRecord.setLastModified(now);
         newRecord.setSubmissionDate(now);
