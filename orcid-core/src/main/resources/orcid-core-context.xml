@@ -749,9 +749,7 @@
 	<bean id="passwordGenerationManager"
 		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">
 		<constructor-arg value="12"></constructor-arg>
-	</bean>
-
-	<bean id="orcidClientGroupManager" class="org.orcid.core.manager.impl.OrcidClientGroupManagerImpl" />		
+	</bean>		
 
     <alias name="incomingValidationManagerV1_2_rc6" alias="incomingValidationManagerLatest"/>
     <alias name="outgoingValidationManagerV1_2_rc6" alias="outgoingValidationManagerLatest"/>

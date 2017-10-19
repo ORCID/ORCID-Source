@@ -36,6 +36,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.MembersManager;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.core.security.OrcidWebRole;
@@ -54,13 +55,17 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class MembersManagerImpl implements MembersManager {
 
@@ -98,6 +103,12 @@ public class MembersManagerImpl implements MembersManager {
     
     @Resource
     private ClientScopeDao clientScopeDao;
+    
+    @Resource
+    private TransactionTemplate transactionTemplate;
+    
+    @Resource
+    private SourceManager sourceManager;
 
     @Override
     public Member createMember(Member member) throws IllegalArgumentException {
@@ -105,50 +116,124 @@ public class MembersManagerImpl implements MembersManager {
             throw new IllegalArgumentException("Email already exists");
         }
 
-        String memberOrcidId = createMemberProfile(member.getGroupName().getValue(), member.getEmail().getValue(),
-                member.getSalesforceId() == null ? null : member.getSalesforceId().getValue(), MemberType.fromValue(member.getType().getValue()));
-        member.setGroupOrcid(Text.valueOf(memberOrcidId));
+        Date now = new Date();
+        String orcid = orcidGenerationManager.createNewOrcid();
+        ProfileEntity newRecord = new ProfileEntity();
+        newRecord.setId(orcid);
+        newRecord.setOrcidType(OrcidType.GROUP);
+        
+        try {
+            newRecord.setHashedOrcid(encryptionManager.sha256Hash(orcid));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        newRecord.setActivitiesVisibilityDefault(Visibility.PRIVATE);
+        newRecord.setClaimed(true);
+        newRecord.setCreationMethod(CreationMethod.DIRECT.value());
+        newRecord.setDateCreated(now);
+        newRecord.setEnableDeveloperTools(false);
+        newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
+        newRecord.setEncryptedPassword(null);
+        newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()));
+        newRecord.setLastModified(now);
+        newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN);
+        newRecord.setRecordLocked(false);
+        newRecord.setReviewed(false);
+        newRecord.setSalesforeId(PojoUtil.isEmpty(member.getSalesforceId()) ? null : member.getSalesforceId().getValue());
+        newRecord.setSendChangeNotifications(false);
+        newRecord.setSendEmailFrequencyDays(Float.valueOf(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS));
+        newRecord.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
+        newRecord.setSendOrcidNews(false);
+        newRecord.setSubmissionDate(now);
+        newRecord.setUsedRecaptchaOnRegistration(false);
+        
+        // Set primary email
+        EmailEntity emailEntity = new EmailEntity();
+        emailEntity.setId(member.getEmail().getValue());
+        emailEntity.setProfile(newRecord);
+        emailEntity.setPrimary(true);
+        emailEntity.setCurrent(true);
+        emailEntity.setVerified(true);
+        // Email is private by default
+        emailEntity.setVisibility(Visibility.PRIVATE);
+        
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        String sourceId = sourceEntity.getSourceProfile().getId();
+        emailEntity.setSourceId(sourceId);
+        Set<EmailEntity> emails = new HashSet<>();
+        emails.add(emailEntity);
+        // Add all emails to record
+        newRecord.setEmails(emails);
+
+        // Set the name
+        RecordNameEntity recordNameEntity = new RecordNameEntity();
+        recordNameEntity.setDateCreated(now);
+        recordNameEntity.setLastModified(now);
+        recordNameEntity.setProfile(newRecord);
+        recordNameEntity.setVisibility(Visibility.PUBLIC);
+        recordNameEntity.setCreditName(member.getGroupName().getValue());
+        newRecord.setRecordNameEntity(recordNameEntity);
+
+        // Set authority
+        OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
+        authority.setProfileEntity(newRecord);
+        authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
+        Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
+        authorities.add(authority);
+        newRecord.setAuthorities(authorities);
+
+        profileDao.persist(newRecord);
+        profileDao.flush();                        
+        member.setGroupOrcid(Text.valueOf(orcid));
         return member;
     }
 
     @Override
-    public Member updateMemeber(Member member) {
-        ProfileEntity memberEntity = profileDao.find(member.getGroupOrcid().getValue());
-        boolean memberChangedType = false;
+    public Member updateMemeber(Member member) throws IllegalArgumentException {
         String memberId = member.getGroupOrcid().getValue();
         String name = member.getGroupName().getValue();
         String email = member.getEmail().getValue();
         String salesForceId = member.getSalesforceId() == null ? null : member.getSalesforceId().getValue();
         MemberType memberType = MemberType.fromValue(member.getType().getValue());
 
-        memberEntity.getRecordNameEntity().setCreditName(name);
-        memberEntity.setSalesforeId(salesForceId);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                boolean memberChangedType = false;
+                ProfileEntity memberEntity = profileDao.find(member.getGroupOrcid().getValue());
+                memberEntity.getRecordNameEntity().setCreditName(name);
+                memberEntity.setSalesforeId(salesForceId);
 
-        if (!memberType.equals(memberEntity.getGroupType())) {
-            memberEntity.setGroupType(memberType);
-            memberChangedType = true;
-        }
+                if (!memberType.equals(memberEntity.getGroupType())) {
+                    memberEntity.setGroupType(memberType);
+                    memberChangedType = true;
+                }
 
-        EmailEntity primaryEmail = memberEntity.getPrimaryEmail();
-        if (!email.equals(primaryEmail.getId())) {
-            Date now = new Date();
-            EmailEntity newPrimaryEmail = new EmailEntity();
-            newPrimaryEmail.setLastModified(now);
-            newPrimaryEmail.setDateCreated(now);
-            newPrimaryEmail.setCurrent(true);
-            newPrimaryEmail.setId(email);
-            newPrimaryEmail.setPrimary(true);
-            newPrimaryEmail.setVerified(true);
-            newPrimaryEmail.setVisibility(Visibility.PRIVATE);
-            memberEntity.setPrimaryEmail(newPrimaryEmail);
-        }
+                EmailEntity primaryEmail = memberEntity.getPrimaryEmail();
+                if (!email.equals(primaryEmail.getId())) {
+                    if (emailManager.emailExists(email)) {
+                        throw new IllegalArgumentException("Email already exists");
+                    }
+                    Date now = new Date();
+                    EmailEntity newPrimaryEmail = new EmailEntity();
+                    newPrimaryEmail.setLastModified(now);
+                    newPrimaryEmail.setDateCreated(now);
+                    newPrimaryEmail.setCurrent(true);
+                    newPrimaryEmail.setId(email);
+                    newPrimaryEmail.setPrimary(true);
+                    newPrimaryEmail.setVerified(true);
+                    newPrimaryEmail.setVisibility(Visibility.PRIVATE);
+                    memberEntity.setPrimaryEmail(newPrimaryEmail);
+                }
 
-        profileDao.merge(memberEntity);
+                profileDao.merge(memberEntity);
 
-        if (memberChangedType) {
-            updateClientTypeDueMemberTypeUpdate(memberId, memberType);
-        }
-
+                if (memberChangedType) {
+                    updateClientTypeDueMemberTypeUpdate(memberId, memberType);
+                }
+            }
+        });
+        
         clearCache();
         return member;
     }
@@ -229,81 +314,7 @@ public class MembersManagerImpl implements MembersManager {
         thirdPartyLinkManager.updateDatabaseCacheVersion();
         // Evict current cache
         thirdPartyLinkManager.evictAll();
-    }
-
-    private String createMemberProfile(String memberName, String email, String salesforceId, MemberType memberType) {
-        Date now = new Date();
-        String orcid = orcidGenerationManager.createNewOrcid();
-        ProfileEntity newRecord = new ProfileEntity();
-        newRecord.setId(orcid);
-
-        try {
-            newRecord.setHashedOrcid(encryptionManager.sha256Hash(orcid));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-
-        newRecord.setOrcidType(OrcidType.GROUP);
-        newRecord.setGroupType(memberType);
-        newRecord.setDateCreated(now);
-        newRecord.setLastModified(now);
-        newRecord.setSubmissionDate(now);
-        newRecord.setClaimed(true);
-        newRecord.setEnableDeveloperTools(false);
-        newRecord.setRecordLocked(false);
-        newRecord.setReviewed(false);
-        newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
-        newRecord.setUsedRecaptchaOnRegistration(false);
-        newRecord.setSendEmailFrequencyDays(Float.valueOf(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS));
-        newRecord.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
-
-        newRecord.setCreationMethod(CreationMethod.DIRECT.value());
-        newRecord.setSendChangeNotifications(false);
-        newRecord.setSendOrcidNews(false);
-        newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN);
-        // Visibility defaults
-        newRecord.setActivitiesVisibilityDefault(Visibility.PRIVATE);
-
-        // No password
-        newRecord.setEncryptedPassword(null);
-
-        // Set primary email
-        EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setId(email);
-        emailEntity.setProfile(newRecord);
-        emailEntity.setPrimary(true);
-        emailEntity.setCurrent(true);
-        emailEntity.setVerified(true);
-        // Email is private by default
-        emailEntity.setVisibility(Visibility.PRIVATE);
-        emailEntity.setSourceId(orcid);
-        Set<EmailEntity> emails = new HashSet<>();
-        emails.add(emailEntity);
-        // Add all emails to record
-        newRecord.setEmails(emails);
-
-        // Set the name
-        RecordNameEntity recordNameEntity = new RecordNameEntity();
-        recordNameEntity.setDateCreated(now);
-        recordNameEntity.setLastModified(now);
-        recordNameEntity.setProfile(newRecord);
-        // Name is public by default
-        recordNameEntity.setVisibility(Visibility.PUBLIC);
-        recordNameEntity.setCreditName(memberName);
-        newRecord.setRecordNameEntity(recordNameEntity);
-
-        // Set authority
-        OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
-        authority.setProfileEntity(newRecord);
-        authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
-        Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
-        authorities.add(authority);
-        newRecord.setAuthorities(authorities);
-
-        profileDao.persist(newRecord);
-        profileDao.flush();
-        return orcid;
-    }
+    }    
     
     /**
      * Returns the client type based on the member type

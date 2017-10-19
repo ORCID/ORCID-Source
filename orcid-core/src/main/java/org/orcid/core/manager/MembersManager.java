@@ -23,7 +23,7 @@ public interface MembersManager {
 
     Member createMember(Member member) throws IllegalArgumentException;
     
-    Member updateMemeber(Member member);
+    Member updateMemeber(Member member) throws IllegalArgumentException;
     
     Member getMember(String memberId);      
     
