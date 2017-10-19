@@ -5168,6 +5168,10 @@ ul.oauth-scopes li {
     width: 800px
 }
 
+.inline{
+    display: inline!important;
+}
+
 .inline-input {
     display: inline;
     margin: 0 10px 15px 0
