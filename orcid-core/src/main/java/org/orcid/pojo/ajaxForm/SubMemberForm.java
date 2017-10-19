@@ -135,7 +135,7 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
         
         if (initialContactEmailValue.indexOf("@") > -1) {
             String emailDomainValue = initialContactEmailValue.substring(initialContactEmailValue.indexOf("@") + 1);
-            member.setPublicDisplayEmail(emailDomainValue);
+            member.setEmailDomains(emailDomainValue);
         } 
         
         return member;
