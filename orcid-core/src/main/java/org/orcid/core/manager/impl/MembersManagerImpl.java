@@ -52,6 +52,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
@@ -201,6 +202,8 @@ public class MembersManagerImpl implements MembersManager {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 boolean memberChangedType = false;
                 ProfileEntity memberEntity = profileDao.find(member.getGroupOrcid().getValue());
+                memberEntity.setLastModified(new Date());
+                memberEntity.setIndexingStatus(IndexingStatus.PENDING);
                 memberEntity.getRecordNameEntity().setCreditName(name);
                 memberEntity.setSalesforeId(salesForceId);
 
