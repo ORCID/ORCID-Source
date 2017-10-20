@@ -28,7 +28,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.orcid.core.constants.DefaultPreferences;
-import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientManager;
 import org.orcid.core.manager.EmailManager;
@@ -61,16 +60,12 @@ import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public class MembersManagerImpl implements MembersManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MembersManagerImpl.class);
 
     @Resource
     private LocaleManager localeManager;
@@ -286,24 +281,6 @@ public class MembersManagerImpl implements MembersManager {
         return member;
     }
 
-    @Override
-    public Client getClient(String clientId) {
-        return clientManagerReadOnly.get(clientId);
-    }
-
-    @Override
-    public Client updateClient(Client client) {
-        try {
-            client = clientManager.edit(client);
-            clearCache();
-        } catch (OrcidClientGroupManagementException e) {
-            LOGGER.error(e.getMessage());
-            throw new IllegalArgumentException(e);
-        }
-
-        return client;
-    }
-
     private String getMessage(String message) {
         return localeManager.resolveMessage(message);
     }
@@ -312,6 +289,7 @@ public class MembersManagerImpl implements MembersManager {
      * Since the groups have changed, the cache version must be updated on
      * database and all caches have to be evicted.
      */
+    @Override
     public void clearCache() {
         // Updates cache database version
         thirdPartyLinkManager.updateDatabaseCacheVersion();
