@@ -42,7 +42,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class AddGrantTypeToExistingClients {
 
     
-    @Option(name = "-g", usage = "Grant types to add (like 'client_credentials', 'refresh_token' and 'authorization_code')")
+    @Option(name = "-g", usage = "Grant types to add ('client_credentials', 'refresh_token', 'authorization_code', 'implicit')")
     private String newGrantTypes;
     
     @Option(name = "-t", usage = "CSV client types, must be one in ClientType, if null, assume the change applies to all client types")
@@ -58,16 +58,16 @@ public class AddGrantTypeToExistingClients {
     private int clientsUpdated = 0;    
     
     public static void main(String [] args) {
-        AddGrantTypeToExistingClients addScopesToExistingClients = new AddGrantTypeToExistingClients();
-        CmdLineParser parser = new CmdLineParser(addScopesToExistingClients);
+        AddGrantTypeToExistingClients addGrantTypeToExistingClients = new AddGrantTypeToExistingClients();
+        CmdLineParser parser = new CmdLineParser(addGrantTypeToExistingClients);
         try {           
             parser.parseArgument(args);
-            addScopesToExistingClients.validateParameters(parser);
-            addScopesToExistingClients.init();
-            addScopesToExistingClients.process();
+            addGrantTypeToExistingClients.validateParameters(parser);
+            addGrantTypeToExistingClients.init();
+            addGrantTypeToExistingClients.process();
             System.out.println();
             System.out.println();
-            System.out.println(addScopesToExistingClients.getClientsUpdated() + " clients were updated");
+            System.out.println(addGrantTypeToExistingClients.getClientsUpdated() + " clients were updated");
             System.out.println();
             System.out.println();
         } catch (CmdLineException e) {
@@ -150,7 +150,7 @@ public class AddGrantTypeToExistingClients {
             String [] grantTypesArray = newGrantTypes.split(",");
             for(String grantType : grantTypesArray) {
                 grantType = grantType.trim();                 
-                if(!grantType.equals("refresh_token") && !grantType.equals("authorization_code") && !grantType.equals("client_credentials")) {
+                if(!grantType.equals("refresh_token") && !grantType.equals("authorization_code") && !grantType.equals("client_credentials") && !grantType.equals("implicit")) {
                     throw new CmdLineException(parser, "Invalid grantType: " + grantType);
                 }
                 if(!PojoUtil.isEmpty(grantType)){
