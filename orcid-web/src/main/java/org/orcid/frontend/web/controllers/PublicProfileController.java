@@ -191,7 +191,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
         } catch(Exception e) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setStatus(HttpStatus.NOT_FOUND.value());   
             return new ModelAndView("error-404");
         }    
         
@@ -207,7 +207,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
                 if (publicPersonalDetails.getName() != null) {
                     Name name = publicPersonalDetails.getName();
-                    if (name.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
+                    if (name.getVisibility().equals(Visibility.PUBLIC)) {
                         if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
                             displayName = name.getCreditName().getContent();
                         } else {
@@ -266,7 +266,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             if (publicPersonalDetails.getName() != null) {
                 Name name = publicPersonalDetails.getName();
-                if (name.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
+                if (name.getVisibility().equals(Visibility.PUBLIC)) {
                     if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
                         displayName = name.getCreditName().getContent();
                     } else {
@@ -290,7 +290,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             // Get biography
             if (publicPersonalDetails.getBiography() != null) {
                 Biography bio = publicPersonalDetails.getBiography();
-                if (org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
+                if (Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
                     isProfileEmtpy = false;
                     mav.addObject("biography", bio);
                 }
@@ -302,7 +302,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
                 while (it.hasNext()) {
                     OtherName otherName = it.next();
-                    if (!org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                    if (!Visibility.PUBLIC.equals(otherName.getVisibility())) {
                         it.remove();
                     }
                 }
