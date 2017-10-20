@@ -208,8 +208,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             }                              
                         }, true); // initialize the watch
                     }
-
-                    }
                 }).fail(function() {
                     console.log("An error occured initializing the registration form.");
                 });
