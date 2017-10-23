@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -39,7 +40,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.MembersManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -62,15 +63,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class ManageMembersControllerTest extends DBUnitTest {
 
+    @Resource
+    MembersManager membersManager;
+    
     @Resource
     ManageMembersController manageMembers;
 
@@ -85,10 +86,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     
     @Resource
     SourceManager sourceManager;
-    
-    @Resource
-    OrcidProfileManager orcidProfileManager;
-    
+        
     @Mock
     SourceManager mockSourceManager;
     
@@ -96,8 +94,10 @@ public class ManageMembersControllerTest extends DBUnitTest {
     public void beforeInstance() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager); 
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity());
+        TargetProxyHelper.injectIntoProxy(membersManager, "sourceManager", mockSourceManager); 
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceProfile(new ProfileEntity("5555-5555-5555-0000"));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
     }
     
     @BeforeClass
@@ -107,7 +107,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
 
     @After
     public void after() {
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(membersManager, "sourceManager", sourceManager);
     }
     
     @AfterClass
@@ -121,7 +121,8 @@ public class ManageMembersControllerTest extends DBUnitTest {
         return auth;
     }
     
-    @Test    
+    @Test   
+    @Transactional
     public void createMemberProfileWithInvalidEmailsTest() throws Exception {
         ProfileEntity profile = profileDao.find("5555-5555-5555-0000");
         assertNotNull(profile);
@@ -216,7 +217,8 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Test    
     public void createMemberProfileTest() throws Exception {
         Member group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
+        String email = "group" + System.currentTimeMillis() + "@email.com";
+        group.setEmail(Text.valueOf(email));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
         group.setSalesforceId(Text.valueOf(""));
@@ -228,7 +230,8 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Test    
     public void findMemberByOrcidTest() throws Exception {
         Member group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
+        String email = "group" + System.currentTimeMillis() + "@email.com";
+        group.setEmail(Text.valueOf(email));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
         group.setSalesforceId(Text.valueOf("1234567890abcde"));
@@ -246,13 +249,13 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertFalse(PojoUtil.isEmpty(newGroup.getSalesforceId()));
         assertFalse(PojoUtil.isEmpty(newGroup.getGroupName()));
 
-        assertEquals("group@email.com", newGroup.getEmail().getValue());
+        assertEquals(email, newGroup.getEmail().getValue());
         assertEquals("Group Name", newGroup.getGroupName().getValue());
         assertEquals("1234567890abcde", newGroup.getSalesforceId().getValue());
         assertEquals(orcid, newGroup.getGroupOrcid().getValue());
 
         // Test find by email
-        Member newGroup2 = manageMembers.findMember("group@email.com");
+        Member newGroup2 = manageMembers.findMember(email);
         assertNotNull(newGroup2);
 
         assertFalse(PojoUtil.isEmpty(newGroup2.getGroupOrcid()));
@@ -260,7 +263,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertFalse(PojoUtil.isEmpty(newGroup2.getSalesforceId()));
         assertFalse(PojoUtil.isEmpty(newGroup2.getGroupName()));
 
-        assertEquals("group@email.com", newGroup2.getEmail().getValue());
+        assertEquals(email, newGroup2.getEmail().getValue());
         assertEquals("Group Name", newGroup2.getGroupName().getValue());
         assertEquals("1234567890abcde", newGroup2.getSalesforceId().getValue());
         assertEquals(orcid, newGroup2.getGroupOrcid().getValue());
@@ -293,7 +296,8 @@ public class ManageMembersControllerTest extends DBUnitTest {
     public void editMemberWithInvalidEmailTest() throws Exception {
         //Create one member
         Member group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
+        String email = "group" + System.currentTimeMillis() + "@email.com";
+        group.setEmail(Text.valueOf(email));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
         group.setSalesforceId(Text.valueOf("1234567890abcde"));
@@ -302,7 +306,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertEquals(0, group.getErrors().size());
         //Try to create another member with the same email
         group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
+        group.setEmail(Text.valueOf(email));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
         group.setSalesforceId(Text.valueOf("1234567890abcde"));
@@ -316,7 +320,8 @@ public class ManageMembersControllerTest extends DBUnitTest {
     public void editMemberWithInvalidSalesforceIdTest() throws Exception {
         //Create one member
         Member group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
+        String email = "group" + System.currentTimeMillis() + "@email.com";
+        group.setEmail(Text.valueOf(email));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
         group.setSalesforceId(Text.valueOf("1234567890abcde"));
@@ -375,8 +380,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
             assertNotNull(rUri2.getType());
             assertEquals("default", rUri2.getType().getValue());
             assertNotNull(rUri2.getScopes());
-            assertEquals(1, rUri2.getScopes().size());
-            assertEquals("", rUri2.getScopes().get(0));
+            assertEquals(0, rUri2.getScopes().size());            
         } else if ("http://www.google.com/APP-0000000000000003/redirect/oauth/grant_read_wizard".equals(rUri2.getValue().getValue())) {
             assertNotNull(rUri2.getType());
             assertEquals("grant-read-wizard", rUri2.getType().getValue());
