@@ -1,7 +1,7 @@
 import { Injectable } 
     from '@angular/core';
 
-import { Headers, Http, RequestOptions, Response } 
+import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
 import { Observable } 
@@ -152,10 +152,26 @@ export class EmailService {
         this.saveEmail();
     }
 
-    verifyEmail(): Observable<any>  {
+    verifyEmail( email ): Observable<any>  {
+        let _email = encodeURI(email);
+        let myParams = new URLSearchParams();
+        myParams.append('email', _email);
+        let options = new RequestOptions(
+            { headers: this.headers , search: myParams }
+        );
+
+        console.log(email, _email, options);
+
         return this.http.get(
-            getBaseUri() + '/account/verifyEmail.json&email=' + this.primaryEmail
+            getBaseUri() + '/account/verifyEmail.json',
+            options
         )
+        /*
+        return this.http.post( 
+            getBaseUri() + '/account/verifyEmail.json', 
+            { "email": _email }, 
+            { headers: this.headers }
+        )*/
         .map(
             (res:Response) => res.json()
         )
