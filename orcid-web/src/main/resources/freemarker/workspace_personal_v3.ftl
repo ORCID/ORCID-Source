@@ -46,7 +46,12 @@
                             </div>
                         </li>
                         <li>
-                            <privacy-toggle-ng2 elementId="bio-privacy-toggle" [dataPrivacyObj]="biographyForm" (privacyUpdate)="privacyChange($event)"></privacy-toggle-ng2>
+                            <privacy-toggle-ng2 
+                                [dataPrivacyObj]="biographyForm"  
+                                (privacyUpdate)="privacyChange($event)"
+                                elementId="bio-privacy-toggle" 
+                                privacyNodeName="visiblity" 
+                            ></privacy-toggle-ng2>
                         </li>
                     </ul>
                 </div>

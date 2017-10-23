@@ -166,12 +166,6 @@ export class EmailService {
             getBaseUri() + '/account/verifyEmail.json',
             options
         )
-        /*
-        return this.http.post( 
-            getBaseUri() + '/account/verifyEmail.json', 
-            { "email": _email }, 
-            { headers: this.headers }
-        )*/
         .map(
             (res:Response) => res.json()
         )
@@ -181,20 +175,5 @@ export class EmailService {
             }
         )
         .share();
-
-        /*
-        $.ajax({
-            url: getBaseUri() + '/account/verifyEmail.json',
-            type: 'get',
-            data:  { "email": email.value },
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function(data) {
-                if (callback) {
-                    callback(data);
-                }
-            }
-        })
-        */
     }
 }

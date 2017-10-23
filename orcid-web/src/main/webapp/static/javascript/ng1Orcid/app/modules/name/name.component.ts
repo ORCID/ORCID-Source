@@ -85,7 +85,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     privacyChange( obj ): any {
-        this.nameForm.visiblity.visibility = obj;
+        this.nameForm.namesVisibility.visibility = obj;
         this.setNameForm();   
     };
 
@@ -109,12 +109,6 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
             this.setNameForm();
         }
     }
-
-    ///
-    setNamesVisibility(priv, $event): void {
-        $event.preventDefault();
-        this.nameForm.namesVisibility.visibility = priv;
-    };
     
     toggleEdit(): void {
 
