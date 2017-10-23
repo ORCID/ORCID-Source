@@ -51,6 +51,8 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
 
         client.setAllowAutoDeprecate(Checkbox.valueOf(modelObject.isAllowAutoDeprecate()));
         
+        client.setPersistentTokenEnabled(Checkbox.valueOf(modelObject.isPersistentTokensEnabled()));
+        
         if (modelObject.getAuthenticationProviderId() != null) {
             client.setAuthenticationProviderId(Text.valueOf(modelObject.getAuthenticationProviderId()));
         }
