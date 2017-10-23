@@ -17,6 +17,7 @@
 package org.orcid.core.adapter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
@@ -85,14 +86,17 @@ public class JpaJaxbClientAdapterTest {
         Client client = getClient();
         ClientDetailsEntity entity = adapter.toEntity(client);
         ClientDetailsEntity toCompare = getClientDetailsEntity();
+        
+        // Configuration values should be the default
+        assertFalse(entity.isPersistentTokensEnabled());
+        assertNull(entity.getAuthenticationProviderId());
+        
         assertEquals(toCompare.getClientDescription(), entity.getClientDescription());
         assertEquals(toCompare.getClientId(), entity.getClientId());
         assertEquals(toCompare.getClientName(), entity.getClientName());
         assertEquals(toCompare.getClientRegisteredRedirectUris(), entity.getClientRegisteredRedirectUris());        
         assertEquals(toCompare.getClientWebsite(), entity.getClientWebsite());
         assertEquals(toCompare.isAllowAutoDeprecate(), entity.isAllowAutoDeprecate());
-        assertEquals(toCompare.isPersistentTokensEnabled(), entity.isPersistentTokensEnabled());
-        assertEquals(toCompare.getAuthenticationProviderId(), entity.getAuthenticationProviderId());
        
         assertNull(entity.getClientType());
         assertNull(entity.getEmailAccessReason());

@@ -265,8 +265,8 @@ public class ClientManagerTest extends BaseTest {
         assertFalse(entityClient.isAllowAutoDeprecate());        
         
         //Verify authentication provider id changed
-        assertEquals(client.getAuthenticationProviderId(), entityClient.getAuthenticationProviderId());
         assertNotEquals(originalClient.getAuthenticationProviderId(), client.getAuthenticationProviderId());
+        assertEquals(client.getAuthenticationProviderId(), entityClient.getAuthenticationProviderId());        
         
         //Verify enable persistent tokens changed
         assertNotEquals(originalClient.isPersistentTokensEnabled(), client.isPersistentTokensEnabled());
