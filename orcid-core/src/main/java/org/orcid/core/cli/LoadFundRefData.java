@@ -39,10 +39,8 @@ import org.kohsuke.args4j.Option;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
-import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +66,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class LoadFundRefData {
 
     class RDFOrganization {
-        String doi, name, country, state, stateCode, city, type, subtype, status;
+        String doi, name, country, state, stateCode, city, type, subtype, status, isReplacedBy;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadFundRefData.class);
@@ -83,8 +81,7 @@ public class LoadFundRefData {
     @Option(name = "-f", usage = "Path to RDF file containing FundRef info to load into DB")
     private File fileToLoad;
 
-    // Resources
-    private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
+    // Resources    
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private String apiUser;
     // Cache
@@ -98,12 +95,13 @@ public class LoadFundRefData {
     private String orgTypeExpression = "fundingBodyType";
     private String orgSubTypeExpression = "fundingBodySubType";
     private String statusExpression = "status";
+    private String isReplacedByExpression = "isReplacedBy";
     // xPath init
     private XPath xPath = XPathFactory.newInstance().newXPath();
     // Statistics
     private long updatedOrgs = 0;
-    private long addedDisambiguatedOrgs = 0;
-    private long addedExternalIdentifiers = 0;
+    private long addedDisambiguatedOrgs = 0;    
+    private long depreciatedOrgs = 0;
 
     public static void main(String[] args) {
         LoadFundRefData loadFundRefData = new LoadFundRefData();
@@ -126,11 +124,10 @@ public class LoadFundRefData {
         }
     }
 
-    @SuppressWarnings({ "resource", "unchecked" })
     private void init() {
+        @SuppressWarnings("resource")
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
-        orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
+        orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");        
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
@@ -150,11 +147,10 @@ public class LoadFundRefData {
             NodeList nodeList = (NodeList) xPath.compile(conceptsExpression).evaluate(xmlDocument, XPathConstants.NODESET);
             for (int i = 0; i < nodeList.getLength(); i++) {
                 RDFOrganization rdfOrganization = getOrganization(xmlDocument, nodeList.item(i).getAttributes());
-                LOGGER.info("Processing organization from RDF, doi:{}, name:{}, country:{}, state:{}, stateCode:{}, type:{}, subtype:{}, status:{}", new String[] {
-                        rdfOrganization.doi, rdfOrganization.name, rdfOrganization.country, rdfOrganization.state, rdfOrganization.stateCode, rdfOrganization.type,
-                        rdfOrganization.subtype, rdfOrganization.status });
+                LOGGER.info("Processing organization from RDF, doi:{}", new String[] {
+                        rdfOrganization.doi });
                 // #1: Look for an existing org
-                OrgDisambiguatedEntity existingEntity = findByDetails(rdfOrganization);
+                OrgDisambiguatedEntity existingEntity = findById(rdfOrganization);
                 if(existingEntity != null) {
                     // #2: If the name, city or region changed, update those values
                     if(entityChanged(rdfOrganization, existingEntity)) {
@@ -173,24 +169,32 @@ public class LoadFundRefData {
                         existingEntity.setStatus(rdfOrganization.status);
                         orgDisambiguatedDao.merge(existingEntity); 
                         updatedOrgs += 1;
-                    } else if(idChanged(rdfOrganization, existingEntity)){
-                        // #3: If the ID changed, create an external identifier
-                        createExternalIdentifier(existingEntity, rdfOrganization.doi);
-                        addedExternalIdentifiers += 1;
                     } else if(statusChanged(rdfOrganization, existingEntity)) {
                         //If the status changed, update the status
                         existingEntity.setStatus(rdfOrganization.status);
                         existingEntity.setLastModified(new Date());
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         orgDisambiguatedDao.merge(existingEntity); 
+                        depreciatedOrgs += 1;
+                    } else {
+                        // Check if it is depreciated
+                        if(StringUtils.isNotBlank(rdfOrganization.isReplacedBy)) {
+                            if(!rdfOrganization.isReplacedBy.equals(existingEntity.getSourceParentId())) {
+                                existingEntity.setSourceParentId(rdfOrganization.isReplacedBy);
+                                existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
+                                existingEntity.setLastModified(new Date());
+                                existingEntity.setIndexingStatus(IndexingStatus.PENDING);
+                                orgDisambiguatedDao.merge(existingEntity); 
+                                depreciatedOrgs += 1;
+                            }
+                        } 
                     }
-                } else {
-                    // #4: Else, create the new org
+                } else {                    
+                    // If it doesn't exists, create the new org
                     createDisambiguatedOrg(rdfOrganization);                    
-                    addedDisambiguatedOrgs += 1;  
+                    addedDisambiguatedOrgs += 1;                                                             
                 }
             }
-
             long end = System.currentTimeMillis();
             LOGGER.info("Time taken to process the files: {}", (end - start));
         } catch (FileNotFoundException fne) {
@@ -204,8 +208,7 @@ public class LoadFundRefData {
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
         } finally {
-            LOGGER.info("Number new Disambiguated Orgs={}, Updated Orgs={}, new External Identifiers={}", new Object[] { addedDisambiguatedOrgs, updatedOrgs,
-                    addedExternalIdentifiers, getTotal() });
+            LOGGER.info("Number new Disambiguated Orgs={}, Updated Orgs={}, Depreciated Orgs={}", new Object[] { addedDisambiguatedOrgs, updatedOrgs, depreciatedOrgs});
         }
 
     }
@@ -222,8 +225,6 @@ public class LoadFundRefData {
         try {
             Node node = attrs.getNamedItem("rdf:resource");
             String itemDoi = node.getNodeValue();
-            LOGGER.info("Processing item {}", itemDoi);
-            
             //Get item node
             Node organizationNode = (Node) xPath.compile(itemExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.NODE);
             
@@ -265,18 +266,24 @@ public class LoadFundRefData {
             // Get subType
             String orgSubType = (String) xPath.compile(orgSubTypeExpression).evaluate(organizationNode, XPathConstants.STRING);
 
+            // Get parent id
+            Node isReplacedByNode = (Node) xPath.compile(isReplacedByExpression).evaluate(organizationNode, XPathConstants.NODE);
+            String isReplacedBy = null;
+            if(isReplacedByNode != null) {
+                isReplacedBy = isReplacedByNode.getAttributes().getNamedItem("rdf:resource").getNodeValue();
+            }
+            
             // Fill the organization object
             organization.doi = itemDoi;
             organization.name = orgName;
             organization.country = countryCode;
             organization.state = stateName;
             organization.stateCode = stateCode;
-            // TODO: since we don't have city, we fill this with the state, this
-            // should be modified soon
             organization.city = stateCode;
             organization.type = orgType;
             organization.subtype = orgSubType;
             organization.status = status;
+            organization.isReplacedBy = isReplacedBy;
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
         }
@@ -286,12 +293,9 @@ public class LoadFundRefData {
 
     /**
      * Indicates if an organization has been marked as deprecated
-     * */
+     */
     private boolean isDeprecatedStatus(String statusAttribute) {
-        if(!PojoUtil.isEmpty(statusAttribute)) {
-            return DEPRECATED_INDICATOR.equalsIgnoreCase(statusAttribute);
-        }
-        return false;
+        return DEPRECATED_INDICATOR.equalsIgnoreCase(statusAttribute);
     }
     
     /**
@@ -386,21 +390,8 @@ public class LoadFundRefData {
     /**
      * DATABASE FUNCTIONS
      * */
-
-    /**
-     * TODO
-     * */
-    private OrgDisambiguatedEntity findByDetails(RDFOrganization org) {
-        Iso3166Country country = StringUtils.isBlank(org.country) ? null : Iso3166Country.valueOf(org.country);
-        // Find the org by name, city, country and state
-        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findByNameCityRegionCountryAndSourceType(org.name, org.stateCode, org.stateCode, country,
-                FUNDREF_SOURCE_TYPE);
-        // If no match is found, try with the doi and source type
-        if (existingEntity == null) {
-            existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.doi, FUNDREF_SOURCE_TYPE);
-        }
-
-        return existingEntity;
+    private OrgDisambiguatedEntity findById(RDFOrganization org) {         
+        return  orgDisambiguatedDao.findBySourceIdAndSourceType(org.doi, FUNDREF_SOURCE_TYPE);              
     }
 
     /**
@@ -445,7 +436,7 @@ public class LoadFundRefData {
         } else if (StringUtils.isNotBlank(entity.getCity())) {
             return true;
         }
-
+        
         return false;
     }
     
@@ -472,15 +463,6 @@ public class LoadFundRefData {
     }
     
     /**
-     * TODO
-     * */
-    private boolean idChanged(RDFOrganization org, OrgDisambiguatedEntity entity) {
-        if(org.doi.equals(entity.getSourceId()))
-            return false;
-        return true;
-    }
-
-    /**
      * Creates a disambiguated ORG in the org_disambiguated table
      * */
     private OrgDisambiguatedEntity createDisambiguatedOrg(RDFOrganization organization) {
@@ -494,40 +476,19 @@ public class LoadFundRefData {
         orgDisambiguatedEntity.setRegion(organization.stateCode);        
         orgDisambiguatedEntity.setOrgType(orgType);
         orgDisambiguatedEntity.setSourceId(organization.doi);
-        orgDisambiguatedEntity.setSourceUrl(organization.doi);
-        orgDisambiguatedEntity.setSourceType(FUNDREF_SOURCE_TYPE);
+        orgDisambiguatedEntity.setSourceUrl(organization.doi);                
+        // Is it deprecated?
         if(!PojoUtil.isEmpty(organization.status)) {            
             orgDisambiguatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());            
+        }        
+        // Is it replaced?
+        if(!PojoUtil.isEmpty(organization.isReplacedBy)) {
+            orgDisambiguatedEntity.setSourceParentId(organization.isReplacedBy);
+            orgDisambiguatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
         }
+        orgDisambiguatedEntity.setSourceType(FUNDREF_SOURCE_TYPE);       
+        
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;
     }
-    
-    /**
-     * Creates an external identifier in the
-     * org_disambiguated_external_identifier table
-     * */
-    private boolean createExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String identifier) {
-        LOGGER.info("Creating external identifier for {}", disambiguatedOrg.getId());
-        Date creationDate = new Date();
-        OrgDisambiguatedExternalIdentifierEntity externalIdentifier = new OrgDisambiguatedExternalIdentifierEntity();
-        externalIdentifier.setIdentifier(identifier);
-        externalIdentifier.setIdentifierType(FUNDREF_SOURCE_TYPE);
-        externalIdentifier.setOrgDisambiguated(disambiguatedOrg);
-        externalIdentifier.setDateCreated(creationDate);
-        externalIdentifier.setLastModified(creationDate);
-        orgDisambiguatedExternalIdentifierDao.persist(externalIdentifier);
-        return true;
-    }
-    
-    /**
-     * STATISTICS
-     * */
-    /**
-     * Get the total number of orgs processed
-     * */
-    private long getTotal() {
-        return updatedOrgs + addedDisambiguatedOrgs + addedExternalIdentifiers;
-    }
-
 }

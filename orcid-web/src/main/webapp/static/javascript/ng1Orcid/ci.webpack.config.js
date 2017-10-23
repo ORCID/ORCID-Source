@@ -11,10 +11,21 @@ module.exports = {
         ]
     },
     output: {
-        path: "/opt/tomcat/apache-tomcat-8.0.21/webapps/orcid-web/static/javascript",
+        path: "../.",
         filename: "angular_orcid_generated.js"
     },
     plugins: [
+        function()
+        {
+            this.plugin("done", function(stats)
+            {
+                if (stats.compilation.errors && stats.compilation.errors.length)
+                {
+                    console.log(stats.compilation.errors[0].message);
+                    process.exit(1);
+                }
+            });
+        }        
     ],
     resolve: {
         alias: {
