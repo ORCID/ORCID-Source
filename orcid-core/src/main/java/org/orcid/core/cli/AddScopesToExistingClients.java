@@ -121,11 +121,6 @@ public class AddScopesToExistingClients {
     }
     
     private boolean isInAllowedClientTypes(ClientDetailsEntity client) {
-        //Ignore the public client
-        if(client.getClientType() == null || ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
-            return false;
-        }
-        
         if(allowedClientTypes == null || allowedClientTypes.isEmpty())
             return true;
         

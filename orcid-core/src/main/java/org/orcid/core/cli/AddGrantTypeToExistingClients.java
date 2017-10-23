@@ -102,11 +102,6 @@ public class AddGrantTypeToExistingClients {
     }
     
     private boolean isInAllowedClientTypes(ClientDetailsEntity client) {
-        //Ignore the public client
-        if(client.getClientType() == null) {
-            return false;
-        }
-        
         if(allowedClientTypes == null || allowedClientTypes.isEmpty())
             return true;
         
