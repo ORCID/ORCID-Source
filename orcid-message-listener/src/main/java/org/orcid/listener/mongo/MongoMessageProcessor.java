@@ -2,6 +2,7 @@ package org.orcid.listener.mongo;
 
 import java.util.function.Consumer;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.bson.Document;
@@ -15,6 +16,7 @@ import org.orcid.utils.listener.BaseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +24,6 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 
 @Component
@@ -33,35 +34,45 @@ public class MongoMessageProcessor implements Consumer<BaseMessage> {
     @Resource
     private RecordStatusManager recordStatusManager;
 
-    private final boolean isMongoEnabled;
+    private boolean isMongoEnabled;
 
     @Resource
     private Orcid20APIClient orcid20ApiClient;
 
-    private final MongoClient mongoClient;
+    @Resource
+    @Lazy
+    private MongoClient mongoClient;
+
+    @Value("${org.orcid.message-listener.mongo.database:messagelistener}")
+    private String mongoDatabase;
+
+    @Value("${org.orcid.message-listener.mongo.collection:dump}")
+    private String mongoCollection;
+
     private final ObjectMapper mapper;
-    private final MongoCollection<Document> col;
+    private MongoCollection<Document> col;
     private final UpdateOptions upsert = new UpdateOptions().upsert(true);
 
-    MongoMessageProcessor(@Value("${org.orcid.message-listener.mongo.enabled}") boolean isMongoEnabled,
-            @Value("${org.orcid.message-listener.mongo.database}") String mongoDatabase,
-            @Value("${org.orcid.message-listener.mongo.collection}") String mongoCollection) {
+    MongoMessageProcessor(@Value("${org.orcid.message-listener.mongo.enabled}") boolean isMongoEnabled) {
         this.isMongoEnabled = isMongoEnabled;
-        if (isMongoEnabled){
-            mapper = new ObjectMapper();
-            JaxbAnnotationModule module = new JaxbAnnotationModule();
-            mapper.registerModule(module);
-            //check db available
-            mongoClient = new MongoClient();
-            MongoDatabase db = mongoClient.getDatabase(mongoDatabase);
-            col = db.getCollection(mongoCollection);        
-        } else {
-            col = null;
-            mapper = null;
-            mongoClient = null;
-            LOG.info("Mongo disabled");
-        }
+        mapper = new ObjectMapper();
+        JaxbAnnotationModule module = new JaxbAnnotationModule();
+        mapper.registerModule(module);
+    }
 
+    @PostConstruct
+    public void init() {
+        if (isMongoEnabled) {
+            Document ping = new Document("ping", "1");
+            try {
+                mongoClient.getDatabase(mongoDatabase).runCommand(ping);
+            } catch (MongoException e) {
+                LOG.error("Cannot connect to MongoDB");
+                isMongoEnabled = false;
+                throw e;
+            }
+            col = mongoClient.getDatabase(mongoDatabase).getCollection(mongoCollection);
+        }
     }
 
     @Override
@@ -86,7 +97,6 @@ public class MongoMessageProcessor implements Consumer<BaseMessage> {
             index.put("_id", message.getOrcid());
             col.replaceOne(index, d, upsert);
             recordStatusManager.markAsSent(orcid, AvailableBroker.MONGO);
-            LOG.info("inserted " + d.toJson());
         } catch (LockedRecordException lre) {
             LOG.error("Record " + orcid + " is locked");
             delete(message.getOrcid(), "locked");

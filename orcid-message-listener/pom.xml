@@ -129,6 +129,7 @@
 		    <version>2.1.0</version>
 		    <scope>test</scope>
 		</dependency>
+
   </dependencies>
   <parent>
   	<groupId>org.orcid</groupId>

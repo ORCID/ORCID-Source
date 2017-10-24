@@ -63,9 +63,9 @@ public class MongoMessageProcessorTest {
     @Mock
     private Orcid20APIClient mock_orcid20ApiClient;
     
-    @Rule
-    public FongoRule fongoRule = new FongoRule();
-            
+    @Resource
+    private MongoClient mongoClient;
+        
     Record record = new Record();
     
     @Value("${org.orcid.message-listener.mongo.database}")
@@ -83,10 +83,7 @@ public class MongoMessageProcessorTest {
     public void before() throws LockedRecordException, DeprecatedRecordException {
         MockitoAnnotations.initMocks(this);        
         TargetProxyHelper.injectIntoProxy(mongo, "orcid20ApiClient", mock_orcid20ApiClient);
-        Fongo fongo = new Fongo("fongo1");
-        MongoDatabase db = fongo.getDatabase( mongoDatabase );
-        col = db.getCollection(mongoCollection);
-        TargetProxyHelper.injectIntoProxy(mongo, "col", col);
+        col = mongoClient.getDatabase(mongoDatabase).getCollection(mongoCollection);
     }
     
     @Test
