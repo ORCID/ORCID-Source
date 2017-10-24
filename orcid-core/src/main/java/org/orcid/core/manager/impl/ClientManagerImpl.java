@@ -147,7 +147,7 @@ public class ClientManagerImpl implements ClientManager {
 
         // Set ClientAuthorisedGrantTypeEntity
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
-        for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token")) {
+        for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token", "implicit")) {
             ClientAuthorisedGrantTypeEntity grantTypeEntity = new ClientAuthorisedGrantTypeEntity();
             grantTypeEntity.setClientDetailsEntity(newEntity);
             grantTypeEntity.setGrantType(clientAuthorisedGrantType);

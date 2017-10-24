@@ -367,8 +367,8 @@ public class ClientManagerTest extends BaseTest {
 
     private void validateClientConfigSettings(ClientDetailsEntity entity, Date lastTimeEntityWasModified) {
         assertNotNull(entity.getAuthorizedGrantTypes());
-        assertEquals(3, entity.getClientAuthorizedGrantTypes().size());
-        boolean found1 = false, found2 = false, found3 = false;
+        assertEquals(4, entity.getClientAuthorizedGrantTypes().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for(ClientAuthorisedGrantTypeEntity cagt : entity.getClientAuthorizedGrantTypes()) {
             assertNotNull(cagt.getDateCreated());
             assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cagt.getDateCreated()));
@@ -380,13 +380,16 @@ public class ClientManagerTest extends BaseTest {
                 found2 = true;
             } else if (cagt.getGrantType().equals("refresh_token")) {
                 found3 = true;
+            } else if(cagt.getGrantType().equals("implicit")) {
+                found4 = true;
             } else {
                 fail("Invalid authorized grant type: " + cagt.getGrantType());
             }
         }
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);        
+        assertTrue(found3);
+        assertTrue(found4);
         
         assertNotNull(entity.getClientGrantedAuthorities());        
         for(ClientGrantedAuthorityEntity cga : entity.getClientGrantedAuthorities()) {
