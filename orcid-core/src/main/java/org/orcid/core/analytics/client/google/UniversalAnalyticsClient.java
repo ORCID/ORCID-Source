@@ -135,41 +135,4 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
         return UriEncoder.encode(payload.toString());
     }
 
-    public static void main(String[] args) throws InterruptedException {
-//        for (int i = 0; i < 1000; i++) {
-//            Thread t = new Thread(new Client(args[0]));
-//            t.start();
-//            System.out.println("Started thread " + i + ": " + t.getName());
-//        }
-        
-        UniversalAnalyticsClient client = new UniversalAnalyticsClient();
-        client.analyticsEndpoint = "https://www.google-analytics.com/collect";
-        client.analyticsTrackingCode = "UA-92988153-3";
-        for (int i = 0; i < 1233; i++) {
-            client.postData(args[0]);
-            System.out.println("Sent x " + i);
-        }
-    }
-    
-    public static class Client implements Runnable {
-
-        private String payload;
-        
-        public Client(String payload) {
-            this.payload = payload;
-        }
-        
-        @Override
-        public void run() {
-            UniversalAnalyticsClient client = new UniversalAnalyticsClient();
-            client.analyticsEndpoint = "https://www.google-analytics.com/collect";
-            client.analyticsTrackingCode = "UA-92988153-3";
-            for (int i = 0; i < 1000; i++) {
-                client.postData(payload);
-                System.out.println("Sent x " + i);
-            }
-            System.out.println("Thread finished");
-        }
-        
-    }
 }

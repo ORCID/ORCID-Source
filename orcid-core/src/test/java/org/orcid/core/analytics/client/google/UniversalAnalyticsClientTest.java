@@ -38,7 +38,7 @@ public class UniversalAnalyticsClientTest {
         assertNotNull(payload);
         
         String[] params = UriEncoder.decode(payload).split("&");
-        assertEquals(13, params.length);
+        assertEquals(14, params.length);
         assertEquals(UniversalAnalyticsClient.PROTOCOL_VERSION_PARAM + "=1", params[0]);
         assertEquals(UniversalAnalyticsClient.TRACKING_ID_PARAM + "=some-tracking-code", params[1]);
         assertEquals(UniversalAnalyticsClient.CLIENT_ID_PARAM + "=" + data.getClientId(), params[2]);
@@ -52,6 +52,7 @@ public class UniversalAnalyticsClientTest {
         assertEquals(UniversalAnalyticsClient.CONTENT_TYPE_PARAM + "=" + data.getContentType(), params[10]);
         assertEquals(UniversalAnalyticsClient.RESPONSE_CODE_PARAM + "=" + data.getResponseCode(), params[11]);
         assertEquals(UniversalAnalyticsClient.CLIENT_PARAM + "=" + data.getClientDetailsString(), params[12]);
+        assertEquals(UniversalAnalyticsClient.SESSION_CONTROL_PARAM + "=" + UniversalAnalyticsClient.SESSION_CONTROL_VALUE, params[13]);
     }
     
     @Test

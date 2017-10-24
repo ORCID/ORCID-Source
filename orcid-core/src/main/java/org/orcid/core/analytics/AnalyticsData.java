@@ -121,15 +121,15 @@ public class AnalyticsData {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("\nAgent: ").append(userAgent);
-        builder.append("\nContent/Accept: ").append(contentType);
-        builder.append("\nClient: ").append(clientDetailsString);
-        builder.append("\nIP: ").append(ipAddress);
-        builder.append("\nMethod: ").append(method);
-        builder.append("\nURL: ").append(url);
-        builder.append("\nResponse: ").append(responseCode);
-        builder.append("\nAPI version: ").append(apiVersion);
-        builder.append("\nCategory: ").append(category);
+        builder.append("\n Agent: ").append(userAgent);
+        builder.append("\n Content/Accept: ").append(contentType);
+        builder.append("\n Client: ").append(clientDetailsString);
+        builder.append("\n IP: ").append(ipAddress);
+        builder.append("\n Method: ").append(method);
+        builder.append("\n URL: ").append(url);
+        builder.append("\n Response: ").append(responseCode);
+        builder.append("\n API version: ").append(apiVersion);
+        builder.append("\n Category: ").append(category);
         return builder.toString();
     }
 
