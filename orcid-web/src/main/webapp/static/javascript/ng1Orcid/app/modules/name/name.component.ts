@@ -49,13 +49,11 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         private emailService: EmailService,
         private modalService: ModalService
     ) {
-        this.nameForm = {
-
-        };
         
         this.emails = {};
         this.emailVerified = false; //change to false once service is ready
         this.lengthError = false;
+        this.nameForm = {};
         this.privacyHelp = false;
         this.showEdit = false;
     }
@@ -75,7 +73,10 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.nameForm = data;
-                console.log('this.nameForm', this.nameForm);
+                if( this.nameForm.creditName == null ) {
+                    this.nameForm.creditName = { value: null };
+                }
+                //console.log('this.nameForm', this.nameForm);
             },
             error => {
                 console.log('getNameForm Error', error);
@@ -84,11 +85,11 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     privacyChange( obj ): any {
-        this.nameForm.visiblity.visibility = obj;
+        this.nameForm.namesVisibility.visibility = obj;
         this.setNameForm();   
     };
 
-    setNameForm(): any{
+    setNameForm(): any {
         this.nameService.setData( this.nameForm )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -103,11 +104,11 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    ///
-    setNamesVisibility(priv, $event): void {
-        $event.preventDefault();
-        this.nameForm.namesVisibility.visibility = priv;
-    };
+    setNameFormEnter( event ): any {
+        if ( event.keyCode == "13"){
+            this.setNameForm();
+        }
+    }
     
     toggleEdit(): void {
 
@@ -143,39 +144,3 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         this.configuration = this.configurationService.getInitialConfiguration();
     }; 
 }
-
-/*
-declare var getBaseUri: any;
-declare var orcidVar: any;
-
-import * as angular from 'angular';
-import {NgModule} from '@angular/core';
-
-// This is the Angular 1 part of the module
-
-export const NameCtrl = angular.module('orcidApp').controller(
-    'NameCtrl', 
-    [
-        '$compile',
-        '$scope', 
-        function NameCtrl(
-            $compile,
-            $scope
-        ) {
-
-
-           
-
-            $scope.setNamesVisibility = function(priv, $event) {
-                $event.preventDefault();
-                $scope.nameForm.namesVisibility.visibility = priv;
-            };
-
-            $scope.getNameForm();
-        }]
-);
-
-// This is the Angular 2 part of the module
-@NgModule({})
-export class NameCtrlNg2Module {}
-*/

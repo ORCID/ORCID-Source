@@ -42,6 +42,7 @@ public class Member implements Serializable {
     private String description;
     private URL logoUrl;
     private String publicDisplayEmail;
+    private String emailDomains;
     private String mainOpportunityPath;
     private String consortiumLeadId;
     private String lastMembershipStartDate;
@@ -137,6 +138,14 @@ public class Member implements Serializable {
 
     public void setPublicDisplayEmail(String publicDisplayEmail) {
         this.publicDisplayEmail = publicDisplayEmail;
+    }
+    
+    public String getEmailDomains() {
+        return emailDomains;
+    }
+
+    public void setEmailDomains(String emailDomains) {
+        this.emailDomains = emailDomains;
     }
 
     public String getMainOpportunityPath() {

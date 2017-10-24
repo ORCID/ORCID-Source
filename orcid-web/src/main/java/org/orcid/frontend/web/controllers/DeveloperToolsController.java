@@ -146,7 +146,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         if (client.getErrors().isEmpty()) {
             org.orcid.jaxb.model.client_v2.Client clientToEdit = client.toModelObject();
             try {
-                clientToEdit = clientManager.edit(clientToEdit);
+                clientToEdit = clientManager.edit(clientToEdit, false);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
                 String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();

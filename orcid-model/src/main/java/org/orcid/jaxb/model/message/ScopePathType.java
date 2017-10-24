@@ -133,9 +133,12 @@ public enum ScopePathType implements Serializable {
     @XmlEnumValue(ScopeConstants.GROUP_ID_RECORD_READ) GROUP_ID_RECORD_READ(ScopeConstants.GROUP_ID_RECORD_READ),
     @XmlEnumValue(ScopeConstants.GROUP_ID_RECORD_UPDATE) GROUP_ID_RECORD_UPDATE(ScopeConstants.GROUP_ID_RECORD_UPDATE, GROUP_ID_RECORD_READ),
 
+    // OpenID connect scopes
+    @XmlEnumValue(ScopeConstants.OPENID) OPENID(ScopeConstants.OPENID, AUTHENTICATE, READ_PUBLIC),
+    
     // ORCID PROFILE CREATE    
     @XmlEnumValue(ScopeConstants.ORCID_PROFILE_CREATE) ORCID_PROFILE_CREATE(ScopeConstants.ORCID_PROFILE_CREATE, AUTHENTICATE, ACTIVITIES_UPDATE, PERSON_UPDATE, ORCID_PROFILE_READ_LIMITED, PEER_REVIEW_CREATE, PEER_REVIEW_UPDATE,
-            PEER_REVIEW_READ_LIMITED, GROUP_ID_RECORD_READ, GROUP_ID_RECORD_UPDATE),
+            PEER_REVIEW_READ_LIMITED, GROUP_ID_RECORD_READ, GROUP_ID_RECORD_UPDATE, OPENID),
     
     // Notifications scopes
     @XmlEnumValue(ScopeConstants.BASIC_NOTIFICATION) BASIC_NOTIFICATION(ScopeConstants.BASIC_NOTIFICATION),
@@ -144,10 +147,7 @@ public enum ScopePathType implements Serializable {
     // Internal scopes
     @XmlEnumValue(ScopeConstants.INTERNAL_PERSON_LAST_MODIFIED) INTERNAL_PERSON_LAST_MODIFIED (ScopeConstants.INTERNAL_PERSON_LAST_MODIFIED),     
     
-    @XmlEnumValue(ScopeConstants.IDENTIFIER_TYPES_CREATE) IDENTIFIER_TYPES_CREATE(ScopeConstants.IDENTIFIER_TYPES_CREATE),
-    
-    // OpenID connect scopes
-    @XmlEnumValue(ScopeConstants.OPENID) OPENID(ScopeConstants.OPENID, AUTHENTICATE, READ_PUBLIC);
+    @XmlEnumValue(ScopeConstants.IDENTIFIER_TYPES_CREATE) IDENTIFIER_TYPES_CREATE(ScopeConstants.IDENTIFIER_TYPES_CREATE);
     
     //@formatter:on
 

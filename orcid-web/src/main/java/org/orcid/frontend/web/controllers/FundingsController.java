@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -98,7 +98,7 @@ public class FundingsController extends BaseWorkspaceController {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
-    private ActivityCacheManager cacheManager;
+    private ActivityManager cacheManager;
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;

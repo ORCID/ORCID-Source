@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.common_v2.Contributor;
@@ -53,7 +53,7 @@ public class ContributorUtilsTest {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Mock
-    private ActivityCacheManager cacheManager;
+    private ActivityManager cacheManager;
     
     @Mock
     private ProfileEntityManager profileEntityManager;

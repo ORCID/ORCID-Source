@@ -105,27 +105,22 @@ public class AddScopesToExistingClients {
                             updateScopes(clientDetails);
                         }
                     }
-            	}
-                
-                for (String clientId : clientIdSet) {
-                	ClientDetailsEntity client = clientDetailsManager.findByClientId(clientId);
-                	if(client == null) {
-                		System.out.println();
-                		System.out.println("Client with Id "+ clientId+ " doesnot exist. Ignoring!!");
-                	} else {
-                		updateScopes(client);
-                	}
-                }
+            	} else {
+                    for (String clientId : clientIdSet) {
+                        ClientDetailsEntity client = clientDetailsManager.findByClientId(clientId);
+                        if (client == null) {
+                            System.out.println();
+                            System.out.println("Client with Id " + clientId + " doesnot exist. Ignoring!!");
+                        } else {
+                            updateScopes(client);
+                        }
+                    }
+            	}                                
             }
         });
     }
     
     private boolean isInAllowedClientTypes(ClientDetailsEntity client) {
-        //Ignore the public client
-        if(client.getClientType() == null || ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
-            return false;
-        }
-        
         if(allowedClientTypes == null || allowedClientTypes.isEmpty())
             return true;
         
@@ -139,15 +134,15 @@ public class AddScopesToExistingClients {
     
     private void updateScopes(ClientDetailsEntity clientDetails) {        
         for(ScopePathType scope : scopes) {            
-            boolean alreadyHaveReadPublicScope = false;
+            boolean alreadyHaveScope = false;
             for (ClientScopeEntity existingScope : clientDetails.getClientScopes()) {
                 if (scope.value().equals(existingScope.getScopeType())) {
-                    alreadyHaveReadPublicScope = true;
+                    alreadyHaveScope = true;
                     break;
                 }
             }
 
-            if (!alreadyHaveReadPublicScope) {
+            if (!alreadyHaveScope) {
                 ClientScopeEntity clientScope = new ClientScopeEntity();
                 clientScope.setClientDetailsEntity(clientDetails);
                 clientScope.setScopeType(scope.value());

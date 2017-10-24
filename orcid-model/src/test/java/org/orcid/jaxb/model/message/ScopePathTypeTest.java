@@ -178,7 +178,7 @@ public class ScopePathTypeTest {
 	public void test_ORCID_PROFILE_CREATE() {
 		// Test ORCID_PROFILE_READ_LIMITED
 		Set<ScopePathType> combined = ScopePathType.ORCID_PROFILE_CREATE.combined();
-		assertEquals(29, combined.size());
+		assertEquals(30, combined.size());
 		assertTrue(combined.contains(ScopePathType.ACTIVITIES_READ_LIMITED));
 		assertTrue(combined.contains(ScopePathType.ACTIVITIES_UPDATE));
 		assertTrue(combined.contains(ScopePathType.AFFILIATIONS_CREATE));
@@ -211,6 +211,7 @@ public class ScopePathTypeTest {
 		assertTrue(combined.contains(ScopePathType.PEER_REVIEW_READ_LIMITED));
 		assertTrue(combined.contains(ScopePathType.GROUP_ID_RECORD_READ));
 		assertTrue(combined.contains(ScopePathType.GROUP_ID_RECORD_UPDATE));
+		assertTrue(combined.contains(ScopePathType.OPENID));
 	}
 
 	@Test
@@ -312,4 +313,14 @@ public class ScopePathTypeTest {
 		assertTrue(combined.contains(ScopePathType.AUTHENTICATE));
 		assertTrue(combined.contains(ScopePathType.READ_PUBLIC));
 	}
+	
+	@Test
+        public void test_OPENID() {
+                // Test AUTHENTICATE
+                Set<ScopePathType> combined = ScopePathType.OPENID.combined;
+                assertEquals(3, combined.size());
+                assertTrue(combined.contains(ScopePathType.OPENID));
+                assertTrue(combined.contains(ScopePathType.AUTHENTICATE));
+                assertTrue(combined.contains(ScopePathType.READ_PUBLIC));
+        }
 }

@@ -131,7 +131,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public void updateClientType(ClientType clientType, String clientId) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set clientType = :clientType where id = :clientId");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set clientType = :clientType, lastModified = now() where id = :clientId");
         updateQuery.setParameter("clientType", clientType);
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
