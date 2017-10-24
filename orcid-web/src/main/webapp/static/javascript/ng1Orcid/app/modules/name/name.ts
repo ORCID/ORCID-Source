@@ -34,11 +34,10 @@ export const NameModule = angular.module(
         imports: [
             CommonModule,
             FormsModule,
-            //PrivacytoggleNg2Module
+            PrivacytoggleNg2Module
         ],
         declarations: [ 
-            NameComponent,
-            //PrivacytoggleComponent
+            NameComponent
         ],
         entryComponents: [ 
             NameComponent 

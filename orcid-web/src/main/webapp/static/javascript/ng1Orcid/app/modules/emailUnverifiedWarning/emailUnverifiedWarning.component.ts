@@ -54,7 +54,7 @@ export class EmailUnverifiedWarningComponent implements AfterViewInit, OnDestroy
     }
 
     verifyEmail(): any {
-        this.emailService.verifyEmail()
+        this.emailService.verifyEmail( this.emailPrimary )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

@@ -23,7 +23,9 @@
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
     
     <!-- Name -->
+    
     <name-ng2></name-ng2>
+
     <div ng-controller="NameCtrl" class="workspace-section" id="names-section">
         <div ng-show="showEdit == false" ng-click="toggleEdit()">
             <div class="row">               
@@ -150,12 +152,12 @@
                     </div>
                     
                     <h2 class="full-name">
-                        <span *ngIf="nameForm != null 
-                            && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC')">{{nameForm.creditName.value}}
+                        <span *ngIf="!(nameForm != null 
+                            && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC'))">{{nameForm?.creditName?.value}}
                         </span>
                         <span *ngIf="nameForm != null 
                             && (nameForm.creditName == null || nameForm.creditName.value == null || nameForm.namesVisibility.visibility != 'PUBLIC')">
-                            {{nameForm.givenNames.value}} <span *ngIf="nameForm.familyName.value != null" >{{nameForm.familyName.value}}</span>
+                            {{nameForm?.givenNames?.value}} <span *ngIf="nameForm?.familyName?.value != null" >{{nameForm?.familyName?.value}}</span>
                         </span>
                     </h2>
                 </div>
@@ -163,24 +165,27 @@
         </div>
         <!-- Edit Mode -->
         <div class="names-edit" *ngIf="showEdit == true">
-           <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>
-           <input type="text" ng-model="nameForm.givenNames.value" ng-enter="setNameForm()" class="full-width-input"></input>
-           <span class="orcid-error" *ngIf="nameForm.givenNames.errors.length > 0">
-               <div *ngFor='let error of nameForm.givenNames.errors'>{{error}}</div>
-           </span>
-           <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
-           <input type="text" ng-model="nameForm.familyName.value" ng-enter="setNameForm()" class="full-width-input"></input>
-           <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>                               
-           <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>          
-           <@orcid.privacyComponent 
-                 angularModel="nameForm.namesVisibility.visibility"
-                 publicClick="setNamesVisibility('PUBLIC', $event)" 
-                 limitedClick="setNamesVisibility('LIMITED', $event)" 
-                 privateClick="setNamesVisibility('PRIVATE', $event)"
-                 placement="top" 
-                 popoverStyle="left: 0; top: -178px;" 
-                 arrowStyle="left: 48px;"                            
-            />
+            <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>
+           
+            <input type="text" [(ngModel)]="nameForm.givenNames.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
+           
+            <span class="orcid-error" *ngIf="nameForm.givenNames.errors.length > 0">
+                <div *ngFor='let error of nameForm.givenNames.errors'>{{error}}</div>
+            </span>
+            <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
+           
+            <input type="text" [(ngModel)]="nameForm.familyName.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
+           
+            <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>                               
+            <input type="text" [(ngModel)]="nameForm.creditName.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
+           
+            <privacy-toggle-ng2 
+                [dataPrivacyObj]="nameForm" 
+                (privacyUpdate)="privacyChange($event)"
+                elementId="name-privacy-toggle" 
+                privacyNodeName="namesVisibility" 
+            ></privacy-toggle-ng2>
+
             <div style="float: left">
                 <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="142948-names-in-the-orcid-registry"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
             </div>

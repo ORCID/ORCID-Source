@@ -1,7 +1,7 @@
 import { Injectable } 
     from '@angular/core';
 
-import { Headers, Http, RequestOptions, Response } 
+import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
 import { Observable } 
@@ -152,9 +152,19 @@ export class EmailService {
         this.saveEmail();
     }
 
-    verifyEmail(): Observable<any>  {
+    verifyEmail( email ): Observable<any>  {
+        let _email = encodeURI(email);
+        let myParams = new URLSearchParams();
+        myParams.append('email', _email);
+        let options = new RequestOptions(
+            { headers: this.headers , search: myParams }
+        );
+
+        console.log(email, _email, options);
+
         return this.http.get(
-            getBaseUri() + '/account/verifyEmail.json&email=' + this.primaryEmail
+            getBaseUri() + '/account/verifyEmail.json',
+            options
         )
         .map(
             (res:Response) => res.json()
@@ -165,20 +175,5 @@ export class EmailService {
             }
         )
         .share();
-
-        /*
-        $.ajax({
-            url: getBaseUri() + '/account/verifyEmail.json',
-            type: 'get',
-            data:  { "email": email.value },
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function(data) {
-                if (callback) {
-                    callback(data);
-                }
-            }
-        })
-        */
     }
 }
