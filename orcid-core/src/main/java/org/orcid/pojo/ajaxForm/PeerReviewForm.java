@@ -586,5 +586,152 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
         return form;
     }
+    
+    public static PeerReviewForm valueOf(org.orcid.jaxb.model.v3.dev1.record.PeerReview peerReview) {
+        PeerReviewForm form = new PeerReviewForm();
+
+        // Put code
+        if (peerReview.getPutCode() != null) {
+            form.setPutCode(Text.valueOf(peerReview.getPutCode()));
+        }
+
+        // Visibility
+        if (peerReview.getVisibility() != null) {
+            form.setVisibility(Visibility.valueOf(peerReview.getVisibility().value()));
+        }
+
+        // Completion date
+        if (!PojoUtil.isEmpty(peerReview.getCompletionDate())) {
+            form.setCompletionDate(Date.valueOf(peerReview.getCompletionDate()));
+        }
+
+        // Role
+        if (peerReview.getRole() != null) {
+            form.setRole(Text.valueOf(peerReview.getRole().value()));
+        }
+
+        // Type
+        if (peerReview.getType() != null) {
+            form.setType(Text.valueOf(peerReview.getType().value()));
+        }
+
+        // Url
+        if (!PojoUtil.isEmpty(peerReview.getUrl())) {
+            form.setUrl(Text.valueOf(peerReview.getUrl().getValue()));
+        }
+
+        // Org info
+        if (peerReview.getOrganization() != null) {
+            if(!PojoUtil.isEmpty(peerReview.getOrganization().getName())) {
+                form.setOrgName(Text.valueOf(peerReview.getOrganization().getName()));
+            }
+            if (peerReview.getOrganization().getAddress() != null) {
+                if (!PojoUtil.isEmpty(peerReview.getOrganization().getAddress().getCity())) {
+                    form.setCity(Text.valueOf(peerReview.getOrganization().getAddress().getCity()));
+                }
+                if (peerReview.getOrganization().getAddress().getCountry() != null) {
+                    form.setCountry(Text.valueOf(peerReview.getOrganization().getAddress().getCountry().value()));
+                }
+                if (!PojoUtil.isEmpty(peerReview.getOrganization().getAddress().getRegion())) {
+                    form.setRegion(Text.valueOf(peerReview.getOrganization().getAddress().getRegion()));
+                }
+            }
+
+            if (peerReview.getOrganization().getDisambiguatedOrganization() != null) {
+                if (!PojoUtil.isEmpty(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier())) {
+                    form.setDisambiguatedOrganizationSourceId(Text
+                            .valueOf(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
+                }
+                if (!PojoUtil.isEmpty(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguationSource())) {
+                    form.setDisambiguationSource(Text.valueOf(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguationSource()));
+                }
+            }
+        }
+
+        // External ids
+        if(peerReview.getExternalIdentifiers() != null) {
+            List<org.orcid.jaxb.model.v3.dev1.record.ExternalID> externalIdentifiers = peerReview.getExternalIdentifiers().getExternalIdentifier();
+            form.setExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
+            for(org.orcid.jaxb.model.v3.dev1.record.ExternalID extId : externalIdentifiers) {                
+                form.getExternalIdentifiers().add(WorkExternalIdentifier.valueOf(extId));
+            }                                    
+        }        
+
+        // Group Id
+        if(!PojoUtil.isEmpty(peerReview.getGroupId())) {
+            form.setGroupId(Text.valueOf(peerReview.getGroupId()));
+        }
+        
+        // Subject ext Id
+        if(peerReview.getSubjectExternalIdentifier() != null) {
+            WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+            if(peerReview.getSubjectExternalIdentifier().getRelationship() != null) {
+                wExtId.setRelationship(Text.valueOf(peerReview.getSubjectExternalIdentifier().getRelationship().value()));
+            }
+            
+            if(peerReview.getSubjectExternalIdentifier().getUrl() != null) {
+                wExtId.setUrl(Text.valueOf(peerReview.getSubjectExternalIdentifier().getUrl().getValue()));
+            }
+            
+            if(peerReview.getSubjectExternalIdentifier().getValue() != null) {
+                wExtId.setWorkExternalIdentifierId(Text.valueOf(peerReview.getSubjectExternalIdentifier().getValue()));
+            }
+            
+            if(peerReview.getSubjectExternalIdentifier().getType() != null) {
+                wExtId.setWorkExternalIdentifierType(Text.valueOf(peerReview.getSubjectExternalIdentifier().getType()));
+            }            
+            
+            form.setSubjectExternalIdentifier(wExtId);
+        }
+        
+        
+        // Subject Container name
+        if(peerReview.getSubjectContainerName() != null) {
+            form.setSubjectContainerName(Text.valueOf(peerReview.getSubjectContainerName().getContent()));
+        }
+        
+        // Subject type
+        if(peerReview.getSubjectType() != null) {
+            form.setSubjectType(Text.valueOf(peerReview.getSubjectType().value()));
+        }
+
+        // Subject name
+        if(peerReview.getSubjectName() != null) {
+            if(peerReview.getSubjectName().getTitle() != null) {
+                form.setSubjectName(Text.valueOf(peerReview.getSubjectName().getTitle().getContent()));
+            }
+            
+            TranslatedTitleForm tTitle = new TranslatedTitleForm();
+            if(peerReview.getSubjectName().getTranslatedTitle() != null) {
+                tTitle.setContent(peerReview.getSubjectName().getTranslatedTitle().getContent());
+                tTitle.setLanguageCode(peerReview.getSubjectName().getTranslatedTitle().getLanguageCode());
+            }
+            form.setTranslatedSubjectName(tTitle);
+        }
+        
+        // Subject url
+        if(peerReview.getSubjectUrl() != null) {
+            form.setSubjectUrl(Text.valueOf(peerReview.getSubjectUrl().getValue()));
+        }
+        
+        // Source
+        if(peerReview.getSource() != null) {
+            form.setSource(peerReview.getSource().retrieveSourcePath());
+            if(peerReview.getSource().getSourceName() != null)
+                form.setSourceName(peerReview.getSource().getSourceName().getContent());
+        }        
+
+        // Created Date
+        if(peerReview.getCreatedDate() != null) {
+            form.setCreatedDate(Date.valueOf(peerReview.getCreatedDate()));
+        }        
+
+        // Last modified
+        if(peerReview.getLastModifiedDate() != null) {
+            form.setLastModified(Date.valueOf(peerReview.getLastModifiedDate()));
+        }        
+
+        return form;
+    }
 
 }

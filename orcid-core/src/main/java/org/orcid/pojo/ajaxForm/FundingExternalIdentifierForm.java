@@ -99,6 +99,20 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
             
         return result;
     }
+    
+    public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.v3.dev1.record.ExternalID fundingExternalIdentifier) {
+        FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();
+        if (fundingExternalIdentifier.getType() != null)
+            result.setType(Text.valueOf(fundingExternalIdentifier.getType()));
+        if (fundingExternalIdentifier.getUrl() != null && !PojoUtil.isEmpty(fundingExternalIdentifier.getUrl().getValue()))
+            result.setUrl(Text.valueOf(fundingExternalIdentifier.getUrl().getValue()));
+        if (!PojoUtil.isEmpty(fundingExternalIdentifier.getValue()))
+            result.setValue(Text.valueOf(fundingExternalIdentifier.getValue()));
+        if(fundingExternalIdentifier.getRelationship() != null) 
+            result.setRelationship(Text.valueOf(fundingExternalIdentifier.getRelationship().value()));        
+            
+        return result;
+    }
                 
     @Deprecated
     public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.message.FundingExternalIdentifier fundingExternalIdentifier) {

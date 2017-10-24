@@ -24,15 +24,15 @@ import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.WorkForm;
 
-public interface ActivityCacheManager {
+public interface ActivityManager {
 
-    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid, long lastModified);
+    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid);
     
-    public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid, long lastModified);
+    public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid);
     
-    public LinkedHashMap<Long, Funding> fundingMap(String orcid, long lastModified);
+    public LinkedHashMap<Long, Funding> fundingMap(String orcid);
     
-    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid, long lastModified);
+    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid);
     
     public String getCreditName(ProfileEntity profile);
     
