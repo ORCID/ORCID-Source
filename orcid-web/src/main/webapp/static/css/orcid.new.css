@@ -3070,12 +3070,13 @@ p.orcid-id-container {
 }
 
 .mini-orcid-icon {
-    background: url(../img/mini-icon.png) no-repeat;
-    background-size: 20px 20px;
-    width: 20px;
-    height: 20px;
+    background: url(../img/orcid_24x24.png) no-repeat;
+    background-size: 16px 16px;
+    width: 16px;
+    height: 16px;
     display: block;
-    float: left
+    float: left;
+    margin: 2px 2px 0 0;
 }
 
 .mini-icon {

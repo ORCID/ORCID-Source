@@ -97,7 +97,12 @@
                 <span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
             </div>
             <div class="orcid-id-options">
-                <a href="${baseUriHttp}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
+                <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+                    <a href="${baseUri}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
+                </@orcid.checkFeatureStatus>
+                <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+                    <a href="${baseUriHttp}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
+                </@orcid.checkFeatureStatus>
             </div>
         </div>
     </div>
