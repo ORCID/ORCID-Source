@@ -100,7 +100,7 @@ public enum ClientType {
         case UPDATER:
             return updaterScopes();
         case PUBLIC_CLIENT:
-            return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AUTHENTICATE, ScopePathType.READ_PUBLIC));
+            return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AUTHENTICATE, ScopePathType.READ_PUBLIC, ScopePathType.OPENID));
         default:
             throw new IllegalArgumentException("Unsupported client type: " + clientType);
         }
@@ -129,7 +129,7 @@ public enum ClientType {
                 ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
                 ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED,
                 ScopePathType.READ_LIMITED, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_UPDATE,
-                ScopePathType.PEER_REVIEW_READ_LIMITED, ScopePathType.GROUP_ID_RECORD_READ, ScopePathType.GROUP_ID_RECORD_UPDATE));
+                ScopePathType.PEER_REVIEW_READ_LIMITED, ScopePathType.GROUP_ID_RECORD_READ, ScopePathType.GROUP_ID_RECORD_UPDATE, ScopePathType.OPENID));
     }
 
     private static void addPremiumOnlyScopes(Set<String> scopes) {

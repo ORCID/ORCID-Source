@@ -492,6 +492,143 @@ public class FundingForm implements ErrorsInterface, Serializable {
         return result;
     }    
     
+    public static FundingForm valueOf(org.orcid.jaxb.model.v3.dev1.record.Funding funding) {
+        FundingForm result = new FundingForm();
+
+        result.setDateSortString(PojoUtil.createDateSortString(funding.getStartDate(), funding.getEndDate()));
+
+        if (funding.getPutCode() != null)
+            result.setPutCode(Text.valueOf(funding.getPutCode()));
+
+        if (funding.getAmount() != null) {
+            if (StringUtils.isNotEmpty(funding.getAmount().getContent())) {
+                String cleanNumber = funding.getAmount().getContent().trim();                                
+                result.setAmount(Text.valueOf(cleanNumber));
+            }
+            if (funding.getAmount().getCurrencyCode() != null)
+                result.setCurrencyCode(Text.valueOf(funding.getAmount().getCurrencyCode()));
+            else 
+                result.setCurrencyCode(new Text());
+        } else {
+            result.setAmount(new Text());
+            result.setCurrencyCode(new Text());
+        }
+        if (StringUtils.isNotEmpty(funding.getDescription()))
+            result.setDescription(Text.valueOf(funding.getDescription()));
+        else
+            result.setDescription(new Text());
+
+        if (funding.getStartDate() != null)
+            result.setStartDate(Date.valueOf(funding.getStartDate()));
+
+        if (funding.getEndDate() != null)
+            result.setEndDate(Date.valueOf(funding.getEndDate()));        
+
+        if (funding.getType() != null)
+            result.setFundingType(Text.valueOf(funding.getType().value()));
+        else 
+            result.setFundingType(new Text());
+        
+        if(funding.getOrganizationDefinedType() != null) {
+            OrgDefinedFundingSubType OrgDefinedFundingSubType = new OrgDefinedFundingSubType();
+            OrgDefinedFundingSubType.setSubtype(Text.valueOf(funding.getOrganizationDefinedType().getContent()));
+            OrgDefinedFundingSubType.setAlreadyIndexed(false);
+            result.setOrganizationDefinedFundingSubType(OrgDefinedFundingSubType);
+        }            
+        
+        org.orcid.jaxb.model.v3.dev1.common.Source source = funding.getSource();
+        if (source != null) {
+            result.setSource(source.retrieveSourcePath());            
+            if(source.getSourceName() != null) {
+                result.setSourceName(source.getSourceName().getContent());
+            }
+        }
+        
+        if (funding.getTitle() != null) {
+            FundingTitleForm fundingTitle = new FundingTitleForm();
+            if (funding.getTitle().getTitle() != null)
+                fundingTitle.setTitle(Text.valueOf(funding.getTitle().getTitle().getContent()));
+            else
+                fundingTitle.setTitle(new Text());
+            if (funding.getTitle().getTranslatedTitle() != null) {
+                TranslatedTitleForm translatedTitle = new TranslatedTitleForm();
+                translatedTitle.setContent(funding.getTitle().getTranslatedTitle().getContent());
+                translatedTitle.setLanguageCode(funding.getTitle().getTranslatedTitle().getLanguageCode());
+                fundingTitle.setTranslatedTitle(translatedTitle);
+            }
+            result.setFundingTitle(fundingTitle);
+        } else {
+            FundingTitleForm fundingTitle = new FundingTitleForm();
+            fundingTitle.setTitle(new Text());
+            result.setFundingTitle(fundingTitle);
+        }
+
+        if (funding.getUrl() != null)
+            result.setUrl(Text.valueOf(funding.getUrl().getValue()));
+        else
+            result.setUrl(new Text());
+
+        if (funding.getVisibility() != null)
+            result.setVisibility(Visibility.valueOf(funding.getVisibility()));
+
+        // Set the disambiguated organization
+        org.orcid.jaxb.model.v3.dev1.common.Organization organization = funding.getOrganization();
+        result.setFundingName(Text.valueOf(organization.getName()));
+        org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization disambiguatedOrganization = organization.getDisambiguatedOrganization();
+        if (disambiguatedOrganization != null) {
+            if (StringUtils.isNotEmpty(disambiguatedOrganization.getDisambiguatedOrganizationIdentifier())) {
+                result.setDisambiguatedFundingSourceId(Text.valueOf(disambiguatedOrganization.getDisambiguatedOrganizationIdentifier()));
+                result.setDisambiguationSource(Text.valueOf(disambiguatedOrganization.getDisambiguationSource()));
+            }
+        }
+        org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress organizationAddress = organization.getAddress();
+        if (organizationAddress != null) {
+            if (!PojoUtil.isEmpty(organizationAddress.getCity()))
+                result.setCity(Text.valueOf(organizationAddress.getCity()));
+            else
+                result.setCity(new Text());
+            if (!PojoUtil.isEmpty(organizationAddress.getRegion()))
+                result.setRegion(Text.valueOf(organizationAddress.getRegion()));
+            else 
+                result.setRegion(new Text());
+            if (organizationAddress.getCountry() != null)
+                result.setCountry(Text.valueOf(organizationAddress.getCountry().value()));
+            else
+                result.setCountry(new Text());
+                
+        } else {
+            result.setCountry(new Text());
+            result.setCity(new Text());            
+            result.setRegion(new Text());
+        }
+
+        // Set contributors
+        if (funding.getContributors() != null) {
+            List<Contributor> contributors = new ArrayList<Contributor>();
+            for (org.orcid.jaxb.model.v3.dev1.record.FundingContributor fContributor : funding.getContributors().getContributor()) {
+                Contributor contributor = Contributor.valueOf(fContributor);
+                contributors.add(contributor);
+            }
+            result.setContributors(contributors);
+        }
+
+        List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
+        // Set external identifiers 
+        if (funding.getExternalIdentifiers() != null) {            
+            for (org.orcid.jaxb.model.v3.dev1.record.ExternalID fExternalIdentifier : funding.getExternalIdentifiers().getExternalIdentifier()) {
+                FundingExternalIdentifierForm fundingExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
+                externalIdentifiersList.add(fundingExternalIdentifierForm);
+            }            
+        } 
+        result.setExternalIdentifiers(externalIdentifiersList);
+        
+        result.setCreatedDate(Date.valueOf(funding.getCreatedDate()));
+        result.setLastModified(Date.valueOf(funding.getLastModifiedDate()));
+
+
+        return result;
+    }    
+    
     public String getDateSortString() {
         return dateSortString;
     }

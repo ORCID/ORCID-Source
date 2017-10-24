@@ -127,6 +127,9 @@ public class ClientManagerImpl implements ClientManager {
         // Set persistent tokens enabled by default
         newEntity.setPersistentTokensEnabled(true);
 
+        // Set authentication provider id
+        newEntity.setAuthenticationProviderId(newClient.getAuthenticationProviderId());
+        
         // Set ClientType
         if(!publicClient) {
             newEntity.setClientType(getClientType(memberEntity.getGroupType()));
@@ -144,7 +147,7 @@ public class ClientManagerImpl implements ClientManager {
 
         // Set ClientAuthorisedGrantTypeEntity
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
-        for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token")) {
+        for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token", "implicit")) {
             ClientAuthorisedGrantTypeEntity grantTypeEntity = new ClientAuthorisedGrantTypeEntity();
             grantTypeEntity.setClientDetailsEntity(newEntity);
             grantTypeEntity.setGrantType(clientAuthorisedGrantType);
@@ -186,13 +189,22 @@ public class ClientManagerImpl implements ClientManager {
     
     @Override
     @Transactional
-    public Client edit(Client existingClient) {
+    public Client edit(Client existingClient, boolean updateConfigValues) {
         if (!clientDetailsDao.exists(existingClient.getId())) {
             throw new IllegalArgumentException("Invalid client id provided: " + existingClient.getId());
         }
         ClientDetailsEntity clientDetails = clientDetailsDao.find(existingClient.getId());
         jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);
         clientDetails.setLastModified(new Date());
+        
+        //Check if we should update client configuration values
+        if(updateConfigValues) {
+            // Authentication provider id
+            clientDetails.setAuthenticationProviderId(existingClient.getAuthenticationProviderId());
+            // Enable persistent tokens      
+            clientDetails.setPersistentTokensEnabled(existingClient.isPersistentTokensEnabled());
+        }
+        
         clientDetails = clientDetailsDao.merge(clientDetails);
         return jpaJaxbClientAdapter.toClient(clientDetails);
     }
@@ -226,8 +238,7 @@ public class ClientManagerImpl implements ClientManager {
     }
 
     private void validateCreateClientRequest(String memberId) throws IllegalArgumentException {
-        ProfileEntity member = profileEntityCacheManager.retrieve(memberId);
-        Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();
+        ProfileEntity member = profileEntityCacheManager.retrieve(memberId);        
         if (member == null || member.getGroupType() == null) {
             throw new IllegalArgumentException("Illegal member id: " + memberId);
         }

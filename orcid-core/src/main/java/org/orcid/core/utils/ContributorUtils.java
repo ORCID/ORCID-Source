@@ -16,7 +16,7 @@
  */
 package org.orcid.core.utils;
 
-import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.common_v2.Contributor;
@@ -33,7 +33,7 @@ public class ContributorUtils {
 
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    private ActivityCacheManager cacheManager;
+    private ActivityManager cacheManager;
 
     private ProfileEntityManager profileEntityManager;
 
@@ -89,7 +89,7 @@ public class ContributorUtils {
         this.profileEntityCacheManager = profileEntityCacheManager;
     }
 
-    public void setCacheManager(ActivityCacheManager cacheManager) {
+    public void setCacheManager(ActivityManager cacheManager) {
         this.cacheManager = cacheManager;
     }
 

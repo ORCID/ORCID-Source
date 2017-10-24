@@ -135,12 +135,14 @@ public class ClientManagerReadOnlyTest {
     private Client getClient(String randomString) {
         Client client = new Client();
         client.setAllowAutoDeprecate(true);        
+        client.setPersistentTokensEnabled(true);
         client.setClientType(ClientType.CREATOR);
         client.setDescription("description " + randomString);        
         client.setGroupProfileId("group-profile-id " + randomString);
         client.setId(randomString);
         client.setName("client-name " + randomString);        
         client.setWebsite("client-website " + randomString);
+        client.setAuthenticationProviderId("authentication-provider-id " + randomString);
 
         Set<ClientRedirectUri> clientRedirectUris = new HashSet<ClientRedirectUri>();
         ClientRedirectUri rUri1 = new ClientRedirectUri();

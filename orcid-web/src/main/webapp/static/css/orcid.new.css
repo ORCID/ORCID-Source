@@ -132,6 +132,13 @@ html {
     overflow-y: scroll
 }
 
+html[lang=ko] .email-pop-up .table-responsive .table,
+html[lang=ja] .email-pop-up .table-responsive .table,
+html[lang=zh_CN] .email-pop-up .table-responsive .table,
+html[lang=zh_TW] .email-pop-up .table-responsive .table {
+    table-layout: fixed;
+}
+
 img {
     -ms-interpolation-mode: bicubic;
     border: 0;
@@ -307,6 +314,19 @@ textarea {
 
 .bottomBuffer {
     margin-bottom: 1em
+}
+.btn-white,
+.btn-white:visited {
+    background-color: #fff;
+    border: 1px solid #338caf;
+    color: #338caf;
+    margin-bottom: 10px;
+}
+
+.btn-white:hover,
+.btn-white:active {
+    background-color: #338caf;
+    color: #fff;
 }
 
 .btn-white-no-border {
@@ -1465,6 +1485,11 @@ ul.privacyHelp li.private {
     height: auto
 }
 
+.more-info .org-ids .ng-binding {
+    min-height: 0;
+    height: auto
+}
+
 .workspace-toolbar {
     margin-top: 0;
     padding-left: 0;
@@ -1836,6 +1861,20 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     overflow: hidden
 }
 
+.col-count-4 {
+    -webkit-column-count: 4;
+    -moz-column-count: 4;
+    column-count: 4;
+}
+
+/*.col-count-4 p {
+    display: block;
+    text-align: left;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;           
+    break-inside: avoid-column;
+}*/
+
 .alert {
     border-color: #f5c120;
     background-color: #f5c120;
@@ -2099,6 +2138,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #494a4c
 }
 
+.overflow-hidden,
 .popover-content {
     overflow: hidden
 }
@@ -4081,7 +4121,7 @@ ul.sources-edit-list>li {
     margin-left: 4px;
 }
 
-#bio-section .popover-help-container .popover {
+#bio-section .popover-help-container #bio-help {
     left: -50px;
 }
 
@@ -5155,6 +5195,10 @@ ul.oauth-scopes li {
     width: 800px
 }
 
+.inline{
+    display: inline!important;
+}
+
 .inline-input {
     display: inline;
     margin: 0 10px 15px 0
@@ -5352,7 +5396,7 @@ ul.oauth-scopes li {
 
 .workspace-peer-review .peer-review-title {
     color: #338caf;
-    font-size: 20px
+    font-size: 17px
 }
 
 .workspace-peer-review span.title {
@@ -5429,7 +5473,7 @@ ul.sources-edit-list>li.group-details {
 
 .group-summary-details {
     padding-bottom: 15px;
-    font-size: 15px
+    font-size: 14px
 }
 
 .shibboleth-container {
@@ -5829,13 +5873,6 @@ a:hover .mozilla-badge {
 .email-pop-up .table-responsive {
     margin-right: -20px;
     margin-left: -20px
-}
-
-html[lang=ko] .email-pop-up .table-responsive .table,
-html[lang=ja] .email-pop-up .table-responsive .table,
-html[lang=zh_CN] .email-pop-up .table-responsive .table,
-html[lang=zh_TW] .email-pop-up .table-responsive .table, {
-    table-layout: fixed;
 }
 
 .email-pop-up .col-md-12,.email-pop-up .control-group {
@@ -6320,7 +6357,8 @@ ul.comma li:last-child:after {
 }
 
 #settings .popover-help-container .popover{
-    left: -128px;
+    left: -145px;
+    top: -200px;
 }
 
 #settings .section-heading{
@@ -6731,6 +6769,10 @@ ul.comma li:last-child:after {
 
     .footer ul li:last-of-type {
         border-bottom: none
+    }
+
+    .login .login-box {
+        padding: 15px 0;
     }
 
     #uvTabLabel {
@@ -7739,6 +7781,10 @@ ul.comma li:last-child:after {
     margin-left: 5px
 }
 
+.lang-rl #settings .popover-help-container .popover{
+    left: 465px;
+}
+
 .lang-rl *,.lang-rl .table td,.lang-rl .table th {
     text-align: right
 }
@@ -7946,43 +7992,37 @@ ul.comma li:last-child:after {
 	display: none;
 }
 
-.twoFactorAuthSetupHeading {
-	font-weight: bold;
-}
-
 .on {
 	color: green;
 	font-weight: bold;
-	margin-right: 10px;
 }
-
-.on::after {
-	content: "\2713";
-}
-
 
 .off {
-    color: crimson;
+    color: red;
     font-weight: bold;
-    margin-right: 10px;
-}
-
-.off::after {
-    content: "\2717";
-}
-
-.twoFactorAuthenticationInfo {
-	font-weight: bold;
-	font-size: 11px;
-}
-
-.halfwidth {
-	width: 50%;
-	float: left;
 }
 
 ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+#recoveryCodes {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+#saveRecoverCodesHeading {
+    color: red;
 }

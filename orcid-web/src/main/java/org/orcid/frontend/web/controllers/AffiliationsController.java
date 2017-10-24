@@ -305,6 +305,9 @@ public class AffiliationsController extends BaseWorkspaceController {
                     form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
                     form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
                     form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
+                    if(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                        form.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
+                    }                    
                 }
                 affiliationsMap.put(form.getPutCode().getValue(), form);
                 affiliationIds.add(form.getPutCode().getValue());

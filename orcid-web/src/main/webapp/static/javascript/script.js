@@ -1040,10 +1040,10 @@ function populateWorkAjaxForm(bibJson, work) {
 
         if (lowerKeyTags.hasOwnProperty('year'))
             if (!isNaN(lowerKeyTags['year']))
-                work.publicationDate.year = lowerKeyTags['year'];
+                work.publicationDate.year = lowerKeyTags['year'].trim();
 
         if (lowerKeyTags.hasOwnProperty('month')) {
-            var month = lowerKeyTags['month'];
+            var month = lowerKeyTags['month'].trim();
             if (bibMonths.indexOf(month.trim().substring(0,3)) >= 0) 
                 month = bibMonths.indexOf(month.trim().substring(0,3)) + 1;
             if (!isNaN(month) && month > 0 && month <= 12)
@@ -4247,9 +4247,13 @@ this.w3cLatexCharMap = {
             if (doneSomething) {
                 query += ' AND ';
             }
+            
             //if all chars are numbers, assume it's a ringgold id
             if (input.affiliationOrg.match(/^[0-9]*$/)) {
                 query += 'ringgold-org-id:' + input.affiliationOrg;
+            } else if(input.affiliationOrg.startsWith('grid.')) {
+                escapedGridOrg = escapeReservedChar(input.affiliationOrg);
+                query += 'grid-org-id:' + escapedGridOrg;
             } else {
                 escapedAffiliationOrg = escapeReservedChar(input.affiliationOrg);
                 query += 'affiliation-org-name:' + escapedAffiliationOrg;
