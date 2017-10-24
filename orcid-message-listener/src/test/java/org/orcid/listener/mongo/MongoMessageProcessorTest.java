@@ -1,9 +1,24 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.listener.mongo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.net.URI;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -15,8 +30,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.bson.Document;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -45,14 +58,11 @@ import org.orcid.utils.listener.LastModifiedMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fakemongo.Fongo;
-import com.github.fakemongo.junit.FongoRule;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 
+@SuppressWarnings("deprecation")
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
 public class MongoMessageProcessorTest {
