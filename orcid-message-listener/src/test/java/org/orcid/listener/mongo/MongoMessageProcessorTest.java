@@ -84,8 +84,8 @@ public class MongoMessageProcessorTest {
     private String mongoCollection;
     private MongoCollection<Document> col;
     
-    private final String orcid = "0000-0000-0001-0000";
-    private final String orcid2 = "0000-0000-0001-0000";
+    private final String orcid = "1000-0000-0000-0000";
+    private final String orcid2 = "2000-0000-0000-0000";
     
     /** Sets up a FONGO instance and injects it into the MessageProcessor.
      * 
