@@ -47,13 +47,6 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.ExternalDocs;
-import io.swagger.annotations.ResponseHeader;
 
 import java.net.URI;
 
@@ -73,6 +66,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.member.MemberApiServiceImplHelper;
+import org.orcid.api.member.server.validator.JSONInputValidator;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
@@ -93,16 +87,24 @@ import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.FundingContributor;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.FundingContributor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.ExternalDocs;
+import io.swagger.annotations.ResponseHeader;
 
 /**
  * 
@@ -122,6 +124,8 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
+    
+    private JSONInputValidator jsonInputValidator = new JSONInputValidator();
 
     protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, ?, Address, Keyword> serviceDelegator;
 
@@ -203,7 +207,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(WORK)
     @ApiOperation(value = "Create a Work", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
@@ -215,15 +219,44 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
         compareWorkAndCreditNameVisibility(work);
         return serviceDelegator.createWork(orcid, work);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(WORK)
+    @ApiOperation(value = "Create a Work", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Work created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Work representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Work representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createWorkJSON(@PathParam("orcid") String orcid, Work work) {
+        jsonInputValidator.validateJSONInput(work, Work.class);
+        compareWorkAndCreditNameVisibility(work);
+        return serviceDelegator.createWork(orcid, work);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(WORK + PUTCODE)
     @ApiOperation(value = "Update a Work", response = Work.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Work updated") })
     public Response updateWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Work work) {
+        compareWorkAndCreditNameVisibility(work);
+        return serviceDelegator.updateWork(orcid, getPutCode(putCode), work);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(WORK + PUTCODE)
+    @ApiOperation(value = "Update a Work", response = Work.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Work updated") })
+    public Response updateWorkJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Work work) {
+        jsonInputValidator.validateJSONInput(work, Work.class);
         compareWorkAndCreditNameVisibility(work);
         return serviceDelegator.updateWork(orcid, getPutCode(putCode), work);
     }
@@ -259,7 +292,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(FUNDING)
     @ApiOperation(value = "Create a Funding", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
@@ -271,15 +304,44 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
         compareFundingAndCreditNameVisibility(funding);
         return serviceDelegator.createFunding(orcid, funding);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING)
+    @ApiOperation(value = "Create a Funding", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Funding created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Funding representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Funding representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createFundingJSON(@PathParam("orcid") String orcid, Funding funding) {
+        jsonInputValidator.validateJSONInput(funding, Funding.class);
+        compareFundingAndCreditNameVisibility(funding);
+        return serviceDelegator.createFunding(orcid, funding);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(FUNDING + PUTCODE)
     @ApiOperation(value = "Update a Funding", response = Funding.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Funding updated") })
     public Response updateFunding(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Funding funding) {
+        compareFundingAndCreditNameVisibility(funding);
+        return serviceDelegator.updateFunding(orcid, getPutCode(putCode), funding);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING + PUTCODE)
+    @ApiOperation(value = "Update a Funding", response = Funding.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Funding updated") })
+    public Response updateFundingJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Funding funding) {
+        jsonInputValidator.validateJSONInput(funding, Funding.class);
         compareFundingAndCreditNameVisibility(funding);
         return serviceDelegator.updateFunding(orcid, getPutCode(putCode), funding);
     }
@@ -318,7 +380,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(EDUCATION)
     @ApiOperation(value = "Create an Education", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
@@ -329,15 +391,42 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     public Response createEducation(@PathParam("orcid") String orcid, Education education) {
         return serviceDelegator.createEducation(orcid, education);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EDUCATION)
+    @ApiOperation(value = "Create an Education", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Education created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Education representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Education representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createEducationJSON(@PathParam("orcid") String orcid, Education education) {
+        jsonInputValidator.validateJSONInput(education, Education.class);
+        return serviceDelegator.createEducation(orcid, education);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(EDUCATION + PUTCODE)
     @ApiOperation(value = "Update an Education", response = Education.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Education updated") })
     public Response updateEducation(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Education education) {
+        return serviceDelegator.updateEducation(orcid, getPutCode(putCode), education);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EDUCATION + PUTCODE)
+    @ApiOperation(value = "Update an Education", response = Education.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Education updated") })
+    public Response updateEducationJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Education education) {
+        jsonInputValidator.validateJSONInput(education, Education.class);
         return serviceDelegator.updateEducation(orcid, getPutCode(putCode), education);
     }
 
@@ -371,7 +460,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(EMPLOYMENT)
     @ApiOperation(value = "Create an Employment", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
@@ -382,15 +471,42 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     public Response createEmployment(@PathParam("orcid") String orcid, Employment employment) {
         return serviceDelegator.createEmployment(orcid, employment);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EMPLOYMENT)
+    @ApiOperation(value = "Create an Employment", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Employment created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Employment representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Employment representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createEmploymentJSON(@PathParam("orcid") String orcid, Employment employment) {
+        jsonInputValidator.validateJSONInput(employment, Employment.class);
+        return serviceDelegator.createEmployment(orcid, employment);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(EMPLOYMENT + PUTCODE)
     @ApiOperation(value = "Update an Employment", response = Employment.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Employment updated") })
     public Response updateEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Employment employment) {
+        return serviceDelegator.updateEmployment(orcid, getPutCode(putCode), employment);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EMPLOYMENT + PUTCODE)
+    @ApiOperation(value = "Update an Employment", response = Employment.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Employment updated") })
+    public Response updateEmploymentJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Employment employment) {
+        jsonInputValidator.validateJSONInput(employment, Employment.class);
         return serviceDelegator.updateEmployment(orcid, getPutCode(putCode), employment);
     }
 
@@ -424,7 +540,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(PEER_REVIEW)
     @ApiOperation(value = "Create a Peer Review", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
@@ -435,15 +551,42 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     public Response createPeerReview(@PathParam("orcid") String orcid, PeerReview peerReview) {
         return serviceDelegator.createPeerReview(orcid, peerReview);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PEER_REVIEW)
+    @ApiOperation(value = "Create a Peer Review", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Peer Review created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Peer Review representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Peer Review representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createPeerReviewJSON(@PathParam("orcid") String orcid, PeerReview peerReview) {
+        jsonInputValidator.validateJSONInput(peerReview, PeerReview.class);
+        return serviceDelegator.createPeerReview(orcid, peerReview);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(PEER_REVIEW + PUTCODE)
     @ApiOperation(value = "Update a Peer Review", response = PeerReview.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
     public Response updatePeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, PeerReview peerReview) {
+        return serviceDelegator.updatePeerReview(orcid, getPutCode(putCode), peerReview);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PEER_REVIEW + PUTCODE)
+    @ApiOperation(value = "Update a Peer Review", response = PeerReview.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
+    public Response updatePeerReviewJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, PeerReview peerReview) {
+        jsonInputValidator.validateJSONInput(peerReview, PeerReview.class);
         return serviceDelegator.updatePeerReview(orcid, getPutCode(putCode), peerReview);
     }
 
@@ -468,7 +611,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(GROUP_ID_RECORD)
     @ApiOperation(value = "Create a Group", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
@@ -478,15 +621,41 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         return serviceDelegator.createGroupIdRecord(groupIdRecord);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(GROUP_ID_RECORD)
+    @ApiOperation(value = "Create a Group", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Group created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Group resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Group representation", response = String.class) })
+    public Response createGroupIdRecordJSON(GroupIdRecord groupIdRecord) {
+        jsonInputValidator.validateJSONInput(groupIdRecord, GroupIdRecord.class);
+        return serviceDelegator.createGroupIdRecord(groupIdRecord);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(GROUP_ID_RECORD + PUTCODE)
     @ApiOperation(value = "Update a Group", response = GroupIdRecord.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
     public Response updateGroupIdRecord(@PathParam("putCode") String putCode, GroupIdRecord groupIdRecord) {
+        return serviceDelegator.updateGroupIdRecord(groupIdRecord, getPutCode(putCode));
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(GROUP_ID_RECORD + PUTCODE)
+    @ApiOperation(value = "Update a Group", response = GroupIdRecord.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
+    public Response updateGroupIdRecordJSON(@PathParam("putCode") String putCode, GroupIdRecord groupIdRecord) {
+        jsonInputValidator.validateJSONInput(groupIdRecord, GroupIdRecord.class);
         return serviceDelegator.updateGroupIdRecord(groupIdRecord, getPutCode(putCode));
     }
 
@@ -556,13 +725,26 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(PERMISSIONS_PATH)
     @ApiOperation(value = "Add a notification", response = URI.class, authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class)) })
     public Response addPermissionNotification(@PathParam("orcid") String orcid, NotificationPermission notification) {
+        return notificationsServiceDelegator.addPermissionNotification(uriInfo, orcid, notification);
+    }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PERMISSIONS_PATH)
+    @ApiOperation(value = "Add a notification", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class)) })
+    public Response addPermissionNotificationJSON(@PathParam("orcid") String orcid, NotificationPermission notification) {
+        jsonInputValidator.validateJSONInput(notification, NotificationPermission.class);
         return notificationsServiceDelegator.addPermissionNotification(uriInfo, orcid, notification);
     }
 
@@ -585,19 +767,43 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(RESEARCHER_URLS)
     @ApiOperation(value = "Add a new researcher url for an ORCID ID", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createResearcherUrl(@PathParam("orcid") String orcid, ResearcherUrl researcherUrl) {
         return serviceDelegator.createResearcherUrl(orcid, researcherUrl);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCHER_URLS)
+    @ApiOperation(value = "Add a new researcher url for an ORCID ID", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response createResearcherUrlJSON(@PathParam("orcid") String orcid, ResearcherUrl researcherUrl) {
+        jsonInputValidator.validateJSONInput(researcherUrl, ResearcherUrl.class);
+        return serviceDelegator.createResearcherUrl(orcid, researcherUrl);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation(value = "Edits researcher url for an ORCID ID", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ResearcherUrl researcherUrl) {
+        return serviceDelegator.updateResearcherUrl(orcid, getPutCode(putCode), researcherUrl);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCHER_URLS + PUTCODE)
+    @ApiOperation(value = "Edits researcher url for an ORCID ID", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response editResearcherUrlJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ResearcherUrl researcherUrl) {
+        jsonInputValidator.validateJSONInput(researcherUrl, ResearcherUrl.class);
         return serviceDelegator.updateResearcherUrl(orcid, getPutCode(putCode), researcherUrl);
     }
 
@@ -638,19 +844,43 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(OTHER_NAMES)
     @ApiOperation(value = "Add other name", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createOtherName(@PathParam("orcid") String orcid, OtherName otherName) {
         return serviceDelegator.createOtherName(orcid, otherName);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(OTHER_NAMES)
+    @ApiOperation(value = "Add other name", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response createOtherNameJSON(@PathParam("orcid") String orcid, OtherName otherName) {
+        jsonInputValidator.validateJSONInput(otherName, OtherName.class);
+        return serviceDelegator.createOtherName(orcid, otherName);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Edit other name", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, OtherName otherName) {
+        return serviceDelegator.updateOtherName(orcid, getPutCode(putCode), otherName);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(OTHER_NAMES + PUTCODE)
+    @ApiOperation(value = "Edit other name", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response editOtherNameJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, OtherName otherName) {
+        jsonInputValidator.validateJSONInput(otherName, OtherName.class);
         return serviceDelegator.updateOtherName(orcid, getPutCode(putCode), otherName);
     }
 
@@ -692,19 +922,43 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(EXTERNAL_IDENTIFIERS)
     @ApiOperation(value = "Add external identifier", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createExternalIdentifier(@PathParam("orcid") String orcid, PersonExternalIdentifier externalIdentifier) {
         return serviceDelegator.createExternalIdentifier(orcid, externalIdentifier);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EXTERNAL_IDENTIFIERS)
+    @ApiOperation(value = "Add external identifier", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response createExternalIdentifierJSON(@PathParam("orcid") String orcid, PersonExternalIdentifier externalIdentifier) {
+        jsonInputValidator.validateJSONInput(externalIdentifier, PersonExternalIdentifier.class);
+        return serviceDelegator.createExternalIdentifier(orcid, externalIdentifier);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
     @ApiOperation(value = "Edit external identifier", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, PersonExternalIdentifier externalIdentifier) {
+        return serviceDelegator.updateExternalIdentifier(orcid, getPutCode(putCode), externalIdentifier);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
+    @ApiOperation(value = "Edit external identifier", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response editExternalIdentifierJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, PersonExternalIdentifier externalIdentifier) {
+        jsonInputValidator.validateJSONInput(externalIdentifier, PersonExternalIdentifier.class);
         return serviceDelegator.updateExternalIdentifier(orcid, getPutCode(putCode), externalIdentifier);
     }
 
@@ -745,19 +999,43 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(KEYWORDS)
     @ApiOperation(value = "Add keyword", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createKeyword(@PathParam("orcid") String orcid, Keyword keyword) {
         return serviceDelegator.createKeyword(orcid, keyword);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(KEYWORDS)
+    @ApiOperation(value = "Add keyword", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response createKeywordJSON(@PathParam("orcid") String orcid, Keyword keyword) {
+        jsonInputValidator.validateJSONInput(keyword, Keyword.class);
+        return serviceDelegator.createKeyword(orcid, keyword);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(KEYWORDS + PUTCODE)
     @ApiOperation(value = "Edit keyword", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Keyword keyword) {
+        return serviceDelegator.updateKeyword(orcid, getPutCode(putCode), keyword);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON }) 
+    @Path(KEYWORDS + PUTCODE)
+    @ApiOperation(value = "Edit keyword", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response editKeywordJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Keyword keyword) {
+        jsonInputValidator.validateJSONInput(keyword, Keyword.class);
         return serviceDelegator.updateKeyword(orcid, getPutCode(putCode), keyword);
     }
 
@@ -789,19 +1067,43 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(ADDRESS)
     @ApiOperation(value = "Add an address", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createAddress(@PathParam("orcid") String orcid, Address address) {
         return serviceDelegator.createAddress(orcid, address);
     }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(ADDRESS)
+    @ApiOperation(value = "Add an address", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response createAddressJSON(@PathParam("orcid") String orcid, Address address) {
+        jsonInputValidator.validateJSONInput(address, Address.class);
+        return serviceDelegator.createAddress(orcid, address);
+    }
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(ADDRESS + PUTCODE)
     @ApiOperation(value = "Edit an address", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Address address) {
+        return serviceDelegator.updateAddress(orcid, getPutCode(putCode), address);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(ADDRESS + PUTCODE)
+    @ApiOperation(value = "Edit an address", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response editAddressJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Address address) {
+        jsonInputValidator.validateJSONInput(address, Address.class);
         return serviceDelegator.updateAddress(orcid, getPutCode(putCode), address);
     }
 
