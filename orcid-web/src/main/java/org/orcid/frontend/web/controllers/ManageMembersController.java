@@ -25,16 +25,18 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ClientManager;
 import org.orcid.core.manager.MembersManager;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.pojo.ajaxForm.Client;
-import org.orcid.pojo.ajaxForm.MemberDetailsForm;
 import org.orcid.pojo.ajaxForm.Member;
+import org.orcid.pojo.ajaxForm.MemberDetailsForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
@@ -59,7 +61,13 @@ public class ManageMembersController extends BaseController {
     MembersManager membersManager;
     
     @Resource
-    ClientDetailsManager clientDetailsManager;
+    private ClientManager clientManager;
+
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
+    
+    @Resource
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     private ClientsController groupAdministratorController;
@@ -69,8 +77,7 @@ public class ManageMembersController extends BaseController {
 
     @RequestMapping
     public ModelAndView getManageMembersPage() {
-        ModelAndView mav = new ModelAndView("/admin/manage_members");
-        return mav;
+        return new ModelAndView("/admin/manage_members");        
     }
 
     /**
@@ -96,7 +103,7 @@ public class ManageMembersController extends BaseController {
     public @ResponseBody ResultContainer find(@RequestParam("id") String id) {
         ResultContainer result = new ResultContainer();
         
-        if(clientDetailsManager.exists(id)) {
+        if(clientDetailsManagerReadOnly.exists(id)) {
             result.setClient(true);
             result.setClientObject(findClient(id));
         } else {
@@ -175,13 +182,14 @@ public class ManageMembersController extends BaseController {
 
     @RequestMapping(value = "/find-client.json", method = RequestMethod.GET)
     public @ResponseBody
-    Client findClient(@RequestParam("orcid") String orcid) {
+    Client findClient(@RequestParam("orcid") String clientId) {
         Client result = new Client();
         
-        if(PojoUtil.isEmpty(orcid)) {
+        if(PojoUtil.isEmpty(clientId)) {
             result.getErrors().add(getMessage("manage_member.not_blank"));
         } else {
-            result = membersManager.getClient(orcid);
+            org.orcid.jaxb.model.client_v2.Client modelClient = clientManagerReadOnly.get(clientId);
+            result = Client.fromModelObject(modelClient);
         }
                 
         return result;
@@ -209,8 +217,10 @@ public class ManageMembersController extends BaseController {
             copyErrors(redirectUri, client);
         }
 
-        if (client.getErrors().isEmpty()) {
-            client = membersManager.updateClient(client);
+        if (client.getErrors().isEmpty()) {           
+            org.orcid.jaxb.model.client_v2.Client modelObject = clientManager.edit(client.toModelObject(), true);
+            client = Client.fromModelObject(modelObject);
+            membersManager.clearCache();
         }
 
         return client;
