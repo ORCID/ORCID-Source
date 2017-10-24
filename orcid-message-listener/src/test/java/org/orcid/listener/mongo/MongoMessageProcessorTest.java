@@ -84,6 +84,9 @@ public class MongoMessageProcessorTest {
     private String mongoCollection;
     private MongoCollection<Document> col;
     
+    private final String orcid = "0000-0000-0000-1000";
+    private final String orcid2 = "0000-0000-0000-2000";
+    
     /** Sets up a FONGO instance and injects it into the MessageProcessor.
      * 
      * @throws LockedRecordException
@@ -99,7 +102,7 @@ public class MongoMessageProcessorTest {
     @Test
     public void testInsertAndUpsert() throws LockedRecordException, DeprecatedRecordException{
         Record record = new Record();
-        record.setOrcidIdentifier(new OrcidIdentifier("http://orcid.org/0000-0000-0000-0001"));
+        record.setOrcidIdentifier(new OrcidIdentifier("http://orcid.org/"+this.orcid));
         ActivitiesSummary sum = new ActivitiesSummary();
         Works works = new Works();
         WorkGroup group = new WorkGroup();
@@ -113,15 +116,15 @@ public class MongoMessageProcessorTest {
         record.setActivitiesSummary(sum);
         when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.any())).thenReturn(record);
         
-        LastModifiedMessage m = new LastModifiedMessage("0000-0000-0000-0001", new Date());
+        LastModifiedMessage m = new LastModifiedMessage(this.orcid, new Date());
         mongo.accept(m);
         //test record inserted (has work, no name)
         Document d = new Document();
-        d.put("_id", "0000-0000-0000-0001");
+        d.put("_id", this.orcid);
         assertEquals(col.count(d),1);
         FindIterable<Document> it = col.find(d);
         Document found = it.first();
-        assertEquals(found.get("orcid-identifier", Document.class).get("path"),"http://orcid.org/0000-0000-0000-0001");
+        assertEquals(found.get("orcid-identifier", Document.class).get("path"),"http://orcid.org/"+this.orcid);
         List<Document> groups = (List<Document>) found.get("activities-summary", Document.class).get("works", Document.class).get("group");
         List<Document> sums = (List<Document>) groups.get(0).get("work-summary");
         assertEquals(sums.get(0).get("title",Document.class)
@@ -132,7 +135,7 @@ public class MongoMessageProcessorTest {
         record.getPerson().setName(new Name());
         record.getPerson().getName().setCreditName(new CreditName());
         record.getPerson().getName().getCreditName().setContent("name");;
-        LastModifiedMessage m2 = new LastModifiedMessage("0000-0000-0000-0001", new Date());
+        LastModifiedMessage m2 = new LastModifiedMessage(this.orcid, new Date());
         mongo.accept(m2);
         it = col.find(d);
         found = it.first();
@@ -142,11 +145,11 @@ public class MongoMessageProcessorTest {
     @Test
     public void testLocked() throws LockedRecordException, DeprecatedRecordException{
         when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.any())).thenThrow(new LockedRecordException(new OrcidError()));
-        LastModifiedMessage m = new LastModifiedMessage("0000-0000-0000-0001", new Date());
+        LastModifiedMessage m = new LastModifiedMessage(this.orcid, new Date());
         mongo.accept(m);
         //test db has entry for locked record
         Document d = new Document();
-        d.put("_id", "0000-0000-0000-0001");
+        d.put("_id", this.orcid);
         assertEquals(col.count(d),1);
         FindIterable<Document> it = col.find(d);
         assertEquals(it.first().get("status"),"locked");
@@ -155,11 +158,11 @@ public class MongoMessageProcessorTest {
     @Test
     public void testDeprecated() throws LockedRecordException, DeprecatedRecordException{
         when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.any())).thenThrow(new DeprecatedRecordException(new OrcidError()));
-        LastModifiedMessage m = new LastModifiedMessage("0000-0000-0000-0001", new Date());
+        LastModifiedMessage m = new LastModifiedMessage(this.orcid, new Date());
         mongo.accept(m);
         //test db has entry for depreciated record
         Document d = new Document();
-        d.put("_id", "0000-0000-0000-0001");
+        d.put("_id", this.orcid);
         assertEquals(col.count(d),1);
         FindIterable<Document> it = col.find(d);
         assertEquals(it.first().get("status"),"deprecated");
@@ -168,7 +171,7 @@ public class MongoMessageProcessorTest {
     @Test
     public void testDeactivated() throws LockedRecordException, DeprecatedRecordException, DatatypeConfigurationException{  
         Record deactivatedRecord = new Record();
-        deactivatedRecord.setOrcidIdentifier(new OrcidIdentifier("http://orcid.org/0000-0000-0000-0002"));
+        deactivatedRecord.setOrcidIdentifier(new OrcidIdentifier("http://orcid.org/"+this.orcid2));
         History h = new History();
         h.setDeactivationDate(new DeactivationDate());
         GregorianCalendar c = new GregorianCalendar();
@@ -176,11 +179,11 @@ public class MongoMessageProcessorTest {
         h.getDeactivationDate().setValue(date);
         deactivatedRecord.setHistory(h);
         when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.any())).thenReturn(deactivatedRecord);
-        LastModifiedMessage m = new LastModifiedMessage("0000-0000-0000-0002", new Date());
+        LastModifiedMessage m = new LastModifiedMessage(this.orcid2, new Date());
         mongo.accept(m);
         //test db has entry for deactivated record
         Document d = new Document();
-        d.put("_id", "0000-0000-0000-0002");
+        d.put("_id", this.orcid2);
         assertEquals(col.count(d),1);
         FindIterable<Document> it = col.find(d);
         assertEquals(it.first().get("status"),"deactivated");
