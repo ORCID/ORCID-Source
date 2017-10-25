@@ -46,7 +46,7 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;
+    private OrcidSecurityManager orcidSecurityManager;    
     
     @Override
     public Response viewStatusText() {
