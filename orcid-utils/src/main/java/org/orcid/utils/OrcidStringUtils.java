@@ -16,26 +16,18 @@
  */
 package org.orcid.utils;
 
-import org.apache.commons.lang.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.safety.Whitelist;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities.EscapeMode;
+import org.jsoup.safety.Whitelist;
 
 /**
  * <p>
@@ -69,11 +61,11 @@ public class OrcidStringUtils {
                 .compile(ORCID_URI_2_1_STRING);
 	private static final Pattern clientIdPattern = Pattern
 			.compile("APP-[\\dA-Z]{16}");
+	
+    private static final Pattern invalidXMLCharactersPattern = Pattern.compile("(\u0000|\uFFFE|\uFFFF)");
 
 	private static final Document.OutputSettings outputSettings = new Document.OutputSettings()
-			.prettyPrint(false).charset("UTF-8").escapeMode(EscapeMode.xhtml);
-
-	private static final String INVALID_CHARS_FILTER_REGEX = "(\u0000|\uFFFE|\uFFFF)";
+			.prettyPrint(false).charset("UTF-8").escapeMode(EscapeMode.xhtml);	
 	
 	public static boolean isValidOrcid(String orcid) {
 		if (StringUtils.isNotBlank(orcid)) {
@@ -173,7 +165,8 @@ public class OrcidStringUtils {
 	public static String filterInvalidXMLCharacters(String string) {
 	    if(string == null || string.isEmpty()) {
 	        return string;
-	    }
-	    return string.replaceAll(INVALID_CHARS_FILTER_REGEX, "");
+	    }	    	    
+	    
+	    return invalidXMLCharactersPattern.matcher(string).replaceAll("");
 	}	    
 }

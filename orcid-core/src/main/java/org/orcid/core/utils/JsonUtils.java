@@ -18,16 +18,19 @@ package org.orcid.core.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.utils.OrcidStringUtils;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
  * 
@@ -39,21 +42,13 @@ public class JsonUtils {
     static ObjectMapper mapper = new ObjectMapper(); // thread safe!
     static ObjectMapper mapperFromJSON = new ObjectMapper(); // thread safe!
     static {
+        mapper.registerModule(new InvalidCharactersFilterModule());
         mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
-    public static void main(String [] args) {
-        JsonUtils.convertToJsonString("Str" + '\u0000' + "ing");
-        JsonUtils.convertToJsonString("Str" + '\uffff' + "ing");
-        JsonUtils.convertToJsonString("Str" + '\ufffe' + "ing");        
-    }
-    
     public static String convertToJsonString(Object object) {
-        try {
-            System.out.println(object);
-            String s = mapper.writeValueAsString(object);
-            System.out.println(s);
-            return OrcidStringUtils.filterInvalidXMLCharacters(mapper.writeValueAsString(object));
+        try {            
+            return mapper.writeValueAsString(object);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -120,4 +115,22 @@ public class JsonUtils {
         }
     }
 
+}
+
+class InvalidCharactersFilterModule extends SimpleModule {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    public InvalidCharactersFilterModule() {
+        addSerializer(new StdSerializer<String>(String.class) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void serialize(String value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonGenerationException {
+                jgen.writeString(OrcidStringUtils.filterInvalidXMLCharacters(value));
+            }
+        });
+    }
 }

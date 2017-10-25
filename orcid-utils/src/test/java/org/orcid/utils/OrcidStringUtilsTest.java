@@ -101,7 +101,7 @@ public class OrcidStringUtilsTest {
         assertEquals(7, OrcidStringUtils.filterInvalidXMLCharacters(s3).length());
         assertEquals("String!", OrcidStringUtils.filterInvalidXMLCharacters(s3));
         assertEquals(7, OrcidStringUtils.filterInvalidXMLCharacters(s4).length());
-        assertEquals("String!", OrcidStringUtils.filterInvalidXMLCharacters(s4));
+        assertEquals("String!", OrcidStringUtils.filterInvalidXMLCharacters(s4));    
     }
     
 }
