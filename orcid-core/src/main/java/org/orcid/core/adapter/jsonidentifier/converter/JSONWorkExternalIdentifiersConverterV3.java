@@ -17,11 +17,14 @@
 package org.orcid.core.adapter.jsonidentifier.converter;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
+
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.v3.identifiers.NormalizationService;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
@@ -33,6 +36,12 @@ import ma.glasnost.orika.metadata.Type;
 
 public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConverter<ExternalIDs, String> {
 
+    private NormalizationService norm;
+    
+    public JSONWorkExternalIdentifiersConverterV3(NormalizationService norm){
+        this.norm=norm;
+    }
+    
     private ExternalIdentifierTypeConverter conv = new ExternalIdentifierTypeConverter();
 
     @Override
@@ -73,6 +82,7 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
             }
             if (workExternalIdentifier.getWorkExternalIdentifierId() != null) {
                 id.setValue(workExternalIdentifier.getWorkExternalIdentifierId().content);
+                id.setNormalized(new TransientNonEmptyString(norm.normalise(workExternalIdentifier.getWorkExternalIdentifierType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
             }
             if (workExternalIdentifier.getUrl() != null) {
                 id.setUrl(new Url(workExternalIdentifier.getUrl().getValue()));
@@ -80,6 +90,9 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
             if (workExternalIdentifier.getRelationship() != null) {
                 id.setRelationship(Relationship.fromValue(conv.convertFrom(workExternalIdentifier.getRelationship(), null)));
             }
+            
+            //create normalized value
+            
             externalIDs.getExternalIdentifier().add(id);
         }
         return externalIDs;
