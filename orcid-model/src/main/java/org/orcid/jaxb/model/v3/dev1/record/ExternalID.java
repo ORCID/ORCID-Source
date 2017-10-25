@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type","value", "url", "relationship" })
+@XmlType(propOrder = { "type","value", "normalized", "url", "relationship" })
 public class ExternalID implements GroupAble,Cloneable,Serializable{
     private static final long serialVersionUID = 1L;
 
@@ -41,6 +42,8 @@ public class ExternalID implements GroupAble,Cloneable,Serializable{
     protected String type;
     @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/common", required = true)
     protected String value;
+    @XmlElement(name = "external-id-normalized", namespace = "http://www.orcid.org/ns/common")
+    protected TransientNonEmptyString normalized;
     @XmlElement(name="external-id-url", namespace = "http://www.orcid.org/ns/common")
     protected Url url;
     @XmlElement(name="external-id-relationship", namespace = "http://www.orcid.org/ns/common")
@@ -61,6 +64,14 @@ public class ExternalID implements GroupAble,Cloneable,Serializable{
     public void setValue(String value) {
         this.value = value;
     }
+    
+    public TransientNonEmptyString getNormalized() {
+        return normalized;
+    }
+
+    public void setNormalized(TransientNonEmptyString normalized) {
+        this.normalized = normalized;
+    }
 
     public Relationship getRelationship() {
         return relationship;
@@ -78,10 +89,17 @@ public class ExternalID implements GroupAble,Cloneable,Serializable{
         this.url = url;
     }
 
+    /** If we have a normalized value, use that to generate Group ID;
+     */
     @Override
     @JsonIgnore
     public String getGroupId() {
-        String workIdVal = this.value == null ? null : this.value;
+        String workIdVal = null;
+        if (this.getNormalized() != null && this.getNormalized().getValue() != null){
+            workIdVal = this.getNormalized().getValue();
+        } else {
+            workIdVal = this.value == null ? null : this.value;            
+        }
         String typeVal = this.type == null ? null : this.type;
         return workIdVal + typeVal; 
     }
@@ -113,6 +131,7 @@ public class ExternalID implements GroupAble,Cloneable,Serializable{
         int result = 1;
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((this.getNormalized() == null) ? 0 : this.getNormalized().hashCode());
         return result;
     }
 
@@ -134,7 +153,12 @@ public class ExternalID implements GroupAble,Cloneable,Serializable{
             if (other.value != null)
                 return false;
         } else if (!value.equals(other.value))
-            return false;
+            return false;            
+        if (this.getNormalized() == null) {
+            if (other.getNormalized() != null)
+                return false;
+        } else if (!getNormalized().equals(other.getNormalized()))
+            return false;            
         return true;
     }
 
@@ -142,6 +166,8 @@ public class ExternalID implements GroupAble,Cloneable,Serializable{
         ExternalID id = new ExternalID();
         id.type=this.getType();
         id.value=this.getValue();
+        if (this.getNormalized()!=null)
+            id.setNormalized(this.getNormalized());
         if (this.getUrl()!=null)
             id.url=new Url(this.getUrl().getValue());
         if (this.getRelationship()!=null)
