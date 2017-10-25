@@ -21,8 +21,8 @@ import java.io.IOException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.utils.OrcidStringUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +42,7 @@ public class JsonUtils {
 
     public static String convertToJsonString(Object object) {
         try {
-            return mapper.writeValueAsString(object);
+            return OrcidStringUtils.filterInvalidXMLCharacters(mapper.writeValueAsString(object));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -22,6 +22,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Whitelist;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +73,8 @@ public class OrcidStringUtils {
 	private static final Document.OutputSettings outputSettings = new Document.OutputSettings()
 			.prettyPrint(false).charset("UTF-8").escapeMode(EscapeMode.xhtml);
 
+	private static final String INVALID_CHARS_FILTER_REGEX = "(\u0000|\uFFFE|\uFFFF)";
+	
 	public static boolean isValidOrcid(String orcid) {
 		if (StringUtils.isNotBlank(orcid)) {
 			return orcidPattern.matcher(orcid).matches();
@@ -159,4 +169,11 @@ public class OrcidStringUtils {
 		}
 		return string.compareTo(otherString);
 	}
+	
+	public static String filterInvalidXMLCharacters(String string) {
+	    if(string == null || string.isEmpty()) {
+	        return string;
+	    }
+	    return string.replaceAll(INVALID_CHARS_FILTER_REGEX, "");
+	}	    
 }

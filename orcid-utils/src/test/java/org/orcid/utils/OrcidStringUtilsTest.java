@@ -87,4 +87,21 @@ public class OrcidStringUtilsTest {
         assertFalse(OrcidStringUtils.hasHtml("Users's test"));
     }    
     
+    @Test
+    public void testFilterInvalidXMLCharacters() {
+        String s1 = new String(new char[] {'\u0000','S','\u0000','t','\u0000','r','\u0000','i','\u0000','n','\u0000','g','\u0000','!'});
+        String s2 = new String(new char[] {'\uffff','S','\uffff','t','\uffff','r','\uffff','i','\uffff','n','\uffff','g','\uffff','!'});
+        String s3 = new String(new char[] {'\ufffe','S','\ufffe','t','\ufffe','r','\ufffe','i','\ufffe','n','\ufffe','g','\ufffe','!'});
+        String s4 = new String(new char[] {'\u0000','S','\uffff','t','\ufffe','r','\u0000','i','\uffff','n','\ufffe','g','\u0000','!'});
+    
+        assertEquals(7, OrcidStringUtils.filterInvalidXMLCharacters(s1).length());
+        assertEquals("String!", OrcidStringUtils.filterInvalidXMLCharacters(s1));
+        assertEquals(7, OrcidStringUtils.filterInvalidXMLCharacters(s2).length());
+        assertEquals("String!", OrcidStringUtils.filterInvalidXMLCharacters(s2));
+        assertEquals(7, OrcidStringUtils.filterInvalidXMLCharacters(s3).length());
+        assertEquals("String!", OrcidStringUtils.filterInvalidXMLCharacters(s3));
+        assertEquals(7, OrcidStringUtils.filterInvalidXMLCharacters(s4).length());
+        assertEquals("String!", OrcidStringUtils.filterInvalidXMLCharacters(s4));
+    }
+    
 }

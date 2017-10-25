@@ -29,6 +29,8 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorEmail;
+import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.WorkContributors;
 
@@ -173,5 +175,22 @@ public class JsonUtilsTest {
         assertEquals("object_1", rootNode.get("object_array").get(0).get("id").asText());
         assertEquals("object_2", rootNode.get("object_array").get(1).get("id").asText());
         assertEquals("object_3", rootNode.get("object_array").get(2).get("id").asText());
+    }
+    
+    @Test
+    public void testFilterInvalidXMLCharacters() {
+        WorkContributors workContributors = new WorkContributors();
+        Contributor contributor1 = new Contributor();
+        workContributors.getContributor().add(contributor1);
+        char c = 0;
+        contributor1.setCreditName(new CreditName("A" + c + "Contributor"));
+        contributor1.setContributorEmail(new ContributorEmail("test@" + '\uffff' + "email.com"));
+        contributor1.setContributorOrcid(new ContributorOrcid("0000" + '\ufffe' + "-0000" + '\ufffe' + "-0000" + '\ufffe' + "-0000"));
+        
+
+        String result = JsonUtils.convertToJsonString(workContributors);
+        assertEquals(
+                "{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":{\"content\":\"A Contributor\",\"visibility\":null},\"contributorEmail\":null,\"contributorAttributes\":null}]}",
+                result);
     }
 }
