@@ -50,6 +50,8 @@ import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -153,6 +155,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         } else {
             // validate external ID vocab
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
+            
+            // clear invalid XML values from citation
+            if(work.getWorkCitation() != null && !PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
+                work.getWorkCitation().setCitation(OrcidStringUtils.filterInvalidXMLCharacters(work.getWorkCitation().getCitation()));
+            }
         }
 
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);

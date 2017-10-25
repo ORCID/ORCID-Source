@@ -16,8 +16,12 @@
  */
 package org.orcid.core.utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -113,8 +117,7 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException("Error extracting JsonNode from file", e);
         }
-    }
-
+    }    
 }
 
 class InvalidCharactersFilterModule extends SimpleModule {
