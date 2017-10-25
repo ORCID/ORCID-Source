@@ -1459,6 +1459,30 @@ ul.privacyHelp li.private {
     background: 0 0
 }
 
+.width-10,
+.normal-width th.width-10,
+.normal-width td.width-10 {
+    width: 10%;
+}
+
+.width-15,
+.normal-width th.width-15,
+.normal-width td.width-15 {
+    width: 15%;
+}
+
+.width-20,
+.normal-width th.width-20,
+.normal-width td.width-20 {
+    width: 20%;
+}
+
+.width-30,
+.normal-width th.width-30,
+.normal-width td.width-30 {
+    width: 30%;
+}
+
 .workspace-top {
     border-top: 1px solid #c9c9c9
 }

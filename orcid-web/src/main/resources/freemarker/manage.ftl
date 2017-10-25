@@ -492,10 +492,10 @@
                 <table class="table table-bordered settings-table normal-width" ng-show="delegation" ng-cloak>
                     <thead>
                         <tr>
-                            <th width="40%" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
-                            <th width="30%" ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-                            <th width="20%" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-                            <td width="10%"></td>
+                            <th class="width-30" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
+                            <th ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+                            <th class="width-15" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+                            <th class="width-10" ></th>
                         </tr>
                     </thead>
                     <tbody ng-show="!delegation.length > 0" ng-cloak>
@@ -506,15 +506,15 @@
                     <tbody ng-show="delegation.length > 0" ng-cloak>
                         <tr ng-repeat="delegationDetails in delegation | orderBy:sort.column:sort.descending">
                             <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-                                <td width="40%"><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
-                                <td width="30%"><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
+                                <td><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                                <td><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">${baseUri}/{{delegationDetails.receiverOrcid.value}}</a></td>
                             </@orcid.checkFeatureStatus>
                             <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-                                <td width="40%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
-                                <td width="30%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
+                                <td><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                                <td><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
                             </@orcid.checkFeatureStatus>
-                            <td width="20%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
-                            <td width="10%" class="tooltip-container">
+                            <td>{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
+                            <td class="tooltip-container">
                                 <a
                                 ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
                                 ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
