@@ -261,12 +261,12 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     
     @Override
     public Response searchByQuery(Map<String, List<String>> solrParams) {
-        return publicV2ApiServiceDelegator.searchByQuery(solrParams);
+        return processReponse(publicV2ApiServiceDelegator.searchByQuery(solrParams));
     }
     
     @Override
     public Response viewBulkWorks(String orcid, String putCodes) {
-        return publicV2ApiServiceDelegator.viewBulkWorks(orcid, putCodes);
+        return processReponse(publicV2ApiServiceDelegator.viewBulkWorks(orcid, putCodes));
     }
     
     private Response processReponse(Response response) {
