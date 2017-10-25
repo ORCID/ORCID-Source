@@ -18,6 +18,8 @@ package org.orcid.core.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,8 +42,17 @@ public class JsonUtils {
         mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
+    public static void main(String [] args) {
+        JsonUtils.convertToJsonString("Str" + '\u0000' + "ing");
+        JsonUtils.convertToJsonString("Str" + '\uffff' + "ing");
+        JsonUtils.convertToJsonString("Str" + '\ufffe' + "ing");        
+    }
+    
     public static String convertToJsonString(Object object) {
         try {
+            System.out.println(object);
+            String s = mapper.writeValueAsString(object);
+            System.out.println(s);
             return OrcidStringUtils.filterInvalidXMLCharacters(mapper.writeValueAsString(object));
         } catch (IOException e) {
             throw new RuntimeException(e);
