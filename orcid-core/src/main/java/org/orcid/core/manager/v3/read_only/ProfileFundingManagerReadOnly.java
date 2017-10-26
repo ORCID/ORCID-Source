@@ -69,7 +69,7 @@ public interface ProfileFundingManagerReadOnly {
      *          Last modified date used to check the cache
      * @return the list of fundings that belongs to this user
      * */
-    List<Funding> getFundingList(String userOrcid, long lastModified);
+    List<Funding> getFundingList(String userOrcid);
     
     /**
      * Generate a grouped list of funding with the given list of funding

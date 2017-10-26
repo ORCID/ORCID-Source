@@ -23,12 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
-import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 
 public class Client implements ErrorsInterface, Serializable, Comparable<Client> {
 
@@ -47,118 +42,16 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;    
     private Set<String> scopes;
-    private Checkbox allowAutoDeprecate;
-
-    @Deprecated
-    public static Client valueOf(ClientDetailsEntity clientDetails) {
-        Client client = new Client();
-        if (clientDetails != null) {
-            client.setClientId(Text.valueOf(clientDetails.getClientId()));
-            client.setDisplayName(Text.valueOf(clientDetails.getClientName()));
-            client.setShortDescription(Text.valueOf(clientDetails.getClientDescription()));
-            client.setWebsite(Text.valueOf(clientDetails.getClientWebsite()));                               
-            client.redirectUris = new ArrayList<RedirectUri>();
-            if (clientDetails.getClientRegisteredRedirectUris() != null) {
-                for (ClientRedirectUriEntity rUri : clientDetails.getClientRegisteredRedirectUris()) {
-                    client.redirectUris.add(RedirectUri.valueOf(rUri));
-                }
-            }            
-            
-            client.persistentTokenEnabled = new Checkbox();
-            client.persistentTokenEnabled.setValue(clientDetails.isPersistentTokensEnabled());     
-            if(clientDetails.getClientType() != null)
-            client.setType(Text.valueOf(clientDetails.getClientType().value()));
-            
-            if(clientDetails.isScoped())
-                client.setScopes(clientDetails.getScope());
-            
-            client.setMemberId(Text.valueOf(clientDetails.getGroupProfileId()));
-            if(!PojoUtil.isEmpty(clientDetails.getAuthenticationProviderId())) {
-                client.setAuthenticationProviderId(Text.valueOf(clientDetails.getAuthenticationProviderId()));
-            }
-            client.setAllowAutoDeprecate(Checkbox.valueOf(clientDetails.isAllowAutoDeprecate()));
-        }
-        return client;
-    }
-    
-    @Deprecated
-    public static List<Client> valueOf(List<ClientDetailsEntity> clientDetails) {
-        List<Client> clients = new ArrayList<Client>();
-        for(ClientDetailsEntity entity : clientDetails) {
-            clients.add(Client.valueOf(entity));
-        }
-        return clients;
-    }
-
-    @Deprecated
-    public static Client valueOf(OrcidClient orcidClient) {
-        Client client = new Client();
-        client.setClientId(Text.valueOf(orcidClient.getClientId()));
-        client.setClientSecret(Text.valueOf(orcidClient.getClientSecret()));
-        client.setDisplayName(Text.valueOf(orcidClient.getDisplayName()));
-        client.setShortDescription(Text.valueOf(orcidClient.getShortDescription()));
-        if (orcidClient.getType() != null)
-            client.setType(Text.valueOf(orcidClient.getType().value()));
-        client.setWebsite(Text.valueOf(orcidClient.getWebsite()));
+    private Checkbox allowAutoDeprecate;    
         
-        Checkbox persistentTokenEnabled = new Checkbox();
-        persistentTokenEnabled.setValue(orcidClient.isPersistentTokenEnabled());        
-        client.setPersistentTokenEnabled(persistentTokenEnabled);
-        
-        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
-        RedirectUris orcidRedirectUris = orcidClient.getRedirectUris();
-        if (orcidRedirectUris != null && orcidRedirectUris.getRedirectUri() != null) {
-            for (org.orcid.jaxb.model.clientgroup.RedirectUri orcidRedirectUri : orcidRedirectUris.getRedirectUri()) {
-                redirectUris.add(RedirectUri.toRedirectUri(orcidRedirectUri));
-            }
-        }
-
-        if(orcidClient.getIdp() != null) {
-            client.setAuthenticationProviderId(Text.valueOf(orcidClient.getIdp()));
-        }
-        
-        client.setRedirectUris(redirectUris);
-        client.setAllowAutoDeprecate(Checkbox.valueOf(orcidClient.getAllowAutoDeprecate()));
-        return client;
-    }
-
-    @Deprecated
-    public OrcidClient toOrcidClient() {
-        OrcidClient orcidClient = new OrcidClient();
-        orcidClient.setDisplayName(this.displayName.getValue());
-        orcidClient.setWebsite(this.website.getValue());
-        orcidClient.setShortDescription(this.shortDescription.getValue());
-        orcidClient.setClientId(this.clientId.getValue());
-        if(this.getAuthenticationProviderId() != null) {
-            orcidClient.setIdp(this.getAuthenticationProviderId().getValue());
-        }
-        if (!PojoUtil.isEmpty(this.clientSecret))
-            orcidClient.setClientSecret(this.clientSecret.getValue());
-        if (!PojoUtil.isEmpty(this.type))
-            orcidClient.setType(ClientType.fromValue(this.type.getValue()));
-
-        RedirectUris redirectUris = new RedirectUris();
-
-        for (RedirectUri redirectUri : this.redirectUris) {
-            redirectUris.getRedirectUri().add(redirectUri.toRedirectUri());
-        }
-
-        orcidClient.setRedirectUris(redirectUris);
-        
-        if(persistentTokenEnabled != null)
-            orcidClient.setPersistentTokenEnabled(persistentTokenEnabled.getValue());
-        
-        orcidClient.setAllowAutoDeprecate(this.getAllowAutoDeprecate() == null ? false : this.getAllowAutoDeprecate().getValue());
-        
-        return orcidClient;
-    }
-
     public static Client fromModelObject(org.orcid.jaxb.model.client_v2.Client modelObject) {
         Client client = new Client();
 
         client.setClientId(Text.valueOf(modelObject.getId()));
 
         client.setAllowAutoDeprecate(Checkbox.valueOf(modelObject.isAllowAutoDeprecate()));
+        
+        client.setPersistentTokenEnabled(Checkbox.valueOf(modelObject.isPersistentTokensEnabled()));
         
         if (modelObject.getAuthenticationProviderId() != null) {
             client.setAuthenticationProviderId(Text.valueOf(modelObject.getAuthenticationProviderId()));

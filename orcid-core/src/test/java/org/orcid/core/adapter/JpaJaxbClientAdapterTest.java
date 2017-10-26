@@ -86,16 +86,19 @@ public class JpaJaxbClientAdapterTest {
         Client client = getClient();
         ClientDetailsEntity entity = adapter.toEntity(client);
         ClientDetailsEntity toCompare = getClientDetailsEntity();
+        
+        // Configuration values should be the default
+        assertFalse(entity.isPersistentTokensEnabled());
+        assertNull(entity.getAuthenticationProviderId());
+        
         assertEquals(toCompare.getClientDescription(), entity.getClientDescription());
         assertEquals(toCompare.getClientId(), entity.getClientId());
         assertEquals(toCompare.getClientName(), entity.getClientName());
         assertEquals(toCompare.getClientRegisteredRedirectUris(), entity.getClientRegisteredRedirectUris());        
         assertEquals(toCompare.getClientWebsite(), entity.getClientWebsite());
         assertEquals(toCompare.isAllowAutoDeprecate(), entity.isAllowAutoDeprecate());
-        
-        assertFalse(entity.isPersistentTokensEnabled());
+       
         assertNull(entity.getClientType());
-        assertNull(entity.getAuthenticationProviderId());
         assertNull(entity.getEmailAccessReason());
         assertNull(entity.getGroupProfileId());
         assertNull(entity.getClientSecrets());
@@ -117,12 +120,14 @@ public class JpaJaxbClientAdapterTest {
     private Client getClient() {
         Client client = new Client();
         client.setAllowAutoDeprecate(true);
+        client.setPersistentTokensEnabled(true);
         client.setClientType(ClientType.CREATOR);
         client.setDescription("description");
         client.setGroupProfileId("group-profile-id");
         client.setId("id");
         client.setName("client-name");
         client.setWebsite("client-website");
+        client.setAuthenticationProviderId("authentication-provider-id");
 
         Set<ClientRedirectUri> clientRedirectUris = new HashSet<ClientRedirectUri>();
         ClientRedirectUri rUri1 = new ClientRedirectUri();

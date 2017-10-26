@@ -104,7 +104,7 @@ export class RootCmp {
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         ModalNg2Module,
-        //NameNg2Module,
+        NameNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
@@ -119,13 +119,13 @@ export class RootCmp {
         CountryService,
         EmailService,
         ModalService,
-        //NameService
+        NameService
     ]
 
 })
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.96');
+        console.log('v0.97');
     }
 }

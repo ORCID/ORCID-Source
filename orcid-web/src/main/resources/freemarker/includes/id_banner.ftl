@@ -23,69 +23,9 @@
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
     
     <!-- Name -->
-    <name-ng2></name-ng2>
-    <div ng-controller="NameCtrl" class="workspace-section" id="names-section">
-        <div ng-show="showEdit == false" ng-click="toggleEdit()">
-            <div class="row">               
-                 <div class="col-md-12">
-                     <div class="workspace-section-title">
-                        <div class="edit-name edit-option" ng-hide="showEdit == true" id="open-edit-names">
-                            <div class="glyphicon glyphicon-pencil">
-                                <div class="popover popover-tooltip top">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <span><@orcid.msg 'manage_bio_settings.editName'/></span>
-                                    </div>                
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <h2 class="full-name">
-                        <span ng-hide="nameForm != null 
-                            && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-bind="nameForm.creditName.value" ng-cloak>
-                        </span>
-                        <span ng-show="nameForm != null 
-                            && (nameForm.creditName == null || nameForm.creditName.value == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-cloak>
-                            {{nameForm.givenNames.value}} <span ng-show="nameForm.familyName.value != null" ng-cloak>{{nameForm.familyName.value}}</span>
-                        </span>
-                    </h2>
-                </div>
-            </div>
-        </div>
-        <!-- Edit Mode -->
-        <div class="names-edit" ng-show="showEdit == true" ng-cloak>
-           <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>
-           <input type="text" ng-model="nameForm.givenNames.value" ng-enter="setNameForm()" class="full-width-input"></input>
-           <span class="orcid-error" ng-show="nameForm.givenNames.errors.length > 0">
-               <div ng-repeat='error in nameForm.givenNames.errors' ng-bind-html="error"></div>
-           </span>
-           <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
-           <input type="text" ng-model="nameForm.familyName.value" ng-enter="setNameForm()" class="full-width-input"></input>
-           <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>                               
-           <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>          
-           <@orcid.privacyComponent 
-                 angularModel="nameForm.namesVisibility.visibility"
-                 publicClick="setNamesVisibility('PUBLIC', $event)" 
-                 limitedClick="setNamesVisibility('LIMITED', $event)" 
-                 privateClick="setNamesVisibility('PRIVATE', $event)"
-                 placement="top" 
-                 popoverStyle="left: 0; top: -178px;" 
-                 arrowStyle="left: 48px;"                            
-            />
-            <div style="float: left">
-                <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="142948-names-in-the-orcid-registry"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
-            </div>
-            <ul class="workspace-section-toolbar">
-                <li class="pull-right">
-                    <button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-                </li>
-                <li class="pull-right">
-                    <a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    
+    <name-ng2 class="clearfix"></name-ng2>
+
     <div class="oid">
         <div class="id-banner-header">
             <span><@orcid.msg 'common.orcid_id' /></span>
@@ -136,7 +76,7 @@
         <div *ngIf="showEdit == false" (click)="toggleEdit()">
             <div class="row">               
                 <div class="col-md-12">
-                    <div class="workspace-section-title">
+                    <div class="workspace-section-title clearfix">
                         <div class="edit-name edit-option" *ngIf="showEdit == false" id="open-edit-names">
                             <div class="glyphicon glyphicon-pencil">
                                 <div class="popover popover-tooltip top">
@@ -150,12 +90,12 @@
                     </div>
                     
                     <h2 class="full-name">
-                        <span *ngIf="nameForm != null 
-                            && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC')">{{nameForm.creditName.value}}
+                        <span *ngIf="!(nameForm != null 
+                            && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC'))">{{nameForm?.creditName?.value}}
                         </span>
                         <span *ngIf="nameForm != null 
                             && (nameForm.creditName == null || nameForm.creditName.value == null || nameForm.namesVisibility.visibility != 'PUBLIC')">
-                            {{nameForm.givenNames.value}} <span *ngIf="nameForm.familyName.value != null" >{{nameForm.familyName.value}}</span>
+                            {{nameForm?.givenNames?.value}} <span *ngIf="nameForm?.familyName?.value != null" >{{nameForm?.familyName?.value}}</span>
                         </span>
                     </h2>
                 </div>
@@ -163,26 +103,29 @@
         </div>
         <!-- Edit Mode -->
         <div class="names-edit" *ngIf="showEdit == true">
-           <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>
-           <input type="text" ng-model="nameForm.givenNames.value" ng-enter="setNameForm()" class="full-width-input"></input>
-           <span class="orcid-error" *ngIf="nameForm.givenNames.errors.length > 0">
-               <div *ngFor='let error of nameForm.givenNames.errors'>{{error}}</div>
-           </span>
-           <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
-           <input type="text" ng-model="nameForm.familyName.value" ng-enter="setNameForm()" class="full-width-input"></input>
-           <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>                               
-           <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>          
-           <@orcid.privacyComponent 
-                 angularModel="nameForm.namesVisibility.visibility"
-                 publicClick="setNamesVisibility('PUBLIC', $event)" 
-                 limitedClick="setNamesVisibility('LIMITED', $event)" 
-                 privateClick="setNamesVisibility('PRIVATE', $event)"
-                 placement="top" 
-                 popoverStyle="left: 0; top: -178px;" 
-                 arrowStyle="left: 48px;"                            
-            />
-            <div style="float: left">
-                <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="142948-names-in-the-orcid-registry"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+            <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>
+           
+            <input type="text" [(ngModel)]="nameForm.givenNames.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
+           
+            <span class="orcid-error" *ngIf="nameForm.givenNames.errors.length > 0">
+                <div *ngFor='let error of nameForm.givenNames.errors'>{{error}}</div>
+            </span>
+            <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
+           
+            <input type="text" [(ngModel)]="nameForm.familyName.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
+           
+            <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>                               
+            <input type="text" [(ngModel)]="nameForm.creditName.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
+           
+            <div>
+                <privacy-toggle-ng2 
+                    [dataPrivacyObj]="nameForm" 
+                    (privacyUpdate)="privacyChange($event)"
+                    elementId="name-privacy-toggle" 
+                    privacyNodeName="namesVisibility" 
+                ></privacy-toggle-ng2>
+
+                <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="142948-names-in-the-orcid-registry"><i class="glyphicon glyphicon-question-sign help-glyphicon" style="width: 14px;"></i></a>
             </div>
             <ul class="workspace-section-toolbar">
                 <li class="pull-right">

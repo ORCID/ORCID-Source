@@ -88,8 +88,7 @@ public class ClientsController extends BaseWorkspaceController {
         MemberType memberType = entity.getGroupType();
         mav.addObject("member_id", memberId);
         mav.addObject("member_type", memberType);
-        
-        Long lastModified = entity.getLastModified() == null ? 0 : entity.getLastModified().getTime();
+                
         Set<org.orcid.jaxb.model.client_v2.Client> clients = clientManagerReadOnly.getClients(memberId);
         if(clients.isEmpty()) {
             mav.addObject("allow_more_clients", true);
@@ -219,8 +218,6 @@ public class ClientsController extends BaseWorkspaceController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody List<Client> getClients() {
         String memberId = getEffectiveUserOrcid();
-        ProfileEntity member = profileEntityCacheManager.retrieve(memberId);
-        Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();       
         Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(memberId);
         List<Client> clients = new ArrayList<Client>();
         for (org.orcid.jaxb.model.client_v2.Client existingClient : existingClients) {
@@ -259,7 +256,8 @@ public class ClientsController extends BaseWorkspaceController {
         if (client.getErrors().size() == 0) {            
             org.orcid.jaxb.model.client_v2.Client clientToEdit = client.toModelObject(); 
             try {                
-                clientToEdit = clientManager.edit(clientToEdit);
+                // Updating from the clients edit page should not overwrite configuration values on the DB
+                clientToEdit = clientManager.edit(clientToEdit, false);
                 clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
