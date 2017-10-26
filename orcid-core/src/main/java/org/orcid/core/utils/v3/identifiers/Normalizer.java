@@ -16,9 +16,21 @@
  */
 package org.orcid.core.utils.v3.identifiers;
 
+import java.util.List;
+
+import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.springframework.core.Ordered;
 
 public interface Normalizer extends Ordered{
 
-    public String normalise(String type, String value);
+    public static final List<String> CAN_HANDLE_EVERYTHING = Lists.newArrayList();
+    
+    /** A list of identifier types (using their API names) that this Normalizer can handle
+     * An empty list implies all identifier types.
+     * 
+     */
+    public List<String> canHandle();
+
+    
+    public String normalise(String apiTypeName, String value);
 }

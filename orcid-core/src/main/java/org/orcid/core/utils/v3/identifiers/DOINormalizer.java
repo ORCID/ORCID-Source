@@ -16,11 +16,22 @@
  */
 package org.orcid.core.utils.v3.identifiers;
 
+import java.util.List;
+
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
+
 @Component
 public class DOINormalizer implements Normalizer {
+
+    private static final List<String> canHandle = Lists.newArrayList("doi");
+
+    @Override
+    public List<String> canHandle() {
+        return canHandle;
+    }
 
     @Override
     public String normalise(String type, String value) {
@@ -30,8 +41,8 @@ public class DOINormalizer implements Normalizer {
         returnValue = returnValue.replace("https://", "");
         returnValue = returnValue.replace("http://", "");
         returnValue = returnValue.replace("doi:", "");
-        returnValue = returnValue.replace("doi.org/", "");
         returnValue = returnValue.replace("dx.doi.org/", "");
+        returnValue = returnValue.replace("doi.org/", "");
         return returnValue;
     }
 

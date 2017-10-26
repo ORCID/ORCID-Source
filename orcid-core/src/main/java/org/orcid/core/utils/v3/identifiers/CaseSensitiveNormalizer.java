@@ -16,11 +16,13 @@
  */
 package org.orcid.core.utils.v3.identifiers;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.pojo.IdentifierType;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
@@ -29,10 +31,16 @@ public class CaseSensitiveNormalizer implements Normalizer{
 
     @Resource
     IdentifierTypeManager idman;
+    
+    @Override
+    public List<String> canHandle() {
+        return CAN_HANDLE_EVERYTHING;
+    }
 
     @Override
-    public String normalise(String type, String value) {
-        if (!idman.fetchIdentifierTypeByDatabaseName(type, Locale.ENGLISH).getCaseSensitive()){
+    public String normalise(String apiTypeName, String value) {
+        IdentifierType t = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
+        if (t != null && !t.getCaseSensitive()){
             return value.toLowerCase();
         }
         return value;
@@ -42,5 +50,6 @@ public class CaseSensitiveNormalizer implements Normalizer{
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
     }
+
 
 }
