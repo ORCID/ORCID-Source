@@ -101,8 +101,9 @@ public class v2ClientPerMessageCacheTest {
     
     @Test
     public void testRecordCache() throws LockedRecordException, DeprecatedRecordException{
-        //get it once
-        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",new Date());        
+        Date date = new Date();
+        date.setYear(1900);
+        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
         Record r = orcid20ApiClient.fetchPublicRecord(message1);
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
         
@@ -111,6 +112,7 @@ public class v2ClientPerMessageCacheTest {
         r = orcid20ApiClient.fetchPublicRecord(message1);
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
         
+        //get it with a different message, should return fresh
         BaseMessage message2 = new LastModifiedMessage("0000-0000-0000-0000",new Date());  
         try{
             r = orcid20ApiClient.fetchPublicRecord(message2);
@@ -125,9 +127,9 @@ public class v2ClientPerMessageCacheTest {
     @Test
     public void testActivityCache() throws LockedRecordException, DeprecatedRecordException{
          //get it once
-        Date old = new Date();
-        old.setYear(1900);
-        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",old);        
+        Date date = new Date();
+        date.setYear(1900);
+        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
         ActivitiesSummary s = orcid20ApiClient.fetchPublicActivities(message1);
         assertEquals(s.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),"blah");
         
@@ -136,7 +138,7 @@ public class v2ClientPerMessageCacheTest {
         s = orcid20ApiClient.fetchPublicActivities(message1);
         assertEquals(s.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),"blah");
         
-        
+        //get it with a different message, should return fresh
         BaseMessage message2 = new LastModifiedMessage("0000-0000-0000-0000",new Date());  
         try{
             s = orcid20ApiClient.fetchPublicActivities(message2);
@@ -150,8 +152,10 @@ public class v2ClientPerMessageCacheTest {
     
     @Test
     public void testRecordThenActivityCache() throws LockedRecordException, DeprecatedRecordException{
-        //get it once
-        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",new Date());        
+        // get it once
+        Date date = new Date();
+        date.setYear(1900);
+        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
         Record r = orcid20ApiClient.fetchPublicRecord(message1);
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
 
@@ -160,6 +164,7 @@ public class v2ClientPerMessageCacheTest {
         ActivitiesSummary s = orcid20ApiClient.fetchPublicActivities(message1);
         assertEquals(s.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),"blah");
         
+        //get it with a different message, should return fresh
         BaseMessage message2 = new LastModifiedMessage("0000-0000-0000-0000",new Date());  
         try{
             s = orcid20ApiClient.fetchPublicActivities(message2);
