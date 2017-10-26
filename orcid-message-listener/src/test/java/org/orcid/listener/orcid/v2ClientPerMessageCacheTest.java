@@ -125,7 +125,9 @@ public class v2ClientPerMessageCacheTest {
     @Test
     public void testActivityCache() throws LockedRecordException, DeprecatedRecordException{
          //get it once
-        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",new Date());        
+        Date old = new Date();
+        old.setYear(1900);
+        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",old);        
         ActivitiesSummary s = orcid20ApiClient.fetchPublicActivities(message1);
         assertEquals(s.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),"blah");
         
@@ -133,6 +135,7 @@ public class v2ClientPerMessageCacheTest {
         when(mock_response.getEntity(Record.class)).thenThrow(new RuntimeException("called twice!"));
         s = orcid20ApiClient.fetchPublicActivities(message1);
         assertEquals(s.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),"blah");
+        
         
         BaseMessage message2 = new LastModifiedMessage("0000-0000-0000-0000",new Date());  
         try{
