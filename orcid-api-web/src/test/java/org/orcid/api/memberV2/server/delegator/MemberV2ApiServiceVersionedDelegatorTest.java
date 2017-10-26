@@ -39,9 +39,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
-import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceVersionedDelegatorImpl;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -50,6 +50,7 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -76,6 +77,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -93,8 +95,17 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator_v2_1;
 
     
+    @Resource(name = "memberV2ApiServiceDelegator")
+    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegatorNonVersioned;
+     
+    @Mock
+    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> mockServiceDelegatorNonVersioned;
+    
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource    
+    private V2VersionConverterChain v2VersionConverterChain;
 
     private String nonExistingUser = "0000-0000-0000-000X";
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
@@ -1511,23 +1522,24 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     @Test
     public void testSearchByQuery() {
+        MockitoAnnotations.initMocks(this);
         Search search = new Search();
         Result result = new Result();
         result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
         search.getResults().add(result);
         Response searchResponse = Response.ok(search).build();
-        MemberV2ApiServiceDelegatorImpl delegator = Mockito.mock(MemberV2ApiServiceDelegatorImpl.class);
-        Mockito.when(delegator.searchByQuery(Matchers.<Map<String, List<String>>> any())).thenReturn(searchResponse);
-        MemberV2ApiServiceVersionedDelegatorImpl versionedDelegator = new MemberV2ApiServiceVersionedDelegatorImpl();
-        versionedDelegator.setMemberV2ApiServiceDelegator(delegator);
-        Response response = versionedDelegator.searchByQuery(new HashMap<String, List<String>>());
-
+        Mockito.when(mockServiceDelegatorNonVersioned.searchByQuery(Matchers.<Map<String, List<String>>>any())).thenReturn(searchResponse);
+        TargetProxyHelper.injectIntoProxy(serviceDelegator, "memberV2ApiServiceDelegator", mockServiceDelegatorNonVersioned);
+        Response response = serviceDelegator.searchByQuery(new HashMap<String, List<String>>());
+        
         // just testing MemberV2ApiServiceDelegatorImpl's response is returned
         assertNotNull(response);
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof Search);
         assertEquals(1, ((Search) response.getEntity()).getResults().size());
         assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
+        
+        TargetProxyHelper.injectIntoProxy(serviceDelegator, "memberV2ApiServiceDelegator", serviceDelegatorNonVersioned);
     }
 
     @Test(expected = NoResultException.class)
