@@ -65,8 +65,6 @@ public class NormalizationServiceTest {
         id1.setType("doi");
         id1.setValue("https://dx.doi.org/10/UPPER");
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));
-        System.out.println(id1);
-        System.out.println(normed);
         assertEquals(id1,normed);
         
         id1.setValue("http://doi.org/10/UPPER");
