@@ -35,7 +35,7 @@
 	                        <div class="relative">
 	                            <input type="password" name="password" class="input-xlarge" ng-model="register.password.value" ng-change="serverValidate('Password')"/>
 	                            <span class="required" ng-class="isValidClass(register.password)">*</span>
-					   			<div class="popover-help-container" style="display: inline; position: relative;">
+					   			<div class="popover-help-container" style="display: inline;float: none;">
 	                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
 	                                <div id="name-help" class="popover bottom">
 								        <div class="arrow"></div>
