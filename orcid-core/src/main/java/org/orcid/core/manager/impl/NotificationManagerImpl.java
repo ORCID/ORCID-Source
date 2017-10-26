@@ -57,6 +57,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.Delegation;
@@ -100,6 +101,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * @author Will Simpson
@@ -431,15 +433,27 @@ public class NotificationManagerImpl implements NotificationManager {
 
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        Map<String, Boolean> features = getFeatures();
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
+        templateParams.put("features", features);
     }
 
     public void addMessageParams(Map<String, Object> templateParams, Locale locale) {
         templateParams.put("messages", this.messages);
+        Map<String, Boolean> features = getFeatures();
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
+        templateParams.put("features", features);
+    }
+    
+    private Map<String, Boolean> getFeatures() {
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        return features;
     }
 
     public String getSubject(String code, OrcidProfile orcidProfile) {
