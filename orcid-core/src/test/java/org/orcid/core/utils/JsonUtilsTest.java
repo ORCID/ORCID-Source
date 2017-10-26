@@ -28,20 +28,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.common_v2.ContributorAttributes;
-import org.orcid.jaxb.model.common_v2.ContributorRole;
-import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.ExternalIDs;
-import org.orcid.jaxb.model.record_v2.FundingContributor;
-import org.orcid.jaxb.model.record_v2.FundingContributorAttributes;
-import org.orcid.jaxb.model.record_v2.FundingContributorRole;
-import org.orcid.jaxb.model.record_v2.FundingContributors;
-import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.jaxb.model.record_v2.SequenceType;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -184,67 +173,5 @@ public class JsonUtilsTest {
         assertEquals("object_1", rootNode.get("object_array").get(0).get("id").asText());
         assertEquals("object_2", rootNode.get("object_array").get(1).get("id").asText());
         assertEquals("object_3", rootNode.get("object_array").get(2).get("id").asText());
-    }
-    
-    @Test
-    public void testFilterInvalidXMLCharacters() {
-        // From work contributors
-        org.orcid.jaxb.model.record_v2.WorkContributors workContributors = new org.orcid.jaxb.model.record_v2.WorkContributors();
-        org.orcid.jaxb.model.common_v2.Contributor workContributor1 = new org.orcid.jaxb.model.common_v2.Contributor();
-        workContributors.getContributor().add(workContributor1);        
-        workContributor1.setCreditName(new org.orcid.jaxb.model.common_v2.CreditName('\uffff' + "Work " + '\u0000' + "Contributor" + '\ufffe'));
-        workContributor1.setContributorEmail(new org.orcid.jaxb.model.common_v2.ContributorEmail("test@" + '\uffff' + "email.com"));
-        workContributor1.setContributorOrcid(getContributorOrcid());        
-        workContributor1.setContributorAttributes(getContributorAttributes());        
-        
-        String workResult = JsonUtils.convertToJsonString(workContributors);
-        assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://test.orcid.org/0000-0000-0000-0000\",\"path\":\"0000-0000-0000-0000\",\"host\":\"test.orcid.org\"},\"creditName\":{\"content\":\"Work Contributor\"},\"contributorEmail\":{\"value\":\"test@email.com\"},\"contributorAttributes\":{\"contributorSequence\":\"ADDITIONAL\",\"contributorRole\":\"ASSIGNEE\"}}]}",
-                workResult);
-        
-        // From funding contributors
-        FundingContributors fundingContributors = new FundingContributors();
-        FundingContributor fundingContributor1 = new FundingContributor();
-        fundingContributors.getContributor().add(fundingContributor1);        
-        fundingContributor1.setCreditName(new org.orcid.jaxb.model.common_v2.CreditName('\uffff' + "Funding " + '\u0000' + "Contributor" + '\ufffe'));
-        fundingContributor1.setContributorEmail(new org.orcid.jaxb.model.common_v2.ContributorEmail("test@" + '\uffff' + "email.com"));
-        fundingContributor1.setContributorOrcid(getContributorOrcid());    
-        FundingContributorAttributes fca = new FundingContributorAttributes();
-        fca.setContributorRole(FundingContributorRole.LEAD);
-        fundingContributor1.setContributorAttributes(fca);
-        
-        String fundingResult = JsonUtils.convertToJsonString(fundingContributors);
-        assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://test.orcid.org/0000-0000-0000-0000\",\"path\":\"0000-0000-0000-0000\",\"host\":\"test.orcid.org\"},\"creditName\":{\"content\":\"Funding Contributor\"},\"contributorEmail\":{\"value\":\"test@email.com\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
-                fundingResult);
-        
-        // From external ids
-        ExternalIDs externalIDs = new ExternalIDs();
-        ExternalID extId = new ExternalID();
-        extId.setType('\u0000' + "ExtId " + '\u0000' + "Type" + '\u0000');
-        extId.setUrl(new Url("http://" + '\u0000' + "test.orcid.org" + '\u0000' + "/"));
-        extId.setValue('\u0000' + "The" + '\u0000' + " value" + '\u0000');
-        extId.setRelationship(Relationship.PART_OF);
-        externalIDs.getExternalIdentifier().add(extId);
-    
-        String extIdsResult = JsonUtils.convertToJsonString(externalIDs);
-        assertEquals(
-                "{\"externalIdentifier\":[{\"type\":\"ExtId Type\",\"value\":\"The value\",\"url\":{\"value\":\"http://test.orcid.org/\"},\"relationship\":\"PART_OF\"}]}",
-                extIdsResult);
-    }
-    
-    private org.orcid.jaxb.model.common_v2.ContributorOrcid getContributorOrcid() {
-        org.orcid.jaxb.model.common_v2.ContributorOrcid c = new org.orcid.jaxb.model.common_v2.ContributorOrcid();
-        c.setHost("test" + '\u0000' + ".orcid" + '\u0000' + ".org");
-        c.setPath("0000" + '\ufffe' + "-0000" + '\ufffe' + "-0000" + '\ufffe' + "-0000");
-        c.setUri("http:" + '\u0000' + "//test" + '\u0000' + ".orcid" + '\u0000' + ".org/" + '\u0000' + "0000" + '\ufffe' + "-0000" + '\ufffe' + "-0000" + '\ufffe' + "-0000");
-        return c;
-    }
-    
-    private ContributorAttributes getContributorAttributes() {
-        ContributorAttributes c = new ContributorAttributes();
-        c.setContributorRole(ContributorRole.ASSIGNEE);
-        c.setContributorSequence(SequenceType.ADDITIONAL);
-        return c;
-    }
+    }    
 }
