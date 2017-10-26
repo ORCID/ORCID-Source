@@ -432,8 +432,8 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         Map<String, Boolean> features = getFeatures();
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
@@ -441,8 +441,8 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     public void addMessageParams(Map<String, Object> templateParams, Locale locale) {
-        templateParams.put("messages", this.messages);
         Map<String, Boolean> features = getFeatures();
+        templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
         templateParams.put("features", features);
@@ -455,7 +455,7 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         return features;
     }
-
+    
     public String getSubject(String code, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, null, locale);
