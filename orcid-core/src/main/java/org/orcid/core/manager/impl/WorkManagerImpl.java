@@ -154,12 +154,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
         } else {
             // validate external ID vocab
-            externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
-            
-            // clear invalid XML values from citation
-            if(work.getWorkCitation() != null && !PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
-                work.getWorkCitation().setCitation(OrcidStringUtils.filterInvalidXMLCharacters(work.getWorkCitation().getCitation()));
-            }
+            externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());            
         }
 
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);

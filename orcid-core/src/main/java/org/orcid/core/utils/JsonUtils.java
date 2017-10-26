@@ -16,25 +16,15 @@
  */
 package org.orcid.core.utils;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.orcid.utils.OrcidStringUtils;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
  * 
@@ -45,8 +35,7 @@ public class JsonUtils {
 
     static ObjectMapper mapper = new ObjectMapper(); // thread safe!
     static ObjectMapper mapperFromJSON = new ObjectMapper(); // thread safe!
-    static {
-        mapper.registerModule(new InvalidCharactersFilterModule());
+    static {        
         mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
@@ -118,22 +107,4 @@ public class JsonUtils {
             throw new RuntimeException("Error extracting JsonNode from file", e);
         }
     }    
-}
-
-class InvalidCharactersFilterModule extends SimpleModule {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-
-    public InvalidCharactersFilterModule() {
-        addSerializer(new StdSerializer<String>(String.class) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void serialize(String value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonGenerationException {
-                jgen.writeString(OrcidStringUtils.filterInvalidXMLCharacters(value));
-            }
-        });
-    }
 }
