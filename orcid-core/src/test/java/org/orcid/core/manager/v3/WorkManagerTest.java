@@ -544,7 +544,6 @@ public class WorkManagerTest extends BaseTest {
         
         for(int i = 0; i < bulk.getBulk().size(); i ++) {
             BulkElement element = bulk.getBulk().get(i);
-            System.out.println(element);
             assertTrue(OrcidError.class.isAssignableFrom(element.getClass()));
             OrcidError error = (OrcidError) element;
             switch(i) {
