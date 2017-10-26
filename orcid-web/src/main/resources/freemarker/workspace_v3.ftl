@@ -764,7 +764,7 @@
     </div>
 </script>
 
-<modalngcomponent elementHeight="248" elementId="modalemailunverified" elementWidth="500">
+<modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
@@ -781,7 +781,7 @@
 
 <!-- Ng2 Templates -->
 <script type="text/ng-template" id="privacy-toggle-ng2-template">
-    <div class="relative" id="privacy-bar">
+    <div class="relative" class="privacy-bar-impr">
         <ul class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
             <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj[privacyNodeName]?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC')"></a></li>
             <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj[privacyNodeName]?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED')"></a></li>
