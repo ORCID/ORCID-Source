@@ -29,18 +29,13 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.adapter.Jaxb2JpaAdapter;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
-import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -66,6 +61,7 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
+import org.orcid.pojo.ajaxForm.ImportWizzardForm;
 import org.orcid.pojo.ajaxForm.KeywordForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNameForm;
@@ -105,19 +101,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     private OtherNameManager otherNameManager;
 
     @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
-
-    @Resource
-    private Jaxb2JpaAdapter jaxb2JpaAdapter;
-
-    @Resource
-    private WorkManager workManager;
-    
-    @Resource
     private ResearcherUrlManager researcherUrlManager;
-
-    @Resource
-    private LocaleManager localeManager;
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
@@ -125,18 +109,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource(name = "profileEntityManager")
-    private ProfileEntityManager profileEntityManager;
-    
     @Resource
     private IdentifierTypeManager identifierTypeManager;
     
-    private long getLastModifiedTime(String orcid) {        
-        return profileEntityManager.getLastModified(orcid);
-    }
-    
     @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
-    public @ResponseBody List<OrcidClient> retrieveWorkImportWizards() {
+    public @ResponseBody List<ImportWizzardForm> retrieveWorkImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
 

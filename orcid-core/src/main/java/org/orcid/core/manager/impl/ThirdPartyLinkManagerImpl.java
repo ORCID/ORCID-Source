@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -25,10 +26,11 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.dev1.client.Client;
+import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.OrcidPropsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -129,7 +131,7 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
     }
 
     @Cacheable("import-works-clients")
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeWorksImport() {
+    public List<Client> findOrcidClientsWithPredefinedOauthScopeWorksImport() {
         updateLocalCacheVersion();
         LOGGER.debug("Updating cache for import-works-clients, new version: " + this.localCacheVersion);
         return getClients(RedirectUriType.IMPORT_WORKS_WIZARD);
@@ -163,7 +165,20 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
         LOGGER.debug("read-access-clients and import-works-clients all keys  evicted");
     }
 
-    private List<OrcidClient> getClients(RedirectUriType rut) {
+    private List<Client> getClients(RedirectUriType rut) {
+        List<Client> clients = new ArrayList<Client>();
+        List<ClientRedirectUriEntity> entitiesWithPredefinedScopes = clientRedirectDao.findClientDetailsWithRedirectScope();
+        for (ClientRedirectUriEntity entity : entitiesWithPredefinedScopes) {
+            if (rut.value().equals(entity.getRedirectUriType())) {
+                if (rut.value().equals(entity.getRedirectUriType())) {
+                    
+                }
+            }
+        }
+        return clients;
+    }
+    
+    private List<OrcidClient> getClientsLegacy(RedirectUriType rut) {
         List<OrcidClient> orcidClients = new ArrayList<OrcidClient>();
         List<ClientRedirectUriEntity> entitiesWithPredefinedScopes = clientRedirectDao.findClientDetailsWithRedirectScope();
 
@@ -171,12 +186,13 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
 
             if (rut.value().equals(entity.getRedirectUriType())) {
                 ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
-                RedirectUri redirectUri = new RedirectUri(entity.getRedirectUri());
-                String prefefinedScopes = entity.getPredefinedClientScope();
-                redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));
-                redirectUri.setType(RedirectUriType.fromValue(entity.getRedirectUriType()));
-                redirectUri.setActType(entity.getUriActType());
-                redirectUri.setGeoArea(entity.getUriGeoArea());
+                ClientRedirectUri redirectUri = new ClientRedirectUri();
+                redirectUri.setRedirectUri(entity.getRedirectUri());
+                String predefinedScopes = entity.getPredefinedClientScope();
+                redirectUri.setPredefinedClientScopes(new HashSet<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(predefinedScopes)));
+                redirectUri.setRedirectUriType(entity.getRedirectUriType());
+                redirectUri.setUriActType(entity.getUriActType());
+                redirectUri.setUriGeoArea(entity.getUriGeoArea());
                 RedirectUris redirectUris = new RedirectUris();
                 redirectUris.getRedirectUri().add(redirectUri);
 
