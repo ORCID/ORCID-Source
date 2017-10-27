@@ -38,7 +38,7 @@ public class TransientNonEmptyString {
         return transientValue;
     }
 
-    public void setTransient() {
+    public void setTransient(boolean value) {
         // nothing
     }
 
