@@ -86,17 +86,19 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     privacyChange( obj ): any {
         this.nameForm.namesVisibility.visibility = obj;
-        this.setNameForm();   
+        this.setNameForm( false );   
     };
 
-    setNameForm(): any {
+    setNameForm( closeAfterAction ): any {
         this.nameService.setData( this.nameForm )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.nameForm = data;
                 //console.log('this.nameForm response', this.nameForm);
-                this.close();
+                if( closeAfterAction == true ) {
+                    this.close();
+                }
             },
             error => {
                 console.log('setNameForm Error', error);
@@ -106,27 +108,12 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setNameFormEnter( event ): any {
         if ( event.keyCode == "13"){
-            this.setNameForm();
+            this.setNameForm( true );
         }
     }
     
     toggleEdit(): void {
-
-        this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    this.showEdit = !this.showEdit;
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                console.log('getEmails', error);
-            } 
-        );
+        this.showEdit = !this.showEdit;    
     };
 
     //Default init functions provided by Angular Core

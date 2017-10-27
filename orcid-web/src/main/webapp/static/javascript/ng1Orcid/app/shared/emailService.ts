@@ -91,7 +91,8 @@ export class EmailService {
                 this.emails = data;
                 
                 for (let i in data.emails){
-                    if (data.emails[i].primary){
+                    //console.log('data.emails[i]', data.emails[i]);
+                    if (data.emails[i].primary == true){
                         this.primaryEmail = data.emails[i];
                     }
                 }                                                
@@ -152,15 +153,15 @@ export class EmailService {
         this.saveEmail();
     }
 
-    verifyEmail( email ): Observable<any>  {
-        let _email = encodeURI(email);
+    verifyEmail(): Observable<any>  {
+        let _email = encodeURI(this.primaryEmail);
         let myParams = new URLSearchParams();
         myParams.append('email', _email);
         let options = new RequestOptions(
             { headers: this.headers , search: myParams }
         );
 
-        console.log(email, _email, options);
+        //console.log(_email, options, this.emails, this.primaryEmail);
 
         return this.http.get(
             getBaseUri() + '/account/verifyEmail.json',

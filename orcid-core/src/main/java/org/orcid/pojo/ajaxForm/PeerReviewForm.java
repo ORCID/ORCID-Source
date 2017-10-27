@@ -597,7 +597,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
         // Visibility
         if (peerReview.getVisibility() != null) {
-            form.setVisibility(Visibility.valueOf(peerReview.getVisibility().value()));
+            form.setVisibility(Visibility.valueOf(peerReview.getVisibility().name()));
         }
 
         // Completion date
