@@ -18,7 +18,7 @@
 -->
 <@public classes=['home'] >
 <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-	<div ng-controller="SearchCtrlV2" id="SearchCtrlV2">
+	<div ng-controller="SearchCtrlV2" id="SearchCtrl">
 </@orcid.checkFeatureStatus>
 <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
 	<div ng-controller="SearchCtrl" id="SearchCtrl">
