@@ -17,11 +17,7 @@
 package org.orcid.integration.blackbox.api.v3.dev1.tests;
 
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.net.URISyntaxException;
 
@@ -411,6 +407,107 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
         OrcidError error = postResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9006), error.getErrorCode());
+    }
+    
+    @Test
+    public void testGroupingNormalized() throws InterruptedException, JSONException{
+        long time = System.currentTimeMillis();
+        String accessTokenForClient1 = getAccessToken();
+        String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        
+        //should result in two groups
+        Work work1 = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
+        work1.setPutCode(null);
+        work1.setSource(null);
+        work1.setVisibility(Visibility.PUBLIC);
+        work1.getExternalIdentifiers().getExternalIdentifier().clear();
+        org.orcid.jaxb.model.v3.dev1.record.WorkTitle title1 = new org.orcid.jaxb.model.v3.dev1.record.WorkTitle();
+        title1.setTitle(new Title("Work # 1" + time));
+        work1.setWorkTitle(title1);
+        ExternalID wExtId1 = new ExternalID();
+        wExtId1.setValue("VALUE" + time);
+        wExtId1.setType(WorkExternalIdentifierType.AGR.value());
+        wExtId1.setRelationship(Relationship.SELF);
+        wExtId1.setUrl(new Url("http://orcid.org/work#1"));
+        work1.getExternalIdentifiers().getExternalIdentifier().clear();
+        work1.getExternalIdentifiers().getExternalIdentifier().add(wExtId1);
+
+        Work work2 = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
+        work2.setPutCode(null);
+        work2.setSource(null);
+        work2.setVisibility(Visibility.PUBLIC);
+        org.orcid.jaxb.model.v3.dev1.record.WorkTitle title2 = new org.orcid.jaxb.model.v3.dev1.record.WorkTitle();
+        title2.setTitle(new Title("Work # 2" + time));
+        work2.setWorkTitle(title2);
+        work2.getExternalIdentifiers().getExternalIdentifier().clear();
+        ExternalID wExtId2 = new ExternalID();
+        wExtId2.setValue("value" + time);
+        wExtId2.setType(WorkExternalIdentifierType.AGR.value());
+        wExtId2.setRelationship(Relationship.SELF);
+        wExtId2.setUrl(new Url("http://orcid.org/work#2"));
+        work2.getExternalIdentifiers().getExternalIdentifier().clear();
+        work2.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
+        
+        Work work3 = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
+        work3.setPutCode(null);
+        work3.setSource(null);
+        work3.setVisibility(Visibility.PUBLIC);
+        org.orcid.jaxb.model.v3.dev1.record.WorkTitle title3 = new org.orcid.jaxb.model.v3.dev1.record.WorkTitle();
+        title3.setTitle(new Title("Work # 3" + time));
+        work3.setWorkTitle(title3);        
+        work3.getExternalIdentifiers().getExternalIdentifier().clear();
+        ExternalID wExtId3 = new ExternalID();
+        wExtId3.setValue("OtherValue" + time);
+        wExtId3.setType(WorkExternalIdentifierType.AGR.value());
+        wExtId3.setRelationship(Relationship.SELF);
+        wExtId3.setUrl(new Url("http://orcid.org/work#3"));
+        work3.getExternalIdentifiers().getExternalIdentifier().clear();
+        work3.getExternalIdentifiers().getExternalIdentifier().add(wExtId3);
+        
+        //Add the three works
+        ClientResponse postResponse = memberV3Dev1ApiClient.createWorkXml(this.getUser1OrcidId(), work1, accessTokenForClient1);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        Long putCode1 = getPutCodeFromResponse(postResponse);
+        
+        postResponse = memberV3Dev1ApiClient.createWorkXml(this.getUser1OrcidId(), work2, accessTokenForClient1);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        Long putCode2 = getPutCodeFromResponse(postResponse);
+        
+        postResponse = memberV3Dev1ApiClient.createWorkXml(this.getUser1OrcidId(), work3, accessTokenForClient2);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        Long putCode3 = getPutCodeFromResponse(postResponse);
+        
+        ClientResponse activitiesResponse = memberV3Dev1ApiClient.viewActivities(this.getUser1OrcidId(), accessTokenForClient1);
+        assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
+        ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(activities);
+        assertFalse(activities.getWorks().getWorkGroup().isEmpty());
+        assertEquals(2,activities.getWorks().getWorkGroup().size()); 
+        
+        if (activities.getWorks().getWorkGroup().get(0).getActivities().size() == 1 && activities.getWorks().getWorkGroup().get(1).getActivities().size() == 2){
+            assertEquals("othervalue"+time,activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());                        
+            assertEquals("value"+time,activities.getWorks().getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());                        
+        }else if (activities.getWorks().getWorkGroup().get(0).getActivities().size() == 2 && activities.getWorks().getWorkGroup().get(0).getActivities().size() == 1){
+            assertEquals("value"+time,activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());                        
+            assertEquals("othervalue"+time,activities.getWorks().getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());                                    
+        }else
+            fail();
+        
+        //Remove all created works
+        ClientResponse deleteResponse = memberV3Dev1ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode1, accessTokenForClient1);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        
+        deleteResponse = memberV3Dev1ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode2, accessTokenForClient1);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        
+        deleteResponse = memberV3Dev1ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode3, accessTokenForClient2);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     private WorkBulk createBulk(int size, String extId) {
