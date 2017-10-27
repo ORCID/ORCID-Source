@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.orcid.core.utils.v3.identifiers.NormalizationService;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
@@ -36,7 +37,9 @@ import org.orcid.utils.DateUtils;
 
 public class JSONWorkExternalIdentifiersConverterV3Test {
 
-    private JSONWorkExternalIdentifiersConverterV3 converter = new JSONWorkExternalIdentifiersConverterV3();
+    NormalizationService norm = new NormalizationService();//dummy;
+    
+    private JSONWorkExternalIdentifiersConverterV3 converter = new JSONWorkExternalIdentifiersConverterV3(norm);
 
     @Test
     public void testConvertTo() throws JAXBException {

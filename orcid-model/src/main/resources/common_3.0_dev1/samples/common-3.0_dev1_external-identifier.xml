@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<common:external-ids xmlns:common="http://www.orcid.org/ns/common">
+	<common:external-id>
+	        <common:external-id-type>doi</common:external-id-type>
+	        <common:external-id-value>value</common:external-id-value>   
+	        <common:external-id-normalized transient="true">normalized-value</common:external-id-normalized>                        
+	        <common:external-id-url>http://orcid.org</common:external-id-url>
+	        <common:external-id-relationship>self</common:external-id-relationship>
+	</common:external-id>
+</common:external-ids>
+
