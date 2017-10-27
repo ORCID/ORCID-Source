@@ -754,7 +754,12 @@ public class BaseController {
 
     @ModelAttribute("searchBaseUrl")
     protected String createSearchBaseUrl() {
-        return getPubBaseUri() + "/v1.2/search/orcid-bio/";
+        if(Features.HTTPS_IDS.isActive()) {
+            return getPubBaseUri() + "/v2.1/search/";
+        } else {
+            return getPubBaseUri() + "/v1.2/search/orcid-bio/";
+        }  
+        
     }
 
     @ModelAttribute("locked")
