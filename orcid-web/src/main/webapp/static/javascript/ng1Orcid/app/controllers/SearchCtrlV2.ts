@@ -77,7 +77,7 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                         $scope.numFound = data['num-found'];
                         
                         if(orcidList){
-                            for (var index in idList){
+                            for (var index in orcidList){
                                 var orcid = orcidList[index]['orcid-identifier'].path;
                                 var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
                                 $.ajax({
@@ -95,7 +95,7 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                                     console.log("error getting search details for " + orcidList[this]['orcid-identifier'].path);
                                 });
                             }
-                            $scope.results = $scope.results.concat(idList);
+                            $scope.results = $scope.results.concat(orcidList);
                         }
                         if(!$scope.numFound){
                             $('#no-results-alert').fadeIn(1200);
