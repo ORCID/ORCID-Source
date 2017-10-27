@@ -28,7 +28,7 @@
 					<a ng-click="openMenu($event)" class="id-banner-switch">
 						<div class="orcid-id-container" ng-cloak>
 							<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-								<a href="${baseUri}/{{requestInfoForm.userOrcid}}" target="userOrcid">${baseUri}/{{requestInfoForm.userOrcid}}</a>
+								${baseUri}/{{requestInfoForm.userOrcid}}
 							</@orcid.checkFeatureStatus>
 							<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
                     			${baseUriHttp}/{{requestInfoForm.userOrcid}}
