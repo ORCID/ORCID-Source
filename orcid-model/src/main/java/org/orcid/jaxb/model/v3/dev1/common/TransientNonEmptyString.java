@@ -17,36 +17,36 @@
 package org.orcid.jaxb.model.v3.dev1.common;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-@XmlRootElement(name="external-id-normalized")
+@XmlType
 public class TransientNonEmptyString {
     private String value;
     private final boolean transientValue = true;
 
-    public TransientNonEmptyString(){
-        
+    public TransientNonEmptyString() {
+
     }
-    
-    public TransientNonEmptyString(String value){
+
+    public TransientNonEmptyString(String value) {
         this.value = value;
     }
-    
+
     @XmlAttribute
     public boolean getTransient() {
         return transientValue;
     }
-    
-    public void setTransient() {
-        //nothing
+
+    public void setTransient(boolean value) {
+        // nothing
     }
-    
+
     @XmlValue
     public String getValue() {
         return value;
     }
- 
+
     public void setValue(String number) {
         this.value = number;
     }
@@ -77,6 +77,11 @@ public class TransientNonEmptyString {
         } else if (!value.equals(other.value))
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "TransientNonEmptyString [value=" + value + ", transientValue=" + transientValue + "]";
     }
 
 }
