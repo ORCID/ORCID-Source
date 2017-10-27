@@ -207,6 +207,21 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
                 return name;
             };
 
+            $scope.getDisplayNameV2 = function(result){
+                var name = "";
+
+                var creditName = result['credit-name'];
+                if(creditName != null){
+                    return creditName;
+                }
+                name = result['given-names'];
+                if(result['family-name'] != null) {
+                    name = name + ' ' + result['family-name'];
+                }
+
+                return name;
+            };
+
             $scope.getResults = function(rows){
                 $.ajax({
                     url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
@@ -232,6 +247,85 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
                                 $scope.results.splice(index, 1);
                             } 
                         }
+                        $scope.numFound = $scope.results.length;
+                        
+                        if(!$scope.numFound){
+                            $('#no-results-alert').fadeIn(1200);
+                        }
+                        
+                        $scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
+                        $scope.showLoader = false;
+                        $scope.$apply();
+                        
+                        newSearchResults = $('.new-search-result');
+                        
+                        if(newSearchResults.length > 0){
+                            newSearchResults.fadeIn(1200);
+                            newSearchResults.removeClass('new-search-result');
+                            newSearchResultsTop = newSearchResults.offset().top;
+                            showMoreButtonTop = $('#show-more-button-container').offset().top;
+                            bottom = $(window).height();
+                            if(showMoreButtonTop > bottom){
+                                $('html, body').animate(
+                                    {
+                                        scrollTop: newSearchResultsTop
+                                    },
+                                    1000,
+                                    'easeOutQuint'
+                                );
+                            }
+                        }
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("error doing search for delegates");
+                });
+            };
+
+            $scope.getResultsV2 = function(rows){
+                $.ajax({
+                    url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
+                    dataType: 'json',
+                    headers: { Accept: 'application/json'},
+                    success: function(data) {
+                        var bottom = null;
+                        var newSearchResults = null;
+                        var newSearchResultsTop = null;
+                        var orcidList = data['result'];
+                        var showMoreButtonTop = null;
+                        var tempResults = null;
+
+                        $scope.numFound = data['num-found'];
+                        if(orcidList){
+                            for (var index in orcidList){
+                                var orcid = orcidList[index]['orcid-identifier'].path;
+                                var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
+                                $.ajax({
+                                    url: url,
+                                    dataType: 'json',
+                                    headers: { Accept: 'application/json'},
+                                    context: index,
+                                    success: function(data) {
+                                        orcidList[this]['given-names'] = data['name']['given-names']['value'];
+                                        orcidList[this]['family-name'] = data['name']['family-name']['value'];
+                                        orcidList[this]['credit-name'] = data['credit-name'];
+                                    }
+                                }).fail(function() {
+                                    // something bad is happening!
+                                    console.log("error getting search details for " + orcidList[this]['orcid-identifier'].path);
+                                });
+                            }
+                            $scope.results = $scope.results.concat(orcidList);
+                        }
+                        
+                        tempResults = $scope.results;
+
+                        for(var i = 0; i < tempResults.length; i ++) {
+                            if($scope.results[i]['given-names'] == null) {
+                                $scope.results.splice(index, 1);
+                            } 
+                        }
+
                         $scope.numFound = $scope.results.length;
                         
                         if(!$scope.numFound){
@@ -314,6 +408,21 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
                 }
                 else{
                     $scope.getResults();
+                }
+            };
+
+            $scope.searchV2 = function(){
+                $scope.results = new Array();
+                $scope.showLoader = true;
+                $('#no-results-alert').hide();
+                if(isEmail($scope.input.text)){
+                    $scope.numFound = 0;
+                    $scope.start = 0;
+                    $scope.areMoreResults = 0;
+                    $scope.searchByEmail();
+                }
+                else{
+                    $scope.getResultsV2();
                 }
             };
 

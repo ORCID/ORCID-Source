@@ -531,10 +531,18 @@
             <#else>
                 <p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
                 <div>
-                    <form ng-submit="search()">
-                        <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
-                        <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
-                    </form>
+                    <@orcid.checkFeatureStatus featureName="HTTPS_IDS">
+                        <form ng-submit="searchV2()">
+                            <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
+                            <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
+                        </form>
+                    </@orcid.checkFeatureStatus>
+                    <@orcid.checkFeatureStatus featureName="HTTPS_IDS" enabled=false>
+                        <form ng-submit="search()">
+                            <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
+                            <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
+                        </form>
+                    </@orcid.checkFeatureStatus>
                 </div>
                 <div>
                     <table class="ng-cloak table" ng-show="areResults()">
@@ -546,22 +554,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat='result in results' class="new-search-result">
-                                <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="DisplayName" ng-bind="getDisplayName(result)"></a></td>
-                                <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="orcid-identifier">{{result['orcid-profile']['orcid-identifier'].path}}</td>
-                                <td width="10%">
-                                    <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
-                                        <span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
-                                            ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
-                                            class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-                                        <a ng-show="delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
-                                            ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
-                                            class="glyphicon glyphicon-trash grey"
-                                            title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
-                                    </span>
-                                    <span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
-                                </td>
-                            </tr>
+                            <@orcid.checkFeatureStatus featureName="HTTPS_IDS">
+                                <tr ng-repeat='result in results' class="new-search-result">
+                                    <td width="20%"><a href="{{result['orcid-identifier'].uri}}" target="DisplayName" ng-bind="getDisplayNameV2(result)"></a></td>
+                                    <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}" target="orcid-identifier">{{result['orcid-identifier'].uri}}</td>
+                                    <td width="10%">
+                                        <span ng-show="effectiveUserOrcid !== result['orcid-identifier'].path">
+                                            <span ng-show="!delegatesByOrcid[result['orcid-identifier'].path]"
+                                                ng-click="confirmAddDelegate(result['given-names'] + ' ' + result['family-name'], result['orcid-identifier'].path, $index)"
+                                                class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+                                            <a ng-show="delegatesByOrcid[result['orcid-identifier'].path]"
+                                                ng-click="confirmRevoke(result['given-names'] + ' ' + result['family-name'], result['orcid-identifier'].path, $index)"
+                                                class="glyphicon glyphicon-trash grey"
+                                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+                                        </span>
+                                        <span ng-show="effectiveUserOrcid === result['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+                                    </td>
+                                </tr>
+                            </@orcid.checkFeatureStatus>
+                            <@orcid.checkFeatureStatus featureName="HTTPS_IDS" enabled=false>
+                                <tr ng-repeat='result in results' class="new-search-result">
+                                    <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="DisplayName" ng-bind="getDisplayName(result)"></a></td>
+                                    <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="orcid-identifier">{{result['orcid-profile']['orcid-identifier'].path}}</td>
+                                    <td width="10%">
+                                        <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
+                                            <span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+                                                ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+                                                class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+                                            <a ng-show="delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+                                                ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+                                                class="glyphicon glyphicon-trash grey"
+                                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+                                        </span>
+                                        <span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+                                    </td>
+                                </tr>
+                            </@orcid.checkFeatureStatus>
                         </tbody>
                     </table>
                     <div id="show-more-button-container">
