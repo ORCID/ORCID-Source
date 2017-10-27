@@ -77,11 +77,11 @@
 
 <script type="text/ng-template" id="name-ng2-template">
     <!-- Name -->    
-    <div class="workspace-section" id="names-section">
+    <div class="workspace-section" id="names-section"> 
         <div *ngIf="showEdit == false" (click)="toggleEdit()">
             <div class="row">               
                 <div class="col-md-12">
-                    <div class="workspace-section-title clearfix">
+                    <div class="workspace-section-title">
                         <div class="edit-name edit-option" *ngIf="showEdit == false" id="open-edit-names">
                             <div class="glyphicon glyphicon-pencil">
                                 <div class="popover popover-tooltip top">
@@ -96,10 +96,10 @@
                     
                     <h2 class="full-name">
                         <span *ngIf="!(nameForm != null 
-                            && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC'))">{{nameForm?.creditName?.value}}
+                            && (nameForm.creditName == null))">{{nameForm?.creditName?.value}}
                         </span>
                         <span *ngIf="nameForm != null 
-                            && (nameForm.creditName == null || nameForm.creditName.value == null || nameForm.namesVisibility.visibility != 'PUBLIC')">
+                            && (nameForm.creditName == null || nameForm.creditName.value == null || nameForm.creditName.value.length == 0 || nameForm.namesVisibility.visibility != 'PUBLIC')">
                             {{nameForm?.givenNames?.value}} <span *ngIf="nameForm?.familyName?.value != null" >{{nameForm?.familyName?.value}}</span>
                         </span>
                     </h2>
@@ -108,6 +108,7 @@
         </div>
         <!-- Edit Mode -->
         <div class="names-edit" *ngIf="showEdit == true">
+
             <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>
            
             <input type="text" [(ngModel)]="nameForm.givenNames.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
@@ -132,9 +133,9 @@
 
                 <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="142948-names-in-the-orcid-registry"><i class="glyphicon glyphicon-question-sign help-glyphicon" style="width: 14px;"></i></a>
             </div>
-            <ul class="workspace-section-toolbar">
+            <ul class="workspace-section-toolbar clearfix">
                 <li class="pull-right">
-                    <button class="btn btn-primary" (click)="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+                    <button class="btn btn-primary" (click)="setNameForm( true )"><@spring.message "freemarker.btnsavechanges"/></button>
                 </li>
                 <li class="pull-right">
                     <a class="cancel-option" (click)="close()"><@spring.message "freemarker.btncancel"/></a>

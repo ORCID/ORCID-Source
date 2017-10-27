@@ -65,6 +65,6 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
 
     ngOnInit() {
         this.getPreferences();
-        console.log("prefs service init");
+        //console.log("prefs service init");
     }
 }
