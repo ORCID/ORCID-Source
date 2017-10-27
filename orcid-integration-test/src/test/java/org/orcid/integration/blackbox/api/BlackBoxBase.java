@@ -67,7 +67,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.sun.jersey.api.client.ClientResponse;
 
 public class BlackBoxBase {
-    private static String SAVE_BUTTON_XPATH = "//div[@id='colorbox']//button[contains('Save changes',text())]";
+    private static String SAVE_BUTTON_XPATH = "//div[@id='colorbox']//button[contains('Save changes',text()) and not(ancestor::*[@hidden])]";
     
     // Admin user
     @Value("${org.orcid.web.adminUser.username}")
