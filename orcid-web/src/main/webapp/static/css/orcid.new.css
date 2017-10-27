@@ -1502,6 +1502,30 @@ ul.privacyHelp li.private {
     background: 0 0
 }
 
+.width-10,
+.normal-width th.width-10,
+.normal-width td.width-10 {
+    width: 10%;
+}
+
+.width-15,
+.normal-width th.width-15,
+.normal-width td.width-15 {
+    width: 15%;
+}
+
+.width-20,
+.normal-width th.width-20,
+.normal-width td.width-20 {
+    width: 20%;
+}
+
+.width-30,
+.normal-width th.width-30,
+.normal-width td.width-30 {
+    width: 30%;
+}
+
 .workspace-top {
     border-top: 1px solid #c9c9c9
 }
@@ -3113,12 +3137,13 @@ p.orcid-id-container {
 }
 
 .mini-orcid-icon {
-    background: url(../img/mini-icon.png) no-repeat;
-    background-size: 20px 20px;
-    width: 20px;
-    height: 20px;
+    background: url(../img/orcid_24x24.png) no-repeat;
+    background-size: 16px 16px;
+    width: 16px;
+    height: 16px;
     display: block;
-    float: left
+    float: left;
+    margin: 2px 2px 0 0;
 }
 
 .mini-icon {
