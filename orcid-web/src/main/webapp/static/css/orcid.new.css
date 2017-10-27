@@ -3682,10 +3682,6 @@ ul.sso-options li {
     width: 100%
 }
 
-.delegation-mode a.id-banner-switch {
-    border-top: 1px solid #fff
-}
-
 .no-delegator-matches,.popover-content strong,.sources-actions .git_create.grey:before,.sources-options .git_create.grey:before {
     color: #494a4c
 }
