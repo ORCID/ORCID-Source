@@ -707,7 +707,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         clientClassMap.fieldBToA("clientId", "id");
         clientClassMap.fieldBToA("clientType", "clientType");                
-        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");                       
+        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");   
+        clientClassMap.fieldBToA("authenticationProviderId", "authenticationProviderId");
+        clientClassMap.fieldBToA("persistentTokensEnabled", "persistentTokensEnabled");
         
         clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
             /**

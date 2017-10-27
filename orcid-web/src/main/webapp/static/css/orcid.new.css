@@ -286,6 +286,49 @@ textarea {
     vertical-align: top
 }
 
+name-ng2 {
+    display: block;
+}
+
+privacy-toggle-ng2 {
+    display: inline-block;
+    line-height: 0;
+}
+
+privacy-toggle-ng2 .privacy-bar-impr {
+    display: inline-block;
+    position: relative;
+}
+
+privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container{
+    bottom: 40px;
+    display: block;
+    left: initial;
+    margin: initial !important;
+    right: calc(50% - 121px);
+    top: initial;
+}
+
+privacy-toggle-ng2 .privacy-bar-impr .privacyToggle {
+    height: 30px;
+}
+
+privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container .popover.privacy-myorcid3, 
+privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container .popover.privacy-myorcid3:hover {
+    bottom: initial;
+    left: initial;
+    margin: initial;
+    position: relative;
+    right: initial;
+    top: initial;
+}
+
+privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.arrow {
+    left: initial;
+    margin: initial;
+    right: calc(50% - 11px);
+}
+
 ::-moz-selection {
     background: #338caf;
     color: #fff
@@ -314,6 +357,19 @@ textarea {
 
 .bottomBuffer {
     margin-bottom: 1em
+}
+.btn-white,
+.btn-white:visited {
+    background-color: #fff;
+    border: 1px solid #338caf;
+    color: #338caf;
+    margin-bottom: 10px;
+}
+
+.btn-white:hover,
+.btn-white:active {
+    background-color: #338caf;
+    color: #fff;
 }
 
 .btn-white-no-border {
@@ -1446,6 +1502,30 @@ ul.privacyHelp li.private {
     background: 0 0
 }
 
+.width-10,
+.normal-width th.width-10,
+.normal-width td.width-10 {
+    width: 10%;
+}
+
+.width-15,
+.normal-width th.width-15,
+.normal-width td.width-15 {
+    width: 15%;
+}
+
+.width-20,
+.normal-width th.width-20,
+.normal-width td.width-20 {
+    width: 20%;
+}
+
+.width-30,
+.normal-width th.width-30,
+.normal-width td.width-30 {
+    width: 30%;
+}
+
 .workspace-top {
     border-top: 1px solid #c9c9c9
 }
@@ -1469,6 +1549,11 @@ ul.privacyHelp li.private {
 
 .more-info .ng-binding {
     min-height: 30px;
+    height: auto
+}
+
+.more-info .org-ids .ng-binding {
+    min-height: 0;
     height: auto
 }
 
@@ -1843,6 +1928,20 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     overflow: hidden
 }
 
+.col-count-4 {
+    -webkit-column-count: 4;
+    -moz-column-count: 4;
+    column-count: 4;
+}
+
+/*.col-count-4 p {
+    display: block;
+    text-align: left;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;           
+    break-inside: avoid-column;
+}*/
+
 .alert {
     border-color: #f5c120;
     background-color: #f5c120;
@@ -2106,6 +2205,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #494a4c
 }
 
+.overflow-hidden,
 .popover-content {
     overflow: hidden
 }
@@ -3037,12 +3137,13 @@ p.orcid-id-container {
 }
 
 .mini-orcid-icon {
-    background: url(../img/mini-icon.png) no-repeat;
-    background-size: 20px 20px;
-    width: 20px;
-    height: 20px;
+    background: url(../img/orcid_24x24.png) no-repeat;
+    background-size: 16px 16px;
+    width: 16px;
+    height: 16px;
     display: block;
-    float: left
+    float: left;
+    margin: 2px 2px 0 0;
 }
 
 .mini-icon {
@@ -3830,10 +3931,6 @@ ul#body-work-list>li {
 
 .biography-controller .bio-edit {
     overflow: visible
-}
-
-.bio-edit .popover-help-container>.privacy-myorcid3>.arrow {
-    left: 120px!important
 }
 
 .dotted-bar {
@@ -5162,6 +5259,10 @@ ul.oauth-scopes li {
     width: 800px
 }
 
+.inline{
+    display: inline!important;
+}
+
 .inline-input {
     display: inline;
     margin: 0 10px 15px 0
@@ -5343,6 +5444,11 @@ ul.oauth-scopes li {
 .emails-box #privacy-bar {
     border-bottom: 1px dotted #c3c3c3;
     padding: 5px 0
+}
+
+.help-glyphicon {
+    display: inline-block;
+    vertical-align: top;
 }
 
 .workspace-top .emails-box .popover-help-container>.popover.privacy-myorcid3 {
@@ -5891,7 +5997,7 @@ a:hover .mozilla-badge {
     color: #494a4c
 }
 
-#bio-section .popover .arrow,.public-profile .workspace-section .workspace-section-header .inline-list .right .popover.top>.arrow {
+.public-profile .workspace-section .workspace-section-header .inline-list .right .popover.top>.arrow {
     left: 56px
 }
 
@@ -6732,6 +6838,10 @@ ul.comma li:last-child:after {
 
     .footer ul li:last-of-type {
         border-bottom: none
+    }
+
+    .login .login-box {
+        padding: 15px 0;
     }
 
     #uvTabLabel {
@@ -7732,16 +7842,43 @@ ul.comma li:last-child:after {
     position: absolute
 }
 
+.lang-rl #bio-section .popover-help-container #bio-help,
+.lang-rl #qrcode-help,
+.lang-rl #workspace-education .workspace-accordion-header .popover-help-container .popover, 
+.lang-rl #workspace-employment .workspace-accordion-header .popover-help-container .popover, 
+.lang-rl #workspace-fundings .workspace-accordion-header .popover-help-container .popover, 
+.lang-rl #workspace-publications .workspace-accordion-header .popover-help-container .popover, 
+.lang-rl #workspace-peer-review .workspace-accordion-header .popover-help-container .popover, .print-orcid-record .popover-help-container .popover,
+.lang-rl .print-orcid-record .popover-help-container .popover,
+.lang-rl .widget-container .popover-help-container .popover
+
+ {
+    left: -128px;
+}
+
+.lang-rl #cboxContent,
 .lang-rl #cboxLoadedContent {
-    overflow: hidden!important;
+    overflow: visible!important;
 }
 
 .lang-rl #idpSelectInput {
     margin-left: 5px
 }
 
+.lang-rl #institution-login-help, 
+.lang-rl #social-login-help {
+    left: -125px;
+}
+
+.lang-rl #settings h1,
+.lang-rl #settings .popover-help-container {
+    float: right;
+}
+
 .lang-rl #settings .popover-help-container .popover{
-    left: 465px;
+    /*left: 465px;*/
+    left: -130px;
+    top: 20px;
 }
 
 .lang-rl *,.lang-rl .table td,.lang-rl .table th {
@@ -7750,6 +7887,15 @@ ul.comma li:last-child:after {
 
 .lang-rl ul.id-details {
     padding-right: 15px
+}
+
+.lang-rl ul.sources-options .edit-source-popover {
+    left: -45px;
+}
+
+.lang-rl #settings works-privacy-preferences-ng2 .popover-help-container .popover {
+    left: -185px;
+    top: -200px;
 }
 
 .lang-rl .action-button-bar,.lang-rl .workspace-body-list>li {
@@ -7779,6 +7925,10 @@ ul.comma li:last-child:after {
     left: -3px;
 }
 
+.lang-rl .bulk-edit-modal #bulk-help {
+    left: -145px;
+}
+
 .lang-rl .bulk-edit-toolbar {
     float: left;
     margin-left: 15px
@@ -7790,6 +7940,10 @@ ul.comma li:last-child:after {
 
 .lang-rl .edit-biography .popover {
     right: 55px
+}
+
+.lang-rl .fixed-area {
+    min-height: 320px;
 }
 
 .lang-rl .fixed-area ul.record-settings {
@@ -7868,6 +8022,10 @@ ul.comma li:last-child:after {
     float: right!important
 }
 
+.lang-rl .record-buttons button:first-of-type {
+    margin-right: 10px;
+}
+
 .lang-rl .see-more {
     float: left;
     left: -235px;
@@ -7886,6 +8044,10 @@ ul.comma li:last-child:after {
 
 .lang-rl .sources-options {
     float: left
+}
+
+.lang-rl .tooltip-container a.glyphicon-trash .popover-tooltip {
+    left: -45px;
 }
 
 .lang-rl .url-popover>span {
@@ -7927,14 +8089,22 @@ ul.comma li:last-child:after {
     float: right
 }
 
+.lang-rl .workspace-section-title .edit-option {
+    float: right;
+}
+
 .lang-rl .workspace-section-title .edit-option .popover-tooltip {
     left: initial;
-    right: -35px;
+    right: -25px;
 }
 
 .lang-rl .workspace-title,.lang-rl .workspace-title+.clear-fix.left,.lang-rl .workspace-title+.clear-fix.left+.info-detail,.lang-rl .workspace-title+.info-detail {
     float: right;
     margin-right: 15px
+}
+
+.lang-rl .workspace-toolbar .works-details .show-hide-details-popover {
+    left: -40px;
 }
 
 .lang-rl .workspace-top .popover-help-container .popover.privacy-myorcid3, 
@@ -7951,43 +8121,37 @@ ul.comma li:last-child:after {
 	display: none;
 }
 
-.twoFactorAuthSetupHeading {
-	font-weight: bold;
-}
-
 .on {
 	color: green;
 	font-weight: bold;
-	margin-right: 10px;
 }
-
-.on::after {
-	content: "\2713";
-}
-
 
 .off {
-    color: crimson;
+    color: red;
     font-weight: bold;
-    margin-right: 10px;
-}
-
-.off::after {
-    content: "\2717";
-}
-
-.twoFactorAuthenticationInfo {
-	font-weight: bold;
-	font-size: 11px;
-}
-
-.halfwidth {
-	width: 50%;
-	float: left;
 }
 
 ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+#recoveryCodes {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+#saveRecoverCodesHeading {
+    color: red;
 }

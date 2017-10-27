@@ -31,6 +31,9 @@ public enum Features implements Feature {
     @Label("Badges on member details")
     BADGES,
     
+    @Label("Https for links to iDs")
+    HTTPS_IDS,
+    
     @Label("Last modified")
     LAST_MOD,
     

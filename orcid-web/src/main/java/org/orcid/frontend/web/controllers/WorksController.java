@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.BibtexManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -84,7 +84,7 @@ public class WorksController extends BaseWorkspaceController {
     private LocaleManager localeManager;
 
     @Resource
-    private ActivityCacheManager cacheManager;
+    private ActivityManager cacheManager;
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;

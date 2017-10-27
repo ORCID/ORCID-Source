@@ -515,12 +515,12 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     
     @Override
     public Response searchByQuery(Map<String, List<String>> solrParams) {
-        return memberV2ApiServiceDelegator.searchByQuery(solrParams);
+        return processReponse(memberV2ApiServiceDelegator.searchByQuery(solrParams));
     }
     
     @Override
     public Response viewBulkWorks(String orcid, String putCodes) {
-        return memberV2ApiServiceDelegator.viewBulkWorks(orcid, putCodes);
+        return processReponse(memberV2ApiServiceDelegator.viewBulkWorks(orcid, putCodes));
     }
     
     public Response viewClient(String clientId) {

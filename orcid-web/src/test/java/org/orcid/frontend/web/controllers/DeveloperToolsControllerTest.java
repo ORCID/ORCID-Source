@@ -122,7 +122,7 @@ public class DeveloperToolsControllerTest {
             }
         });
 
-        when(mockClientManager.edit(Matchers.any(org.orcid.jaxb.model.client_v2.Client.class))).thenAnswer(new Answer<org.orcid.jaxb.model.client_v2.Client>() {
+        when(mockClientManager.edit(Matchers.any(org.orcid.jaxb.model.client_v2.Client.class), Matchers.eq(false))).thenAnswer(new Answer<org.orcid.jaxb.model.client_v2.Client>() {
             @Override
             public org.orcid.jaxb.model.client_v2.Client answer(InvocationOnMock invocation) throws Throwable {
                 org.orcid.jaxb.model.client_v2.Client c = (org.orcid.jaxb.model.client_v2.Client) invocation.getArguments()[0];
@@ -318,7 +318,7 @@ public class DeveloperToolsControllerTest {
         redirectUris.add(rUri2);
         client.setRedirectUris(redirectUris);
         Client updatedClient = developerToolsController.updateClient(client);
-        verify(mockClientManager, times(1)).edit(Matchers.any(org.orcid.jaxb.model.client_v2.Client.class));
+        verify(mockClientManager, times(1)).edit(Matchers.any(org.orcid.jaxb.model.client_v2.Client.class), Matchers.eq(false));
         assertEquals(CLIENT_2, updatedClient.getClientId().getValue());
     }
 

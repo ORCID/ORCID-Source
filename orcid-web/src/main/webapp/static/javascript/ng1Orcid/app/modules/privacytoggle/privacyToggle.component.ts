@@ -2,11 +2,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-/*
-import { BiographyService } 
-    from '../../shared/biographyService.ts'; 
-*/
-
 import { ConfigurationService } 
     from '../../shared/configurationService.ts';
 
@@ -26,6 +21,7 @@ elementId: Set a unique name, to show/hide the popup
 export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
     @Input() elementId: string;
     @Input() dataPrivacyObj: any;
+    @Input() privacyNodeName: string;
 
     @Output() privacyUpdate: EventEmitter<any> = new EventEmitter<any>();
 
@@ -42,7 +38,8 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
     
     setPrivacy(priv): void {
         let _priv = priv;
-        this.dataPrivacyObj.visiblity.visibility = _priv;
+        console.log('dataPrivacyObj 2', this.privacyNodeName, this.dataPrivacyObj, this.dataPrivacyObj[this.privacyNodeName]);
+        this.dataPrivacyObj[this.privacyNodeName].visibility = _priv;
         this.privacyUpdate.emit(_priv);
     };
     

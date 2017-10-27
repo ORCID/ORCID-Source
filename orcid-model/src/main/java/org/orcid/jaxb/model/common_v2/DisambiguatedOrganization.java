@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.common_v2;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -67,6 +68,8 @@ public class DisambiguatedOrganization implements Serializable {
     protected String disambiguationSource;
     @XmlTransient
     protected Long id;
+    @XmlTransient
+    protected List<DisambiguatedOrganizationExternalIdentifier> externalIdentifiers;
 
     /**
      * Gets the value of the disambiguatedOrganizationIdentifier property.
@@ -116,6 +119,14 @@ public class DisambiguatedOrganization implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }    
+    
+    public List<DisambiguatedOrganizationExternalIdentifier> getExternalIdentifiers() {
+        return externalIdentifiers;
+    }
+
+    public void setExternalIdentifiers(List<DisambiguatedOrganizationExternalIdentifier> externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
     }
 
     @Override

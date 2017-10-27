@@ -54,7 +54,6 @@ import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -107,9 +106,6 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Resource
     private EmailDao emailDao;
-
-    @Resource
-    OrcidClientGroupManager orcidClientGroupManager;
 
     @Resource
     ClientsController groupAdministratorController;

@@ -31,7 +31,11 @@
 		    	<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.locked.this_is_an_important_message.1" /><a href="${baseUriHttp}/${orcid}?lang=${locale}">${baseUriHttp}/${orcid}</a><@emailMacros.msg "email.locked.this_is_an_important_message.2" />
+		    	<#if features["HTTPS_IDS"]?? && features["HTTPS_IDS"]> 
+		    		<@emailMacros.msg "email.locked.this_is_an_important_message.1" /><a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a><@emailMacros.msg "email.locked.this_is_an_important_message.2" />
+		    	<#else>
+		    		<@emailMacros.msg "email.locked.this_is_an_important_message.1" /><a href="${baseUriHttp}/${orcid}?lang=${locale}">${baseUriHttp}/${orcid}</a><@emailMacros.msg "email.locked.this_is_an_important_message.2" />
+		    	</#if>
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.locked.the_orcid_registry_provides" />

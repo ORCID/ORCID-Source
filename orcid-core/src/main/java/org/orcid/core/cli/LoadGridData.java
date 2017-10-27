@@ -17,6 +17,8 @@
 package org.orcid.core.cli;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,6 +50,7 @@ public class LoadGridData {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadGridData.class);
     private static final String GRID_SOURCE_TYPE = "GRID";
+    private static final String WIKIPEDIA_URL = "wikipedia_url";
 
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
@@ -58,6 +61,7 @@ public class LoadGridData {
     private long addedExternalIdentifiers = 0;
     private long deprecatedOrgs = 0;
     private long obsoletedOrgs = 0;
+    private long updatedExternalIdentifiers = 0;
 
     // Params
     @Option(name = "-f", usage = "Path to JSON file containing GRID info to load into DB")
@@ -93,6 +97,10 @@ public class LoadGridData {
 
     public long getObsoletedOrgs() {
         return obsoletedOrgs;
+    }        
+
+    public long getUpdatedExternalIdentifiers() {
+        return updatedExternalIdentifiers;
     }
 
     public static void main(String[] args) {
@@ -125,6 +133,7 @@ public class LoadGridData {
     }
 
     public void execute() {
+        Instant start = Instant.now();
         JsonNode rootNode = JsonUtils.read(fileToLoad);
         ArrayNode institutes = (ArrayNode) rootNode.get("institutes");
         institutes.forEach(institute -> {
@@ -168,7 +177,7 @@ public class LoadGridData {
                 OrgDisambiguatedEntity entity = processInstitute(sourceId, name, country, city, region, url, orgType);
 
                 // Creates external identifiers
-                processExternalIdentifiers(entity, institute);
+                processExternalIdentifiers(entity, institute);               
             } else if ("redirected".equals(status)) {
                 String primaryId = institute.get("redirect").isNull() ? null : institute.get("redirect").asText();
                 deprecateOrg(sourceId, primaryId);
@@ -182,8 +191,10 @@ public class LoadGridData {
         LOGGER.info("Updated orgs: {}", updatedOrgs);
         LOGGER.info("New orgs: {}", addedDisambiguatedOrgs);
         LOGGER.info("New external identifiers: {}", addedExternalIdentifiers);
+        LOGGER.info("Updated external identifiers: {}", updatedExternalIdentifiers);
         LOGGER.info("Deprecated orgs: {}", deprecatedOrgs);
-        LOGGER.info("Obsoleted orgs: {}", obsoletedOrgs);
+        LOGGER.info("Obsoleted orgs: {}", obsoletedOrgs);        
+        LOGGER.info("Time taken to process the data: {}", Duration.between(start, Instant.now()).toString());
     }
 
     private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
@@ -217,16 +228,41 @@ public class LoadGridData {
             while (nodes.hasNext()) {
                 Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) nodes.next();
                 String identifierTypeName = entry.getKey().toUpperCase();
+                String preferredId = entry.getValue().get("preferred").isNull() ? null : entry.getValue().get("preferred").asText();
                 ArrayNode elements = (ArrayNode) entry.getValue().get("all");
                 for (JsonNode extId : elements) {
                     // If the external identifier doesn't exists yet
-                    if (orgDisambiguatedExternalIdentifierDao.findByDetails(org.getId(), extId.asText(), identifierTypeName) == null) {
-                        createExternalIdentifier(org, extId.asText(), identifierTypeName);
+                    OrgDisambiguatedExternalIdentifierEntity existingExternalId = orgDisambiguatedExternalIdentifierDao.findByDetails(org.getId(), extId.asText(), identifierTypeName);
+                    Boolean preferred = extId.asText().equals(preferredId);
+                    if (existingExternalId == null) {
+                        if(preferred) {
+                            createExternalIdentifier(org, extId.asText(), identifierTypeName, true);
+                        } else {
+                            createExternalIdentifier(org, extId.asText(), identifierTypeName, false);
+                        }                        
                     } else {
-                        LOGGER.info("External identifier for {} with ext id {} and type {} already exists",
-                                new Object[] { org.getId(), extId.asText(), identifierTypeName });
+                        if(existingExternalId.getPreferred() != preferred) {
+                            existingExternalId.setPreferred(preferred);
+                            orgDisambiguatedExternalIdentifierDao.merge(existingExternalId);
+                            LOGGER.info("External identifier for {} with ext id {} and type {} was updated",
+                                    new Object[] { org.getId(), extId.asText(), identifierTypeName });
+                            updatedExternalIdentifiers++;
+                        } else {
+                            LOGGER.info("External identifier for {} with ext id {} and type {} already exists",
+                                    new Object[] { org.getId(), extId.asText(), identifierTypeName });
+                        }                        
                     }
                 }
+            }
+        }
+        
+        if(!institute.get(WIKIPEDIA_URL).isNull()) {
+            String url = institute.get(WIKIPEDIA_URL).asText();
+            // If the external identifier doesn't exists yet
+            if (orgDisambiguatedExternalIdentifierDao.findByDetails(org.getId(), url, WIKIPEDIA_URL.toUpperCase()) == null) {
+                createExternalIdentifier(org, url, WIKIPEDIA_URL.toUpperCase(), true);
+            } else {
+                LOGGER.info("Wikipedia URL for {} already exists", org.getId());
             }
         }
     }
@@ -311,7 +347,7 @@ public class LoadGridData {
      * Creates an external identifier in the
      * org_disambiguated_external_identifier table
      */
-    private boolean createExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String identifier, String externalIdType) {
+    private boolean createExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String identifier, String externalIdType, Boolean preferred) {
         LOGGER.info("Creating external identifier for {}", disambiguatedOrg.getId());
         Date creationDate = new Date();
         OrgDisambiguatedExternalIdentifierEntity externalIdentifier = new OrgDisambiguatedExternalIdentifierEntity();
@@ -320,6 +356,7 @@ public class LoadGridData {
         externalIdentifier.setOrgDisambiguated(disambiguatedOrg);
         externalIdentifier.setDateCreated(creationDate);
         externalIdentifier.setLastModified(creationDate);
+        externalIdentifier.setPreferred(preferred);
         orgDisambiguatedExternalIdentifierDao.persist(externalIdentifier);
         addedExternalIdentifiers++;
         return true;

@@ -210,6 +210,48 @@ Please notice that you should update the path on "*keystoreFile*" and "*truststo
 
 When this it is done, restart the server.
 
+### Configure Message Listener
+
+* Create a directory to be used as the message store directory for the ActiveMQ broker (changing the /Users/rcpeters/git/ path to a path on your machine)
+
+        mkdir /Users/rcpeters/git/mq
+
+* Go to File -> New -> Other.
+
+* Filter for 'Server', select and click Next.
+
+* Expand the folder Apache, select Apache Tomcat.
+
+* Choose the same version as you selected in Tomcat Setup above
+
+* Change Server name field to Message Listener
+
+* Click Next and Finish.
+
+* Select Window -> Show View -> Servers
+
+* Double Click "Message Listener"
+
+* Select Open launch configuration
+
+* Select Arguments 
+
+* In VM Arguments add the following (changing org.orcid.persistence.path to the path to the directory you created above):
+
+        -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties -Dorg.orcid.persistence.solr.url=http://localhost:8080/orcid-solr-web -Dorg.orcid.persistence.solr.read.only.url=http://localhost:8080/orcid-solr-web -Dorg.orcid.persistence.messaging.enabled=true -Dorg.orcid.persistence.path="/Users/rcpeters/git/mq"
+
+* Click Ok
+
+* Save and close the server configuration view.
+
+* In the Servers tab, right click on "Message Listener".
+
+* Select "Add and Remove." Add orcid-activemq and orcid-message-listener
+
+* In[orcid-message-listener.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-message-listener/src/main/resources/message-listener.properties#L47), change the value of org.orcid.message-listener.api.read_public_access_token to a valid /read-public access token. See [Basic tutorial: Searching data using the ORCID API](https://members.orcid.org/api/tutorial/search-orcid-registry for instructions) for steps to generate a token.
+
+* In the Servers tab, right click on "Message Listener" and click Start.
+
 ### Configure frontend (Angular2)
 
 Follow next instructions in order to generate the core javascript file.

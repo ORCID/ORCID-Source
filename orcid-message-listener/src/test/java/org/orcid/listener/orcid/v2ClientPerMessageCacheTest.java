@@ -104,6 +104,7 @@ public class v2ClientPerMessageCacheTest {
         Date date = new Date();
         date.setYear(1900);
         BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
+
         Record r = orcid20ApiClient.fetchPublicRecord(message1);
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
         
@@ -156,6 +157,7 @@ public class v2ClientPerMessageCacheTest {
         Date date = new Date();
         date.setYear(1900);
         BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
+
         Record r = orcid20ApiClient.fetchPublicRecord(message1);
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
 

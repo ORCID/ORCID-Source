@@ -20,7 +20,11 @@
 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.deactivate.you_have_requested.1" /> 
+<#if features["HTTPS_IDS"]?? && features["HTTPS_IDS"]>
+${baseUri}/${orcid}?lang=${locale}<@emailMacros.msg "email.deactivate.you_have_requested.2" />
+<#else>
 ${baseUriHttp}/${orcid}?lang=${locale}<@emailMacros.msg "email.deactivate.you_have_requested.2" />
+</#if>
 ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 
 

@@ -124,10 +124,7 @@
             </span>
         </div>
     </div>
-    
-    <modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
-        <country-form-ng2></country-form-ng2>
-    </modalngcomponent><!-- Ng2 component --> 
+
 
       <!-- Keywords -->         
       <div ng-controller="KeywordsCtrl" class="workspace-section keywords">
@@ -767,7 +764,7 @@
     </div>
 </script>
 
-<modalngcomponent elementHeight="248" elementId="modalemailunverified" elementWidth="500">
+<modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
@@ -775,18 +772,20 @@
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-
+<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
+    <country-form-ng2></country-form-ng2>
+</modalngcomponent><!-- Ng2 component --> 
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
 
 <!-- Ng2 Templates -->
 <script type="text/ng-template" id="privacy-toggle-ng2-template">
-    <div class="relative" id="privacy-bar">
+    <div class="relative" class="privacy-bar-impr">
         <ul class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
-            <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj?.visiblity?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC')"></a></li>
-            <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj?.visiblity?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED')"></a></li>
-            <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj?.visiblity?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE')"></a></li>
+            <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj[privacyNodeName]?.visibility != 'PUBLIC'}"><a (click)="setPrivacy('PUBLIC')"></a></li>
+            <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj[privacyNodeName]?.visibility != 'LIMITED'}"><a (click)="setPrivacy('LIMITED')"></a></li>
+            <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj[privacyNodeName]?.visibility != 'PRIVATE'}"><a (click)="setPrivacy('PRIVATE')"></a></li>
         </ul>
 
         <div class="popover-help-container">
@@ -842,62 +841,68 @@
             </div>          
         </div>
         <div class="bottomBuffer" style="margin: 0!important;">                          
-            <!-- Move this to component
-                <div class="row bulk-edit-modal ng-scope">
-                    <div class="pull-right bio-edit-modal">             
-                        <span class="right">Edit all privacy settings</span>
-                        <div class="bulk-privacy-bar">
-                <div ng-class="{'relative' : modal == false}" id="privacy-bar">
-                    <ul class="privacyToggle" ng-mouseenter="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" ng-mouseleave="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
-                        <li class="publicActive publicInActive" ng-class="{publicInActive: bioModel != 'PUBLIC'}"><a ng-click="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" name="privacy-toggle-3-public" id=""></a></li>
-                        <li class="limitedActive limitedInActive" ng-class="{limitedInActive: bioModel != 'LIMITED'}"><a ng-click="setBulkGroupPrivacy('LIMITED', $event, bioModel)" name="privacy-toggle-3-limited" id=""></a></li>
-                        <li class="privateActive privateInActive" ng-class="{privateInActive: bioModel != 'PRIVATE'}"><a ng-click="setBulkGroupPrivacy('PRIVATE', $event, bioModel)" name="privacy-toggle-3-private" id=""></a></li>
-                    </ul>
-                </div>
-                <div class="popover-help-container" style="top: -75px; left: 512px;">
-                   <div class="popover top privacy-myorcid3" ng-class="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                            <strong>Who can see this? </strong>
-                            <ul class="privacyHelp">
-                                <li class="public" style="color: #009900;">everyone</li>
-                                <li class="limited" style="color: #ffb027;">trusted parties</li>
-                                <li class="private" style="color: #990000;">only me</li>
+            <!-- Move this to component - Begin of bulk component-->
+            <div class="row bulk-edit-modal">
+                <div class="pull-right bio-edit-modal">             
+                    <span class="right">Edit all privacy settings</span>
+                    <div class="bulk-privacy-bar">
+                        <div ng-class="{'relative' : modal == false}" id="privacy-bar">
+                            <ul class="privacyToggle" ng-mouseenter="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" ng-mouseleave="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
+                                <li class="publicActive publicInActive" ng-class="{publicInActive: bioModel != 'PUBLIC'}"><a ng-click="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" name="privacy-toggle-3-public" id=""></a></li>
+                                <li class="limitedActive limitedInActive" ng-class="{limitedInActive: bioModel != 'LIMITED'}"><a ng-click="setBulkGroupPrivacy('LIMITED', $event, bioModel)" name="privacy-toggle-3-limited" id=""></a></li>
+                                <li class="privateActive privateInActive" ng-class="{privateInActive: bioModel != 'PRIVATE'}"><a ng-click="setBulkGroupPrivacy('PRIVATE', $event, bioModel)" name="privacy-toggle-3-private" id=""></a></li>
                             </ul>
-                           <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">More information on privacy settings</a>
-                        </div>                
-                    </div>                              
-                </div>
-
                         </div>
-                        <div class="bulk-help popover-help-container">
-                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                            <div id="bulk-help" class="popover bottom">
+                        <div class="popover-help-container" style="top: -75px; left: 512px;">
+                            <div class="popover top privacy-myorcid3" ng-class="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p>Use Edit all privacy settings to change the visibility level of all items, or Edit individual privacy settings to select different visibility levels for each item.</p>
-                                </div>
-                           </div>
+                                    <strong>Who can see this? </strong>
+                                    <ul class="privacyHelp">
+                                        <li class="public" style="color: #009900;">everyone</li>
+                                        <li class="limited" style="color: #ffb027;">trusted parties</li>
+                                        <li class="private" style="color: #990000;">only me</li>
+                                    </ul>
+                                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">More information on privacy settings</a>
+                                </div>                
+                            </div>                              
                         </div>
-                    </div>          
-                </div>
-            -->
 
-        </div>              
+                    </div>
+                    <div class="bulk-help popover-help-container">
+                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <div id="bulk-help" class="popover bottom">
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <p>Use Edit all privacy settings to change the visibility level of all items, or Edit individual privacy settings to select different visibility levels for each item.</p>
+                            </div>
+                       </div>
+                    </div>
+                </div>          
+            </div>
+            <!-- End of bulk edit -->          
+        </div>    
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class=" padding-right-reset">
                 <span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>   
             </div>
         </div>      
         <div class="col-md-12 col-xs-12 col-sm-12">
-            <div class="" style="position: static">
+            <div style="position: static">
                 <div class="fixed-area" scroll>             
                     <div class="scroll-area">       
                                     
-                        <div class="row aka-row" *ngFor="let country of countryFormAddresses">
+                        <div class="row aka-row" *ngFor="let country of countryFormAddresses; let index = index; let first = first; let last = last">
                             <div class="col-md-6">                                  
                                 <div class="aka">
-                                    <select name="country" [(ngModel)]="country.iso2Country.value" ng-disabled="country.source != orcidId" ng-class="{'not-allowed': country.source != orcidId}" focus-me="newInput">
+                                    <select 
+                                        [(ngModel)]="country.iso2Country.value" 
+                                        [disabled]="country.source != orcidId"
+                                        [ngClass]="{ 'not-allowed': country?.source != orcidId }"
+                                        focus-me="newInput"
+                                        name="country" 
+                                    >
+
                                         <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
                                         <#list isoCountries?keys as key>
                                             <option value="${key}">${isoCountries[key]}</option>
@@ -905,48 +910,65 @@
                                     </select>                                      
                                 </div>         
                                                         
-                                <div class="source" *ngIf="country.sourceName || country.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="country.sourceName">{{country.sourceName}}</span><span *ngIf="country.sourceName == null">{{orcidId}}</span></div>
+                                <div class="source" *ngIf="country.sourceName || country?.sourceName == null">
+                                    <@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="country.sourceName">{{country.sourceName}}</span><span *ngIf="country.sourceName == null">{{orcidId}}</span>
+                                </div>
                                 
                             </div> 
                             <div class="col-md-6" style="position: static">
-                                <ul class="record-settings pull-right">                                                                             
+                                <ul class="record-settings pull-right">              
                                     <li>                                    
-                                        <div class="glyphicon glyphicon-arrow-up circle" (click)="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-move-up-'+$index)"></div>
-                                        <@orcid.tooltip elementId="'tooltip-country-move-up-'+$index" message="common.modals.move_up"/>                                         
+                                        <div 
+                                            (click)="first || swapUp(index)" 
+                                            (mouseenter)="commonSrvc.showTooltip('tooltip-country-move-up-'+index, $event, 37, -33, 44)" 
+                                            (mouseleave)="commonSrvc.hideTooltip('tooltip-country-move-up-'+index)"
+                                            class="glyphicon glyphicon-arrow-up circle" 
+                                        ></div>
+                                        <@orcid.tooltip elementId="'tooltip-country-move-up-'+index" message="common.modals.move_up"/>                                         
                                     </li>
                                     <li>
-                                        <div class="glyphicon glyphicon-arrow-down circle" (click)="$last || swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-move-down-'+$index)"></div>
-                                        <@orcid.tooltip elementId="'tooltip-country-move-down-'+$index" message="common.modals.move_down" />
+                                        <div 
+                                            class="glyphicon glyphicon-arrow-down circle" 
+                                            (click)="last || swapDown(index)" 
+                                            (mouseenter)="commonSrvc.showTooltip('tooltip-country-move-down-'+index, $event, 37, -2, 53)" 
+                                            (mouseleave)="commonSrvc.hideTooltip('tooltip-country-move-down-'+index)"
+                                        ></div>
+                                        <@orcid.tooltip elementId="'tooltip-country-move-down-'+index" message="common.modals.move_down" />
                                     </li>
                                     <li>
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteCountry(country)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-delete-'+$index)"></div>
-                                        <@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />                                          
+                                        <div 
+                                            (click)="deleteCountry(country)" 
+                                            (mouseenter)="commonSrvc.showTooltip('tooltip-country-delete-'+$index, $event, 37, 50, 39)" 
+                                            (mouseleave)="commonSrvc.hideTooltip('tooltip-country-delete-'+$index)"
+                                            class="glyphicon glyphicon-trash" 
+                                        ></div>
+                                        <@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />                               
                                     </li>
                                     <li>
                                         <!--
                                         <privacy-toggle-ng2 elementId="bio-privacy-toggle" [dataPrivacyObj]="country.visibility.visibility" (privacyUpdate)="privacyChange($event)"></privacy-toggle-ng2>
+                                        -->
+                                        <!--
+                                        -->
                                         <@orcid.privacyToggle3  angularModel="country.visibility.visibility"
                                             questionClick="toggleClickPrivacyHelp($index)"
                                             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
                                             publicClick="setPrivacyModal('PUBLIC', $event, country)" 
                                             limitedClick="setPrivacyModal('LIMITED', $event, country)" 
                                             privateClick="setPrivacyModal('PRIVATE', $event, country)"
-                                            elementId="$index"/>   -->
-                                            
+                                            elementId="$index"/>   
                                     </li>
                                 </ul>
-                                <span class="created-date pull-right" *ngIf="country.createdDate" ng-class="{'hidden-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
-                                <span class="created-date pull-left" *ngIf="country.createdDate" ng-class="{'visible-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+                                <span class="created-date pull-right hidden-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+                                <span class="created-date pull-left visible-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
                             </div>                                  
                         </div>                                          
-                    </div>
-                    <!--
-                    <div *ngIf="countryForm.errors.length > 0">
-                        <div *ngFor="let error of countryForm.errors">
-                            <span ng-bind="error" class="red"></span>
+                    </div>         
+                    <div *ngIf="countryForm?.errors?.length > 0">
+                        <div *ngFor="let error of countryFormErrors">
+                            <span class="red">{{error}}</span>
                         </div>
                     </div>
-                    -->
                 </div>                  
                 <div class="record-buttons">                        
                     <a (click)="addNewCountry()"><span class="glyphicon glyphicon-plus pull-left">
@@ -963,7 +985,6 @@
             </div>
         </div>
     </div>
-    
 </script>
 <#include "/includes/record/record_modals.ftl">
 <#include "/includes/record/email_settings.ftl">

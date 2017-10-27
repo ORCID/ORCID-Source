@@ -53,6 +53,8 @@ export class CommonService {
         let top = $(event.target.parentNode).parent().prop('offsetTop');
         let left = $(event.target.parentNode).parent().prop('offsetLeft');   
         let scrollTop = $('.fixed-area').scrollTop();
+
+        //console.log('showtooltip', elem, event, topOffset, leftOffset, arrowOffset, top, left, scrollTop);
         
         $('.edit-record .popover-tooltip').css({
             top: top - scrollTop - topOffset,
