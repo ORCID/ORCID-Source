@@ -470,7 +470,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         Long putCode1 = getPutCodeFromResponse(postResponse);
         
-        postResponse = memberV3Dev1ApiClient.createWorkXml(this.getUser1OrcidId(), work2, accessTokenForClient1);
+        postResponse = memberV3Dev1ApiClient.createWorkXml(this.getUser1OrcidId(), work2, accessTokenForClient2);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         Long putCode2 = getPutCodeFromResponse(postResponse);
@@ -485,23 +485,60 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(activities);
         assertFalse(activities.getWorks().getWorkGroup().isEmpty());
-        assertEquals(2,activities.getWorks().getWorkGroup().size()); 
         
-        if (activities.getWorks().getWorkGroup().get(0).getActivities().size() == 1 && activities.getWorks().getWorkGroup().get(1).getActivities().size() == 2){
-            assertEquals("othervalue"+time,activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());                        
-            assertEquals("value"+time,activities.getWorks().getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());                        
-        }else if (activities.getWorks().getWorkGroup().get(0).getActivities().size() == 2 && activities.getWorks().getWorkGroup().get(0).getActivities().size() == 1){
-            assertEquals("value"+time,activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());                        
-            assertEquals("othervalue"+time,activities.getWorks().getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());                                    
-        }else
-            fail();
+        WorkGroup work1Group = null; 
+        WorkGroup work2Group = null;
+        WorkGroup work3Group = null;
+        
+        boolean work1found = false;
+        boolean work2found = false;
+        boolean work3found = false;
+                                
+        for(WorkGroup group : activities.getWorks().getWorkGroup()) {
+            for(ExternalID id : group.getIdentifiers().getExternalIdentifier()) {
+                //If it is the ID is the one we are looking for
+                if(id.getNormalized().getValue().equals("value" + time)) {                    
+                    for(WorkSummary summary : group.getWorkSummary()) {
+                        String title = summary.getTitle().getTitle().getContent(); 
+                        if(("Work # 1" + time).equals(title)) {
+                            work1found = true;
+                            work1Group = group;
+                            assertEquals(2,group.getActivities().size());
+                        } else if(("Work # 2" + time).equals(title)) {
+                            work2found = true;
+                            work2Group = group;
+                            assertEquals(2,group.getActivities().size());
+                        } else
+                            fail();
+                    }
+                } else if (id.getNormalized().getValue().equals("othervalue" + time)) {
+                    for(WorkSummary summary : group.getWorkSummary()) {
+                        String title = summary.getTitle().getTitle().getContent(); 
+                        if (("Work # 3" + time).equals(title)) {
+                            work3found = true;
+                            work3Group = group;
+                            assertEquals(1,group.getActivities().size());
+                        }else
+                            fail();
+                    }
+                }
+            }       
+        }
+        
+        assertTrue(work1found);
+        assertTrue(work2found);
+        assertTrue(work3found);
+        //Check that work # 1 and Work # 2 are in the same work
+        assertEquals(work1Group, work2Group);
+        //Check that work # 3 is not in the same group than group # 1
+        assertThat(work3Group, not(work1Group));
         
         //Remove all created works
         ClientResponse deleteResponse = memberV3Dev1ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode1, accessTokenForClient1);
         assertNotNull(deleteResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
         
-        deleteResponse = memberV3Dev1ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode2, accessTokenForClient1);
+        deleteResponse = memberV3Dev1ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode2, accessTokenForClient2);
         assertNotNull(deleteResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
         
