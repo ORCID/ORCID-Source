@@ -256,4 +256,5 @@
 	<include file="/db/updates/remove_invalid_fundref_org_disambiguated_external_identifiers.xml" />
 	<include file="/db/updates/add_preferred_indicator_to_org_disambiguated_external_identifier.xml" />
 	<include file="/db/updates/reindex-records-with-grid-identifiers.xml" />
+	<include file="/db/updates/allow_multiple_sf_connections.xml" />
 </databaseChangeLog>
