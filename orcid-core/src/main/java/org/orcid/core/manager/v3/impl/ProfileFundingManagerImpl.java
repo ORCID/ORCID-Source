@@ -29,7 +29,7 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
@@ -61,7 +61,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
     
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
     
     @Resource(name = "orcidSecurityManagerV3")

@@ -29,7 +29,7 @@ import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AddressManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
@@ -46,7 +46,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
     
-    @Resource
+    @Resource(name = "sourceManagerV3")
     protected SourceManager sourceManager;    
     
     @Resource

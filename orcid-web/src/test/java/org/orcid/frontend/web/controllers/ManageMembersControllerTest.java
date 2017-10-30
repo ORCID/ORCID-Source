@@ -40,12 +40,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.MembersManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.MembersManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -69,7 +69,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 public class ManageMembersControllerTest extends DBUnitTest {
 
-    @Resource
+    @Resource(name = "membersManagerV3")
     MembersManager membersManager;
     
     @Resource
@@ -84,7 +84,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Resource
     ClientDetailsDao clientDetailsDao;
     
-    @Resource
+    @Resource(name = "sourceManagerV3")
     SourceManager sourceManager;
         
     @Mock

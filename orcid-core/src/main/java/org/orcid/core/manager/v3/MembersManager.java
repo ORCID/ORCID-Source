@@ -14,26 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.v3;
 
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.Member;
 
-/**
- * 
- * @author Will Simpson
- * 
- */
-public interface SourceManager {
+public interface MembersManager {
 
-    String retrieveSourceOrcid();
-    
-    SourceEntity retrieveSourceEntity();
+    Member createMember(Member member) throws IllegalArgumentException;
 
-    boolean isInDelegationMode();
-    
-    ProfileEntity retrieveSourceProfileEntity();
+    Member updateMemeber(Member member) throws IllegalArgumentException;
 
-    String retrieveRealUserOrcid();
+    Member getMember(String memberId);
 
+    void clearCache();
 }

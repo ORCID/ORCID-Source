@@ -34,7 +34,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.common_v2.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.pojo.ajaxForm.CustomEmailForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;

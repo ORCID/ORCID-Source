@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.v3;
 
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -32,6 +32,8 @@ public interface SourceManager {
 
     boolean isInDelegationMode();
     
+    boolean isDelegatedByAnAdmin();
+
     ProfileEntity retrieveSourceProfileEntity();
 
     String retrieveRealUserOrcid();

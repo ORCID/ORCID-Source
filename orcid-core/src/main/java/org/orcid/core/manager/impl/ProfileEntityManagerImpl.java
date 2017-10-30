@@ -457,7 +457,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (claim != null) {
             profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
             profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
-            profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility());
+            profile.setActivitiesVisibilityDefault(Visibility.valueOf(claim.getActivitiesVisibilityDefault().getVisibility().name()));
         }
 
         // Update the visibility for every bio element to the visibility

@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.common_v2.ContributorEmail;
-import org.orcid.jaxb.model.common_v2.ContributorOrcid;
-import org.orcid.jaxb.model.common_v2.CreditName;
-import org.orcid.jaxb.model.record_v2.FundingContributor;
-import org.orcid.jaxb.model.record_v2.FundingContributorAttributes;
-import org.orcid.jaxb.model.record_v2.FundingContributorRole;
+import org.orcid.jaxb.model.v3.dev1.common.ContributorEmail;
+import org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.dev1.common.CreditName;
+import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
+import org.orcid.jaxb.model.v3.dev1.record.FundingContributorAttributes;
+import org.orcid.jaxb.model.v3.dev1.record.FundingContributorRole;
 
 public class Contributor implements ErrorsInterface, Serializable {
 
@@ -111,25 +111,6 @@ public class Contributor implements ErrorsInterface, Serializable {
         return c;
     }   
     
-    public static Contributor valueOf(org.orcid.jaxb.model.v3.dev1.record.FundingContributor contributor) {
-        Contributor c = new Contributor();
-        if (contributor != null) {
-            if (contributor.getContributorAttributes() != null) {
-                contributor.getContributorAttributes();
-                if (contributor.getContributorAttributes().getContributorRole() != null)
-                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
-            }
-            if (contributor.getContributorOrcid() != null) {
-                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
-                c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
-            }
-            if (contributor.getCreditName() != null) {
-                c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-            }
-        }
-        return c;
-    }   
-        
     @Deprecated
     public static Contributor valueOf(org.orcid.jaxb.model.message.FundingContributor contributor) {
         Contributor c = new Contributor();

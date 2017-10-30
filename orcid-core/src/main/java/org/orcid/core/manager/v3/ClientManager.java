@@ -14,26 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.v3;
 
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.jaxb.model.v3.dev1.client.Client;
 
-/**
- * 
- * @author Will Simpson
- * 
- */
-public interface SourceManager {
+public interface ClientManager {
 
-    String retrieveSourceOrcid();
+    Client create(Client newClient);
     
-    SourceEntity retrieveSourceEntity();
+    Client createPublicClient(Client newClient);
 
-    boolean isInDelegationMode();
+    Client edit(Client existingClient, boolean updateConfigValues);
     
-    ProfileEntity retrieveSourceProfileEntity();
-
-    String retrieveRealUserOrcid();
-
+    Boolean resetClientSecret(String clientId);
 }
