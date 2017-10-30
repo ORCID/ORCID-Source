@@ -481,7 +481,12 @@
                 </div>
             </div>
         </div>
+    <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+        <div ng-controller="DelegatesCtrlV2" class="clearfix" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
         <div ng-controller="DelegatesCtrl" class="clearfix" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
+    </@orcid.checkFeatureStatus>
             <div ng-show="delegation.length > 0" ng-cloak>
                 <div class="ng-hide" ng-show="showInitLoader == true;">
                 <i id="delegates-spinner" class="glyphicon glyphicon-refresh spin x4 green"></i>
@@ -537,18 +542,10 @@
             <#else>
                 <p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
                 <div>
-                    <@orcid.checkFeatureStatus featureName="HTTPS_IDS">
-                        <form ng-submit="searchV2()">
-                            <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
-                            <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
-                        </form>
-                    </@orcid.checkFeatureStatus>
-                    <@orcid.checkFeatureStatus featureName="HTTPS_IDS" enabled=false>
                         <form ng-submit="search()">
                             <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
                             <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
                         </form>
-                    </@orcid.checkFeatureStatus>
                 </div>
                 <div>
                     <table class="ng-cloak table" ng-show="areResults()">
@@ -562,8 +559,8 @@
                         <tbody>
                             <@orcid.checkFeatureStatus featureName="HTTPS_IDS">
                                 <tr ng-repeat='result in results' class="new-search-result">
-                                    <td width="20%"><a href="{{result['orcid-identifier'].uri}}" target="DisplayName" ng-bind="getDisplayNameV2(result)"></a></td>
-                                    <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}" target="orcid-identifier">{{result['orcid-identifier'].uri}}</td>
+                                    <td width="20%"><span ng-if="result['credit-name']">{{result['credit-name']}}</span><span ng-if="!result['credit-name']">{{result['given-names']}} {{result['family-name']}}</span></td>
+                                    <td width="25%" class='search-result-orcid-id' ng-bind="result['orcid-identifier'].uri"></td>
                                     <td width="10%">
                                         <span ng-show="effectiveUserOrcid !== result['orcid-identifier'].path">
                                             <span ng-show="!delegatesByOrcid[result['orcid-identifier'].path]"
@@ -596,14 +593,14 @@
                                     </td>
                                 </tr>
                             </@orcid.checkFeatureStatus>
-                        </tbody>
-                    </table>
-                    <div id="show-more-button-container">
-                        <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
-                        <span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+                            </tbody>
+                        </table>
+                        <div id="show-more-button-container">
+                            <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
+                            <span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+                        </div>
                     </div>
-                </div>
-                <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
+                    <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
             </#if>
         </div>
         <div class="section-heading">
@@ -807,47 +804,78 @@
     </div>
 </script>
 
-<script type="text/ng-template" id="confirm-add-delegate-modal">
-    <div style="padding: 20px;">
-       <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
-       <div ng-show="effectiveUserOrcid === delegateToAdd">
-          <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
-          <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-       </div>
-       <div ng-hide="effectiveUserOrcid === delegateToAdd">
-          <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
-          <form ng-submit="addDelegate()">
-              <div ng-show="isPasswordConfirmationRequired">
-                  <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
-                  <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-                  <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
-                  <span class="orcid-error" ng-show="errors.length > 0">
-                      <span ng-repeat='error in errors' ng-bind-html="error"></span>
-                  </span>
-              </div>
-              <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'> 
+    <script type="text/ng-template" id="confirm-add-delegate-modal">
+        <div style="padding: 20px;">
+           <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+           <div ng-show="effectiveUserOrcid === delegateToAdd">
+              <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
               <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-          </form>
-       </div>
-       <div ng-show="errors.length === 0">
-           <br></br>
-       </div>
-    </div>
-</script>
+           </div>
+           <div ng-hide="effectiveUserOrcid === delegateToAdd">
+              <p>{{delegateNameToAdd}} (<a href="${baseUri}/{{delegateToAdd}}" target="delegateToAdd">${baseUri}/{{delegateToAdd}}</a>)</p>
+              <form ng-submit="addDelegate()">
+                  <div ng-show="isPasswordConfirmationRequired">
+                      <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                      <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                      <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                      <span class="orcid-error" ng-show="errors.length > 0">
+                          <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                      </span>
+                  </div>
+                  <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
+                  <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+              </form>
+           </div>
+           <div ng-show="errors.length === 0">
+               <br></br>
+           </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false> 
+    <script type="text/ng-template" id="confirm-add-delegate-modal">
+        <div style="padding: 20px;">
+           <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+           <div ng-show="effectiveUserOrcid === delegateToAdd">
+              <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+              <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+           </div>
+           <div ng-hide="effectiveUserOrcid === delegateToAdd">
+              <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
+              <form ng-submit="addDelegate()">
+                  <div ng-show="isPasswordConfirmationRequired">
+                      <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                      <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                      <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                      <span class="orcid-error" ng-show="errors.length > 0">
+                          <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                      </span>
+                  </div>
+                  <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
+                  <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+              </form>
+           </div>
+           <div ng-show="errors.length === 0">
+               <br></br>
+           </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>
     
 <script type="text/ng-template" id="confirm-add-delegate-by-email-modal">
-    <div style="padding: 20px;">
+    <div>
         <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
-        <div ng-show="emailSearchResult.isSelf">
+        <div ng-show="emailSearchResult.isSelf" ng-cloak>
             <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
             <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
         </div>
-        <div ng-show="!emailSearchResult.found" >
+        <div ng-show="!emailSearchResult.found" ng-cloak>
             <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
             <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
             <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
         </div>
-        <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
+        <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found" ng-cloak>
             <p>{{input.text}}</p>
             <form ng-submit="addDelegateByEmail(input.text)">
                 <div ng-show="isPasswordConfirmationRequired">
@@ -867,29 +895,31 @@
         </div>
     </div>
 </script>
-    
-<script type="text/ng-template" id="revoke-delegate-modal">
-    <div class="lightbox-container">
-        <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
-        <p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
-        <form ng-submit="revoke()">
-            <div ng-show="isPasswordConfirmationRequired">
-                <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
-                <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-                <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
-                <span class="orcid-error" ng-show="errors.length > 0">
-                    <span ng-repeat='error in errors' ng-bind-html="error"></span>
-                </span>
-            </div>
-            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
-            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-        </form>
-        <div ng-show="errors.length === 0">
-            <br></br>
-        </div>
-    </div>
-</script>
 
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>     
+    <script type="text/ng-template" id="revoke-delegate-modal">
+        <div class="lightbox-container">
+            <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
+            <p> {{delegateNameToRevoke}} (<a href="${baseUri}/{{delegateToRevoke}}" target="delegateToRevoke">${baseUri}/{{delegateToRevoke}}</a>)</p>
+            <form ng-submit="revoke()">
+                <div ng-show="isPasswordConfirmationRequired" ng-cloak>
+                    <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                    <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                    <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                    <span class="orcid-error" ng-show="errors.length > 0" ng-cloak>
+                        <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                    </span>
+                </div>
+                <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+                <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+            </form>
+            <div ng-show="errors.length === 0" ng-cloak>
+            </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false> 
+</@orcid.checkFeatureStatus>
    
 <script type="text/ng-template" id="revoke-shibboleth-account-modal">
     <div class="lightbox-container">

@@ -12,12 +12,12 @@ import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
 // This is the Angular 1 part of the module
-export const DelegatesCtrl = angular.module('orcidApp').controller(
-    'DelegatesCtrl',
+export const DelegatesCtrlV2 = angular.module('orcidApp').controller(
+    'DelegatesCtrlV2',
     [
         '$compile', 
         '$scope', 
-        function DelegatesCtrlV2(
+        function DelegatesCtrl(
             $compile,
             $scope
         ){
@@ -191,24 +191,7 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
                 });
             };
 
-            $scope.getDisplayName = function(result){
-                var personalDetails = result['orcid-profile']['orcid-bio']['personal-details'];
-                var name = "";
-                if(personalDetails != null) {
-                    var creditName = personalDetails['credit-name'];
-                    if(creditName != null){
-                        return creditName.value;
-                    }
-                    name = personalDetails['given-names'].value;
-                    if(personalDetails['family-name'] != null) {
-                        name = name + ' ' + personalDetails['family-name'].value;
-                    }
-                }
-                return name;
-            };
-
             $scope.getResults = function(rows){
-                console.log("v1 controller");
                 $.ajax({
                     url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
                     dataType: 'json',
@@ -217,23 +200,66 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
                         var bottom = null;
                         var newSearchResults = null;
                         var newSearchResultsTop = null;
-                        var resultsContainer = data['orcid-search-results'];
+                        var orcidList = data['result'];
                         var showMoreButtonTop = null;
                         var tempResults = null;
+                        $scope.numFound = data['num-found'];
 
-                        $scope.numFound = resultsContainer['num-found'];
-                        if(resultsContainer['orcid-search-result']){
-                            $scope.numFound = resultsContainer['num-found'];
-                            $scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
-                        }
+                        // This works but ajax context is deprecated
+                        /*if(orcidList){
+                            for (var index in orcidList){
+                                var orcid = orcidList[index]['orcid-identifier'].path;
+                                var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
+                                $.ajax({
+                                    url: url,
+                                    dataType: 'json',
+                                    headers: { Accept: 'application/json'},
+                                    context: index,
+                                    success: function(data) {
+                                        orcidList[this]['given-names'] = data['name']['given-names']['value'];
+                                        orcidList[this]['family-name'] = data['name']['family-name']['value'];
+                                        orcidList[this]['credit-name'] = data['credit-name'];
+                                    }
+                                }).fail(function() {
+                                    // something bad is happening!
+                                    console.log("error getting search details for " + orcidList[this]['orcid-identifier'].path);
+                                });   
+                                $scope.results = $scope.results.concat(orcidList); 
+                            }*/
+
+                            //This returns the right data in $scope.results but view never updates
+                            if(orcidList){
+                                for (var index in orcidList) {
+                                    (function(index){
+                                        console.log(index);
+                                        var orcid = orcidList[index]['orcid-identifier'].path;
+                                        var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
+                                      $.ajax(
+                                        {
+                                          url: url,
+                                            dataType: 'json',
+                                            headers: { Accept: 'application/json'},
+                                            success: function(data) {
+                                                orcidList[index]['given-names'] = data['name']['given-names']['value'];
+                                                orcidList[index]['family-name'] = data['name']['family-name']['value'];
+                                                orcidList[index]['credit-name'] = data['credit-name'];
+                                                $scope.results.push(orcidList[index]); 
+                                                $scope.apply;
+                                            }
+                                        });  
+                                    })(index);
+                                }
+                            }
+
+                        console.log($scope.results);
                         
                         tempResults = $scope.results;
-                        for(var index = 0; index < tempResults.length; index ++) {
-                            if($scope.results[index]['orcid-profile']['orcid-bio']['personal-details'] == null) {
-                                $scope.results.splice(index, 1);
+
+                        for(var i = 0; i < tempResults.length; i ++) {
+                            if($scope.results[i]['given-names'] == null) {
+                                $scope.results.splice(i, 1);
                             } 
                         }
-                        $scope.numFound = $scope.results.length;
                         
                         if(!$scope.numFound){
                             $('#no-results-alert').fadeIn(1200);
@@ -273,6 +299,7 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
                 $scope.start += 10;
                 $scope.getResults();
             };
+
 
             $scope.revoke = function () {
                 var revokeDelegate = {
@@ -344,4 +371,4 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
 
 // This is the Angular 2 part of the module
 @NgModule({})
-export class DelegatesCtrlNg2Module {}
+export class DelegatesCtrlV2Ng2Module {}
