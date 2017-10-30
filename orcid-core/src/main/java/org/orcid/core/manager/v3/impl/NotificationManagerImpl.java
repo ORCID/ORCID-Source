@@ -56,6 +56,7 @@ import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.message.Delegation;
@@ -430,16 +431,29 @@ public class NotificationManagerImpl implements NotificationManager {
 
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        Map<String, Boolean> features = getFeatures();
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
+        templateParams.put("features", features);
     }
 
     public void addMessageParams(Map<String, Object> templateParams, Locale locale) {
+        Map<String, Boolean> features = getFeatures();
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
+        templateParams.put("features", features);
     }
+    
+    private Map<String, Boolean> getFeatures() {
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        return features;
+    }
+    
 
     public String getSubject(String code, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);

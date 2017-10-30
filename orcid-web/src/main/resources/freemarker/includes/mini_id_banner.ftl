@@ -27,7 +27,12 @@
 					ng-cloak>
 					<a ng-click="openMenu($event)" class="id-banner-switch">
 						<div class="orcid-id-container" ng-cloak>
-							${baseUriHttp}/{{requestInfoForm.userOrcid}}
+							<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+								${baseUri}/{{requestInfoForm.userOrcid}}
+							</@orcid.checkFeatureStatus>
+							<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+                    			${baseUriHttp}/{{requestInfoForm.userOrcid}}
+               				</@orcid.checkFeatureStatus>
 							<span class="glyphicon glyphicon-chevron-down"></span>
 						</div>
 					</a>
@@ -58,7 +63,12 @@
 				</div>
 				<div ng-hide="me || unfilteredLength > 0" ng-cloak>
 					<div class="pull-right">
-						${baseUriHttp}/{{requestInfoForm.userOrcid}}
+						<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+							<a href="${baseUri}/{{requestInfoForm.userOrcid}}" target="userOrcid">${baseUri}/{{requestInfoForm.userOrcid}}</a>
+						</@orcid.checkFeatureStatus>
+						<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+                			${baseUriHttp}/{{requestInfoForm.userOrcid}}
+           				</@orcid.checkFeatureStatus>
 					</div>
 				</div>
 			</div>

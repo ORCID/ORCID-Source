@@ -492,10 +492,10 @@
                 <table class="table table-bordered settings-table normal-width" ng-show="delegation" ng-cloak>
                     <thead>
                         <tr>
-                            <th width="40%" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
-                            <th width="30%" ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-                            <th width="20%" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-                            <td width="10%"></td>
+                            <th class="width-30" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
+                            <th ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+                            <th class="width-15" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+                            <th class="width-10" ></th>
                         </tr>
                     </thead>
                     <tbody ng-show="!delegation.length > 0" ng-cloak>
@@ -505,10 +505,16 @@
                     </tbody>
                     <tbody ng-show="delegation.length > 0" ng-cloak>
                         <tr ng-repeat="delegationDetails in delegation | orderBy:sort.column:sort.descending">
-                            <td width="40%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
-                            <td width="30%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
-                            <td width="20%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
-                            <td width="10%" class="tooltip-container">
+                            <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+                                <td><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                                <td><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">${baseUri}/{{delegationDetails.receiverOrcid.value}}</a></td>
+                            </@orcid.checkFeatureStatus>
+                            <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+                                <td><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                                <td><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
+                            </@orcid.checkFeatureStatus>
+                            <td>{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
+                            <td class="tooltip-container">
                                 <a
                                 ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
                                 ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
@@ -659,49 +665,100 @@
     </div>
 </script>
 
-<script type="text/ng-template" id="confirm-deprecate-account-modal">
-    <div class="lightbox-container confirm-deprecate-account-modal">
-       <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">        
-                <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>      
-                <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
-                <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
-                <span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span><br />
-                <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
-                <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
-                <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
-                <span ng-bind="deprecateProfilePojo.primaryOrcid"></span><br />
-                <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
-                <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
-            </div>          
-        </div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="pull-left">
-                    <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>  
+    <script type="text/ng-template" id="confirm-deprecate-account-modal">
+        <div class="lightbox-container confirm-deprecate-account-modal">
+           <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">       
+                    <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>     
+                    <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
+                    <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
+                    <a href="${baseUri}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">${baseUri}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span></a><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
+                    <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
+                    <a href="${baseUri}/{{deprecateProfilePojo.primaryOrcid}}" target="primaryOrcid">${baseUri}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></a></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
+                </div>          
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left">
+                        <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</script>
+    </script>
+</@orcid.checkFeatureStatus>   
 
-<script type="text/ng-template" id="deprecate-account-confirmation-modal">
-    <div class="lightbox-container deprecate-account-confirmation-modal">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
-                <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2>    
-                <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+    <script type="text/ng-template" id="confirm-deprecate-account-modal">
+        <div class="lightbox-container confirm-deprecate-account-modal">
+           <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">       
+                    <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2> 
+                    <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
+                    <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
+                    ${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
+                    <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
+                    ${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
+                </div>          
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="pull-left">
-                    <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left">
+                        <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</script>
+    </script>
+</@orcid.checkFeatureStatus>   
+    
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'> 
+    <script type="text/ng-template" id="deprecate-account-confirmation-modal">
+        <div class="lightbox-container deprecate-account-confirmation-modal">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
+                    <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2> 
+                    <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;<a href="${baseUri}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">${baseUri}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span></a>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;<a href="${baseUri}/{{deprecateProfilePojo.primaryOrcid}}>${baseUri}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></a></span></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left">
+                        <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>   
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+    <script type="text/ng-template" id="deprecate-account-confirmation-modal">
+        <div class="lightbox-container deprecate-account-confirmation-modal">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
+                    <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2> 
+                    <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left">
+                        <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>  
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
     <div class="lightbox-container confirm-revoke-access-modal">        
