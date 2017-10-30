@@ -67,6 +67,33 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showEdit = false;
     };
 
+    displayFullName(): boolean {
+        let display = false;
+
+        if(
+            !(this.nameForm != null && (this.nameForm.creditName == null) || this.nameForm.givenNames.value.length == 0 )
+        ){
+            display = true;
+        }
+
+        return display;
+    };
+
+    displayPublishedName(): boolean {
+        let display = false;
+
+        if(
+            this.nameForm != null 
+            && (this.nameForm.creditName == null 
+                || this.nameForm.creditName.value == null 
+                || this.nameForm.creditName.value.length == 0)
+        ){
+            display = true;
+        }
+
+        return display;
+    };
+
     getNameForm(): void {
         this.nameService.getData()
         .takeUntil(this.ngUnsubscribe)
@@ -96,7 +123,9 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.nameForm = data;
                 //console.log('this.nameForm response', this.nameForm);
-                if( closeAfterAction == true ) {
+                if( closeAfterAction == true 
+                    && this.nameForm.errors.length == 0 
+                ) {
                     this.close();
                 }
             },
