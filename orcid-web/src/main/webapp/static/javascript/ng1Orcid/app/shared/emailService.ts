@@ -76,7 +76,6 @@ export class EmailService {
     }
 
     getEmailPrimary(): any {
-        console.log('this.primaryEmail', this.primaryEmail);
         return this.primaryEmail;
     }
 
@@ -156,14 +155,11 @@ export class EmailService {
 
     verifyEmail(): Observable<any>  {
         let _email = encodeURI(this.getEmailPrimary().value);
-        console.log('_email', _email);
         let myParams = new URLSearchParams();
         myParams.append('email', _email);
         let options = new RequestOptions(
             { headers: this.headers , search: myParams }
         );
-
-        console.log(options, options);
 
         return this.http.get(
             getBaseUri() + '/account/verifyEmail.json',
