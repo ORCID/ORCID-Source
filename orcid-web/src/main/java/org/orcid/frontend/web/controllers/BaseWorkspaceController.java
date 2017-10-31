@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.YearsList;
@@ -54,7 +54,7 @@ public class BaseWorkspaceController extends BaseController {
     @Resource
     protected SecurityQuestionManager securityQuestionManager;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
     @Resource(name = "visibilityFilter")

@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.Addresses;
 
 public class AddressesForm implements ErrorsInterface, Serializable {    
     private static final long serialVersionUID = -5674080678098963655L;

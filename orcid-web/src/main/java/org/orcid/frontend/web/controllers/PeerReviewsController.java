@@ -29,17 +29,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.GroupIdRecordManager;
+import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
-import org.orcid.core.manager.PeerReviewManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.PeerReviewManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PeerReviewType;
-import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.jaxb.model.record_v2.Role;
+import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.dev1.record.Role;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.Date;
@@ -70,7 +70,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
+    @Resource(name = "peerReviewManagerV3")
     private PeerReviewManager peerReviewManager;
 
     @Resource
@@ -79,10 +79,10 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;    
     
-    @Resource
+    @Resource(name = "groupIdRecordManagerV3")
     private GroupIdRecordManager groupIdRecordManager;
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
     public void setLocaleManager(LocaleManager localeManager) {

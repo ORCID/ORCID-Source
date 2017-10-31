@@ -21,12 +21,12 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.v3.dev1.record.Person;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +50,7 @@ public class OpenIDController {
     @Resource
     private OpenIDConnectKeyService openIDConnectKeyService;
     
-    @Resource
+    @Resource(name = "personDetailsManagerReadOnlyV3")
     private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
     
     @Resource(name="orcidTokenStore")

@@ -31,7 +31,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
@@ -60,7 +60,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource(name = "orcidSecurityManagerV3")

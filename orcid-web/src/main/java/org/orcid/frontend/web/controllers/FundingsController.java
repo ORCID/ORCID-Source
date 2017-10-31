@@ -34,16 +34,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ActivityManager;
+import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.record_v2.FundingType;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.v3.dev1.record.FundingType;
+import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -79,7 +79,7 @@ public class FundingsController extends BaseWorkspaceController {
     private static final String DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE = "Grant number";
     private static final String DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE_CODE = "grant_number";
 
-    @Resource
+    @Resource(name = "profileFundingManagerV3")
     private ProfileFundingManager profileFundingManager;
 
     @Resource
@@ -91,13 +91,13 @@ public class FundingsController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
     
-    @Resource(name = "profileEntityManager")
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "activityManagerV3")
     private ActivityManager cacheManager;
 
     public void setLocaleManager(LocaleManager localeManager) {

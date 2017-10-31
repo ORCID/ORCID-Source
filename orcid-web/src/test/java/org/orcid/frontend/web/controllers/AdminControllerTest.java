@@ -51,20 +51,20 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.BiographyManager;
-import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.v3.BiographyManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -101,7 +101,7 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
     @Resource
@@ -110,10 +110,10 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     ClientsController groupAdministratorController;
 
-    @Resource
+    @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
 
-    @Resource
+    @Resource(name = "biographyManagerV3")
     private BiographyManager biographyManager;
 
     @BeforeClass

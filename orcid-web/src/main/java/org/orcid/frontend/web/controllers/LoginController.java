@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
@@ -54,10 +54,10 @@ public class LoginController extends OauthControllerBase {
     @Resource
     protected OrcidAuthorizationEndpoint authorizationEndpoint;
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     protected ProfileEntityManager profileEntityManager;
     
-    @Resource
+    @Resource(name = "emailManagerReadOnlyV3")
     protected EmailManagerReadOnly emailManagerReadOnly;
     
     @ModelAttribute("yesNo")

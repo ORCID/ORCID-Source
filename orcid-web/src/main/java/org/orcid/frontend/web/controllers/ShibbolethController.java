@@ -29,11 +29,12 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
-import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
-import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -78,7 +79,7 @@ public class ShibbolethController extends BaseController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
@@ -146,7 +147,8 @@ public class ShibbolethController extends BaseController {
     private OrcidProfileUserDetails getOrcidProfileUserDetails(String orcid) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
-        return new OrcidProfileUserDetails(orcid, email.getEmail(), profileEntity.getPassword(), profileEntity.getOrcidType());
+        OrcidType orcidType = OrcidType.valueOf(profileEntity.getOrcidType().name());
+        return new OrcidProfileUserDetails(orcid, email.getEmail(), profileEntity.getPassword(), orcidType);
     }
 
     private Map<String, String> parseOriginalHeaders(String originalHeadersJson) {

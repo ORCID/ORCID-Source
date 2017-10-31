@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
@@ -46,7 +46,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailManager {
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource

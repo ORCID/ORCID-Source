@@ -31,12 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.EmailManager;
-import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
@@ -71,10 +71,10 @@ public class AdminController extends BaseController {
 
     private static int RANDOM_STRING_LENGTH = 15;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     ProfileEntityManager profileEntityManager;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     NotificationManager notificationManager;
 
     @Resource
@@ -83,10 +83,10 @@ public class AdminController extends BaseController {
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     OrcidSecurityManager orcidSecurityManager;
     
-    @Resource
+    @Resource(name = "emailManagerV3")
     protected EmailManager emailManager;
         
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";

@@ -28,19 +28,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ActivityManager;
-import org.orcid.core.manager.BibtexManager;
+import org.orcid.core.manager.v3.ActivityManager;
+import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkCategory;
-import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.v3.dev1.record.WorkCategory;
+import org.orcid.jaxb.model.v3.dev1.record.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
@@ -74,7 +74,7 @@ public class WorksController extends BaseWorkspaceController {
 
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
 
-    @Resource
+    @Resource(name = "workManagerV3")
     private WorkManager workManager;
 
     @Resource
@@ -83,19 +83,19 @@ public class WorksController extends BaseWorkspaceController {
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
-    private ActivityManager cacheManager;
+    @Resource(name = "activityManagerV3")
+    private ActivityManager activityManager;
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Resource(name = "bibtexManagerV3")
     private BibtexManager bibtexManager;
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
@@ -176,7 +176,7 @@ public class WorksController extends BaseWorkspaceController {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
             Visibility v = profile.getActivitiesVisibilityDefault() == null
-                    ? Visibility.fromValue(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value()) : profile.getActivitiesVisibilityDefault();
+                    ? Visibility.fromValue(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value()) : Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
             w.setVisibility(v);
         }
 
@@ -325,7 +325,7 @@ public class WorksController extends BaseWorkspaceController {
                         if (profileEntityManager.orcidExists(contributorOrcid)) {
                             // contributor is an ORCID user - visibility of user's name in record must be taken into account 
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                            String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                            String publicContributorCreditName = activityManager.getPublicCreditName(profileEntity);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                         }
                     }
