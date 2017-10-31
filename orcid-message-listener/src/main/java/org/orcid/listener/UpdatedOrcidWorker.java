@@ -18,6 +18,7 @@ package org.orcid.listener;
 
 import javax.annotation.Resource;
 
+import org.orcid.listener.mongo.MongoMessageProcessor;
 import org.orcid.listener.s3.S3MessageProcessor;
 import org.orcid.listener.solr.SolrMessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -39,6 +40,8 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     @Resource
     private SolrMessageProcessor solrProcessor;
 
+    @Resource
+    private MongoMessageProcessor mongoProcessor;
 
     /**
      * Fires when the queue evicts after an inactivity period.
@@ -50,6 +53,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
             LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue '" + m.getLastUpdated() + "' Removal cause " + removal.getCause() );            
             s3Processor.accept(m);
             solrProcessor.accept(m);
+            mongoProcessor.accept(m);
         }
     }
 }
