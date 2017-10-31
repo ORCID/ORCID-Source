@@ -188,6 +188,10 @@ Do this before the '-vmargs' param
 
   * Click "Apply"
 
+### Add Typescript support
+
+* Follow instructions at [https://github.com/palantir/eclipse-typescript](https://github.com/palantir/eclipse-typescript)
+
 ### Disabling JPA facet for orcid-persistence
 
 * Select Eclipse (or Spring Tool Suit) -> Preferences -> Validation 
