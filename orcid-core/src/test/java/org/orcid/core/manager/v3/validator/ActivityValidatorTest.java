@@ -59,6 +59,7 @@ import org.orcid.jaxb.model.v3.dev1.common.SourceName;
 import org.orcid.jaxb.model.v3.dev1.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.dev1.common.Subtitle;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
+import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.TranslatedTitle;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
@@ -824,5 +825,35 @@ public class ActivityValidatorTest {
         disambiguatedOrganization.setDisambiguatedOrganizationIdentifier("some-identifier");
         disambiguatedOrganization.setDisambiguationSource("FUNDREF");
         return disambiguatedOrganization;
+    }
+    
+    //validate normalization is being used
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void checkDupesNormalized(){
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("agr");
+        id1.setValue("UPPER");
+        ExternalIDs ids1 = new ExternalIDs();
+        ids1.getExternalIdentifier().add(id1);
+        
+        ExternalID id2 = new ExternalID();
+        id2.setRelationship(Relationship.SELF);
+        id2.setType("agr");
+        id2.setValue("upper");
+        id2.setNormalized(new TransientNonEmptyString("upper"));
+        ExternalIDs ids2 = new ExternalIDs();
+        ids2.getExternalIdentifier().add(id2);
+        
+        SourceEntity source1 = mock(SourceEntity.class);
+        when(source1.getSourceName()).thenReturn("source name");
+        when(source1.getSourceId()).thenReturn("APP-00000000000000");
+        
+        SourceClientId sourceClientId = new SourceClientId();
+        sourceClientId.setPath("APP-00000000000000");
+        Source source2 = mock(Source.class);
+        when(source2.getSourceName()).thenReturn(new SourceName("source name"));
+        when(source2.getSourceClientId()).thenReturn(sourceClientId);
+        activityValidator.checkExternalIdentifiersForDuplicates(ids1, ids2, source2, source1);
     }
 }

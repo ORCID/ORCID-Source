@@ -41,6 +41,7 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.utils.v3.identifiers.NormalizationService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.client.Client;
 import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
@@ -152,6 +153,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private EncryptionManager encryptionManager;
+    
+    @Resource
+    private NormalizationService norm;
     
     @Override
     public MapperFacade getObject() throws Exception {
@@ -409,7 +413,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm));
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
         
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
@@ -632,7 +636,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm));
         converterFactory.registerConverter("workExternalIdentifierConverterId", new JSONPeerReviewWorkExternalIdentifierConverterV3());
         //do same as work
         

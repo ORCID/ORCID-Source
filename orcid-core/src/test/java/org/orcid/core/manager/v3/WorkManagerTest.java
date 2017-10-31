@@ -267,7 +267,7 @@ public class WorkManagerTest extends BaseTest {
         work2.setWorkType(WorkType.BOOK);
         bulk.getBulk().add(work2);
                 
-        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
+        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk); 
         
         assertNotNull(updatedBulk);
         assertEquals(2, updatedBulk.getBulk().size());
@@ -275,6 +275,62 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(((Work)updatedBulk.getBulk().get(0)).getPutCode());
         assertEquals(Relationship.SELF, ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("isbn-1", ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        assertTrue(updatedBulk.getBulk().get(1) instanceof OrcidError);
+        assertEquals(Integer.valueOf(9021), ((OrcidError)updatedBulk.getBulk().get(1)).getErrorCode());
+        assertEquals("409 Conflict: You have already added this activity (matched by external identifiers.) If you are trying to edit the item, please use PUT instead of POST.", ((OrcidError)updatedBulk.getBulk().get(1)).getDeveloperMessage());
+   
+        workManager.removeWorks(orcid, Arrays.asList(((Work)updatedBulk.getBulk().get(0)).getPutCode()));
+    }
+    
+    @Test
+    public void testCreateWorkWithBulk_TwoSelf_DupError_CaseSensitive() {
+        String orcid = "0000-0000-0000-0003";
+        Long time = System.currentTimeMillis();
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID extId1 = new ExternalID();
+        extId1.setRelationship(Relationship.SELF);
+        extId1.setType("isbn");
+        extId1.setUrl(new Url("http://isbn/1/" + time));
+        extId1.setValue("ISBN-2-CASE");
+        extIds1.getExternalIdentifier().add(extId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work1);
+        
+        // Work # 2
+        Work work2 = new Work();
+        WorkTitle title2 = new WorkTitle();
+        title2.setTitle(new Title("Work # 2"));
+        work2.setWorkTitle(title2);
+        ExternalIDs extIds2 = new ExternalIDs();
+        ExternalID extId2 = new ExternalID();
+        extId2.setRelationship(Relationship.SELF);
+        extId2.setType("isbn");
+        extId2.setUrl(new Url("http://isbn/1/" + time));
+        extId2.setValue("isbn-2-case"); // this should fail as ISBNs are not case sensitive
+        extIds2.getExternalIdentifier().add(extId2);
+        work2.setWorkExternalIdentifiers(extIds2);
+        work2.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work2);
+                
+        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
+        
+        assertNotNull(updatedBulk);
+        assertEquals(2, updatedBulk.getBulk().size());
+        assertTrue(updatedBulk.getBulk().get(0) instanceof Work);
+        assertNotNull(((Work)updatedBulk.getBulk().get(0)).getPutCode());
+        assertEquals(Relationship.SELF, ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("ISBN-2-CASE", ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("isbn-2-case", ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());
         
         assertTrue(updatedBulk.getBulk().get(1) instanceof OrcidError);
         assertEquals(Integer.valueOf(9021), ((OrcidError)updatedBulk.getBulk().get(1)).getErrorCode());

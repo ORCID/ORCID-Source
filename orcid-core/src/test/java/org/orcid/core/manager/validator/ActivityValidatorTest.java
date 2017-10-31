@@ -730,4 +730,5 @@ public class ActivityValidatorTest {
         org.setName("name");
         return org;
     }
+    
 }
