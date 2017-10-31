@@ -191,6 +191,45 @@ export const DelegatesCtrlV2 = angular.module('orcidApp').controller(
                 });
             };
 
+            $scope.getDisplayName = function(result){
+                if(!result['namesRequestSent']){
+                    result['namesRequestSent'] = true;
+                    var name="";
+                    var orcid = result['orcid-identifier'].path;
+                    var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
+                    $.ajax({
+                        url: url,
+                        dataType: 'json',
+                        headers: { Accept: 'application/json'},
+                        success: function(data) {
+                            if (data['name']['given-names']){
+                                result['given-names'] = data['name']['given-names']['value'];
+                            }
+                            if(data['name']['family-name']){
+                                result['family-name'] = data['name']['family-name']['value'];
+                            }
+                            if(data['name']['credit-name']) {
+                                result['credit-name'] = data['name']['credit-name']['value'];
+                            }
+                        }
+                    }).fail(function(){
+                        // something bad is happening!
+                        console.log("error getting name for " + orcid);
+                    });  
+                } 
+
+                if(result['credit-name']) {
+                    name = result['credit-name'];
+                } else if (result['given-names'] && result['given-names']){
+                    name = result['given-names'] + " " + result['family-name'];
+                } else if (result['given-names']) {
+                    name = result['given-names'];
+                } else {
+                    name = "";
+                }             
+                return name; 
+            };
+
             $scope.getResults = function(rows){
                 $.ajax({
                     url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
@@ -205,61 +244,7 @@ export const DelegatesCtrlV2 = angular.module('orcidApp').controller(
                         var tempResults = null;
                         $scope.numFound = data['num-found'];
 
-                        // This works but ajax context is deprecated
-                        /*if(orcidList){
-                            for (var index in orcidList){
-                                var orcid = orcidList[index]['orcid-identifier'].path;
-                                var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
-                                $.ajax({
-                                    url: url,
-                                    dataType: 'json',
-                                    headers: { Accept: 'application/json'},
-                                    context: index,
-                                    success: function(data) {
-                                        orcidList[this]['given-names'] = data['name']['given-names']['value'];
-                                        orcidList[this]['family-name'] = data['name']['family-name']['value'];
-                                        orcidList[this]['credit-name'] = data['credit-name'];
-                                    }
-                                }).fail(function() {
-                                    // something bad is happening!
-                                    console.log("error getting search details for " + orcidList[this]['orcid-identifier'].path);
-                                });   
-                                $scope.results = $scope.results.concat(orcidList); 
-                            }*/
-
-                            //This returns the right data in $scope.results but view never updates
-                            if(orcidList){
-                                for (var index in orcidList) {
-                                    (function(index){
-                                        console.log(index);
-                                        var orcid = orcidList[index]['orcid-identifier'].path;
-                                        var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
-                                      $.ajax(
-                                        {
-                                          url: url,
-                                            dataType: 'json',
-                                            headers: { Accept: 'application/json'},
-                                            success: function(data) {
-                                                orcidList[index]['given-names'] = data['name']['given-names']['value'];
-                                                orcidList[index]['family-name'] = data['name']['family-name']['value'];
-                                                orcidList[index]['credit-name'] = data['credit-name'];
-                                                $scope.results.push(orcidList[index]); 
-                                                $scope.apply;
-                                            }
-                                        });  
-                                    })(index);
-                                }
-                            }
-
-                        console.log($scope.results);
-                        
-                        tempResults = $scope.results;
-
-                        for(var i = 0; i < tempResults.length; i ++) {
-                            if($scope.results[i]['given-names'] == null) {
-                                $scope.results.splice(i, 1);
-                            } 
-                        }
+                        $scope.results = $scope.results.concat(orcidList); 
                         
                         if(!$scope.numFound){
                             $('#no-results-alert').fadeIn(1200);

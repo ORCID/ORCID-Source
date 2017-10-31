@@ -551,16 +551,16 @@
                     <table class="ng-cloak table" ng-show="areResults()">
                         <thead>
                             <tr>
-                                <th width="20%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+                                <th width="20%">${springMacroRequestContext.getMessage("manage_bio_settings.thname")}</th>
                                 <th width="25%">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
                                 <th width="10%"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <@orcid.checkFeatureStatus featureName="HTTPS_IDS">
-                                <tr ng-repeat='result in results' class="new-search-result">
-                                    <td width="20%"><span ng-if="result['credit-name']">{{result['credit-name']}}</span><span ng-if="!result['credit-name']">{{result['given-names']}} {{result['family-name']}}</span></td>
-                                    <td width="25%" class='search-result-orcid-id' ng-bind="result['orcid-identifier'].uri"></td>
+                                <tr ng-repeat='result in results track by $index' class="new-search-result">
+                                    <td width="20%" ng-bind="getDisplayName(result)"></td>
+                                    <td width="25%" class='search-result-orcid-id'><a href="result['orcid-identifier'].uri" target="result['orcid-identifier'].path">{{result['orcid-identifier'].uri}}</a></td>
                                     <td width="10%">
                                         <span ng-show="effectiveUserOrcid !== result['orcid-identifier'].path">
                                             <span ng-show="!delegatesByOrcid[result['orcid-identifier'].path]"

@@ -75,28 +75,9 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                         var orcidList = data['result'];
                         
                         $scope.numFound = data['num-found'];
+
+                        $scope.results = $scope.results.concat(orcidList); 
                         
-                        if(orcidList){
-                            for (var index in orcidList){
-                                var orcid = orcidList[index]['orcid-identifier'].path;
-                                var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
-                                $.ajax({
-                                    url: url,
-                                    dataType: 'json',
-                                    headers: { Accept: 'application/json'},
-                                    context: index,
-                                    success: function(data) {
-                                        orcidList[this]['given-names'] = data['name']['given-names']['value'];
-                                        orcidList[this]['family-name'] = data['name']['family-name']['value'];
-                                        orcidList[this]['other-name'] = data['other-names']['other-name'];
-                                    }
-                                }).fail(function() {
-                                    // something bad is happening!
-                                    console.log("error getting search details for " + orcidList[this]['orcid-identifier'].path);
-                                });
-                            }
-                            $scope.results = $scope.results.concat(orcidList);
-                        }
                         if(!$scope.numFound){
                             $('#no-results-alert').fadeIn(1200);
                         }
@@ -145,6 +126,41 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                     $('#search-error-alert').fadeIn(1200);
 
                 });
+            };
+
+            $scope.getNames = function(result){
+                if(!result['namesRequestSent']){
+                    result['namesRequestSent'] = true;
+                    var name="";
+                    var orcid = result['orcid-identifier'].path;
+                    var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
+                    $.ajax({
+                        url: url,
+                        dataType: 'json',
+                        headers: { Accept: 'application/json'},
+                        success: function(data) {
+                            if (data['name']['given-names']){
+                                result['given-names'] = data['name']['given-names']['value'];
+                            }
+                            if(data['name']['family-name']){
+                                result['family-name'] = data['name']['family-name']['value'];
+                            }
+                            if(data['other-names']['other-name']) {
+                                result['other-name'] = data['other-names']['other-name'];
+                            }
+                        }
+                    }).fail(function(){
+                        // something bad is happening!
+                        console.log("error getting name for " + orcid);
+                    });  
+                } 
+
+                if (result['given-names']) {
+                    name = result['given-names'];
+                } else {
+                    name = "";
+                }             
+                return name; 
             };
 
             $scope.isValid = function(){
