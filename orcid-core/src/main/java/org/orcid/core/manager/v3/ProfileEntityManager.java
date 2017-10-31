@@ -45,7 +45,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     boolean isProfileDeprecated(String orcid);
 
-    boolean enableDeveloperTools(OrcidProfile profile);
+    boolean enableDeveloperTools(String orcid);
 
     boolean disableDeveloperTools(OrcidProfile profile);
 

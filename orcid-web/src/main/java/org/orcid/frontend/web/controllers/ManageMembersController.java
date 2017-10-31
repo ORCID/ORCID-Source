@@ -25,11 +25,11 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.ClientManager;
-import org.orcid.core.manager.MembersManager;
+import org.orcid.core.manager.v3.ClientManager;
+import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
-import org.orcid.core.manager.read_only.ClientManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -57,16 +57,16 @@ import org.springframework.web.servlet.ModelAndView;
 public class ManageMembersController extends BaseController {    
     private static String SALESFORCE_ID_PATTERN = "[a-zA-Z0-9]{15}";
 
-    @Resource
+    @Resource(name = "membersManagerV3")
     MembersManager membersManager;
     
-    @Resource
+    @Resource(name = "clientManagerV3")
     private ClientManager clientManager;
 
-    @Resource
+    @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
     
-    @Resource
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
@@ -188,7 +188,7 @@ public class ManageMembersController extends BaseController {
         if(PojoUtil.isEmpty(clientId)) {
             result.getErrors().add(getMessage("manage_member.not_blank"));
         } else {
-            org.orcid.jaxb.model.client_v2.Client modelClient = clientManagerReadOnly.get(clientId);
+            org.orcid.jaxb.model.v3.dev1.client.Client modelClient = clientManagerReadOnly.get(clientId);
             result = Client.fromModelObject(modelClient);
         }
                 
@@ -218,7 +218,7 @@ public class ManageMembersController extends BaseController {
         }
 
         if (client.getErrors().isEmpty()) {           
-            org.orcid.jaxb.model.client_v2.Client modelObject = clientManager.edit(client.toModelObject(), true);
+            org.orcid.jaxb.model.v3.dev1.client.Client modelObject = clientManager.edit(client.toModelObject(), true);
             client = Client.fromModelObject(modelObject);
             membersManager.clearCache();
         }

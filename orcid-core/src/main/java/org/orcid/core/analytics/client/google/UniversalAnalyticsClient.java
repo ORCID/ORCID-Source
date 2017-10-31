@@ -68,6 +68,10 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
     protected static final String RESPONSE_CODE_PARAM = "cd3";
 
     protected static final String CLIENT_PARAM = "cd4";
+    
+    protected static final String SESSION_CONTROL_PARAM = "sc";
+    
+    protected static final String SESSION_CONTROL_VALUE = "start";
 
     @Value("${org.orcid.core.api.analytics.trackingCode:}")
     private String analyticsTrackingCode;
@@ -135,6 +139,7 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
         payload.append("&").append(CONTENT_TYPE_PARAM).append("=").append(data.getContentType());
         payload.append("&").append(RESPONSE_CODE_PARAM).append("=").append(data.getResponseCode());
         payload.append("&").append(CLIENT_PARAM).append("=").append(data.getClientDetailsString());
+        payload.append("&").append(SESSION_CONTROL_PARAM).append("=").append(SESSION_CONTROL_VALUE);
         return UriEncoder.encode(payload.toString());
     }
 

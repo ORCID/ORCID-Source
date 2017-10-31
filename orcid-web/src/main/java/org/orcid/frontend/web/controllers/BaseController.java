@@ -46,13 +46,13 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -136,7 +136,7 @@ public class BaseController {
     @Resource
     protected OrcidProfileManager orcidProfileManager;
 
-    @Resource
+    @Resource(name = "emailManagerV3")
     protected EmailManager emailManager;
     
     @Resource
@@ -145,10 +145,10 @@ public class BaseController {
     @Resource
     protected OrcidUrlManager orcidUrlManager;
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     protected SourceManager sourceManager;
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
 
     @Resource
@@ -754,7 +754,12 @@ public class BaseController {
 
     @ModelAttribute("searchBaseUrl")
     protected String createSearchBaseUrl() {
-        return getPubBaseUri() + "/v1.2/search/orcid-bio/";
+        if(Features.HTTPS_IDS.isActive()) {
+            return getPubBaseUri() + "/v2.1/search/";
+        } else {
+            return getPubBaseUri() + "/v1.2/search/orcid-bio/";
+        }  
+        
     }
 
     @ModelAttribute("locked")

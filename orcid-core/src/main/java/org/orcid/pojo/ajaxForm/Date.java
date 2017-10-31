@@ -22,12 +22,12 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.CreatedDate;
-import org.orcid.jaxb.model.common_v2.Day;
-import org.orcid.jaxb.model.common_v2.FuzzyDate;
-import org.orcid.jaxb.model.common_v2.LastModifiedDate;
-import org.orcid.jaxb.model.common_v2.Month;
-import org.orcid.jaxb.model.common_v2.Year;
+import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
+import org.orcid.jaxb.model.v3.dev1.common.Day;
+import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.dev1.common.Month;
+import org.orcid.jaxb.model.v3.dev1.common.Year;
 import org.orcid.utils.DateUtils;
 
 public class Date implements ErrorsInterface, Required, Serializable {
@@ -52,17 +52,6 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return d;
     }       
     
-    public static Date valueOf(org.orcid.jaxb.model.v3.dev1.common.FuzzyDate fuzzyDate) {
-        Date d = new Date();
-        if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
-            d.setDay(fuzzyDate.getDay().getValue());
-        if (fuzzyDate.getMonth() != null && fuzzyDate.getMonth().getValue() !=null)
-            d.setMonth(fuzzyDate.getMonth().getValue());
-        if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
-            d.setYear(fuzzyDate.getYear().getValue());
-        return d;
-    }       
-
     public FuzzyDate toFuzzyDate() {
         FuzzyDate fd = new FuzzyDate();
         if (!PojoUtil.isEmpty(this.getDay()))
@@ -103,20 +92,6 @@ public class Date implements ErrorsInterface, Required, Serializable {
     }
 
     public static Date valueOf(LastModifiedDate date) {
-        Date newDate = new Date();
-        if (date != null && date.getValue() != null)
-            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
-        return newDate;
-    }
-    
-    public static Date valueOf(org.orcid.jaxb.model.v3.dev1.common.CreatedDate date) {
-        Date newDate = new Date();
-        if (date != null && date.getValue() != null)
-            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
-        return newDate;
-    }
-
-    public static Date valueOf(org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate date) {
         Date newDate = new Date();
         if (date != null && date.getValue() != null)
             return Date.valueOf(date.getValue().toGregorianCalendar().getTime());

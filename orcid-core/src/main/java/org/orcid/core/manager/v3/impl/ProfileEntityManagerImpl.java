@@ -230,17 +230,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         });
     }
     
-    /**
-     * Enable developer tools
-     * 
-     * @param profile
-     *            The profile to update
-     * @return true if the developer tools where enabled on that profile
-     */
     @Override
-    public boolean enableDeveloperTools(OrcidProfile profile) {
-        boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), true);
-        return result;
+    public boolean enableDeveloperTools(String orcid) {
+        return profileDao.updateDeveloperTools(orcid, true);
     }
 
     /**
@@ -458,7 +450,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (claim != null) {
             profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
             profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
-            profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility());
+            profile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.valueOf(claim.getActivitiesVisibilityDefault().getVisibility().name()));
         }
 
         // Update the visibility for every bio element to the visibility

@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.common_v2.OrcidIdBase;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -181,6 +182,9 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         // Record
         mapperFactory.classMap(Record.class, Record.class).byDefault().register();
 
+        // OrcidError
+        mapperFactory.classMap(OrcidError.class, OrcidError.class).byDefault().register();
+        
         mapper = mapperFactory.getMapperFacade();
     }    
     

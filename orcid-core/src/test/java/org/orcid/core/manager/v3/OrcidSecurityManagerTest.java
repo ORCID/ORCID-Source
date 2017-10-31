@@ -34,7 +34,7 @@ import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -62,7 +62,7 @@ public class OrcidSecurityManagerTest {
     @Value("${org.orcid.core.claimWaitPeriodDays:10}")
     private int claimWaitPeriodDays;
     
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
     
     @Resource 

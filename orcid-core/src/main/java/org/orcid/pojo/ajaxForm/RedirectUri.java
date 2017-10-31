@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
+import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -95,6 +95,24 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
     }
     
     public static RedirectUri fromModelObject(ClientRedirectUri modelObject) {
+        RedirectUri redirectUri = new RedirectUri();
+        if(modelObject.getPredefinedClientScopes() != null) {
+            for(ScopePathType scope : modelObject.getPredefinedClientScopes()) {
+                redirectUri.getScopes().add(scope.value());
+            }
+        }
+        
+        redirectUri.setValue(Text.valueOf(modelObject.getRedirectUri()));
+        
+        redirectUri.setType(Text.valueOf(modelObject.getRedirectUriType()));
+        
+        redirectUri.setActType(Text.valueOf(modelObject.getUriActType()));
+        
+        redirectUri.setGeoArea(Text.valueOf(modelObject.getUriGeoArea()));
+        return redirectUri;
+    }
+    
+    public static RedirectUri fromModelObject(org.orcid.jaxb.model.client_v2.ClientRedirectUri modelObject) {
         RedirectUri redirectUri = new RedirectUri();
         if(modelObject.getPredefinedClientScopes() != null) {
             for(ScopePathType scope : modelObject.getPredefinedClientScopes()) {

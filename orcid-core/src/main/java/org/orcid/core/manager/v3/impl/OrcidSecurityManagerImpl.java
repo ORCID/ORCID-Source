@@ -41,7 +41,7 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
@@ -94,7 +94,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private static final ScopePathType READ_PEER_REVIEWS_REQUIRED_SCOPE = ScopePathType.PEER_REVIEW_READ_LIMITED;
     private static final ScopePathType READ_WORKS_REQUIRED_SCOPE = ScopePathType.ORCID_WORKS_READ_LIMITED;                
     
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource

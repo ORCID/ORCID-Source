@@ -21,7 +21,7 @@ import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import org.orcid.core.manager.OrgManager;
+import org.orcid.core.manager.v3.OrgManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = { "/orgs" })
 public class OrgController {
 
-    @Resource
+    @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
 
     @RequestMapping(value = "ambiguous", method = RequestMethod.GET, produces = "text/csv")

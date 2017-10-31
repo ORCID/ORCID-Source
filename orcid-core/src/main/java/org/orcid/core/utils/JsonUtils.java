@@ -22,7 +22,6 @@ import java.io.IOException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,12 +35,12 @@ public class JsonUtils {
 
     static ObjectMapper mapper = new ObjectMapper(); // thread safe!
     static ObjectMapper mapperFromJSON = new ObjectMapper(); // thread safe!
-    static {
+    static {        
         mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
     public static String convertToJsonString(Object object) {
-        try {
+        try {            
             return mapper.writeValueAsString(object);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -107,6 +106,5 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException("Error extracting JsonNode from file", e);
         }
-    }
-
+    }    
 }

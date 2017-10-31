@@ -64,6 +64,11 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     @Override
+    public boolean isPrimaryEmail(String email) {
+        return emailDao.isPrimaryEmail(email);
+    }
+    
+    @Override
     @SuppressWarnings("rawtypes")
     public Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail) {
         Map<String, String> emailIds = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);

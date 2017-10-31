@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -61,7 +61,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
     @Resource 
     private OauthLoginController oauthLoginController;
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
     /** This is called if user is already logged in.  

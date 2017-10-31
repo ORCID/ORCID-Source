@@ -17,7 +17,12 @@
 
 -->
 <@public classes=['home'] >
-<div ng-controller="SearchCtrl" id="SearchCtrl">
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+	<div ng-controller="SearchCtrlV2" id="SearchCtrl">
+</@orcid.checkFeatureStatus>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+	<div ng-controller="SearchCtrl" id="SearchCtrl">
+</@orcid.checkFeatureStatus>
 	<div class="row">
 		<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-offset-9 col-xs-12">
 			<@orcid.checkFeatureStatus featureName='AFFILIATION_SEARCH' enabled=false>

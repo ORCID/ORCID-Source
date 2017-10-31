@@ -70,22 +70,11 @@ public class MailGunManager {
     @Value("${com.mailgun.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String notifyApiUrl;
 
-    @Value("${com.mailgun.alt.apiUrl:https://api.mailgun.net/v2}")
-    private String altApiUrl;
-
-    @Value("${com.mailgun.alt.verify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
-    private String altVerifyApiUrl;
-
-    @Value("${com.mailgun.alt.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
-    private String altNotifyApiUrl;
-
     @Value("${com.mailgun.testmode:yes}")
     private String testmode;
 
     @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com|rcpeters\\.com)$}")
     private String filter;
-
-    private String[] domainsForDedicatedIp = { "vt.edu", "qq.com" };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
@@ -100,27 +89,16 @@ public class MailGunManager {
 
         // determine correct api based off domain.
         WebResource webResource = null;
-        String toAddress = to.trim();
         String fromEmail = getFromEmail(from);
-        if (shouldBeSentThroughDedicatedIP(toAddress)) {
-            if (custom)
-                webResource = client.resource(getAltNotifyApiUrl());
-            else if (fromEmail.endsWith("@verify.orcid.org"))
-                webResource = client.resource(getAltVerifyApiUrl());
-            else if (fromEmail.endsWith("@notify.orcid.org"))
-                webResource = client.resource(getAltNotifyApiUrl());
-            else
-                webResource = client.resource(getAltApiUrl());
-        } else {
-            if (custom)
-                webResource = client.resource(getNotifyApiUrl());
-            else if (fromEmail.endsWith("@verify.orcid.org"))
-                webResource = client.resource(getVerifyApiUrl());
-            else if (fromEmail.endsWith("@notify.orcid.org"))
-                webResource = client.resource(getNotifyApiUrl());
-            else
-                webResource = client.resource(getApiUrl());
-        }
+        
+        if (custom)
+            webResource = client.resource(getNotifyApiUrl());
+        else if (fromEmail.endsWith("@verify.orcid.org"))
+            webResource = client.resource(getVerifyApiUrl());
+        else if (fromEmail.endsWith("@notify.orcid.org"))
+            webResource = client.resource(getNotifyApiUrl());
+        else
+            webResource = client.resource(getApiUrl());
 
         MultivaluedMapImpl formData = new MultivaluedMapImpl();
         formData.add("from", from);
@@ -175,39 +153,6 @@ public class MailGunManager {
 
     public void setNotifyApiUrl(String notifyApiUrl) {
         this.notifyApiUrl = notifyApiUrl;
-    }
-
-    public String getAltApiUrl() {
-        return altApiUrl;
-    }
-
-    public void setAltApiUrl(String altApiUrl) {
-        this.altApiUrl = altApiUrl;
-    }
-
-    public String getAltVerifyApiUrl() {
-        return altVerifyApiUrl;
-    }
-
-    public void setAltVerifyApiUrl(String altVerifyApiUrl) {
-        this.altVerifyApiUrl = altVerifyApiUrl;
-    }
-
-    public String getAltNotifyApiUrl() {
-        return altNotifyApiUrl;
-    }
-
-    public void setAltNotifyApiUrl(String altNotifyApiUrl) {
-        this.altNotifyApiUrl = altNotifyApiUrl;
-    }
-
-    private boolean shouldBeSentThroughDedicatedIP(String destinationAddress) {
-        for (String domain : domainsForDedicatedIp) {
-            if (destinationAddress.endsWith("@" + domain) || destinationAddress.endsWith("." + domain)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private String getFromEmail(String from) {

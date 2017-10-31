@@ -78,6 +78,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ExceedMaxNumberOfPutCodesException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9042));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidDisambiguatedOrgException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9045));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidOrgException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9046));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidJSONException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9047));
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));

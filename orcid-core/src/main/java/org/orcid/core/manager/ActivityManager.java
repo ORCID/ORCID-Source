@@ -22,12 +22,9 @@ import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ajaxForm.WorkForm;
 
 public interface ActivityManager {
 
-    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid);
-    
     public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid);
     
     public LinkedHashMap<Long, Funding> fundingMap(String orcid);

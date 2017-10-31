@@ -29,7 +29,7 @@ import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ExternalIdentifierManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
@@ -47,7 +47,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
     @Value("${org.orcid.core.validations.requireRelationship:false}")
     private boolean requireRelationshipOnExternalIdentifier;
     
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource(name = "orcidSecurityManagerV3")
