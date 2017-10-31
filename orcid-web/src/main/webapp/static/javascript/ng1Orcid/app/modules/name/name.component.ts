@@ -103,7 +103,13 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( this.nameForm.creditName == null ) {
                     this.nameForm.creditName = { value: null };
                 }
-                //console.log('this.nameForm', this.nameForm);
+                if( this.nameForm.familyName == null ) {
+                    this.nameForm.familyName = { value: null };
+                }
+                if( this.nameForm.givenNames == null ) {
+                    this.nameForm.givenNames = { value: null };
+                }
+                console.log('this.nameForm', this.nameForm);
             },
             error => {
                 console.log('getNameForm Error', error);
