@@ -433,7 +433,8 @@
                             </div>                                                                                              
                         </div>
                     </div>
-                    <div class="record-buttons">    
+                    <div class="record-buttons">
+                        <span id="modal-noop"><!-- For automated tests --> </span>    
                         <button class="btn btn-primary pull-right" ng-click="setExternalIdentifiersForm()"><@spring.message "freemarker.btnsavechanges"/></button>
                         <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
                     </div>
