@@ -39,7 +39,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
 import org.orcid.jaxb.model.v3.dev1.common.Url;

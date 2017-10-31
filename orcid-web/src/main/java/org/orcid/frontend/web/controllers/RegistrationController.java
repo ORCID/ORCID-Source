@@ -34,9 +34,9 @@ import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.OrcidSearchManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
@@ -50,7 +50,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
@@ -111,13 +111,13 @@ public class RegistrationController extends BaseController {
     @Resource
     private AuthenticationManager authenticationManager;    
 
-    @Resource
+    @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManager orcidSearchManager;
 
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
@@ -135,7 +135,7 @@ public class RegistrationController extends BaseController {
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;   
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
@@ -614,7 +614,7 @@ public class RegistrationController extends BaseController {
             emailEntity.setCurrent(true);
             emailManager.update(emailEntity);
             
-            profileEntityManager.updateLocale(emailOrcid, org.orcid.jaxb.model.common_v2.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+            profileEntityManager.updateLocale(emailOrcid, org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
             redirectAttributes.addFlashAttribute("emailVerified", true);
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");

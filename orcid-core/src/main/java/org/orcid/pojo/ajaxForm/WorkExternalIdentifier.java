@@ -20,11 +20,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 
 public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
     
@@ -93,7 +93,7 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
         return we;
     }
     
-    public org.orcid.jaxb.model.record_v2.ExternalID toRecordWorkExternalIdentifier() {
+    public org.orcid.jaxb.model.v3.dev1.record.ExternalID toRecordWorkExternalIdentifier() {
         ExternalID we = new ExternalID();
         if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierId())) 
             we.setValue(this.getWorkExternalIdentifierId().getValue());

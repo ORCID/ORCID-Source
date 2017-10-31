@@ -46,11 +46,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -98,7 +98,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Mock
     private EmailManager emailManager;
     
-    @Mock 
+    @Mock
     private ProfileEntityManager profileEntityManager;
     
     @Mock

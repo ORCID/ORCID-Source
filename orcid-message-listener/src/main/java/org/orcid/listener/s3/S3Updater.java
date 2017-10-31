@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.amazonaws.AmazonServiceException;
+import com.amazonaws.AmazonClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -125,118 +125,68 @@ public class S3Updater {
         }
     }
     
-    public void setErrorOnActivitiesBucket(String orcid, OrcidError error) throws IOException, JAXBException {
+    public void setErrorOnActivitiesBucket(String orcid, OrcidError error) throws AmazonClientException, IOException, JAXBException {
         putJsonElement(orcid, error, true);
         putXmlElement(orcid, error, true);        
     }    
 
-    private void putJsonElement(String orcid, OrcidMessage profile) throws JsonProcessingException {
-        try {
-            String bucket = getBucketName("api-1-2", "json", orcid);
-            s3MessagingService.send(bucket, orcid + ".json", toJson(profile), MediaType.APPLICATION_JSON);
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
+    private void putJsonElement(String orcid, OrcidMessage profile) throws AmazonClientException, JsonProcessingException {
+        String bucket = getBucketName("api-1-2", "json", orcid);
+        s3MessagingService.send(bucket, orcid + ".json", toJson(profile), MediaType.APPLICATION_JSON);        
     }
 
-    private void putXmlElement(String orcid, OrcidMessage profile) throws IOException, JAXBException {
-        try {
-            String bucket = getBucketName("api-1-2", "xml", orcid);
-            s3MessagingService.send(bucket, orcid + ".xml", toXML(profile), MediaType.APPLICATION_XML);
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
+    private void putXmlElement(String orcid, OrcidMessage profile) throws AmazonClientException, IOException, JAXBException {
+        String bucket = getBucketName("api-1-2", "xml", orcid);
+        s3MessagingService.send(bucket, orcid + ".xml", toXML(profile), MediaType.APPLICATION_XML);
     }
 
-    private void putJsonElement(String orcid, OrcidDeprecated error) throws JsonProcessingException {
-        try {
-            String bucket = getBucketName("api-1-2", "json", orcid);
-            s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
+    private void putJsonElement(String orcid, OrcidDeprecated error) throws AmazonClientException, JsonProcessingException {
+        String bucket = getBucketName("api-1-2", "json", orcid);
+        s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
     }
 
-    private void putXmlElement(String orcid, OrcidDeprecated error) throws IOException, JAXBException {
-        try {
-            String bucket = getBucketName("api-1-2", "xml", orcid);
-            s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
+    private void putXmlElement(String orcid, OrcidDeprecated error) throws AmazonClientException, IOException, JAXBException {
+        String bucket = getBucketName("api-1-2", "xml", orcid);
+        s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
     }
 
-    private void putJsonElement(String orcid, Record record) throws JsonProcessingException {
-        try {
-            String bucket = getBucketName("api-2-0", "json", orcid);
-            s3MessagingService.send(bucket, orcid + ".json", toJson(record), MediaType.APPLICATION_JSON);
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
+    private void putJsonElement(String orcid, Record record) throws AmazonClientException, JsonProcessingException {
+        String bucket = getBucketName("api-2-0", "json", orcid);
+        s3MessagingService.send(bucket, orcid + ".json", toJson(record), MediaType.APPLICATION_JSON);
     }
 
-    private void putXmlElement(String orcid, Record record) throws IOException, JAXBException {
-        try {
-            String bucket = getBucketName("api-2-0", "xml", orcid);
-            s3MessagingService.send(bucket, orcid + ".xml", toXML(record), MediaType.APPLICATION_XML);
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
+    private void putXmlElement(String orcid, Record record) throws AmazonClientException, IOException, JAXBException {
+        String bucket = getBucketName("api-2-0", "xml", orcid);
+        s3MessagingService.send(bucket, orcid + ".xml", toXML(record), MediaType.APPLICATION_XML);
     }
 
-    private void putJsonElement(String orcid, ActivitiesSummary as) throws JsonProcessingException {
-        try {
+    private void putJsonElement(String orcid, ActivitiesSummary as) throws AmazonClientException, JsonProcessingException {
+        String bucket = getBucketName("api-2-0-activities", "json", orcid);
+        s3MessagingService.send(bucket, orcid + "_activities.json", toJson(as), MediaType.APPLICATION_JSON);
+    }
+
+    private void putXmlElement(String orcid, ActivitiesSummary as) throws AmazonClientException, IOException, JAXBException {
+        String bucket = getBucketName("api-2-0-activities", "xml", orcid);
+        s3MessagingService.send(bucket, orcid + "_activities.xml", toXML(as), MediaType.APPLICATION_XML);
+    }
+
+    private void putJsonElement(String orcid, OrcidError error, boolean activities) throws AmazonClientException, JsonProcessingException {
+        if (activities) {
             String bucket = getBucketName("api-2-0-activities", "json", orcid);
-            s3MessagingService.send(bucket, orcid + "_activities.json", toJson(as), MediaType.APPLICATION_JSON);
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
+            s3MessagingService.send(bucket, orcid + "_activities.json", toJson(error), MediaType.APPLICATION_JSON);
+        } else {
+            String bucket = getBucketName("api-2-0", "json", orcid);
+            s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
         }
     }
 
-    private void putXmlElement(String orcid, ActivitiesSummary as) throws IOException, JAXBException {
-        try {
+    private void putXmlElement(String orcid, OrcidError error, boolean activities) throws AmazonClientException, IOException, JAXBException {
+        if (activities) {
             String bucket = getBucketName("api-2-0-activities", "xml", orcid);
-            s3MessagingService.send(bucket, orcid + "_activities.xml", toXML(as), MediaType.APPLICATION_XML);
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
-    }
-
-    private void putJsonElement(String orcid, OrcidError error, boolean activities) throws JsonProcessingException {
-        try {            
-            if(activities) {
-                String bucket = getBucketName("api-2-0-activities", "json", orcid);
-                s3MessagingService.send(bucket, orcid + "_activities.json", toJson(error), MediaType.APPLICATION_JSON);
-            } else {
-                String bucket = getBucketName("api-2-0", "json", orcid);                
-                s3MessagingService.send(bucket, orcid + ".json", toJson(error), MediaType.APPLICATION_JSON);
-            }            
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
-    }
-
-    private void putXmlElement(String orcid, OrcidError error, boolean activities) throws IOException, JAXBException {
-        try {
-            if(activities) {
-                String bucket = getBucketName("api-2-0-activities", "xml", orcid);
-                s3MessagingService.send(bucket, orcid + "_activities.xml", toXML(error), MediaType.APPLICATION_XML);
-            } else {
-                String bucket = getBucketName("api-2-0", "xml", orcid);                
-                s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
-            }            
-        } catch (AmazonServiceException e) {
-            LOG.error(e.getMessage());
-            throw e;
+            s3MessagingService.send(bucket, orcid + "_activities.xml", toXML(error), MediaType.APPLICATION_XML);
+        } else {
+            String bucket = getBucketName("api-2-0", "xml", orcid);
+            s3MessagingService.send(bucket, orcid + ".xml", toXML(error), MediaType.APPLICATION_XML);
         }
     }
 

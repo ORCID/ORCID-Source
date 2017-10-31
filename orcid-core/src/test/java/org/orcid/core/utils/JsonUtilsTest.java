@@ -173,5 +173,5 @@ public class JsonUtilsTest {
         assertEquals("object_1", rootNode.get("object_array").get(0).get("id").asText());
         assertEquals("object_2", rootNode.get("object_array").get(1).get("id").asText());
         assertEquals("object_3", rootNode.get("object_array").get(2).get("id").asText());
-    }
+    }    
 }

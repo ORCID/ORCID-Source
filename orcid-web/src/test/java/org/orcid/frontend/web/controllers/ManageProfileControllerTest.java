@@ -40,25 +40,25 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.BiographyManager;
-import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.v3.BiographyManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.GivenPermissionToManager;
-import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.common_v2.CreditName;
-import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.FamilyName;
-import org.orcid.jaxb.model.record_v2.GivenNames;
-import org.orcid.jaxb.model.record_v2.Name;
+import org.orcid.jaxb.model.v3.dev1.common.CreditName;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.dev1.record.Biography;
+import org.orcid.jaxb.model.v3.dev1.record.Email;
+import org.orcid.jaxb.model.v3.dev1.record.Emails;
+import org.orcid.jaxb.model.v3.dev1.record.FamilyName;
+import org.orcid.jaxb.model.v3.dev1.record.GivenNames;
+import org.orcid.jaxb.model.v3.dev1.record.Name;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -110,7 +110,7 @@ public class ManageProfileControllerTest {
 
     private RecordNameEntity getRecordName(String orcidId) {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         recordName.setFamilyName(orcidId + " Family Name");
         recordName.setGivenNames(orcidId + " Given Names");
         return recordName;
@@ -160,7 +160,7 @@ public class ManageProfileControllerTest {
                     e1.setGiver(invocation.getArgument(0));
                     ProfileSummaryEntity ps = new ProfileSummaryEntity();
                     RecordNameEntity recordName = new RecordNameEntity();
-                    recordName.setVisibility(Visibility.PUBLIC);
+                    recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
                     if (i == 0) {
                         ps.setId("0000-0000-0000-0004");
                         recordName.setCreditName("Credit Name");
@@ -181,7 +181,7 @@ public class ManageProfileControllerTest {
                 email1.setDateCreated(new Date());
                 email1.setLastModified(new Date());
                 email1.setPrimary(true);
-                email1.setVisibility(Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
 
                 EmailEntity email2 = new EmailEntity();
                 email2.setId(invocation.getArgument(0) + "_2@test.orcid.org");
@@ -190,7 +190,7 @@ public class ManageProfileControllerTest {
                 email2.setDateCreated(new Date());
                 email2.setLastModified(new Date());
                 email2.setPrimary(false);
-                email2.setVisibility(Visibility.PUBLIC);
+                email2.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
 
                 Set<EmailEntity> emails = new HashSet<EmailEntity>();
                 emails.add(email1);
@@ -230,7 +230,7 @@ public class ManageProfileControllerTest {
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
                 email.setId(emailString);
-                email.setVisibility(Visibility.PUBLIC);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
                 entity.setRecordNameEntity(getRecordName(orcidString));
@@ -254,7 +254,7 @@ public class ManageProfileControllerTest {
                 email1.setDateCreated(new Date());
                 email1.setLastModified(new Date());
                 email1.setPrimary(true);
-                email1.setVisibility(Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
 
                 Set<EmailEntity> emails = new HashSet<EmailEntity>();
                 emails.add(email1);
@@ -276,7 +276,7 @@ public class ManageProfileControllerTest {
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
                 email.setId(emailString);
-                email.setVisibility(Visibility.PUBLIC);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
                 entity.setRecordNameEntity(getRecordName(orcidString));
@@ -302,7 +302,7 @@ public class ManageProfileControllerTest {
                 email1.setDateCreated(new Date());
                 email1.setLastModified(new Date());
                 email1.setPrimary(true);
-                email1.setVisibility(Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
 
                 Set<EmailEntity> emails = new HashSet<EmailEntity>();
                 emails.add(email1);
@@ -324,7 +324,7 @@ public class ManageProfileControllerTest {
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
                 email.setId(emailString);
-                email.setVisibility(Visibility.PUBLIC);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
                 entity.setRecordNameEntity(getRecordName(orcidString));
@@ -680,7 +680,7 @@ public class ManageProfileControllerTest {
                 email1.setDateCreated(new Date());
                 email1.setLastModified(new Date());
                 email1.setPrimary(true);
-                email1.setVisibility(Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
 
                 Set<EmailEntity> emails = new HashSet<EmailEntity>();
                 emails.add(email1);

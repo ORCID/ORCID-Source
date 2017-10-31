@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -75,25 +74,13 @@ public class S3MessagingService {
      * @return true if the element was correctly sent to the bucket
      * 
      **/
-    public boolean send(String bucketName, String elementName, byte [] elementContent, String contentType) {
-        try {
-            InputStream is = new ByteArrayInputStream(elementContent);
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(contentType);
-            metadata.setContentLength(elementContent.length);
-            s3.putObject(new PutObjectRequest(bucketName, elementName, is, metadata));
-            return true;
-        } catch (AmazonServiceException ase) {
-            LOG.error("AmazonServiceException while sending element '" + elementName + "' to bucket " + bucketName + " with error message '" + ase.getMessage()
-                    + "' and status code '" + ase.getStatusCode() + "'");
-            throw ase;
-        } catch (AmazonClientException ace) {
-            LOG.error("AmazonClientException while sending element '" + elementName + "' to bucket " + bucketName + " error message: " + ace.getMessage(), ace);
-            throw ace;
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            throw e;
-        }
+    public boolean send(String bucketName, String elementName, byte[] elementContent, String contentType) throws AmazonClientException {
+        InputStream is = new ByteArrayInputStream(elementContent);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(contentType);
+        metadata.setContentLength(elementContent.length);
+        s3.putObject(new PutObjectRequest(bucketName, elementName, is, metadata));
+        return true;
     }
 
 }

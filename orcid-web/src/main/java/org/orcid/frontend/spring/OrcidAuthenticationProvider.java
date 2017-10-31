@@ -28,6 +28,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -94,7 +95,8 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         
         for (EmailEntity email : emails) {
             if (email.getPrimary()) {
-                return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword(), profileEntity.getOrcidType());
+                OrcidType orcidType = OrcidType.valueOf(profileEntity.getOrcidType().name());
+                return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword(), orcidType);
             }
         }
         return null;

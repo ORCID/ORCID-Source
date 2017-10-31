@@ -145,5 +145,13 @@
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
-	       
+	
+	<bean id="mongoClientURI" class="com.mongodb.MongoClientURI">
+		<constructor-arg value="${org.orcid.message-listener.mongo.uri:mongodb://localhost}" />
+	</bean>
+	
+	<bean id="mongoClient" class="com.mongodb.MongoClient" lazy-init="true">
+		<constructor-arg ref="mongoClientURI" />
+	</bean>
+		       
 </beans>

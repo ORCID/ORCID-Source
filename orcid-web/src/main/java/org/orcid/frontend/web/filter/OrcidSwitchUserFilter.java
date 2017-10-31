@@ -31,10 +31,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.exception.SwitchUserAuthenticationException;
-import org.orcid.jaxb.model.common_v2.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
@@ -64,7 +64,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidSwitchUserFilter.class);
     
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource
@@ -186,7 +186,8 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         ProfileEntity profileEntity = profileDao.find(orcid);
         for (EmailEntity email : profileEntity.getEmails()) {
             if (email.getPrimary()) {
-                return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword(), profileEntity.getOrcidType());
+                OrcidType orcidType = OrcidType.fromValue(profileEntity.getOrcidType().name());
+                return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword(), orcidType);
             }
         }
         return null;

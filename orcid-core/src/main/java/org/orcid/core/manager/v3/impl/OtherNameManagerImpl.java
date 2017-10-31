@@ -28,7 +28,7 @@ import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.OtherNameManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
@@ -46,7 +46,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;     
     
     @Resource

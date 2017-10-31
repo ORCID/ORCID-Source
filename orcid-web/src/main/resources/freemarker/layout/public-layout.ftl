@@ -577,7 +577,8 @@
         </footer>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='NEW_FOOTER' enabled=false>
-        <div class="footer clear-fix">
+        <div id="footer" class="footer clear-fix">
+            <span id="noop"><!-- For automated tests --> </span>
             <div class="container">
                 <div class="row">
                     <div class="col-md-11 col-md-offset-1">

@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -165,24 +164,4 @@ public class SourceManagerImpl implements SourceManager {
         return profileDao.find(sourceOrcid);
     }
 
-    @Override
-    public boolean isDelegatedByAnAdmin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            if (authorities != null) {
-                for (GrantedAuthority authority : authorities) {
-                    if (authority instanceof SwitchUserGrantedAuthority) {
-                        SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
-                        Authentication sourceAuthentication = suga.getSource();
-                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getDetails() instanceof OrcidProfileUserDetails) {
-                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getDetails()).getOrcidType(); 
-                            return OrcidType.ADMIN.equals(sourceUserType);
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

@@ -30,11 +30,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
-import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.ClientManager;
+import org.orcid.core.manager.v3.ClientDetailsManager;
+import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
-import org.orcid.core.manager.read_only.ClientManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -68,16 +68,16 @@ public class ClientsController extends BaseWorkspaceController {
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
     
-    @Resource
+    @Resource(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "clientManagerV3")
     private ClientManager clientManager;
     
-    @Resource
+    @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
 
     @RequestMapping
@@ -89,7 +89,7 @@ public class ClientsController extends BaseWorkspaceController {
         mav.addObject("member_id", memberId);
         mav.addObject("member_type", memberType);
                 
-        Set<org.orcid.jaxb.model.client_v2.Client> clients = clientManagerReadOnly.getClients(memberId);
+        Set<org.orcid.jaxb.model.v3.dev1.client.Client> clients = clientManagerReadOnly.getClients(memberId);
         if(clients.isEmpty()) {
             mav.addObject("allow_more_clients", true);
         } else if(MemberType.PREMIUM.equals(memberType) || MemberType.PREMIUM_INSTITUTION.equals(memberType)) {
@@ -218,9 +218,9 @@ public class ClientsController extends BaseWorkspaceController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody List<Client> getClients() {
         String memberId = getEffectiveUserOrcid();
-        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(memberId);
+        Set<org.orcid.jaxb.model.v3.dev1.client.Client> existingClients = clientManagerReadOnly.getClients(memberId);
         List<Client> clients = new ArrayList<Client>();
-        for (org.orcid.jaxb.model.client_v2.Client existingClient : existingClients) {
+        for (org.orcid.jaxb.model.v3.dev1.client.Client existingClient : existingClients) {
             clients.add(Client.fromModelObject(existingClient));
         }
         Collections.sort(clients);
@@ -233,7 +233,7 @@ public class ClientsController extends BaseWorkspaceController {
         validateIncomingElement(client);
 
         if (client.getErrors().size() == 0) {
-            org.orcid.jaxb.model.client_v2.Client newClient = client.toModelObject();             
+            org.orcid.jaxb.model.v3.dev1.client.Client newClient = client.toModelObject();             
             try {
                 newClient = clientManager.create(newClient);
             } catch (Exception e) {
@@ -254,7 +254,7 @@ public class ClientsController extends BaseWorkspaceController {
         validateIncomingElement(client);
         
         if (client.getErrors().size() == 0) {            
-            org.orcid.jaxb.model.client_v2.Client clientToEdit = client.toModelObject(); 
+            org.orcid.jaxb.model.v3.dev1.client.Client clientToEdit = client.toModelObject(); 
             try {                
                 // Updating from the clients edit page should not overwrite configuration values on the DB
                 clientToEdit = clientManager.edit(clientToEdit, false);
@@ -303,7 +303,7 @@ public class ClientsController extends BaseWorkspaceController {
     @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
     public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
         //Verify this client belongs to the member
-        org.orcid.jaxb.model.client_v2.Client client = clientManagerReadOnly.get(clientId);
+        org.orcid.jaxb.model.v3.dev1.client.Client client = clientManagerReadOnly.get(clientId);
         if(client == null) {
             return false;
         }

@@ -40,6 +40,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     emailSrvc: any;
     emailVerified: any;
     lengthError: any;
+    originalData: any;
     privacyHelp: boolean;
     showEdit: any;
 
@@ -54,17 +55,46 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emailVerified = false; //change to false once service is ready
         this.lengthError = false;
         this.nameForm = {};
+        this.originalData = {};
         this.privacyHelp = false;
         this.showEdit = false;
     }
 
     cancel(): void {
+        this.nameForm = this.originalData;
         this.getNameForm();
         this.showEdit = false;
     };
 
     close(): void {
         this.showEdit = false;
+    };
+
+    displayFullName(): boolean {
+        let display = false;
+
+        if(
+            !(this.nameForm != null && (this.nameForm.creditName == null) || this.nameForm.givenNames.value.length == 0 )
+        ){
+            display = true;
+        }
+
+        return display;
+    };
+
+    displayPublishedName(): boolean {
+        let display = false;
+
+        if(
+            this.nameForm != null 
+            && (this.nameForm.creditName == null 
+                || this.nameForm.creditName.value == null 
+                || this.nameForm.creditName.value.length == 0)
+        ){
+            display = true;
+        }
+
+        return display;
     };
 
     getNameForm(): void {
@@ -76,6 +106,13 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( this.nameForm.creditName == null ) {
                     this.nameForm.creditName = { value: null };
                 }
+                if( this.nameForm.familyName == null ) {
+                    this.nameForm.familyName = { value: null };
+                }
+                if( this.nameForm.givenNames == null ) {
+                    this.nameForm.givenNames = { value: null };
+                }
+                this.originalData = this.nameForm;
                 //console.log('this.nameForm', this.nameForm);
             },
             error => {
@@ -86,17 +123,21 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     privacyChange( obj ): any {
         this.nameForm.namesVisibility.visibility = obj;
-        this.setNameForm();   
+        this.setNameForm( false );   
     };
 
-    setNameForm(): any {
+    setNameForm( closeAfterAction ): any {
         this.nameService.setData( this.nameForm )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.nameForm = data;
                 //console.log('this.nameForm response', this.nameForm);
-                this.close();
+                if( closeAfterAction == true 
+                    && this.nameForm.errors.length == 0 
+                ) {
+                    this.close();
+                }
             },
             error => {
                 console.log('setNameForm Error', error);
@@ -106,27 +147,12 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setNameFormEnter( event ): any {
         if ( event.keyCode == "13"){
-            this.setNameForm();
+            this.setNameForm( true );
         }
     }
     
     toggleEdit(): void {
-
-        this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    this.showEdit = !this.showEdit;
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                console.log('getEmails', error);
-            } 
-        );
+        this.showEdit = !this.showEdit;    
     };
 
     //Default init functions provided by Angular Core

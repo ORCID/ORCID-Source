@@ -32,8 +32,6 @@ public interface SourceManager {
 
     boolean isInDelegationMode();
     
-    boolean isDelegatedByAnAdmin();
-
     ProfileEntity retrieveSourceProfileEntity();
 
     String retrieveRealUserOrcid();

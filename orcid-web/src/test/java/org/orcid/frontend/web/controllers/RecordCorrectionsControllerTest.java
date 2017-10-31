@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.model.record_correction.RecordCorrectionsPage;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;

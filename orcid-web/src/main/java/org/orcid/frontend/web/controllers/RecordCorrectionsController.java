@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.read_only.RecordCorrectionsManagerReadOnly;
 import org.orcid.model.record_correction.RecordCorrectionsPage;
 import org.springframework.stereotype.Controller;
@@ -40,7 +40,7 @@ public class RecordCorrectionsController extends BaseController {
     @Resource
     private RecordCorrectionsManagerReadOnly manager;
 
-    @Resource
+    @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager securityMgr;
     
     private static final Long PAGE_SIZE = 10L;

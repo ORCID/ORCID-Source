@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
@@ -51,7 +51,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = { "/delegators" })
 public class ManageDelegatorsController extends BaseWorkspaceController {
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;    
 
     @RequestMapping
