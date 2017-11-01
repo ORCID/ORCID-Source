@@ -63,6 +63,15 @@
                         <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
                         <@orcid.checkFeatureStatus 'BADGES'>
                             <div ng-if="integration.badgeAwarded">
+                                <div class="cc-badge authenticate popover-help-container" ng-if="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
+                                    <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" /></a>
+                                    <div id="cc-authenticate-help" class="popover bottom">
+                                      <div class="asrrow"></div>
+                                      <div class="popover-content">
+                                        <p><@orcid.msg 'member_list.details.authenticate_help_text'/></p>
+                                      </div>
+                                    </div>
+                                </div>
                                 <div class="cc-badge collect popover-help-container" ng-if="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
                                     <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" /></a>
                                     <div id="cc-collect-help" class="popover bottom">
