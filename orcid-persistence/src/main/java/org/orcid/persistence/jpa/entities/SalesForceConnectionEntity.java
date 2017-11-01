@@ -37,6 +37,7 @@ public class SalesForceConnectionEntity extends BaseEntity<Long> {
     private String orcid;
     private String email;
     private String salesForceAccountId;
+    private boolean primary;
 
     public SalesForceConnectionEntity() {
         super();
@@ -83,6 +84,15 @@ public class SalesForceConnectionEntity extends BaseEntity<Long> {
 
     public void setSalesForceAccountId(String salesForceAccountId) {
         this.salesForceAccountId = salesForceAccountId;
+    }
+
+    @Column(name = "is_primary")
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
     }
 
 }

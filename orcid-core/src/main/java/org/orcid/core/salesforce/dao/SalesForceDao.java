@@ -77,6 +77,8 @@ public interface SalesForceDao {
 
     void updateMember(Member member);
 
+    Opportunity retrieveOpportunity(String opportunityId);
+
     /**
      * 
      * @return the opportunity id

@@ -19,19 +19,18 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-
 	<changeSet author="Will Simpson" id="ALLOW-MULTIPLE-SF-CONNECTIONS">
 	    <preConditions>
 	    	<not>
-	    		<columnExists tableName="salesforce_connection" columnName="primary"/>
+	    		<columnExists tableName="salesforce_connection" columnName="is_primary"/>
 	    	</not>
 	    </preConditions>
 	    <addColumn tableName="salesforce_connection">
-	        <column name="primary" type="boolean" valueBoolean="true" defaultValueBoolean="true">
+	        <column name="is_primary" type="boolean" valueBoolean="true" defaultValueBoolean="true">
 	            <constraints nullable="false" />
 	        </column>
 	    </addColumn>
-		<dropUniqueConstraint tableName="salesforce_connection" constraintName="salesforce_connection_orcid_unique"/>
+		<dropUniqueConstraint tableName="salesforce_connection" constraintName="salesforce_connection_orcid_unique" />
 		<addUniqueConstraint tableName="salesforce_connection" constraintName="salesforce_connection_orcid_salesforce_account_id_unique" columnNames="orcid, salesforce_account_id" />
     </changeSet>
 </databaseChangeLog>
