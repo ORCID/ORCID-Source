@@ -255,7 +255,7 @@ public class MemberV2ApiServiceImplV2_0_rc4 extends MemberApiServiceImplHelper {
 
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS)
     @ApiOperation(value = "Create a listo of Work", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
@@ -264,21 +264,6 @@ public class MemberV2ApiServiceImplV2_0_rc4 extends MemberApiServiceImplHelper {
             @ApiResponse(code = 400, message = "Invalid Work representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Work representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createWorks(@PathParam("orcid") String orcid, WorkBulk works) {
-        return serviceDelegator.createWorks(orcid, works);
-    }
-    
-    @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(WORKS)
-    @ApiOperation(value = "Create a listo of Work", response = URI.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "At least one of the works was created", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class) ),
-            @ApiResponse(code = 400, message = "Invalid Work representation", response = String.class),
-            @ApiResponse(code = 500, message = "Invalid Work representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
-    public Response createWorksJSON(@PathParam("orcid") String orcid, WorkBulk works) {
-        jsonInputValidator.validateJSONInput(works);
         return serviceDelegator.createWorks(orcid, works);
     }
     
