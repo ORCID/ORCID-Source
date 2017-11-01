@@ -231,7 +231,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @ApiResponse(code = 400, message = "Invalid Work representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Work representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createWorkJSON(@PathParam("orcid") String orcid, Work work) {
-        jsonInputValidator.validateJSONInput(work, Work.class);
+        jsonInputValidator.validateJSONInput(work);
         compareWorkAndCreditNameVisibility(work);
         return serviceDelegator.createWork(orcid, work);
     }
@@ -256,7 +256,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Work updated") })
     public Response updateWorkJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Work work) {
-        jsonInputValidator.validateJSONInput(work, Work.class);
+        jsonInputValidator.validateJSONInput(work);
         compareWorkAndCreditNameVisibility(work);
         return serviceDelegator.updateWork(orcid, getPutCode(putCode), work);
     }
@@ -316,7 +316,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @ApiResponse(code = 400, message = "Invalid Funding representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Funding representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createFundingJSON(@PathParam("orcid") String orcid, Funding funding) {
-        jsonInputValidator.validateJSONInput(funding, Funding.class);
+        jsonInputValidator.validateJSONInput(funding);
         compareFundingAndCreditNameVisibility(funding);
         return serviceDelegator.createFunding(orcid, funding);
     }
@@ -341,7 +341,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Funding updated") })
     public Response updateFundingJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Funding funding) {
-        jsonInputValidator.validateJSONInput(funding, Funding.class);
+        jsonInputValidator.validateJSONInput(funding);
         compareFundingAndCreditNameVisibility(funding);
         return serviceDelegator.updateFunding(orcid, getPutCode(putCode), funding);
     }
@@ -403,7 +403,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @ApiResponse(code = 400, message = "Invalid Education representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Education representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createEducationJSON(@PathParam("orcid") String orcid, Education education) {
-        jsonInputValidator.validateJSONInput(education, Education.class);
+        jsonInputValidator.validateJSONInput(education);
         return serviceDelegator.createEducation(orcid, education);
     }
 
@@ -426,7 +426,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Education updated") })
     public Response updateEducationJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Education education) {
-        jsonInputValidator.validateJSONInput(education, Education.class);
+        jsonInputValidator.validateJSONInput(education);
         return serviceDelegator.updateEducation(orcid, getPutCode(putCode), education);
     }
 
@@ -483,7 +483,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @ApiResponse(code = 400, message = "Invalid Employment representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Employment representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createEmploymentJSON(@PathParam("orcid") String orcid, Employment employment) {
-        jsonInputValidator.validateJSONInput(employment, Employment.class);
+        jsonInputValidator.validateJSONInput(employment);
         return serviceDelegator.createEmployment(orcid, employment);
     }
 
@@ -506,7 +506,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Employment updated") })
     public Response updateEmploymentJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Employment employment) {
-        jsonInputValidator.validateJSONInput(employment, Employment.class);
+        jsonInputValidator.validateJSONInput(employment);
         return serviceDelegator.updateEmployment(orcid, getPutCode(putCode), employment);
     }
 
@@ -563,7 +563,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @ApiResponse(code = 400, message = "Invalid Peer Review representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Peer Review representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createPeerReviewJSON(@PathParam("orcid") String orcid, PeerReview peerReview) {
-        jsonInputValidator.validateJSONInput(peerReview, PeerReview.class);
+        jsonInputValidator.validateJSONInput(peerReview);
         return serviceDelegator.createPeerReview(orcid, peerReview);
     }
 
@@ -586,7 +586,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
     public Response updatePeerReviewJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, PeerReview peerReview) {
-        jsonInputValidator.validateJSONInput(peerReview, PeerReview.class);
+        jsonInputValidator.validateJSONInput(peerReview);
         return serviceDelegator.updatePeerReview(orcid, getPutCode(putCode), peerReview);
     }
 
@@ -632,7 +632,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @ApiResponse(code = 201, message = "Group created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Group resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Group representation", response = String.class) })
     public Response createGroupIdRecordJSON(GroupIdRecord groupIdRecord) {
-        jsonInputValidator.validateJSONInput(groupIdRecord, GroupIdRecord.class);
+        jsonInputValidator.validateJSONInput(groupIdRecord);
         return serviceDelegator.createGroupIdRecord(groupIdRecord);
     }
 
@@ -655,7 +655,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
     public Response updateGroupIdRecordJSON(@PathParam("putCode") String putCode, GroupIdRecord groupIdRecord) {
-        jsonInputValidator.validateJSONInput(groupIdRecord, GroupIdRecord.class);
+        jsonInputValidator.validateJSONInput(groupIdRecord);
         return serviceDelegator.updateGroupIdRecord(groupIdRecord, getPutCode(putCode));
     }
 
@@ -744,7 +744,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class)) })
     public Response addPermissionNotificationJSON(@PathParam("orcid") String orcid, NotificationPermission notification) {
-        jsonInputValidator.validateJSONInput(notification, NotificationPermission.class);
+        jsonInputValidator.validateJSONInput(notification);
         return notificationsServiceDelegator.addPermissionNotification(uriInfo, orcid, notification);
     }
 
@@ -782,7 +782,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Add a new researcher url for an ORCID ID", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createResearcherUrlJSON(@PathParam("orcid") String orcid, ResearcherUrl researcherUrl) {
-        jsonInputValidator.validateJSONInput(researcherUrl, ResearcherUrl.class);
+        jsonInputValidator.validateJSONInput(researcherUrl);
         return serviceDelegator.createResearcherUrl(orcid, researcherUrl);
     }
 
@@ -803,7 +803,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Edits researcher url for an ORCID ID", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editResearcherUrlJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ResearcherUrl researcherUrl) {
-        jsonInputValidator.validateJSONInput(researcherUrl, ResearcherUrl.class);
+        jsonInputValidator.validateJSONInput(researcherUrl);
         return serviceDelegator.updateResearcherUrl(orcid, getPutCode(putCode), researcherUrl);
     }
 
@@ -859,7 +859,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Add other name", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createOtherNameJSON(@PathParam("orcid") String orcid, OtherName otherName) {
-        jsonInputValidator.validateJSONInput(otherName, OtherName.class);
+        jsonInputValidator.validateJSONInput(otherName);
         return serviceDelegator.createOtherName(orcid, otherName);
     }
 
@@ -880,7 +880,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Edit other name", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editOtherNameJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, OtherName otherName) {
-        jsonInputValidator.validateJSONInput(otherName, OtherName.class);
+        jsonInputValidator.validateJSONInput(otherName);
         return serviceDelegator.updateOtherName(orcid, getPutCode(putCode), otherName);
     }
 
@@ -937,7 +937,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Add external identifier", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createExternalIdentifierJSON(@PathParam("orcid") String orcid, PersonExternalIdentifier externalIdentifier) {
-        jsonInputValidator.validateJSONInput(externalIdentifier, PersonExternalIdentifier.class);
+        jsonInputValidator.validateJSONInput(externalIdentifier);
         return serviceDelegator.createExternalIdentifier(orcid, externalIdentifier);
     }
 
@@ -958,7 +958,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Edit external identifier", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editExternalIdentifierJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, PersonExternalIdentifier externalIdentifier) {
-        jsonInputValidator.validateJSONInput(externalIdentifier, PersonExternalIdentifier.class);
+        jsonInputValidator.validateJSONInput(externalIdentifier);
         return serviceDelegator.updateExternalIdentifier(orcid, getPutCode(putCode), externalIdentifier);
     }
 
@@ -1014,7 +1014,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Add keyword", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createKeywordJSON(@PathParam("orcid") String orcid, Keyword keyword) {
-        jsonInputValidator.validateJSONInput(keyword, Keyword.class);
+        jsonInputValidator.validateJSONInput(keyword);
         return serviceDelegator.createKeyword(orcid, keyword);
     }
 
@@ -1035,7 +1035,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Edit keyword", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editKeywordJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Keyword keyword) {
-        jsonInputValidator.validateJSONInput(keyword, Keyword.class);
+        jsonInputValidator.validateJSONInput(keyword);
         return serviceDelegator.updateKeyword(orcid, getPutCode(putCode), keyword);
     }
 
@@ -1082,7 +1082,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Add an address", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response createAddressJSON(@PathParam("orcid") String orcid, Address address) {
-        jsonInputValidator.validateJSONInput(address, Address.class);
+        jsonInputValidator.validateJSONInput(address);
         return serviceDelegator.createAddress(orcid, address);
     }
 
@@ -1103,7 +1103,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @ApiOperation(value = "Edit an address", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editAddressJSON(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Address address) {
-        jsonInputValidator.validateJSONInput(address, Address.class);
+        jsonInputValidator.validateJSONInput(address);
         return serviceDelegator.updateAddress(orcid, getPutCode(putCode), address);
     }
 

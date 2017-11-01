@@ -263,7 +263,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             if (OrcidMessage.class.equals(type) 
                     || org.orcid.jaxb.model.record_rc3.WorkBulk.class.equals(type) 
                     || org.orcid.jaxb.model.record_rc4.WorkBulk.class.equals(type)
-                    || org.orcid.jaxb.model.record_v2.WorkBulk.class.equals(type)) {
+                    || org.orcid.jaxb.model.record_v2.WorkBulk.class.equals(type)
+                    || org.orcid.jaxb.model.v3.dev1.record.WorkBulk.class.equals(type)) {
                 return unmarshaller;
             }
             if (schemaFilenamePrefix != null) {
