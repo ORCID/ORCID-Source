@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.AmazonClientException;
+
 /**
  * Core logic for listeners
  * 
@@ -114,12 +116,14 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                     LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
                     recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
                 }
+            } catch (AmazonClientException e) {
+                LOG.error("Unable to fetch record " + orcid + " for 1.2 API: " + e.getMessage(), e);
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
             } catch (Exception e) {
                 // something else went wrong fetching record from ORCID and
                 // threw a
                 // runtime exception
-                LOG.error("Unable to fetch record " + orcid + " for 1.2 API");
-                LOG.error(e.getMessage(), e);
+                LOG.error("Unable to fetch record " + orcid + " for 1.2 API: " + e.getMessage(), e);
                 recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
             }
         }
@@ -151,12 +155,14 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                     LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
                     recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
                 }
+            } catch (AmazonClientException e) {
+                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
             } catch (Exception e) {
                 // something else went wrong fetching record from ORCID and
                 // threw a
                 // runtime exception
-                LOG.error("Unable to fetch record " + orcid + " for 2.0 API");
-                LOG.error(e.getMessage(), e);
+                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
                 recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
             }
         }
@@ -188,12 +194,14 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                     LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
                     recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
                 }
+            } catch (AmazonClientException e) {
+                LOG.error("Unable to fetch activities for record record " + orcid + " for 2.0 API: " + e.getMessage(), e);
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
             } catch (Exception e) {
                 // something else went wrong fetching activities from ORCID and
                 // threw a
                 // runtime exception
-                LOG.error("Unable to fetch activities for record " + orcid + " for 2.0 API");
-                LOG.error(e.getMessage(), e);
+                LOG.error("Unable to fetch activities for record record " + orcid + " for 2.0 API: " + e.getMessage(), e);
                 recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
             }
         }

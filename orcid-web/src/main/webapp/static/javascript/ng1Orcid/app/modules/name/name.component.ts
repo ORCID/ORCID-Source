@@ -40,6 +40,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     emailSrvc: any;
     emailVerified: any;
     lengthError: any;
+    originalData: any;
     privacyHelp: boolean;
     showEdit: any;
 
@@ -54,11 +55,13 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emailVerified = false; //change to false once service is ready
         this.lengthError = false;
         this.nameForm = {};
+        this.originalData = {};
         this.privacyHelp = false;
         this.showEdit = false;
     }
 
     cancel(): void {
+        this.nameForm = this.originalData;
         this.getNameForm();
         this.showEdit = false;
     };
@@ -103,6 +106,13 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( this.nameForm.creditName == null ) {
                     this.nameForm.creditName = { value: null };
                 }
+                if( this.nameForm.familyName == null ) {
+                    this.nameForm.familyName = { value: null };
+                }
+                if( this.nameForm.givenNames == null ) {
+                    this.nameForm.givenNames = { value: null };
+                }
+                this.originalData = this.nameForm;
                 //console.log('this.nameForm', this.nameForm);
             },
             error => {

@@ -25,7 +25,7 @@ import java.util.Optional;
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
@@ -64,7 +64,7 @@ public class SelfServiceController extends BaseController {
     @Resource
     private SalesForceManager salesForceManager;
 
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
     @ModelAttribute("contactRoleTypes")

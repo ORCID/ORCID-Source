@@ -29,11 +29,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -73,13 +73,13 @@ public class ClaimController extends BaseController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
     private AuthenticationManager authenticationManager;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
     @Resource
@@ -180,8 +180,8 @@ public class ClaimController extends BaseController {
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 public void doInTransactionWithoutResult(TransactionStatus status) {
                     Locale requestLocale = RequestContextUtils.getLocale(request);
-                    org.orcid.jaxb.model.common_v2.Locale userLocale = (requestLocale == null) ? null
-                            : org.orcid.jaxb.model.common_v2.Locale.fromValue(requestLocale.toString());
+                    org.orcid.jaxb.model.v3.dev1.common.Locale userLocale = (requestLocale == null) ? null
+                            : org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(requestLocale.toString());
                     boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
                     if (!claimed) {
                         throw new IllegalStateException("Unable to claim record " + orcid);

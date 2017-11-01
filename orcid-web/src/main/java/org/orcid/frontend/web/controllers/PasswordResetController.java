@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
@@ -75,7 +75,7 @@ public class PasswordResetController extends BaseController {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
@@ -90,7 +90,7 @@ public class PasswordResetController extends BaseController {
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
     @Resource

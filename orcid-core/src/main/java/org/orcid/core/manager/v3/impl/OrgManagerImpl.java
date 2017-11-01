@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.OrcidValidationException;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
@@ -59,7 +59,7 @@ public class OrgManagerImpl implements OrgManager {
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Override

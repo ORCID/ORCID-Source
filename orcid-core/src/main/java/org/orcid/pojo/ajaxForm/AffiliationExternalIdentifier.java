@@ -36,8 +36,6 @@ public class AffiliationExternalIdentifier implements ErrorsInterface, Serializa
     
     private Text url;
     
-    private Text putCode;
-    
     private Text relationship;
 
     public static AffiliationExternalIdentifier valueOf(ExternalID externalID) {
@@ -107,14 +105,6 @@ public class AffiliationExternalIdentifier implements ErrorsInterface, Serializa
 
     public void setValue(Text value) {
         this.value = value;
-    }
-
-    public Text getPutCode() {
-        return putCode;
-    }
-
-    public void setPutCode(Text putCode) {
-        this.putCode = putCode;
     }
 
     @Override

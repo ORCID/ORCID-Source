@@ -32,21 +32,21 @@ public class Visibility implements ErrorsInterface, Required, Serializable {
 
     private String getRequiredMessage;
 
-    private org.orcid.jaxb.model.common_v2.Visibility visibility;
+    private org.orcid.jaxb.model.v3.dev1.common.Visibility visibility;
     
     public Visibility() {
-        visibility = org.orcid.jaxb.model.common_v2.Visibility.PUBLIC;
+        visibility = org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC;
     }
     
     public static Visibility valueOf(org.orcid.jaxb.model.common_v2.Visibility visibility) {
         Visibility v = new Visibility();
-        v.setVisibility(visibility);
+        v.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(visibility.name()));
         return v;
     }
     
     public static Visibility valueOf(org.orcid.jaxb.model.v3.dev1.common.Visibility visibility) {
         Visibility v = new Visibility();
-        v.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.value()));
+        v.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.value()));
         return v;
     }
     
@@ -58,11 +58,11 @@ public class Visibility implements ErrorsInterface, Required, Serializable {
         this.errors = errors;
     }
 
-    public org.orcid.jaxb.model.common_v2.Visibility getVisibility() {
+    public org.orcid.jaxb.model.v3.dev1.common.Visibility getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(org.orcid.jaxb.model.common_v2.Visibility visibility) {
+    public void setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility visibility) {
         this.visibility = visibility;
     }
 

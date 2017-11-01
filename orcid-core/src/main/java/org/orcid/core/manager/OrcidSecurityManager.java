@@ -44,8 +44,6 @@ public interface OrcidSecurityManager {
 
     boolean isAdmin();
 
-    boolean isPasswordConfirmationRequired();
-
     String getClientIdFromAPIRequest();
 
     void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException, DeactivatedException;

@@ -114,7 +114,22 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-        </dependency> 		  	
+        </dependency> 	
+        
+        <!-- Mongo -->
+		<dependency>
+		    <groupId>org.mongodb</groupId>
+		    <artifactId>mongo-java-driver</artifactId>
+		    <version>3.5.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.fakemongo/fongo -->
+		<dependency>
+		    <groupId>com.github.fakemongo</groupId>
+		    <artifactId>fongo</artifactId>
+		    <version>2.1.0</version>
+		    <scope>test</scope>
+		</dependency>
+
   </dependencies>
   <parent>
   	<groupId>org.orcid</groupId>

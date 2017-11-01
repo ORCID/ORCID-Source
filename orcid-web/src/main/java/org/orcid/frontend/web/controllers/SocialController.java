@@ -24,11 +24,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
-import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
-import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -66,7 +67,7 @@ public class SocialController extends BaseController {
     @Resource
     private UserConnectionManager userConnectionManager;
     
-    @Resource
+    @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource
@@ -114,7 +115,8 @@ public class SocialController extends BaseController {
     private OrcidProfileUserDetails getOrcidProfileUserDetails(String orcid) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
-        return new OrcidProfileUserDetails(orcid, email.getEmail(), profileEntity.getPassword(), profileEntity.getOrcidType());
+        OrcidType orcidType = OrcidType.valueOf(profileEntity.getOrcidType().name());
+        return new OrcidProfileUserDetails(orcid, email.getEmail(), profileEntity.getPassword(), orcidType);
     }
 
     private Map<String, String> retrieveUserDetails(SocialType connectionType) {

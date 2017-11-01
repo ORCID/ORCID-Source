@@ -32,28 +32,28 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.EmailConstants;
-import org.orcid.core.manager.AddressManager;
+import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.BiographyManager;
-import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.v3.BiographyManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.GivenPermissionToManager;
-import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.record_v2.Addresses;
-import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.Name;
+import org.orcid.jaxb.model.v3.dev1.record.Addresses;
+import org.orcid.jaxb.model.v3.dev1.record.Biography;
+import org.orcid.jaxb.model.v3.dev1.record.Emails;
+import org.orcid.jaxb.model.v3.dev1.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -105,16 +105,16 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
 
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
     @Resource
@@ -126,16 +126,16 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Resource(name = "addressManagerV3")
     private AddressManager addressManager;
 
-    @Resource
+    @Resource(name = "biographyManagerV3")
     private BiographyManager biographyManager;
     
     @Resource
     private RegistrationManager registrationManager;
 
-    @Resource
+    @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
     
     @Resource
@@ -606,7 +606,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             // clear errors
             email.setErrors(new ArrayList<String>());
             String currentUserOrcid = getCurrentUserOrcid();            
-            emailManager.addEmail(request, currentUserOrcid, email.toV2Email());                            
+            emailManager.addEmail(request, currentUserOrcid, email.toV3Email());                            
         } else {
             email.setErrors(errors);
         }
@@ -662,7 +662,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         emails.setErrors(allErrors);
         if (allErrors.size() == 0) {
-            emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV2Emails());
+            emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
             
         }
         return emails;
@@ -797,7 +797,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setContent(bf.getBiography().getValue());
             }
             if (bf.getVisiblity() != null && bf.getVisiblity().getVisibility() != null) {
-                org.orcid.jaxb.model.common_v2.Visibility v = org.orcid.jaxb.model.common_v2.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
+                org.orcid.jaxb.model.v3.dev1.common.Visibility v = org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
                 bio.setVisibility(v);
             }
 

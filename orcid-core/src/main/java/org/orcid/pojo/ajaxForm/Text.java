@@ -20,10 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Keyword;
-import org.orcid.jaxb.model.message.OtherName;
-import org.orcid.jaxb.model.message.Subtitle;
-import org.orcid.jaxb.model.message.Title;
+import org.orcid.utils.OrcidStringUtils;
 
 public class Text implements ErrorsInterface, Required, Serializable, Comparable<Text> {
     
@@ -45,26 +42,6 @@ public class Text implements ErrorsInterface, Required, Serializable, Comparable
         t.setValue(String.valueOf(value));
        return t;
     }
-    
-    public Keyword toKeyword() {
-        Keyword k = new Keyword();
-        k.setContent(this.value);
-        return k;
-    }
-
-    public Title toTitle() {
-        return new Title(this.value);
-    }
-
-    public Subtitle toSubtitle() {
-        return new Subtitle(this.value);
-    }
-    
-    public OtherName toOtherName() {
-        OtherName n = new OtherName();
-        n.setContent(this.value);
-        return n;
-    }
 
     public List<String> getErrors() {
         return errors;
@@ -79,7 +56,7 @@ public class Text implements ErrorsInterface, Required, Serializable, Comparable
     }
 
     public void setValue(String value) {
-        this.value = value;
+        this.value = OrcidStringUtils.filterInvalidXMLCharacters(value);
     }
 
     public boolean isRequired() {

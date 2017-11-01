@@ -51,15 +51,6 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
     @Resource
     private AffiliationsManager affiliationsManager;
 
-    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid) {
-        LinkedHashMap<Long, WorkForm> workMap = new LinkedHashMap<>();
-        List<Work> works = workManager.findPublicWorks(orcid);
-        if (works != null)
-            for (Work work : works)                
-                workMap.put(work.getPutCode(), WorkForm.valueOf(work));                          
-        return workMap;
-    }
-    
     public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid) {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid);
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();

@@ -29,21 +29,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.helper.UserSession;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
-import org.orcid.jaxb.model.notification_v2.Notification;
-import org.orcid.jaxb.model.notification_v2.NotificationType;
-import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.dev1.notification.Notification;
+import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
+import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -63,7 +63,7 @@ import org.springframework.web.servlet.ModelAndView;
 @SessionAttributes("primaryEmail")
 public class NotificationController extends BaseController {
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
@@ -81,7 +81,7 @@ public class NotificationController extends BaseController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
     @RequestMapping

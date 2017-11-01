@@ -17,7 +17,7 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
     [
         '$compile', 
         '$scope', 
-        function DelegatesCtrl(
+        function DelegatesCtrlV2(
             $compile,
             $scope
         ){
@@ -208,6 +208,7 @@ export const DelegatesCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.getResults = function(rows){
+                console.log("v1 controller");
                 $.ajax({
                     url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
                     dataType: 'json',

@@ -17,8 +17,12 @@
 
 -->
 <@public classes=['home']>
-
-<div class="row" ng-controller="SearchCtrl" id="SearchCtrl" data-search-query="${searchQuery?html}">
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+    <div class="row" ng-controller="SearchCtrlV2" id="SearchCtrl" data-search-query="${searchQuery?html}">
+</@orcid.checkFeatureStatus>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+    <div class="row" ng-controller="SearchCtrl" id="SearchCtrl" data-search-query="${searchQuery?html}">
+</@orcid.checkFeatureStatus>
     <div class="centered">
         <span id="ajax-loader-search" class="orcid-hide"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
     </div>

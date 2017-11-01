@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

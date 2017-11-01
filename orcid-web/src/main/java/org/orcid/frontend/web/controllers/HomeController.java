@@ -28,7 +28,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class HomeController extends BaseController {
     @Resource
     private InternalSSOManager internalSSOManager;
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
 // @formatter:off
@@ -96,7 +96,7 @@ public class HomeController extends BaseController {
         if (lang != null) {
             String orcid = getRealUserOrcid();
             if (orcid != null) {
-                profileEntityManager.updateLocale(orcid, org.orcid.jaxb.model.common_v2.Locale.fromValue(lang));
+                profileEntityManager.updateLocale(orcid, org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(lang));
             }
         }
 

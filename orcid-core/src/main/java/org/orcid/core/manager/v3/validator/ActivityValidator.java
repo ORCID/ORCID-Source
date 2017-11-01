@@ -35,6 +35,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.utils.v3.identifiers.NormalizationService;
 import org.orcid.jaxb.model.v3.dev1.common.Amount;
 import org.orcid.jaxb.model.v3.dev1.common.Contributor;
 import org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid;
@@ -45,6 +46,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Organization;
 import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
+import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.common.Year;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
@@ -71,6 +73,10 @@ public class ActivityValidator {
 
     @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator externalIDValidator;
+    
+    @Resource
+    private NormalizationService norm;
+
 
     public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
@@ -440,6 +446,10 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
+                    //normalize the ids before checking equality
+                    newId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
+                    if (existingId.getNormalized() == null)
+                        existingId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();

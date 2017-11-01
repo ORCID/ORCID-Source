@@ -78,7 +78,7 @@
                     <button class="btn btn-primary" (click)="setNameForm( true )"><@spring.message "freemarker.btnsavechanges"/></button>
                 </li>
                 <li class="pull-right">
-                    <a class="cancel-option" (click)="close()"><@spring.message "freemarker.btncancel"/></a>
+                    <a class="cancel-option" (click)="cancel()"><@spring.message "freemarker.btncancel"/></a>
                 </li>
             </ul>
         </div>

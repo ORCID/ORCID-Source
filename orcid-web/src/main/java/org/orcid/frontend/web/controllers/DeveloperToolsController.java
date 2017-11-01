@@ -26,11 +26,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.orcid.core.manager.ClientManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.read_only.ClientManagerReadOnly;
-import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.ClientManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -41,7 +41,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,19 +56,19 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
     private static int CLIENT_NAME_LENGTH = 255;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
-    @Resource
+    @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "clientManagerV3")
     private ClientManager clientManager;
     
-    @Resource
+    @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
     
     @RequestMapping
@@ -109,7 +108,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/get-client.json", method = RequestMethod.GET)
     public @ResponseBody Client getClient() {
         String userOrcid = getEffectiveUserOrcid();
-        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
+        Set<org.orcid.jaxb.model.v3.dev1.client.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
 
         if (existingClients.isEmpty()) {
             return null;
@@ -123,7 +122,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
-            org.orcid.jaxb.model.client_v2.Client clientToCreate = client.toModelObject();
+            org.orcid.jaxb.model.v3.dev1.client.Client clientToCreate = client.toModelObject();
             try {
                 clientToCreate = clientManager.createPublicClient(clientToCreate);
             } catch (Exception e) {
@@ -144,7 +143,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
-            org.orcid.jaxb.model.client_v2.Client clientToEdit = client.toModelObject();
+            org.orcid.jaxb.model.v3.dev1.client.Client clientToEdit = client.toModelObject();
             try {
                 clientToEdit = clientManager.edit(clientToEdit, false);
             } catch (Exception e) {
@@ -163,7 +162,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
     public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
         //Verify this client belongs to the member
-        org.orcid.jaxb.model.client_v2.Client client = clientManagerReadOnly.get(clientId);
+        org.orcid.jaxb.model.v3.dev1.client.Client client = clientManagerReadOnly.get(clientId);
         if(client == null) {
             return false;
         }

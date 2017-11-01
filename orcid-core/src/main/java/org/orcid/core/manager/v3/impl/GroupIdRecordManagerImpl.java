@@ -26,7 +26,7 @@ import org.orcid.core.exception.OrcidElementCantBeDeletedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.GroupIdRecordManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
@@ -35,7 +35,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManager {
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource
