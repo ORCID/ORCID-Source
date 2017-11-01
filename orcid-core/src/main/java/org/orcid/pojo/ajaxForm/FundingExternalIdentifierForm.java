@@ -20,9 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Url;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 
 public class FundingExternalIdentifierForm implements ErrorsInterface, Serializable {
 
@@ -100,20 +100,6 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
         return result;
     }
     
-    public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.v3.dev1.record.ExternalID fundingExternalIdentifier) {
-        FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();
-        if (fundingExternalIdentifier.getType() != null)
-            result.setType(Text.valueOf(fundingExternalIdentifier.getType()));
-        if (fundingExternalIdentifier.getUrl() != null && !PojoUtil.isEmpty(fundingExternalIdentifier.getUrl().getValue()))
-            result.setUrl(Text.valueOf(fundingExternalIdentifier.getUrl().getValue()));
-        if (!PojoUtil.isEmpty(fundingExternalIdentifier.getValue()))
-            result.setValue(Text.valueOf(fundingExternalIdentifier.getValue()));
-        if(fundingExternalIdentifier.getRelationship() != null) 
-            result.setRelationship(Text.valueOf(fundingExternalIdentifier.getRelationship().value()));        
-            
-        return result;
-    }
-                
     @Deprecated
     public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.message.FundingExternalIdentifier fundingExternalIdentifier) {
         FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();
@@ -127,7 +113,7 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
     }       
     
     public ExternalID toFundingExternalIdentifier() {
-        ExternalID result = new org.orcid.jaxb.model.record_v2.ExternalID();
+        ExternalID result = new ExternalID();
         if (!PojoUtil.isEmpty(type))
             result.setType(type.getValue());
         if (!PojoUtil.isEmpty(url))
@@ -142,7 +128,7 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
     }
     
     public ExternalID toRecordFundingExternalIdentifier() {
-        ExternalID result = new org.orcid.jaxb.model.record_v2.ExternalID();
+        ExternalID result = new ExternalID();
         if (!PojoUtil.isEmpty(type))
             result.setType(type.getValue());
         if (!PojoUtil.isEmpty(url))

@@ -481,7 +481,12 @@
                 </div>
             </div>
         </div>
+    <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+        <div ng-controller="DelegatesCtrlV2" class="clearfix" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
         <div ng-controller="DelegatesCtrl" class="clearfix" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
+    </@orcid.checkFeatureStatus>
             <div ng-show="delegation.length > 0" ng-cloak>
                 <div class="ng-hide" ng-show="showInitLoader == true;">
                 <i id="delegates-spinner" class="glyphicon glyphicon-refresh spin x4 green"></i>
@@ -492,10 +497,10 @@
                 <table class="table table-bordered settings-table normal-width" ng-show="delegation" ng-cloak>
                     <thead>
                         <tr>
-                            <th width="40%" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
-                            <th width="30%" ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-                            <th width="20%" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-                            <td width="10%"></td>
+                            <th class="width-30" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
+                            <th ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+                            <th class="width-15" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+                            <th class="width-10" ></th>
                         </tr>
                     </thead>
                     <tbody ng-show="!delegation.length > 0" ng-cloak>
@@ -505,10 +510,16 @@
                     </tbody>
                     <tbody ng-show="delegation.length > 0" ng-cloak>
                         <tr ng-repeat="delegationDetails in delegation | orderBy:sort.column:sort.descending">
-                            <td width="40%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
-                            <td width="30%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
-                            <td width="20%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
-                            <td width="10%" class="tooltip-container">
+                            <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+                                <td><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                                <td><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">${baseUri}/{{delegationDetails.receiverOrcid.value}}</a></td>
+                            </@orcid.checkFeatureStatus>
+                            <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+                                <td><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                                <td><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
+                            </@orcid.checkFeatureStatus>
+                            <td>{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
+                            <td class="tooltip-container">
                                 <a
                                 ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
                                 ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
@@ -531,45 +542,65 @@
             <#else>
                 <p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
                 <div>
-                    <form ng-submit="search()">
-                        <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
-                        <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
-                    </form>
+                        <form ng-submit="search()">
+                            <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
+                            <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
+                        </form>
                 </div>
                 <div>
                     <table class="ng-cloak table" ng-show="areResults()">
                         <thead>
                             <tr>
-                                <th width="20%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+                                <th width="20%">${springMacroRequestContext.getMessage("manage_bio_settings.thname")}</th>
                                 <th width="25%">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
                                 <th width="10%"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat='result in results' class="new-search-result">
-                                <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="DisplayName" ng-bind="getDisplayName(result)"></a></td>
-                                <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="orcid-identifier">{{result['orcid-profile']['orcid-identifier'].path}}</td>
-                                <td width="10%">
-                                    <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
-                                        <span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
-                                            ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
-                                            class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-                                        <a ng-show="delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
-                                            ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
-                                            class="glyphicon glyphicon-trash grey"
-                                            title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
-                                    </span>
-                                    <span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div id="show-more-button-container">
-                        <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
-                        <span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+                            <@orcid.checkFeatureStatus featureName="HTTPS_IDS">
+                                <tr ng-repeat='result in results track by $index' class="new-search-result">
+                                    <td width="20%" ng-bind="getDisplayName(result)"></td>
+                                    <td width="25%" class='search-result-orcid-id'><a href="result['orcid-identifier'].uri" target="result['orcid-identifier'].path">{{result['orcid-identifier'].uri}}</a></td>
+                                    <td width="10%">
+                                        <span ng-show="effectiveUserOrcid !== result['orcid-identifier'].path">
+                                            <span ng-show="!delegatesByOrcid[result['orcid-identifier'].path]"
+                                                ng-click="confirmAddDelegate(result['given-names'] + ' ' + result['family-name'], result['orcid-identifier'].path, $index)"
+                                                class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+                                            <a ng-show="delegatesByOrcid[result['orcid-identifier'].path]"
+                                                ng-click="confirmRevoke(result['given-names'] + ' ' + result['family-name'], result['orcid-identifier'].path, $index)"
+                                                class="glyphicon glyphicon-trash grey"
+                                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+                                        </span>
+                                        <span ng-show="effectiveUserOrcid === result['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+                                    </td>
+                                </tr>
+                            </@orcid.checkFeatureStatus>
+                            <@orcid.checkFeatureStatus featureName="HTTPS_IDS" enabled=false>
+                                <tr ng-repeat='result in results' class="new-search-result">
+                                    <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="DisplayName" ng-bind="getDisplayName(result)"></a></td>
+                                    <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="orcid-identifier">{{result['orcid-profile']['orcid-identifier'].path}}</td>
+                                    <td width="10%">
+                                        <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
+                                            <span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+                                                ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+                                                class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+                                            <a ng-show="delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+                                                ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+                                                class="glyphicon glyphicon-trash grey"
+                                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+                                        </span>
+                                        <span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+                                    </td>
+                                </tr>
+                            </@orcid.checkFeatureStatus>
+                            </tbody>
+                        </table>
+                        <div id="show-more-button-container">
+                            <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
+                            <span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+                        </div>
                     </div>
-                </div>
-                <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
+                    <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
             </#if>
         </div>
         <div class="section-heading">
@@ -659,49 +690,100 @@
     </div>
 </script>
 
-<script type="text/ng-template" id="confirm-deprecate-account-modal">
-    <div class="lightbox-container confirm-deprecate-account-modal">
-       <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">        
-                <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>      
-                <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
-                <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
-                <span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span><br />
-                <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
-                <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
-                <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
-                <span ng-bind="deprecateProfilePojo.primaryOrcid"></span><br />
-                <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
-                <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
-            </div>          
-        </div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="pull-left">
-                    <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>  
+    <script type="text/ng-template" id="confirm-deprecate-account-modal">
+        <div class="lightbox-container confirm-deprecate-account-modal">
+           <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">       
+                    <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>     
+                    <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
+                    <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
+                    <a href="${baseUri}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">${baseUri}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span></a><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
+                    <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
+                    <a href="${baseUri}/{{deprecateProfilePojo.primaryOrcid}}" target="primaryOrcid">${baseUri}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></a></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
+                </div>          
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left">
+                        <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</script>
+    </script>
+</@orcid.checkFeatureStatus>   
 
-<script type="text/ng-template" id="deprecate-account-confirmation-modal">
-    <div class="lightbox-container deprecate-account-confirmation-modal">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
-                <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2>    
-                <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+    <script type="text/ng-template" id="confirm-deprecate-account-modal">
+        <div class="lightbox-container confirm-deprecate-account-modal">
+           <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">       
+                    <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2> 
+                    <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
+                    <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
+                    ${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
+                    <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
+                    ${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
+                    <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
+                </div>          
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="pull-left">
-                    <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left">
+                        <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</script>
+    </script>
+</@orcid.checkFeatureStatus>   
+    
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'> 
+    <script type="text/ng-template" id="deprecate-account-confirmation-modal">
+        <div class="lightbox-container deprecate-account-confirmation-modal">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
+                    <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2> 
+                    <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;<a href="${baseUri}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">${baseUri}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span></a>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;<a href="${baseUri}/{{deprecateProfilePojo.primaryOrcid}}">${baseUri}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></a></span></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left">
+                        <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>   
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+    <script type="text/ng-template" id="deprecate-account-confirmation-modal">
+        <div class="lightbox-container deprecate-account-confirmation-modal">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
+                    <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2> 
+                    <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left">
+                        <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>  
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
     <div class="lightbox-container confirm-revoke-access-modal">        
@@ -722,47 +804,78 @@
     </div>
 </script>
 
-<script type="text/ng-template" id="confirm-add-delegate-modal">
-    <div style="padding: 20px;">
-       <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
-       <div ng-show="effectiveUserOrcid === delegateToAdd">
-          <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
-          <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-       </div>
-       <div ng-hide="effectiveUserOrcid === delegateToAdd">
-          <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
-          <form ng-submit="addDelegate()">
-              <div ng-show="isPasswordConfirmationRequired">
-                  <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
-                  <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-                  <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
-                  <span class="orcid-error" ng-show="errors.length > 0">
-                      <span ng-repeat='error in errors' ng-bind-html="error"></span>
-                  </span>
-              </div>
-              <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'> 
+    <script type="text/ng-template" id="confirm-add-delegate-modal">
+        <div style="padding: 20px;">
+           <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+           <div ng-show="effectiveUserOrcid === delegateToAdd">
+              <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
               <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-          </form>
-       </div>
-       <div ng-show="errors.length === 0">
-           <br></br>
-       </div>
-    </div>
-</script>
+           </div>
+           <div ng-hide="effectiveUserOrcid === delegateToAdd">
+              <p>{{delegateNameToAdd}} (<a href="${baseUri}/{{delegateToAdd}}" target="delegateToAdd">${baseUri}/{{delegateToAdd}}</a>)</p>
+              <form ng-submit="addDelegate()">
+                  <div ng-show="isPasswordConfirmationRequired">
+                      <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                      <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                      <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                      <span class="orcid-error" ng-show="errors.length > 0">
+                          <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                      </span>
+                  </div>
+                  <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
+                  <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+              </form>
+           </div>
+           <div ng-show="errors.length === 0">
+               <br></br>
+           </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false> 
+    <script type="text/ng-template" id="confirm-add-delegate-modal">
+        <div style="padding: 20px;">
+           <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+           <div ng-show="effectiveUserOrcid === delegateToAdd">
+              <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+              <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+           </div>
+           <div ng-hide="effectiveUserOrcid === delegateToAdd">
+              <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
+              <form ng-submit="addDelegate()">
+                  <div ng-show="isPasswordConfirmationRequired">
+                      <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                      <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                      <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                      <span class="orcid-error" ng-show="errors.length > 0">
+                          <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                      </span>
+                  </div>
+                  <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
+                  <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+              </form>
+           </div>
+           <div ng-show="errors.length === 0">
+               <br></br>
+           </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>
     
 <script type="text/ng-template" id="confirm-add-delegate-by-email-modal">
-    <div style="padding: 20px;">
+    <div>
         <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
-        <div ng-show="emailSearchResult.isSelf">
+        <div ng-show="emailSearchResult.isSelf" ng-cloak>
             <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
             <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
         </div>
-        <div ng-show="!emailSearchResult.found" >
+        <div ng-show="!emailSearchResult.found" ng-cloak>
             <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
             <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
             <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
         </div>
-        <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
+        <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found" ng-cloak>
             <p>{{input.text}}</p>
             <form ng-submit="addDelegateByEmail(input.text)">
                 <div ng-show="isPasswordConfirmationRequired">
@@ -782,29 +895,31 @@
         </div>
     </div>
 </script>
-    
-<script type="text/ng-template" id="revoke-delegate-modal">
-    <div class="lightbox-container">
-        <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
-        <p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
-        <form ng-submit="revoke()">
-            <div ng-show="isPasswordConfirmationRequired">
-                <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
-                <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-                <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
-                <span class="orcid-error" ng-show="errors.length > 0">
-                    <span ng-repeat='error in errors' ng-bind-html="error"></span>
-                </span>
-            </div>
-            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
-            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-        </form>
-        <div ng-show="errors.length === 0">
-            <br></br>
-        </div>
-    </div>
-</script>
 
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>     
+    <script type="text/ng-template" id="revoke-delegate-modal">
+        <div class="lightbox-container">
+            <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
+            <p> {{delegateNameToRevoke}} (<a href="${baseUri}/{{delegateToRevoke}}" target="delegateToRevoke">${baseUri}/{{delegateToRevoke}}</a>)</p>
+            <form ng-submit="revoke()">
+                <div ng-show="isPasswordConfirmationRequired" ng-cloak>
+                    <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                    <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                    <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                    <span class="orcid-error" ng-show="errors.length > 0" ng-cloak>
+                        <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                    </span>
+                </div>
+                <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+                <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+            </form>
+            <div ng-show="errors.length === 0" ng-cloak>
+            </div>
+        </div>
+    </script>
+</@orcid.checkFeatureStatus>
+<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false> 
+</@orcid.checkFeatureStatus>
    
 <script type="text/ng-template" id="revoke-shibboleth-account-modal">
     <div class="lightbox-container">

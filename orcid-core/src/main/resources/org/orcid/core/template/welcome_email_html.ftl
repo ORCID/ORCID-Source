@@ -45,8 +45,13 @@
 				<a href="${verificationUrl}?lang=${locale}" target="orcid.blank">${verificationUrl}?lang=${locale}</a>
 				<br />
 				<ul>
-					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space /><a href="${baseUriHttp}/${orcidId}" target="orcid.blank">${orcidId}</a></li>
-					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUriHttp}/${orcidId}" target="orcid.blank">${baseUriHttp}/${orcidId}</a></li>
+					<#if features["HTTPS_IDS"]?? && features["HTTPS_IDS"]> 
+						<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${orcidId}</a></li>
+						<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a></li>
+					<#else>
+						<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space /><a href="${baseUriHttp}/${orcidId}" target="orcid.blank">${orcidId}</a></li>
+						<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUriHttp}/${orcidId}" target="orcid.blank">${baseUriHttp}/${orcidId}</a></li>
+					</#if>
 				</ul>				
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 18px; color: #666666; font-weight: bold;">

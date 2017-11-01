@@ -29,7 +29,7 @@ import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileKeywordManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
@@ -43,7 +43,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl implements ProfileKeywordManager {
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource(name = "orcidSecurityManagerV3")

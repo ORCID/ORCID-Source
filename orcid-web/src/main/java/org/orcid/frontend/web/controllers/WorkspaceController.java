@@ -25,17 +25,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
-import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileKeywordManager;
-import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileKeywordManager;
+import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
+import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -46,15 +49,15 @@ import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.record_v2.CitationType;
-import org.orcid.jaxb.model.record_v2.Keywords;
-import org.orcid.jaxb.model.record_v2.OtherNames;
-import org.orcid.jaxb.model.record_v2.PeerReviewType;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_v2.ResearcherUrls;
-import org.orcid.jaxb.model.record_v2.Role;
-import org.orcid.jaxb.model.record_v2.WorkCategory;
-import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.jaxb.model.v3.dev1.record.CitationType;
+import org.orcid.jaxb.model.v3.dev1.record.Keywords;
+import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.dev1.record.Role;
+import org.orcid.jaxb.model.v3.dev1.record.WorkCategory;
+import org.orcid.jaxb.model.v3.dev1.record.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
@@ -91,16 +94,25 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
 
-    @Resource
+    @Resource(name = "externalIdentifierManagerV3")
     private ExternalIdentifierManager externalIdentifierManager;    
     
-    @Resource
+    @Resource(name = "profileKeywordManagerV3")
     private ProfileKeywordManager profileKeywordManager;
     
-    @Resource
+    @Resource(name = "otherNameManagerV3")
     private OtherNameManager otherNameManager;
 
     @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
+
+    @Resource(name = "workManagerV3")
+    private WorkManager workManager;
+    
+    @Resource(name = "researcherUrlManagerV3")
     private ResearcherUrlManager researcherUrlManager;
 
     @Resource(name = "languagesMap")
@@ -108,6 +120,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource(name = "profileEntityManagerV3")
+    private ProfileEntityManager profileEntityManager;
     
     @Resource
     private IdentifierTypeManager identifierTypeManager;

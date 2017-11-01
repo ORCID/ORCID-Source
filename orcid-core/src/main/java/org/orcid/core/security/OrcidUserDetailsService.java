@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.common_v2.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;

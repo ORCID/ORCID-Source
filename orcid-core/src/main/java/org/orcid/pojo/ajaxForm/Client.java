@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
+import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 
 public class Client implements ErrorsInterface, Serializable, Comparable<Client> {
@@ -44,7 +44,7 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
     private Set<String> scopes;
     private Checkbox allowAutoDeprecate;    
         
-    public static Client fromModelObject(org.orcid.jaxb.model.client_v2.Client modelObject) {
+    public static Client fromModelObject(org.orcid.jaxb.model.v3.dev1.client.Client modelObject) {
         Client client = new Client();
 
         client.setClientId(Text.valueOf(modelObject.getId()));
@@ -75,8 +75,39 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
         return client;
     }
     
-    public org.orcid.jaxb.model.client_v2.Client toModelObject() {
-        org.orcid.jaxb.model.client_v2.Client modelObject = new org.orcid.jaxb.model.client_v2.Client();
+    public static Client fromModelObject(org.orcid.jaxb.model.client_v2.Client modelObject) {
+        Client client = new Client();
+
+        client.setClientId(Text.valueOf(modelObject.getId()));
+
+        client.setAllowAutoDeprecate(Checkbox.valueOf(modelObject.isAllowAutoDeprecate()));
+        
+        client.setPersistentTokenEnabled(Checkbox.valueOf(modelObject.isPersistentTokensEnabled()));
+        
+        if (modelObject.getAuthenticationProviderId() != null) {
+            client.setAuthenticationProviderId(Text.valueOf(modelObject.getAuthenticationProviderId()));
+        }
+
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        if(modelObject.getClientRedirectUris() != null) {
+            for (org.orcid.jaxb.model.client_v2.ClientRedirectUri element : modelObject.getClientRedirectUris()) {
+                RedirectUri rUri = RedirectUri.fromModelObject(element);
+                redirectUris.add(rUri);
+            }
+        }
+        client.setRedirectUris(redirectUris);        
+        client.setType(Text.valueOf(modelObject.getClientType().value()));
+        client.setClientSecret(Text.valueOf(modelObject.getDecryptedSecret()));
+        client.setShortDescription(Text.valueOf(modelObject.getDescription()));
+        client.setMemberId(Text.valueOf(modelObject.getGroupProfileId()));
+        client.setDisplayName(Text.valueOf(modelObject.getName()));
+        client.setWebsite(Text.valueOf(modelObject.getWebsite()));
+
+        return client;
+    }
+    
+    public org.orcid.jaxb.model.v3.dev1.client.Client toModelObject() {
+        org.orcid.jaxb.model.v3.dev1.client.Client modelObject = new org.orcid.jaxb.model.v3.dev1.client.Client();
 
         if (this.getAllowAutoDeprecate() != null) {
             modelObject.setAllowAutoDeprecate(this.getAllowAutoDeprecate().getValue());

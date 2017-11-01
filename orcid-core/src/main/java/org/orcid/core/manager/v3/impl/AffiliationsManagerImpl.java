@@ -25,7 +25,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
@@ -46,7 +46,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource

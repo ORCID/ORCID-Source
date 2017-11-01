@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common_v2.CreatedDate;
-import org.orcid.jaxb.model.common_v2.LastModifiedDate;
-import org.orcid.jaxb.model.common_v2.Source;
-import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
+import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.dev1.common.Source;
+import org.orcid.jaxb.model.v3.dev1.record.Keyword;
 import org.orcid.utils.DateUtils;
 
 /**
@@ -109,9 +109,9 @@ public class KeywordForm implements ErrorsInterface, Serializable {
         }
 
         if (visibility != null && visibility.getVisibility() != null) {
-            keyword.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.getVisibility().value()));
+            keyword.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.getVisibility().value()));
         } else {
-            keyword.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
+            keyword.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
         }
 
         if (createdDate != null) {

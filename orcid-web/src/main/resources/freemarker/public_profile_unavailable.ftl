@@ -48,7 +48,12 @@
 		        </div>        		
         	<#elseif (deprecated)??>
 	        	<div class="alert alert-error readme">
-	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
+                    <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+                        <p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUri}/${primaryRecord}">${baseUri}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
+                    </@orcid.checkFeatureStatus> 
+                    <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false> 
+    	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
+                    </@orcid.checkFeatureStatus>
 	        	</div>
 	        <#elseif (deactivated)??>
 	        	<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>

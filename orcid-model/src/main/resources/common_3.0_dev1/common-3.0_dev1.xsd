@@ -247,6 +247,25 @@
 			<xs:pattern value="[\s\S]*[^\s\n\r]+[\s\S]*" />			
 		</xs:restriction>		
 	</xs:simpleType>
+	
+	<xs:complexType name="transient-non-empty-string">
+		<xs:annotation>
+			<xs:documentation>A string that is flagged as transient
+			i.e. populated by ORCID, not the source.
+			</xs:documentation>
+		</xs:annotation>
+       <xs:simpleContent>
+           <xs:extension base="common:non-empty-string">
+               <xs:attribute name="transient" use="required">
+                  <xs:simpleType>
+	                 <xs:restriction base="xs:boolean">
+	                        <xs:pattern value="true" />
+	                 </xs:restriction>
+                  </xs:simpleType>
+               </xs:attribute>
+           </xs:extension>
+       </xs:simpleContent>
+   </xs:complexType>
 		
 	<xs:complexType name="amount">
 		<xs:annotation>
@@ -1613,7 +1632,8 @@
 			<xs:extension base="common:element-summary">
 				<xs:sequence>
 					<xs:element name="external-id-type" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />
-					<xs:element name="external-id-value" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />		
+					<xs:element name="external-id-value" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />	
+					<xs:element name="external-id-normalized" type="common:transient-non-empty-string" minOccurs="0" maxOccurs="1" />		
 					<xs:element name="external-id-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
 					<xs:element name="external-id-relationship" minOccurs="0" maxOccurs="1" type="common:relationship-type" />
 				</xs:sequence>

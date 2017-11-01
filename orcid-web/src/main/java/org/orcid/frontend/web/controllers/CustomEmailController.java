@@ -24,9 +24,9 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.orcid.core.constants.EmailConstants;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.CustomEmailManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
@@ -55,9 +55,11 @@ public class CustomEmailController extends BaseController {
         
     @Resource
     CustomEmailManager customEmailManager;
-    @Resource
+    
+    @Resource(name = "clientDetailsManagerV3")
     ClientDetailsManager clientDetailsManager;
-    @Resource
+    
+    @Resource(name = "profileEntityManagerV3")
     ProfileEntityManager profileEntityManager;
     
     @RequestMapping        

@@ -20,19 +20,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.CreatedDate;
-import org.orcid.jaxb.model.common_v2.FuzzyDate;
-import org.orcid.jaxb.model.common_v2.SourceClientId;
-import org.orcid.jaxb.model.common_v2.SourceOrcid;
-import org.orcid.jaxb.model.common_v2.Url;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.CitationType;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.ExternalIDs;
-import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkCategory;
-import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
+import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
+import org.orcid.jaxb.model.v3.dev1.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.dev1.record.CitationType;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.v3.dev1.record.WorkCategory;
+import org.orcid.jaxb.model.v3.dev1.record.WorkType;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 
@@ -160,129 +160,6 @@ public class WorkForm implements ErrorsInterface, Serializable {
         // Set publication date
         FuzzyDate fuzzyPublicationDate = null;
         if (work.getPublicationDate() != null) {
-            org.orcid.jaxb.model.common_v2.PublicationDate publicationDate = work.getPublicationDate();
-            Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
-            Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
-            Integer day = PojoUtil.isEmpty(publicationDate.getDay()) ? null : Integer.valueOf(publicationDate.getDay().getValue());
-            if(year != null && year == 0) {
-                year = null;
-            }
-            if(month != null && month == 0) {
-                month = null;
-            }
-            if (day != null && day == 0) {
-                day = null;
-            }
-            fuzzyPublicationDate = FuzzyDate.valueOf(year, month, day);
-            w.setPublicationDate(Date.valueOf(fuzzyPublicationDate));
-        }
-        w.setDateSortString(PojoUtil.createDateSortString(null, fuzzyPublicationDate));
-
-        // Set citation
-        if (work.getWorkCitation() != null) {            
-            Citation citation = new Citation();
-            if(!PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
-                citation.setCitation(Text.valueOf(work.getWorkCitation().getCitation()));
-            }
-            if(work.getWorkCitation().getWorkCitationType() != null) {
-                citation.setCitationType(Text.valueOf(work.getWorkCitation().getWorkCitationType().value()));
-            }
-            
-            w.setCitation(citation);
-        }
-
-        // Set contributors
-        populateContributors(work, w);
-
-        // Set external identifiers
-        populateExternalIdentifiers(work, w);
-
-        // Set created date
-        w.setCreatedDate(Date.valueOf(work.getCreatedDate()));
-
-        // Set last modified
-        w.setLastModified(Date.valueOf(work.getLastModifiedDate()));
-
-        if(work.getSource() != null) {
-            // Set source
-            w.setSource(work.getSource().retrieveSourcePath());
-            if(work.getSource().getSourceName() != null) {
-                w.setSourceName(work.getSource().getSourceName().getContent());
-            }
-        }
-        return w;
-    }
-    
-    public static WorkForm valueOf(org.orcid.jaxb.model.v3.dev1.record.Work work) {
-        if (work == null)
-            return null;
-
-        WorkForm w = new WorkForm();
-
-        // Set work id
-        if (work.getPutCode() != null) {
-            w.setPutCode(Text.valueOf(work.getPutCode()));
-        }
-
-        // Set language
-        if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-            w.setLanguageCode(Text.valueOf(work.getLanguageCode()));
-        }
-
-        // Set type
-        if (work.getWorkType() != null) {
-            w.setWorkType(Text.valueOf(work.getWorkType().value()));
-            // Set category
-            WorkCategory category = WorkCategory.fromWorkType(org.orcid.jaxb.model.record_v2.WorkType.fromValue(work.getWorkType().value()));
-            w.setWorkCategory(Text.valueOf(category.value()));
-        }
-
-        if (work.getWorkTitle() != null) {
-            // Set title
-            if (work.getWorkTitle().getTitle() != null) {
-                w.setTitle(Text.valueOf(work.getWorkTitle().getTitle().getContent()));
-            }
-            // Set translated title
-            if (work.getWorkTitle().getTranslatedTitle() != null) {
-                TranslatedTitleForm tt = new TranslatedTitleForm();
-                tt.setContent(work.getWorkTitle().getTranslatedTitle().getContent());
-                tt.setLanguageCode(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-                w.setTranslatedTitle(tt);
-            }
-            // Set subtitle
-            if (work.getWorkTitle().getSubtitle() != null) {
-                w.setSubtitle(Text.valueOf(work.getWorkTitle().getSubtitle().getContent()));
-            }
-        }
-
-        // Set journal title
-        if (work.getJournalTitle() != null ) {
-            w.setJournalTitle(Text.valueOf(work.getJournalTitle().getContent()));
-        }
-
-        // Set description
-        if (work.getShortDescription() != null) {
-            w.setShortDescription(Text.valueOf(work.getShortDescription()));
-        }
-
-        // Set url
-        if (work.getUrl() != null ) {
-            w.setUrl(Text.valueOf(work.getUrl().getValue()));
-        }
-
-        // Set visibility
-        if (work.getVisibility() != null) {
-            w.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(work.getVisibility().value()));
-        }
-
-        // Set country
-        if (work.getCountry() != null && work.getCountry().getValue() != null) {
-            w.setCountryCode(Text.valueOf(work.getCountry().getValue().value()));
-        }
-
-        // Set publication date
-        FuzzyDate fuzzyPublicationDate = null;
-        if (work.getPublicationDate() != null) {
             org.orcid.jaxb.model.v3.dev1.common.PublicationDate publicationDate = work.getPublicationDate();
             Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
             Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
@@ -335,7 +212,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
         return w;
     }
-
+    
     private static void populateExternalIdentifiers(Work work, WorkForm workForm) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
         if(work.getExternalIdentifiers() != null) {        
@@ -368,38 +245,6 @@ public class WorkForm implements ErrorsInterface, Serializable {
         workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
     
-    private static void populateExternalIdentifiers(org.orcid.jaxb.model.v3.dev1.record.Work work, WorkForm workForm) {
-        List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
-        if(work.getExternalIdentifiers() != null) {        
-            org.orcid.jaxb.model.v3.dev1.record.ExternalIDs extIds = work.getExternalIdentifiers();
-            if (extIds != null) {
-                for (org.orcid.jaxb.model.v3.dev1.record.ExternalID extId : extIds.getExternalIdentifier()) {
-                    
-                    if(extId.getRelationship() == null) {
-                        if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
-                            if(WorkType.BOOK.equals(work.getWorkType())) {
-                                extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.PART_OF);
-                            } else {
-                                extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.SELF);
-                            }
-                        } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
-                            if(WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
-                                extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.PART_OF);
-                            } else {
-                                extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.SELF);
-                            }
-                        } else {
-                            extId.setRelationship(org.orcid.jaxb.model.v3.dev1.record.Relationship.SELF);
-                        }
-                    }
-                    
-                    workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
-                }
-            }
-        }
-        workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
-    }
-        
     private static void populateExternalIdentifiers(WorkForm workForm, Work work) {
         ExternalIDs workExternalIds = new ExternalIDs();
         if(workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
@@ -418,7 +263,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 }
                 
                 if(!PojoUtil.isEmpty(wfExtId.getUrl())) {
-                    wExtId.setUrl(new org.orcid.jaxb.model.common_v2.Url(wfExtId.getUrl().getValue()));
+                    wExtId.setUrl(new org.orcid.jaxb.model.v3.dev1.common.Url(wfExtId.getUrl().getValue()));
                 }
                 workExternalIds.getExternalIdentifier().add(wExtId);
             }
@@ -427,19 +272,6 @@ public class WorkForm implements ErrorsInterface, Serializable {
     }
 
     private static void populateContributors(Work work, WorkForm workForm) {
-        List<Contributor> contributorsList = new ArrayList<Contributor>();
-        if(work.getWorkContributors() != null) {
-            org.orcid.jaxb.model.record_v2.WorkContributors contributors = work.getWorkContributors();
-            if (contributors != null) {
-                for (org.orcid.jaxb.model.common_v2.Contributor contributor : contributors.getContributor()) {
-                    contributorsList.add(Contributor.valueOf(contributor));
-                }
-            }
-        }
-        workForm.setContributors(contributorsList);
-    }
-    
-    private static void populateContributors(org.orcid.jaxb.model.v3.dev1.record.Work work, WorkForm workForm) {
         List<Contributor> contributorsList = new ArrayList<Contributor>();
         if(work.getWorkContributors() != null) {
             org.orcid.jaxb.model.v3.dev1.record.WorkContributors contributors = work.getWorkContributors();
@@ -453,31 +285,31 @@ public class WorkForm implements ErrorsInterface, Serializable {
     }
     
     private static void populateContributors(WorkForm workForm, Work work) {
-        org.orcid.jaxb.model.record_v2.WorkContributors contributors = new org.orcid.jaxb.model.record_v2.WorkContributors();
+        org.orcid.jaxb.model.v3.dev1.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.dev1.record.WorkContributors();
         if(workForm.getContributors() != null && !workForm.getContributors().isEmpty()) {
             for(Contributor wfContributor : workForm.getContributors()) {
-                org.orcid.jaxb.model.common_v2.Contributor workContributor = new org.orcid.jaxb.model.common_v2.Contributor();
-                org.orcid.jaxb.model.common_v2.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.common_v2.ContributorAttributes();
+                org.orcid.jaxb.model.v3.dev1.common.Contributor workContributor = new org.orcid.jaxb.model.v3.dev1.common.Contributor();
+                org.orcid.jaxb.model.v3.dev1.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.dev1.common.ContributorAttributes();
                 if(!PojoUtil.isEmpty(wfContributor.getContributorRole())) {
-                    contributorAttributes.setContributorRole(org.orcid.jaxb.model.common_v2.ContributorRole.fromValue(wfContributor.getContributorRole().getValue()));
+                    contributorAttributes.setContributorRole(org.orcid.jaxb.model.v3.dev1.common.ContributorRole.fromValue(wfContributor.getContributorRole().getValue()));
                 }
                 
                 if(!PojoUtil.isEmpty(wfContributor.getContributorSequence())) {
-                    contributorAttributes.setContributorSequence(org.orcid.jaxb.model.record_v2.SequenceType.fromValue(wfContributor.getContributorSequence().getValue()));
+                    contributorAttributes.setContributorSequence(org.orcid.jaxb.model.v3.dev1.record.SequenceType.fromValue(wfContributor.getContributorSequence().getValue()));
                 }                
                 workContributor.setContributorAttributes(contributorAttributes);
                 
                 if(!PojoUtil.isEmpty(wfContributor.getCreditName())) {
-                    org.orcid.jaxb.model.common_v2.CreditName creditName = new org.orcid.jaxb.model.common_v2.CreditName(); 
+                    org.orcid.jaxb.model.v3.dev1.common.CreditName creditName = new org.orcid.jaxb.model.v3.dev1.common.CreditName(); 
                     creditName.setContent(wfContributor.getCreditName().getValue());
                     workContributor.setCreditName(creditName);
                 }                                
                 
                 if(!PojoUtil.isEmpty(wfContributor.getEmail())) {                    
-                    workContributor.setContributorEmail(new org.orcid.jaxb.model.common_v2.ContributorEmail(wfContributor.getEmail().getValue()));
+                    workContributor.setContributorEmail(new org.orcid.jaxb.model.v3.dev1.common.ContributorEmail(wfContributor.getEmail().getValue()));
                 }
                 
-                org.orcid.jaxb.model.common_v2.ContributorOrcid contributorOrcid = new org.orcid.jaxb.model.common_v2.ContributorOrcid(); 
+                org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid contributorOrcid = new org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid(); 
                 if(!PojoUtil.isEmpty(wfContributor.getOrcid())) {
                     contributorOrcid.setPath(wfContributor.getOrcid().getValue());
                 }
@@ -510,15 +342,15 @@ public class WorkForm implements ErrorsInterface, Serializable {
             work.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }        
         
-        org.orcid.jaxb.model.record_v2.WorkTitle workTitle = new org.orcid.jaxb.model.record_v2.WorkTitle();
+        org.orcid.jaxb.model.v3.dev1.record.WorkTitle workTitle = new org.orcid.jaxb.model.v3.dev1.record.WorkTitle();
         // Set title
         if(!PojoUtil.isEmpty(this.getTitle())) {            
-            workTitle.setTitle(new org.orcid.jaxb.model.common_v2.Title(this.getTitle().getValue()));
+            workTitle.setTitle(new org.orcid.jaxb.model.v3.dev1.common.Title(this.getTitle().getValue()));
         }
         
         // Set translated title        
         if(this.getTranslatedTitle() != null && !PojoUtil.isEmpty(this.getTranslatedTitle().getContent())) {
-            org.orcid.jaxb.model.common_v2.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.common_v2.TranslatedTitle();
+            org.orcid.jaxb.model.v3.dev1.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.v3.dev1.common.TranslatedTitle();
             translatedTitle.setContent(this.getTranslatedTitle().getContent());
             translatedTitle.setLanguageCode(this.getTranslatedTitle().getLanguageCode());
             workTitle.setTranslatedTitle(translatedTitle);
@@ -526,7 +358,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         
         // Set subtitle
         if (!PojoUtil.isEmpty(this.getSubtitle())) {
-            org.orcid.jaxb.model.common_v2.Subtitle subtitle = new  org.orcid.jaxb.model.common_v2.Subtitle();
+            org.orcid.jaxb.model.v3.dev1.common.Subtitle subtitle = new  org.orcid.jaxb.model.v3.dev1.common.Subtitle();
             subtitle.setContent(this.getSubtitle().getValue());
             workTitle.setSubtitle(subtitle);
         }
@@ -535,7 +367,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         
         // Set journal title
         if(!PojoUtil.isEmpty(this.getJournalTitle())) {
-            work.setJournalTitle(new org.orcid.jaxb.model.common_v2.Title(this.getJournalTitle().getValue()));            
+            work.setJournalTitle(new org.orcid.jaxb.model.v3.dev1.common.Title(this.getJournalTitle().getValue()));            
         }
 
         // Set description
@@ -557,7 +389,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         
         // Set country
         if (!PojoUtil.isEmpty(this.getCountryCode())) {
-            work.setCountry(new org.orcid.jaxb.model.common_v2.Country(org.orcid.jaxb.model.common_v2.Iso3166Country.fromValue(this.getCountryCode().getValue())));
+            work.setCountry(new org.orcid.jaxb.model.v3.dev1.common.Country(org.orcid.jaxb.model.v3.dev1.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
         }
 
         // Set publication date        
@@ -565,24 +397,24 @@ public class WorkForm implements ErrorsInterface, Serializable {
             Integer yearInteger = PojoUtil.isEmpty(this.getPublicationDate().getYear()) ? null : Integer.valueOf(this.getPublicationDate().getYear());
             Integer monthInteger = PojoUtil.isEmpty(this.getPublicationDate().getMonth()) ? null : Integer.valueOf(this.getPublicationDate().getMonth());
             Integer dayInteger = PojoUtil.isEmpty(this.getPublicationDate().getDay()) ? null : Integer.valueOf(this.getPublicationDate().getDay());
-            org.orcid.jaxb.model.common_v2.Year year = null;
-            org.orcid.jaxb.model.common_v2.Month month = null;
-            org.orcid.jaxb.model.common_v2.Day day = null;
+            org.orcid.jaxb.model.v3.dev1.common.Year year = null;
+            org.orcid.jaxb.model.v3.dev1.common.Month month = null;
+            org.orcid.jaxb.model.v3.dev1.common.Day day = null;
             if(yearInteger != null) {
-                year = new org.orcid.jaxb.model.common_v2.Year(yearInteger);
+                year = new org.orcid.jaxb.model.v3.dev1.common.Year(yearInteger);
             }
             if(monthInteger != null) {
-                month = new org.orcid.jaxb.model.common_v2.Month(monthInteger);
+                month = new org.orcid.jaxb.model.v3.dev1.common.Month(monthInteger);
             }
             if(dayInteger != null) {
-                day = new org.orcid.jaxb.model.common_v2.Day(dayInteger);
+                day = new org.orcid.jaxb.model.v3.dev1.common.Day(dayInteger);
             }                                                  
-            work.setPublicationDate(new org.orcid.jaxb.model.common_v2.PublicationDate(year, month, day));
+            work.setPublicationDate(new org.orcid.jaxb.model.v3.dev1.common.PublicationDate(year, month, day));
         }
                 
         // Set citation
         if(this.getCitation() != null) {
-            org.orcid.jaxb.model.record_v2.Citation citation = new org.orcid.jaxb.model.record_v2.Citation();
+            org.orcid.jaxb.model.v3.dev1.record.Citation citation = new org.orcid.jaxb.model.v3.dev1.record.Citation();
             if(!PojoUtil.isEmpty(this.getCitation().getCitation())) {
                 citation.setCitation(this.getCitation().getCitation().getValue());
             }
@@ -608,13 +440,13 @@ public class WorkForm implements ErrorsInterface, Serializable {
         
         // Set last modified
         if(!PojoUtil.isEmpty(this.getLastModified())) {
-            org.orcid.jaxb.model.common_v2.LastModifiedDate lastModified = new org.orcid.jaxb.model.common_v2.LastModifiedDate();
+            org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate lastModified = new org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate();
             lastModified.setValue(DateUtils.convertToXMLGregorianCalendar(this.getLastModified().toJavaDate()));
             work.setLastModifiedDate(lastModified);
         }
 
         if(!PojoUtil.isEmpty(this.getSource())) {
-            org.orcid.jaxb.model.common_v2.Source source = new org.orcid.jaxb.model.common_v2.Source();
+            org.orcid.jaxb.model.v3.dev1.common.Source source = new org.orcid.jaxb.model.v3.dev1.common.Source();
             
             if(OrcidStringUtils.isClientId(this.getSource())) {
                 source.setSourceClientId(new SourceClientId(this.getSource()));

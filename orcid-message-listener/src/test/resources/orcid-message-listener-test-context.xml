@@ -25,6 +25,7 @@
 	xmlns:jms="http://www.springframework.org/schema/jms"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
@@ -32,12 +33,16 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+        http://www.springframework.org/schema/data/mongo
+		http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 	
 	<tx:annotation-driven />
 	
     <context:property-placeholder location="classpath:orcid-message-listener-test.properties" />
 	<context:component-scan base-package="org.orcid.listener" />
+	<context:annotation-config />
+	
 	
 	<!--SOLR -->
 	<!-- Confusingly, the client is actually called a server -->
@@ -126,7 +131,7 @@
         <property name="user" value="${org.orcid.message-listener.db.username}" />
         <property name="password" value="${org.orcid.message-listener.db.password}" />        
     </bean>
-    
+        
     <bean id="mqEntityManagerFactory" class="org.orcid.listener.persistence.spring.OrcidEntityManagerFactory">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
@@ -136,4 +141,10 @@
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>        
+	
+	<bean name="fongo" class="com.github.fakemongo.Fongo">
+	    <constructor-arg value="InMemoryMongo" />
+	</bean>
+	<bean id="mongoClient" class="com.mongodb.MongoClient" factory-bean="fongo" factory-method="getMongo" />
+		
 </beans>

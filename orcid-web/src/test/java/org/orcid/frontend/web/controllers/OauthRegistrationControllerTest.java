@@ -127,7 +127,7 @@ public class OauthRegistrationControllerTest extends DBUnitTest {
         
         OauthRegistrationForm reg = new OauthRegistrationForm();
         org.orcid.pojo.ajaxForm.Visibility fv = new org.orcid.pojo.ajaxForm.Visibility();
-        fv.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        fv.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
         reg.setActivitiesVisibilityDefault(fv);        
         reg.setEmail(email);
         reg.setEmailConfirm(email);

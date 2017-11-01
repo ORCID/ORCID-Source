@@ -31,12 +31,14 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
@@ -60,7 +62,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
 
-    @Resource
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
     @Resource(name = "orcidSecurityManagerV3")
@@ -83,6 +85,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private NormalizationService norm;
     
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
@@ -213,6 +218,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         //Validate it is not duplicated
                         if(work.getExternalIdentifiers() != null) {
                             for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                                //normalise the provided ID
+                                extId.setNormalized(new TransientNonEmptyString(norm.normalise(extId.getType(), extId.getValue())));                                
                                 // If the external id exists and is a SELF identifier, then mark it as duplicated                                
                                 if(existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();

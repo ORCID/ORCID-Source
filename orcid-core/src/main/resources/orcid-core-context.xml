@@ -34,7 +34,7 @@
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz" />
+		base-package="org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers" />
 	<aop:aspectj-autoproxy />
 	
     <context:mbean-server />
@@ -529,7 +529,9 @@
         <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
     </bean>
     
-    <bean id="orcidSecurityManagerV3" class="org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl" />     
+    <bean id="orcidSecurityManagerV3" class="org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl" />
+
+    <bean id="membersManagerV3" class="org.orcid.core.manager.v3.impl.MembersManagerImpl" />    
     
     <bean id="orgManagerV3" class="org.orcid.core.manager.v3.impl.OrgManagerImpl" />
     
@@ -666,6 +668,12 @@
         <property name="workEntityCacheManager" ref="workEntityCacheManagerReadOnly" />
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
     </bean>
+    
+    <bean id="clientDetailsManagerV3" class="org.orcid.core.manager.v3.impl.ClientDetailsManagerImpl">
+        <property name="clientDetailsDao" ref="clientDetailsDao" />
+        <property name="clientSecretDao" ref="clientSecretDao" />
+        <property name="clientRedirectDao" ref="clientRedirectDao" />
+    </bean>
 
     <bean id="clientDetailsManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.ClientDetailsManagerReadOnlyImpl">
         <property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
@@ -673,9 +681,13 @@
         <property name="clientRedirectDao" ref="clientRedirectDaoReadOnly" />
     </bean>
     
+    <bean id="clientManagerV3" class="org.orcid.core.manager.v3.impl.ClientManagerImpl" />
+    
     <bean id="clientManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.ClientManagerReadOnlyImpl">
         <property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
     </bean>
+    
+    <bean id="sourceManagerV3" class="org.orcid.core.manager.v3.impl.SourceManagerImpl" />
     
 
 	<!-- Other Managers -->

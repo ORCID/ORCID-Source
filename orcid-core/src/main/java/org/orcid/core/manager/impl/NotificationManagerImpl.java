@@ -57,6 +57,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.Delegation;
@@ -430,18 +431,30 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
+        Map<String, Boolean> features = getFeatures();
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
+        templateParams.put("features", features);
     }
 
     public void addMessageParams(Map<String, Object> templateParams, Locale locale) {
+        Map<String, Boolean> features = getFeatures();
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
+        templateParams.put("features", features);
     }
-
+    
+    private Map<String, Boolean> getFeatures() {
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        return features;
+    }
+    
     public String getSubject(String code, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, null, locale);

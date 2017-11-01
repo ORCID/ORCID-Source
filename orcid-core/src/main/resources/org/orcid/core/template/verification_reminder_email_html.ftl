@@ -34,7 +34,11 @@
 		        <@emailMacros.msg "email.verify.thank_you" /><br /><br /><a href="${verificationUrl}?lang=${locale}" target="orcid.blank">${verificationUrl}</a> 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		        <@emailMacros.msg "email.verify.1" /><@emailMacros.space />${orcid}<@emailMacros.msg "email.verify.2" /><@emailMacros.space /><a href="${baseUriHttp}/${orcid}?lang=${locale}" target="orcid.blank">${baseUriHttp}/${orcid}</a><@emailMacros.space /><@emailMacros.msg "email.verify.primary_email_1" /><@emailMacros.space />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.	        
+		    	<#if features["HTTPS_IDS"]?? && features["HTTPS_IDS"]>
+		        	<@emailMacros.msg "email.verify.1" /><@emailMacros.space />${orcid}<@emailMacros.msg "email.verify.2" /><@emailMacros.space /><a href="${baseUri}/${orcid}?lang=${locale}" target="orcid.blank">${baseUri}/${orcid}</a><@emailMacros.space /><@emailMacros.msg "email.verify.primary_email_1" /><@emailMacros.space />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.	        
+		    	<#else>
+		        	<@emailMacros.msg "email.verify.1" /><@emailMacros.space />${orcid}<@emailMacros.msg "email.verify.2" /><@emailMacros.space /><a href="${baseUriHttp}/${orcid}?lang=${locale}" target="orcid.blank">${baseUriHttp}/${orcid}</a><@emailMacros.space /><@emailMacros.msg "email.verify.primary_email_1" /><@emailMacros.space />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.	        
+		    	</#if>
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		        <@emailMacros.msg "email.verify.if_you_did_not" />

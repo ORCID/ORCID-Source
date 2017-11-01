@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.v3.dev1.record.Biography;
 
 public class BiographyForm implements ErrorsInterface, Serializable {
 
