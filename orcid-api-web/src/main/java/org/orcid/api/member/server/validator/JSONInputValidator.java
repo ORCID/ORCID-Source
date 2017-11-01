@@ -118,7 +118,8 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.notification.permission_rc1.NotificationPermission.class, "/notification_2.0_rc1/notification-permission-2.0_rc1.xsd");
     }
 
-    public void validateJSONInput(Object obj, Class<?> clazz) {
+    public void validateJSONInput(Object obj) {
+        Class<?> clazz = obj.getClass();
         Validator validator = null;
         JAXBSource source = null;
 

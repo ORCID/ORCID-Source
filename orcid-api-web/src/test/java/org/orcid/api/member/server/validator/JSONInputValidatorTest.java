@@ -40,84 +40,84 @@ public class JSONInputValidatorTest {
     @Test
     public void testValidateJSONInputForValidV3Education() throws JAXBException, SAXException, IOException {
         Education education = org.orcid.test.helper.v3.Utils.getEducation();
-        validator.validateJSONInput(education, Education.class);
+        validator.validateJSONInput(education);
     }
 
     @Test(expected = ApplicationException.class)
     public void testValidateJSONValidInputForInvalidV3Education() throws JAXBException, SAXException, IOException {
         Education education = org.orcid.test.helper.v3.Utils.getEducation();
         education.setStartDate(null);
-        validator.validateJSONInput(education, Education.class);
+        validator.validateJSONInput(education);
     }
 
     @Test
     public void testValidateJSONInputForValidV2Education() throws JAXBException, SAXException, IOException {
         org.orcid.jaxb.model.record_v2.Education education = org.orcid.test.helper.Utils.getEducation();
-        validator.validateJSONInput(education, org.orcid.jaxb.model.record_v2.Education.class);
+        validator.validateJSONInput(education);
     }
 
     @Test(expected = ApplicationException.class)
     public void testValidateJSONValidInputForInvalidEducation() throws JAXBException, SAXException, IOException {
         org.orcid.jaxb.model.record_v2.Education education = org.orcid.test.helper.Utils.getEducation();
         education.setOrganization(null);
-        validator.validateJSONInput(education, org.orcid.jaxb.model.record_v2.Education.class);
+        validator.validateJSONInput(education);
     }
 
     @Test
     public void testValidateJSONInputForValidV3Employment() throws JAXBException, SAXException, IOException {
         Employment employment = org.orcid.test.helper.v3.Utils.getEmployment();
-        validator.validateJSONInput(employment, Employment.class);
+        validator.validateJSONInput(employment);
     }
 
     @Test(expected = InvalidJSONException.class)
     public void testValidateJSONValidInputForInvalidV3Employment() throws JAXBException, SAXException, IOException {
         Employment employment = org.orcid.test.helper.v3.Utils.getEmployment();
         employment.setStartDate(null);
-        validator.validateJSONInput(employment, Employment.class);
+        validator.validateJSONInput(employment);
     }
 
     @Test
     public void testValidateJSONInputForValidV2Employment() throws JAXBException, SAXException, IOException {
         org.orcid.jaxb.model.record_v2.Employment employment = org.orcid.test.helper.Utils.getEmployment();
-        validator.validateJSONInput(employment, org.orcid.jaxb.model.record_v2.Employment.class);
+        validator.validateJSONInput(employment);
     }
 
     @Test(expected = InvalidJSONException.class)
     public void testValidateJSONValidInputForInvalidEmployment() throws JAXBException, SAXException, IOException {
         org.orcid.jaxb.model.record_v2.Employment employment = org.orcid.test.helper.Utils.getEmployment();
         employment.setOrganization(null);
-        validator.validateJSONInput(employment, org.orcid.jaxb.model.record_v2.Employment.class);
+        validator.validateJSONInput(employment);
     }
 
     @Test
     public void testValidateJSONInputForValidV3Work() throws JAXBException, SAXException, IOException {
         Work work = org.orcid.test.helper.v3.Utils.getWork("title");
-        validator.validateJSONInput(work, Work.class);
+        validator.validateJSONInput(work);
     }
 
     @Test(expected = InvalidJSONException.class)
     public void testValidateJSONValidInputForInvalidV3Work() throws JAXBException, SAXException, IOException {
         Work work = org.orcid.test.helper.v3.Utils.getWork(null);
-        validator.validateJSONInput(work, Work.class);
+        validator.validateJSONInput(work);
     }
 
     @Test
     public void testValidateJSONInputForValidV2Work() throws JAXBException, SAXException, IOException {
         org.orcid.jaxb.model.record_v2.Work work = org.orcid.test.helper.Utils.getWork("title");
-        validator.validateJSONInput(work, org.orcid.jaxb.model.record_v2.Work.class);
+        validator.validateJSONInput(work);
     }
 
     @Test(expected = InvalidJSONException.class)
     public void testValidateJSONValidInputForInvalidWork() throws JAXBException, SAXException, IOException {
         org.orcid.jaxb.model.record_v2.Work work = org.orcid.test.helper.Utils.getWork(null);
-        validator.validateJSONInput(work, org.orcid.jaxb.model.record_v2.Work.class);
+        validator.validateJSONInput(work);
     }
 
     @Test
     public void testValidateJSONInputForValidV3PeerReview() throws JAXBException, SAXException, IOException {
         PeerReview peerReview = org.orcid.test.helper.v3.Utils.getPeerReview();
         peerReview.setCompletionDate(new FuzzyDate(new Year(2017), new Month(1), new Day(1)));
-        validator.validateJSONInput(peerReview, PeerReview.class);
+        validator.validateJSONInput(peerReview);
     }
 
     @Test(expected = InvalidJSONException.class)
@@ -125,7 +125,7 @@ public class JSONInputValidatorTest {
         PeerReview peerReview = org.orcid.test.helper.v3.Utils.getPeerReview();
         peerReview.setCompletionDate(new FuzzyDate(new Year(2017), new Month(1), new Day(1)));
         peerReview.setRole(null);
-        validator.validateJSONInput(peerReview, PeerReview.class);
+        validator.validateJSONInput(peerReview);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class JSONInputValidatorTest {
         org.orcid.jaxb.model.record_v2.PeerReview peerReview = org.orcid.test.helper.Utils.getPeerReview();
         peerReview.setCompletionDate(new org.orcid.jaxb.model.common_v2.FuzzyDate(new org.orcid.jaxb.model.common_v2.Year(2017),
                 new org.orcid.jaxb.model.common_v2.Month(1), new org.orcid.jaxb.model.common_v2.Day(1)));
-        validator.validateJSONInput(peerReview, org.orcid.jaxb.model.record_v2.PeerReview.class);
+        validator.validateJSONInput(peerReview);
     }
 
     @Test(expected = InvalidJSONException.class)
@@ -142,7 +142,7 @@ public class JSONInputValidatorTest {
         peerReview.setCompletionDate(new org.orcid.jaxb.model.common_v2.FuzzyDate(new org.orcid.jaxb.model.common_v2.Year(2017),
                 new org.orcid.jaxb.model.common_v2.Month(1), new org.orcid.jaxb.model.common_v2.Day(1)));
         peerReview.setRole(null);
-        validator.validateJSONInput(peerReview, org.orcid.jaxb.model.record_v2.PeerReview.class);
+        validator.validateJSONInput(peerReview);
     }
 
 }
