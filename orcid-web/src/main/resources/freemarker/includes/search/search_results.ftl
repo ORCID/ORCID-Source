@@ -33,7 +33,7 @@
     				<td class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}">{{result['orcid-identifier'].uri}}</td>
     				<td ng-bind="getNames(result)">{{result['given-names']}}</td>
     				<td>{{result['family-name']}}</td>
-    				<td>{{concatPropertyValues(result['other-name'], 'value')}}</td>
+    				<td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
     			</tr>
             </@orcid.checkFeatureStatus>
             <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
