@@ -40,7 +40,6 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS = new HashMap<>();
 
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Work.class, "/record_3.0_dev1/work-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.WorkBulk.class, "/record_3.0_dev1/bulk-3.0_dev1.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Funding.class, "/record_3.0_dev1/funding-3.0_dev1.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Education.class, "/record_3.0_dev1/education-3.0_dev1.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Employment.class, "/record_3.0_dev1/employment-3.0_dev1.xsd");
@@ -55,7 +54,6 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Address.class, "/record_3.0_dev1/address-3.0_dev1.xsd");
 
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Work.class, "/record_2.0/work-2.0.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.WorkBulk.class, "/record_2.0/bulk-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Funding.class, "/record_2.0/funding-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Education.class, "/record_2.0/education-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Employment.class, "/record_2.0/employment-2.0.xsd");
@@ -69,7 +67,6 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Address.class, "/record_2.0/address-2.0.xsd");
 
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc4.Work.class, "/record_2.0_rc4/work-2.0_rc4.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc4.WorkBulk.class, "/record_2.0_rc4/bulk-2.0_rc4.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc4.Funding.class, "/record_2.0_rc4/funding-2.0_rc4.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc4.Education.class, "/record_2.0_rc4/education-2.0_rc4.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc4.Employment.class, "/record_2.0_rc4/employment-2.0_rc4.xsd");
@@ -83,7 +80,6 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc4.Address.class, "/record_2.0_rc4/address-2.0_rc4.xsd");
 
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc3.Work.class, "/record_2.0_rc3/work-2.0_rc3.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc3.WorkBulk.class, "/record_2.0_rc3/bulk-2.0_rc3.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc3.Funding.class, "/record_2.0_rc3/funding-2.0_rc3.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc3.Education.class, "/record_2.0_rc3/education-2.0_rc3.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_rc3.Employment.class, "/record_2.0_rc3/employment-2.0_rc3.xsd");
@@ -118,7 +114,8 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.notification.permission_rc1.NotificationPermission.class, "/notification_2.0_rc1/notification-permission-2.0_rc1.xsd");
     }
 
-    public void validateJSONInput(Object obj, Class<?> clazz) {
+    public void validateJSONInput(Object obj) {
+        Class<?> clazz = obj.getClass();
         Validator validator = null;
         JAXBSource source = null;
 

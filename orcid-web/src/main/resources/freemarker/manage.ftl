@@ -549,7 +549,7 @@
                             <@orcid.checkFeatureStatus featureName="HTTPS_IDS">
                                 <tr ng-repeat='result in results track by $index' class="new-search-result">
                                     <td width="20%" ng-bind="getDisplayName(result)"></td>
-                                    <td width="25%" class='search-result-orcid-id'><a href="result['orcid-identifier'].uri" target="result['orcid-identifier'].path">{{result['orcid-identifier'].uri}}</a></td>
+                                    <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}" target="{{result['orcid-identifier'].path}}">{{result['orcid-identifier'].uri}}</a></td>
                                     <td width="10%">
                                         <span ng-show="effectiveUserOrcid !== result['orcid-identifier'].path">
                                             <span ng-show="!delegatesByOrcid[result['orcid-identifier'].path]"

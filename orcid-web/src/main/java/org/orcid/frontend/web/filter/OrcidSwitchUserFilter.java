@@ -186,7 +186,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         ProfileEntity profileEntity = profileDao.find(orcid);
         for (EmailEntity email : profileEntity.getEmails()) {
             if (email.getPrimary()) {
-                OrcidType orcidType = OrcidType.fromValue(profileEntity.getOrcidType().name());
+                OrcidType orcidType = OrcidType.valueOf(profileEntity.getOrcidType().name());
                 return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword(), orcidType);
             }
         }
