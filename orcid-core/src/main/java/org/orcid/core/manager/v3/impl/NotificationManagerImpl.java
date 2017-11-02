@@ -602,7 +602,8 @@ public class NotificationManagerImpl implements NotificationManager {
             LOGGER.debug("Not sending amend email, because option to send change notifications not set to true: {}", amendedProfile);
             return;
         }
-        if (OrcidType.ADMIN.equals(profileDao.retrieveOrcidType(amenderOrcid))) {
+        org.orcid.jaxb.model.common_v2.OrcidType amenderType = profileDao.retrieveOrcidType(amenderOrcid);
+        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.fromValue(amenderType.value()))) {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, amendedProfile);
             return;
         }
