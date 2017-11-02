@@ -2,9 +2,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { ConfigurationService } 
-    from '../../shared/configurationService.ts';
-
 /*
 Implementation Example:
 <privacy-toggle-ng2 elementId="bio-privacy-toggle" [dataPrivacyObj]="biographyForm" (privacyUpdate)="privacyChange($event)"></privacy-toggle-ng2>

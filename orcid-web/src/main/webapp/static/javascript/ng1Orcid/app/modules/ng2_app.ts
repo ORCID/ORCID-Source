@@ -46,16 +46,19 @@ import { WorksPrivacyPreferencesNg2Module }
 //User generated services
 import { BiographyService } 
     from '../shared/biographyService.ts';
+
 import { CountryService } 
     from '../shared/countryService.ts'; 
+
 import { CommonService }
     from '../shared/commonService.ts'
-import { ConfigurationService } 
-    from '../shared/configurationService.ts'; 
+
 import { EmailService } 
     from '../shared/emailService.ts'; 
+
 import { ModalService } 
     from '../shared/modalService.ts';
+
 import { NameService } 
     from '../shared/nameService.ts'; 
 
@@ -115,7 +118,6 @@ export class RootCmp {
         },
         BiographyService,
         CommonService,
-        ConfigurationService,
         CountryService,
         EmailService,
         ModalService,

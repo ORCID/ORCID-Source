@@ -5,18 +5,11 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
         showModalManualEditVerificationEnabled: true
     };
 
-    var paramVerifyEditRegex = /.*\?(.*\&)*(verifyEdit){1}(=true){0,1}(?!=false)((\&){1}.+)*/g;
-    var paramVerifyEdit = paramVerifyEditRegex.test( $location.absUrl() ); 
-
     var initialConfigService = {
         getInitialConfiguration: function(){
             return configValues;
         }
     };
-
-    if( paramVerifyEdit == true ){
-        configValues.showModalManualEditVerificationEnabled = true;
-    } 
 
     return initialConfigService;
 }]);
