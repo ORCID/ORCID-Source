@@ -217,7 +217,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setRole(Text.valueOf("reviewer"));
         form.setType(Text.valueOf("evaluation"));
         form.setUrl(Text.valueOf("http://orcid.org"));
-        form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC));
+        form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED));
 
         Date completionDate = new Date();
         completionDate.setDay("01");

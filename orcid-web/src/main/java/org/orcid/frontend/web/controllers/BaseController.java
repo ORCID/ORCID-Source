@@ -854,8 +854,7 @@ public class BaseController {
         }
         if(form.getVisibility() == null) {
             setError(form, "common.visibility.not_blank");           
-        }
-        if(form.getVisibility().getVisibility() == null) {
+        } else if(form.getVisibility().getVisibility() == null) {
             setError(form.getVisibility(), "common.visibility.not_blank"); 
         }
     }
