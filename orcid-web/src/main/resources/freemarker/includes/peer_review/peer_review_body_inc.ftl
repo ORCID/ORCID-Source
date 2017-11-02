@@ -32,7 +32,7 @@
                             <#if !(isPublicProfile??)>
                             <!-- Privacy -->
                             <li>
-                            <@orcid.privacyToggle2 angularModel="peerReview.visibility"
+                            <@orcid.privacyToggle2 angularModel="peerReview.visibility.visibility"
                             questionClick=""
                             clickedClassCheck="{'popover-help-container-show':privacyHelp[peerReview.putCode.value]==true}"
                             publicClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'PUBLIC', $event)"

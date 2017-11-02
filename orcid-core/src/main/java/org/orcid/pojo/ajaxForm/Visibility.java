@@ -38,6 +38,12 @@ public class Visibility implements ErrorsInterface, Required, Serializable {
         visibility = org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC;
     }
     
+    public static Visibility valueOf(org.orcid.jaxb.model.message.Visibility visibility) {
+        Visibility v = new Visibility();
+        v.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(visibility.name()));
+        return v;
+    }
+    
     public static Visibility valueOf(org.orcid.jaxb.model.common_v2.Visibility visibility) {
         Visibility v = new Visibility();
         v.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(visibility.name()));

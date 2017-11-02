@@ -559,7 +559,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
             var putCodes = new Array();
             for (var idx in group.activities) {
                 putCodes.push(group.activities[idx].putCode.value);
-                group.activities[idx].visibility = priv;
+                group.activities[idx].visibility.visibility = priv;
             }
             worksSrvc.updateVisibility(putCodes, priv);
         },

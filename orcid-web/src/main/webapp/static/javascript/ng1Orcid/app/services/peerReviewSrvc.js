@@ -263,7 +263,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($r
                 var putCodes = new Array();
                 for (var idx in group.activities) {
                     putCodes.push(group.activities[idx].putCode.value);
-                    group.activities[idx].visibility = priv;
+                    group.activities[idx].visibility.visibility = priv;
                 }
                 peerReviewSrvc.updateVisibility(putCodes, priv);
             },

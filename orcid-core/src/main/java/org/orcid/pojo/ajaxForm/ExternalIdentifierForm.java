@@ -23,7 +23,7 @@ import java.util.List;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
 
-public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
+public class ExternalIdentifierForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 8715304593954651166L;
     private List<String> errors = new ArrayList<String>();
@@ -31,8 +31,7 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
     private String reference;
     private String url;
     private String source;
-    private String sourceName;
-    private Visibility visibility;
+    private String sourceName;    
     private Long displayIndex;
     private String putCode;
     private Date createdDate;
@@ -136,14 +135,6 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
-    }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public String getPutCode() {
