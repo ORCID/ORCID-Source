@@ -554,16 +554,31 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
      * @see SalesForceManagerImpl#updateContacts(Collection), which does check
      *      user permissions.
      */
-    void updateContact(Contact contact) {
+    void updateContact(Contact contact, List<Contact> existingContacts) {
         String accountId = contact.getAccountId();
-        removeContactRole(contact);
-        ContactRole contactRole = new ContactRole();
-        contactRole.setAccountId(accountId);
-        contactRole.setContactId(contact.getId());
-        contactRole.setRoleType(contact.getRole().getRoleType());
-        contactRole.setVotingContact(contact.getRole().isVotingContact());
-        String contactRoleId = salesForceDao.createContactRole(contactRole);
-        contact.getRole().setId(contactRoleId);
+        ContactRole updatedRole = null;
+        Optional<Contact> existingContactOfSameType = existingContacts.stream()
+                .filter(existing -> contact.getId().equals(existing.getId()) && contact.getRole().getRoleType().equals(existing.getRole().getRoleType())).findFirst();
+        if (existingContactOfSameType.isPresent()) {
+            updatedRole = existingContactOfSameType.get().getRole();
+            if (!updatedRole.getId().equals(contact.getRole().getId())) {
+                removeContactRole(contact);
+            }
+        } else {
+            removeContactRole(contact);
+            updatedRole = new ContactRole();
+            updatedRole.setAccountId(accountId);
+            updatedRole.setContactId(contact.getId());
+            updatedRole.setRoleType(contact.getRole().getRoleType());
+        }
+        updatedRole.setVotingContact(contact.getRole().isVotingContact());
+        updatedRole.setCurrent(true);
+        if (updatedRole.getId() == null) {
+            updatedRole.setId(salesForceDao.createContactRole(updatedRole));
+        } else {
+            salesForceDao.updateContactRole(updatedRole);
+        }
+        contact.getRole().setId(updatedRole.getId());
         salesForceContactsCache.remove(accountId);
     }
 
@@ -573,16 +588,17 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         if (contacts.stream().allMatch(c -> !accountId.equals(c.getAccountId()))) {
             throw new IllegalStateException("Contacts account id inconsistent");
         }
-        List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId, true);
+        List<Contact> currentContacts = existingContacts.stream().filter(c -> c.getRole().isCurrent()).collect(Collectors.toList());
         // Ensure contact ORCID iDs are correct by getting from registry DB.
-        addOrcidsToContacts(existingContacts);
-        checkContactUpdatePermissions(existingContacts, contacts);
+        addOrcidsToContacts(currentContacts);
+        checkContactUpdatePermissions(currentContacts, contacts);
         // Need to remove roles with validation rules in SF first
-        existingContacts.stream().filter(c -> {
+        currentContacts.stream().filter(c -> {
             return ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType()) || ContactRoleType.AGREEMENT_SIGNATORY.equals(c.getRole().getRoleType())
                     || c.getRole().isVotingContact();
         }).forEach(c -> removeContactRole(c));
-        contacts.stream().forEach(c -> updateContact(c));
+        contacts.stream().forEach(c -> updateContact(c, existingContacts));
         // Update access control list for self-service
         updateAccessControl(contacts, accountId);
         salesForceContactsCache.remove(accountId);
@@ -600,7 +616,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     private void addSalesForceConnection(String accountId, Contact contact) {
         String orcid = contact.getOrcid();
-        if(orcid == null){
+        if (orcid == null) {
             return;
         }
         List<SalesForceConnectionEntity> existingConnections = salesForceConnectionDao.findByOrcid(orcid);
