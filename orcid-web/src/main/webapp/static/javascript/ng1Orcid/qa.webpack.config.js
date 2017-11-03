@@ -4,10 +4,10 @@ module.exports = {
     entry: "./require.js",
     module: {
         loaders: [
-            { 
-                test: /\.ts$/, 
-                loader: 'ts-loader' 
-            }
+                    { 
+                        test: /\.ts$/, 
+                        loader: 'ts-loader' 
+                    }
         ]
     },
     output: {
@@ -15,6 +15,12 @@ module.exports = {
         filename: "angular_orcid_generated.js"
     },
     plugins: [
+            new webpack.DefinePlugin({
+                'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+                                     'process.env':{
+                                         'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+                                     }
+            })
     ],
     resolve: {
         alias: {
@@ -22,4 +28,4 @@ module.exports = {
         }
     },
     watch: false
-};
+}

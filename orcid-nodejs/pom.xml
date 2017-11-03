@@ -34,6 +34,7 @@
                     <installDirectory>target</installDirectory>
                     <environmentVariables>
                         <eirslett_ver>1.3</eirslett_ver>
+                        <NODE_ENV>production</NODE_ENV>
                     </environmentVariables>
                 </configuration>
                 <executions>
@@ -81,10 +82,4 @@
             <properties>
             </properties>
         </profile>
-        <profile>
-            <id>production</id>
-            <properties>
-            </properties>
-        </profile>        
-    </profiles>
 </project>
