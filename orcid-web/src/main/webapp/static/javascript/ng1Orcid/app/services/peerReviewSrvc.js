@@ -1,4 +1,4 @@
-angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', function ($rootScope, $timeout) {
     var peerReviewSrvc = {
             blankPeerReview: null,
             constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
@@ -36,11 +36,11 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($r
                                 };
                             });
                             if(peerReviewSrvc.peerReviewsToAddIds.length == 0 ) {
-                                peerReviewSrvc.loading = false;
-                                $rootScope.$apply();
+                                $timeout(function() {
+                                  peerReviewSrvc.loading = false;
+                                });
                             } else {
-                                $rootScope.$apply();
-                                setTimeout(function(){
+                                $timeout(function(){
                                     peerReviewSrvc.addPeerReviewsToScope(type);
                                 },50);
                             }
