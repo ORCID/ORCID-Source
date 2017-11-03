@@ -946,7 +946,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             function loadWorkImportWizardList() {
                 $.ajax({
-                    url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
+                    url: getBaseUri() + '/workspace/retrieve-work-import-wizards.json',
                     type: 'GET',
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
@@ -960,23 +960,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                         $scope.workImportWizardsOriginal = data;
                         $scope.bulkEditShow = false;
                         $scope.showBibtexImportWizard = false;
-                        for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
-                            for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
-                                $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
-                                $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
-                                for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
-                                    if(!utilsService.contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k])){
-                                        $scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
-                                    }
-                                }
-                                
-                                for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
-                                    if(!utilsService.contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k])){
-                                        $scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
-                                    }
-                                }
-                            }
-                        }               
+                        //TODO!!!!!!!            
                         $scope.$apply();
                     }
                 }).fail(function(e) {

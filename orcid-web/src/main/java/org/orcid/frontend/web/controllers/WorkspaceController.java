@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.v3.dev1.client.Client;
 import org.orcid.jaxb.model.v3.dev1.record.CitationType;
 import org.orcid.jaxb.model.v3.dev1.record.Keywords;
 import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
@@ -127,9 +128,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private IdentifierTypeManager identifierTypeManager;
     
-    @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/workspace/retrieve-work-import-wizards.json" }, method = RequestMethod.GET)
     public @ResponseBody List<ImportWizzardForm> retrieveWorkImportWizards() {
-        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();        
     }
 
     @ModelAttribute("fundingImportWizards")
