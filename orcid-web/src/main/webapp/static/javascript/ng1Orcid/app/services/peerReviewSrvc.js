@@ -27,7 +27,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                         'url': url + peerReviewIds,
                         'dataType': 'json',
                         'success': function(data) {
-                            $rootScope.$apply(function(){
+                            $timeout(function(){
                                 var dw = null;
                                 for (var i in data) {
                                     dw = data[i];                                    
@@ -46,9 +46,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                             }
                         }
                     }).fail(function(e) {
-                        // $rootScope.$apply(function() {
                             peerReviewSrvc.loading = false;
-                        // });
                         console.log("Error fetching Peer Review: " + peerReviewIds);
                         logAjaxError(e);
                     });
@@ -99,8 +97,9 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                     url: getBaseUri() + '/peer-reviews/peer-review.json',
                     dataType: 'json',
                     success: function(data) {
-                        callback(data);
-                        $rootScope.$apply();
+                        $timeout(function(){
+                            callback(data);
+                        });
                     }
                 }).fail(function() {
                     console.log("Error fetching blank Peer Review");
@@ -160,7 +159,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                             contentType: 'application/json;charset=UTF-8',
                             type: 'GET',
                             success: function(data) {
-                                $rootScope.$apply(function(){
+                                $timeout(function(){
                                     console.log(angular.toJson(data));
                                     group.groupName = data.name;
                                     group.groupDescription = data.description;
@@ -190,9 +189,11 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                         url: getBaseUri() + '/peer-reviews/peer-review-ids.json',
                         dataType: 'json',
                         success: function(data) {
-                            peerReviewSrvc.peerReviewsToAddIds = data;                          
-                            peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
-                            $rootScope.$apply();
+                            $timeout(function(){
+                                peerReviewSrvc.peerReviewsToAddIds = data;              
+                                peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
+                            });
+                            
                         }
                     }).fail(function(e){
                         // something bad is happening!
