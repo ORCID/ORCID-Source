@@ -81,5 +81,10 @@
             <properties>
             </properties>
         </profile>
+        <profile>
+            <id>production</id>
+            <properties>
+            </properties>
+        </profile>        
     </profiles>
 </project>
