@@ -76,4 +76,21 @@ public class NormalizationServiceTest {
         assertEquals(id1,normed);
 
     }
+    
+    @Test
+    public void checkISBNAndCaseNormalized(){
+        ExternalID normed = new ExternalID();
+        normed.setRelationship(Relationship.SELF);
+        normed.setType("isbn");
+        normed.setValue("ISBN: 123-456-7-89x junk");
+        normed.setNormalized(new TransientNonEmptyString("123456789X"));  //everything should normalize to this.       
+        
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("isbn");
+        id1.setValue("ISBN: 123-456-7-89x junk");
+        id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));        
+        assertEquals(normed,id1);
+    }
+
 }
