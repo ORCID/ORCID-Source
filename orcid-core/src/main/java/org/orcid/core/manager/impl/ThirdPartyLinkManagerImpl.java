@@ -36,6 +36,7 @@ import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.OrcidPropsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
 import org.orcid.pojo.ajaxForm.ImportWizzardForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
@@ -178,28 +179,23 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
         LOGGER.debug("read-access-clients and import-works-clients all keys  evicted");
     }
 
-    private ImportWizzardForm generateImportWizzardForm(RedirectUriType rut) {
-        List<Client> clients = new ArrayList<Client>();
+    private List<ImportWizzardClientForm> generateImportWizzardForm(RedirectUriType rut) {
         List<ClientRedirectUriEntity> entitiesWithPredefinedScopes = clientRedirectDao.findClientDetailsWithRedirectScope();
-        // TODO: Generate the ImportWizzardForm here!
+        
+        List<ImportWizzardClientForm> clients = new ArrayList<ImportWizzardClientForm>();
+                
         for (ClientRedirectUriEntity entity : entitiesWithPredefinedScopes) {
             if (rut.value().equals(entity.getRedirectUriType())) {
                 if (rut.value().equals(entity.getRedirectUriType())) {
                     ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
-                    Client client = new Client();
-                    client.setId(clientDetails.getId());
-                    client.setName(clientDetails.getClientName());
-                    client.setDescription(clientDetails.getClientDescription());
-                    client.setWebsite(clientDetails.getClientWebsite());
-                    ClientRedirectUri rUri = new ClientRedirectUri();
-                    rUri.setPredefinedClientScopes(new HashSet<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(entity.getPredefinedClientScope())));
-                    rUri.setRedirectUri(entity.getRedirectUri());
-                    rUri.setRedirectUriType(entity.getRedirectUriType());
-                    rUri.setUriActType(entity.getUriActType());
-                    rUri.setUriGeoArea(entity.getUriGeoArea());
-                    client.setClientRedirectUris(new HashSet<ClientRedirectUri>());
-                    client.getClientRedirectUris().add(rUri);
-                    clients.add(client);
+                    ImportWizzardClientForm clientForm = new ImportWizzardClientForm();
+                    clientForm.setId(clientDetails.getId());
+                    clientForm.setName(clientDetails.getClientName());
+                    clientForm.setDescription(clientDetails.getClientDescription());
+                    clientForm.setRedirectUri(entity.getRedirectUri());
+                    clientForm.setActTypes(null);
+                    clientForm.setGeoAreas(null);
+                    clients.add(clientForm);
                 }
             }
         }
