@@ -92,5 +92,21 @@ public class NormalizationServiceTest {
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));        
         assertEquals(normed,id1);
     }
+    
+    @Test
+    public void checkISSNAndCaseNormalized(){
+        ExternalID normed = new ExternalID();
+        normed.setRelationship(Relationship.SELF);
+        normed.setType("issn");
+        normed.setValue("ISSN: 1234-4567 stuff");
+        normed.setNormalized(new TransientNonEmptyString("1234-4567"));  //everything should normalize to this.       
+        
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("issn");
+        id1.setValue("ISSN: 1234-4567 stuff");
+        id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));        
+        assertEquals(normed,id1);
+    }
 
 }
