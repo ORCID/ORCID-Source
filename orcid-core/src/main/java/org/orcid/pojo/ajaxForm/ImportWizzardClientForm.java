@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
@@ -10,6 +26,7 @@ public class ImportWizzardClientForm implements Serializable {
     public String name;
     public String description;
     public String redirectUri;
+    public String scopes;
     public List<String> actTypes = new ArrayList<String>();
     public List<String> geoAreas = new ArrayList<String>();
 
@@ -43,6 +60,14 @@ public class ImportWizzardClientForm implements Serializable {
 
     public void setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
+    }    
+    
+    public String getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(String scopes) {
+        this.scopes = scopes;
     }
 
     public List<String> getActTypes() {

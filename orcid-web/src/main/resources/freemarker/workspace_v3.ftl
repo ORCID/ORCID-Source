@@ -271,7 +271,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                   <p class="wizard-content">
                     <@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
-                  </p>                
+                  </p>
                 </div>
               </div>
               <div class="row">
@@ -279,14 +279,14 @@
                   <form class="form-inline">
                     <div class="col-md-5 col-sm-5 col-xs-12">
                       <div class="form-group">
-                        <label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label>
-                        <select id="work-type" ng-options="wt as wt for wt in workType" ng-init="selectedWorkType = 'All'" ng-model="selectedWorkType"></select>
-                      </div>
+                        <label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label>   
+                        <select id="work-type" ng-options="wt as wt for wt in workType" ng-model="selectedWorkType"></select>                    
+                      </div> 
                     </div>
                     <div class="col-md-7 col-sm-7 col-xs-12">
                       <div class="form-group geo-area-group">
-                        <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>
-                        <select ng-options="ga as ga for ga in geoArea" ng-init="selectedGeoArea = 'All'" ng-model="selectedGeoArea"></select>
+                        <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>  
+                        <select ng-options="ga as ga for ga in geoArea" ng-model="selectedGeoArea"></select>                      
                       </div>
                     </div>  
                   </form>
@@ -295,14 +295,14 @@
               </div>         
               <div class="row wizards">               
                 <div class="col-md-12 col-sm-12 col-xs-12">
-                  <div ng-repeat="wtw in workImportWizardsOriginal | orderBy: 'displayName' | filterImportWizards : selectedWorkType : selectedGeoArea">
-                    <strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.displayName}}</a></strong><br />                                                                                    
+                  <div ng-repeat="wtw in workImportWizardsOriginal | orderBy: 'name' | filterImportWizards : selectedWorkType : selectedGeoArea">
+                    <strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong><br />                                                                                    
                     <div class="justify">                       
-                      <p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null}">
-                        {{wtw.shortDescription}}                          
-                        <a ng-click="toggleWizardDesc(wtw.clientId)" ng-if="wizardDescExpanded[wtw.clientId]"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+                      <p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null}">
+                        {{wtw.description}}
+                        <a ng-click="toggleWizardDesc(wtw.id)" ng-if="wizardDescExpanded[wtw.id]"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
                       </p>                        
-                      <a ng-click="toggleWizardDesc(wtw.clientId)" ng-if="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+                      <a ng-click="toggleWizardDesc(wtw.id)" ng-if="wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
                     </div>
                     <hr/>
                   </div>
