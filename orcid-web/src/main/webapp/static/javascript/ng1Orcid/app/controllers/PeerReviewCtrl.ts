@@ -20,6 +20,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
         '$compile', 
         '$filter', 
         '$scope', 
+        '$timeout',
         'commonSrvc', 
         'peerReviewSrvc', 
         'workspaceSrvc', 
@@ -27,6 +28,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
             $compile, 
             $filter, 
             $scope, 
+            $timeout,
             commonSrvc, 
             peerReviewSrvc,
             workspaceSrvc
@@ -61,15 +63,17 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                 peerReviewSrvc.postPeerReview($scope.editPeerReview,
                     function(data){             
                         if (data.errors.length == 0) {
-                            $scope.addingPeerReview = false;
-                            $scope.$apply();
+                            $timeout(function(){
+                                $scope.addingPeerReview = false;
+                            });
                             $.colorbox.close();
                             $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
                         } else {
-                            $scope.editPeerReview = data;
-                            commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
-                            $scope.addingPeerReview = false;
-                            $scope.$apply();
+                            $timeout(function(){
+                                $scope.editPeerReview = data;
+                                commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
+                                $scope.addingPeerReview = false;
+                            });
                         }
                     },
                     function() {
@@ -84,7 +88,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                 if (data == undefined) {
                     peerReviewSrvc.getBlankPeerReview(function(data) {
                         $scope.editPeerReview = data;
-                        $scope.$apply(function() {                    
+                        $timeout(function() {                    
                             $scope.showAddPeerReviewModal();
                             $scope.bindTypeaheadForOrgs();
                         });
@@ -132,8 +136,9 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                     }
                 });
                 $("#organizationName").bind("typeahead:selected", function(obj, datum) {
-                    $scope.selectOrganization(datum);
-                    $scope.$apply();
+                    $timeout(function(){
+                        $scope.selectOrganization(datum);
+                    });
                 });
             };
 
@@ -201,12 +206,13 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                     dataType: 'json',
                     type: 'GET',
                     success: function(data) {
-                        if (data != null) {
-                            $scope.disambiguatedOrganization = data;
-                            $scope.editPeerReview.disambiguatedOrganizationSourceId = data.sourceId;
-                            $scope.editPeerReview.disambiguationSource = data.sourceType;
-                            $scope.$apply();
-                        }
+                        $timeout(function(){
+                            if (data != null) {
+                                $scope.disambiguatedOrganization = data;
+                                $scope.editPeerReview.disambiguatedOrganizationSourceId = data.sourceId;
+                                $scope.editPeerReview.disambiguationSource = data.sourceType;
+                            }
+                        }); 
                     }
                 }).fail(function(){
                     console.log("error getDisambiguatedOrganization(id)");
@@ -273,7 +279,6 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                     if (datum.disambiguatedOrganizationIdentifier != undefined 
                         && datum.disambiguatedOrganizationIdentifier != null) {
                         $scope.getDisambiguatedOrganization(datum.disambiguatedOrganizationIdentifier);
-                        $scope.unbindTypeaheadForOrgs();
                     }
                 }
             };
@@ -286,8 +291,9 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        commonSrvc.copyErrorsLeft($scope.editPeerReview, data);                
-                        $scope.$apply();
+                        $timeout(function(){
+                            commonSrvc.copyErrorsLeft($scope.editPeerReview, data);    
+                        });
                     }
                 }).fail(function() {
                     // something bad is happening!
@@ -307,6 +313,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                         // resize to insure content fits
                     },
                     onClosed: function() {
+                        $scope.unbindTypeaheadForOrgs();
                         // $scope.closeAllMoreInfo();
                         $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
                     }
@@ -370,11 +377,12 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.peerReviewImportWizardList = data;
-                        if(data == null || data.length == 0) {
-                            $scope.noLinkFlag = false;
-                        }
-                        $scope.$apply();
+						$timeout(function(){
+	                        $scope.peerReviewImportWizardList = data;
+	                        if(data == null || data.length == 0) {
+	                            $scope.noLinkFlag = false;
+	                        }
+                        });                        
                     }
                 }).fail(function(e) {
                     // something bad is happening!

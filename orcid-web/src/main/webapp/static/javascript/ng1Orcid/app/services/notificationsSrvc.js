@@ -1,4 +1,4 @@
-angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
+angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', '$timeout', function ($rootScope, $q, $timeout) {
     var defaultMaxResults = 10;
     var serv = {
         loading: true,
@@ -73,8 +73,9 @@ angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', fun
                 url: getBaseUri() + '/inbox/unreadCount.json',
                 dataType: 'json',
                 success: function(data) {
-                    serv.unreadCount = data;                   
-                    $rootScope.$apply();
+                    $timeout(function(){
+                        serv.unreadCount = data;  
+                    });
                 }
             }).fail(function(e) {
                 // something bad is happening!

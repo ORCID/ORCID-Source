@@ -1,4 +1,4 @@
-angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', '$timeout', function ($rootScope, $timeout) {
     var serv = {
         educations: new Array(),
         employments: new Array(),
@@ -25,11 +25,11 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                             }
                         };
                         if (serv.affiliationsToAddIds.length == 0) {
-                            serv.loading = false;
-                            $rootScope.$apply();
+                            $timeout(function() {
+                              serv.loading = false;
+                            });
                         } else {
-                            $rootScope.$apply();
-                            setTimeout(
+                            $timeout(
                                 function () {
                                     serv.addAffiliationToScope(path);
                                 },
@@ -59,9 +59,10 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                 url: getBaseUri() + '/' + path,
                 dataType: 'json',
                 success: function(data) {
-                    serv.affiliationsToAddIds = data;
-                    serv.addAffiliationToScope('affiliations/affiliations.json');
-                    $rootScope.$apply();
+                    $timeout(function(){
+                        serv.affiliationsToAddIds = data;
+                        serv.addAffiliationToScope('affiliations/affiliations.json');
+                    });
                 }
             }).fail(function(e){
                 // something bad is happening!
@@ -78,9 +79,10 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                 dataType: 'json',
                 success: function(data) {
                     if(data.errors.length != 0){
-                        console.log("Unable to update profile affiliation.");
+                        $timeout(function(){ 
+                            console.log("Unable to update profile affiliation.");
+                        });
                     }
-                    $rootScope.$apply();
                 }
             }).fail(function() {
                 console.log("Error updating profile affiliation.");
@@ -110,10 +112,11 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function(data) {
-                    if(data.errors.length != 0){
-                        console.log("Unable to delete affiliation.");
-                    }
-                    $rootScope.$apply();
+                    $timeout(function() {
+                        if(data.errors.length != 0){
+                            console.log("Unable to delete affiliation.");
+                        }
+                    });
                 }
             }).fail(function() {
                 console.log("Error deleting affiliation.");

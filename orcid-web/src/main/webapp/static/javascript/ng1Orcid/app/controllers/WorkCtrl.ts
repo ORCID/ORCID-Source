@@ -128,7 +128,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     if (data == undefined) {
                         worksSrvc.getBlankWork(function(data) {
                             $scope.editWork = data;
-                            $scope.$apply(function() {
+                            $timeout(function(){
                                 $scope.loadWorkTypes();
                                 $scope.showAddWorkModal();
                             });
@@ -380,7 +380,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 }
                 //not loaded any descriptions yet, fetch them
                 var url = getBaseUri()+'/works/idTypes.json?query='+model;
-                ajax = $.ajax({
+                var ajax = $.ajax({
                     url: url,
                     dataType: 'json',
                     cache: true,
@@ -473,10 +473,11 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                     worksSrvc.worksValidate(
                                         newWorks, 
                                         function(data) {
-                                            for (var i in data) {                           
-                                                $scope.worksFromBibtex.push(data[i]);
-                                            }
-                                            $scope.$apply();
+                                            $timeout(function(){
+                                                for (var i in data) {                           
+                                                    $scope.worksFromBibtex.push(data[i]);
+                                                }   
+                                            });
                                         }
                                     );
                                 }
@@ -526,7 +527,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.$apply(function() {
+                        $timeout(function() {
                             $scope.types = data;
                             if($scope.editWork != null && $scope.editWork.workCategory != null) {
                                 // if the edit works doesn't have a value that matches types
@@ -633,19 +634,20 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                     $.colorbox.close();
                                     $scope.addingWork = false;
                                 } else {
-                                    $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
-                                    $scope.bibtextWork = false;
-                                    $scope.addingWork = false;
-                                    $scope.$apply();
+                                    $timeout(function(){
+                                        $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
+                                        $scope.bibtextWork = false;
+                                        $scope.addingWork = false;
+                                    });
                                     $.colorbox.close();
                                     $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
                                 }
                             } else {
-                                $scope.editWork = data;                    
-                                commonSrvc.copyErrorsLeft($scope.editWork, data);
-                                
-                                $scope.addingWork = false;
-                                $scope.$apply();
+                                $timeout(function(){
+                                    $scope.editWork = data;                    
+                                    commonSrvc.copyErrorsLeft($scope.editWork, data);
+                                    $scope.addingWork = false;
+                                });
                                 // make sure colorbox is shown if there are errors
                                 if (!($("#colorbox").css("display")=="block")) {
                                     $scope.addWorkModal(data);
@@ -695,9 +697,10 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     numToSave = worksToSave.length;
                     angular.forEach( worksToSave, function( work, key ) {
                         worksSrvc.putWork(work,function(data) {
-                            var index = $scope.worksFromBibtex.indexOf(work);
-                            $scope.worksFromBibtex.splice(index, 1);
-                            $scope.$apply();
+                            $timeout(function(){
+                                var index = $scope.worksFromBibtex.indexOf(work);
+                                $scope.worksFromBibtex.splice(index, 1);
+                            });
                             numToSave--;
                             if (numToSave == 0){
                                 $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
@@ -718,11 +721,12 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        commonSrvc.copyErrorsLeft($scope.editWork, data);
-                        if ( relativePath == 'works/work/citationValidate.json') {
-                            $scope.validateCitation();
-                        }
-                        $scope.$apply();
+                        $timeout(function(){
+                            commonSrvc.copyErrorsLeft($scope.editWork, data);
+                            if ( relativePath == 'works/work/citationValidate.json') {
+                                $scope.validateCitation();
+                            }
+                        });
                     }
                 }).fail(function() {
                     // something bad is happening!
@@ -950,28 +954,29 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     type: 'GET',
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
-                    success: function(data) {                    	
-                        if(data == null || data.length == 0) {
-                            $scope.noLinkFlag = false;
-                        }
-                        $scope.selectedWorkType = om.get('workspace.works.import_wizzard.all');
-                        $scope.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
-                        $scope.workImportWizardsOriginal = data;
-                        $scope.bulkEditShow = false;
-                        $scope.showBibtexImportWizard = false;
-                        for(var idx in data) {                        	
-                        	for(var i in data[idx].actTypes) {
-                        		if(!utilsService.contains($scope.workType, data[idx].actTypes[i])) {
-                        			$scope.workType.push(data[idx].actTypes[i]);
-                        		}                        		
-                        	}
-                        	for(var j in data[idx].geoAreas) {
-                        		if(!utilsService.contains($scope.geoArea, data[idx].geoAreas[j])) {
-                        			$scope.geoArea.push(data[idx].geoAreas[j]);
-                        		}                        		
-                        	}							
-                        }
-                        $scope.$apply();
+                    success: function(data) {                    	                     
+                        $timeout(function(){
+	                        if(data == null || data.length == 0) {
+	                            $scope.noLinkFlag = false;
+	                        }
+	                        $scope.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+	                        $scope.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+	                        $scope.workImportWizardsOriginal = data;
+	                        $scope.bulkEditShow = false;
+	                        $scope.showBibtexImportWizard = false;
+	                        for(var idx in data) {                        	
+	                        	for(var i in data[idx].actTypes) {
+	                        		if(!utilsService.contains($scope.workType, data[idx].actTypes[i])) {
+	                        			$scope.workType.push(data[idx].actTypes[i]);
+	                        		}                        		
+	                        	}
+	                        	for(var j in data[idx].geoAreas) {
+	                        		if(!utilsService.contains($scope.geoArea, data[idx].geoAreas[j])) {
+	                        			$scope.geoArea.push(data[idx].geoAreas[j]);
+	                        		}                        		
+	                        	}							
+	                        }
+                        });                                                
                     }
                 }).fail(function(e) {
                     // something bad is happening!

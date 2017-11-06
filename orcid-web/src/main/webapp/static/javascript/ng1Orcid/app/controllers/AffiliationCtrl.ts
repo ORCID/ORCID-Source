@@ -14,6 +14,7 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
     [
         '$scope', 
         '$rootScope', 
+        '$timeout',
         '$compile', 
         '$filter', 
         'affiliationsSrvc', 
@@ -23,7 +24,8 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
         'workspaceSrvc', 
         function (
             $scope, 
-            $rootScope, 
+            $rootScope,
+            $timeout, 
             $compile, 
             $filter, 
             affiliationsSrvc, 
@@ -100,10 +102,11 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                             $scope.addingAffiliation = false;
                             affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
                         } else {
-                            $scope.editAffiliation = data;
-                            commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
-                            $scope.addingAffiliation = false;
-                            $scope.$apply();
+                            $timeout(function(){
+                                $scope.editAffiliation = data;
+                                commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
+                                $scope.addingAffiliation = false;
+                            });
                         }
                     }
                 }).fail(function(){
@@ -126,7 +129,7 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                                 if (type != null){
                                     $scope.editAffiliation.affiliationType.value = type;
                                 }
-                                $scope.$apply(function() {
+                                $timeout(function() {
                                     $scope.showAddModal();
                                 });
                             }
@@ -170,8 +173,9 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                     }
                 });
                 $("#affiliationName").bind("typeahead:selected", function(obj, datum) {
-                    $scope.selectAffiliation(datum);
-                    $scope.$apply();
+                    $timeout(function(){
+                        $scope.selectAffiliation(datum);
+                    });
                 });
             };
 
@@ -218,13 +222,14 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                     dataType: 'json',
                     type: 'GET',
                     success: function(data) {
-                        if (data != null) {
-                            $scope.disambiguatedAffiliation = data;
-                            $scope.editAffiliation.orgDisambiguatedId.value = id;
-                            $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
-                            $scope.editAffiliation.disambiguationSource = data.sourceType;
-                            $scope.$apply();
-                        }
+                        $timeout(function(){
+                            if (data != null) {
+                                $scope.disambiguatedAffiliation = data;
+                                $scope.editAffiliation.orgDisambiguatedId.value = id;
+                                $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
+                                $scope.editAffiliation.disambiguationSource = data.sourceType; 
+                            }
+                        }); 
                     }
                 }).fail(function(){
                     console.log("error getDisambiguatedAffiliation(id)");
@@ -327,7 +332,6 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
 
                     if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
                         $scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-                        $scope.unbindTypeahead();
                     }
                 }
             };
@@ -340,8 +344,9 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
-                        $scope.$apply();
+                        $timeout(function(){
+                            commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
+                        });
                     }
                 }).fail(function() {
                     // something bad is happening!
@@ -368,6 +373,9 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                         // resize to insure content fits
                         formColorBoxResize();
                         $scope.bindTypeahead();
+                    },
+                    onClosed: function() {
+                        $scope.unbindTypeahead();
                     }
                 });
             };
