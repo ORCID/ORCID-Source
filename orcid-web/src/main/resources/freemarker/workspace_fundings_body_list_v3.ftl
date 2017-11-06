@@ -39,16 +39,16 @@
 			    	    	<div class="justify">
 								<p><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
 							</div>            	    	           	
-		    		    	<#list fundingImportWizards?sort_by("displayName") as thirdPartyDetails>
-			        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-		            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-		                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
+		    		    	<#list fundingImportWizards?sort_by("name") as thirdPartyDetails>
+			        	       	<#assign redirect = (thirdPartyDetails.redirectUri) >
+		            	   		<#assign predefScopes = (thirdPartyDetails.scopes) >
+		                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.id}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.name}</a></strong><br />
 		                 		<div class="justify">
-									<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null}">
-										${(thirdPartyDetails.shortDescription)!}
-									<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-if="wizardDescExpanded[${thirdPartyDetails.clientId}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+									<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.id}] == false || wizardDescExpanded[${thirdPartyDetails.id}] == null}">
+										${(thirdPartyDetails.description)!}
+									<a ng-click="toggleWizardDesc(${thirdPartyDetails.id})" ng-if="wizardDescExpanded[${thirdPartyDetails.id}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
 												</p>												
-												<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-if="wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+												<a ng-click="toggleWizardDesc(${thirdPartyDetails.id})" ng-if="wizardDescExpanded[${thirdPartyDetails.id}] == false || wizardDescExpanded[${thirdPartyDetails.id}] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
 								</div>
 		                   		<#if (thirdPartyDetails_has_next)>
 			                      	<hr/>

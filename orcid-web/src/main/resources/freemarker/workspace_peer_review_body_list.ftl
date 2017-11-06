@@ -85,14 +85,14 @@
                     </div>
                     <div class="row wizards">
                         <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div ng-repeat="peerReview in peerReviewImportWizardList">
-                                <strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', peerReview)">{{peerReview.displayName}}</a></strong><br />                                                                                                              
+                            <div ng-repeat="client in peerReviewImportWizardList | orderBy: 'name'">
+                                <strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', client)">{{client.name}}</a></strong><br />                                                                                                              
                                 <div class="justify">                                               
-                                    <p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null}">
-                                        {{peerReview.shortDescription}}                                                 
-                                        <a ng-click="toggleWizardDesc(peerReview.clientId)" ng-if="wizardDescExpanded[peerReview.clientId]" ng-cloak><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+                                    <p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[client.id] == false || wizardDescExpanded[client.id] == null}">
+                                        {{client.description}}                                                 
+                                        <a ng-click="toggleWizardDesc(client.id)" ng-if="wizardDescExpanded[client.id]" ng-cloak><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
                                     </p>                                                
-                                    <a ng-click="toggleWizardDesc(peerReview.clientId)" ng-if="wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null" class="toggle-wizard-desc" ng-cloak><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+                                    <a ng-click="toggleWizardDesc(client.id)" ng-if="wizardDescExpanded[client.id] == false || wizardDescExpanded[client.id] == null" class="toggle-wizard-desc" ng-cloak><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
                                 </div>
                                 <hr/>
                             </div>

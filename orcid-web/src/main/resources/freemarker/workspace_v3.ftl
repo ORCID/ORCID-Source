@@ -280,13 +280,13 @@
                     <div class="col-md-5 col-sm-5 col-xs-12">
                       <div class="form-group">
                         <label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label>   
-                        <select id="work-type" ng-options="wt as wt for wt in workType" ng-model="selectedWorkType"></select>                    
+                        <select id="work-type" ng-options="wt as wt for wt in workType | orderBy: 'toString()'" ng-model="selectedWorkType"></select>                    
                       </div> 
                     </div>
                     <div class="col-md-7 col-sm-7 col-xs-12">
                       <div class="form-group geo-area-group">
                         <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>  
-                        <select ng-options="ga as ga for ga in geoArea" ng-model="selectedGeoArea"></select>                      
+                        <select ng-options="ga as ga for ga in geoArea | orderBy: 'toString()'" ng-model="selectedGeoArea"></select>                      
                       </div>
                     </div>  
                   </form>
@@ -712,13 +712,13 @@
           <div class="justify">
             <p><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
           </div>                                
-          <#list fundingImportWizards?sort_by("displayName") as thirdPartyDetails>
-          <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-          <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-          <strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
+          <#list fundingImportWizards?sort_by("name") as thirdPartyDetails>
+          <#assign redirect = (thirdPartyDetails.redirectUri) >
+          <#assign predefScopes = (thirdPartyDetails.scopes) >
+          <strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.id}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.name}</a></strong><br />
           <div class="justify">
             <p>
-              ${(thirdPartyDetails.shortDescription)!}
+              ${(thirdPartyDetails.description)!}
             </p>
           </div>
           <#if (thirdPartyDetails_has_next)>

@@ -246,8 +246,8 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                 }
             };
 
-            $scope.openImportWizardUrlFilter = function(url, param) {
-                url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+            $scope.openImportWizardUrlFilter = function(url, client) {
+                url = url + '?client_id='+client.id+'&response_type=code&scope='+client.scopes+'&redirect_uri='+client.redirectUri;
                 openImportWizardUrl(url);
             };
 
@@ -374,15 +374,6 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                         if(data == null || data.length == 0) {
                             $scope.noLinkFlag = false;
                         }
-                        $scope.peerReviewImportWizardList.sort(function(obj1, obj2){
-                            if(obj1.displayName < obj2.displayName) {
-                                return -1;
-                            }
-                            if(obj1.displayName > obj2.displayName) {
-                                return 1;
-                            }
-                            return 0;
-                        });
                         $scope.$apply();
                     }
                 }).fail(function(e) {
