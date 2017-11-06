@@ -61,7 +61,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping(value = "/group/developer-tools")
-@PreAuthorize("!@sourceManager.isInDelegationMode() OR @sourceManager.isDelegatedByAnAdmin()")
+@PreAuthorize("!@sourceManagerV3.isInDelegationMode() OR @sourceManagerV3.isDelegatedByAnAdmin()")
 public class ClientsController extends BaseWorkspaceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientsController.class);
 

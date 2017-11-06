@@ -37,7 +37,7 @@
                 </#if>
             </div>
         </div>
-        <div ng-show="workspaceSrvc.displayWorks" class="col-md-9 col-sm-10 col-xs-12 action-button-bar">
+        <div ng-show="workspaceSrvc.displayWorks" class="col-md-8 col-sm-8 col-xs-12 action-button-bar">
             <#include "../workspace/workspace_act_sort_menu.ftl"/>
         </div>        
     </div>

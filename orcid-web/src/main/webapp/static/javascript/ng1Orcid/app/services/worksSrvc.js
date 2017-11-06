@@ -1,4 +1,4 @@
-angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', function ($rootScope, $timeout) {
     var worksSrvc = {
         bibtexJson: {},
         blankWork: null,
@@ -240,7 +240,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                     'url': url + workIds,
                     'dataType': 'json',
                     'success': function(data) {
-                        $rootScope.$apply(function(){
+                        $timeout(function(){
                             var dw = null;
                             for (var i in data) {
                                 dw = data[i];
@@ -251,13 +251,13 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                             };
                         });
                         if(worksSrvc.worksToAddIds.length == 0 ) {
-                            worksSrvc.loading = false;
-                            $rootScope.$apply();
+                            $timeout(function() {
+                              worksSrvc.loading = false;
+                            });
                             fixZindexIE7('.workspace-public workspace-body-list li',99999);
                             fixZindexIE7('.workspace-toolbar',9999);
                         } else {
-                            $rootScope.$apply();
-                            setTimeout(function(){
+                            $timeout(function(){
                                 worksSrvc.addAbbrWorksToScope(type);
                             },50);
                         }
@@ -323,8 +323,9 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
 
         deleteWork: function(putCode) {
             worksSrvc.removeWorks([putCode], function() {
-                groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
-                $rootScope.$apply();
+                $timeout(function(){
+                    groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
+                });
             });
         },
 
@@ -358,7 +359,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                     url: url + putCode,
                     dataType: 'json',
                     success: function(data) {
-                        $rootScope.$apply(function () {
+                        $timeout(function () {
                             removeBadContributors(data);
                             removeBadExternalIdentifiers(data);
                             worksSrvc.addBibtexJson(data);
@@ -495,9 +496,10 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                     url: getBaseUri() + '/works/workIds.json',
                     dataType: 'json',
                     success: function(data) {
-                        worksSrvc.worksToAddIds = data;
-                        worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
-                        $rootScope.$apply();
+                        $timeout(function(){
+                            worksSrvc.worksToAddIds = data;
+                            worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
+                        });
                     }
                 }).fail(function(e){
                     // something bad is happening!

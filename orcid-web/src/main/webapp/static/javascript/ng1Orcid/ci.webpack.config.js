@@ -25,7 +25,13 @@ module.exports = {
                     process.exit(1);
                 }
             });
-        }        
+        },
+        new webpack.DefinePlugin({
+            'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+            'process.env':{
+                'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+            }
+        })        
     ],
     resolve: {
         alias: {
@@ -33,4 +39,4 @@ module.exports = {
         }
     },
     watch: false
-};
+}
