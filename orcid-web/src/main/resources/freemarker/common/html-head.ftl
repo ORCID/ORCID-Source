@@ -147,16 +147,158 @@
             <!-- Education -->
             <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
             <
-                <#include "../includes/affiliate/edu_section_header_inc.ftl" />
+                <div class="workspace-accordion-header clearfix">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <a name='workspace-educations' />
+                            <a href="" ng-click="workspaceSrvc.toggleEducation($event)" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text">
+                                <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
+                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
+                            </a>
+                            <#if !(isPublicProfile??)> 
+                                <div class="popover-help-container">
+                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <div id="education-help" class="popover bottom">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></a></p>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </#if>
+                        </div>
+                        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEducation">
+                            <#include "../workspace/workspace_act_sort_menu.ftl"/>                    
+                            <#if !(isPublicProfile??)>
+                                <ul class="workspace-bar-menu">                         
+                                    <!-- Link Manually -->
+                                    <li class="hidden-xs">                  
+                                        <div class="menu-container" id="add-education-container">
+                                            <ul class="toggle-menu">
+                                                <li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
+                                                    <ul class="menu-options education">                         
+                                                        <!-- Add Manually -->
+                                                        <li>          
+                                                            <a id="add-education" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                            </a>
+                                                       </li>
+                                                    </ul>
+                                                 </li>
+                                          </ul>
+                                        </div>         
+                                    </li>
+                                    <!-- Mobile Workaround -->                    
+                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                       <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+                                           <span class="glyphicon glyphicon-plus"></span>
+                                           <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                       </a>
+                                   </li>                                            
+                                </ul>
+                            </#if>
+                        </div>
+                    </div>
+                </div>
                 <div ng-if="workspaceSrvc.displayEducation" class="workspace-accordion-content">
-                    <#include "../includes/affiliate/edu_body_inc.ftl" />
+                    <ul id="educations-list" ng-hide="!affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" ng-repeat="group in affiliationsSrvc.educations | orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.getActive().putCode.value}}"> 
+                                <#include "aff_row_inc_v3.ftl" />
+                        </li>
+                    </ul>
+                    <div ng-if="affiliationsSrvc.loading" class="text-center">
+                        <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+                        <!--[if lt IE 8]>    
+                            <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                        <![endif]-->
+                    </div>
+                    <div ng-if="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0" ng-cloak>
+                        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noeducationaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyeducation")} <a ng-click="addAffiliationModal('education')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
+                    </div>      
                 </div>
             </div>
             <!-- Employment -->
             <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" >
-                <#include "../includes/affiliate/emp_section_header_inc.ftl" />
+                <div class="workspace-accordion-header clearfix">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <a name='workspace-employments' />
+                            <a href="" ng-click="workspaceSrvc.toggleEmployment($event)" ng-click="workspaceSrvc.toggleEmployment($event)" class="toggle-text">
+                                <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
+                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span ng-bind="affiliationsSrvc.employments.length"></span>)
+                            </a>
+                            <#if !(isPublicProfile??)> 
+                                <div class="popover-help-container">
+                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <div id="employment-help" class="popover bottom">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="${knowledgeBaseUri}/articles/1807525" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </#if>                     
+                        </div>
+                        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEmployment">
+                            <#include "../workspace/workspace_act_sort_menu.ftl"/>  
+                            <#if !(isPublicProfile??)>
+                                <ul class="workspace-bar-menu">                         
+                                    <!-- Link Manually -->
+                                    <li class="hidden-xs">                  
+                                        <div class="menu-container" id="add-employment-container">
+                                            <ul class="toggle-menu">
+                                                <li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
+                                                    <ul class="menu-options employment">                            
+                                                        <!-- Add Manually -->
+                                                        <li>                            
+                                                            <a id="add-employment" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                            </a>                
+                                                         </li>
+                                                    </ul>
+                                                 </li>
+                                          </ul>
+                                        </div>         
+                                    </li>
+                                    <!-- Mobile workaound -->
+                                    <li class="hidden-md hidden-sm visible-xs-inline">                            
+                                        <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                        </a>                
+                                    </li>
+                                    
+                                    
+                                    
+                                    
+                                    
+                                </ul>
+                            </#if>
+                        </div>
+                    </div>
+                </div>
                 <div ng-if="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
-                    <#include "../includes/affiliate/emp_body_inc.ftl" />
+                    <ul id="employments-list" ng-hide="!affiliationsSrvc.employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card" ng-repeat="group in affiliationsSrvc.employments | orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.getActive().putCode.value}}">  
+                            <#include "aff_row_inc_v3.ftl" />
+                        </li>
+                    </ul>
+                    <div ng-if="affiliationsSrvc.loading" class="text-center">
+                        <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+                        <!--[if lt IE 8]>    
+                            <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                        <![endif]-->
+                    </div>
+                    <div ng-if="affiliationsSrvc.loading == false && affiliationsSrvc.employments.length == 0" ng-cloak>
+                        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noemploymentaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyemployment")} <a ng-click="addAffiliationModal('employment')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -308,7 +450,7 @@
                                 <div class="col-md-6">                                  
                                     <div class="aka">
                                         <select 
-                                            [(ngModel)]="country.iso2Country.value" 
+                                            [(ngModel)]="country.iso2Country" 
                                             [disabled]="country.source != orcidId"
                                             [ngClass]="{ 'not-allowed': country?.source != orcidId }"
                                             focus-me="newInput"
