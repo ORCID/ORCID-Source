@@ -1,4 +1,5 @@
 declare var $: any;
+declare var ActSortState: any;
 declare var typeahead: any;
 
 //Import all the angular components
@@ -35,18 +36,22 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     /*
     emailSrvc: any;
-    moreInfoCurKey: any;
     workspaceSrvc: any;
     */
     addingAffiliation: boolean;
+    deleAff: any;
+    disambiguatedAffiliation: any;
     displayAffiliationExtIdPopOver: any;
     displayURLPopOver: any;
     editAffiliation: any;
     emails: any;
+    fixedTitle: string;
     moreInfo: any;
+    moreInfoCurKey: any;
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
+    sortState: any;
 
     constructor(
         private affiliationService: AffiliationService,
@@ -55,18 +60,23 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         /*
         this.emailSrvc = emailSrvc;
-        this.moreInfoCurKey = null;
         this.workspaceSrvc = workspaceSrvc;
         */
         this.addingAffiliation = false;
+        this.deleAff = null;
+        this.disambiguatedAffiliation = null;
         this.displayAffiliationExtIdPopOver = {};
         this.displayURLPopOver = {};
         this.editAffiliation = {};
         this.emails = {};
+        this.fixedTitle = '';
         this.moreInfo = {};
+        this.moreInfoCurKey = null;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.showElement = {};
+        //this.sortState = new ActSortState(this.GroupedActivities.AFFILIATION);
+        this.sortState = '';
     }
 
     addAffiliation(): void {
@@ -99,6 +109,40 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('setBiographyFormError', error);
             } 
         );
+    };
+
+    addAffiliationModal(type, affiliation): void {
+        /*
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+            $scope.addAffType = type;
+            if(affiliation === undefined) {
+                $scope.removeDisambiguatedAffiliation();
+                $.ajax({
+                    url: getBaseUri() + '/affiliations/affiliation.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $scope.editAffiliation = data;
+                        if (type != null){
+                            $scope.editAffiliation.affiliationType.value = type;
+                        }
+                        $scope.$apply(function() {
+                            $scope.showAddModal();
+                        });
+                    }
+                }).fail(function(e) {
+                    console.log("Error fetching affiliation: ", $scope.editAffiliation.affiliationType.value,  e);
+                });
+            } else {
+                $scope.editAffiliation = affiliation;
+                if($scope.editAffiliation.orgDisambiguatedId != null){
+                    $scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
+                }
+                $scope.showAddModal();
+            }
+        }else{
+            showEmailVerificationModal();
+        }
+        */
     };
 
     bindTypeahead(): void {
@@ -143,6 +187,37 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo[key]=false;
     };
 
+    deleteAff(delAff): void {
+        this.affiliationService.deleteData(delAff);
+        this.closeModal();
+    };
+
+    deleteAffiliation(aff): void {
+        var maxSize = 100;
+        
+        this.deleAff = aff;
+
+        if (aff.affiliationName && aff.affiliationName.value){
+            this.fixedTitle = aff.affiliationName.value;
+        }
+        else {
+            this.fixedTitle = '';
+        }
+
+        if(this.fixedTitle.length > maxSize){
+            this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
+        }
+
+        /*
+        $.colorbox({
+            html : $compile($('#delete-affiliation-modal').html())($scope),
+            onComplete: function() {
+                $.colorbox.resize();
+            }
+        });
+        */
+    };
+
     hideTooltip(element): void{        
         this.showElement[element] = false;
     };
@@ -153,6 +228,26 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     hideAffiliationExtIdPopOver(id): void{
         this.displayAffiliationExtIdPopOver[id] = false;
+    };
+
+    getDisambiguatedAffiliation = function(id) {
+        this.affiliationService.getDisambiguatedAffiliation(id)
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                //console.log('this.getDisambiguatedAffiliation', data);
+
+                if (data != null) {
+                    this.disambiguatedAffiliation = data;
+                    this.editAffiliation.orgDisambiguatedId.value = id;
+                    this.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
+                    this.editAffiliation.disambiguationSource = data.sourceType;
+                }
+            },
+            error => {
+                console.log("error getDisambiguatedAffiliation(id)", id, error);
+            } 
+        );
     };
 
     isValidClass(cur): any {
@@ -184,12 +279,120 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         return '';
     };
 
-    showURLPopOver(id): void {
-        this.displayURLPopOver[id] = true;
+    moreInfoMouseEnter(key, $event): void {
+        $event.stopPropagation();
+        if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
+            if (this.moreInfoCurKey != null
+                && this.moreInfoCurKey != key) {
+                this.privacyHelp[this.moreInfoCurKey]=false;
+            }
+            this.moreInfoCurKey = key;
+            this.moreInfo[key]=true;
+        }
+    };
+
+    openEditAffiliation(affiliation): void {
+        this.addAffiliationModal(affiliation.affiliationType.value, affiliation);
+    };
+
+    removeDisambiguatedAffiliation(): void {
+        this.bindTypeahead();
+        
+        if (this.disambiguatedAffiliation != undefined) {
+            delete this.disambiguatedAffiliation;
+        }
+        
+        if (this.editAffiliation != undefined && this.editAffiliation.disambiguatedAffiliationSourceId != undefined) {
+            delete this.editAffiliation.disambiguatedAffiliationSourceId;
+        }
+        
+        if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {delete this.editAffiliation.orgDisambiguatedId;
+        }
+    };
+
+    selectAffiliation(datum): void {
+        if (datum != undefined && datum != null) {
+            this.editAffiliation.affiliationName.value = datum.value;
+            this.editAffiliation.city.value = datum.city;
+            
+            if(datum.city) {
+                this.editAffiliation.city.errors = [];
+            }
+
+            this.editAffiliation.region.value = datum.region;
+            
+            if(datum.region){
+                this.editAffiliation.region.errors = [];
+            }
+            
+            if(datum.country != undefined && datum.country != null) {
+                this.editAffiliation.country.value = datum.country;
+                this.editAffiliation.country.errors = [];
+            }
+
+            if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+                this.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
+                this.unbindTypeahead();
+            }
+        }
+    };
+
+    setAddAffiliationPrivacy(priv, $event): void {
+        $event.preventDefault();
+        this.editAffiliation.visibility.visibility = priv;
+    };
+
+    setPrivacy(aff, priv, $event): void {
+        $event.preventDefault();
+        aff.visibility.visibility = priv;
+        //this.affiliationService.updateProfileAffiliation(aff);
+    };
+
+    showAddModal(): void{
+        let numOfResults = 25;
+        /*
+        $.colorbox({
+            html: $compile($('#add-affiliation-modal').html())($scope),            
+            onComplete: function() {
+                // resize to insure content fits
+                formColorBoxResize();
+                $scope.bindTypeahead();
+            }
+        });
+        */
     };
 
     showAffiliationExtIdPopOver(id): void{
         this.displayAffiliationExtIdPopOver[id] = true;
+    };
+
+    showDetailsMouseClick = function(group, $event) {
+        $event.stopPropagation();
+        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+    };
+
+    showTooltip(element): void{        
+        this.showElement[element] = true;
+    };
+
+    sort(key): void {       
+        this.sortState.sortBy(key);
+    };
+
+    showURLPopOver(id): void {
+        this.displayURLPopOver[id] = true;
+    };
+
+    // remove once grouping is live
+    toggleClickMoreInfo(key): void {
+        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
+            if (this.moreInfoCurKey != null
+                    && this.moreInfoCurKey != key) {
+                this.moreInfo[this.moreInfoCurKey]=false;
+            }
+            this.moreInfoCurKey = key;
+            this.moreInfo[key]=!this.moreInfo[key];
+        }
     };
 
     toggleClickPrivacyHelp(key): void {
@@ -203,10 +406,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             this.privacyHelp[key]=!this.privacyHelp[key];
         }
 
-    };
-
-    unbindTypeahead(): void {
-        $('#affiliationName').typeahead('destroy');
     };
 
     toggleEdit(): void {
@@ -225,6 +424,10 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('getEmails', error);
             } 
         );
+    };
+
+    unbindTypeahead(): void {
+        $('#affiliationName').typeahead('destroy');
     };
 
     //Default init functions provided by Angular Core
@@ -279,153 +482,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
             
 
-            $scope.addAffiliationModal = function(type, affiliation){
-                if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-                    $scope.addAffType = type;
-                    if(affiliation === undefined) {
-                        $scope.removeDisambiguatedAffiliation();
-                        $.ajax({
-                            url: getBaseUri() + '/affiliations/affiliation.json',
-                            dataType: 'json',
-                            success: function(data) {
-                                $scope.editAffiliation = data;
-                                if (type != null){
-                                    $scope.editAffiliation.affiliationType.value = type;
-                                }
-                                $scope.$apply(function() {
-                                    $scope.showAddModal();
-                                });
-                            }
-                        }).fail(function(e) {
-                            console.log("Error fetching affiliation: ", $scope.editAffiliation.affiliationType.value,  e);
-                        });
-                    } else {
-                        $scope.editAffiliation = affiliation;
-                        if($scope.editAffiliation.orgDisambiguatedId != null){
-                            $scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
-                        }
-                        $scope.showAddModal();
-                    }
-                }else{
-                    showEmailVerificationModal();
-                }
-            };
-
             
 
             
 
-            $scope.deleteAff = function(delAff) {
-                affiliationsSrvc.deleteAffiliation(delAff);
-                $.colorbox.close();
-            };
-
-            $scope.deleteAffiliation = function(aff) {
-                var maxSize = 100;
-                
-                $scope.deleAff = aff;
-
-                if (aff.affiliationName && aff.affiliationName.value){
-                    $scope.fixedTitle = aff.affiliationName.value;
-                }
-                else {
-                    $scope.fixedTitle = '';
-                }
-
-                if($scope.fixedTitle.length > maxSize){
-                    $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
-                }
-
-                $.colorbox({
-                    html : $compile($('#delete-affiliation-modal').html())($scope),
-                    onComplete: function() {
-                        $.colorbox.resize();
-                    }
-                });
-            };
-
-            $scope.getDisambiguatedAffiliation = function(id) {
-                $.ajax({
-                    url: getBaseUri() + '/affiliations/disambiguated/id/' + id,
-                    dataType: 'json',
-                    type: 'GET',
-                    success: function(data) {
-                        if (data != null) {
-                            $scope.disambiguatedAffiliation = data;
-                            $scope.editAffiliation.orgDisambiguatedId.value = id;
-                            $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
-                            $scope.editAffiliation.disambiguationSource = data.sourceType;
-                            $scope.$apply();
-                        }
-                    }
-                }).fail(function(){
-                    console.log("error getDisambiguatedAffiliation(id)");
-                });
-            };
-
             
-
-
-            
-
-            // remove once grouping is live
-            $scope.moreInfoMouseEnter = function(key, $event) {
-                $event.stopPropagation();
-                if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
-                    if ($scope.moreInfoCurKey != null
-                        && $scope.moreInfoCurKey != key) {
-                        $scope.privacyHelp[$scope.moreInfoCurKey]=false;
-                    }
-                    $scope.moreInfoCurKey = key;
-                    $scope.moreInfo[key]=true;
-                }
-            };
-
-            $scope.openEditAffiliation = function(affiliation) {
-                $scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
-            };
-
-            $scope.removeDisambiguatedAffiliation = function() {
-                $scope.bindTypeahead();
-                
-                if ($scope.disambiguatedAffiliation != undefined) {
-                    delete $scope.disambiguatedAffiliation;
-                }
-                
-                if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) {
-                    delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
-                }
-                
-                if ($scope.editAffiliation != undefined && $scope.editAffiliation.orgDisambiguatedId != undefined) {delete $scope.editAffiliation.orgDisambiguatedId;
-                }
-            };
-
-            $scope.selectAffiliation = function(datum) {
-                if (datum != undefined && datum != null) {
-                    $scope.editAffiliation.affiliationName.value = datum.value;
-                    $scope.editAffiliation.city.value = datum.city;
-                    
-                    if(datum.city) {
-                        $scope.editAffiliation.city.errors = [];
-                    }
-
-                    $scope.editAffiliation.region.value = datum.region;
-                    
-                    if(datum.region){
-                        $scope.editAffiliation.region.errors = [];
-                    }
-                    
-                    if(datum.country != undefined && datum.country != null) {
-                        $scope.editAffiliation.country.value = datum.country;
-                        $scope.editAffiliation.country.errors = [];
-                    }
-
-                    if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
-                        $scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-                        $scope.unbindTypeahead();
-                    }
-                }
-            };
 
             $scope.serverValidate = function (relativePath) {
                 $.ajax({
@@ -444,55 +505,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 });
             };
 
-            $scope.setAddAffiliationPrivacy = function(priv, $event) {
-                $event.preventDefault();
-                $scope.editAffiliation.visibility.visibility = priv;
-            };
+            
 
-            $scope.setPrivacy = function(aff, priv, $event) {
-                $event.preventDefault();
-                aff.visibility.visibility = priv;
-                affiliationsSrvc.updateProfileAffiliation(aff);
-            };
+            
 
-            $scope.showAddModal = function(){
-                var numOfResults = 25;
-                $.colorbox({
-                    html: $compile($('#add-affiliation-modal').html())($scope),            
-                    onComplete: function() {
-                        // resize to insure content fits
-                        formColorBoxResize();
-                        $scope.bindTypeahead();
-                    }
-                });
-            };
-
-            $scope.showDetailsMouseClick = function(group, $event) {
-                $event.stopPropagation();
-                $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
-            };
-
-            $scope.showTooltip = function (element){        
-                $scope.showElement[element] = true;
-            };
-
-            $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
-
-            $scope.sort = function(key) {       
-                $scope.sortState.sortBy(key);
-            };
-
-            // remove once grouping is live
-            $scope.toggleClickMoreInfo = function(key) {
-                if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
-                    if ($scope.moreInfoCurKey != null
-                            && $scope.moreInfoCurKey != key) {
-                        $scope.moreInfo[$scope.moreInfoCurKey]=false;
-                    }
-                    $scope.moreInfoCurKey = key;
-                    $scope.moreInfo[key]=!$scope.moreInfo[key];
-                }
-            };
+            
 
             
         }

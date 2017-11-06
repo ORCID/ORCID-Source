@@ -15,6 +15,7 @@ export class AffiliationService {
     private employments: any;
     private headers: Headers;
     private urlAffiliation: string;
+    private urlAffiliationDisambiguated: string;
     private urlAffiliations: string;
 
 
@@ -24,10 +25,10 @@ export class AffiliationService {
                 'Content-Type': 'application/json' 
             }
         );
-        //this.url = getBaseUri() + '/affiliations/affiliations.json';
         this.educations = new Array(),
         this.employments = new Array(),
         this.urlAffiliation = getBaseUri() + '/affiliations/affiliation.json';
+        this.urlAffiliationDisambiguated = getBaseUri() + '/affiliations/disambiguated/id/';
         this.urlAffiliations = getBaseUri() + '/affiliations/affiliations.json';
     }
 
@@ -110,6 +111,13 @@ export class AffiliationService {
     getData(): Observable<any> {
         return this.http.get(
             this.urlAffiliation
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    getDisambiguatedAffiliation( id ): Observable<any> {
+        return this.http.get(
+            this.urlAffiliationDisambiguated + id
         )
         .map((res:Response) => res.json()).share();
     }
