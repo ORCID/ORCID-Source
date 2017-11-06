@@ -25,19 +25,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
+import org.orcid.core.manager.v3.ExternalIdentifierManager;
+import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
@@ -49,7 +51,6 @@ import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.v3.dev1.client.Client;
 import org.orcid.jaxb.model.v3.dev1.record.CitationType;
 import org.orcid.jaxb.model.v3.dev1.record.Keywords;
 import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
@@ -65,7 +66,7 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
-import org.orcid.pojo.ajaxForm.ImportWizzardForm;
+import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
 import org.orcid.pojo.ajaxForm.KeywordForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNameForm;
@@ -128,9 +129,12 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private IdentifierTypeManager identifierTypeManager;
     
+    @Resource
+    private LocaleManager localeManager;
+    
     @RequestMapping(value = { "/workspace/retrieve-work-import-wizards.json" }, method = RequestMethod.GET)
-    public @ResponseBody List<ImportWizzardForm> retrieveWorkImportWizards() {
-        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();        
+    public @ResponseBody List<ImportWizzardClientForm> retrieveWorkImportWizards() {
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport(localeManager.getLocale());        
     }
 
     @ModelAttribute("fundingImportWizards")

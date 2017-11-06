@@ -17,9 +17,10 @@
 package org.orcid.core.manager;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.pojo.ajaxForm.ImportWizzardForm;
+import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
 
 /**
  * Manager to return all clients with a predefined OAuthscope 
@@ -30,7 +31,7 @@ public interface ThirdPartyLinkManager {
 
     public static String CACHE_VERSION_KEY="import-wizard-cache-version";
     
-    public ImportWizzardForm findOrcidClientsWithPredefinedOauthScopeWorksImport();
+    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeWorksImport(Locale locale);
     
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeFundingImport();
 
