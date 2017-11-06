@@ -1411,8 +1411,9 @@ ul.privacyHelp li.private {
     padding-left: 20px
 }
 
-#colorbox {
-    position: absolute
+#colorbox,
+.popover-ng2-bck {
+    position: fixed
 }
 
 #cboxOverlay,#cboxWrapper,#colorbox {
@@ -7826,7 +7827,7 @@ ul.comma li:last-child:after {
     height: 100%;
     left: 0;
     opacity: .9;
-    position: absolute;
+    position: fixed;
     top: 0;
     width: 100%;
     z-index: 9000

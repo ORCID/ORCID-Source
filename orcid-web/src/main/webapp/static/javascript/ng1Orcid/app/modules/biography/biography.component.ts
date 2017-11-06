@@ -34,7 +34,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     biographyForm: any;
     emails: any;
     emailSrvc: any;
-    emailVerified: any;
+    //emailVerified: any;
     lengthError: any;
     showEdit: any;
 
@@ -50,7 +50,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         
         this.emails = {};
-        this.emailVerified = false; //change to false once service is ready
+        //this.emailVerified = false;
         this.lengthError = false;
         this.showEdit = false;
     }

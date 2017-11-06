@@ -142,6 +142,28 @@
     <!-- Ng2 Templates - BEGIN -->
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
+    <script type="text/ng-template" id="affiliation-ng2-template">
+        <div ng-controller="AffiliationCtrl">
+            <!-- Education -->
+            <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
+                <#include "includes/affiliate/edu_section_header_inc.ftl" />
+                <div ng-if="workspaceSrvc.displayEducation" class="workspace-accordion-content">
+                    <#include "includes/affiliate/edu_body_inc.ftl" />
+                </div>
+            </div>
+            <!-- Employment -->
+            <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" >
+                <#include "includes/affiliate/emp_section_header_inc.ftl" />
+                <div ng-if="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
+                    <#include "includes/affiliate/emp_body_inc.ftl" />
+                </div>
+            </div>
+        </div>
+    
+    </script>
+    </#if>
+
+    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
     <script type="text/ng-template" id="biography-ng2-template">
         <div class="biography-controller" id="bio-section">
             <div class="row">
@@ -429,6 +451,70 @@
             <br />
             <button class="btn" (click)="close()"><@orcid.msg 'freemarker.btnclose'/></button>
         </div>
+    </script>
+    </#if>
+
+    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
+    <script type="text/ng-template" id="modal-ng2-template">
+        <div [hidden]="!showModal" >
+            <div class="popover-ng2-bck" (click)="closeModal()"></div>
+            <div
+                class="popover-ng2-content"
+                id="colorbox" 
+                role="dialog" 
+                style="transition: width 2s, height 2s;"
+                tabindex="-1" 
+                [ngStyle]="{
+                'height': this.elementHeight + 'px',
+                'left': 'calc(50% - ' + this.elementWidth/2 + 'px)',
+                'top': 'calc(50% - ' + this.elementHeight/2 + 'px)',
+                'width': this.elementWidth + 'px'
+                }"
+            >
+                <div id="cboxWrapper" 
+                    [ngStyle]="{
+                    'height': this.elementHeight + 'px',
+                    'width': this.elementWidth + 'px'
+                    }"
+                >
+                    <div>
+                        <div id="cboxTopLeft" style="float: left;"></div>
+                        <div id="cboxTopCenter" style="float: left;"
+                            [ngStyle]="{
+                            'width': this.elementWidth + 'px'
+                            }"
+                        ></div>
+                        <div id="cboxTopRight" style="float: left;"></div>
+                    </div>
+                    <div style="clear: left;">
+                        <div id="cboxMiddleLeft" style="float: left;"
+                            [ngStyle]="{
+                            'height': this.elementHeight + 'px'
+                            }"
+                        ></div>
+                        <div id="cboxContent" style="float: left;"
+                            [ngStyle]="{
+                                'height': this.elementHeight + 'px',
+                                'width': this.elementWidth + 'px'
+                            }"
+                        >
+                            <div id="cboxLoadedContent" style=" overflow: auto;"
+                                [ngStyle]="{
+                                'height': this.elementHeight + 'px',
+                                'width': this.elementWidth + 'px'
+                                }"
+                            >
+                                <div class="lightbox-container">
+
+                                    <ng-content></ng-content>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
     </script>
     </#if>
 

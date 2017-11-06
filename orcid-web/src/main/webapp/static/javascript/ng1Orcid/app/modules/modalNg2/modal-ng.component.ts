@@ -21,65 +21,7 @@ import { ModalService }
 @Component(
     {
         selector: '[modalngcomponent]',
-        template: `
-          <div [hidden]="!showModal" >
-              <div class="popover-ng2-bck"></div>
-              <div
-                  class="popover-ng2-content"
-                  id="colorbox" 
-                  role="dialog" 
-                  style="transition: width 2s, height 2s;"
-                  tabindex="-1" 
-                  [ngStyle]="{
-                      'height': this.elementHeight + 'px',
-                      'left': 'calc(50% - ' + this.elementWidth/2 + 'px)',
-                      'top': 'calc(50% - ' + this.elementHeight/2 + 'px)',
-                      'width': this.elementWidth + 'px'
-                  }"
-              >
-                <div id="cboxWrapper" 
-                [ngStyle]="{
-                      'height': this.elementHeight + 'px',
-                      'width': this.elementWidth + 'px'
-                  }">
-                  <div>
-                    <div id="cboxTopLeft" style="float: left;"></div>
-                    <div id="cboxTopCenter" style="float: left;"
-                        [ngStyle]="{
-                              'width': this.elementWidth + 'px'
-                          }"
-                    ></div>
-                    <div id="cboxTopRight" style="float: left;"></div>
-                  </div>
-                  <div style="clear: left;">
-                    <div id="cboxMiddleLeft" style="float: left;"
-                        [ngStyle]="{
-                              'height': this.elementHeight + 'px'
-                          }"
-                    ></div>
-                    <div id="cboxContent" style="float: left;"
-                        [ngStyle]="{
-                              'height': this.elementHeight + 'px',
-                              'width': this.elementWidth + 'px'
-                          }">
-                      <div id="cboxLoadedContent" style=" overflow: auto;"
-                          [ngStyle]="{
-                              'height': this.elementHeight + 'px',
-                              'width': this.elementWidth + 'px'
-                          }"
-                      >
-                        <div class="lightbox-container">
-
-                          <ng-content></ng-content>
-                
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-          </div> 
-        `
+        template:  scriptTmpl("modal-ng2-template")
     }
 )
 export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
@@ -104,7 +46,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     closeModal(): void{
-        $('body').removeClass('overflow-hidden');
+        //$('body').removeClass('overflow-hidden');
         this.showModal = false;
     };
 
@@ -135,7 +77,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openModal(): void{
-        $('body').addClass('overflow-hidden');
+        //$('body').addClass('overflow-hidden');
         this.showModal = true;
     };
 
