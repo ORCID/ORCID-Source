@@ -423,7 +423,6 @@ export const FundingCtrl = angular.module('orcidApp').controller(
 
                     if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
                         $scope.getDisambiguatedFunding(datum.disambiguatedAffiliationIdentifier);
-                        $scope.unbindTypeaheadForOrgs();
                     }
                 }
             };
@@ -433,7 +432,6 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                     $scope.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
                     $scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = true;
                     $scope.lastIndexedTerm = subtype.value;
-                    $scope.unbindTypeaheadForSubTypes();
                 }
             };
 
@@ -488,6 +486,8 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                         $scope.bindTypeaheadForSubTypes();
                     },
                     onClosed: function() {
+                        $scope.unbindTypeaheadForOrgs();
+                        $scope.unbindTypeaheadForSubTypes();
                         $scope.closeAllMoreInfo();
                         fundingSrvc.getFundings('fundings/fundingIds.json');
                     }
