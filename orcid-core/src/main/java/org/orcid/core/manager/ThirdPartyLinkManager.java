@@ -19,7 +19,6 @@ package org.orcid.core.manager;
 import java.util.List;
 import java.util.Locale;
 
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
 
 /**
@@ -31,21 +30,21 @@ public interface ThirdPartyLinkManager {
 
     public static String CACHE_VERSION_KEY="import-wizard-cache-version";
     
-    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeWorksImport(Locale locale);
+    List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeWorksImport(Locale locale);
     
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeFundingImport();
+    List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeFundingImport(Locale locale);
 
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess();
+    List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeReadAccess(Locale locale);
     
-    List<OrcidClient> findOrcidClientsWithPredefinedOauthScopePeerReviewImport();
+    List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopePeerReviewImport(Locale locale);
 
     void evictAll();
 
-    public long getLocalCacheVersion();
+    long getLocalCacheVersion();
 
-    public void setLocalCacheVersion(long localCacheVersion);
+    void setLocalCacheVersion(long localCacheVersion);
     
-    public long getDatabaseCacheVersion(); 
+    long getDatabaseCacheVersion(); 
     
     void updateDatabaseCacheVersion();
 }

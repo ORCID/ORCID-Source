@@ -971,8 +971,6 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                         		}                        		
                         	}							
                         }
-                        console.log($scope.workType);
-                        console.log($scope.geoArea);
                         $scope.$apply();
                     }
                 }).fail(function(e) {

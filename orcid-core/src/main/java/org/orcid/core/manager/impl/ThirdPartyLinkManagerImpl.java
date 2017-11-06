@@ -26,11 +26,7 @@ import javax.annotation.Resource;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.OrcidPropsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -139,33 +135,32 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
 
     @Cacheable("import-works-clients")
     public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeWorksImport(Locale locale) {
-        System.out.println("Looking for locale: " + locale.toString());
         updateLocalCacheVersion();
         LOGGER.debug("Updating cache for import-works-clients, new version: " + this.localCacheVersion);
         return generateImportWizzardForm(RedirectUriType.IMPORT_WORKS_WIZARD, locale);
     }
 
     @Cacheable("import-funding-clients")
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeFundingImport() {
+    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeFundingImport(Locale locale) {
         updateLocalCacheVersion();
         LOGGER.debug("Updating cache for import-funding-clients, new version: " + this.localCacheVersion);
-        return getClientsLegacy(RedirectUriType.IMPORT_FUNDING_WIZARD);
+        return generateImportWizzardForm(RedirectUriType.IMPORT_FUNDING_WIZARD, locale);
     }
 
     @Override
     @Cacheable("read-access-clients")
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess() {
+    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeReadAccess(Locale locale) {
         updateLocalCacheVersion();
         LOGGER.debug("Updating cache for read-access-clients, new version: " + this.localCacheVersion);
-        return getClientsLegacy(RedirectUriType.GRANT_READ_WIZARD);
+        return generateImportWizzardForm(RedirectUriType.GRANT_READ_WIZARD, locale);
     }
     
-	@Override
-	@Cacheable("import-peer-review-clients")
-	public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopePeerReviewImport() {
-		updateLocalCacheVersion();
-        return getClientsLegacy(RedirectUriType.IMPORT_PEER_REVIEW_WIZARD);
-	}
+    @Override
+    @Cacheable("import-peer-review-clients")
+    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopePeerReviewImport(Locale locale) {
+        updateLocalCacheVersion();
+        return generateImportWizzardForm(RedirectUriType.IMPORT_PEER_REVIEW_WIZARD, locale);
+    }
 
     @Override
     @CacheEvict(value = { "read-access-clients", "import-works-clients", "import-funding-clients", "import-peer-review-clients" }, allEntries = true)
@@ -252,33 +247,5 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
             }
         }
         return clients;
-    }
-    
-    private List<OrcidClient> getClientsLegacy(RedirectUriType rut) {
-        List<OrcidClient> orcidClients = new ArrayList<OrcidClient>();
-        List<ClientRedirectUriEntity> entitiesWithPredefinedScopes = clientRedirectDao.findClientDetailsWithRedirectScope();
-
-        for (ClientRedirectUriEntity entity : entitiesWithPredefinedScopes) {
-
-            if (rut.value().equals(entity.getRedirectUriType())) {
-                ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
-                RedirectUri redirectUri = new RedirectUri(entity.getRedirectUri());
-                String prefefinedScopes = entity.getPredefinedClientScope();
-                redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));
-                redirectUri.setType(RedirectUriType.fromValue(entity.getRedirectUriType()));
-                redirectUri.setActType(entity.getUriActType());
-                redirectUri.setGeoArea(entity.getUriGeoArea());
-                RedirectUris redirectUris = new RedirectUris();
-                redirectUris.getRedirectUri().add(redirectUri);
-                OrcidClient minimalClientDetails = new OrcidClient();
-                minimalClientDetails.setDisplayName(clientDetails.getClientName());
-                minimalClientDetails.setShortDescription(clientDetails.getClientDescription());
-                minimalClientDetails.setClientId(clientDetails.getClientId());
-                minimalClientDetails.setRedirectUris(redirectUris);
-                orcidClients.add(minimalClientDetails);
-            }
-
-        }
-        return orcidClients;
     }
 }

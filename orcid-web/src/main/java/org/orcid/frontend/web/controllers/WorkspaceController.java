@@ -44,8 +44,6 @@ import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
@@ -138,13 +136,13 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     @ModelAttribute("fundingImportWizards")
-    public List<OrcidClient> retrieveFundingImportWizards() {
-        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
+    public List<ImportWizzardClientForm> retrieveFundingImportWizards() {
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeFundingImport(localeManager.getLocale());
     }
     
     @RequestMapping(value = { "/workspace/retrieve-peer-review-import-wizards.json" }, method = RequestMethod.GET)
-    public @ResponseBody List<OrcidClient> retrievePeerReviewImportWizards() {
-        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopePeerReviewImport();
+    public @ResponseBody List<ImportWizzardClientForm> retrievePeerReviewImportWizards() {
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopePeerReviewImport(localeManager.getLocale());
     }
 
     @ModelAttribute("affiliationTypes")
@@ -558,15 +556,14 @@ public class WorkspaceController extends BaseWorkspaceController {
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients
-        List<OrcidClient> orcidClients = thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
-        for (OrcidClient orcidClient : orcidClients) {
-            if (sourcStr.equals(orcidClient.getClientId())) {
-                RedirectUri ru = orcidClient.getRedirectUris().getRedirectUri().get(0);
-                String redirect = getBaseUri() + "/oauth/authorize?client_id=" + orcidClient.getClientId() + "&response_type=code&scope=" + ru.getScopeAsSingleString()
-                        + "&redirect_uri=" + ru.getValue();
+        List<ImportWizzardClientForm> clients = thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeReadAccess(localeManager.getLocale());
+        for (ImportWizzardClientForm client : clients) {
+            if (sourcStr.equals(client.getId())) {
+                String redirect = getBaseUri() + "/oauth/authorize?client_id=" + client.getId() + "&response_type=code&scope=" +client.getScopes()
+                        + "&redirect_uri=" + client.getRedirectUri();
                 tpr.setUrl(redirect);
-                tpr.setDisplayName(orcidClient.getDisplayName());
-                tpr.setShortDescription(orcidClient.getShortDescription());
+                tpr.setDisplayName(client.getName());
+                tpr.setShortDescription(client.getDescription());
                 return tpr;
             }
         }
