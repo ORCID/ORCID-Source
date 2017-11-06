@@ -332,7 +332,6 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
 
                     if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
                         $scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-                        $scope.unbindTypeahead();
                     }
                 }
             };
@@ -374,6 +373,9 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                         // resize to insure content fits
                         formColorBoxResize();
                         $scope.bindTypeahead();
+                    },
+                    onClosed: function() {
+                        $scope.unbindTypeahead();
                     }
                 });
             };

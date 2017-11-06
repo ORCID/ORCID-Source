@@ -279,7 +279,6 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                     if (datum.disambiguatedOrganizationIdentifier != undefined 
                         && datum.disambiguatedOrganizationIdentifier != null) {
                         $scope.getDisambiguatedOrganization(datum.disambiguatedOrganizationIdentifier);
-                        $scope.unbindTypeaheadForOrgs();
                     }
                 }
             };
@@ -314,6 +313,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                         // resize to insure content fits
                     },
                     onClosed: function() {
+                        $scope.unbindTypeaheadForOrgs();
                         // $scope.closeAllMoreInfo();
                         $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
                     }

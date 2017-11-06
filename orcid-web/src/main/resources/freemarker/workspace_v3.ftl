@@ -872,7 +872,7 @@
                             <div class="col-md-6">                                  
                                 <div class="aka">
                                     <select 
-                                        [(ngModel)]="country.iso2Country.value" 
+                                        [(ngModel)]="country.iso2Country" 
                                         [disabled]="country.source != orcidId"
                                         [ngClass]="{ 'not-allowed': country?.source != orcidId }"
                                         focus-me="newInput"

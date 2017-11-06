@@ -57,7 +57,6 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
                 let preferences_parsed = null;
                 this.preferences = preferences;
                 preferences_parsed = JSON.parse(JSON.stringify(this.preferences, null, 2));
-                console.log("preferences_parsed", preferences_parsed);
                 this.default_visibility = preferences_parsed.default_visibility;
             }
         );
