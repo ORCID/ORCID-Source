@@ -143,15 +143,19 @@
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
     <script type="text/ng-template" id="affiliation-ng2-template">
-                <div>
+        <div>
             <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active">
                 <div class="workspace-accordion-header clearfix">
                     <div class="row">
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <a name='workspace-educations'></a>
-                            <a href="" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text">
-                                <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
-                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
+                            <a href="" (click)="workspaceSrvc.toggleEducation($event)" class="toggle-text">
+                                <i
+                                    class="glyphicon-chevron-down glyphicon x075"
+                                    [ngClass]="{ 'glyphicon-chevron-right': workspaceSrvc.displayEducation==false }"
+                                ></i>
+                                    
+                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span>{{affiliationsSrvc.educations.length}}</span>)
                             </a>
                             
                             <#if !(isPublicProfile??)> 
@@ -167,7 +171,7 @@
                             </#if>
 
                         </div>
-                        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEducation">
+                        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayEducation">
                             
                             <#escape x as x?html>
                             
@@ -177,32 +181,32 @@
                                         <span class="glyphicon glyphicon-sort"></span>                          
                                         <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                         <ul class="menu-options sort">
-                                            <li ng-class="{'checked':sortState.predicateKey=='date'}" ng-hide="sortHideOption">                                         
-                                                <a ng-click="sort('date');" class="action-option manage-button">
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!sortHideOption">                                         
+                                                <a (click)="sort('date');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-                                                    <span ng-show="sortState.reverseKey['date']" ng-class="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
-                                                    <span ng-show="sortState.reverseKey['date'] == false" ng-class="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
                                                 </a>                       
                                             </li>
-                                            <li ng-class="{'checked':sortState.predicateKey=='groupName'}" ng-hide="sortHideOption == null">
-                                                <a ng-click="sort('groupName');" class="action-option manage-button">
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="!sortHideOption == null">
+                                                <a (click)="sort('groupName');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                    <span ng-show="sortState.reverseKey['groupName']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
-                                                    <span ng-show="sortState.reverseKey['groupName'] == false" ng-class="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
                                                 </a>                                            
                                             </li>
-                                            <li ng-class="{'checked':sortState.predicateKey=='title'}" ng-hide="sortHideOption">                                            
-                                                <a ng-click="sort('title');" class="action-option manage-button">
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
+                                                <a (click)="sort('title');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                    <span ng-show="sortState.reverseKey['title']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
-                                                    <span ng-show="sortState.reverseKey['title'] == false" ng-class="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
                                                 </a>
                                             </li>
-                                            <li ng-show="sortState.type != 'affiliation'" ng-class="{'checked':sortState.predicateKey=='type'}" ng-hide="sortHideOption">
-                                                <a ng-click="sort('type');" class="action-option manage-button">
+                                            <li *ngIf="sortState.type != 'affiliation'" [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!sortHideOption">
+                                                <a (click)="sort('type');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-                                                    <span ng-show="sortState.reverseKey['type']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
-                                                    <span ng-show="sortState.reverseKey['type'] == false" ng-class="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['type'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -216,13 +220,12 @@
                                 <li class="hidden-xs">                  
                                     <div class="menu-container" id="add-education-container">
                                         <ul class="toggle-menu">
-                                            <li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+                                            <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
-                                                <ul class="menu-options education">                         
-                                                    
+                                                <ul class="menu-options education">
                                                     <li>          
-                                                        <a id="add-education" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+                                                        <a id="add-education" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                                             <span class="glyphicon glyphicon-plus"></span>
                                                             <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                         </a>
@@ -234,7 +237,7 @@
                                 </li>
                                                    
                                 <li class="hidden-md hidden-sm visible-xs-inline">          
-                                    <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+                                    <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                         <span class="glyphicon glyphicon-plus"></span>
                                         <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                     </a>
@@ -244,31 +247,31 @@
                         </div>
                     </div>
                 </div>
-                <div ng-if="workspaceSrvc.displayEducation" class="workspace-accordion-content">
-                    <ul id="educations-list" ng-hide="!affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" ng-repeat="group in affiliationsSrvc.educations | orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.getActive().putCode.value}}">
+                <div *ngIf="workspaceSrvc.displayEducation" class="workspace-accordion-content">
+                    <ul id="educations-list" *ngIf="affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of affiliationsSrvc.educations | orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.getActive().putCode.value}}">
                             <div class="row"> 
          
                                 
                                 <div class="col-md-9 col-sm-9 col-xs-7">
                                     <h3 class="workspace-title">            
-                                        <span ng-bind="group.getActive().affiliationName.value"></span>:
-                                        <span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>                                               
+                                        <span>{{group.getActive().affiliationName.value}}</span>:
+                                        <span>{{group.getActive().city.value}}</span><span *ngIf="group.getActive().region.value">, </span><span>{{group.getActive().region.value}}</span>, <span>{{group.getActive().countryForDisplay}}</span>                                               
                                     </h3>
                                     <div class="info-detail">
                                         <div class="info-date">                     
-                                            <span class="affiliation-date" ng-if="group.getActive().startDate">
-                                                <span ng-if="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-if="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span><span ng-if="group.getActive().startDate.day">-{{group.getActive().startDate.day}}</span>
+                                            <span class="affiliation-date" *ngIf="group.getActive().startDate">
+                                                <span *ngIf="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span *ngIf="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span><span *ngIf="group.getActive().startDate.day">-{{group.getActive().startDate.day}}</span>
                                                 <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
                                                 <span ng-hide="group.getActive().endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                                <span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
+                                                <span *ngIf="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span *ngIf="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span *ngIf="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
                                             </span>
-                                            <span class="affiliation-date" ng-if="!group.getActive().startDate && group.getActive().endDate">
-                                                 <span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
+                                            <span class="affiliation-date" *ngIf="!group.getActive().startDate && group.getActive().endDate">
+                                                 <span *ngIf="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span *ngIf="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span *ngIf="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
                                             </span>
-                                            <span ng-if="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"> | </span> <span ng-if="group.getActive().roleTitle.value" ng-bind="group.getActive().roleTitle.value"></span>        
-                                            <span ng-if="group.getActive().departmentName.value">
-                                                <span ng-if="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value"></span>)
+                                            <span *ngIf="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"> | </span> <span *ngIf="group.getActive().roleTitle.value">{{group.getActive().roleTitle.value}}</span>        
+                                            <span *ngIf="group.getActive().departmentName.value">
+                                                <span *ngIf="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span>{{group.getActive().departmentName.value}}</span>)
                                             </span>
                                         </div>
                                     </div>
@@ -280,15 +283,15 @@
                                         <ul class="workspace-private-toolbar"> 
                                             <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'> 
                                             <li class="works-details">
-                                                <a ng-click="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                                    <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>
-                                                <div class="popover popover-tooltip top show-hide-details-popover" ng-if="showElement[group.groupId+'-showHideDetails']">
+                                                <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails']">
                                                      <div class="arrow"></div>
                                                     <div class="popover-content">   
-                                                        <span ng-if="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
-                                                        <span ng-if="moreInfo[group.groupId]"><@orcid.msg 'common.details.hide_details'/></span>
+                                                        <span *ngIf="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
+                                                        <span *ngIf="moreInfo[group.groupId]"><@orcid.msg 'common.details.hide_details'/></span>
                                                     </div>
                                                 </div>
                                             </li>
@@ -307,13 +310,13 @@
                                     </div>
                                 </div>  
                             </div>
-                            <div class="row" ng-if="group.activePutCode == group.getActive().putCode.value">
+                            <div class="row" *ngIf="group.activePutCode == group.getActive().putCode.value">
                                 <div class="col-md-12 col-sm-12 bottomBuffer">
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li ng-repeat='extID in group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"] track by $index' class="url-popover">
-                                                    <span ng-if="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
+                                                <li *ngFor='let extID of group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"] track by $index' class="url-popover">
+                                                    <span *ngIf="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -323,39 +326,39 @@
 
                             <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'>
                             
-                            <div class="more-info content" ng-if="moreInfo[group.groupId]">
+                            <div class="more-info content" *ngIf="moreInfo[group.groupId]">
                                 <div class="row bottomBuffer">
                                     <div class="col-md-12"></div>
                                 </div>
                                 <span class="dotted-bar"></span>    
                                 <div class="row">
-                                    <div class="org-ids" ng-if="group.getActive().orgDisambiguatedId.value">
+                                    <div class="org-ids" *ngIf="group.getActive().orgDisambiguatedId.value">
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
                                             <span bind-html-compile='group.getActive().disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.getActive().disambiguationSource.value:group.getActive().putCode.value:group.getActive().disambiguationSource' class="url-popover"> 
                                             </span>
                                         </div>
                                         <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
-                                            <span ng-if="group.getActive().orgDisambiguatedName">{{group.getActive().orgDisambiguatedName}}</span><span ng-if="group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion || group.getActive().orgDisambiguatedCountry">: </span><span ng-if="group.getActive().orgDisambiguatedCity">{{group.getActive().orgDisambiguatedCity}}</span><span ng-if="group.getActive().orgDisambiguatedCity && group.getActive().orgDisambiguatedRegion">, </span><span ng-if="group.getActive().orgDisambiguatedRegion">{{group.getActive().orgDisambiguatedRegion}}</span><span ng-if="group.getActive().orgDisambiguatedCountry && (group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion)">, </span><span ng-if="group.getActive().orgDisambiguatedCountry">{{group.getActive().orgDisambiguatedCountry}}</span>
-                                            <span ng-if="group.getActive().orgDisambiguatedUrl"><br>
-                                            <a href="{{group.getActive().orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span ng-bind="group.getActive().orgDisambiguatedUrl"></span></a>
+                                            <span *ngIf="group.getActive().orgDisambiguatedName">{{group.getActive().orgDisambiguatedName}}</span><span *ngIf="group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion || group.getActive().orgDisambiguatedCountry">: </span><span *ngIf="group.getActive().orgDisambiguatedCity">{{group.getActive().orgDisambiguatedCity}}</span><span *ngIf="group.getActive().orgDisambiguatedCity && group.getActive().orgDisambiguatedRegion">, </span><span *ngIf="group.getActive().orgDisambiguatedRegion">{{group.getActive().orgDisambiguatedRegion}}</span><span *ngIf="group.getActive().orgDisambiguatedCountry && (group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion)">, </span><span *ngIf="group.getActive().orgDisambiguatedCountry">{{group.getActive().orgDisambiguatedCountry}}</span>
+                                            <span *ngIf="group.getActive().orgDisambiguatedUrl"><br>
+                                            <a href="{{group.getActive().orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span>{{group.getActive().orgDisambiguatedUrl}}</span></a>
                                             </span>
                                          
-                                            <div ng-if="group.getActive().orgDisambiguatedExternalIdentifiers">
+                                            <div *ngIf="group.getActive().orgDisambiguatedExternalIdentifiers">
                                                 <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.getActive().disambiguationSource.value}}</strong><br>
                                                 <ul class="reset">
-                                                    <li ng-repeat="orgDisambiguatedExternalIdentifier in group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
                                                         {{orgDisambiguatedExternalIdentifier.identifierType}}:  
-                                                        <span ng-if="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> 
-                                                        <span ng-if="orgDisambiguatedExternalIdentifier.all">
-                                                            <span ng-repeat="orgDisambiguatedExternalIdentifierAll in orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span>
+                                                        <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> 
+                                                        <span *ngIf="orgDisambiguatedExternalIdentifier.all">
+                                                            <span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span>
                                                         </span>
                                                     </li>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6" ng-if="group.getActive().url.value">
+                                    <div class="col-md-6" *ngIf="group.getActive().url.value">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'common.url'/></strong><br> 
                                             <a href="{{group.getActive().url.value}}" target="affiliation.url.value">{{group.getActive().url.value}}</a>
@@ -364,7 +367,7 @@
                                     <div class="col-md-12">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'groups.common.created'/></strong><br /> 
-                                            <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
+                                            <span>{{group.getActive().createdDate | ajaxFormDateToISO8601}}</span>
                                         </div>
                                     </div>  
                                 </div>
@@ -380,17 +383,17 @@
                                             </div>
                                             
                                             <div class="col-md-3 col-sm-3 col-xs-6">
-                                                <@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
+                                                <@orcid.msg 'groups.common.created'/>: <span>{{group.getActive().createdDate | ajaxFormDateToISO8601}}</span>
                                             </div>
                                                         
                                             <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
                                                 <ul class="sources-options">
                                                     <#if !(isPublicProfile??)>
-                                                    <li ng-if="group.getActive().source == '${effectiveUserOrcid}'">
-                                                        <a ng-click="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-edit')">
+                                                    <li *ngIf="group.getActive().source == '${effectiveUserOrcid}'">
+                                                        <a (click)="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-edit')">
                                                             <span class="glyphicon glyphicon-pencil"></span>
                                                         </a>
-                                                        <div class="popover popover-tooltip top edit-source-popover" ng-if="showElement[group.getActive().putCode.value+'-edit']"> 
+                                                        <div class="popover popover-tooltip top edit-source-popover" *ngIf="showElement[group.getActive().putCode.value+'-edit']"> 
                                                             <div class="arrow"></div>
                                                             <div class="popover-content">
                                                                 <span ><@orcid.msg 'groups.common.edit_my'/></span>
@@ -398,8 +401,8 @@
                                                         </div>  
                                                     </li>   
                                                     <li>
-                                                        <a id="delete-affiliation_{{group.getActive().putCode.value}}" href="" ng-click="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
-                                                        <div class="popover popover-tooltip top delete-source-popover" ng-if="showElement[group.getActive().putCode.value+'-delete']"> 
+                                                        <a id="delete-affiliation_{{group.getActive().putCode.value}}" href="" (click)="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
+                                                        <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.getActive().putCode.value+'-delete']"> 
                                                             <div class="arrow"></div>
                                                             <div class="popover-content">
                                                                  <@orcid.msg 'groups.common.delete_this_source' />
@@ -415,11 +418,11 @@
                             </div>
                         </li>
                     </ul>
-                    <div ng-if="affiliationsSrvc.loading" class="text-center">
+                    <div *ngIf="affiliationsSrvc.loading" class="text-center">
                         <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                     </div>
-                    <div ng-if="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0">
-                        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noeducationaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyeducation")} <a ng-click="addAffiliationModal('education')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
+                    <div *ngIf="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0">
+                        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noeducationaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyeducation")} <a (click)="addAffiliationModal('education')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
                     </div>      
                 </div>
             </div>
@@ -429,9 +432,9 @@
                     <div class="row">
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <a name='workspace-employments'></a>
-                            <a href="" ng-click="workspaceSrvc.toggleEmployment($event)" class="toggle-text">
-                                <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
-                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span ng-bind="affiliationsSrvc.employments.length"></span>)
+                            <a href="" (click)="workspaceSrvc.toggleEmployment($event)" class="toggle-text">
+                                <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
+                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span>{{affiliationsSrvc.employments.length}}</span>)
                             </a>
                             <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
@@ -445,7 +448,7 @@
                             </div>
                             </#if>                     
                         </div>
-                        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEmployment">
+                        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayEmployment">
                             <#escape x as x?html>
                             
                             <div class="menu-container">                                     
@@ -454,32 +457,32 @@
                                         <span class="glyphicon glyphicon-sort"></span>                          
                                         <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                         <ul class="menu-options sort">
-                                            <li ng-class="{'checked':sortState.predicateKey=='date'}" ng-hide="sortHideOption">                                         
-                                                <a ng-click="sort('date');" class="action-option manage-button">
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='date'}" ng-hide="sortHideOption">                                         
+                                                <a (click)="sort('date');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-                                                    <span ng-show="sortState.reverseKey['date']" ng-class="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
-                                                    <span ng-show="sortState.reverseKey['date'] == false" ng-class="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
                                                 </a>                                                                                    
                                             </li>
-                                            <li ng-class="{'checked':sortState.predicateKey=='groupName'}" ng-hide="sortHideOption == null">
-                                                <a ng-click="sort('groupName');" class="action-option manage-button">
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" ng-hide="sortHideOption == null">
+                                                <a (click)="sort('groupName');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                    <span ng-show="sortState.reverseKey['groupName']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
-                                                    <span ng-show="sortState.reverseKey['groupName'] == false" ng-class="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
                                                 </a>                                            
                                             </li>
-                                            <li ng-class="{'checked':sortState.predicateKey=='title'}" ng-hide="sortHideOption">                                            
-                                                <a ng-click="sort('title');" class="action-option manage-button">
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='title'}" ng-hide="sortHideOption">                                            
+                                                <a (click)="sort('title');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                    <span ng-show="sortState.reverseKey['title']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
-                                                    <span ng-show="sortState.reverseKey['title'] == false" ng-class="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
                                                 </a>                                            
                                             </li>
-                                            <li ng-show="sortState.type != 'affiliation'" ng-class="{'checked':sortState.predicateKey=='type'}" ng-hide="sortHideOption">                                           
-                                                <a ng-click="sort('type');" class="action-option manage-button">
+                                            <li *ngIf="sortState.type != 'affiliation'" [ngClass]="{'checked':sortState.predicateKey=='type'}" ng-hide="sortHideOption">                                           
+                                                <a (click)="sort('type');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-                                                    <span ng-show="sortState.reverseKey['type']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
-                                                    <span ng-show="sortState.reverseKey['type'] == false" ng-class="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['type'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
                                                 </a>                                                                                        
                                             </li>
                                         </ul>                                           
@@ -494,13 +497,13 @@
                                 <li class="hidden-xs">                  
                                     <div class="menu-container" id="add-employment-container">
                                         <ul class="toggle-menu">
-                                            <li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+                                            <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
                                                 <ul class="menu-options employment">                            
                                                     
                                                     <li>                            
-                                                        <a id="add-employment" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
+                                                        <a id="add-employment" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                                             <span class="glyphicon glyphicon-plus"></span>
                                                             <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                         </a>            
@@ -512,7 +515,7 @@
                                 </li>
                                 
                                 <li class="hidden-md hidden-sm visible-xs-inline">                     
-                                    <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
+                                    <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                         <span class="glyphicon glyphicon-plus"></span>
                                         <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                     </a>                
@@ -523,31 +526,31 @@
                         </div>
                     </div>
                 </div>
-                <div ng-if="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
+                <div *ngIf="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
                     <ul id="employments-list" ng-hide="!affiliationsSrvc.employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        <li class="bottom-margin-small workspace-border-box affiliation-box card" ng-repeat="group in affiliationsSrvc.employments | orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.getActive().putCode.value}}">
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of affiliationsSrvc.employments ">***| orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.getActive().putCode.value}}
                             <div class="row"> 
                          
                     
                                 <div class="col-md-9 col-sm-9 col-xs-7">
                                     <h3 class="workspace-title">            
-                                        <span ng-bind="group.getActive().affiliationName.value"></span>:
-                                        <span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>                                               
+                                        <span>{{group.getActive().affiliationName.value}}</span>:
+                                        <span>{{group.getActive().city.value}}</span><span *ngIf="group.getActive().region.value">, </span><span>{{group.getActive().region.value}}</span>, <span>{{group.getActive().countryForDisplay}}</span>                                               
                                     </h3>
                                     <div class="info-detail">
                                         <div class="info-date">                     
-                                            <span class="affiliation-date" ng-if="group.getActive().startDate">
-                                                <span ng-if="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-if="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span><span ng-if="group.getActive().startDate.day">-{{group.getActive().startDate.day}}</span>
+                                            <span class="affiliation-date" *ngIf="group.getActive().startDate">
+                                                <span *ngIf="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span *ngIf="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span><span *ngIf="group.getActive().startDate.day">-{{group.getActive().startDate.day}}</span>
                                                 <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
                                                 <span ng-hide="group.getActive().endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                                <span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
+                                                <span *ngIf="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span *ngIf="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span *ngIf="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
                                             </span>
-                                            <span class="affiliation-date" ng-if="!group.getActive().startDate && group.getActive().endDate">
-                                                 <span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
+                                            <span class="affiliation-date" *ngIf="!group.getActive().startDate && group.getActive().endDate">
+                                                 <span *ngIf="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span *ngIf="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span *ngIf="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
                                             </span>
-                                            <span ng-if="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"> | </span> <span ng-if="group.getActive().roleTitle.value" ng-bind="group.getActive().roleTitle.value"></span>        
-                                            <span ng-if="group.getActive().departmentName.value">
-                                            <span ng-if="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value"></span>)
+                                            <span *ngIf="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"> | </span> <span *ngIf="group.getActive().roleTitle.value">{{group.getActive().roleTitle.value}}</span>        
+                                            <span *ngIf="group.getActive().departmentName.value">
+                                            <span *ngIf="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span>{{group.getActive().departmentName.value}}</span>)
                                             </span>
                                         </div>
                                     </div>
@@ -558,15 +561,15 @@
                                         <ul class="workspace-private-toolbar"> 
                                             <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'> 
                                             <li class="works-details">
-                                                <a ng-click="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                                    <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>
-                                                <div class="popover popover-tooltip top show-hide-details-popover" ng-if="showElement[group.groupId+'-showHideDetails']">
+                                                <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails']">
                                                      <div class="arrow"></div>
                                                     <div class="popover-content">   
-                                                        <span ng-if="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
-                                                        <span ng-if="moreInfo[group.groupId]"><@orcid.msg 'common.details.hide_details'/></span>
+                                                        <span *ngIf="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
+                                                        <span *ngIf="moreInfo[group.groupId]"><@orcid.msg 'common.details.hide_details'/></span>
                                                     </div>
                                                 </div>
                                             </li>
@@ -585,13 +588,13 @@
                                     </div>
                                 </div>  
                             </div>
-                            <div class="row" ng-if="group.activePutCode == group.getActive().putCode.value">
+                            <div class="row" *ngIf="group.activePutCode == group.getActive().putCode.value">
                                 <div class="col-md-12 col-sm-12 bottomBuffer">
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li ng-repeat='extID in group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"] track by $index' class="url-popover">
-                                                    <span ng-if="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
+                                                <li *ngFor='let extID of group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"] track by $index' class="url-popover">
+                                                    <span *ngIf="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -599,33 +602,33 @@
                                 </div>
                             </div>  
                             <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'>
-                            <div class="more-info content" ng-if="moreInfo[group.groupId]">
+                            <div class="more-info content" *ngIf="moreInfo[group.groupId]">
                                 <div class="row bottomBuffer">
                                     <div class="col-md-12"></div>
                                 </div>
                                 <span class="dotted-bar"></span>    
                                 <div class="row">
-                                    <div class="org-ids" ng-if="group.getActive().orgDisambiguatedId.value">
+                                    <div class="org-ids" *ngIf="group.getActive().orgDisambiguatedId.value">
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
                                             <span bind-html-compile='group.getActive().disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.getActive().disambiguationSource.value:group.getActive().putCode.value:group.getActive().disambiguationSource' class="url-popover"> 
                                             </span>
                                         </div>
                                         <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
-                                            <span ng-if="group.getActive().orgDisambiguatedName">{{group.getActive().orgDisambiguatedName}}</span><span ng-if="group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion || group.getActive().orgDisambiguatedCountry">: </span><span ng-if="group.getActive().orgDisambiguatedCity">{{group.getActive().orgDisambiguatedCity}}</span><span ng-if="group.getActive().orgDisambiguatedCity && group.getActive().orgDisambiguatedRegion">, </span><span ng-if="group.getActive().orgDisambiguatedRegion">{{group.getActive().orgDisambiguatedRegion}}</span><span ng-if="group.getActive().orgDisambiguatedCountry && (group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion)">, </span><span ng-if="group.getActive().orgDisambiguatedCountry">{{group.getActive().orgDisambiguatedCountry}}</span>
-                                            <span ng-if="group.getActive().orgDisambiguatedUrl"><br>
-                                            <a href="{{group.getActive().orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span ng-bind="group.getActive().orgDisambiguatedUrl"></span></a>
+                                            <span *ngIf="group.getActive().orgDisambiguatedName">{{group.getActive().orgDisambiguatedName}}</span><span *ngIf="group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion || group.getActive().orgDisambiguatedCountry">: </span><span *ngIf="group.getActive().orgDisambiguatedCity">{{group.getActive().orgDisambiguatedCity}}</span><span *ngIf="group.getActive().orgDisambiguatedCity && group.getActive().orgDisambiguatedRegion">, </span><span *ngIf="group.getActive().orgDisambiguatedRegion">{{group.getActive().orgDisambiguatedRegion}}</span><span *ngIf="group.getActive().orgDisambiguatedCountry && (group.getActive().orgDisambiguatedCity || group.getActive().orgDisambiguatedRegion)">, </span><span *ngIf="group.getActive().orgDisambiguatedCountry">{{group.getActive().orgDisambiguatedCountry}}</span>
+                                            <span *ngIf="group.getActive().orgDisambiguatedUrl"><br>
+                                            <a href="{{group.getActive().orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span>{{group.getActive().orgDisambiguatedUrl}}</span></a>
                                             </span>
                                             
-                                            <div ng-if="group.getActive().orgDisambiguatedExternalIdentifiers">
+                                            <div *ngIf="group.getActive().orgDisambiguatedExternalIdentifiers">
                                                 <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.getActive().disambiguationSource.value}}</strong><br>
                                                 <ul class="reset">
-                                                    <li ng-repeat="orgDisambiguatedExternalIdentifier in group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">{{orgDisambiguatedExternalIdentifier.identifierType}}:  <span ng-if="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span ng-if="orgDisambiguatedExternalIdentifier.all"><span ng-repeat="orgDisambiguatedExternalIdentifierAll in orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">{{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6" ng-if="group.getActive().url.value">
+                                    <div class="col-md-6" *ngIf="group.getActive().url.value">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'common.url'/></strong><br> 
                                             <a href="{{group.getActive().url.value}}" target="affiliation.url.value">{{group.getActive().url.value}}</a>
@@ -634,7 +637,7 @@
                                     <div class="col-md-12">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                            <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
+                                            <span>{{group.getActive().createdDate | ajaxFormDateToISO8601}}</span>
                                         </div>
                                     </div>  
                                 </div>
@@ -653,17 +656,17 @@
                                 </div>
                             
                                 <div class="col-md-3 col-sm-3 col-xs-6">
-                                    <@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
+                                    <@orcid.msg 'groups.common.created'/>: <span>{{group.getActive().createdDate | ajaxFormDateToISO8601}}</span>
                                 </div>
                                             
                                 <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
                                     <ul class="sources-options">
                                         <#if !(isPublicProfile??)>
-                                        <li ng-if="group.getActive().source == '${effectiveUserOrcid}'">
-                                            <a ng-click="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-edit')">
+                                        <li *ngIf="group.getActive().source == true">***ngIf="group.getActive().source == '${effectiveUserOrcid}
+                                            <a (click)="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-edit')">
                                                 <span class="glyphicon glyphicon-pencil"></span>
                                             </a>
-                                            <div class="popover popover-tooltip top edit-source-popover" ng-if="showElement[group.getActive().putCode.value+'-edit']"> 
+                                            <div class="popover popover-tooltip top edit-source-popover" *ngIf="showElement[group.getActive().putCode.value+'-edit']"> 
                                                 <div class="arrow"></div>
                                                 <div class="popover-content">
                                                     <span ><@orcid.msg 'groups.common.edit_my'/></span>
@@ -671,8 +674,8 @@
                                             </div>  
                                         </li>   
                                         <li>
-                                            <a id="delete-affiliation_{{group.getActive().putCode.value}}" href="" ng-click="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
-                                            <div class="popover popover-tooltip top delete-source-popover" ng-if="showElement[group.getActive().putCode.value+'-delete']"> 
+                                            <a id="delete-affiliation_{{group.getActive().putCode.value}}" href="" (click)="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
+                                            <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.getActive().putCode.value+'-delete']"> 
                                                 <div class="arrow"></div>
                                                 <div class="popover-content">
                                                      <@orcid.msg 'groups.common.delete_this_source' />
@@ -686,11 +689,11 @@
                         </div>
                     </div>
  
-                    <div ng-if="affiliationsSrvc.loading" class="text-center">
+                    <div *ngIf="affiliationsSrvc.loading" class="text-center">
                         <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                     </div>
-                    <div ng-if="affiliationsSrvc.loading == false && affiliationsSrvc.employments.length == 0">
-                        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noemploymentaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyemployment")} <a ng-click="addAffiliationModal('employment')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
+                    <div *ngIf="affiliationsSrvc.loading == false && affiliationsSrvc.employments.length == 0">
+                        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noemploymentaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyemployment")} <a (click)="addAffiliationModal('employment')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
                     </div>
                 </div>
             </div>
@@ -792,15 +795,15 @@
                     <div class="pull-right bio-edit-modal">             
                         <span class="right">Edit all privacy settings</span>
                         <div class="bulk-privacy-bar">
-                            <div ng-class="{'relative' : modal == false}" id="privacy-bar">
+                            <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
                                 <ul class="privacyToggle" ng-mouseenter="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" ng-mouseleave="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
-                                    <li class="publicActive publicInActive" ng-class="{publicInActive: bioModel != 'PUBLIC'}"><a ng-click="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" name="privacy-toggle-3-public" id=""></a></li>
-                                    <li class="limitedActive limitedInActive" ng-class="{limitedInActive: bioModel != 'LIMITED'}"><a ng-click="setBulkGroupPrivacy('LIMITED', $event, bioModel)" name="privacy-toggle-3-limited" id=""></a></li>
-                                    <li class="privateActive privateInActive" ng-class="{privateInActive: bioModel != 'PRIVATE'}"><a ng-click="setBulkGroupPrivacy('PRIVATE', $event, bioModel)" name="privacy-toggle-3-private" id=""></a></li>
+                                    <li class="publicActive publicInActive" [ngClass]="{publicInActive: bioModel != 'PUBLIC'}"><a (click)="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" name="privacy-toggle-3-public" id=""></a></li>
+                                    <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: bioModel != 'LIMITED'}"><a (click)="setBulkGroupPrivacy('LIMITED', $event, bioModel)" name="privacy-toggle-3-limited" id=""></a></li>
+                                    <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE', $event, bioModel)" name="privacy-toggle-3-private" id=""></a></li>
                                 </ul>
                             </div>
                             <div class="popover-help-container" style="top: -75px; left: 512px;">
-                                <div class="popover top privacy-myorcid3" ng-class="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
+                                <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
                                         <strong>Who can see this? </strong>
