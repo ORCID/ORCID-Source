@@ -57,23 +57,56 @@ public class NormalizationServiceTest {
         ExternalID normed = new ExternalID();
         normed.setRelationship(Relationship.SELF);
         normed.setType("doi");
-        normed.setValue("10/upper");
-        normed.setNormalized(new TransientNonEmptyString("10/upper"));  //everything should normalize to this.       
+        normed.setValue("10.1/upper");
+        normed.setNormalized(new TransientNonEmptyString("10.1/upper"));  //everything should normalize to this.       
 
         ExternalID id1 = new ExternalID();
         id1.setRelationship(Relationship.SELF);
         id1.setType("doi");
-        id1.setValue("https://dx.doi.org/10/UPPER");
+        id1.setValue("https://dx.doi.org/10.1/UPPER");
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));
         assertEquals(id1,normed);
         
-        id1.setValue("http://doi.org/10/UPPER");
+        id1.setValue("http://doi.org/10.1/UPPER");
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));        
         assertEquals(id1,normed);
         
-        id1.setValue("10/UPPER");
+        id1.setValue("10.1/UPPER");
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));
         assertEquals(id1,normed);
 
     }
+    
+    @Test
+    public void checkISBNAndCaseNormalized(){
+        ExternalID normed = new ExternalID();
+        normed.setRelationship(Relationship.SELF);
+        normed.setType("isbn");
+        normed.setValue("ISBN: 123-456-7-89x junk");
+        normed.setNormalized(new TransientNonEmptyString("123456789X"));  //everything should normalize to this.       
+        
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("isbn");
+        id1.setValue("ISBN: 123-456-7-89x junk");
+        id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));        
+        assertEquals(normed,id1);
+    }
+    
+    @Test
+    public void checkISSNAndCaseNormalized(){
+        ExternalID normed = new ExternalID();
+        normed.setRelationship(Relationship.SELF);
+        normed.setType("issn");
+        normed.setValue("ISSN: 1234-4567 stuff");
+        normed.setNormalized(new TransientNonEmptyString("1234-4567"));  //everything should normalize to this.       
+        
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("issn");
+        id1.setValue("ISSN: 1234-4567 stuff");
+        id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));        
+        assertEquals(normed,id1);
+    }
+
 }
