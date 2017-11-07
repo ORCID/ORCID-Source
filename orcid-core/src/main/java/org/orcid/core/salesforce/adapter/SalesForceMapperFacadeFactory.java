@@ -161,6 +161,8 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.fieldBToA("Contact__c", "role.contactId");
         classMap.fieldBToA("AccountId", "role.accountId");
         classMap.fieldBToA("Id", "role.id");
+        classMap.fieldBToA("Organization__c", "accountId");
+        
         classMap.register();
     }
 

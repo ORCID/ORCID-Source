@@ -119,7 +119,9 @@ public class SalesForceManagerImplTest {
         when(sourceManager.retrieveRealUserOrcid()).thenReturn(TEST_ORCID);
         SalesForceConnectionEntity connection = new SalesForceConnectionEntity();
         connection.setSalesForceAccountId("account1Id");
-        when(salesForceConnectionDao.findByOrcid(TEST_ORCID)).thenReturn(connection);
+        List<SalesForceConnectionEntity> connections = new ArrayList<>();
+        connections.add(connection);
+        when(salesForceConnectionDao.findByOrcid(TEST_ORCID)).thenReturn(connections);
     }
 
     private void setUpContact1() {
@@ -181,7 +183,7 @@ public class SalesForceManagerImplTest {
         // Switch from main to technical contact
         Contact contact = new Contact();
         contact.setId("contact2Id");
-        contact.setAccountId("account1");
+        contact.setAccountId("account1Id");
         ContactRole role = new ContactRole(ContactRoleType.TECHNICAL_CONTACT);
         role.setId("contact2Idrole1Id");
         contact.setRole(role);
