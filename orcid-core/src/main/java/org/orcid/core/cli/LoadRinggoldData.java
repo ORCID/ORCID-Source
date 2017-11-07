@@ -118,6 +118,8 @@ public class LoadRinggoldData {
             processInstitutions(zip);
         } catch (IOException e) {
             throw new RuntimeException("Error reading zip file", e);
+        } finally {
+            LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}", new Object[] { numAdded, numUpdated, numUnchanged, numSkipped });
         }
     }
 
@@ -211,19 +213,37 @@ public class LoadRinggoldData {
         }
 
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(ringgoldId), RINGGOLD_SOURCE_TYPE);
+        Date now = new Date();
         if (existingEntity == null) {
             // TODO: create org
+            OrgDisambiguatedEntity newEntity = new OrgDisambiguatedEntity();
+            newEntity.setDateCreated(now);
+            newEntity.setLastIndexedDate(now);
+            newEntity.setCity(city);
+            newEntity.setCountry(country);
+            newEntity.setIndexingStatus(IndexingStatus.PENDING);
+            newEntity.setName(name);
+            newEntity.setOrgType(type);
+            newEntity.setRegion(state);
+            newEntity.setSourceId(String.valueOf(ringgoldId));
+            newEntity.setSourceParentId(String.valueOf(parentId));
+            newEntity.setSourceType(RINGGOLD_SOURCE_TYPE);
+            orgDisambiguatedDao.persist(newEntity);
+            numAdded++;
         } else {
             // TODO: check if the org have changed
-            if(changed(existingEntity, parentId, name, country, city, state, type)) {
+            if (changed(existingEntity, parentId, name, country, city, state, type)) {
                 existingEntity.setCity(city);
                 existingEntity.setCountry(country);
                 existingEntity.setIndexingStatus(IndexingStatus.REINDEX);
-                existingEntity.setLastModified(new Date());
+                existingEntity.setLastModified(now);
                 existingEntity.setName(name);
                 existingEntity.setOrgType(type);
-                existingEntity.setRegion(state);  
+                existingEntity.setRegion(state);
                 orgDisambiguatedDao.merge(existingEntity);
+                numUpdated++;
+            } else {
+                numUnchanged++;
             }
         }
     }
@@ -237,7 +257,7 @@ public class LoadRinggoldData {
                 || !city.equals(entity.getCity()) || !type.equals(entity.getOrgType())) {
             return true;
         }
-        
+
         String existingRegion = entity.getRegion();
         if (state == null) {
             if (existingRegion != null) {
@@ -246,7 +266,7 @@ public class LoadRinggoldData {
         } else if (!state.equals(existingRegion)) {
             return true;
         }
-        
+
         return false;
     }
 
