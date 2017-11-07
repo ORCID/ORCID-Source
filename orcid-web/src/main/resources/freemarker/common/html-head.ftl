@@ -168,7 +168,7 @@
                             </#if>
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEducation">
-                            <#include "../workspace/workspace_act_sort_menu.ftl"/>                    
+                            <#include "../includes/workspace/workspace_act_sort_menu.ftl"/>                    
                             <#if !(isPublicProfile??)>
                                 <ul class="workspace-bar-menu">                         
                                     <!-- Link Manually -->
@@ -206,7 +206,7 @@
                 <div ng-if="workspaceSrvc.displayEducation" class="workspace-accordion-content">
                     <ul id="educations-list" ng-hide="!affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
                         <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" ng-repeat="group in affiliationsSrvc.educations | orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.getActive().putCode.value}}"> 
-                                <#include "aff_row_inc_v3.ftl" />
+                                <#include "../includes/affiliate/aff_row_inc_v3.ftl" />
                         </li>
                     </ul>
                     <div ng-if="affiliationsSrvc.loading" class="text-center">
@@ -243,7 +243,7 @@
                             </#if>                     
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEmployment">
-                            <#include "../workspace/workspace_act_sort_menu.ftl"/>  
+                            <#include "../includes/workspace/workspace_act_sort_menu.ftl"/>  
                             <#if !(isPublicProfile??)>
                                 <ul class="workspace-bar-menu">                         
                                     <!-- Link Manually -->
@@ -273,11 +273,6 @@
                                             <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                         </a>                
                                     </li>
-                                    
-                                    
-                                    
-                                    
-                                    
                                 </ul>
                             </#if>
                         </div>
@@ -286,7 +281,7 @@
                 <div ng-if="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
                     <ul id="employments-list" ng-hide="!affiliationsSrvc.employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
                         <li class="bottom-margin-small workspace-border-box affiliation-box card" ng-repeat="group in affiliationsSrvc.employments | orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.getActive().putCode.value}}">  
-                            <#include "aff_row_inc_v3.ftl" />
+                            <#include "../includes/affiliate/aff_row_inc_v3.ftl" />
                         </li>
                     </ul>
                     <div ng-if="affiliationsSrvc.loading" class="text-center">
@@ -298,11 +293,9 @@
                     <div ng-if="affiliationsSrvc.loading == false && affiliationsSrvc.employments.length == 0" ng-cloak>
                         <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noemploymentaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyemployment")} <a ng-click="addAffiliationModal('employment')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
                     </div>
-
                 </div>
             </div>
         </div>
-
     </script>
     </#if>
 

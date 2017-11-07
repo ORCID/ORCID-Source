@@ -19,6 +19,9 @@
 <#include "includes/affiliate/del_affiliate_inc.ftl"/>
 
 <#include "includes/affiliate/add_affiliate_inc.ftl"/>
+++++
+<affiliation-ng2></affiliation-ng2>
+----
 <div ng-controller="AffiliationCtrl">
 	<!-- Education -->
 	<div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
