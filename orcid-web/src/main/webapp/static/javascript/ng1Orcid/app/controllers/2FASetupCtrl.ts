@@ -87,9 +87,8 @@ export const _2FASetupCtrl = angular.module('orcidApp').controller(
                         }
                         $scope.$apply();
                     }
-                }).fail(function(xhr, status, error) {
-                    var err = eval("(" + xhr.responseText + ")");
-                    alert(err.Message);
+                }).fail(function() {
+                    console.log("error posting 2fa registration to server");
                 });
             };
 
