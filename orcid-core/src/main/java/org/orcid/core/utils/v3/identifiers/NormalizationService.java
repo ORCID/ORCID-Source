@@ -62,7 +62,9 @@ public class NormalizationService {
     }
 
     /**
-     * Ensure this is the API type name, not the DB type name
+     * Ensure this is the API type name, not the DB type name.
+     * 
+     * Will return empty strings for values that cannot be normalised (because they're not recognised)
      * 
      * @param type
      * @param value

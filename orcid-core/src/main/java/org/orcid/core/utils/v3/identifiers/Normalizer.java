@@ -31,6 +31,13 @@ public interface Normalizer extends Ordered{
      */
     public List<String> canHandle();
 
-    
+    /** If this normaliser can handle the apiTypeName provided 
+     * then attempt to normalise the value and return it.
+     * If the value cannot be normalised for any reason, return an empty string.
+     * 
+     * @param apiTypeName
+     * @param value
+     * @return
+     */
     public String normalise(String apiTypeName, String value);
 }

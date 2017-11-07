@@ -32,7 +32,6 @@ public class ISSNNormalizerTest {
             "1234-5678",
             "1234-567X",
             "0210-9980 DOI: 10.7203/saitabi.64.7258" ,
-            "978-85-17-00088-1",
             "Print ISSN: 0974–2441  Online ISSN: 2455–3891",
             "09599428 13645501",
             "13886150",
@@ -47,13 +46,17 @@ public class ISSNNormalizerTest {
             "ISSN-1870-3984",
             "1434-9949 (Electronic) 0770-3198 (Linking)",
             "1473 - 0111 ",
-            "0365-0340 (Print) 1476-3567 (Online)");
+            "0365-0340 (Print) 1476-3567 (Online)",
+            //unrecognised
+            "978-85-17-00088-1",
+            "1234567",
+            "123456789"
+            );
     
     List<String> results = Lists.newArrayList(
             "1234-5678",
             "1234-567X",
             "0210-9980" ,
-            "978-85-17-00088-1", //doesn't match
             "0974-2441",
             "0959-9428",
             "1388-6150",
@@ -68,7 +71,10 @@ public class ISSNNormalizerTest {
             "1870-3984",
             "1434-9949",
             "1473-0111",
-            "0365-0340");
+            "0365-0340",
+            "",
+            "",
+            "");
     
     @Test
     public void go(){
