@@ -26,6 +26,8 @@ import { UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated modules imports
+import { AffiliationNg2Module } 
+    from './affiliation/affiliation.ts';
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 import { CountryNg2Module } 
@@ -44,6 +46,9 @@ import { WorksPrivacyPreferencesNg2Module }
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
 //User generated services
+import { AffiliationService } 
+    from '../shared/affiliationService.ts';
+
 import { BiographyService } 
     from '../shared/biographyService.ts';
 
@@ -101,6 +106,7 @@ export class RootCmp {
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
+        AffiliationNg2Module,
         BiographyNg2Module,
         CountryNg2Module,
         CountryFormNg2Module,
@@ -116,6 +122,7 @@ export class RootCmp {
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
         },
+        AffiliationService,
         BiographyService,
         CommonService,
         CountryService,

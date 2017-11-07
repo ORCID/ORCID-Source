@@ -12,6 +12,8 @@ import * as vcRecaptcha from 'angular-recaptcha'
 import 'angular-route'
 
 //User generated imports
+import { AffiliationModule } 
+    from './affiliation/affiliation.ts';
 import { BiographyModule } 
     from './biography/biography.ts';
 import { CountryModule } 
@@ -38,6 +40,7 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
+        AffiliationModule.name,
         BiographyModule.name,
         CountryModule.name,
         CountryFormModule.name,
