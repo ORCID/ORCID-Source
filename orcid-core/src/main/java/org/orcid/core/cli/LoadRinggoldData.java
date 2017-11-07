@@ -181,7 +181,7 @@ public class LoadRinggoldData {
         });
     }
 
-    private void processDeletedElemens(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
+    private void processDeletedElements(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
         LOGGER.info("Processing identifiers");
         JsonNode deletedIds = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_deleted_ids.json"));
         deletedIds.forEach(element -> {
@@ -191,7 +191,15 @@ public class LoadRinggoldData {
             if (newId == null) {
                 status = OrganizationStatus.DEPRECATED;
             }
+            
             LOGGER.info("Deleting org {} with status {}", oldId, status);
+            OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(oldId), RINGGOLD_SOURCE_TYPE);
+            if(existingEntity != null) {
+                existingEntity.setStatus(status.name());
+                orgDisambiguatedDao.merge(existingEntity);
+            } else {
+                //TODO: Create entity
+            }
         });
     }
 
@@ -206,8 +214,7 @@ public class LoadRinggoldData {
         String city = institution.get("city").asText();
         String type = institution.get("type").asText();
 
-        // If we already have a DN name for it, lets keep just the newest
-        // one
+        // TODO: Should we still replace the name with the DN?
         if (dnNameMap.containsKey(ringgoldId)) {
             name = dnNameMap.get(ringgoldId).get("name").asText();
         }
@@ -215,7 +222,6 @@ public class LoadRinggoldData {
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(ringgoldId), RINGGOLD_SOURCE_TYPE);
         Date now = new Date();
         if (existingEntity == null) {
-            // TODO: create org
             OrgDisambiguatedEntity newEntity = new OrgDisambiguatedEntity();
             newEntity.setDateCreated(now);
             newEntity.setLastIndexedDate(now);
@@ -231,7 +237,6 @@ public class LoadRinggoldData {
             orgDisambiguatedDao.persist(newEntity);
             numAdded++;
         } else {
-            // TODO: check if the org have changed
             if (changed(existingEntity, parentId, name, country, city, state, type)) {
                 existingEntity.setCity(city);
                 existingEntity.setCountry(country);
@@ -246,10 +251,6 @@ public class LoadRinggoldData {
                 numUnchanged++;
             }
         }
-    }
-
-    private void processNew() {
-
     }
 
     private boolean changed(OrgDisambiguatedEntity entity, Integer parentId, String name, Iso3166Country country, String city, String state, String type) {
