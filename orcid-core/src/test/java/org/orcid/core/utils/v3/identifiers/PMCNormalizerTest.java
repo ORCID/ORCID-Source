@@ -39,6 +39,7 @@ public class PMCNormalizerTest {
             "PMID: 25123551 [PubMed - in process] PMCID: PMC4146442 ",
             "PMID: 27930716 PMCID: PMC5145179 DOI: 10.1371/journal.pone.0167675",
             "PMCID: PMC4937647",
+            "12690141  PMCID: PMC1744630", //really annoying!
             
             "PMID: 25533354",
             "ISSN: 0363-0269",
@@ -70,6 +71,7 @@ public class PMCNormalizerTest {
             "PMC4146442",
             "PMC5145179",
             "PMC4937647",
+            "PMC1744630",
             "","","","","",
             "","","","","",
             "","","",""
