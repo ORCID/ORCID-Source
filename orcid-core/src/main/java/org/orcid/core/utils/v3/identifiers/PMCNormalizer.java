@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 public class PMCNormalizer implements Normalizer {
 
     private static final List<String> canHandle = Lists.newArrayList("pmc");
-    private static final Pattern pattern = Pattern.compile("(?:^|[Pp][Mm][Cc]-?)\\s*(\\d{7,9})(?:$|\\b)");
+    private static final Pattern pattern = Pattern.compile("(?:^|[Pp][Mm][Cc]-?)\\s*(\\d{5,9})(?:$|\\b)");
     
     @Override
     public List<String> canHandle() {
