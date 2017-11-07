@@ -202,7 +202,7 @@
                                                     <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
                                                 </a>
                                             </li>
-                                            <li *ngIf="sortState.type != 'affiliation'" [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!sortHideOption">
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!sortHideOption && sortState.type != 'affiliation'">
                                                 <a (click)="sort('type');" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
                                                     <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
@@ -249,7 +249,7 @@
                 </div>
                 <div *ngIf="workspaceSrvc.displayEducation" class="workspace-accordion-content">
                     <ul id="educations-list" *ngIf="affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of affiliationsSrvc.educations | orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.getActive().putCode.value}}">
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of affiliationsSrvc.educations ">***| orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.getActive().putCode.value}}
                             <div class="row"> 
          
                                 
@@ -315,8 +315,8 @@
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li *ngFor='let extID of group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"] track by $index' class="url-popover">
-                                                    <span *ngIf="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
+                                                <li *ngFor='let extID of group.getActive().affiliationExternalIdentifiers ' class="url-popover">***| orderBy:["-relationship.value", "type.value"] track by $index
+                                                    <span *ngIf="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -347,7 +347,7 @@
                                             <div *ngIf="group.getActive().orgDisambiguatedExternalIdentifiers">
                                                 <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.getActive().disambiguationSource.value}}</strong><br>
                                                 <ul class="reset">
-                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.getActive().orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
                                                         {{orgDisambiguatedExternalIdentifier.identifierType}}:  
                                                         <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> 
                                                         <span *ngIf="orgDisambiguatedExternalIdentifier.all">
@@ -367,7 +367,7 @@
                                     <div class="col-md-12">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'groups.common.created'/></strong><br /> 
-                                            <span>{{group.getActive().createdDate | ajaxFormDateToISO8601}}</span>
+                                            <span>{{group.getActive().createdDate}}***| ajaxFormDateToISO8601</span>
                                         </div>
                                     </div>  
                                 </div>
@@ -383,7 +383,7 @@
                                             </div>
                                             
                                             <div class="col-md-3 col-sm-3 col-xs-6">
-                                                <@orcid.msg 'groups.common.created'/>: <span>{{group.getActive().createdDate | ajaxFormDateToISO8601}}</span>
+                                                <@orcid.msg 'groups.common.created'/>: <span>{{group.getActive().createdDate}}***| ajaxFormDateToISO8601</span>
                                             </div>
                                                         
                                             <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
@@ -593,8 +593,8 @@
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li *ngFor='let extID of group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"] track by $index' class="url-popover">
-                                                    <span *ngIf="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
+                                                <li *ngFor='let extID of group.getActive().affiliationExternalIdentifiers' class="url-popover">*** | orderBy:["-relationship.value", "type.value"] track by $index
+                                                    <span *ngIf="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -623,7 +623,8 @@
                                             <div *ngIf="group.getActive().orgDisambiguatedExternalIdentifiers">
                                                 <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.getActive().disambiguationSource.value}}</strong><br>
                                                 <ul class="reset">
-                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">{{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.getActive().orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                        {{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -637,7 +638,7 @@
                                     <div class="col-md-12">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                            <span>{{group.getActive().createdDate | ajaxFormDateToISO8601}}</span>
+                                            <span>{{group.getActive().createdDate}}***| ajaxFormDateToISO8601</span>
                                         </div>
                                     </div>  
                                 </div>
@@ -656,7 +657,7 @@
                                 </div>
                             
                                 <div class="col-md-3 col-sm-3 col-xs-6">
-                                    <@orcid.msg 'groups.common.created'/>: <span>{{group.getActive().createdDate | ajaxFormDateToISO8601}}</span>
+                                    <@orcid.msg 'groups.common.created'/>: <span>{{group.getActive().createdDate}}***| ajaxFormDateToISO8601</span>
                                 </div>
                                             
                                 <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
