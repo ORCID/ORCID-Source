@@ -94,17 +94,17 @@ public class NormalizationServiceTest {
     }
     
     @Test
-    public void checkISSNAndCaseNormalized(){
+    public void checkBibcodeAndCaseNormalized(){
         ExternalID normed = new ExternalID();
         normed.setRelationship(Relationship.SELF);
-        normed.setType("issn");
-        normed.setValue("ISSN: 1234-4567 stuff");
-        normed.setNormalized(new TransientNonEmptyString("1234-4567"));  //everything should normalize to this.       
+        normed.setType("bibcode");
+        normed.setValue(" 123456789.A23456789 ");
+        normed.setNormalized(new TransientNonEmptyString("123456789.A23456789"));  //everything should normalize to this.       
         
         ExternalID id1 = new ExternalID();
         id1.setRelationship(Relationship.SELF);
-        id1.setType("issn");
-        id1.setValue("ISSN: 1234-4567 stuff");
+        id1.setType("bibcode");
+        id1.setValue(" 123456789.A23456789 ");
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));        
         assertEquals(normed,id1);
     }
