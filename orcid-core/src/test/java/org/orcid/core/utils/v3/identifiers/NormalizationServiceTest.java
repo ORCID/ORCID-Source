@@ -57,21 +57,21 @@ public class NormalizationServiceTest {
         ExternalID normed = new ExternalID();
         normed.setRelationship(Relationship.SELF);
         normed.setType("doi");
-        normed.setValue("10/upper");
-        normed.setNormalized(new TransientNonEmptyString("10/upper"));  //everything should normalize to this.       
+        normed.setValue("10.1/upper");
+        normed.setNormalized(new TransientNonEmptyString("10.1/upper"));  //everything should normalize to this.       
 
         ExternalID id1 = new ExternalID();
         id1.setRelationship(Relationship.SELF);
         id1.setType("doi");
-        id1.setValue("https://dx.doi.org/10/UPPER");
+        id1.setValue("https://dx.doi.org/10.1/UPPER");
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));
         assertEquals(id1,normed);
         
-        id1.setValue("http://doi.org/10/UPPER");
+        id1.setValue("http://doi.org/10.1/UPPER");
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));        
         assertEquals(id1,normed);
         
-        id1.setValue("10/UPPER");
+        id1.setValue("10.1/UPPER");
         id1.setNormalized(new TransientNonEmptyString(norm.normalise(id1.getType(), id1.getValue())));
         assertEquals(id1,normed);
 
