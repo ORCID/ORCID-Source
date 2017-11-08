@@ -24,7 +24,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 
-public class WebsiteForm implements ErrorsInterface, Serializable {
+public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,7 +32,6 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
     private String url;
     private String urlName;
     private String putCode;
-    private Visibility visibility;
     private Long displayIndex;
     private Date createdDate;
     private Date lastModified;
@@ -151,15 +150,7 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
     public void setPutCode(String putCode) {
         this.putCode = putCode;
     }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
-    }
-
+    
     public String getSource() {
         return source;
     }
