@@ -39,6 +39,7 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -63,6 +64,7 @@ public class LoadRinggoldData {
 
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
+    private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
 
     private int numAdded;
     private int numUpdated;
@@ -102,6 +104,7 @@ public class LoadRinggoldData {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
         orgDisambiguatedSolrDao = (OrgDisambiguatedSolrDao) context.getBean("orgDisambiguatedSolrDao");
+        orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
@@ -252,10 +255,17 @@ public class LoadRinggoldData {
             }
         }
     }
+    
+    private void processIdentifier(Long orgDisambiguatedId, List<JsonNode> identifiers) {
+        
+    }
 
     private boolean changed(OrgDisambiguatedEntity entity, Integer parentId, String name, Iso3166Country country, String city, String state, String type) {
-        if (!parentId.equals(Integer.valueOf(entity.getSourceParentId())) || !name.equals(entity.getName()) || !country.equals(entity.getCountry())
-                || !city.equals(entity.getCity()) || !type.equals(entity.getOrgType())) {
+        if (!parentId.equals(Integer.valueOf(entity.getSourceParentId())) 
+                || !name.equals(entity.getName()) 
+                || !country.equals(entity.getCountry())
+                || !city.equals(entity.getCity()) 
+                || !type.equals(entity.getOrgType())) {
             return true;
         }
 
