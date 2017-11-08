@@ -26,10 +26,10 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-public class DOINormalizer implements Normalizer {
+public class PMCNormalizer implements Normalizer {
 
-    private static final List<String> canHandle = Lists.newArrayList("doi");
-    private static final Pattern pattern = Pattern.compile("(10\\.[0-9a-zA-Z]+\\/[\\/0-9a-zA-Z\\._-]*[0-9a-zA-Z])");
+    private static final List<String> canHandle = Lists.newArrayList("pmc");
+    private static final Pattern pattern = Pattern.compile("(?:^|[Pp][Mm][Cc]-?)\\s*(\\d{5,9}(?!.+PMC))(?:$|\\b)");
     
     @Override
     public List<String> canHandle() {
@@ -44,7 +44,7 @@ public class DOINormalizer implements Normalizer {
         if (m.find()){
             String n = m.group(1);
             if (n != null){
-                return n;
+                return "PMC"+n;
             }
         }
         return "";

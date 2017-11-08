@@ -25,7 +25,7 @@
    				<div class="row">
 	   			    <div class="col-md-12 col-sm-12 col-xs-12">
 	   			    	<div class="box">
-			   			    <@orcid.privacyToggle  angularModel="biographyForm.visiblity.visibility"
+			   			    <@orcid.privacyToggle  angularModel="biographyForm.visibility.visibility"
 							             questionClick="toggleClickPrivacyHelp()"
 							             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 							             publicClick="setPrivacy('PUBLIC', $event)" 

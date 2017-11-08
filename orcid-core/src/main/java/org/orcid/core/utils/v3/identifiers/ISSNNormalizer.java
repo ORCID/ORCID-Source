@@ -26,14 +26,19 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-public class DOINormalizer implements Normalizer {
+public class ISSNNormalizer implements Normalizer{
 
-    private static final List<String> canHandle = Lists.newArrayList("doi");
-    private static final Pattern pattern = Pattern.compile("(10\\.[0-9a-zA-Z]+\\/[\\/0-9a-zA-Z\\._-]*[0-9a-zA-Z])");
+    private static final List<String> canHandle = Lists.newArrayList("issn");
+    private static final Pattern pattern = Pattern.compile("(?:^|[^\\d])(\\d{4}\\ {0,1}[-–]{0,1}\\ {0,1}\\d{3}[\\dXx])(?:$|[^-\\d])");
     
     @Override
     public List<String> canHandle() {
         return canHandle;
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
     @Override
@@ -44,15 +49,15 @@ public class DOINormalizer implements Normalizer {
         if (m.find()){
             String n = m.group(1);
             if (n != null){
+                n = n.replace(" ", "");
+                n = n.replace("-", "");
+                n = n.replace("–", "");
+                n = n.replace("x", "X");
+                n= n.substring(0,4) +"-"+n.substring(4,8);//0000-000X
                 return n;
             }
         }
         return "";
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
     }
 
 }

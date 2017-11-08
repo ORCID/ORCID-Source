@@ -26,10 +26,10 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-public class DOINormalizer implements Normalizer {
+public class BibcodeNormalizer implements Normalizer {
 
-    private static final List<String> canHandle = Lists.newArrayList("doi");
-    private static final Pattern pattern = Pattern.compile("(10\\.[0-9a-zA-Z]+\\/[\\/0-9a-zA-Z\\._-]*[0-9a-zA-Z])");
+    private static final List<String> canHandle = Lists.newArrayList("bibcode");
+    private static final Pattern pattern = Pattern.compile("(?:^|[^a-zA-Z0-9\\.])([0-9]{4}[\\.a-zA-Z0-9]{15})(?:$|[^a-zA-Z0-9\\.])");
     
     @Override
     public List<String> canHandle() {

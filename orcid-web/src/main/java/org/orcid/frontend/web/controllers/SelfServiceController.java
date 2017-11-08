@@ -94,7 +94,7 @@ public class SelfServiceController extends BaseController {
 
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
-        return new ModelAndView("redirect:/self-service/" + salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid()));
+        return new ModelAndView("redirect:/self-service/" + salesForceManager.retrievePrimaryAccountIdByOrcid(getCurrentUserOrcid()));
     }
 
     @RequestMapping("/{accountId}")
@@ -127,7 +127,7 @@ public class SelfServiceController extends BaseController {
     public @ResponseBody MemberDetailsForm validateMemberDetailsEmail(@RequestBody MemberDetailsForm consortium) {
         // if email address exists validate format
         consortium.getEmail().setErrors(new ArrayList<String>());
-        if (consortium.getEmail().getValue() != null || !consortium.getEmail().getValue().trim().isEmpty()) {
+        if (consortium.getEmail().getValue() != null && !consortium.getEmail().getValue().trim().isEmpty()) {
             if (!super.validateEmailAddress(consortium.getEmail().getValue())) {
                 setError(consortium.getEmail(), "manage_consortium.email_valid_format");
             }
@@ -239,11 +239,12 @@ public class SelfServiceController extends BaseController {
 
     @RequestMapping(value = "/update-contacts.json", method = RequestMethod.POST)
     public @ResponseBody ContactsForm updateContacts(@RequestBody ContactsForm contactsForm) {
-        checkFullAccess(contactsForm.getAccountId());
+        String accountId = contactsForm.getAccountId();
+        checkFullAccess(accountId);
         validateContacts(contactsForm);
         if (contactsForm.getErrors().isEmpty()) {
             salesForceManager.updateContacts(contactsForm.getContactsList());
-            return getContacts(salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid()));
+            return getContacts(accountId);
         } else {
             return contactsForm;
         }
@@ -287,7 +288,7 @@ public class SelfServiceController extends BaseController {
         }
         return contactsForm;
     }
-    
+
     @RequestMapping(value = "/validate-sub-member-initial-contact-email.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberInitialContactEmail(@RequestBody SubMemberForm subMember) {
         // validate initial contact email is correct format
@@ -297,7 +298,7 @@ public class SelfServiceController extends BaseController {
         }
         return subMember;
     }
-    
+
     @RequestMapping(value = "/validate-sub-member-initial-contact-first-name.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberInitialContactFirstName(@RequestBody SubMemberForm subMember) {
         // validate initial contact first name isn't blank
@@ -308,7 +309,7 @@ public class SelfServiceController extends BaseController {
 
         return subMember;
     }
-    
+
     @RequestMapping(value = "/validate-sub-member-initial-contact-last-name.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberInitialContactLastName(@RequestBody SubMemberForm subMember) {
         // validate initial contact last name isn't blank
@@ -329,7 +330,7 @@ public class SelfServiceController extends BaseController {
         }
 
         return subMember;
-        
+
     }
 
     @RequestMapping(value = "/validate-sub-member-website.json", method = RequestMethod.POST)
@@ -404,19 +405,19 @@ public class SelfServiceController extends BaseController {
     @RequestMapping(value = "/remove-sub-member.json", method = RequestMethod.POST)
     public @ResponseBody void removeSubMember(@RequestBody SubMember subMember) {
         checkFullAccess(subMember.getParentAccountId());
-        salesForceManager.flagOpportunityAsRemovalRequested(subMember.getOpportunity().getId());
+        salesForceManager.flagOpportunityAsRemovalRequested(subMember.getOpportunity());
     }
 
     @RequestMapping(value = "/cancel-sub-member-removal.json", method = RequestMethod.POST)
     public @ResponseBody void cancelSubMemberRemoval(@RequestBody SubMember subMember) {
         checkFullAccess(subMember.getParentAccountId());
-        salesForceManager.flagOpportunityAsRemovalNotRequested(subMember.getOpportunity().getId());
+        salesForceManager.flagOpportunityAsRemovalNotRequested(subMember.getOpportunity());
     }
 
     @RequestMapping(value = "/cancel-sub-member-addition.json", method = RequestMethod.POST)
     public @ResponseBody void cancelSubMemberAddition(@RequestBody SubMember subMember) {
         checkFullAccess(subMember.getParentAccountId());
-        salesForceManager.removeOpportunity(subMember.getOpportunity().getId());
+        salesForceManager.removeOpportunity(subMember.getOpportunity());
     }
 
     private void checkFullAccess(String memberId) {
@@ -426,14 +427,14 @@ public class SelfServiceController extends BaseController {
     }
 
     private boolean isAllowedFullAccess(String memberId) {
-        String usersAuthorizedAccountId = salesForceManager.retrieveAccountIdByOrcid(sourceManager.retrieveSourceOrcid());
-        return usersAuthorizedAccountId.equals(memberId);
+        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveSourceOrcid());
+        return usersAuthorizedAccountIds.contains(memberId);
     }
 
     private void checkAccess(String memberId) {
-        String usersAuthorizedAccountId = salesForceManager.retrieveAccountIdByOrcid(sourceManager.retrieveSourceOrcid());
+        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveSourceOrcid());
         MemberDetails memberDetails = salesForceManager.retrieveDetails(memberId);
-        if (!(usersAuthorizedAccountId.equals(memberId) || usersAuthorizedAccountId.equals(memberDetails.getMember().getConsortiumLeadId()))) {
+        if (!(usersAuthorizedAccountIds.contains(memberId) || usersAuthorizedAccountIds.contains(memberDetails.getMember().getConsortiumLeadId()))) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);
         }
     }

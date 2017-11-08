@@ -14,21 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.pojo.ajaxForm;
 
-import java.util.List;
+public abstract class VisibilityForm implements ErrorsInterface {
+    protected Visibility visibility;
 
-import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
+    public Visibility getVisibility() {
+        return visibility;
+    }
 
-/**
- * @author Will Simpson
- */
-public interface SalesForceConnectionDao extends GenericDao<SalesForceConnectionEntity, Long> {
-
-    SalesForceConnectionEntity findByOrcidAndAccountId(String orcid, String accountId);
-
-    List<SalesForceConnectionEntity> findByOrcid(String orcid);
-
-    List<SalesForceConnectionEntity> findByAccountId(String accountId);
-
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
 }

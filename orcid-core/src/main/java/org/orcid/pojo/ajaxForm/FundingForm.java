@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
 import org.orcid.jaxb.model.v3.dev1.record.FundingContributors;
 import org.orcid.jaxb.model.v3.dev1.record.FundingType;
 
-public class FundingForm implements ErrorsInterface, Serializable {
+public class FundingForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,8 +68,6 @@ public class FundingForm implements ErrorsInterface, Serializable {
     private List<FundingExternalIdentifierForm> externalIdentifiers;
 
     private Text putCode;
-
-    private Visibility visibility;
 
     private String sourceName;
     
@@ -110,14 +108,6 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
     public void setPutCode(Text putCode) {
         this.putCode = putCode;
-    }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public FundingTitleForm getFundingTitle() {
