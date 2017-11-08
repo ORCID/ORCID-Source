@@ -25,7 +25,6 @@ import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.dev1.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.CitationType;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
@@ -36,15 +35,13 @@ import org.orcid.jaxb.model.v3.dev1.record.WorkType;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 
-public class WorkForm implements ErrorsInterface, Serializable {
+public class WorkForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
 
-    private Date publicationDate;
-
-    private Visibility visibility;
+    private Date publicationDate;    
 
     private Text putCode;
 
@@ -149,7 +146,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set visibility
         if (work.getVisibility() != null) {
-            w.setVisibility(work.getVisibility());
+            w.setVisibility(Visibility.valueOf(work.getVisibility()));
         }
 
         // Set country
@@ -383,8 +380,8 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
 
         // Set visibility
-        if (this.getVisibility() != null) {
-            work.setVisibility(this.getVisibility());
+        if (this.getVisibility() != null && this.getVisibility().getVisibility() != null) {
+            work.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
         
         // Set country
@@ -470,14 +467,6 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
-    }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public Date getPublicationDate() {

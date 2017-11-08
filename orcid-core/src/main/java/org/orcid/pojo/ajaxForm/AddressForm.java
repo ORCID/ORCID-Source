@@ -25,13 +25,12 @@ import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 
-public class AddressForm implements ErrorsInterface, Serializable {
+public class AddressForm extends VisibilityForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
     private List<String> errors = new ArrayList<String>();
     private Iso2Country iso2Country;
     private String countryName;
-    private String putCode;
-    private Visibility visibility;
+    private String putCode;    
     private Long displayIndex;
     private Date createdDate;
     private Date lastModified;
@@ -145,14 +144,6 @@ public class AddressForm implements ErrorsInterface, Serializable {
 
     public void setPutCode(String putCode) {
         this.putCode = putCode;
-    }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public Date getCreatedDate() {
