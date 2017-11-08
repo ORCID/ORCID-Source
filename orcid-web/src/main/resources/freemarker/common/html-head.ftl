@@ -249,7 +249,7 @@
                 </div>
                 <div *ngIf="workspaceSrvc.displayEducation" class="workspace-accordion-content">
                     <ul id="educations-list" *ngIf="affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of affiliationsSrvc.educations ">***| orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.getActive().putCode.value}}
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of null ">***| let group of affiliationsSrvc.educations orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.getActive().putCode.value}}
                             <div class="row"> 
          
                                 
@@ -528,7 +528,7 @@
                 </div>
                 <div *ngIf="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
                     <ul id="employments-list" ng-hide="!affiliationsSrvc.employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of affiliationsSrvc.employments ">***| orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.getActive().putCode.value}}
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of null ">***let group of affiliationsSrvc.employments | orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.getActive().putCode.value}}
                             <div class="row"> 
                          
                     

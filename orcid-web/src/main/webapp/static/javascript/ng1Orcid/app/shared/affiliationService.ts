@@ -15,19 +15,26 @@ export class AffiliationService {
     private employments: any;
     private headers: Headers;
     private urlAffiliation: string;
+    private urlAffiliationId: string;
+    private urlAffiliationById: string;
     private urlAffiliationDisambiguated: string;
     private urlAffiliations: string;
-
+    private loading: boolean;
+    private affiliationsToAddIds: any;
 
     constructor( private http: Http ){
+        this.affiliationsToAddIds = null,
+        this.educations = new Array(),
+        this.employments = new Array(),
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 
             }
         );
-        this.educations = new Array(),
-        this.employments = new Array(),
+        this.loading = true,
         this.urlAffiliation = getBaseUri() + '/affiliations/affiliation.json';
+        this.urlAffiliationId = getBaseUri() + '/affiliations/affiliationIds.json';
+        this.urlAffiliationById = getBaseUri() + '/affiliations/affiliations.json?affiliationIds=';
         this.urlAffiliationDisambiguated = getBaseUri() + '/affiliations/disambiguated/id/';
         this.urlAffiliations = getBaseUri() + '/affiliations/affiliations.json';
     }
@@ -70,7 +77,6 @@ export class AffiliationService {
             }
         )
         .share();
-    }
 
     /*
      deleteAffiliation: function(affiliation) {
@@ -107,41 +113,48 @@ export class AffiliationService {
             });
         }
         */
+    }
 
-    getData(): Observable<any> {
+    getAffiliationsId() {
+        this.loading = true;
+        this.affiliationsToAddIds = null;
+        this.educations.length = 0;
+        this.employments.length = 0;
         return this.http.get(
-            this.urlAffiliation
+            this.urlAffiliationId
         )
         .map((res:Response) => res.json()).share();
+
+        /*
+        //clear out current affiliations
+        this.loading = true;
+        this.affiliationsToAddIds = null;
+        this.educations.length = 0;
+        this.employments.length = 0;
+        //get affiliation ids
+        $.ajax({
+            url: getBaseUri() + '/' + path,
+            dataType: 'json',
+            success: function(data) {
+                serv.affiliationsToAddIds = data;
+                serv.addAffiliationToScope('affiliations/affiliations.json');
+                $rootScope.$apply();
+            }
+        }).fail(function(e){
+            // something bad is happening!
+            console.log("error fetching affiliations");
+            logAjaxError(e);
+        });
+        */
     }
 
-    getDisambiguatedAffiliation( id ): Observable<any> {
+    getAffiliationsById( idList ) { //Previously addAffiliationToScope('affiliations/affiliations.json')
         return this.http.get(
-            this.urlAffiliationDisambiguated + id
+            this.urlAffiliationById + idList
         )
         .map((res:Response) => res.json()).share();
-    }
 
-    setData( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        
-        return this.http.post( 
-            this.urlAffiliation, 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        .map((res:Response) => res.json()).share();
-    }
-}
-
-/*
-angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
-    var serv = {
-        educations: new Array(),
-        employments: new Array(),
-        loading: false,
-        affiliationsToAddIds: null,
-        
+        /*
         addAffiliationToScope: function(path) {
             if( serv.affiliationsToAddIds.length != 0 ) {
                 var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
@@ -181,31 +194,50 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
             } else {
                 serv.loading = false;
             };
-        },
+        }
+        */
+
+    }
+
+    getData(): Observable<any> {
+        return this.http.get(
+            this.urlAffiliation
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    getDisambiguatedAffiliation( id ): Observable<any> {
+        return this.http.get(
+            this.urlAffiliationDisambiguated + id
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    setData( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            this.urlAffiliation, 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+}
+
+/*
+angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
+    var serv = {
+        educations: new Array(),
+        employments: new Array(),
+        loading: false,
+        affiliationsToAddIds: null,
+        
+        ,
         setIdsToAdd: function(ids) {
             serv.affiliationsToAddIds = ids;
         },
-        getAffiliations: function(path) {
-            //clear out current affiliations
-            serv.loading = true;
-            serv.affiliationsToAddIds = null;
-            serv.educations.length = 0;
-            serv.employments.length = 0;
-            //get affiliation ids
-            $.ajax({
-                url: getBaseUri() + '/' + path,
-                dataType: 'json',
-                success: function(data) {
-                    serv.affiliationsToAddIds = data;
-                    serv.addAffiliationToScope('affiliations/affiliations.json');
-                    $rootScope.$apply();
-                }
-            }).fail(function(e){
-                // something bad is happening!
-                console.log("error fetching affiliations");
-                logAjaxError(e);
-            });
-        },
+        ,
         updateProfileAffiliation: function(aff) {
             $.ajax({
                 url: getBaseUri() + '/affiliations/affiliation.json',

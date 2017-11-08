@@ -27,6 +27,9 @@ import { EmailService }
 import { ModalService } 
     from '../../shared/modalService.ts'; 
 
+import { WorkspaceService } 
+    from '../../shared/workspaceService.ts'; 
+
 @Component({
     selector: 'affiliation-ng2',
     template:  scriptTmpl("affiliation-ng2-template")
@@ -56,7 +59,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor(
         private affiliationService: AffiliationService,
         private emailService: EmailService,
-        private modalService: ModalService
+        private modalService: ModalService,
+        private workspaceSrvc: WorkspaceService
     ) {
         /*
         this.emailSrvc = emailSrvc;
@@ -218,16 +222,81 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         */
     };
 
-    hideTooltip(element): void{        
-        this.showElement[element] = false;
+    getAffiliationsId(): void {
+        this.affiliationService.getAffiliationsId()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                console.log('getAffiliationsIds', data);
+
+                if( data.length != 0 ) {
+                    let affiliationIds = data.splice(0,20).join();
+                    //this.getAffiliationsById( affiliationIds );
+                    
+                }
+
+                /*
+
+        addAffiliationToScope: function(path) {
+            if( serv.affiliationsToAddIds.length != 0 ) {
+                var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
+                var url = getBaseUri() + '/' + path + '?affiliationIds=' + affiliationIds;                
+                $.ajax({
+                    url: url,                        
+                    headers : {'Content-Type': 'application/json'},
+                    method: 'GET',
+                    success: function(data) {
+                        for (i in data) {
+                            if (data[i].affiliationType != null && data[i].affiliationType.value != null
+                                    && data[i].affiliationType.value == 'education'){
+                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
+                            }
+                            else if (data[i].affiliationType != null && data[i].affiliationType.value != null
+                                    && data[i].affiliationType.value == 'employment'){
+                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
+                            }
+                        };
+                        if (serv.affiliationsToAddIds.length == 0) {
+                            serv.loading = false;
+                            $rootScope.$apply();
+                        } else {
+                            $rootScope.$apply();
+                            setTimeout(
+                                function () {
+                                    serv.addAffiliationToScope(path);
+                                },
+                                50
+                            );
+                        }
+                    }
+                }).fail(function(e) {
+                    console.log("Error adding affiliations to scope")
+                    logAjaxError(e);
+                });
+            } else {
+                serv.loading = false;
+            };
+        }
+        */
+            },
+            error => {
+                console.log('getBiographyFormError', error);
+            } 
+        );
     };
 
-    hideURLPopOver(id): void{
-        this.displayURLPopOver[id] = false;
-    };
+    getAffiliationsById( affiliationIds ): void {
+        this.affiliationService.getAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
 
-    hideAffiliationExtIdPopOver(id): void{
-        this.displayAffiliationExtIdPopOver[id] = false;
+                    console.log('this.getAffiliationsById', data);
+
+                },
+                error => {
+                    console.log('getBiographyFormError', error);
+                } 
+        );
     };
 
     getDisambiguatedAffiliation = function(id) {
@@ -248,6 +317,18 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log("error getDisambiguatedAffiliation(id)", id, error);
             } 
         );
+    };
+
+    hideTooltip(element): void{        
+        this.showElement[element] = false;
+    };
+
+    hideURLPopOver(id): void{
+        this.displayURLPopOver[id] = false;
+    };
+
+    hideAffiliationExtIdPopOver(id): void{
+        this.displayAffiliationExtIdPopOver[id] = false;
     };
 
     isValidClass(cur): any {
@@ -441,7 +522,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //affiliationService.getAffiliations('affiliations/affiliationIds.json');
+        console.log('initi affiliation component');
+        //this.getAffiliationsId();
     }; 
 }
 

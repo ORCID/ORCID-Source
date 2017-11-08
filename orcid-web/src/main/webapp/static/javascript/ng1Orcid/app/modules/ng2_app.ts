@@ -67,6 +67,9 @@ import { ModalService }
 import { NameService } 
     from '../shared/nameService.ts'; 
 
+import { WorkspaceService } 
+    from '../shared/workspaceService.ts'; 
+
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -128,13 +131,14 @@ export class RootCmp {
         CountryService,
         EmailService,
         ModalService,
-        NameService
+        NameService,
+        WorkspaceService
     ]
 
 })
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.98');
+        console.log('v0.99');
     }
 }
