@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 public class ISSNNormalizer implements Normalizer{
 
     private static final List<String> canHandle = Lists.newArrayList("issn");
-    private static final Pattern pattern = Pattern.compile("(\\d{4}\\ {0,1}[-–]{0,1}\\ {0,1}\\d{3}[\\dXx])(?:$|[^-\\d])");
+    private static final Pattern pattern = Pattern.compile("(?:^|[^\\d])(\\d{4}\\ {0,1}[-–]{0,1}\\ {0,1}\\d{3}[\\dXx])(?:$|[^-\\d])");
     
     @Override
     public List<String> canHandle() {
@@ -57,7 +57,7 @@ public class ISSNNormalizer implements Normalizer{
                 return n;
             }
         }
-        return value;
+        return "";
     }
 
 }

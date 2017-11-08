@@ -47,7 +47,7 @@ public class DOINormalizer implements Normalizer {
                 return n;
             }
         }
-        return value;
+        return "";
     }
 
     @Override

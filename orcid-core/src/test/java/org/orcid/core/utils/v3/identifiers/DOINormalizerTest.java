@@ -28,6 +28,9 @@ public class DOINormalizerTest {
 
     DOINormalizer norm = new DOINormalizer();
     List<String> tests = Lists.newArrayList(
+            "10.123/123",
+            "https://dx.doi.org/10.123/123",
+            "http://doi.org/10.123/123",
             "S0022-2828(12)00261-1 [pii]\n10.1016/j.yjmcc.2012.07.013" ,
             " 10.1051/0004-6361/201424908",
             "052029\n10.1088/1742-6596/635/5/052029",
@@ -54,6 +57,9 @@ public class DOINormalizerTest {
             );
     
     List<String> results = Lists.newArrayList(
+            "10.123/123",
+            "10.123/123",
+            "10.123/123",
             "10.1016/j.yjmcc.2012.07.013" ,
             "10.1051/0004-6361/201424908",
             "10.1088/1742-6596/635/5/052029",
@@ -73,10 +79,11 @@ public class DOINormalizerTest {
             "10.5935/1415-2762.20160006",
             "10.1063/1.1395625",
             //these do not match
+            "","","",""/*
             "ijiv11i2a8",
             "doi:10.1038",
             "papers3://publication/doi/10.1038",
-            "Unisinos - 10.4013 /cld.2016.141.04"
+            "Unisinos - 10.4013 /cld.2016.141.04"*/
             );
     
     @Test
