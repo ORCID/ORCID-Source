@@ -36,7 +36,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkCategory;
@@ -49,6 +48,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.slf4j.Logger;
@@ -176,7 +176,7 @@ public class WorksController extends BaseWorkspaceController {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
             Visibility v = profile.getActivitiesVisibilityDefault() == null
-                    ? Visibility.fromValue(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value()) : Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+                    ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             w.setVisibility(v);
         }
 
@@ -707,7 +707,7 @@ public class WorksController extends BaseWorkspaceController {
         ArrayList<Long> workIds = new ArrayList<Long>();
         for (String workId : workIdsStr.split(","))
             workIds.add(new Long(workId));
-        workManager.updateVisibilities(orcid, workIds, Visibility.fromValue(visibilityStr));
+        workManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibilityStr));
         return workIds;
     }
 

@@ -736,7 +736,7 @@
                                 [dataPrivacyObj]="biographyForm"  
                                 (privacyUpdate)="privacyChange($event)"
                                 elementId="bio-privacy-toggle" 
-                                privacyNodeName="visiblity" 
+                                privacyNodeName="visibility" 
                             ></privacy-toggle-ng2>
                         </li>
                     </ul>
@@ -772,9 +772,10 @@
                             <button class="btn btn-primary" (click)="setBiographyForm()"><@spring.message "freemarker.btnsavechanges"/></button>
                         </div>
                     </div>
-                </div>                                                    
+                </div>                                                          
             </div>
-        </div>   
+        </div>
+        
     </script>
     </#if>
 
@@ -1109,7 +1110,7 @@
                         [dataPrivacyObj]="nameForm" 
                         (privacyUpdate)="privacyChange($event)"
                         elementId="name-privacy-toggle" 
-                        privacyNodeName="namesVisibility" 
+                        privacyNodeName="visibility" 
                     ></privacy-toggle-ng2>
 
                     <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="142948-names-in-the-orcid-registry"><i class="glyphicon glyphicon-question-sign help-glyphicon" style="width: 14px;"></i></a>

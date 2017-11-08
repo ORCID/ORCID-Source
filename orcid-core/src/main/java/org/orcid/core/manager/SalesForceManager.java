@@ -65,7 +65,9 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
 
     void enableAccess(String accountId, List<Contact> contactsList);
 
-    String retrieveAccountIdByOrcid(String orcid);
+    List<String> retrieveAccountIdsByOrcid(String orcid);
+
+    String retrievePrimaryAccountIdByOrcid(String orcid);
 
     /**
      * 
@@ -91,13 +93,11 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
      */
     String createOpportunity(Opportunity opportunity);
 
-    void flagOpportunityAsClosed(String opportunityId);
-    
-    void flagOpportunityAsRemovalRequested(String opportunityId);
+    void flagOpportunityAsRemovalRequested(Opportunity opportunity);
 
-    void flagOpportunityAsRemovalNotRequested(String opportunityId);
+    void flagOpportunityAsRemovalNotRequested(Opportunity opportunity);
 
-    void removeOpportunity(String opportunityId);
+    void removeOpportunity(Opportunity opportunity);
 
     void createContact(Contact contact);
 

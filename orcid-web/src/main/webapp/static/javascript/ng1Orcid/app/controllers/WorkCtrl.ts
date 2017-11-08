@@ -613,8 +613,8 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 openImportWizardUrl(url);
             };
     
-            $scope.openImportWizardUrlFilter = function(url, param) {
-                url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+            $scope.openImportWizardUrlFilter = function(url, client) {
+                url = url + '?client_id='+client.id+'&response_type=code&scope='+client.scopes+'&redirect_uri='+client.redirectUri;
                 openImportWizardUrl(url);
             };
 
@@ -736,20 +736,22 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             $scope.setAddWorkPrivacy = function(priv, $event) {
                 $event.preventDefault();
-                $scope.editWork.visibility = priv;
+                $scope.editWork.visibility.visibility = priv;
             };
 
             $scope.setBulkGroupPrivacy = function(priv) {
-                var putCodes = new Array();
+            	var putCodes = new Array();
                 for (var idx in worksSrvc.groups){
-                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){    
+                	if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){    
                         for (var idj in worksSrvc.groups[idx].activities) {
-                            putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
-                            worksSrvc.groups[idx].activities[idj].visibility = priv;
+                        	putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+                            worksSrvc.groups[idx].activities[idj].visibility.visibility = priv;
                         }
                     }
                 }
-                worksSrvc.updateVisibility(putCodes, priv);
+                if(putCodes.length > 0) {
+                	worksSrvc.updateVisibility(putCodes, priv);
+                }                
             };
 
             $scope.showAddWorkModal = function(){
@@ -950,39 +952,33 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             function loadWorkImportWizardList() {
                 $.ajax({
-                    url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
+                    url: getBaseUri() + '/workspace/retrieve-work-import-wizards.json',
                     type: 'GET',
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
-                    success: function(data) {
+                    success: function(data) {                    	                     
                         $timeout(function(){
-                            if(data == null || data.length == 0) {
-                                $scope.noLinkFlag = false;
-                            }
-                            
-                            $scope.selectedWorkType = 'Articles';
-                            $scope.selectedGeoArea = 'Global';
-                            $scope.workImportWizardsOriginal = data;
-                            $scope.bulkEditShow = false;
-                            $scope.showBibtexImportWizard = false;
-                            for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
-                                for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
-                                    $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
-                                    $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
-                                    for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
-                                        if(!utilsService.contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k])){
-                                            $scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
-                                        }
-                                    }
-                                    
-                                    for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
-                                        if(!utilsService.contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k])){
-                                            $scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
-                                        }
-                                    }
-                                }
-                            }               
-                        });
+	                        if(data == null || data.length == 0) {
+	                            $scope.noLinkFlag = false;
+	                        }
+	                        $scope.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+	                        $scope.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+	                        $scope.workImportWizardsOriginal = data;
+	                        $scope.bulkEditShow = false;
+	                        $scope.showBibtexImportWizard = false;
+	                        for(var idx in data) {                        	
+	                        	for(var i in data[idx].actTypes) {
+	                        		if(!utilsService.contains($scope.workType, data[idx].actTypes[i])) {
+	                        			$scope.workType.push(data[idx].actTypes[i]);
+	                        		}                        		
+	                        	}
+	                        	for(var j in data[idx].geoAreas) {
+	                        		if(!utilsService.contains($scope.geoArea, data[idx].geoAreas[j])) {
+	                        			$scope.geoArea.push(data[idx].geoAreas[j]);
+	                        		}                        		
+	                        	}							
+	                        }
+                        });                                                
                     }
                 }).fail(function(e) {
                     // something bad is happening!

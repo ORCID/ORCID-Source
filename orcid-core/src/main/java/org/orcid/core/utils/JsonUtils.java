@@ -55,6 +55,14 @@ public class JsonUtils {
         }
     }
 
+    public static JsonNode readTree(String jsonString) {
+        try {
+            return mapperFromJSON.readTree(jsonString);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     public static JSONObject extractObject(JSONObject parent, String key) {
         if (parent.isNull(key)) {
             return null;

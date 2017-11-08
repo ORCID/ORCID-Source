@@ -6411,6 +6411,17 @@ ul.comma li:last-child:after {
     padding: 8px 20px 8px 0
 }
 
+#settings #password-edit .popover-help-container{
+    display: block;
+    margin: 30px 0 0 4px;
+    float: none;
+}
+
+#settings #password-edit .popover-help-container .popover{
+    left: -128px;
+    top: 10px;
+}
+
 #settings h1{
     float: left;
     clear: both;

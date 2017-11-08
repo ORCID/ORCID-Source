@@ -110,6 +110,7 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.springframework.beans.factory.annotation.Value;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -118,6 +119,7 @@ import io.swagger.annotations.AuthorizationScope;
 import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.ResponseHeader;
 
+@Api("Development Member API v3.0_dev1")
 @Path("/v3.0_dev1")
 public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper {
 

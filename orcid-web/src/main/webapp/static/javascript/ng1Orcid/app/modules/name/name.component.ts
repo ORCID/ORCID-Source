@@ -115,7 +115,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     privacyChange( obj ): any {
-        this.nameForm.namesVisibility.visibility = obj;
+        this.nameForm.visibility.visibility = obj;
         this.setNameForm( false );   
     };
 
