@@ -21,4 +21,6 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEnti
 public interface OrgDisambiguatedExternalIdentifierDao extends GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> {
 
     OrgDisambiguatedExternalIdentifierEntity findByDetails(Long orgDisambiguatedId, String identifier, String identifierType);
+    
+    boolean exists(Long orgDisambiguatedId, String identifier, String identifierType);    
 }

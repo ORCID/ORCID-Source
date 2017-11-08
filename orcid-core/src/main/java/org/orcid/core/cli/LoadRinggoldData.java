@@ -38,11 +38,13 @@ import org.kohsuke.args4j.Option;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
+import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
-import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,29 +57,29 @@ public class LoadRinggoldData {
     private static final String RINGGOLD_CHARACTER_ENCODING = "UTF-8";
     private static final String RINGGOLD_SOURCE_TYPE = "RINGGOLD";
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadRinggoldData.class);
-    @Option(name = "-f", usage = "Path to json file containing Ringgold parents to load into DB")
-    private File fileToLoad;
-    @Option(name = "-d", usage = "Path to json file containing Ringgold deleted IDs to process")
-    private File deletedIdsFile;
     @Option(name = "-z", usage = "Path to zip file containing Ringgold data to process")
     private File zipFile;
 
+    private OrgDao orgDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
 
     private int numAdded;
     private int numUpdated;
     private int numUnchanged;
-    private int numSkipped;
-    private int numDeleted;
-    private int numDeletionsSkipped;
+    private int numObsoleted;
+    private int numDeprecated;
+    private int numSkipDeletion;
+    private int numAddedOrgs;
+    private int numUpdatedOrgs;
+    private int numAddedExtIds;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private Map<Integer, List<JsonNode>> altNamesMap = new HashMap<>();
     private Map<Integer, List<JsonNode>> identifiersMap = new HashMap<>();
     private Map<Integer, JsonNode> dnNameMap = new HashMap<>();
+    private Map<Integer, Integer> deletedElementsMap = new HashMap<>();
 
     public static void main(String[] args) {
         LoadRinggoldData loadRinggoldData = new LoadRinggoldData();
@@ -102,27 +104,33 @@ public class LoadRinggoldData {
     @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        orgDao = (OrgDao) context.getBean("orgDao");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
-        orgDisambiguatedSolrDao = (OrgDisambiguatedSolrDao) context.getBean("orgDisambiguatedSolrDao");
         orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
-        if (NullUtils.allNull(fileToLoad, deletedIdsFile, zipFile)) {
-            throw new CmdLineException(parser, "At least one of -f | -d | -z must be specificed");
+        if (NullUtils.anyNull(zipFile)) {
+            throw new CmdLineException(parser, "-f must be specificed");
         }
     }
 
     private void execute() {
         LOGGER.info("Execute");
-        try (ZipFile zip = new ZipFile(zipFile)) {
-            processAltNames(zip);
-            processIdentifiers(zip);
-            processInstitutions(zip);
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading zip file", e);
-        } finally {
-            LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}", new Object[] { numAdded, numUpdated, numUnchanged, numSkipped });
+        if (zipFile != null) {
+            try (ZipFile zip = new ZipFile(zipFile)) {
+                processAltNamesFile(zip);
+                processIdentifiersFile(zip);
+                processDeletedElementsFile(zip);
+                processInstitutions(zip);
+                processDeletedElements();
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading zip file", e);
+            } finally {
+                LOGGER.info(
+                        "Number added={}, number updated={}, number unchanged={}, obsoleted={}, num deprecated={}, skip deletion={}, added orgs={}, updated orgs={}, added ext ids={}",
+                        new Object[] { numAdded, numUpdated, numUnchanged, numObsoleted, numDeprecated, numSkipDeletion, numAddedOrgs, numUpdatedOrgs, numAddedExtIds });
+            }
         }
     }
 
@@ -133,12 +141,12 @@ public class LoadRinggoldData {
         return JsonUtils.read(reader);
     }
 
-    private void processAltNames(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
+    private void processAltNamesFile(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
         LOGGER.info("Processing alt names");
         JsonNode altNames = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_alt_names.json"));
         altNames.forEach(altName -> {
             Integer ringgoldId = altName.get("ringgold_id").asInt();
-            if ("DN".equals(altName.get("notes").asText())) {
+            if (altName.has("notes") && "DN".equals(altName.get("notes").asText())) {
                 // If there is already a DN name for this org, lets keep just
                 // the newest one
                 if (dnNameMap.containsKey(ringgoldId)) {
@@ -147,7 +155,15 @@ public class LoadRinggoldData {
                         Date existingDate = dateFormat.parse(existing.get("timestamp").asText());
                         Date date = dateFormat.parse(altName.get("timestamp").asText());
                         if (date.after(existingDate)) {
+                            // If the DN name is newer than the existing one,
+                            // put the existing one in the list of alt names and
+                            // set this one as the DN name
+                            altNamesMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(existing);
                             dnNameMap.put(ringgoldId, altName);
+                        } else {
+                            // If the DN name is older than the existing one,
+                            // put it in the list of alt names
+                            altNamesMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(altName);
                         }
                     } catch (ParseException e) {
                         LOGGER.error("Exception parsing date {}", e);
@@ -161,111 +177,223 @@ public class LoadRinggoldData {
         });
     }
 
-    private void processIdentifiers(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
+    private void processIdentifiersFile(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
         LOGGER.info("Processing identifiers");
         JsonNode identifiers = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_identifiers.json"));
-
         identifiers.forEach(identifier -> {
             Integer ringgoldId = identifier.get("ringgold_id").asInt();
             identifiersMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(identifier);
         });
     }
 
+    private void processDeletedElementsFile(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
+        LOGGER.info("Processing deleted elements");
+        JsonNode deletedIds = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_deleted_ids.json"));
+        deletedIds.forEach(element -> {
+            Integer oldId = element.has("old_ringgold_id") ? element.get("old_ringgold_id").asInt() : null;
+            Integer newId = element.has("new_ringgold_id") ? element.get("new_ringgold_id").asInt() : null;
+            deletedElementsMap.put(oldId, newId);
+        });
+    }
+
     private void processInstitutions(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
         LOGGER.info("Processing institutions");
         JsonNode institutions = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_institutions.json"));
-
         institutions.forEach(institution -> {
-            processInstitution(institution);
+            OrgDisambiguatedEntity entity = processInstitution(institution);
             Integer ringgoldId = institution.get("ringgold_id").asInt();
+            // Create external identifiers
+            if (identifiersMap.containsKey(ringgoldId)) {
+                generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
+            }
+
+            // Create orgs based on the alt names information
             if (altNamesMap.containsKey(ringgoldId)) {
-                List<JsonNode> altNamesList = altNamesMap.get(ringgoldId);
+                generateOrganizations(entity, altNamesMap.get(ringgoldId));
             }
         });
     }
 
-    private void processDeletedElements(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
-        LOGGER.info("Processing identifiers");
-        JsonNode deletedIds = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_deleted_ids.json"));
-        deletedIds.forEach(element -> {
-            Integer oldId = element.get("old_ringgold_id").asInt();
-            Integer newId = element.get("new_ringgold_id").asInt();
+    private void processDeletedElements() {
+        LOGGER.info("Processing deleted elements");
+        deletedElementsMap.forEach((oldId, newId) -> {
             OrganizationStatus status = OrganizationStatus.OBSOLETE;
             if (newId == null) {
                 status = OrganizationStatus.DEPRECATED;
             }
-            
+
             LOGGER.info("Deleting org {} with status {}", oldId, status);
             OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(oldId), RINGGOLD_SOURCE_TYPE);
-            if(existingEntity != null) {
-                existingEntity.setStatus(status.name());
-                orgDisambiguatedDao.merge(existingEntity);
+            OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(newId), RINGGOLD_SOURCE_TYPE);
+            if (existingEntity != null) {
+                // Check if the status is up to date, if not, update it
+                if (!status.name().equals(existingEntity.getStatus())) {
+                    existingEntity.setStatus(status.name());
+                    if (newId != null) {
+                        existingEntity.setSourceParentId(String.valueOf(newId));
+                    }
+                    orgDisambiguatedDao.merge(existingEntity);
+                    if (status.equals(OrganizationStatus.OBSOLETE)) {
+                        numObsoleted++;
+                    } else {
+                        numDeprecated++;
+                    }
+
+                    if (replacementEntity != null) {
+                        // Replace the org disambiguated id in all org that had
+                        // the
+                        // deprecated/obsoleted entity
+                        orgDisambiguatedDao.replace(existingEntity.getId(), replacementEntity.getId());
+                    } else {
+                        LOGGER.warn("Couldn't find replacement entity ringgold_id:'{}' for ringgold_id:'{}'", newId, oldId);
+                    }
+                }
             } else {
-                //TODO: Create entity
+                LOGGER.warn("Couldn't find entity to be deleted with ringgold_id: '{}'", oldId);
+                numSkipDeletion++;
             }
         });
     }
 
-    private void processInstitution(JsonNode institution) {
+    private OrgDisambiguatedEntity processInstitution(JsonNode institution) {
         Integer recId = institution.get("rec_id").asInt();
         Integer ringgoldId = institution.get("ringgold_id").asInt();
-        LOGGER.info("Processing: {} rec_id: {}", ringgoldId, recId);
+        LOGGER.info("Processing ringgold_id: {} rec_id: {}", ringgoldId, recId);
         Integer parentId = institution.get("parent_ringgold_id").asInt();
         String name = institution.get("name").asText();
         Iso3166Country country = Iso3166Country.fromValue(institution.get("country").asText());
-        String state = institution.get("state").asText();
+        String state = institution.has("state") ? institution.get("state").asText() : null;
         String city = institution.get("city").asText();
         String type = institution.get("type").asText();
 
-        // TODO: Should we still replace the name with the DN?
+        String originalName = null;
+
+        // Replace the name with the DN (Diacritic Name) name
         if (dnNameMap.containsKey(ringgoldId)) {
+            // Save the original name
+            originalName = name;
             name = dnNameMap.get(ringgoldId).get("name").asText();
         }
 
-        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(ringgoldId), RINGGOLD_SOURCE_TYPE);
+        OrgDisambiguatedEntity entity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(ringgoldId), RINGGOLD_SOURCE_TYPE);
         Date now = new Date();
-        if (existingEntity == null) {
-            OrgDisambiguatedEntity newEntity = new OrgDisambiguatedEntity();
-            newEntity.setDateCreated(now);
-            newEntity.setLastIndexedDate(now);
-            newEntity.setCity(city);
-            newEntity.setCountry(country);
-            newEntity.setIndexingStatus(IndexingStatus.PENDING);
-            newEntity.setName(name);
-            newEntity.setOrgType(type);
-            newEntity.setRegion(state);
-            newEntity.setSourceId(String.valueOf(ringgoldId));
-            newEntity.setSourceParentId(String.valueOf(parentId));
-            newEntity.setSourceType(RINGGOLD_SOURCE_TYPE);
-            orgDisambiguatedDao.persist(newEntity);
+        if (entity == null) {
+            entity = new OrgDisambiguatedEntity();
+            entity.setDateCreated(now);
+            entity.setLastIndexedDate(now);
+            entity.setCity(city);
+            entity.setCountry(country);
+            entity.setName(name);
+            entity.setOrgType(type);
+            entity.setRegion(state);
+            entity.setSourceId(String.valueOf(ringgoldId));
+            entity.setSourceParentId(String.valueOf(parentId));
+            entity.setSourceType(RINGGOLD_SOURCE_TYPE);
+            entity.setIndexingStatus(IndexingStatus.PENDING);
+            orgDisambiguatedDao.persist(entity);
             numAdded++;
         } else {
-            if (changed(existingEntity, parentId, name, country, city, state, type)) {
-                existingEntity.setCity(city);
-                existingEntity.setCountry(country);
-                existingEntity.setIndexingStatus(IndexingStatus.REINDEX);
-                existingEntity.setLastModified(now);
-                existingEntity.setName(name);
-                existingEntity.setOrgType(type);
-                existingEntity.setRegion(state);
-                orgDisambiguatedDao.merge(existingEntity);
+            // If the element have changed
+            if (changed(entity, parentId, name, country, city, state, type)) {
+                entity.setCity(city);
+                entity.setCountry(country);
+                entity.setLastModified(now);
+                entity.setName(name);
+                entity.setOrgType(type);
+                entity.setRegion(state);
+                entity.setIndexingStatus(IndexingStatus.REINDEX);
+                orgDisambiguatedDao.merge(entity);
                 numUpdated++;
             } else {
                 numUnchanged++;
             }
         }
+
+        // If the original name was replaces by the DN name, lets create an org
+        // with the original name
+        if (originalName != null) {
+            generateOrganizationFromInstitutionNode(entity, originalName, country, city, state);
+        }
+
+        return entity;
     }
-    
-    private void processIdentifier(Long orgDisambiguatedId, List<JsonNode> identifiers) {
-        
+
+    private void generateExternalIdentifiers(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> identifiers) {
+        identifiers.forEach(identifierNode -> {
+            String type = identifierNode.get("identifier_type").asText();
+            LOGGER.info("Processing external identifier {} for {}", type, disambiguatedEntity.getId());
+            String identifier = identifierNode.get("value").asText();
+            if (!orgDisambiguatedExternalIdentifierDao.exists(disambiguatedEntity.getId(), identifier, type)) {
+                OrgDisambiguatedExternalIdentifierEntity newEntity = new OrgDisambiguatedExternalIdentifierEntity();
+                Date now = new Date();
+                newEntity.setDateCreated(now);
+                newEntity.setLastModified(now);
+                newEntity.setIdentifier(identifier);
+                newEntity.setIdentifierType(type);
+                newEntity.setOrgDisambiguated(disambiguatedEntity);
+                newEntity.setPreferred(false);
+                orgDisambiguatedExternalIdentifierDao.persist(newEntity);
+                numAddedExtIds++;
+            }
+        });
+    }
+
+    private void generateOrganizations(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> altNames) {
+        Date now = new Date();
+        altNames.forEach(altName -> {
+            String name = altName.get("name").asText();
+            LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
+            String city = altName.get("city").asText();
+            Iso3166Country country = Iso3166Country.fromValue(altName.get("country").asText());
+            OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, null, country);
+            if (existingOrg != null) {
+                if (existingOrg.getOrgDisambiguated() == null) {
+                    existingOrg.setOrgDisambiguated(disambiguatedEntity);
+                    existingOrg.setLastModified(now);
+                    orgDao.merge(existingOrg);
+                    numUpdatedOrgs++;
+                }
+            } else {
+                OrgEntity newOrg = new OrgEntity();
+                newOrg.setDateCreated(now);
+                newOrg.setLastModified(now);
+                newOrg.setCity(city);
+                newOrg.setCountry(country);
+                newOrg.setName(name);
+                newOrg.setOrgDisambiguated(disambiguatedEntity);
+                orgDao.persist(newOrg);
+                numAddedOrgs++;
+            }
+        });
+    }
+
+    private void generateOrganizationFromInstitutionNode(OrgDisambiguatedEntity disambiguatedEntity, String name, Iso3166Country country, String city, String region) {
+        Date now = new Date();
+        OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, region, country);
+        if (existingOrg != null) {
+            if (existingOrg.getOrgDisambiguated() == null) {
+                existingOrg.setOrgDisambiguated(disambiguatedEntity);
+                existingOrg.setLastModified(now);
+                orgDao.merge(existingOrg);
+                numUpdatedOrgs++;
+            }
+        } else {
+            OrgEntity newOrg = new OrgEntity();
+            newOrg.setDateCreated(now);
+            newOrg.setLastModified(now);
+            newOrg.setRegion(region);
+            newOrg.setCity(city);
+            newOrg.setCountry(country);
+            newOrg.setName(name);
+            newOrg.setOrgDisambiguated(disambiguatedEntity);
+            orgDao.persist(newOrg);
+            numAddedOrgs++;
+        }
     }
 
     private boolean changed(OrgDisambiguatedEntity entity, Integer parentId, String name, Iso3166Country country, String city, String state, String type) {
-        if (!parentId.equals(Integer.valueOf(entity.getSourceParentId())) 
-                || !name.equals(entity.getName()) 
-                || !country.equals(entity.getCountry())
-                || !city.equals(entity.getCity()) 
-                || !type.equals(entity.getOrgType())) {
+        if (!parentId.equals(Integer.valueOf(entity.getSourceParentId())) || !name.equals(entity.getName()) || !country.equals(entity.getCountry())
+                || !city.equals(entity.getCity()) || !type.equals(entity.getOrgType())) {
             return true;
         }
 
