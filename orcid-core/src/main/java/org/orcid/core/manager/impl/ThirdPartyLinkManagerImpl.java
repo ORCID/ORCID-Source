@@ -19,24 +19,26 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.OrcidPropsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyLinkManagerImpl.class);
@@ -48,6 +50,9 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
 
     @Resource
     private OrcidPropsDao orcidPropsDao;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     public static class CacheVersion {
         private String version;
@@ -129,33 +134,33 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
     }
 
     @Cacheable("import-works-clients")
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeWorksImport() {
+    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeWorksImport(Locale locale) {
         updateLocalCacheVersion();
         LOGGER.debug("Updating cache for import-works-clients, new version: " + this.localCacheVersion);
-        return getClients(RedirectUriType.IMPORT_WORKS_WIZARD);
+        return generateImportWizzardForm(RedirectUriType.IMPORT_WORKS_WIZARD, locale);
     }
 
     @Cacheable("import-funding-clients")
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeFundingImport() {
+    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeFundingImport(Locale locale) {
         updateLocalCacheVersion();
         LOGGER.debug("Updating cache for import-funding-clients, new version: " + this.localCacheVersion);
-        return getClients(RedirectUriType.IMPORT_FUNDING_WIZARD);
+        return generateImportWizzardForm(RedirectUriType.IMPORT_FUNDING_WIZARD, locale);
     }
 
     @Override
     @Cacheable("read-access-clients")
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess() {
+    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeReadAccess(Locale locale) {
         updateLocalCacheVersion();
         LOGGER.debug("Updating cache for read-access-clients, new version: " + this.localCacheVersion);
-        return getClients(RedirectUriType.GRANT_READ_WIZARD);
+        return generateImportWizzardForm(RedirectUriType.GRANT_READ_WIZARD, locale);
     }
     
-	@Override
-	@Cacheable("import-peer-review-clients")
-	public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopePeerReviewImport() {
-		updateLocalCacheVersion();
-        return getClients(RedirectUriType.IMPORT_PEER_REVIEW_WIZARD);
-	}
+    @Override
+    @Cacheable("import-peer-review-clients")
+    public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopePeerReviewImport(Locale locale) {
+        updateLocalCacheVersion();
+        return generateImportWizzardForm(RedirectUriType.IMPORT_PEER_REVIEW_WIZARD, locale);
+    }
 
     @Override
     @CacheEvict(value = { "read-access-clients", "import-works-clients", "import-funding-clients", "import-peer-review-clients" }, allEntries = true)
@@ -163,32 +168,84 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
         LOGGER.debug("read-access-clients and import-works-clients all keys  evicted");
     }
 
-    private List<OrcidClient> getClients(RedirectUriType rut) {
-        List<OrcidClient> orcidClients = new ArrayList<OrcidClient>();
-        List<ClientRedirectUriEntity> entitiesWithPredefinedScopes = clientRedirectDao.findClientDetailsWithRedirectScope();
-
+    private List<ImportWizzardClientForm> generateImportWizzardForm(RedirectUriType rut, Locale locale) {
+        List<ClientRedirectUriEntity> entitiesWithPredefinedScopes = clientRedirectDao.findClientDetailsWithRedirectScope();        
+        List<ImportWizzardClientForm> clients = new ArrayList<ImportWizzardClientForm>();
         for (ClientRedirectUriEntity entity : entitiesWithPredefinedScopes) {
-
             if (rut.value().equals(entity.getRedirectUriType())) {
-                ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
-                RedirectUri redirectUri = new RedirectUri(entity.getRedirectUri());
-                String prefefinedScopes = entity.getPredefinedClientScope();
-                redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));
-                redirectUri.setType(RedirectUriType.fromValue(entity.getRedirectUriType()));
-                redirectUri.setActType(entity.getUriActType());
-                redirectUri.setGeoArea(entity.getUriGeoArea());
-                RedirectUris redirectUris = new RedirectUris();
-                redirectUris.getRedirectUri().add(redirectUri);
-
-                OrcidClient minimalClientDetails = new OrcidClient();
-                minimalClientDetails.setDisplayName(clientDetails.getClientName());
-                minimalClientDetails.setShortDescription(clientDetails.getClientDescription());
-                minimalClientDetails.setClientId(clientDetails.getClientId());
-                minimalClientDetails.setRedirectUris(redirectUris);
-                orcidClients.add(minimalClientDetails);
+                if (rut.value().equals(entity.getRedirectUriType())) {
+                    ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
+                    ImportWizzardClientForm clientForm = new ImportWizzardClientForm();
+                    clientForm.setId(clientDetails.getId());
+                    clientForm.setName(clientDetails.getClientName());
+                    clientForm.setDescription(clientDetails.getClientDescription());
+                    clientForm.setRedirectUri(entity.getRedirectUri());
+                    clientForm.setScopes(entity.getPredefinedClientScope());
+                    if(RedirectUriType.IMPORT_WORKS_WIZARD.equals(rut)) {                        
+                        if(!PojoUtil.isEmpty(entity.getUriActType())) {
+                            JsonNode node = JsonUtils.readTree(entity.getUriActType());
+                            List<String> elements = new ArrayList<String>();
+                            node.get("import-works-wizard").forEach(x -> {
+                                String value = x.asText(); 
+                                switch(value) {
+                                case "Articles":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.articles", locale));
+                                    break;
+                                case "Data":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.books", locale));
+                                    break;
+                                case "Books":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.data", locale));
+                                    break;
+                                case "Student Publications":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.student_publications", locale));
+                                    break;
+                                default:
+                                    elements.add(value);
+                                    break;
+                                }                                
+                                });
+                            clientForm.setActTypes(elements);
+                        }                        
+                        if(!PojoUtil.isEmpty(entity.getUriActType())) {
+                            JsonNode node = JsonUtils.readTree(entity.getUriGeoArea());
+                            List<String> elements = new ArrayList<String>();
+                            node.get("import-works-wizard").forEach(x -> {
+                                String value = x.asText();
+                                switch(value) {
+                                case "Africa":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.africa", locale));
+                                    break;
+                                case "Asia":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.asia", locale));
+                                    break;
+                                case "Australia":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.australia", locale));
+                                    break;
+                                case "Europe":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.europe", locale));
+                                    break;
+                                case "Global":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.global", locale));
+                                    break;                                                                
+                                case "North America":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.north_america", locale));
+                                    break;
+                                case "South America":
+                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.south_america", locale));
+                                    break;                                
+                                default:
+                                    elements.add(value);
+                                    break;
+                                }                                
+                                });
+                            clientForm.setGeoAreas(elements);
+                        }
+                    }
+                    clients.add(clientForm);
+                }
             }
-
         }
-        return orcidClients;
+        return clients;
     }
 }
