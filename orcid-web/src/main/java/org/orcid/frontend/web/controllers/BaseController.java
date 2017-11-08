@@ -46,15 +46,15 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
-import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.togglz.Features;
@@ -71,6 +71,7 @@ import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.VisibilityForm;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
@@ -845,6 +846,17 @@ public class BaseController {
             features.put(f.name(), f.isActive());
         }
         return features;
+    }
+    
+    protected void validateVisibility(VisibilityForm form) {
+        if(form == null) {
+            return;
+        }
+        if(form.getVisibility() == null) {
+            setError(form, "common.visibility.not_blank");           
+        } else if(form.getVisibility().getVisibility() == null) {
+            setError(form.getVisibility(), "common.visibility.not_blank"); 
+        }
     }
     
 }

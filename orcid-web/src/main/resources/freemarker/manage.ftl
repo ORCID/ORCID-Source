@@ -137,45 +137,35 @@
                 </tr>
                 <tr ng-controller="PasswordEditCtrl" ng-show="showEditPassword"
                     ng-cloak>
-                    <td colspan="2">
-                        <div class="editTablePadCell35" id="password-edit">
-                            <span class="orcid-error"
-                                ng-show="changePasswordPojo.errors.length > 0">
-                                <div ng-repeat='error in changePasswordPojo.errors'
-                                    ng-bind-html="error"></div>
-                            </span>
-                            <div>
-                                <label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label>
-                                <div class="relative">
-                                    <input id="passwordField" type="password" name="oldPassword" ng-enter="saveChangePassword()" 
-                                        ng-model="changePasswordPojo.oldPassword" class="input-xlarge" />
-                                    <span class="required">*</span>
-                                </div>
-                            </div>
-                            <div>
-                                <label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.newpassword")}</label>
-                                <div class="relative">
-                                    <input id="password" type="password" name="password" ng-enter="saveChangePassword()" 
-                                        ng-model="changePasswordPojo.password" class="input-xlarge" />
-                                    <span class="required">*</span> <@orcid.passwordHelpPopup />
-                                </div>
-                            </div>
-                            <div>
-                                <label for="retypedPassword" class="">${springMacroRequestContext.getMessage("change_password.confirmnewpassword")}</label>
-                                <div class="relative">
-                                    <input id="retypedPassword" type="password"
-                                        name="retypedPassword"
-                                        ng-model="changePasswordPojo.retypedPassword" ng-enter="saveChangePassword()" 
-                                        class="input-xlarge" /> <span class="required">*</span>
-                                </div>
-                            </div>
-                            <br />
-                            <div>
-                                <button id="bottom-submit-password-change"
-                                    class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>                                    
-                                <a class="cancel-option inner-row" ng-click="getChangePassword()" id="bottom-clear-password-changes">${springMacroRequestContext.getMessage("freemarker.btncancel")}</a>                                    
-                            </div>
+                    <td colspan="2" class="reset" id="password-edit">
+                        <span class="orcid-error"
+                            ng-show="changePasswordPojo.errors.length > 0">
+                            <div ng-repeat='error in changePasswordPojo.errors'
+                                ng-bind-html="error"></div>
+                        </span>
+                        <div class="form-group">
+                            <label for="passwordField">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label><br>
+                            <input id="passwordField" type="password" name="oldPassword" ng-enter="saveChangePassword()" 
+                                ng-model="changePasswordPojo.oldPassword" class="input-xlarge" />
+                            <span class="required">*</span>
                         </div>
+                        <div class="form-group">
+                            <label for="passwordField">${springMacroRequestContext.getMessage("change_password.newpassword")}</label><br>
+                            <input id="password" type="password" name="password" ng-enter="saveChangePassword()" 
+                                ng-model="changePasswordPojo.password" class="input-xlarge" />
+                            <span class="required">*</span> <@orcid.passwordHelpPopup />
+                        </div>
+                        <div class="form-group">
+                            <label for="retypedPassword">${springMacroRequestContext.getMessage("change_password.confirmnewpassword")}</label><br>
+                            <input id="retypedPassword" type="password"
+                                    name="retypedPassword"
+                                    ng-model="changePasswordPojo.retypedPassword" ng-enter="saveChangePassword()" 
+                                    class="input-xlarge" />
+                            <span class="required">*</span>
+                        </div>
+                        <button id="bottom-submit-password-change"
+                            class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>                                   
+                        <a class="cancel-option inner-row" ng-click="getChangePassword()" id="bottom-clear-password-changes">${springMacroRequestContext.getMessage("freemarker.btncancel")}</a>                                    
                     </td>
                 </tr>
                 
@@ -560,7 +550,7 @@
                             <@orcid.checkFeatureStatus featureName="HTTPS_IDS">
                                 <tr ng-repeat='result in results track by $index' class="new-search-result">
                                     <td width="20%" ng-bind="getDisplayName(result)"></td>
-                                    <td width="25%" class='search-result-orcid-id'><a href="result['orcid-identifier'].uri" target="result['orcid-identifier'].path">{{result['orcid-identifier'].uri}}</a></td>
+                                    <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}" target="{{result['orcid-identifier'].path}}">{{result['orcid-identifier'].uri}}</a></td>
                                     <td width="10%">
                                         <span ng-show="effectiveUserOrcid !== result['orcid-identifier'].path">
                                             <span ng-show="!delegatesByOrcid[result['orcid-identifier'].path]"

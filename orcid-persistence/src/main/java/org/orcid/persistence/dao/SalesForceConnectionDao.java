@@ -27,7 +27,7 @@ public interface SalesForceConnectionDao extends GenericDao<SalesForceConnection
 
     SalesForceConnectionEntity findByOrcidAndAccountId(String orcid, String accountId);
 
-    SalesForceConnectionEntity findByOrcid(String orcid);
+    List<SalesForceConnectionEntity> findByOrcid(String orcid);
 
     List<SalesForceConnectionEntity> findByAccountId(String accountId);
 

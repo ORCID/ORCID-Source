@@ -35,7 +35,7 @@
                 </span>
                 <!--orgDisambiguatedExternalIdentifiers-->
                 <div ng-if="group.getActive().orgDisambiguatedExternalIdentifiers">
-                    <strong><@orcid.msg 'workspace_affiliations.external_ids'/></strong><br>
+                    <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.getActive().disambiguationSource.value}}</strong><br>
                     <ul class="reset">
                         <li ng-repeat="orgDisambiguatedExternalIdentifier in group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">{{orgDisambiguatedExternalIdentifier.identifierType}}:  <span ng-if="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span ng-if="orgDisambiguatedExternalIdentifier.all"><span ng-repeat="orgDisambiguatedExternalIdentifierAll in orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                     </ul>

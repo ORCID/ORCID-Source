@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -119,7 +120,9 @@ public class SalesForceManagerImplTest {
         when(sourceManager.retrieveRealUserOrcid()).thenReturn(TEST_ORCID);
         SalesForceConnectionEntity connection = new SalesForceConnectionEntity();
         connection.setSalesForceAccountId("account1Id");
-        when(salesForceConnectionDao.findByOrcid(TEST_ORCID)).thenReturn(connection);
+        List<SalesForceConnectionEntity> connections = new ArrayList<>();
+        connections.add(connection);
+        when(salesForceConnectionDao.findByOrcid(TEST_ORCID)).thenReturn(connections);
     }
 
     private void setUpContact1() {
@@ -181,11 +184,11 @@ public class SalesForceManagerImplTest {
         // Switch from main to technical contact
         Contact contact = new Contact();
         contact.setId("contact2Id");
-        contact.setAccountId("account1");
+        contact.setAccountId("account1Id");
         ContactRole role = new ContactRole(ContactRoleType.TECHNICAL_CONTACT);
         role.setId("contact2Idrole1Id");
         contact.setRole(role);
-        ((SalesForceManagerImpl) salesForceManager).updateContact(contact);
+        ((SalesForceManagerImpl) salesForceManager).updateContact(contact, Collections.<Contact> emptyList());
         verify(salesForceDao, times(1)).updateContactRole(argThat(r -> {
             return "contact2Idrole1Id".equals(r.getId()) && "contact2Id".equals(r.getContactId()) && ContactRoleType.MAIN_CONTACT.equals(r.getRoleType())
                     && !r.isCurrent();
