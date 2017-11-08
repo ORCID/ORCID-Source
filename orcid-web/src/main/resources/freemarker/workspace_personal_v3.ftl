@@ -50,7 +50,7 @@
                                 [dataPrivacyObj]="biographyForm"  
                                 (privacyUpdate)="privacyChange($event)"
                                 elementId="bio-privacy-toggle" 
-                                privacyNodeName="visiblity" 
+                                privacyNodeName="visibility" 
                             ></privacy-toggle-ng2>
                         </li>
                     </ul>

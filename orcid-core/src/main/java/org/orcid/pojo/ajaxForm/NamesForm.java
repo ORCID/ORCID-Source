@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.v3.dev1.record.FamilyName;
 import org.orcid.jaxb.model.v3.dev1.record.GivenNames;
 import org.orcid.jaxb.model.v3.dev1.record.Name;
 
-public class NamesForm implements ErrorsInterface, Serializable {
+public class NamesForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,8 +34,7 @@ public class NamesForm implements ErrorsInterface, Serializable {
 
     private Text givenNames;
     private Text familyName;
-    private Text creditName;
-    private Visibility namesVisibility;
+    private Text creditName;    
 
     public static NamesForm valueOf(Name name) {
         NamesForm nf = new NamesForm();
@@ -54,10 +53,10 @@ public class NamesForm implements ErrorsInterface, Serializable {
             }
 
             if (name.getVisibility() != null) {
-                nf.setNamesVisibility(Visibility.valueOf(name.getVisibility()));
+                nf.setVisibility(Visibility.valueOf(name.getVisibility()));
             } else {
                 org.orcid.jaxb.model.common_v2.Visibility v = org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-                nf.setNamesVisibility(Visibility.valueOf(v));
+                nf.setVisibility(Visibility.valueOf(v));
             }
         }
 
@@ -78,21 +77,13 @@ public class NamesForm implements ErrorsInterface, Serializable {
             name.setCreditName(new CreditName(creditName.getValue()));
         }
         
-        if(namesVisibility != null && namesVisibility.getVisibility() != null) {
-            name.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(namesVisibility.getVisibility().value()));
+        if(visibility != null && visibility.getVisibility() != null) {
+            name.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.getVisibility().value()));
         } else {
             name.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
         }
         
         return name;
-    }
-
-    public Visibility getNamesVisibility() {
-        return namesVisibility;
-    }
-
-    public void setNamesVisibility(Visibility visibility) {
-        this.namesVisibility = visibility;
     }
 
     public List<String> getErrors() {

@@ -18,7 +18,7 @@
 -->
 <div class="workspace-accordion-header clearfix">
     <div class="row">
-        <div class="col-md-3 col-sm-2 col-xs-12">
+        <div class="col-md-4 col-sm-4 col-xs-12">
             <div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
                 <a href="" ng-click="workspaceSrvc.togglePeerReviews($event)" class="toggle-text">
                    <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i>
@@ -37,7 +37,7 @@
                 </#if>
             </div>
         </div>
-        <div ng-show="workspaceSrvc.displayWorks" class="col-md-9 col-sm-10 col-xs-12 action-button-bar">
+        <div ng-show="workspaceSrvc.displayWorks" class="col-md-8 col-sm-8 col-xs-12 action-button-bar">
             <#include "../workspace/workspace_act_sort_menu.ftl"/>
         </div>        
     </div>

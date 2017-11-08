@@ -29,18 +29,13 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.adapter.Jaxb2JpaAdapter;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
+import org.orcid.core.manager.v3.ExternalIdentifierManager;
+import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.manager.ThirdPartyLinkManager;
-import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -103,21 +98,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @Resource(name = "otherNameManagerV3")
     private OtherNameManager otherNameManager;
-
-    @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
-
-    @Resource
-    private Jaxb2JpaAdapter jaxb2JpaAdapter;
-
-    @Resource(name = "workManagerV3")
-    private WorkManager workManager;
     
     @Resource(name = "researcherUrlManagerV3")
     private ResearcherUrlManager researcherUrlManager;
-
-    @Resource
-    private LocaleManager localeManager;
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
@@ -125,15 +108,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;
-    
     @Resource
     private IdentifierTypeManager identifierTypeManager;
-    
-    private long getLastModifiedTime(String orcid) {        
-        return profileEntityManager.getLastModified(orcid);
-    }
     
     @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
     public @ResponseBody List<OrcidClient> retrieveWorkImportWizards() {
@@ -373,8 +349,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
         kf.setErrors(new ArrayList<String>());              
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-        Visibility defaultVisibility = Visibility.valueOf(profile.getActivitiesVisibilityDefault());        
         if(kf != null) {
             Iterator<KeywordForm> it = kf.getKeywords().iterator();            
             while (it.hasNext()) {
@@ -387,12 +361,11 @@ public class WorkspaceController extends BaseWorkspaceController {
                     it.remove();
                 } 
                 
-                //Set default visibility in case it is null
-                if(k.getVisibility() == null || k.getVisibility().getVisibility() == null) {
-                    k.setVisibility(defaultVisibility);
-                }
+                //Validate visibility is not null
+                validateVisibility(k);
                 
                 copyErrors(k, kf);
+                copyErrors(k.getVisibility(), kf);
             }
 
             if (kf.getErrors().size()>0) {
@@ -422,8 +395,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
         onf.setErrors(new ArrayList<String>());        
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-        Visibility defaultVisibility = Visibility.valueOf(profile.getActivitiesVisibilityDefault());        
         if(onf != null) {
             Iterator<OtherNameForm> it = onf.getOtherNames().iterator();
             while(it.hasNext()) {
@@ -435,11 +406,12 @@ public class WorkspaceController extends BaseWorkspaceController {
                 if(form.getContent().length() > SiteConstants.MAX_LENGTH_255) {
                     form.setContent(form.getContent().substring(0, SiteConstants.MAX_LENGTH_255));
                 }
-                //Set default visibility in case it is null
-                if(form.getVisibility() == null || form.getVisibility().getVisibility() == null) {
-                    form.setVisibility(defaultVisibility);
-                }                
+                
+                //Validate visibility is not null
+                validateVisibility(form);
+                
                 copyErrors(form, onf);
+                copyErrors(form.getVisibility(), onf);
             }
                     
             if (onf.getErrors().size()>0) {
@@ -476,8 +448,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
         ws.setErrors(new ArrayList<String>());
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-        Visibility defaultVisibility = Visibility.valueOf(profile.getActivitiesVisibilityDefault());
         if(ws != null) {
             Set<String> existingUrls = new HashSet<String>();
             for (WebsiteForm w : ws.getWebsites()) {
@@ -498,11 +468,11 @@ public class WorkspaceController extends BaseWorkspaceController {
                 } else {
                     existingUrls.add(w.getUrl());
                 }
-                //Set default visibility in case it is null
-                if(w.getVisibility() == null || w.getVisibility().getVisibility() == null) {
-                    w.setVisibility(defaultVisibility);
-                } 
+                //Validate visibility is not null
+                validateVisibility(w);
+                 
                 copyErrors(w, ws);
+                copyErrors(w.getVisibility(), ws);
             }   
             
             if (ws.getErrors().size()>0) {
@@ -543,7 +513,21 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.POST)
     public @ResponseBody
-    ExternalIdentifiersForm updateExternalIdentifierJson(HttpServletRequest request, @RequestBody ExternalIdentifiersForm externalIdentifiersForm) {        
+    ExternalIdentifiersForm updateExternalIdentifierJson(HttpServletRequest request, @RequestBody ExternalIdentifiersForm externalIdentifiersForm) {  
+        externalIdentifiersForm.setErrors(new ArrayList<String>());
+        //Validate visibility is not null
+        if(externalIdentifiersForm != null && externalIdentifiersForm.getExternalIdentifiers() != null) {
+            for(ExternalIdentifierForm extId : externalIdentifiersForm.getExternalIdentifiers()) {
+                //Validate visibility is not null
+                validateVisibility(extId);
+                copyErrors(extId, externalIdentifiersForm);
+            }            
+        }
+        
+        if(!externalIdentifiersForm.getErrors().isEmpty()) {
+            return externalIdentifiersForm;
+        }        
+                        
         PersonExternalIdentifiers externalIdentifiers = externalIdentifiersForm.toPersonExternalIdentifiers();
         externalIdentifiers = externalIdentifierManager.updateExternalIdentifiers(getCurrentUserOrcid(), externalIdentifiers);
         return externalIdentifiersForm;

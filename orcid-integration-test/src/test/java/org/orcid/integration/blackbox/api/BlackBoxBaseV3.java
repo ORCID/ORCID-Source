@@ -355,7 +355,7 @@ public class BlackBoxBaseV3 {
             WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
             namesVisibilityElement.click();
             
-            By saveButton = By.xpath("//div[@id = 'names-section']//ul[@class='workspace-section-toolbar']//li[1]//button");
+            By saveButton = By.xpath("//div[@id = 'names-section']//ul[@class='workspace-section-toolbar clearfix']//li[1]//button");
             (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
             WebElement button = webDriver.findElement(saveButton);
             button.click();

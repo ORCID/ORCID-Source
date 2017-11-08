@@ -714,6 +714,7 @@ public class ManageProfileControllerTest {
         nf.setCreditName(Text.valueOf("<button onclick=\"alert('hello')\">Credit Name</button>"));
         nf.setGivenNames(Text.valueOf("<button onclick=\"alert('hello')\">Given Names</button>"));
         nf.setFamilyName(Text.valueOf("<button onclick=\"alert('hello')\">Family Name</button>"));
+        nf.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
         nf = controller.setNameFormJson(nf);
         assertEquals("Credit Name", nf.getCreditName().getValue());
         assertEquals("Given Names", nf.getGivenNames().getValue());
@@ -738,6 +739,7 @@ public class ManageProfileControllerTest {
         when(mockBiographyManager.exists(Mockito.anyString())).thenReturn(true);
                 
         BiographyForm bf = new BiographyForm();
+        bf.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
         // No NPE exception on empty bio
         controller.setBiographyFormJson(bf);
         assertNotNull(bf.getErrors());
@@ -746,14 +748,22 @@ public class ManageProfileControllerTest {
         bf.setBiography(Text.valueOf(bio));
         controller.setBiographyFormJson(bf);
         assertEquals(1, bf.getErrors().size());
-        assertEquals("Length.changePersonalInfoForm.biography", bf.getErrors().get(0));
+        assertEquals("Length.changePersonalInfoForm.biography", bf.getErrors().get(0));        
         bio = StringUtils.repeat('a', 5000);
         bf.setBiography(Text.valueOf(bio));
+        bf.setVisibility(null);
+        controller.setBiographyFormJson(bf);
+        assertEquals(1, bf.getErrors().size());
+        assertEquals("common.visibility.not_blank", bf.getErrors().get(0));        
+        
+        bf.setBiography(Text.valueOf(bio));
+        bf.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
         controller.setBiographyFormJson(bf);
         assertTrue(bf.getErrors().isEmpty()); 
         
         Biography bioElement = new Biography();
-        bioElement.setContent(bio);        
+        bioElement.setContent(bio);      
+        bioElement.setVisibility(Visibility.PUBLIC);
         
         verify(mockBiographyManager, times(1)).updateBiography(Mockito.eq(USER_ORCID), Mockito.eq(bioElement));
     }

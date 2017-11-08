@@ -44,7 +44,7 @@ Version number used with releases will look to follow a similar format like [sem
 > [release that can’t be rolled back, typically DB changes].[release sequence].[release patch]|([patches applied after pushed to production]) 
 
 # Contributing
-Pull requests are welcome; See [CONTRIBUTING.md](CONTRIBUTING.md)
+Pull requests are welcome to improve the Registry. See [CONTRIBUTING.md](CONTRIBUTING.md) for details on making contributions,  feature requests, and creating issue/bug reports.
 
 # Development Environment Setup
 See [DEVSETUP.md](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)

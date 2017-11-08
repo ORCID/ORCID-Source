@@ -32,8 +32,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidType;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
@@ -560,22 +560,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
         updateQuery.setParameter("sendEmailFrequencyDays", sendEmailFrequencyDays);
         updateQuery.executeUpdate();
-    }
-
-    /**
-     * Return the list of profiles that belongs to the provided OrcidType
-     * 
-     * @param type
-     *            OrcidType that indicates the profile type we want to fetch
-     * @return the list of profiles that belongs to the specified type
-     */
-    @Override
-    @Transactional
-    @SuppressWarnings("unchecked")
-    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type) {
-        Query query = entityManager.createQuery("from ProfileEntity where profile_deactivation_date=NULL and orcidType=:type");
-        query.setParameter("type", type);
-        return (List<ProfileEntity>) query.getResultList();
     }
 
     /**

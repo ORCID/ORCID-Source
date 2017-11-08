@@ -8,3 +8,7 @@ declare var logAjaxError: any;
 declare var om: any;
 declare var orcidVar: any;
 declare var scriptTmpl: any;
+declare var NODE_ENV: string;
+interface GlobalEnvironment {
+    NODE_ENV;
+}

@@ -1,7 +1,7 @@
 /**
  * Fundings Service
  * */
-angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', '$timeout', function ($rootScope, $timeout) {
     var fundingSrvc = {
         constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
         fundings: new Array(),
@@ -22,11 +22,11 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
                             groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
                         };
                         if (fundingSrvc.fundingToAddIds.length == 0) {
-                            fundingSrvc.loading = false;
-                            $rootScope.$apply();
+                            $timeout(function() {
+                              fundingSrvc.loading = false;
+                            });
                         } else {
-                            $rootScope.$apply();
-                            setTimeout(function () {
+                            $timeout(function () {
                                 fundingSrvc.addFundingToScope(path);
                             },50);
                         }
@@ -119,9 +119,10 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
                 url: getBaseUri() + '/'  + path,
                 dataType: 'json',
                 success: function(data) {
-                    fundingSrvc.fundingToAddIds = data;
-                    fundingSrvc.addFundingToScope('fundings/fundings.json');
-                    $rootScope.$apply();
+                    $timeout(function(){
+                        fundingSrvc.fundingToAddIds = data;
+                        fundingSrvc.addFundingToScope('fundings/fundings.json');
+                    });
                 }
             }).fail(function(e){
                 // something bad is happening!
@@ -157,13 +158,14 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function(data) {
-                    if (data.errors.length != 0){
-                       console.log("Unable to delete funding.");
-                    }
-                    else{
-                       groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);
-                    }
-                    $rootScope.$apply();
+                    $timeout(function(){
+                        if (data.errors.length != 0){
+                           console.log("Unable to delete funding.");
+                        }
+                        else{
+                           groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);
+                        }
+                    });  
                 }
             }).fail(function() {
                 console.log("Error deleting funding.");
@@ -192,10 +194,11 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function(data) {
-                    if(data.errors.length != 0){
-                        console.log("Unable to update profile funding.");
-                    }
-                    $rootScope.$apply();
+                    $timeout(function(){
+                        if(data.errors.length != 0){
+                            console.log("Unable to update profile funding.");
+                        }
+                    }); 
                 }
             }).fail(function() {
                 console.log("Error updating profile funding.");
