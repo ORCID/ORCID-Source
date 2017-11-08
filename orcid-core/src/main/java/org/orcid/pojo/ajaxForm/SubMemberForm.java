@@ -120,6 +120,7 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
 
     public Member toMember() {
         Member member = new Member();
+        member.setConsortiumLeadId(getParentAccountId());
         member.setName(getName().getValue());
         member.setPublicDisplayName(getName().getValue());
         try {

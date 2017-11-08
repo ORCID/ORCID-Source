@@ -38,7 +38,7 @@
 	        		<!-- Privacy bar -->
 					<ul class="workspace-private-toolbar">
 						<li>
-						<@orcid.privacyToggle angularModel="work.visibility" 
+						<@orcid.privacyToggle angularModel="work.visibility.visibility" 
 						    questionClick="toggleClickPrivacyHelp(work.putCode.value)"
 						    clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
 							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 

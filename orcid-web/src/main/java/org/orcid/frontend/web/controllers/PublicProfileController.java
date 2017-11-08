@@ -629,7 +629,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         for (String workId : workIds) {
             if (minimizedWorksMap.containsKey(Long.valueOf(workId))) {
                 WorkForm work = minimizedWorksMap.get(Long.valueOf(workId));                
-                validateVisibility(Visibility.valueOf(work.getVisibility().name()));                
+                validateVisibility(work.getVisibility().getVisibility());
                 if (!PojoUtil.isEmpty(work.getCountryCode())) {
                     Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
                     work.setCountryName(countryName);

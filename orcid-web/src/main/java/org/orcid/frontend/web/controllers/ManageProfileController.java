@@ -32,20 +32,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.EmailConstants;
-import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.v3.BiographyManager;
-import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.GivenPermissionToManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.manager.v3.AddressManager;
+import org.orcid.core.manager.v3.BiographyManager;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
@@ -132,9 +131,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource(name = "biographyManagerV3")
     private BiographyManager biographyManager;
     
-    @Resource
-    private RegistrationManager registrationManager;
-
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
     
@@ -670,7 +666,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());        
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
         AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
@@ -716,7 +711,12 @@ public class ManageProfileController extends BaseWorkspaceController {
                     } else {
                         form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
                     }
+                    
+                    //Validate visibility is not null
+                    validateVisibility(form);
+                    
                     copyErrors(form, addressesForm);
+                    copyErrors(form.getVisibility(), addressesForm);
                 }
             }
 
@@ -754,10 +754,14 @@ public class ManageProfileController extends BaseWorkspaceController {
             nf.getCreditName().setValue(OrcidStringUtils.stripHtml(nf.getCreditName().getValue()));
         }
 
+        //Validate visibility is not null
+        validateVisibility(nf);
+                
         if (nf.getGivenNames() == null)
             nf.setGivenNames(new Text());
         givenNameValidate(nf.getGivenNames());
         copyErrors(nf.getGivenNames(), nf);
+        copyErrors(nf.getVisibility(), nf);
         if (nf.getErrors().size() > 0)
             return nf;
         Name name = nf.toName();
@@ -776,9 +780,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody BiographyForm getBiographyForm() {
         Biography bio = biographyManager.getBiography(getCurrentUserOrcid());
         BiographyForm form = BiographyForm.valueOf(bio);
-        if(form.getVisiblity() == null) {
+        if(form.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());            
-            form.setVisiblity(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
         }
         return form;
     }
@@ -788,7 +792,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         bf.setErrors(new ArrayList<String>());
         if (bf.getBiography() != null) {
             validateBiography(bf.getBiography());
+            //Validate visibility is not null
+            validateVisibility(bf);
+            
             copyErrors(bf.getBiography(), bf);
+            copyErrors(bf.getVisibility(), bf);
             if (bf.getErrors().size() > 0)
                 return bf;
 
@@ -796,8 +804,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (bf.getBiography() != null) {
                 bio.setContent(bf.getBiography().getValue());
             }
-            if (bf.getVisiblity() != null && bf.getVisiblity().getVisibility() != null) {
-                org.orcid.jaxb.model.v3.dev1.common.Visibility v = org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
+            if (bf.getVisibility() != null && bf.getVisibility().getVisibility() != null) {
+                org.orcid.jaxb.model.v3.dev1.common.Visibility v = org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(bf.getVisibility().getVisibility().value());
                 bio.setVisibility(v);
             }
 

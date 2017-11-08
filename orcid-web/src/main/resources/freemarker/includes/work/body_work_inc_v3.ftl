@@ -57,7 +57,7 @@
                                             </li>
                                             <#if !(isPublicProfile??)>
                                                 <li>
-                                                    <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
+                                                    <@orcid.privacyToggle2 angularModel="group.getActive().visibility.visibility"
                                                         questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
                                                         clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
                                                         publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
@@ -115,7 +115,7 @@
                                   <#if !(isPublicProfile??)>
                                       <!-- Privacy -->
                                       <li>
-                                          <@orcid.privacyToggle2 angularModel="work.visibility"
+                                          <@orcid.privacyToggle2 angularModel="work.visibility.visibility"
                                               questionClick="toggleClickPrivacyHelp(group.highestVis())"
                                               clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
                                               publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"

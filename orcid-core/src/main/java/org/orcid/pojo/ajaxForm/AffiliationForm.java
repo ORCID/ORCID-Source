@@ -34,15 +34,13 @@ import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 
-public class AffiliationForm implements ErrorsInterface, Serializable {
+public class AffiliationForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
 
     private Text putCode;
-
-    private Visibility visibility;
 
     private Text affiliationName;
 
@@ -250,14 +248,6 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setPutCode(Text putCode) {
         this.putCode = putCode;
-    }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public Text getAffiliationName() {

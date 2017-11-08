@@ -39,7 +39,7 @@
         <property name="version" value="Latest" />
         <property name="host" value="#{ orcidUrlManager.pubHostWithPort }" />
         <property name="basePath" value="#{ orcidUrlManager.pubPath }"/>
-        <property name="resourcePackage" value="org.orcid.api.publicV2.server,org.orcid.api.t1.stats,org.orcid.api.identifiers"/>
+        <property name="resourcePackage" value="org.orcid.api.publicV2.server,org.orcid.api.publicV3.server, org.orcid.api.t1.stats,org.orcid.api.identifiers"/>
         <property name="scan" value="true"/>
         <property name="prettyPrint" value="true"/>        
     </bean>

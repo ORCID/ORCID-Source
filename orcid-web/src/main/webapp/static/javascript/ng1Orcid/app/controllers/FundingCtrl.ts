@@ -146,7 +146,10 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                         var forDisplay =
                             '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
                             +'<span style=\'font-size: 80%;\'>'
-                            + ' <br />' + datum.city;
+                            + ' <br />';
+                        if(datum.city){
+                            forDisplay += datum.city;
+                        }
                         if(datum.region){
                             forDisplay += ", " + datum.region;
                         }
@@ -159,7 +162,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                     }
                 });
                 $("#fundingName").bind("typeahead:selected", function(obj, datum) {
-                    $timeout(function(datum){
+                    $timeout(function(){
                         $scope.selectFunding(datum);
                     });
                 });

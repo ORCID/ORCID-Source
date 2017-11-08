@@ -736,20 +736,22 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             $scope.setAddWorkPrivacy = function(priv, $event) {
                 $event.preventDefault();
-                $scope.editWork.visibility = priv;
+                $scope.editWork.visibility.visibility = priv;
             };
 
             $scope.setBulkGroupPrivacy = function(priv) {
-                var putCodes = new Array();
+            	var putCodes = new Array();
                 for (var idx in worksSrvc.groups){
-                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){    
+                	if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){    
                         for (var idj in worksSrvc.groups[idx].activities) {
-                            putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
-                            worksSrvc.groups[idx].activities[idj].visibility = priv;
+                        	putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+                            worksSrvc.groups[idx].activities[idj].visibility.visibility = priv;
                         }
                     }
                 }
-                worksSrvc.updateVisibility(putCodes, priv);
+                if(putCodes.length > 0) {
+                	worksSrvc.updateVisibility(putCodes, priv);
+                }                
             };
 
             $scope.showAddWorkModal = function(){
