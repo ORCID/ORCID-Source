@@ -75,7 +75,7 @@ Funding, Works and Peer-review items are grouped together based on a common exte
 
 ### Additional metadata about items on the record 
  - *created date* when the item was first added to the ORCID record
- - *last-modified-date* when the item was changed, such as being edited or having it's visibility changed. 
+ - *last-modified-date* when the item was changed, such as being edited or having its visibility changed. 
  - *source*  who added the item to the record. Items added via the API will have the *source-client-id* field to record the client iD, items added by the researcher will use the *source-orcid* field to record the researcher's ORCID iD.
 
 ### Additional external identifier fields
