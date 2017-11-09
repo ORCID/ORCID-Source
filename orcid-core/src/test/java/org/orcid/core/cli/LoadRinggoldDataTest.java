@@ -41,6 +41,7 @@ import org.mockito.stubbing.Answer;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -66,13 +67,24 @@ public class LoadRinggoldDataTest {
     }
 
     @Test
-    public void test_InvalidDirectory() {
-        fail();
-    }
+    public void test_DoNothing() throws URISyntaxException {
+        setupInitialMocks();
 
-    @Test
-    public void test_InvalidZipFile() {
-        fail();
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_base/").toURI());
+        File testDirectory = path.toFile();
+        assertTrue(testDirectory.exists());
+
+        loader.setDirectory(testDirectory);
+        loader.execute();
+
+        verify(mockOrgDisambiguatedDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDao, times(0)).merge(Matchers.any());
     }
 
     @Test
@@ -81,7 +93,7 @@ public class LoadRinggoldDataTest {
         when(mockOrgDisambiguatedExternalIdentifierDao.exists(Matchers.anyLong(), Matchers.anyString(), Matchers.anyString())).thenReturn(false);
         when(mockOrgDao.findByNameCityRegionAndCountry(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any())).thenReturn(null);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_1/").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_base/").toURI());
         File testDirectory = path.toFile();
         assertTrue(testDirectory.exists());
 
@@ -96,6 +108,8 @@ public class LoadRinggoldDataTest {
 
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for (OrgDisambiguatedEntity entity : newOrgDisambiguatedEntities) {
+            assertEquals(IndexingStatus.PENDING, entity.getIndexingStatus());
+            assertEquals("RINGGOLD", entity.getSourceType());
             switch (entity.getSourceId()) {
             case "1":
                 assertNull(entity.getSourceParentId());
@@ -103,7 +117,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("City#1", entity.getCity());
                 assertEquals("State#1", entity.getRegion());
                 assertEquals(Iso3166Country.US, entity.getCountry());
-                assertEquals("type/1", entity.getOrgType());
+                assertEquals("type/1", entity.getOrgType());                
                 found1 = true;
                 break;
             case "2":
@@ -157,49 +171,49 @@ public class LoadRinggoldDataTest {
             case "1":
                 assertEquals("1", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("XXX1", entity.getIdentifierType());
-                assertEquals("1", entity.getIdentifier());                
+                assertEquals("1", entity.getIdentifier());
                 found1 = true;
                 break;
             case "2":
                 assertEquals("1", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("XXX2", entity.getIdentifierType());
-                assertEquals("2", entity.getIdentifier());                
+                assertEquals("2", entity.getIdentifier());
                 found2 = true;
                 break;
             case "3":
                 assertEquals("2", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("XXX3", entity.getIdentifierType());
-                assertEquals("3", entity.getIdentifier());                
+                assertEquals("3", entity.getIdentifier());
                 found3 = true;
                 break;
             case "4":
                 assertEquals("2", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("XXX4", entity.getIdentifierType());
-                assertEquals("4", entity.getIdentifier());                
+                assertEquals("4", entity.getIdentifier());
                 found4 = true;
                 break;
             case "5":
                 assertEquals("3", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("XXX5", entity.getIdentifierType());
-                assertEquals("5", entity.getIdentifier());                
+                assertEquals("5", entity.getIdentifier());
                 found5 = true;
                 break;
             case "6":
                 assertEquals("3", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("XXX6", entity.getIdentifierType());
-                assertEquals("6", entity.getIdentifier());                
+                assertEquals("6", entity.getIdentifier());
                 found6 = true;
                 break;
             case "7":
                 assertEquals("4", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("XXX7", entity.getIdentifierType());
-                assertEquals("7", entity.getIdentifier());                
+                assertEquals("7", entity.getIdentifier());
                 found7 = true;
                 break;
             case "8":
                 assertEquals("4", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("XXX8", entity.getIdentifierType());
-                assertEquals("8", entity.getIdentifier());                
+                assertEquals("8", entity.getIdentifier());
                 found8 = true;
                 break;
             default:
@@ -248,25 +262,25 @@ public class LoadRinggoldDataTest {
     @Test
     public void test_UpdateDisambiguatedOrgs() throws URISyntaxException {
         setupInitialMocks();
-        
-        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_2/").toURI());
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_UpdateDisambiguatedOrgs/").toURI());
         File testDirectory = path.toFile();
         assertTrue(testDirectory.exists());
 
         loader.setDirectory(testDirectory);
         loader.execute();
-    
+
         ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, times(0)).persist(Matchers.any());
         verify(mockOrgDisambiguatedDao, times(4)).merge(orgDisambiguatedEntityCaptor.capture());
-        
+
         List<OrgDisambiguatedEntity> newOrgDisambiguatedEntities = orgDisambiguatedEntityCaptor.getAllValues();
         assertEquals(4, newOrgDisambiguatedEntities.size());
 
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for (OrgDisambiguatedEntity entity : newOrgDisambiguatedEntities) {
             switch (entity.getSourceId()) {
-            case "1":                
+            case "1":
                 assertNull(entity.getSourceParentId());
                 assertEquals(Long.valueOf(1000), entity.getId());
                 assertEquals("1. Name - updated", entity.getName());
@@ -310,70 +324,153 @@ public class LoadRinggoldDataTest {
                 fail("Invalid ringgold id found: " + entity.getSourceId());
                 break;
             }
-        };
+        }
+        ;
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
         assertTrue(found4);
-        
-        //TODO
+
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
-        
+
         verify(mockOrgDao, times(0)).persist(Matchers.any());
         verify(mockOrgDao, times(0)).merge(Matchers.any());
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @Test
-    public void test_AddDisambiguatedOrg() {
-        fail();
+    public void test_AddDisambiguatedOrg() throws URISyntaxException {
+        setupInitialMocks();
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_AddDisambiguatedOrg/").toURI());
+        File testDirectory = path.toFile();
+        assertTrue(testDirectory.exists());
+
+        loader.setDirectory(testDirectory);
+        loader.execute();
+
+        ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
+        verify(mockOrgDisambiguatedDao, times(0)).merge(Matchers.any());
+        verify(mockOrgDisambiguatedDao, times(1)).persist(orgDisambiguatedEntityCaptor.capture());
+        
+        List<OrgDisambiguatedEntity> list = orgDisambiguatedEntityCaptor.getAllValues();
+        assertEquals(1, list.size());
+        OrgDisambiguatedEntity entity = list.get(0);
+        assertEquals("City#5", entity.getCity());
+        assertEquals(Iso3166Country.US, entity.getCountry());
+        assertEquals(IndexingStatus.PENDING, entity.getIndexingStatus());
+        assertEquals("5. Name", entity.getName());
+        assertEquals("type/5", entity.getOrgType());
+        assertEquals("State#5", entity.getRegion());
+        assertEquals("5", entity.getSourceId());
+        assertEquals("4", entity.getSourceParentId());
+        assertEquals("RINGGOLD", entity.getSourceType());
+        
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDao, times(0)).merge(Matchers.any());
     }
 
     @Test
-    public void test_AddOrg() {
-        fail();
+    public void test_AddOrg() throws URISyntaxException {
+        setupInitialMocks();
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_addOrg/").toURI());
+        File testDirectory = path.toFile();
+        assertTrue(testDirectory.exists());
+
+        loader.setDirectory(testDirectory);
+        loader.execute();
+
+        verify(mockOrgDisambiguatedDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
+
+        ArgumentCaptor<OrgEntity> orgEntityCaptor = ArgumentCaptor.forClass(OrgEntity.class);
+        verify(mockOrgDao, times(1)).persist(orgEntityCaptor.capture());
+        verify(mockOrgDao, times(0)).merge(Matchers.any());
+        
+        List<OrgEntity> list = orgEntityCaptor.getAllValues();
+        assertEquals(1, list.size());
+        OrgEntity entity = list.get(0);
+        assertEquals("AltCity#3", entity.getCity());
+        assertEquals(Iso3166Country.CA, entity.getCountry());
+        assertEquals("3. Alt Name", entity.getName());
+        assertEquals(Long.valueOf(3000), entity.getOrgDisambiguated().getId());
+        assertNull(entity.getRegion());        
     }
 
     @Test
-    public void test_AddExternalIdentifier() {
+    public void test_AddExternalIdentifier() throws URISyntaxException {
         fail();
+
+        setupInitialMocks();
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_1/").toURI());
+        File testDirectory = path.toFile();
+        assertTrue(testDirectory.exists());
+
+        loader.setDirectory(testDirectory);
+        loader.execute();
+
+        verify(mockOrgDisambiguatedDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDao, times(0)).merge(Matchers.any());
     }
 
     @Test
-    public void test_DeprecateADisambiguatedOrg() {
+    public void test_DeprecateADisambiguatedOrg() throws URISyntaxException {
         fail();
+
+        setupInitialMocks();
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_1/").toURI());
+        File testDirectory = path.toFile();
+        assertTrue(testDirectory.exists());
+
+        loader.setDirectory(testDirectory);
+        loader.execute();
+
+        verify(mockOrgDisambiguatedDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDao, times(0)).merge(Matchers.any());
     }
 
     @Test
-    public void test_LinkExistingOrgToNewDisambiguatedOrg() {
-
-    }
-
-    @Test
-    public void test_DoNothing() {
+    public void test_LinkExistingOrgToNewDisambiguatedOrg() throws URISyntaxException {
         fail();
+
+        setupInitialMocks();
+
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_1/").toURI());
+        File testDirectory = path.toFile();
+        assertTrue(testDirectory.exists());
+
+        loader.setDirectory(testDirectory);
+        loader.execute();
+
+        verify(mockOrgDisambiguatedDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
+
+        verify(mockOrgDao, times(0)).persist(Matchers.any());
+        verify(mockOrgDao, times(0)).merge(Matchers.any());
     }
 
     private void setupInitialMocks() {
@@ -441,25 +538,25 @@ public class LoadRinggoldDataTest {
                 String identifierType = (String) invocation.getArgument(2);
 
                 if (disambiguatedOrgId == 1000L) {
-                    if("XXX1".equals(identifierType) && "1".equals(identifierValue)) {
+                    if ("XXX1".equals(identifierType) && "1".equals(identifierValue)) {
                         return true;
                     } else if ("XXX2".equals(identifierType) && "2".equals(identifierValue)) {
                         return true;
                     }
                 } else if (disambiguatedOrgId == 2000L) {
-                    if("XXX3".equals(identifierType) && "3".equals(identifierValue)) {
+                    if ("XXX3".equals(identifierType) && "3".equals(identifierValue)) {
                         return true;
                     } else if ("XXX4".equals(identifierType) && "4".equals(identifierValue)) {
                         return true;
                     }
                 } else if (disambiguatedOrgId == 3000L) {
-                    if("XXX5".equals(identifierType) && "5".equals(identifierValue)) {
+                    if ("XXX5".equals(identifierType) && "5".equals(identifierValue)) {
                         return true;
                     } else if ("XXX6".equals(identifierType) && "6".equals(identifierValue)) {
                         return true;
                     }
                 } else if (disambiguatedOrgId == 4000L) {
-                    if("XXX7".equals(identifierType) && "7".equals(identifierValue)) {
+                    if ("XXX7".equals(identifierType) && "7".equals(identifierValue)) {
                         return true;
                     } else if ("XXX8".equals(identifierType) && "8".equals(identifierValue)) {
                         return true;
@@ -480,19 +577,19 @@ public class LoadRinggoldDataTest {
                         String city = invocation.getArgument(1);
                         String region = invocation.getArgument(2);
                         Iso3166Country country = (Iso3166Country) invocation.getArgument(3);
-                        
+
                         OrgEntity entity = new OrgEntity();
                         entity.setName(name);
                         entity.setCity(city);
                         entity.setRegion(region);
                         entity.setCountry(country);
-                        
-                        if("1. Alt Name".equals(name) && "AltCity#1".equals(city) && region == null && Iso3166Country.MX.equals(country)) {
+
+                        if ("1. Alt Name".equals(name) && "AltCity#1".equals(city) && region == null && Iso3166Country.MX.equals(country)) {
                             OrgDisambiguatedEntity od = new OrgDisambiguatedEntity();
                             // ringgold_id * 1000
                             od.setId(Long.valueOf(1000));
                             entity.setOrgDisambiguated(od);
-                        } else if("2. Alt Name".equals(name) && "AltCity#2".equals(city) && region == null && Iso3166Country.BR.equals(country)) {
+                        } else if ("2. Alt Name".equals(name) && "AltCity#2".equals(city) && region == null && Iso3166Country.BR.equals(country)) {
                             OrgDisambiguatedEntity od = new OrgDisambiguatedEntity();
                             // ringgold_id * 1000
                             od.setId(Long.valueOf(2000));
@@ -500,7 +597,7 @@ public class LoadRinggoldDataTest {
                         } else {
                             return null;
                         }
-                        
+
                         return entity;
                     }
 
