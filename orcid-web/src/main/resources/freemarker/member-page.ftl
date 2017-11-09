@@ -21,11 +21,12 @@
     	
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
         	<p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> All members</a></p>
-        	<div ng-hide="membersListSrvc.currentMemberDetails != null" class="text-center" ng-cloak>
-	                    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
-	                    <!--[if lt IE 8]>
-	                        <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
-	                    <![endif]-->
+        	<div class="text-center" ng-cloak>
+                <i ng-show="showMemberDetailsLoader" class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+                <!--[if lt IE 8]>
+                    <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                <![endif]-->
+                <p ng-show="!membersListSrvc.currentMemberDetails" ng-cloak>Could not get details for this member</p>
 	    	</div>
         	<div class="row" ng-show="membersListSrvc.currentMemberDetails">
         		<div class="col-md-12 col-sm-12 col-xs-12">
@@ -66,7 +67,7 @@
                                 <div class="cc-badge authenticate popover-help-container" ng-if="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
                                     <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" /></a>
                                     <div id="cc-authenticate-help" class="popover bottom">
-                                      <div class="asrrow"></div>
+                                      <div class="arrow"></div>
                                       <div class="popover-content">
                                         <p><@orcid.msg 'member_list.details.authenticate_help_text'/></p>
                                       </div>
@@ -75,7 +76,7 @@
                                 <div class="cc-badge collect popover-help-container" ng-if="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
                                     <a href="javascript:void(0);"><img src="${staticCdn}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" /></a>
                                     <div id="cc-collect-help" class="popover bottom">
-                                      <div class="asrrow"></div>
+                                      <div class="arrow"></div>
                                       <div class="popover-content">
                                         <p><@orcid.msg 'member_list.details.collect_help_text'/></p>
                                       </div>
