@@ -355,7 +355,7 @@ public class LoadRinggoldData {
         Integer recId = institution.get("rec_id").asInt();
         Integer ringgoldId = institution.get("ringgold_id").asInt();
         LOGGER.info("Processing ringgold_id: {} rec_id: {}", ringgoldId, recId);
-        Integer parentId = institution.get("parent_ringgold_id").asInt();
+        Integer parentId = institution.get("parent_ringgold_id").asInt() == 0 ? null : institution.get("parent_ringgold_id").asInt();
         String name = institution.get("name").asText();
         Iso3166Country country = Iso3166Country.fromValue(institution.get("country").asText());
         String state = institution.has("state") ? institution.get("state").asText() : null;
@@ -420,13 +420,13 @@ public class LoadRinggoldData {
         identifiers.forEach(identifierNode -> {
             String type = identifierNode.get("identifier_type").asText();
             LOGGER.info("Processing external identifier {} for {}", type, disambiguatedEntity.getId());
-            String identifier = identifierNode.get("value").asText();
-            if (!orgDisambiguatedExternalIdentifierDao.exists(disambiguatedEntity.getId(), identifier, type)) {
+            String value = identifierNode.get("value").asText();
+            if (!orgDisambiguatedExternalIdentifierDao.exists(disambiguatedEntity.getId(), value, type)) {
                 OrgDisambiguatedExternalIdentifierEntity newEntity = new OrgDisambiguatedExternalIdentifierEntity();
                 Date now = new Date();
                 newEntity.setDateCreated(now);
                 newEntity.setLastModified(now);
-                newEntity.setIdentifier(identifier);
+                newEntity.setIdentifier(value);
                 newEntity.setIdentifierType(type);
                 newEntity.setOrgDisambiguated(disambiguatedEntity);
                 newEntity.setPreferred(false);
@@ -490,11 +490,18 @@ public class LoadRinggoldData {
     }
 
     private boolean changed(OrgDisambiguatedEntity entity, Integer parentId, String name, Iso3166Country country, String city, String state, String type) {
-        if (!parentId.equals(Integer.valueOf(entity.getSourceParentId())) || !name.equals(entity.getName()) || !country.equals(entity.getCountry())
+        if (!name.equals(entity.getName()) || !country.equals(entity.getCountry())
                 || !city.equals(entity.getCity()) || !type.equals(entity.getOrgType())) {
             return true;
         }
-
+        if(parentId == null) {
+            if(entity.getSourceParentId() != null) {
+                return true;
+            }
+        } else if(entity.getSourceParentId() == null || !parentId.equals(Integer.valueOf(entity.getSourceParentId()))) {
+            return true;
+        }
+        
         String existingRegion = entity.getRegion();
         if (state == null) {
             if (existingRegion != null) {
