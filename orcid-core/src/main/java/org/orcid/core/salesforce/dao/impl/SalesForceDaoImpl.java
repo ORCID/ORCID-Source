@@ -39,6 +39,7 @@ import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.SlugUtils;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -526,9 +527,16 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      * 
      */
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
-        WebResource resource = createQueryResource(
-                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'",
-                memberId);
+        String query = new String();
+        
+        if(Features.BADGES.isActive()) {
+            query = "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'";
+        } else {
+            query = "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'";
+        }
+        
+        WebResource resource = createQueryResource(query, memberId);
+        
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting integrations list from SalesForce");
