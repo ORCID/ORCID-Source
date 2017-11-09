@@ -19,9 +19,11 @@
 <#include "includes/affiliate/del_affiliate_inc.ftl"/>
 
 <#include "includes/affiliate/add_affiliate_inc.ftl"/>
-++++
+
+<@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'> 
 <affiliation-ng2></affiliation-ng2>
-----
+</@orcid.checkFeatureStatus>
+
 <div ng-controller="AffiliationCtrl">
 	<!-- Education -->
 	<div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
