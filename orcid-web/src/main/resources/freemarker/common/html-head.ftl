@@ -248,11 +248,176 @@
                     </div>
                 </div>
                 <div *ngIf="workspaceSrvc.displayEducation" class="workspace-accordion-content">
-                    <ul id="educations-list" *ngIf="affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
- 
+                    <ul id="educations-list" *ngIf="educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of educations ">***| let group of affiliationsSrvc.educations orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.putCode.value}}
+                            <div class="row"> 
+         
+                                
+                                <div class="col-md-9 col-sm-9 col-xs-7">
+                                    <h3 class="workspace-title">            
+                                        <span>{{group.affiliationName.value}}</span>:
+                                        <span>{{group.city.value}}</span><span *ngIf="group.region.value">, </span><span>{{group.region.value}}</span>, <span>{{group.countryForDisplay}}</span>                                               
+                                    </h3>
+                                    <div class="info-detail">
+                                        <div class="info-date">                     
+                                            <span class="affiliation-date" *ngIf="group.startDate">
+                                                <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
+                                                <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
+                                                <span ng-hide="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            </span>
+                                            <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
+                                                 <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            </span>
+                                            <span *ngIf="(group.startDate || group.endDate) && (group.roleTitle.value || group.departmentName.value)"> | </span> <span *ngIf="group.roleTitle.value">{{group.roleTitle.value}}</span>        
+                                            <span *ngIf="group.departmentName.value">
+                                                <span *ngIf="group.roleTitle.value && !printView">&nbsp;</span>(<span>{{group.departmentName.value}}</span>)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+                                <div class="col-md-3 col-sm-3 col-xs-5 padding-left-fix">          
+                                    <div class="workspace-toolbar">         
+                                        <ul class="workspace-private-toolbar"> 
+                                            <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'> 
+                                            <li class="works-details">
+                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                    </span>
+                                                </a>
+                                                <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails']">
+                                                     <div class="arrow"></div>
+                                                    <div class="popover-content">   
+                                                        <span *ngIf="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
+                                                        <span *ngIf="moreInfo[group.groupId]"><@orcid.msg 'common.details.hide_details'/></span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            </@orcid.checkFeatureStatus>
+                                            <#if !(isPublicProfile??)> 
+                                            <li>
+                                                <@orcid.privacyToggle2  angularModel="group.visibility.visibility"
+                                                questionClick="toggleClickPrivacyHelp(group.putCode.value)"
+                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.putCode.value]==true}" 
+                                                publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
+                                                    limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
+                                                    privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
+                                            </li>
+                                            </#if>
+                                        </ul>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="row" *ngIf="group.activePutCode == group.putCode.value">
+                                <div class="col-md-12 col-sm-12 bottomBuffer">
+                                    <ul class="id-details">
+                                        <li class="url-work">
+                                            <ul class="id-details">
+                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers ' class="url-popover">***| orderBy:["-relationship.value", "type.value"] track by $index
+                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+                                                </li>
+                                            </ul>                                   
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>  
+
+                            <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'>
+                            
+                            <div class="more-info content" *ngIf="moreInfo[group.groupId]">
+                                <div class="row bottomBuffer">
+                                    <div class="col-md-12"></div>
+                                </div>
+                                <span class="dotted-bar"></span>    
+                                <div class="row">
+                                    <div class="org-ids" *ngIf="group.orgDisambiguatedId.value">
+                                        <div class="col-md-12">   
+                                            <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+                                            <span bind-html-compile='group.disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.disambiguationSource.value:group.putCode.value:group.disambiguationSource' class="url-popover"> 
+                                            </span>
+                                        </div>
+                                        <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
+                                            <span *ngIf="group.orgDisambiguatedName">{{group.orgDisambiguatedName}}</span><span *ngIf="group.orgDisambiguatedCity || group.orgDisambiguatedRegion || group.orgDisambiguatedCountry">: </span><span *ngIf="group.orgDisambiguatedCity">{{group.orgDisambiguatedCity}}</span><span *ngIf="group.orgDisambiguatedCity && group.orgDisambiguatedRegion">, </span><span *ngIf="group.orgDisambiguatedRegion">{{group.orgDisambiguatedRegion}}</span><span *ngIf="group.orgDisambiguatedCountry && (group.orgDisambiguatedCity || group.orgDisambiguatedRegion)">, </span><span *ngIf="group.orgDisambiguatedCountry">{{group.orgDisambiguatedCountry}}</span>
+                                            <span *ngIf="group.orgDisambiguatedUrl"><br>
+                                            <a href="{{group.orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span>{{group.orgDisambiguatedUrl}}</span></a>
+                                            </span>
+                                         
+                                            <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
+                                                <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
+                                                <ul class="reset">
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                        {{orgDisambiguatedExternalIdentifier.identifierType}}:  
+                                                        <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> 
+                                                        <span *ngIf="orgDisambiguatedExternalIdentifier.all">
+                                                            <span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" *ngIf="group.url.value">
+                                        <div class="bottomBuffer">
+                                            <strong><@orcid.msg 'common.url'/></strong><br> 
+                                            <a href="{{group.url.value}}" target="affiliation.url.value">{{group.url.value}}</a>
+                                        </div>
+                                    </div>  
+                                    <div class="col-md-12">
+                                        <div class="bottomBuffer">
+                                            <strong><@orcid.msg 'groups.common.created'/></strong><br /> 
+                                            <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                        </div>
+                                    </div>  
+                                </div>
+                            </div>
+                            </@orcid.checkFeatureStatus>
+    
+                            <div class="row source-line">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="sources-container-header">          
+                                        <div class="row">
+                                            <div class="col-md-7 col-sm-7 col-xs-12">
+                                                <@orcid.msg 'groups.common.source'/>: {{(group.sourceName == null || group.sourceName == '') ? group.source : group.sourceName}}    
+                                            </div>
+                                            
+                                            <div class="col-md-3 col-sm-3 col-xs-6">
+                                                <@orcid.msg 'groups.common.created'/>: <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                            </div>
+                                                        
+                                            <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
+                                                <ul class="sources-options">
+                                                    <#if !(isPublicProfile??)>
+                                                    <li *ngIf="group.source == '${effectiveUserOrcid}'">
+                                                        <a (click)="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.putCode.value+'-edit')">
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                        </a>
+                                                        <div class="popover popover-tooltip top edit-source-popover" *ngIf="showElement[group.putCode.value+'-edit']"> 
+                                                            <div class="arrow"></div>
+                                                            <div class="popover-content">
+                                                                <span ><@orcid.msg 'groups.common.edit_my'/></span>
+                                                            </div>                
+                                                        </div>  
+                                                    </li>   
+                                                    <li>
+                                                        <a id="delete-affiliation_{{group.putCode.value}}" href="" (click)="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
+                                                        <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.putCode.value+'-delete']"> 
+                                                            <div class="arrow"></div>
+                                                            <div class="popover-content">
+                                                                 <@orcid.msg 'groups.common.delete_this_source' />
+                                                            </div>                
+                                                        </div>
+                                                    </li>
+                                                    </#if>  
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
                     </ul>
- 
-   
                 </div>
             </div>
             
@@ -263,7 +428,7 @@
                             <a name='workspace-employments'></a>
                             <a href="" (click)="workspaceSrvc.toggleEmployment($event)" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
-                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span>{{affiliationsSrvc.employments.length}}</span>)
+                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span>{{employments.length}}</span>)
                             </a>
                             <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
@@ -356,8 +521,124 @@
                     </div>
                 </div>
                 <div *ngIf="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
-                    <ul id="employments-list" ng-hide="!affiliationsSrvc.employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        
+                    <ul id="employments-list" ng-hide="!employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments ">***let group of affiliationsSrvc.employments | orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.putCode.value}}
+                            <div class="row"> 
+                         
+                    
+                                <div class="col-md-9 col-sm-9 col-xs-7">
+                                    <h3 class="workspace-title">            
+                                        <span>{{group.affiliationName.value}}</span>:
+                                        <span>{{group.city.value}}</span><span *ngIf="group.region.value">, </span><span>{{group.region.value}}</span>, <span>{{group.countryForDisplay}}</span>                                               
+                                    </h3>
+                                    <div class="info-detail">
+                                        <div class="info-date">                     
+                                            <span class="affiliation-date" *ngIf="group.startDate">
+                                                <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
+                                                <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
+                                                <span ng-hide="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            </span>
+                                            <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
+                                                 <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            </span>
+                                            <span *ngIf="(group.startDate || group.endDate) && (group.roleTitle.value || group.departmentName.value)"> | </span> <span *ngIf="group.roleTitle.value">{{group.roleTitle.value}}</span>        
+                                            <span *ngIf="group.departmentName.value">
+                                            <span *ngIf="group.roleTitle.value && !printView">&nbsp;</span>(<span>{{group.departmentName.value}}</span>)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 col-sm-3 col-xs-5 padding-left-fix">          
+                                    <div class="workspace-toolbar">         
+                                        <ul class="workspace-private-toolbar"> 
+                                            <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'> 
+                                            <li class="works-details">
+                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                    </span>
+                                                </a>
+                                                <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails']">
+                                                     <div class="arrow"></div>
+                                                    <div class="popover-content">   
+                                                        <span *ngIf="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
+                                                        <span *ngIf="moreInfo[group.groupId]"><@orcid.msg 'common.details.hide_details'/></span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            </@orcid.checkFeatureStatus>
+                                            <#if !(isPublicProfile??)> 
+                                            <li>
+                                                <@orcid.privacyToggle2  angularModel="group.visibility.visibility"
+                                                questionClick="toggleClickPrivacyHelp(group.putCode.value)"
+                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.putCode.value]==true}" 
+                                                publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
+                                                    limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
+                                                    privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
+                                            </li>
+                                            </#if>
+                                        </ul>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="row" *ngIf="group.activePutCode == group.putCode.value">
+                                <div class="col-md-12 col-sm-12 bottomBuffer">
+                                    <ul class="id-details">
+                                        <li class="url-work">
+                                            <ul class="id-details">
+                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">*** | orderBy:["-relationship.value", "type.value"] track by $index
+                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+                                                </li>
+                                            </ul>                                   
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>  
+                            <@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'>
+                            <div class="more-info content" *ngIf="moreInfo[group.groupId]">
+                                <div class="row bottomBuffer">
+                                    <div class="col-md-12"></div>
+                                </div>
+                                <span class="dotted-bar"></span>    
+                                <div class="row">
+                                    <div class="org-ids" *ngIf="group.orgDisambiguatedId.value">
+                                        <div class="col-md-12">   
+                                            <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+                                            <span bind-html-compile='group.disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.disambiguationSource.value:group.putCode.value:group.disambiguationSource' class="url-popover"> 
+                                            </span>
+                                        </div>
+                                        <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
+                                            <span *ngIf="group.orgDisambiguatedName">{{group.orgDisambiguatedName}}</span><span *ngIf="group.orgDisambiguatedCity || group.orgDisambiguatedRegion || group.orgDisambiguatedCountry">: </span><span *ngIf="group.orgDisambiguatedCity">{{group.orgDisambiguatedCity}}</span><span *ngIf="group.orgDisambiguatedCity && group.orgDisambiguatedRegion">, </span><span *ngIf="group.orgDisambiguatedRegion">{{group.orgDisambiguatedRegion}}</span><span *ngIf="group.orgDisambiguatedCountry && (group.orgDisambiguatedCity || group.orgDisambiguatedRegion)">, </span><span *ngIf="group.orgDisambiguatedCountry">{{group.orgDisambiguatedCountry}}</span>
+                                            <span *ngIf="group.orgDisambiguatedUrl"><br>
+                                            <a href="{{group.orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span>{{group.orgDisambiguatedUrl}}</span></a>
+                                            </span>
+                                            
+                                            <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
+                                                <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
+                                                <ul class="reset">
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                        {{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" *ngIf="group.url.value">
+                                        <div class="bottomBuffer">
+                                            <strong><@orcid.msg 'common.url'/></strong><br> 
+                                            <a href="{{group.url.value}}" target="affiliation.url.value">{{group.url.value}}</a>
+                                        </div>
+                                    </div>  
+                                    <div class="col-md-12">
+                                        <div class="bottomBuffer">
+                                            <strong><@orcid.msg 'groups.common.created'/></strong><br> 
+                                            <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                        </div>
+                                    </div>  
+                                </div>
+                            </div>
+                            </@orcid.checkFeatureStatus>
+                        </li>
                     </ul>
                 </div>
     

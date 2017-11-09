@@ -266,32 +266,33 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     for (let i in data) {
                         if (data[i].affiliationType != null 
                             && data[i].affiliationType.value != null
-                            && data[i].affiliationType.value == 'education'
                         ){
-                            this.educations.push(data[i]);
-                            /*
-                            groupedActivitiesUtil.group(
-                                data[i],
-                                GroupedActivities.AFFILIATION, 
-                                this.affiliationService.educations
-                            );
-                            */
+                            if(data[i].affiliationType.value == 'education'){
+                                this.educations.push(data[i]);
+                                /*
+                                groupedActivitiesUtil.group(
+                                    data[i],
+                                    GroupedActivities.AFFILIATION, 
+                                    this.affiliationService.educations
+                                );
+                                */
+                                
+                            } else if ( data[i].affiliationType.value == 'employment' ) {
+                                this.employments.push( data[i] );
+                                 /*
+                                groupedActivitiesUtil.group(
+                                    data[i],
+                                    GroupedActivities.AFFILIATION,
+                                    this.affiliationService.employments
+                                );
+                                */
+                            }
                         }
-                        else if (
-                            data[i].affiliationType != null 
-                            && data[i].affiliationType.value != null
-                            && data[i].affiliationType.value == 'employment'
-                        ){
-                            this.employments.push( data[i] );
-                            /*
-                            groupedActivitiesUtil.group(
-                                data[i],
-                                GroupedActivities.AFFILIATION,
-                                this.affiliationService.employments
-                            );
-                            */
-                        }
+
                     };
+                    console.log('educations', this.educations);
+                    console.log('employments', this.employments);
+                    /*
                     if (this.affiliationService.affiliationsToAddIds.length == 0) {
                         this.affiliationService.loading = false;
                         //$rootScope.$apply();
@@ -304,6 +305,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                             50
                         );
                     }
+                    */
 
                 },
                 error => {
