@@ -59,7 +59,9 @@ public class LoadRinggoldData {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadRinggoldData.class);
     @Option(name = "-z", usage = "Path to zip file containing Ringgold data to process")
     private File zipFile;
-
+    @Option(name = "-d", usage = "Path to directory containing Ringgold data to process")
+    private File directory;
+    
     private OrgDao orgDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
@@ -80,6 +82,26 @@ public class LoadRinggoldData {
     private Map<Integer, List<JsonNode>> identifiersMap = new HashMap<>();
     private Map<Integer, JsonNode> dnNameMap = new HashMap<>();
     private Map<Integer, Integer> deletedElementsMap = new HashMap<>();
+
+    public void setOrgDao(OrgDao orgDao) {
+        this.orgDao = orgDao;
+    }
+
+    public void setOrgDisambiguatedDao(OrgDisambiguatedDao orgDisambiguatedDao) {
+        this.orgDisambiguatedDao = orgDisambiguatedDao;
+    }
+
+    public void setOrgDisambiguatedExternalIdentifierDao(OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao) {
+        this.orgDisambiguatedExternalIdentifierDao = orgDisambiguatedExternalIdentifierDao;
+    }
+    
+    public void setZipFile(File zipFile) {
+        this.zipFile = zipFile;
+    }
+
+    public void setDirectory(File directory) {
+        this.directory = directory;
+    }
 
     public static void main(String[] args) {
         LoadRinggoldData loadRinggoldData = new LoadRinggoldData();
@@ -110,12 +132,20 @@ public class LoadRinggoldData {
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
-        if (NullUtils.anyNull(zipFile)) {
-            throw new CmdLineException(parser, "-f must be specificed");
+        if (NullUtils.allNull(zipFile, directory)) {
+            throw new CmdLineException(parser, "One of -f | -d must be specificed");
+        }
+        
+        if(zipFile != null && !zipFile.exists()) {
+            throw new CmdLineException(parser, "Couldn't find the zip file at: " + zipFile.getPath());
+        }
+        
+        if(directory != null && (!directory.exists() || !directory.isDirectory()) ) {
+            throw new CmdLineException(parser, "Couldn't find the directory at: " + directory.getPath());
         }
     }
 
-    private void execute() {
+    public void execute() {
         LOGGER.info("Execute");
         if (zipFile != null) {
             try (ZipFile zip = new ZipFile(zipFile)) {
@@ -131,6 +161,32 @@ public class LoadRinggoldData {
                         "Number added={}, number updated={}, number unchanged={}, obsoleted={}, num deprecated={}, skip deletion={}, added orgs={}, updated orgs={}, added ext ids={}",
                         new Object[] { numAdded, numUpdated, numUnchanged, numObsoleted, numDeprecated, numSkipDeletion, numAddedOrgs, numUpdatedOrgs, numAddedExtIds });
             }
+        } else {
+            File altNamesFile = null;
+            File deletedElementsFile = null;
+            File identifiersFile = null;
+            File institutesFile = null;
+            for(File file : directory.listFiles()) {
+                if(file.isFile()) {
+                    if(file.getName().endsWith("_alt_names.json")) {
+                        altNamesFile = file;
+                    } else if(file.getName().endsWith("_deleted_ids.json")) {
+                        deletedElementsFile = file;
+                    } else if(file.getName().endsWith("_identifiers.json")) {
+                        identifiersFile = file;
+                    } else if(file.getName().endsWith("_institutions.json")) {
+                        institutesFile = file;
+                    }
+                }
+            }
+            if(institutesFile == null || !institutesFile.exists() || !institutesFile.isFile()) {
+                throw new RuntimeException("Couldent find _institutions.json file or it is invalid");
+            }
+            processAltNamesFile(altNamesFile);
+            processIdentifiersFile(identifiersFile);
+            processDeletedElementsFile(deletedElementsFile);
+            processInstitutions(institutesFile);
+            processDeletedElements();
         }
     }
 
@@ -140,10 +196,23 @@ public class LoadRinggoldData {
         Reader reader = new InputStreamReader(is, RINGGOLD_CHARACTER_ENCODING);
         return JsonUtils.read(reader);
     }
+    
+    private JsonNode getJsonNode(File file) {
+        return JsonUtils.read(file);
+    }
 
     private void processAltNamesFile(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
         LOGGER.info("Processing alt names");
         JsonNode altNames = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_alt_names.json"));
+        processAltNames(altNames);
+    }
+    
+    private void processAltNamesFile(File file) {
+        JsonNode altNames = getJsonNode(file);
+        processAltNames(altNames);
+    }
+    
+    private void processAltNames(JsonNode altNames) {
         altNames.forEach(altName -> {
             Integer ringgoldId = altName.get("ringgold_id").asInt();
             if (altName.has("notes") && "DN".equals(altName.get("notes").asText())) {
@@ -178,8 +247,17 @@ public class LoadRinggoldData {
     }
 
     private void processIdentifiersFile(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
-        LOGGER.info("Processing identifiers");
         JsonNode identifiers = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_identifiers.json"));
+        processIdentifiers(identifiers);
+    }
+    
+    private void processIdentifiersFile(File file) {
+        JsonNode identifiers = getJsonNode(file);
+        processIdentifiers(identifiers);
+    }
+    
+    private void processIdentifiers(JsonNode identifiers) {
+        LOGGER.info("Processing identifiers");
         identifiers.forEach(identifier -> {
             Integer ringgoldId = identifier.get("ringgold_id").asInt();
             identifiersMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(identifier);
@@ -187,8 +265,17 @@ public class LoadRinggoldData {
     }
 
     private void processDeletedElementsFile(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
-        LOGGER.info("Processing deleted elements");
         JsonNode deletedIds = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_deleted_ids.json"));
+        processDeletedElements(deletedIds);
+    }
+    
+    private void processDeletedElementsFile(File file) {
+        JsonNode deletedIds = getJsonNode(file);
+        processDeletedElements(deletedIds);
+    }
+    
+    private void processDeletedElements(JsonNode deletedIds) {
+        LOGGER.info("Processing deleted elements");
         deletedIds.forEach(element -> {
             Integer oldId = element.has("old_ringgold_id") ? element.get("old_ringgold_id").asInt() : null;
             Integer newId = element.has("new_ringgold_id") ? element.get("new_ringgold_id").asInt() : null;
@@ -197,8 +284,17 @@ public class LoadRinggoldData {
     }
 
     private void processInstitutions(ZipFile mainFile) throws UnsupportedEncodingException, IOException {
-        LOGGER.info("Processing institutions");
         JsonNode institutions = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_institutions.json"));
+        processInstitutions(institutions);
+    }
+    
+    private void processInstitutions(File file) {
+        JsonNode institutions = getJsonNode(file);
+        processInstitutions(institutions);
+    }
+    
+    private void processInstitutions(JsonNode institutions) {
+        LOGGER.info("Processing institutions");
         institutions.forEach(institution -> {
             OrgDisambiguatedEntity entity = processInstitution(institution);
             Integer ringgoldId = institution.get("ringgold_id").asInt();
@@ -287,7 +383,9 @@ public class LoadRinggoldData {
             entity.setOrgType(type);
             entity.setRegion(state);
             entity.setSourceId(String.valueOf(ringgoldId));
-            entity.setSourceParentId(String.valueOf(parentId));
+            if(parentId > 0) {
+                entity.setSourceParentId(String.valueOf(parentId));                
+            }
             entity.setSourceType(RINGGOLD_SOURCE_TYPE);
             entity.setIndexingStatus(IndexingStatus.PENDING);
             orgDisambiguatedDao.persist(entity);
@@ -408,5 +506,4 @@ public class LoadRinggoldData {
 
         return false;
     }
-
 }

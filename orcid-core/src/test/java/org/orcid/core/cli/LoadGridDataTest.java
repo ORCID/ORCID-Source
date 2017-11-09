@@ -109,8 +109,7 @@ public class LoadGridDataTest {
         assertEquals(2L, loadGridData.getObsoletedOrgs());
         assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
     }
-
-    @SuppressWarnings("deprecation")
+    
     @Test
     public void execute_JustAddOneExeternalIdentifier_Test() throws URISyntaxException {
         when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
