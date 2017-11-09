@@ -47,6 +47,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEnti
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.jaxb.model.message.Iso3166Country;
 
+@SuppressWarnings("deprecation")
 public class LoadRinggoldDataTest {
 
     @Mock
@@ -406,11 +407,9 @@ public class LoadRinggoldDataTest {
 
     @Test
     public void test_AddExternalIdentifier() throws URISyntaxException {
-        fail();
-
         setupInitialMocks();
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_1/").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_AddExternalIdentifier/").toURI());
         File testDirectory = path.toFile();
         assertTrue(testDirectory.exists());
 
@@ -420,29 +419,50 @@ public class LoadRinggoldDataTest {
         verify(mockOrgDisambiguatedDao, times(0)).persist(Matchers.any());
         verify(mockOrgDisambiguatedDao, times(0)).merge(Matchers.any());
 
-        verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
+        ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
+        verify(mockOrgDisambiguatedExternalIdentifierDao, times(1)).persist(captor.capture());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
-
+        List<OrgDisambiguatedExternalIdentifierEntity> list = captor.getAllValues();
+        assertEquals(1, list.size());
+        OrgDisambiguatedExternalIdentifierEntity entity = list.get(0);
+        assertEquals("9", entity.getIdentifier());
+        assertEquals("XXX9", entity.getIdentifierType());
+        assertEquals(false, entity.getPreferred());
+        assertEquals(Long.valueOf(1000), entity.getOrgDisambiguated().getId());        
+        
         verify(mockOrgDao, times(0)).persist(Matchers.any());
         verify(mockOrgDao, times(0)).merge(Matchers.any());
     }
 
     @Test
     public void test_DeprecateADisambiguatedOrg() throws URISyntaxException {
-        fail();
-
         setupInitialMocks();
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_1/").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_DeprecateADisambiguatedOrg/").toURI());
         File testDirectory = path.toFile();
         assertTrue(testDirectory.exists());
 
         loader.setDirectory(testDirectory);
         loader.execute();
 
+        ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, times(0)).persist(Matchers.any());
-        verify(mockOrgDisambiguatedDao, times(0)).merge(Matchers.any());
-
+        verify(mockOrgDisambiguatedDao, times(1)).merge(captor.capture());
+        List<OrgDisambiguatedEntity> list = captor.getAllValues();
+        assertEquals(1, list.size());
+        OrgDisambiguatedEntity entity = list.get(0);
+        assertEquals("City#1", entity.getCity());
+        assertEquals(Iso3166Country.US, entity.getCountry());
+        assertEquals(Long.valueOf(1000), entity.getId());
+        assertEquals(IndexingStatus.REINDEX, entity.getIndexingStatus());
+        assertEquals("1. Name", entity.getName());
+        assertEquals("type/1", entity.getOrgType());
+        assertEquals("State#1", entity.getRegion());
+        assertEquals("1", entity.getSourceId());
+        assertEquals("4", entity.getSourceParentId());
+        assertEquals("RINGGOLD", entity.getSourceType());
+        assertEquals("DEPRECATED", entity.getStatus());        
+        
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
 
@@ -452,11 +472,9 @@ public class LoadRinggoldDataTest {
 
     @Test
     public void test_LinkExistingOrgToNewDisambiguatedOrg() throws URISyntaxException {
-        fail();
-
         setupInitialMocks();
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_1/").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_LinkExistingOrgToNewDisambiguatedOrg/").toURI());
         File testDirectory = path.toFile();
         assertTrue(testDirectory.exists());
 
@@ -469,8 +487,17 @@ public class LoadRinggoldDataTest {
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(Matchers.any());
 
+        ArgumentCaptor<OrgEntity> captor = ArgumentCaptor.forClass(OrgEntity.class);
         verify(mockOrgDao, times(0)).persist(Matchers.any());
-        verify(mockOrgDao, times(0)).merge(Matchers.any());
+        verify(mockOrgDao, times(1)).merge(captor.capture());
+        List<OrgEntity> list = captor.getAllValues();
+        assertEquals(1, list.size());
+        OrgEntity entity = list.get(0);
+        assertEquals("AltCity#3", entity.getCity());
+        assertEquals(Iso3166Country.CR, entity.getCountry());
+        assertEquals("Testing Org", entity.getName());
+        assertEquals(Long.valueOf(3000), entity.getOrgDisambiguated().getId());
+        assertEquals(null, entity.getRegion());               
     }
 
     private void setupInitialMocks() {
@@ -594,6 +621,8 @@ public class LoadRinggoldDataTest {
                             // ringgold_id * 1000
                             od.setId(Long.valueOf(2000));
                             entity.setOrgDisambiguated(od);
+                        } else if("Testing Org".equals(name)) {
+                            // This is an org not linked to any disambiguated org yet
                         } else {
                             return null;
                         }

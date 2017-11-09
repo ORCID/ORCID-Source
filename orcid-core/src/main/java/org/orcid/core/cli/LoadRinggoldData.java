@@ -314,7 +314,7 @@ public class LoadRinggoldData {
         LOGGER.info("Processing deleted elements");
         deletedElementsMap.forEach((oldId, newId) -> {
             OrganizationStatus status = OrganizationStatus.OBSOLETE;
-            if (newId == null) {
+            if (newId != null) {
                 status = OrganizationStatus.DEPRECATED;
             }
 
@@ -325,6 +325,7 @@ public class LoadRinggoldData {
                 // Check if the status is up to date, if not, update it
                 if (!status.name().equals(existingEntity.getStatus())) {
                     existingEntity.setStatus(status.name());
+                    existingEntity.setIndexingStatus(IndexingStatus.REINDEX);
                     if (newId != null) {
                         existingEntity.setSourceParentId(String.valueOf(newId));
                     }
@@ -383,7 +384,7 @@ public class LoadRinggoldData {
             entity.setOrgType(type);
             entity.setRegion(state);
             entity.setSourceId(String.valueOf(ringgoldId));
-            if(parentId > 0) {
+            if(parentId != null && parentId > 0) {
                 entity.setSourceParentId(String.valueOf(parentId));                
             }
             entity.setSourceType(RINGGOLD_SOURCE_TYPE);
