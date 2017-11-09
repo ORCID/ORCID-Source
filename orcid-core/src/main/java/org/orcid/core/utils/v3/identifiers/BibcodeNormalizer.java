@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 public class BibcodeNormalizer implements Normalizer {
 
     private static final List<String> canHandle = Lists.newArrayList("bibcode");
-    private static final Pattern pattern = Pattern.compile("(?:^|[^a-zA-Z0-9\\.])([0-9]{4}[\\.a-zA-Z0-9]{15})(?:$|[^a-zA-Z0-9\\.])");
+    private static final Pattern pattern = Pattern.compile("(?:^|[Bb][Ii][Bb][Bc][Oo][Dd][Ee]:?\\s*|[^a-zA-Z0-9\\.])([0-9]{4}[\\.a-zA-Z0-9]{15})(?:$|[^a-zA-Z0-9\\.])");
     
     @Override
     public List<String> canHandle() {
