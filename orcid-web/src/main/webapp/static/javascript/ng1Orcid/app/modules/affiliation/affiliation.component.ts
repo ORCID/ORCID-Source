@@ -1,5 +1,8 @@
 declare var $: any;
 declare var ActSortState: any;
+declare var GroupedActivities: any;
+declare var groupedActivitiesUtil: any;
+declare var sortState: any;
 declare var typeahead: any;
 
 //Import all the angular components
@@ -24,6 +27,9 @@ import { AffiliationService }
 import { EmailService } 
     from '../../shared/emailService.ts';
 
+import { GroupedActivitiesUtilService } 
+    from '../../shared/groupedActivitiesService.ts';
+
 import { ModalService } 
     from '../../shared/modalService.ts'; 
 
@@ -47,18 +53,22 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     displayAffiliationExtIdPopOver: any;
     displayURLPopOver: any;
     editAffiliation: any;
+    educations: any;
     emails: any;
+    employments: any;
     fixedTitle: string;
     moreInfo: any;
     moreInfoCurKey: any;
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
+    sortHideOption: boolean;
     sortState: any;
 
     constructor(
         private affiliationService: AffiliationService,
         private emailService: EmailService,
+        //private groupedActivitiesUtilService: GroupedActivitiesUtilService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService
     ) {
@@ -72,15 +82,17 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.displayAffiliationExtIdPopOver = {};
         this.displayURLPopOver = {};
         this.editAffiliation = {};
+        this.educations = [];
         this.emails = {};
+        this.employments = [];
         this.fixedTitle = '';
         this.moreInfo = {};
         this.moreInfoCurKey = null;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.showElement = {};
-        //this.sortState = new ActSortState(this.GroupedActivities.AFFILIATION);
-        this.sortState = '';
+        this.sortHideOption = false;
+        this.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     }
 
     addAffiliation(): void {
@@ -222,6 +234,10 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         */
     };
 
+    displayEducation(): boolean {
+        return this.workspaceSrvc.displayEducation;
+    }
+
     getAffiliationsId(): void {
         this.affiliationService.getAffiliationsId()
         .takeUntil(this.ngUnsubscribe)
@@ -231,10 +247,68 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
                 if( data.length != 0 ) {
                     let affiliationIds = data.splice(0,20).join();
-                    //this.getAffiliationsById( affiliationIds );
+                    this.getAffiliationsById( affiliationIds );
                     
                 }
+            },
+            error => {
+                console.log('getBiographyFormError', error);
+            } 
+        );
+    };
 
+    getAffiliationsById( affiliationIds ): void {
+        this.affiliationService.getAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+
+                    console.log('this.getAffiliationsById', data);
+                    for (let i in data) {
+                        if (data[i].affiliationType != null 
+                            && data[i].affiliationType.value != null
+                            && data[i].affiliationType.value == 'education'
+                        ){
+                            this.educations.push(data[i]);
+                            /*
+                            groupedActivitiesUtil.group(
+                                data[i],
+                                GroupedActivities.AFFILIATION, 
+                                this.affiliationService.educations
+                            );
+                            */
+                        }
+                        else if (
+                            data[i].affiliationType != null 
+                            && data[i].affiliationType.value != null
+                            && data[i].affiliationType.value == 'employment'
+                        ){
+                            this.employments.push( data[i] );
+                            /*
+                            groupedActivitiesUtil.group(
+                                data[i],
+                                GroupedActivities.AFFILIATION,
+                                this.affiliationService.employments
+                            );
+                            */
+                        }
+                    };
+                    if (this.affiliationService.affiliationsToAddIds.length == 0) {
+                        this.affiliationService.loading = false;
+                        //$rootScope.$apply();
+                    } else {
+                        //$rootScope.$apply();
+                        setTimeout(
+                            function () {
+                                //this.affiliationService.getAffiliationsById(path);
+                            },
+                            50
+                        );
+                    }
+
+                },
+                error => {
+                    console.log('getBiographyFormError', error);
+                } 
                 /*
 
         addAffiliationToScope: function(path) {
@@ -278,24 +352,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             };
         }
         */
-            },
-            error => {
-                console.log('getBiographyFormError', error);
-            } 
-        );
-    };
-
-    getAffiliationsById( affiliationIds ): void {
-        this.affiliationService.getAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
-            .subscribe(
-                data => {
-
-                    console.log('this.getAffiliationsById', data);
-
-                },
-                error => {
-                    console.log('getBiographyFormError', error);
-                } 
         );
     };
 
@@ -507,6 +563,10 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    toggleEducation(): void {
+        this.workspaceSrvc.toggleEducation();
+    }
+
     unbindTypeahead(): void {
         $('#affiliationName').typeahead('destroy');
     };
@@ -523,7 +583,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         console.log('initi affiliation component');
-        //this.getAffiliationsId();
+        this.getAffiliationsId();
     }; 
 }
 

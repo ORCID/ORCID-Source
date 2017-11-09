@@ -11,16 +11,16 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class AffiliationService {
-    private educations: any;
-    private employments: any;
+    public educations: any;
+    public employments: any;
     private headers: Headers;
     private urlAffiliation: string;
     private urlAffiliationId: string;
     private urlAffiliationById: string;
     private urlAffiliationDisambiguated: string;
     private urlAffiliations: string;
-    private loading: boolean;
-    private affiliationsToAddIds: any;
+    public loading: boolean;
+    public affiliationsToAddIds: any;
 
     constructor( private http: Http ){
         this.affiliationsToAddIds = null,

@@ -8,12 +8,12 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class WorkspaceService {
-    private displayEducation: boolean;
-    private displayEmployment: boolean;
-    private displayFunding: boolean;
-    private displayPersonalInfo: boolean;
-    private displayWorks: boolean;
-    private displayPeerReview: boolean;
+    public displayEducation: boolean;
+    public displayEmployment: boolean;
+    public displayFunding: boolean;
+    public displayPersonalInfo: boolean;
+    public displayWorks: boolean;
+    public displayPeerReview: boolean;
 
     constructor(){
         this.displayEducation = true;

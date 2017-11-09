@@ -61,6 +61,9 @@ import { CommonService }
 import { EmailService } 
     from '../shared/emailService.ts'; 
 
+import { GroupedActivitiesUtilService } 
+    from '../shared/groupedActivitiesService.ts';
+
 import { ModalService } 
     from '../shared/modalService.ts';
 
@@ -130,6 +133,7 @@ export class RootCmp {
         CommonService,
         CountryService,
         EmailService,
+        //GroupedActivitiesUtilService,
         ModalService,
         NameService,
         WorkspaceService
