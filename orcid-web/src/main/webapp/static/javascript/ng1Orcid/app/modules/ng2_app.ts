@@ -38,6 +38,8 @@ import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 import { NameNg2Module } 
     from './name/name.ts';
+import { SearchNg2Module } 
+    from './search/search.ts';
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 import { WorksPrivacyPreferencesNg2Module } 
@@ -58,7 +60,6 @@ import { ModalService }
     from '../shared/modalService.ts';
 import { NameService } 
     from '../shared/nameService.ts'; 
-
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -105,6 +106,7 @@ export class RootCmp {
         EmailVerificationSentMesssageNg2Module,
         ModalNg2Module,
         NameNg2Module,
+        SearchNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],

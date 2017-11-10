@@ -26,6 +26,8 @@ import { ModalModule }
     from './modalNg2/modal-ng.ts';
 import { NameModule } 
     from './name/name.ts';
+import { SearchModule } 
+    from './search/search.ts';
 import { WidgetModule } 
     from './widget/widget.ts';
 import { WorksPrivacyPreferencesModule } 
@@ -45,6 +47,7 @@ export const orcidApp = angular.module(
         EmailVerificationSentMesssageModule.name,
         ModalModule.name,
         NameModule.name,
+        SearchModule.name,
         WidgetModule.name,
         WorksPrivacyPreferencesModule.name
     ]
