@@ -69,7 +69,10 @@ public class MongoMessageProcessor implements Consumer<BaseMessage> {
     private MongoCollection<Document> col;
     private final UpdateOptions upsert = new UpdateOptions().upsert(true);
 
-    MongoMessageProcessor(@Value("${org.orcid.message-listener.mongo.enabled}") boolean isMongoEnabled) {
+    MongoMessageProcessor(@Value("${org.orcid.message-listener.mongo.enabled:false}") boolean isMongoEnabled) {
+        if(!isMongoEnabled) {
+            LOG.warn("Mongo is disabled");
+        }
         this.isMongoEnabled = isMongoEnabled;
         mapper = new ObjectMapper();
         JaxbAnnotationModule module = new JaxbAnnotationModule();
