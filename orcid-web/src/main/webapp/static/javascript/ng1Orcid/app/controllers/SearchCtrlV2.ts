@@ -166,8 +166,7 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
             $scope.getAffiliations = function(result){
                 if(!result['affiliationsRequestSent']){
                     result['affiliationsRequestSent'] = true;
-                    var activities = {};
-                    result['affiliations'] = '';
+                    result['affiliations'] = [];
                     var orcid = result['orcid-identifier'].path;
                     var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
                     $.ajax({
@@ -175,15 +174,15 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                         dataType: 'json',
                         headers: { Accept: 'application/json'},
                         success: function(data) {
-                            console.log(data);
                             if(data.employments){
                                 for(var i in data.employments['employment-summary']){
-                                    result['affiliations'] += (', ' + data.employments['employment-summary'][i]['organization']['name']);
+                                    result['affiliations'].push(data.employments['employment-summary'][i]['organization']['name']);
                                 }
                             }
                             if(data.educations){
                                 for(var i in data.educations['education-summary']){
-                                    result['affiliations'] += (', ' + data.educations['education-summary'][i]['organization']['name']);
+                                    result['affiliations'].push(data.educations['education-summary'][i]['organization']['name']);
+
                                 }
                             }
                         }
@@ -198,7 +197,7 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                 } else {
                     name = "";
                 }*/            
-                return result['affiliations']; 
+                return result['affiliations'].join(", "); 
             };
 
             $scope.isValid = function(){
