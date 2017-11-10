@@ -482,8 +482,8 @@ public class NotificationManagerImpl implements NotificationManager {
         addMessageParams(templateParams, orcidProfile);
 
         // Generate body from template
-        String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_reminder_email_html.ftl", templateParams);
+        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);
     }
 
