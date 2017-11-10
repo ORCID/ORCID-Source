@@ -909,6 +909,26 @@
     </script>
 </@orcid.checkFeatureStatus>
 <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false> 
+    <script type="text/ng-template" id="revoke-delegate-modal">
+        <div class="lightbox-container">
+            <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
+             <p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
+            <form ng-submit="revoke()">
+                <div ng-show="isPasswordConfirmationRequired">
+                    <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                    <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                    <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                    <span class="orcid-error" ng-show="errors.length > 0">
+                        <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                    </span>
+                </div>
+                <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+                <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+            </form>
+            <div ng-show="errors.length === 0">
+            </div>
+        </div>
+    </script>
 </@orcid.checkFeatureStatus>
    
 <script type="text/ng-template" id="revoke-shibboleth-account-modal">
