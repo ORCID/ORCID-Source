@@ -43,22 +43,21 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
-import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
@@ -66,6 +65,9 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.jaxb.model.v3.dev1.notification.Notification;
+import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
@@ -74,8 +76,6 @@ import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.Items;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermissions;
-import org.orcid.jaxb.model.v3.dev1.notification.Notification;
-import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
 import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.GenericDao;
@@ -345,6 +345,13 @@ public class NotificationManagerImpl implements NotificationManager {
         String html = templateManager.processTemplate("locked_orcid_email_html.ftl", templateParams);
 
         mailGunManager.sendEmail(LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
+    }
+    
+    @Override
+    public void sendVerificationEmailToNonPrimaryEmails(String userOrcid) {
+        emailManager.getEmails(userOrcid).getEmails().stream().filter(e -> !e.isPrimary()).map(e -> e.getEmail()).forEach(e -> {
+            sendVerificationEmail(userOrcid, e);
+        });
     }
     
     // look like the following is our best best for i18n emails

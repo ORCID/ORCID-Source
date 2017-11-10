@@ -676,6 +676,7 @@ public class RegistrationController extends BaseController {
         LOGGER.debug("About to create profile from registration email={}, sessionid={}", email, sessionId);
         String newUserOrcid = registrationManager.createMinimalRegistration(registration, usedCaptcha, locale, ip);
         notificationManager.sendWelcomeEmail(newUserOrcid, email);
+        notificationManager.sendVerificationEmailToNonPrimaryEmails(newUserOrcid);
         request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
         LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
                 new Object[] { newUserOrcid, email, sessionId });
