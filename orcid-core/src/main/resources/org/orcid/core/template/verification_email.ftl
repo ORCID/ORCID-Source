@@ -19,7 +19,7 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.verify.thank_you" />
+<#if isPrimary?? && isPrimary><@emailMacros.msg "email.verify.primary_reminder" /><@emailMacros.space /></#if><@emailMacros.msg "email.verify.thank_you" />
 
 ${verificationUrl}?lang=${locale}
 

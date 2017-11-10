@@ -346,35 +346,56 @@ public class NotificationManagerImpl implements NotificationManager {
 
         mailGunManager.sendEmail(LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
-
+    
     // look like the following is our best best for i18n emails
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     @Override
     public void sendVerificationEmail(String userOrcid, String email) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);                
-        Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        
-        String subject = getSubject("email.subject.verify_reminder", userLocale);
-        
-        org.orcid.jaxb.model.v3.dev1.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
-        
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("primaryEmail", primaryEmail.getEmail());
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
         String emailFriendlyName = deriveEmailFriendlyName(profile);
-        templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("subject", subject);
-        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("orcid", userOrcid);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-
-        addMessageParams(templateParams, userLocale);
-
+        Locale locale = getUserLocaleFromProfileEntity(profile);
+        String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
+        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+    }
+
+    private String createSubjectForVerificationEmail(String email, String primaryEmail, Locale userLocale) {
+        return getSubject(primaryEmail.equalsIgnoreCase(email) ? "email.subject.verify_reminder_primary" : "email.subject.verify_reminder", userLocale);
+    }
+
+    @Override
+    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
+        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
+        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, orcidProfile.getOrcidIdentifier().getPath(), email,
+                primaryEmail, locale);
+        // Generate body from template
+        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+    }
+
+    private Map<String, Object> createParamsForVerificationEmail(String subject, String emailFriendlyName, String orcid, String email, String primaryEmail,
+            Locale locale) {
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("primaryEmail", primaryEmail);
+        templateParams.put("isPrimary", primaryEmail.equalsIgnoreCase(email));
+        templateParams.put("emailName", emailFriendlyName);
+        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("orcid", orcid);
+        templateParams.put("email", email);
+        templateParams.put("subject", subject);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        addMessageParams(templateParams, locale);
+        return templateParams;
     }
 
     public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile) {
@@ -462,29 +483,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String getSubject(String code, Locale locale) {
         return messages.getMessage(code, null, locale);
-    }
-
-    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        templateParams.put("primaryEmail", primaryEmail);
-        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
-        templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("email", email);
-        templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-
-        addMessageParams(templateParams, orcidProfile);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);
     }
 
     @Override

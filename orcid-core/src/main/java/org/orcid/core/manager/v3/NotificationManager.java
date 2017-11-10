@@ -40,9 +40,9 @@ public interface NotificationManager {
     void sendWelcomeEmail(String userOrcid, String email);
 
     void sendVerificationEmail(String userOrcid, String email);
-
-    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
-
+    
+    void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
+    
     void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile);
     
     void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile);
