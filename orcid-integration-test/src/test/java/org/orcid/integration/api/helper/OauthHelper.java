@@ -145,8 +145,7 @@ public class OauthHelper {
         assertEquals(200, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        return accessToken;
+        return (String) jsonObject.get("access_token");
     }
     
     public ClientResponse getResponse(MultivaluedMap<String, String> params, APIRequestType apiRequerstType) {

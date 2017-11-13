@@ -27,6 +27,9 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -40,19 +43,19 @@ public class RevokeController {
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;
+    private OrcidSecurityManager orcidSecurityManagerV3;
 
     public void setOrcidOauth2TokenDetailService(OrcidOauth2TokenDetailService orcidOauth2TokenDetailService) {
         this.orcidOauth2TokenDetailService = orcidOauth2TokenDetailService;
     }
 
-    public void setOrcidSecurityManager(OrcidSecurityManager orcidSecurityManager) {
-        this.orcidSecurityManager = orcidSecurityManager;
+    public void setOrcidSecurityManager(OrcidSecurityManager orcidSecurityManagerV3) {
+        this.orcidSecurityManagerV3 = orcidSecurityManagerV3;
     }
 
     @RequestMapping
     public ResponseEntity<?> revoke(HttpServletRequest request) {
-        String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
+        String clientId = SecurityContextHolder.getContext().getAuthentication().getName();        
         if (PojoUtil.isEmpty(clientId)) {
             throw new IllegalArgumentException("Unable to validate client credentials");
         }
@@ -68,7 +71,7 @@ public class RevokeController {
             token = orcidOauth2TokenDetailService.findByRefreshTokenValue(tokenToRevoke);
         }
 
-        if (token != null) {
+        if (token != null && (token.getTokenDisabled() == null || !token.getTokenDisabled())) {
             String tokenOwner = token.getClientDetailsId();
             if (clientId.equals(tokenOwner)) {
                 orcidOauth2TokenDetailService.disableAccessToken(token.getTokenValue());

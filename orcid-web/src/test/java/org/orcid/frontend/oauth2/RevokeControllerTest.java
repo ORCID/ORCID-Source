@@ -23,8 +23,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -39,32 +41,44 @@ public class RevokeControllerTest {
     private HttpServletRequest request;
 
     @Mock
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+    private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
 
     @Mock
-    private OrcidSecurityManager orcidSecurityManager;
+    private OrcidSecurityManager mockOrcidSecurityManager;
 
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+    
     private RevokeController revokeController = new RevokeController();
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        revokeController.setOrcidOauth2TokenDetailService(orcidOauth2TokenDetailService);
-        revokeController.setOrcidSecurityManager(orcidSecurityManager);
+        revokeController.setOrcidOauth2TokenDetailService(mockOrcidOauth2TokenDetailService);
+        revokeController.setOrcidSecurityManager(mockOrcidSecurityManager);
         when(request.getParameter("token")).thenReturn("token-value");
-        when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("client-id");
+        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("client-id");
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setClientDetailsId("client-id");
         token.setTokenValue("token-value");
         token.setRefreshTokenValue("refresh-token-value");
         token.setTokenDisabled(false);
-        when(orcidOauth2TokenDetailService.findNonDisabledByTokenValue("token-value")).thenReturn(token);
-        when(orcidOauth2TokenDetailService.findByRefreshTokenValue("refresh-token-value")).thenReturn(token);
+        when(mockOrcidOauth2TokenDetailService.findNonDisabledByTokenValue("token-value")).thenReturn(token);
+        when(mockOrcidOauth2TokenDetailService.findByRefreshTokenValue("refresh-token-value")).thenReturn(token);
+    }
+    
+    @After
+    public void after() {
+        revokeController.setOrcidOauth2TokenDetailService(orcidOauth2TokenDetailService);
+        revokeController.setOrcidSecurityManager(orcidSecurityManager);        
     }
 
     @Test
     public void noClientIdTest() {
-        when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
+        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
         try {
             revokeController.revoke(request);
             fail();
@@ -74,7 +88,7 @@ public class RevokeControllerTest {
             fail();
         }
 
-        when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("");
+        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("");
         try {
             revokeController.revoke(request);
             fail();
@@ -84,7 +98,7 @@ public class RevokeControllerTest {
             fail();
         }
 
-        when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("client-id");
+        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("client-id");
         try {
             revokeController.revoke(request);
         } catch (Exception e) {
@@ -124,38 +138,64 @@ public class RevokeControllerTest {
 
     @Test
     public void notOwnerTest() {
-        when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("other-client-id");
+        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("other-client-id");
+        
         revokeController.revoke(request);
 
-        verify(orcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("token-value");
-        verify(orcidOauth2TokenDetailService, times(0)).findByRefreshTokenValue(anyString());
-        verify(orcidOauth2TokenDetailService, times(0)).disableAccessToken(anyString());
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(0)).findByRefreshTokenValue(anyString());
+        verify(mockOrcidOauth2TokenDetailService, times(0)).disableAccessToken(anyString());
     }
 
     @Test
     public void tokenAlreadyDisabledOrNonExistingTest() {
         when(request.getParameter("token")).thenReturn("disabled-or-unexisting");
+        
         revokeController.revoke(request);
-        verify(orcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("disabled-or-unexisting");
-        verify(orcidOauth2TokenDetailService, times(1)).findByRefreshTokenValue("disabled-or-unexisting");
-        verify(orcidOauth2TokenDetailService, times(0)).disableAccessToken(anyString());
+        
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("disabled-or-unexisting");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findByRefreshTokenValue("disabled-or-unexisting");
+        verify(mockOrcidOauth2TokenDetailService, times(0)).disableAccessToken(anyString());
     }
 
     @Test
     public void disableByTokenTest() {
         when(request.getParameter("token")).thenReturn("token-value");
+        
         revokeController.revoke(request);
-        verify(orcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("token-value");
-        verify(orcidOauth2TokenDetailService, times(0)).findByRefreshTokenValue(anyString());
-        verify(orcidOauth2TokenDetailService, times(1)).disableAccessToken("token-value");
+        
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(0)).findByRefreshTokenValue(anyString());
+        verify(mockOrcidOauth2TokenDetailService, times(1)).disableAccessToken("token-value");
     }
 
     @Test
     public void disableByRefreshTokenTest() {
-        when(request.getParameter("token")).thenReturn("refrsh-token-value");
+        when(request.getParameter("token")).thenReturn("refresh-token-value");
+        
         revokeController.revoke(request);
-        verify(orcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("refrsh-token-value");
-        verify(orcidOauth2TokenDetailService, times(1)).findByRefreshTokenValue("refrsh-token-value");
-        verify(orcidOauth2TokenDetailService, times(1)).disableAccessToken("refrsh-token-value");
+        
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("refresh-token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findByRefreshTokenValue("refresh-token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).disableAccessToken("token-value");
+    }
+    
+    @Test
+    public void refreshTokenAlreadyDisabledTest() {
+        OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
+        token.setClientDetailsId("client-id");
+        token.setTokenValue("token-value");
+        token.setRefreshTokenValue("refresh-token-value");
+        token.setTokenDisabled(true);
+        when(mockOrcidOauth2TokenDetailService.findNonDisabledByTokenValue("token-value")).thenReturn(token);
+        when(mockOrcidOauth2TokenDetailService.findByRefreshTokenValue("refresh-token-value")).thenReturn(token);
+        when(request.getParameter("token")).thenReturn("refresh-token-value");
+        
+        revokeController.revoke(request);
+        
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("refresh-token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findByRefreshTokenValue("refresh-token-value");
+        // It should not call the disable function since it is already disabled
+        verify(mockOrcidOauth2TokenDetailService, times(0)).disableAccessToken("refresh-token-value");
     }
 }
