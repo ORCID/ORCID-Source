@@ -18,7 +18,7 @@
 -->
 <@public classes=['home'] nav="signin">
     <#include "sandbox_warning.ftl"/>
-    <div ng-controller="Social2FACtrl" ng-init="init()">
+    <div ng-controller="Institutional2FACtrl" ng-init="init()">
         <form class="form-social-sign-in" id="loginForm" ng-submit="submitCode()" method="post">
             <div class="row">
                 <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">

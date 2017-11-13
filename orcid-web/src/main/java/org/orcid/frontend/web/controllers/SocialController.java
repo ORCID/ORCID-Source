@@ -172,9 +172,14 @@ public class SocialController extends BaseController {
 
     private void validate2FACodes(String orcid, TwoFactorAuthenticationCodes codes) {
         codes.setErrors(new ArrayList<>());
-        if (codes.getRecoveryCode() != null && !codes.getRecoveryCode().isEmpty() && !backupCodeManager.verify(orcid, codes.getRecoveryCode())) {
-            codes.getErrors().add(getMessage("2FA.recoveryCode.invalid"));
-        } else if (codes.getVerificationCode() == null || codes.getVerificationCode().isEmpty()
+        if (codes.getRecoveryCode() != null && !codes.getRecoveryCode().isEmpty()) {
+            if (!backupCodeManager.verify(orcid, codes.getRecoveryCode())) {
+                codes.getErrors().add(getMessage("2FA.recoveryCode.invalid"));
+            }
+            return;
+        } 
+
+        if (codes.getVerificationCode() == null || codes.getVerificationCode().isEmpty()
                 || !twoFactorAuthenticationManager.verificationCodeIsValid(codes.getVerificationCode(), orcid)) {
             codes.getErrors().add(getMessage("2FA.verificationCode.invalid"));
         }
