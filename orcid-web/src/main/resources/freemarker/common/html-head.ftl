@@ -540,7 +540,7 @@
                                                 <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
                                             </span>
                                             <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
-                                                 <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                                 <span  *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
                                             </span>
                                             <span *ngIf="(group.startDate || group.endDate) && (group.roleTitle.value || group.departmentName.value)"> | </span> <span *ngIf="group.roleTitle.value">{{group.roleTitle.value}}</span>        
                                             <span *ngIf="group.departmentName.value">
@@ -1044,6 +1044,7 @@
                             </div>
                         </div>
                         
+                        <#if !(isPublicProfile??)>
                         <h2 class="full-name">
                             <span *ngIf="displayFullName()">{{nameForm?.creditName?.value}}
                             </span>
@@ -1051,6 +1052,7 @@
                                 {{nameForm?.givenNames?.value}} <span *ngIf="nameForm?.familyName?.value != null" >{{nameForm?.familyName?.value}}</span>
                             </span>
                         </h2>
+                        </#if>
                     </div>
                 </div>
             </div>

@@ -20,7 +20,7 @@
 
 <#include "includes/affiliate/add_affiliate_inc.ftl"/>
 
-<@orcid.checkFeatureStatus 'AFFILIATION_ORG_ID'> 
+<@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
 <affiliation-ng2></affiliation-ng2>
 </@orcid.checkFeatureStatus>
 
