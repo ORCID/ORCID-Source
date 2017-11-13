@@ -141,6 +141,7 @@
     <!-- ***************************************************** -->
     <!-- Ng2 Templates - BEGIN -->
 
+    <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
     <script type="text/ng-template" id="affiliation-ng2-template">
         <div>
@@ -667,6 +668,7 @@
         </div>
     </script>
     </#if>
+    </@orcid.checkFeatureStatus> 
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
     <script type="text/ng-template" id="biography-ng2-template">
@@ -746,6 +748,7 @@
     </#if>
 
     <!-- Country -->
+    <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
     <script type="text/ng-template" id="country-form-ng2-template">        
         <div class="edit-record <#if RequestParameters['bulkEdit']??>edit-record-bulk-edit</#if> edit-country row">
@@ -904,6 +907,7 @@
         </div>
     </script>
     </#if>
+    </@orcid.checkFeatureStatus> 
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
     <script type="text/ng-template" id="country-ng2-template">
