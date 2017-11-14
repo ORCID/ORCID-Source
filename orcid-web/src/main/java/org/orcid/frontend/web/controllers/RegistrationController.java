@@ -25,6 +25,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -291,6 +292,9 @@ public class RegistrationController extends BaseController {
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
+        Cookie justRegisteredCookie = new Cookie("justRegistered", "true");
+        justRegisteredCookie.setMaxAge(30000);
+        response.addCookie(justRegisteredCookie);
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;

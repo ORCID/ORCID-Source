@@ -18,6 +18,17 @@
 -->
 <@protected nav="record">
 <#escape x as x?html>
+
+<@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
+<#if justRegistered?? && justRegistered>
+<div class="alert alert-success">
+  <strong>
+    <@spring.message "orcid.frontend.web.thanks_for_registering"/>
+  </strong>
+</div>
+</#if>
+</@orcid.checkFeatureStatus>
+
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
   <strong>
