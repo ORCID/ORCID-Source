@@ -250,10 +250,8 @@
                 </div>
                 <div *ngIf="workspaceSrvc.displayEducation" class="workspace-accordion-content">
                     <ul id="educations-list" *ngIf="educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of educations ">***| let group of affiliationsSrvc.educations orderBy:sortState.predicate:sortState.reverse" education-put-code="{{group.putCode.value}}
-                            <div class="row"> 
-         
-                                
+                        <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of educations | orderBy: sortState.predicate:sortState.reverse" [attr.education-put-code]="group.putCode.value">
+                            <div class="row">                                 
                                 <div class="col-md-9 col-sm-9 col-xs-7">
                                     <h3 class="workspace-title">            
                                         <span>{{group.affiliationName.value}}</span>:
@@ -316,8 +314,13 @@
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers ' class="url-popover">***| orderBy:["-relationship.value", "type.value"] track by $index
-                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+
+                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"]; trackBy: trackByFn' class="url-popover">
+                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
+                                                    <!--
+                                                    ***
+                                                    <span ng-if="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
+                                                    -->
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -336,8 +339,12 @@
                                     <div class="org-ids" *ngIf="group.orgDisambiguatedId.value">
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+                                            <span class="url-popover">{{group.disambiguatedAffiliationSourceId.value}}</span>
+                                            <!--
+                                            ***
                                             <span bind-html-compile='group.disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.disambiguationSource.value:group.putCode.value:group.disambiguationSource' class="url-popover"> 
                                             </span>
+                                            -->
                                         </div>
                                         <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
                                             <span *ngIf="group.orgDisambiguatedName">{{group.orgDisambiguatedName}}</span><span *ngIf="group.orgDisambiguatedCity || group.orgDisambiguatedRegion || group.orgDisambiguatedCountry">: </span><span *ngIf="group.orgDisambiguatedCity">{{group.orgDisambiguatedCity}}</span><span *ngIf="group.orgDisambiguatedCity && group.orgDisambiguatedRegion">, </span><span *ngIf="group.orgDisambiguatedRegion">{{group.orgDisambiguatedRegion}}</span><span *ngIf="group.orgDisambiguatedCountry && (group.orgDisambiguatedCity || group.orgDisambiguatedRegion)">, </span><span *ngIf="group.orgDisambiguatedCountry">{{group.orgDisambiguatedCountry}}</span>
@@ -348,7 +355,7 @@
                                             <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
                                                 <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
                                                 <ul class="reset">
-                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
                                                         {{orgDisambiguatedExternalIdentifier.identifierType}}:  
                                                         <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> 
                                                         <span *ngIf="orgDisambiguatedExternalIdentifier.all">
@@ -368,7 +375,7 @@
                                     <div class="col-md-12">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'groups.common.created'/></strong><br /> 
-                                            <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                            <span>{{group.createdDate | ajaxFormDateToISO8601}}</span>
                                         </div>
                                     </div>  
                                 </div>
@@ -384,14 +391,14 @@
                                             </div>
                                             
                                             <div class="col-md-3 col-sm-3 col-xs-6">
-                                                <@orcid.msg 'groups.common.created'/>: <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                                <@orcid.msg 'groups.common.created'/>: <span>{{group.createdDate | ajaxFormDateToISO8601}}</span>
                                             </div>
                                                         
                                             <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
                                                 <ul class="sources-options">
                                                     <#if !(isPublicProfile??)>
                                                     <li *ngIf="group.source == '${effectiveUserOrcid}'">
-                                                        <a (click)="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.putCode.value+'-edit')">
+                                                        <a (click)="openEditAffiliation(group.getActive())" (mouseenter)="showTooltip(group.putCode.value+'-edit')" (mouseleave)="hideTooltip(group.putCode.value+'-edit')">
                                                             <span class="glyphicon glyphicon-pencil"></span>
                                                         </a>
                                                         <div class="popover popover-tooltip top edit-source-popover" *ngIf="showElement[group.putCode.value+'-edit']"> 
@@ -402,7 +409,7 @@
                                                         </div>  
                                                     </li>   
                                                     <li>
-                                                        <a id="delete-affiliation_{{group.putCode.value}}" href="" (click)="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
+                                                        <a id="delete-affiliation_{{group.putCode.value}}" href="" (click)="deleteAffiliation(group.getActive())" (mouseenter)="showTooltip(group.putCode.value+'-delete')" (mouseleave)="hideTooltip(group.putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
                                                         <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.putCode.value+'-delete']"> 
                                                             <div class="arrow"></div>
                                                             <div class="popover-content">

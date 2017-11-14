@@ -45,6 +45,10 @@ import { WidgetNg2Module }
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
+//User generated filters
+import { OrderByPipe }
+    from '../filters/orderByNg2.ts'; 
+
 //User generated services
 import { AffiliationService } 
     from '../shared/affiliationService.ts';
@@ -101,7 +105,8 @@ export class RootCmp {
         RootCmp
     ],
     declarations: [
-        RootCmp
+        RootCmp,
+        //OrderByPipe
     ],
     imports: [
         /* Ng Modules */

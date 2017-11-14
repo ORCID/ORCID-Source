@@ -567,7 +567,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleEducation(): void {
         this.workspaceSrvc.toggleEducation();
-    }
+    };
+
+    trackByFn(index, item): any {
+        return index; // or item.id
+    };
 
     unbindTypeahead(): void {
         $('#affiliationName').typeahead('destroy');

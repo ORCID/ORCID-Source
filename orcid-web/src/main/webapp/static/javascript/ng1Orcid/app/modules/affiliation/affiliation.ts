@@ -13,6 +13,14 @@ import { FormsModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
+//User generated filters
+import { OrderByPipe }
+    from '../../filters/orderByNg2.ts'; 
+
+import { AjaxFormDateToISO8601Pipe }
+    from '../../filters/ajaxFormDateToISO8601Ng2.ts'; 
+
+//User generated components
 import { AffiliationComponent } 
     from './affiliation.component.ts';
 
@@ -31,10 +39,13 @@ export const AffiliationModule = angular.module(
         imports: [
             CommonModule,
             FormsModule,
+            //OrderByPipe,
             PrivacytoggleNg2Module
         ],
         declarations: [ 
-            AffiliationComponent
+            AffiliationComponent,
+            AjaxFormDateToISO8601Pipe,
+            OrderByPipe
         ],
         entryComponents: [ 
             AffiliationComponent 
