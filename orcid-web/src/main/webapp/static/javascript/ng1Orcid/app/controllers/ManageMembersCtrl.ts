@@ -31,7 +31,7 @@ export const manageMembersCtrl = angular.module('orcidApp').controller(
             $scope.selectedScope = "";
             $scope.showError = false;
             $scope.showFindModal = false;
-            $scope.success_message = null;
+            $scope.success_message = null;            
 
             $scope.addMember = function() {
                 $.ajax({
@@ -118,7 +118,7 @@ export const manageMembersCtrl = angular.module('orcidApp').controller(
                                 for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
                                     $scope.client.redirectUris[i].actType.value = JSON.parse($scope.client.redirectUris[i].actType.value);
                                     $scope.client.redirectUris[i].geoArea.value = JSON.parse($scope.client.redirectUris[i].geoArea.value);
-                                }
+                                }                                
                             } else {
                                 $scope.client = null;
                                 $scope.member = data.memberObject;
@@ -188,6 +188,8 @@ export const manageMembersCtrl = angular.module('orcidApp').controller(
                 } else if (rUri.type.value == 'import-works-wizard'){
                     rUri.scopes.push('/orcid-profile/read-limited');
                     rUri.scopes.push('/orcid-works/create');
+                    rUri.actType = {'actType':{'errors':[], 'value':{'import-works-wizard':[]}}};
+                    rUri.geoArea = {'geoArea':{'errors':[], 'value':{'import-works-wizard':[]}}};   
                 } else if (rUri.type.value == 'import-funding-wizard'){
                     rUri.scopes.push('/orcid-profile/read-limited');
                     rUri.scopes.push('/funding/create');
@@ -196,7 +198,7 @@ export const manageMembersCtrl = angular.module('orcidApp').controller(
                     rUri.scopes.push('/peer-review/create');
                 } else if(rUri.type.value == 'institutional-sign-in') {
                     rUri.scopes.push('/authenticate');
-                }
+                }                
             };
 
             $scope.searchClient = function() {
