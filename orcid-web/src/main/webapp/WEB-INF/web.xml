@@ -110,6 +110,7 @@
     <filter-mapping>
         <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
         <url-pattern>/oauth/token</url-pattern>
+        <url-pattern>/oauth/revoke</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
