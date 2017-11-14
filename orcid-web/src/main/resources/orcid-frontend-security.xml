@@ -169,7 +169,7 @@
         <sec:anonymous enabled="false" />
         <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
         <!-- include this only if you need to authenticate clients via request parameters -->
-        <sec:custom-filter ref="customFilters" before="BASIC_AUTH_FILTER" />
+        <sec:custom-filter ref="revokeTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
     
@@ -477,6 +477,8 @@
     <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
-    </bean>            
+    </bean>                    
+    
+    <bean id="revokeTokenEndpointFilter" class="org.orcid.api.common.security.oauth.RevokeTokenEndpointFilter" />    
     
 </beans>
