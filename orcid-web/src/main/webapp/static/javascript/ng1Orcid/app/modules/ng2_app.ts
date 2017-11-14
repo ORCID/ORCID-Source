@@ -38,6 +38,7 @@ import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 import { NameNg2Module } 
     from './name/name.ts';
+import { ThanksForRegisteringNg2Module } from './thanksForRegistering/thanksForRegistering.ts';
 import { ThanksForVerifyingNg2Module } from './thanksForVerifying/thanksForVerifying.ts';
 import { WidgetNg2Module } 
     from './widget/widget.ts';
@@ -106,6 +107,7 @@ export class RootCmp {
         EmailVerificationSentMesssageNg2Module,
         ModalNg2Module,
         NameNg2Module,
+        ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module
