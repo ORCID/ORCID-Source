@@ -185,60 +185,64 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
                         if(!PojoUtil.isEmpty(entity.getUriActType())) {
                             JsonNode node = JsonUtils.readTree(entity.getUriActType());
                             List<String> elements = new ArrayList<String>();
-                            node.get("import-works-wizard").forEach(x -> {
-                                String value = x.asText(); 
-                                switch(value) {
-                                case "Articles":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.articles", locale));
-                                    break;
-                                case "Data":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.books", locale));
-                                    break;
-                                case "Books":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.data", locale));
-                                    break;
-                                case "Student Publications":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.student_publications", locale));
-                                    break;
-                                default:
-                                    elements.add(value);
-                                    break;
-                                }                                
-                                });
+                            if(node.has("import-works-wizard")) {
+                                node.get("import-works-wizard").forEach(x -> {
+                                    String value = x.asText(); 
+                                    switch(value) {
+                                    case "Articles":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.articles", locale));
+                                        break;
+                                    case "Data":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.books", locale));
+                                        break;
+                                    case "Books":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.data", locale));
+                                        break;
+                                    case "Student Publications":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.student_publications", locale));
+                                        break;
+                                    default:
+                                        elements.add(value);
+                                        break;
+                                    }                                
+                                    });
+                            }
                             clientForm.setActTypes(elements);
                         }                        
                         if(!PojoUtil.isEmpty(entity.getUriActType())) {
                             JsonNode node = JsonUtils.readTree(entity.getUriGeoArea());
                             List<String> elements = new ArrayList<String>();
-                            node.get("import-works-wizard").forEach(x -> {
-                                String value = x.asText();
-                                switch(value) {
-                                case "Africa":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.africa", locale));
-                                    break;
-                                case "Asia":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.asia", locale));
-                                    break;
-                                case "Australia":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.australia", locale));
-                                    break;
-                                case "Europe":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.europe", locale));
-                                    break;
-                                case "Global":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.global", locale));
-                                    break;                                                                
-                                case "North America":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.north_america", locale));
-                                    break;
-                                case "South America":
-                                    elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.south_america", locale));
-                                    break;                                
-                                default:
-                                    elements.add(value);
-                                    break;
-                                }                                
-                                });
+                            if(node.has("import-works-wizard")) {
+                                node.get("import-works-wizard").forEach(x -> {
+                                    String value = x.asText();
+                                    switch(value) {
+                                    case "Africa":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.africa", locale));
+                                        break;
+                                    case "Asia":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.asia", locale));
+                                        break;
+                                    case "Australia":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.australia", locale));
+                                        break;
+                                    case "Europe":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.europe", locale));
+                                        break;
+                                    case "Global":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.global", locale));
+                                        break;                                                                
+                                    case "North America":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.north_america", locale));
+                                        break;
+                                    case "South America":
+                                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.geo_area.south_america", locale));
+                                        break;                                
+                                    default:
+                                        elements.add(value);
+                                        break;
+                                    }                                
+                                    });
+                            }                            
                             clientForm.setGeoAreas(elements);
                         }
                     }
