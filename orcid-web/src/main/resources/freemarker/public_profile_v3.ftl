@@ -34,20 +34,20 @@
 					</div>
 					<div class="orcid-id-container">
 						<div class="orcid-id-options">
-						<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-		                    <div class="orcid-id-info">
-		                        <span class="mini-orcid-icon-16"></span>
-		                        <!-- Reference: orcid.js:removeProtocolString() -->
-		                        <span id="orcid-id" class="orcid-id-https">${baseUri}/${(effectiveUserOrcid)!}</span>
-		                    </div>
-		                </@orcid.checkFeatureStatus>
-                		<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-							<div class="orcid-id-info">
-						    	<span class="mini-orcid-icon"></span>
-						    	<!-- Reference: orcid.js:removeProtocolString() -->
-					       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
-							</div>
-						</@orcid.checkFeatureStatus>	
+							<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+			                    <div class="orcid-id-info">
+			                        <span class="mini-orcid-icon-16"></span>
+			                        <!-- Reference: orcid.js:removeProtocolString() -->
+			                        <span id="orcid-id" class="orcid-id-https">${baseUri}/${(effectiveUserOrcid)!}</span>
+			                    </div>
+			                </@orcid.checkFeatureStatus>
+	                		<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+								<div class="orcid-id-info">
+							    	<span class="mini-orcid-icon"></span>
+							    	<!-- Reference: orcid.js:removeProtocolString() -->
+						       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
+								</div>
+							</@orcid.checkFeatureStatus>	
 						</div>					
 					</div>
 				</div>
