@@ -160,11 +160,9 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                             if(datum.city || datum.region){
                                 forDisplay += ", ";
                             }
-                            forDisplay += datum.region;
-                            forDisplay += ", " + datum.orgType;
+                            forDisplay += datum.orgType;
                         }
                         forDisplay += '</span><hr />';
-
                         return forDisplay;
                     }
                 });
