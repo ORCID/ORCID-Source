@@ -3146,6 +3146,16 @@ p.orcid-id-container {
     margin: 2px 2px 0 0;
 }
 
+.mini-orcid-icon-16 {
+    background: url(../img/orcid_16x16.png) no-repeat;
+    background-size: 14px 14px;
+    width: 14px;
+    height: 14px;
+    display: block;
+    float: left;
+    margin: 4px 2px 0 2px;
+}
+
 .mini-icon {
     width: 30px;
     height: 30px;
