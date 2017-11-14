@@ -48,6 +48,9 @@ public enum Features implements Feature {
     
     @Label("Revoke access token if authorization code is reused")
     REVOKE_TOKEN_ON_CODE_REUSE,
+    
+    @Label("Ng2 search")
+    SEARCH_NG2,
 
     @Label("Survey link")
     SURVEY,
