@@ -459,7 +459,7 @@ public class RegistrationController extends BaseController {
                         String[] codes = { "Email.personalInfoForm.email" };
                         String[] args = { emailAddressAdditional };
                         mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Not vaild"));
-                    } else if(emailAddressAdditional.equals(reg.getEmail().getValue())){
+                    } else if(emailAddressAdditional.equalsIgnoreCase(reg.getEmail().getValue())){
                         String[] codes = { "Email.personalInfoForm.additionalEmailCannotMatchPrimary" };
                         String[] args = { emailAddressAdditional };
                         mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Additional email cannot match primary"));
@@ -538,7 +538,7 @@ public class RegistrationController extends BaseController {
     public boolean duplicateAdditionalEmails(Registration reg, String emailAddressAdditional) {
         int count = 0;
         for(Text emailCheckAdditional : reg.getEmailsAdditional()){
-            if(emailAddressAdditional.equals(emailCheckAdditional.getValue())){
+            if(emailAddressAdditional.equalsIgnoreCase(emailCheckAdditional.getValue())){
                 count++;
             }
         }
