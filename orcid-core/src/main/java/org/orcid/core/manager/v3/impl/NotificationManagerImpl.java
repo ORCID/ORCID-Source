@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDateTime;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
@@ -85,6 +88,8 @@ import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
+import org.orcid.persistence.jpa.entities.EmailEventEntity;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
@@ -98,8 +103,12 @@ import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Will Simpson
@@ -133,6 +142,11 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String WILDCARD_DESCRIPTION = "${description}";
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
+    
+    @Value("${org.orcid.core.email.verify.tooOld:15}")
+    private int emailTooOld;
+    
+    private int verifyReminderAfterDays = 7;
 
     @Resource
     private MessageSource messages;
@@ -158,6 +172,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private ProfileDao profileDaoReadOnly;
 
     @Resource
     private CustomEmailManager customEmailManager;
@@ -200,6 +217,12 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
+    
+    @Resource
+    private GenericDao<EmailEventEntity, Long> emailEventDao;
+    
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -1304,6 +1327,56 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
         return notificationAdapter.toNotification(notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, emailFrequencyDays, recordActiveDate));
+    }
+    
+    @Override
+    synchronized public void processUnverifiedEmails7Days() {
+        LOGGER.info("About to process unverIfied emails for reminder");
+        List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
+        do {
+            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+            LOGGER.info("Got batch of {} profiles with unverified emails for reminder", elements.size());
+            LocalDateTime now = LocalDateTime.now();
+            Date tooOld = now.minusDays(emailTooOld).toDate();
+            for (Pair<String, Date> element : elements) {
+                if(element.getRight() == null || element.getRight().after(tooOld)) {
+                    processUnverifiedEmails7DaysInTransaction(element.getLeft());
+                } else {
+                    // Mark is as too old to send the verification email
+                    markUnverifiedEmailAsTooOld(element.getLeft());
+                }
+            }
+        } while (!elements.isEmpty());
+    }
+
+    private void processUnverifiedEmails7DaysInTransaction(final String email) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            @Transactional
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email, LoadOptions.BIO_ONLY);
+                    sendVerificationReminderEmail(orcidProfile, email);
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+                    emailEventDao.flush();
+                } catch (Exception e) {
+                    LOGGER.error("Unable to send unverified email reminder to email: " + email, e);
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED));
+                    emailEventDao.flush();
+                }
+            }
+        });
+    }
+    
+    private void markUnverifiedEmailAsTooOld(final String email) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            @Transactional
+            protected void doInTransactionWithoutResult(TransactionStatus status) {                                
+                emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_TOO_OLD));
+                emailEventDao.flush();
+            }
+        });
     }
 
 }

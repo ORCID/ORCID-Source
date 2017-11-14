@@ -135,4 +135,6 @@ public interface NotificationManager {
     
     boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile);
 
+    void processUnverifiedEmails7Days();
+
 }
