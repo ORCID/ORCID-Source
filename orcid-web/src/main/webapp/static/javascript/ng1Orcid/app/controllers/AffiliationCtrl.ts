@@ -161,12 +161,21 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                         var forDisplay =
                             '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
                             +'<span style=\'font-size: 80%;\'>'
-                            + ' <br />' + datum.city;
+                            + ' <br />';
+                        if(datum.city){
+                            forDisplay += datum.city;
+                        }
                         if(datum.region){
-                            forDisplay += ", " + datum.region;
+                            if(datum.city){
+                                forDisplay += ", ";
+                            }
+                            forDisplay += datum.region;
                         }
                         if (datum.orgType != null && datum.orgType.trim() != ''){
-                            forDisplay += ", " + datum.orgType;
+                            if(datum.city || datum.region){
+                                forDisplay += ", ";
+                            }
+                            forDisplay += datum.orgType;
                         }
                         forDisplay += '</span><hr />';
                         return forDisplay;
