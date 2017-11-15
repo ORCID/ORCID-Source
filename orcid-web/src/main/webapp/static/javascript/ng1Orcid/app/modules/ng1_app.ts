@@ -28,7 +28,7 @@ import { ModalModule }
     from './modalNg2/modal-ng.ts';
 import { NameModule } 
     from './name/name.ts';
-    import { ThanksForRegisteringModule } 
+import { ThanksForRegisteringModule } 
     from './thanksForRegistering/thanksForRegistering.ts';
 import { ThanksForVerifyingModule } 
     from './thanksForVerifying/thanksForVerifying.ts';

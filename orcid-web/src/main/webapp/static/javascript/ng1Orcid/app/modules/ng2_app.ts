@@ -34,14 +34,18 @@ import { CountryNg2Module }
     from './country/country.ts';
 import { CountryFormNg2Module } 
     from './countryForm/countryForm.ts';
-import { EmailUnverifiedWarningNg2Module } from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
-import { EmailVerificationSentMesssageNg2Module } from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+import { EmailUnverifiedWarningNg2Module } 
+    from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
+import { EmailVerificationSentMesssageNg2Module } 
+    from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 import { NameNg2Module } 
     from './name/name.ts';
-import { ThanksForRegisteringNg2Module } from './thanksForRegistering/thanksForRegistering.ts';
-import { ThanksForVerifyingNg2Module } from './thanksForVerifying/thanksForVerifying.ts';
+import { ThanksForRegisteringNg2Module } 
+    from './thanksForRegistering/thanksForRegistering.ts';
+import { ThanksForVerifyingNg2Module } 
+    from './thanksForVerifying/thanksForVerifying.ts';
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 import { WorksPrivacyPreferencesNg2Module } 
