@@ -68,7 +68,6 @@ angular.module('orcidApp').factory(
                         }
                     } else {
                         if (this.activities[idx].visibility != vis) {
-                            console.log(this.activities[idx].visibility);
                             return false;
                         }
                     }
