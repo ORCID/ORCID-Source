@@ -94,11 +94,11 @@
     </filter>
 
     <filter-mapping>
-        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
-        <url-pattern>/oauth/token</url-pattern>
+        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>        
+        <url-pattern>/oauth/token</url-pattern>        
     </filter-mapping>
 
-    <filter-mapping>
+	<filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
