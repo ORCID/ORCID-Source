@@ -56,12 +56,15 @@ angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($
                     cache: true,
                     success: function(data) {
                         serv.currentMemberDetails = data;
+                        serv.showMemberDetailsLoader = false;
                         $rootScope.$apply();
                     }
                 }).fail(function() {
                     // something bad is happening!
                     console.log("error with member details by slug");
                     serv.feed = [];
+                    serv.currentMemberDetails = null;
+                    serv.showMemberDetailsLoader = false;
                     $rootScope.$apply();
                 });
             }

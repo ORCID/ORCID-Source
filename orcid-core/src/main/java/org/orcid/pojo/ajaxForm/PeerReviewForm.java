@@ -27,7 +27,6 @@ import org.orcid.jaxb.model.v3.dev1.common.Organization;
 import org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
@@ -37,13 +36,11 @@ import org.orcid.jaxb.model.v3.dev1.record.Role;
 import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
 import org.orcid.jaxb.model.v3.dev1.record.WorkType;
 
-public class PeerReviewForm implements ErrorsInterface, Serializable {
+public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = -6291184427922193706L;
 
     private List<String> errors = new ArrayList<String>();
-
-    private Visibility visibility;
 
     private Text putCode;
 
@@ -101,14 +98,6 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
-    }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public Text getPutCode() {
@@ -318,8 +307,8 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
             peerReview.setPutCode(Long.valueOf(putCode.getValue()));
         }
         // Visibility
-        if (visibility != null) {
-            peerReview.setVisibility(visibility);
+        if (visibility != null && visibility.getVisibility() != null) {
+            peerReview.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.getVisibility().value()));
         }
 
         // Completion date
@@ -450,7 +439,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
         // Visibility
         if (peerReview.getVisibility() != null) {
-            form.setVisibility(peerReview.getVisibility());
+            form.setVisibility(Visibility.valueOf(peerReview.getVisibility()));
         }
 
         // Completion date

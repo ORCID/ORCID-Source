@@ -162,6 +162,17 @@
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
     
+    <!-- Authenticate the client before reaching the revoke endpoint -->
+    <sec:http pattern="/oauth/revoke" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+    	<sec:csrf disabled="true"/>
+        <sec:intercept-url pattern="/oauth/revoke" access="IS_AUTHENTICATED_FULLY" />
+        <sec:anonymous enabled="false" />
+        <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
+        <!-- include this only if you need to authenticate clients via request parameters -->
+        <sec:custom-filter ref="revokeTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
+        <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
+    </sec:http>
+    
 	<sec:http use-expressions="false" pattern="/oauth/.*" 
 	    authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager" 
 	    create-session="ifRequired" request-matcher="regex" entry-point-ref="approveOauthAuthenticationEntryPoint">
@@ -474,6 +485,8 @@
     <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
-    </bean>        
+    </bean>                    
+    
+    <bean id="revokeTokenEndpointFilter" class="org.orcid.api.common.security.oauth.RevokeTokenEndpointFilter" />    
     
 </beans>

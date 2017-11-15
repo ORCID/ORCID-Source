@@ -298,12 +298,12 @@ public class WorkManagerTest extends BaseTest {
         ExternalIDs extIds1 = new ExternalIDs();
         ExternalID extId1 = new ExternalID();
         extId1.setRelationship(Relationship.SELF);
-        extId1.setType("isbn");
-        extId1.setUrl(new Url("http://isbn/1/" + time));
-        extId1.setValue("ISBN-2-CASE");
+        extId1.setType("doi");
+        extId1.setUrl(new Url("http://doi.org/10.1/CASE" + time));
+        extId1.setValue("10.1/CASE");
         extIds1.getExternalIdentifier().add(extId1);
         work1.setWorkExternalIdentifiers(extIds1);
-        work1.setWorkType(WorkType.BOOK);
+        work1.setWorkType(WorkType.JOURNAL_ARTICLE);
         bulk.getBulk().add(work1);
         
         // Work # 2
@@ -314,12 +314,12 @@ public class WorkManagerTest extends BaseTest {
         ExternalIDs extIds2 = new ExternalIDs();
         ExternalID extId2 = new ExternalID();
         extId2.setRelationship(Relationship.SELF);
-        extId2.setType("isbn");
-        extId2.setUrl(new Url("http://isbn/1/" + time));
-        extId2.setValue("isbn-2-case"); // this should fail as ISBNs are not case sensitive
+        extId2.setType("doi");
+        extId2.setUrl(new Url("http://doi.org/10.1/case" + time));
+        extId2.setValue("10.1/case"); // this should fail as dois are not case sensitive
         extIds2.getExternalIdentifier().add(extId2);
         work2.setWorkExternalIdentifiers(extIds2);
-        work2.setWorkType(WorkType.BOOK);
+        work2.setWorkType(WorkType.JOURNAL_ARTICLE);
         bulk.getBulk().add(work2);
                 
         WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
@@ -329,8 +329,8 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(updatedBulk.getBulk().get(0) instanceof Work);
         assertNotNull(((Work)updatedBulk.getBulk().get(0)).getPutCode());
         assertEquals(Relationship.SELF, ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
-        assertEquals("ISBN-2-CASE", ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals("isbn-2-case", ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());
+        assertEquals("10.1/CASE", ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("10.1/case", ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getNormalized().getValue());
         
         assertTrue(updatedBulk.getBulk().get(1) instanceof OrcidError);
         assertEquals(Integer.valueOf(9021), ((OrcidError)updatedBulk.getBulk().get(1)).getErrorCode());

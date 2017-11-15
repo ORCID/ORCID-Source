@@ -39,6 +39,7 @@ import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.SlugUtils;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,6 +190,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         retryConsumer(accessToken -> updateMemberInSalesForce(accessToken, member));
     }
 
+    @Override
+    public Opportunity retrieveOpportunity(String opportunityId) {
+        return retry(accessToken -> retrieveOpportunityFromSalesForce(accessToken, opportunityId));
+    }
+    
     @Override
     public String createOpportunity(Opportunity opportunity) {
         return retry(accessToken -> createOpportunityInSalesForce(accessToken, opportunity));
@@ -478,7 +484,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get consortium from SalesForce");
         validateSalesForceId(consortiumId);
         WebResource resource = createQueryResource(
-                "SELECT (SELECT Id, AccountId, Account.Name, Account.Public_Display_Name__c, StageName, NextStep, Consortium_member_removal_requested__c FROM ConsortiaOpportunities__r WHERE StageName In ('Negotiation/Review', 'Invoice Paid') AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='%s'",
+                "SELECT (SELECT Id, AccountId, Account.Name, Account.Public_Display_Name__c, StageName, NextStep, Consortium_member_removal_requested__c, Consortia_Lead__c FROM ConsortiaOpportunities__r WHERE StageName In ('Negotiation/Review', 'Invoice Paid') AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='%s'",
                 consortiumId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
@@ -521,9 +527,16 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      * 
      */
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
-        WebResource resource = createQueryResource(
-                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'",
-                memberId);
+        String query = new String();
+        
+        if(Features.BADGES.isActive()) {
+            query = "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'";
+        } else {
+            query = "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'";
+        }
+        
+        WebResource resource = createQueryResource(query, memberId);
+        
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting integrations list from SalesForce");
@@ -560,7 +573,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceId(accountId);
         StringBuilder query = new StringBuilder(
-                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c, Current__c From Membership_Contact_Roles__r");
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c, Current__c, Organization__c From Membership_Contact_Roles__r");
         if (!includeNonCurrent) {
             query.append(" Where Current__c = True");
         }
@@ -602,7 +615,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private String retrievePremiumConsortiumMemberTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get premium consortium member type ID from SalesForce");
-        WebResource resource1 = createQueryResource("Select Id From Member_Type__c Where Name =  'Premium Consortium Member'");
+        WebResource resource1 = createQueryResource("Select Id From Member_Type__c Where Name = 'Premium Consortium Member'");
         WebResource resource = resource1;
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
@@ -619,14 +632,30 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private String retrieveConsortiumMemberRecordTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get consortium member record type ID from SalesForce");
-        WebResource resource1 = createQueryResource("Select Id, Name, SobjectType From RecordType  Where SobjectType = 'Opportunity' And Name = 'Consortium Member'");
-        WebResource resource = resource1;
+        WebResource resource = createQueryResource("Select Id, Name, SobjectType From RecordType  Where SobjectType = 'Opportunity' And Name = 'Consortium Member'");
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting consortium member record type ID from SalesForce");
         return salesForceAdapter.extractIdFromFirstRecord(result);
     }
 
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private Opportunity retrieveOpportunityFromSalesForce(String accessToken, String opportunityId) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get opportunity from SalesForce");
+        validateSalesForceId(opportunityId);
+        WebResource resource = createObjectsResource("/Opportunity/", opportunityId);
+        ClientResponse response = doGetRequest(resource, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 200, "Error getting opportunity from SalesForce");
+        return salesForceAdapter.createOpportunityFromSalesForceRecord(result);
+    }
+    
     private <T> T retry(Function<String, T> function) {
         try {
             return function.apply(getAccessToken());

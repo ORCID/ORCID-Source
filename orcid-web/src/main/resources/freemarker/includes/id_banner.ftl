@@ -68,7 +68,7 @@
                     [dataPrivacyObj]="nameForm" 
                     (privacyUpdate)="privacyChange($event)"
                     elementId="name-privacy-toggle" 
-                    privacyNodeName="namesVisibility" 
+                    privacyNodeName="visibility" 
                 ></privacy-toggle-ng2>
 
                 <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="142948-names-in-the-orcid-registry"><i class="glyphicon glyphicon-question-sign help-glyphicon" style="width: 14px;"></i></a>
@@ -99,16 +99,21 @@
             <span><@orcid.msg 'common.orcid_id' /></span>
         </div>
         <div class="orcid-id-container">
-            <div class="orcid-id-info">
-                <span class="mini-orcid-icon"></span>
-                <!-- Reference: orcid.js:removeProtocolString() -->
-                <span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
-            </div>
             <div class="orcid-id-options">
                 <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+                    <div class="orcid-id-info">
+                        <span class="mini-orcid-icon-16"></span>
+                        <!-- Reference: orcid.js:removeProtocolString() -->
+                        <span id="orcid-id" class="orcid-id-https">${baseUri}/${(effectiveUserOrcid)!}</span>
+                    </div>
                     <a href="${baseUri}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
                 </@orcid.checkFeatureStatus>
                 <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
+                    <div class="orcid-id-info">
+                        <span class="mini-orcid-icon"></span>
+                        <!-- Reference: orcid.js:removeProtocolString() -->
+                        <span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
+                    </div>
                     <a href="${baseUriHttp}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
                 </@orcid.checkFeatureStatus>
             </div>

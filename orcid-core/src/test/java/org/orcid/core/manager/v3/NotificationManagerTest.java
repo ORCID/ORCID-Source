@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -93,6 +96,8 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.impl.NotificationDaoImpl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.EmailEventEntity;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -148,10 +153,19 @@ public class NotificationManagerTest extends DBUnitTest {
     private ProfileDao mockProfileDao;
     
     @Mock
+    private ProfileDao mockProfileDaoReadOnly;
+    
+    @Mock
     private JpaJaxbNotificationAdapter mockNotificationAdapter;
     
-    @Resource
+    @Mock
+    public GenericDao<EmailEventEntity, Long> mockEmailEventDao;
+    
+    @Resource(name = "profileDao")
     private ProfileDao profileDao;
+
+    @Resource(name = "profileDaoReadOnly")
+    private ProfileDao profileDaoReadOnly;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -173,6 +187,9 @@ public class NotificationManagerTest extends DBUnitTest {
     
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
+    
+    @Resource
+    public GenericDao<EmailEventEntity, Long> emailEventDao;
 
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
@@ -202,6 +219,8 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEventDao", profileEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "orcidOauth2TokenDetailService", mockOrcidOauth2TokenDetailService);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDaoReadOnly", mockProfileDaoReadOnly);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailEventDao", mockEmailEventDao);
         when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);        
     }
     
@@ -212,6 +231,8 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);        
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);        
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", notificationAdapter);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDaoReadOnly", profileDaoReadOnly);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailEventDao", emailEventDao);
     }
 
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
@@ -565,6 +586,28 @@ public class NotificationManagerTest extends DBUnitTest {
             assertThat(n.getPutCode(), not(anyOf(is(Long.valueOf(0)), is(Long.valueOf(3)), is(Long.valueOf(6)), is(Long.valueOf(9)))));
         }                
     }
+    
+    @Test
+    public void processUnverifiedEmails7DaysTest() {
+        List<Pair<String, Date>> emails = new ArrayList<Pair<String, Date>>();
+        Pair<String, Date> tooOld1 = Pair.of("tooOld1@test.orcid.org", LocalDateTime.now().minusDays(15).toDate());
+        Pair<String, Date> tooOld2 = Pair.of("tooOld2@test.orcid.org", LocalDateTime.now().minusDays(20).toDate());
+        Pair<String, Date> ok1 = Pair.of("michael@bentine.com", LocalDateTime.now().minusDays(7).toDate());
+        Pair<String, Date> ok2 = Pair.of("spike@milligan.com", LocalDateTime.now().minusDays(14).toDate());
+        emails.add(ok1);
+        emails.add(ok2);
+        emails.add(tooOld1);
+        emails.add(tooOld2);
+        when(mockProfileDaoReadOnly.findEmailsUnverfiedDays(Matchers.anyInt(), Matchers.anyInt(), Matchers.any())).thenReturn(emails)
+                .thenReturn(new ArrayList<Pair<String, Date>>());
+        
+        notificationManager.processUnverifiedEmails7Days();
+        
+        verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("michael@bentine.com", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+        verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("spike@milligan.com", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+        verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("tooOld1@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
+        verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("tooOld2@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
+    }     
     
     private OrcidProfile getProfile(Locale locale) throws JAXBException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));

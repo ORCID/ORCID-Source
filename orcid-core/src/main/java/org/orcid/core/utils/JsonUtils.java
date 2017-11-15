@@ -18,6 +18,7 @@ package org.orcid.core.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -55,6 +56,14 @@ public class JsonUtils {
         }
     }
 
+    public static JsonNode readTree(String jsonString) {
+        try {
+            return mapperFromJSON.readTree(jsonString);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     public static JSONObject extractObject(JSONObject parent, String key) {
         if (parent.isNull(key)) {
             return null;
@@ -106,5 +115,13 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException("Error extracting JsonNode from file", e);
         }
-    }    
+    }  
+    
+    public static JsonNode read(Reader reader) {
+        try {
+            return mapper.readTree(reader);
+        } catch (IOException e) {
+            throw new RuntimeException("Error extracting JsonNode from file", e);
+        }
+    }
 }

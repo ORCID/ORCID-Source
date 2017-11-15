@@ -17,6 +17,8 @@
 package org.orcid.core.utils.v3.identifiers;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -27,23 +29,25 @@ import com.google.common.collect.Lists;
 public class DOINormalizer implements Normalizer {
 
     private static final List<String> canHandle = Lists.newArrayList("doi");
-
+    private static final Pattern pattern = Pattern.compile("(10\\.[0-9a-zA-Z]+\\/[\\/0-9a-zA-Z\\._-]*[0-9a-zA-Z])");
+    
     @Override
     public List<String> canHandle() {
         return canHandle;
     }
 
     @Override
-    public String normalise(String type, String value) {
-        if (!type.equals("doi"))
+    public String normalise(String apiTypeName, String value) {
+        if (!canHandle.contains(apiTypeName))
             return value;
-        String returnValue = value;
-        returnValue = returnValue.replace("https://", "");
-        returnValue = returnValue.replace("http://", "");
-        returnValue = returnValue.replace("doi:", "");
-        returnValue = returnValue.replace("dx.doi.org/", "");
-        returnValue = returnValue.replace("doi.org/", "");
-        return returnValue;
+        Matcher m = pattern.matcher(value);
+        if (m.find()){
+            String n = m.group(1);
+            if (n != null){
+                return n;
+            }
+        }
+        return "";
     }
 
     @Override

@@ -166,6 +166,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
      *            token
      */
     @Override    
+    @Transactional
     public void disableAccessToken(String accessToken) {
         orcidOauth2TokenDetailDao.disableAccessToken(accessToken);
     }
@@ -179,6 +180,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
      *            the id of the user owner of the token
      */
     @Override    
+    @Transactional
     public void disableAccessToken(Long tokenId, String userOrcid) {
         if(PojoUtil.isEmpty(userOrcid) || tokenId == null) {
             throw new IllegalArgumentException("One of the provided params is empty: userOrcid='" + userOrcid + "' tokenId='" + String.valueOf(tokenId) + "'");
@@ -211,11 +213,13 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
      *            token
      */
     @Override
+    @Transactional
     public void disableAccessTokenByRefreshToken(String refreshTokenValue) {
         orcidOauth2TokenDetailDao.disableAccessTokenByRefreshToken(refreshTokenValue);
     }
 
     @Override
+    @Transactional
     public void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail) {
         // We should allow multiple tokens for the same combo user-scopes, thats why we will
         // not delete based on the authentication key
@@ -257,11 +261,13 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     }
     
     @Override
+    @Transactional
     public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID) {
         return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID);
     }
 
     @Override
+    @Transactional
     public void disableAccessTokenByUserOrcid(String userOrcid) {
         orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid);
     }

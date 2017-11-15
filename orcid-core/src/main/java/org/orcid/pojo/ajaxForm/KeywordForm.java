@@ -32,12 +32,11 @@ import org.orcid.utils.DateUtils;
  * @author Angel Montenegro
  * 
  */
-public class KeywordForm implements ErrorsInterface, Serializable {
+public class KeywordForm extends VisibilityForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
     private List<String> errors = new ArrayList<String>();
     private String putCode;
-    private String content;
-    private Visibility visibility;
+    private String content;    
     private Long displayIndex;
     private Date createdDate;
     private Date lastModified;
@@ -154,14 +153,6 @@ public class KeywordForm implements ErrorsInterface, Serializable {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public Date getCreatedDate() {

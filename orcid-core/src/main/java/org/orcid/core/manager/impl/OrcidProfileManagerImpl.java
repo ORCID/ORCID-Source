@@ -43,7 +43,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
@@ -118,7 +117,6 @@ import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
-import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -227,17 +225,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     private int claimReminderAfterDays = 8;
 
-    private int verifyReminderAfterDays = 7;
-
     @Value("${org.orcid.core.activities.max:10000}")
     private long maxNumOfActivities;
 
     @Resource
     private EncryptionManager encryptionManager;
     
-    @Value("${org.orcid.core.email.verify.tooOld:15}")
-    private int emailTooOld;
-
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = null;
     
@@ -1782,55 +1775,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         } while (!orcidsToRemind.isEmpty());
     }
 
-    @Override
-    synchronized public void processUnverifiedEmails7Days() {
-        LOG.info("About to process unclaimed profiles for reminder");
-        List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
-        do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, INDEXING_BATCH_SIZE, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
-            LOG.info("Got batch of {} unclaimed profiles for reminder", elements.size());
-            LocalDateTime now = LocalDateTime.now();
-            Date tooOld = now.minusDays(emailTooOld).toDate();
-            for (Pair<String, Date> element : elements) {
-                if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmails7DaysInTransaction(element.getLeft());
-                } else {
-                    // Mark is as too old to send the verificiation email
-                    markUnverifiedEmailAsTooOld(element.getLeft());
-                }
-            }
-        } while (!elements.isEmpty());
-    }
-
-    private void processUnverifiedEmails7DaysInTransaction(final String email) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            @Transactional
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                try {
-                    OrcidProfile orcidProfile = retrieveOrcidProfileByEmail(email, LoadOptions.BIO_ONLY);
-                    notificationManager.sendVerificationReminderEmail(orcidProfile, email);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
-                    emailEventDao.flush();
-                } catch (Exception e) {
-                    LOG.error("Unable to send unverified email reminder to email: " + email, e);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED));
-                    emailEventDao.flush();
-                }
-            }
-        });
-    }
     
-    private void markUnverifiedEmailAsTooOld(final String email) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            @Transactional
-            protected void doInTransactionWithoutResult(TransactionStatus status) {                                
-                emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_TOO_OLD));
-                emailEventDao.flush();
-            }
-        });
-    }
 
     private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {

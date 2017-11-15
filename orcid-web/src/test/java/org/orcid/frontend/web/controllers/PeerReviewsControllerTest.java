@@ -44,13 +44,13 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -217,7 +217,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setRole(Text.valueOf("reviewer"));
         form.setType(Text.valueOf("evaluation"));
         form.setUrl(Text.valueOf("http://orcid.org"));
-        form.setVisibility(Visibility.LIMITED);
+        form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED));
 
         Date completionDate = new Date();
         completionDate.setDay("01");

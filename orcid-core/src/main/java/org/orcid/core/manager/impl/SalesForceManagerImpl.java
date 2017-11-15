@@ -166,7 +166,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             }
             return details;
         }
-        throw new IllegalArgumentException("No member details found for " + memberId);
+        return null;
     }
 
     @Override
@@ -218,22 +218,21 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             if (orcid == null) {
                 return;
             }
-            SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(orcid, accountId);
-            if (connection == null) {
-                connection = new SalesForceConnectionEntity();
-                connection.setOrcid(orcid);
-                connection.setSalesForceAccountId(accountId);
-                connection.setEmail(c.getEmail());
-                salesForceConnectionDao.persist(connection);
-            }
+            addSalesForceConnection(accountId, c);
             c.setSelfServiceEnabled(true);
         });
     }
 
     @Override
-    public String retrieveAccountIdByOrcid(String orcid) {
-        SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcid(orcid);
-        return connection != null ? connection.getSalesForceAccountId() : null;
+    public List<String> retrieveAccountIdsByOrcid(String orcid) {
+        List<SalesForceConnectionEntity> connections = salesForceConnectionDao.findByOrcid(orcid);
+        return connections.stream().map(c -> c.getSalesForceAccountId()).collect(Collectors.toList());
+    }
+
+    @Override
+    public String retrievePrimaryAccountIdByOrcid(String orcid) {
+        List<SalesForceConnectionEntity> connections = salesForceConnectionDao.findByOrcid(orcid);
+        return connections.stream().filter(c -> c.isPrimary()).findFirst().get().getSalesForceAccountId();
     }
 
     @Override
@@ -260,7 +259,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public String createMember(Member member, Contact initialContact) {
-        String consortiumLeadId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        String consortiumLeadId = member.getConsortiumLeadId();
         Member consortium = retrieveMember(consortiumLeadId);
         String consortiumOwnerId = consortium.getOwnerId();
         Opportunity opportunity = new Opportunity();
@@ -402,61 +401,54 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
-    public void flagOpportunityAsClosed(String opportunityId) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        checkOpportunityUpdatePermissions(opportunityId);
-        Opportunity opportunity = new Opportunity();
-        opportunity.setId(opportunityId);
-        opportunity.setStageName(OPPORTUNITY_CLOSED_LOST);
-        salesForceDao.updateOpportunity(opportunity);
-        salesForceMembersListCache.removeAll();
-        removeMemberDetailsFromCache(accountId);
-        salesForceConsortiumCache.remove(accountId);
-    }
-
-    @Override
-    public void flagOpportunityAsRemovalRequested(String opportunityId) {
+    public void flagOpportunityAsRemovalRequested(Opportunity opportunity) {
         String userOrcid = sourceManager.retrieveRealUserOrcid();
-        String accountId = retrieveAccountIdByOrcid(userOrcid);
-        checkOpportunityUpdatePermissions(opportunityId);
-        Opportunity opportunity = new Opportunity();
-        opportunity.setId(opportunityId);
-        opportunity.setRemovalRequested(true);
-        opportunity.setNextStep("Removal requested by " + userOrcid);
-        salesForceDao.updateOpportunity(opportunity);
+        String consortiumLeadId = opportunity.getConsortiumLeadId();
+        checkOpportunityUpdatePermissions(opportunity);
+        Opportunity updatedOpportunity = new Opportunity();
+        updatedOpportunity.setId(opportunity.getId());
+        updatedOpportunity.setRemovalRequested(true);
+        updatedOpportunity.setNextStep("Removal requested by " + userOrcid);
+        salesForceDao.updateOpportunity(updatedOpportunity);
         salesForceMembersListCache.removeAll();
-        removeMemberDetailsFromCache(accountId);
-        salesForceConsortiumCache.remove(accountId);
+        removeMemberDetailsFromCache(consortiumLeadId);
+        salesForceConsortiumCache.remove(consortiumLeadId);
     }
 
     @Override
-    public void flagOpportunityAsRemovalNotRequested(String opportunityId) {
+    public void flagOpportunityAsRemovalNotRequested(Opportunity opportunity) {
         String userOrcid = sourceManager.retrieveRealUserOrcid();
-        String accountId = retrieveAccountIdByOrcid(userOrcid);
-        checkOpportunityUpdatePermissions(opportunityId);
-        Opportunity opportunity = new Opportunity();
-        opportunity.setId(opportunityId);
-        opportunity.setRemovalRequested(false);
-        opportunity.setNextStep("Removal request cancelled by " + userOrcid);
-        salesForceDao.updateOpportunity(opportunity);
+        checkOpportunityUpdatePermissions(opportunity);
+        Opportunity updatedOpportunity = new Opportunity();
+        updatedOpportunity.setId(updatedOpportunity.getId());
+        updatedOpportunity.setRemovalRequested(false);
+        updatedOpportunity.setNextStep("Removal request cancelled by " + userOrcid);
+        salesForceDao.updateOpportunity(updatedOpportunity);
         salesForceMembersListCache.removeAll();
-        removeMemberDetailsFromCache(accountId);
-        salesForceConsortiumCache.remove(accountId);
+        String consortiumLeadId = opportunity.getConsortiumLeadId();
+        removeMemberDetailsFromCache(consortiumLeadId);
+        salesForceConsortiumCache.remove(consortiumLeadId);
     }
 
     @Override
-    public void removeOpportunity(String opportunityId) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        checkOpportunityUpdatePermissions(opportunityId);
-        salesForceDao.removeOpportunity(opportunityId);
-        removeMemberDetailsFromCache(accountId);
-        salesForceConsortiumCache.remove(accountId);
+    public void removeOpportunity(Opportunity opportunity) {
+        checkOpportunityUpdatePermissions(opportunity);
+        salesForceDao.removeOpportunity(opportunity.getId());
+        String consortiumLeadId = opportunity.getConsortiumLeadId();
+        removeMemberDetailsFromCache(consortiumLeadId);
+        salesForceConsortiumCache.remove(consortiumLeadId);
     }
 
-    private void checkOpportunityUpdatePermissions(String opportunityId) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        MemberDetails memberDetails = retrieveDetails(accountId);
-        boolean authorized = memberDetails.getSubMembers().stream().anyMatch(s -> opportunityId.equals(s.getOpportunity().getId()));
+    private void checkOpportunityUpdatePermissions(Opportunity opportunity) {
+        Opportunity retrievedOpportunity = salesForceDao.retrieveOpportunity(opportunity.getId());
+        if (!opportunity.getConsortiumLeadId().equals(retrievedOpportunity.getConsortiumLeadId())) {
+            throw new IllegalStateException("Opportunity consortium lead mismatch");
+        }
+        if (!opportunity.getTargetAccountId().equals(retrievedOpportunity.getTargetAccountId())) {
+            throw new IllegalStateException("Opportunity target account mismatch");
+        }
+        List<String> accountIds = retrieveAccountIdsByOrcid(sourceManager.retrieveRealUserOrcid());
+        boolean authorized = accountIds.contains(retrievedOpportunity.getConsortiumLeadId());
         if (!authorized) {
             throw new OrcidUnauthorizedException("Insufficient permissions to update opportunity");
         }
@@ -464,8 +456,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void createContact(Contact contact) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        contact.setAccountId(accountId);
+        String accountId = contact.getAccountId();
         if (StringUtils.isBlank(contact.getEmail())) {
             String contactOrcid = contact.getOrcid();
             Email primaryEmail = emailManager.getEmails(contactOrcid).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
@@ -495,9 +486,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             contactRole.setAccountId(contact.getAccountId());
             salesForceDao.createContactRole(contactRole);
         }
-        if (salesForceConnectionDao.findByOrcid(contact.getOrcid()) == null) {
-            salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
-        }
+        addSalesForceConnection(accountId, contact);
         salesForceContactsCache.remove(accountId);
     }
 
@@ -522,14 +511,12 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         contactRole.setRoleType(ContactRoleType.MAIN_CONTACT);
         contactRole.setOpportunityId(opportunityId);
         salesForceDao.createOpportunityContactRole(contactRole);
-        if (contactOrcid != null && salesForceConnectionDao.findByOrcid(contact.getOrcid()) == null) {
-            salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
-        }
+        addSalesForceConnection(accountId, contact);
     }
 
     @Override
     public void removeContact(Contact contact) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        String accountId = contact.getAccountId();
         List<Contact> existingContacts = retrieveContactsByAccountId(accountId);
         List<Contact> updatedList = new ArrayList<>(1);
         updatedList.add(contact);
@@ -540,7 +527,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     private void removeContactAccess(Contact contact) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        String accountId = contact.getAccountId();
         String contactOrcid = contact.getOrcid();
         if (contactOrcid != null) {
             SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(contactOrcid, accountId);
@@ -552,7 +539,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void removeContactRole(Contact contact) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        String accountId = contact.getAccountId();
         List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
         contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> {
             r.setCurrent(false);
@@ -567,32 +554,51 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
      * @see SalesForceManagerImpl#updateContacts(Collection), which does check
      *      user permissions.
      */
-    void updateContact(Contact contact) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        removeContactRole(contact);
-        ContactRole contactRole = new ContactRole();
-        contactRole.setAccountId(accountId);
-        contactRole.setContactId(contact.getId());
-        contactRole.setRoleType(contact.getRole().getRoleType());
-        contactRole.setVotingContact(contact.getRole().isVotingContact());
-        String contactRoleId = salesForceDao.createContactRole(contactRole);
-        contact.getRole().setId(contactRoleId);
+    void updateContact(Contact contact, List<Contact> existingContacts) {
+        String accountId = contact.getAccountId();
+        ContactRole updatedRole = null;
+        Optional<Contact> existingContactOfSameType = existingContacts.stream()
+                .filter(existing -> contact.getId().equals(existing.getId()) && contact.getRole().getRoleType().equals(existing.getRole().getRoleType())).findFirst();
+        if (existingContactOfSameType.isPresent()) {
+            updatedRole = existingContactOfSameType.get().getRole();
+            if (!updatedRole.getId().equals(contact.getRole().getId())) {
+                removeContactRole(contact);
+            }
+        } else {
+            removeContactRole(contact);
+            updatedRole = new ContactRole();
+            updatedRole.setAccountId(accountId);
+            updatedRole.setContactId(contact.getId());
+            updatedRole.setRoleType(contact.getRole().getRoleType());
+        }
+        updatedRole.setVotingContact(contact.getRole().isVotingContact());
+        updatedRole.setCurrent(true);
+        if (updatedRole.getId() == null) {
+            updatedRole.setId(salesForceDao.createContactRole(updatedRole));
+        } else {
+            salesForceDao.updateContactRole(updatedRole);
+        }
+        contact.getRole().setId(updatedRole.getId());
         salesForceContactsCache.remove(accountId);
     }
 
     @Override
     public void updateContacts(Collection<Contact> contacts) {
-        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        String accountId = contacts.iterator().next().getAccountId();
+        if (contacts.stream().allMatch(c -> !accountId.equals(c.getAccountId()))) {
+            throw new IllegalStateException("Contacts account id inconsistent");
+        }
+        List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId, true);
+        List<Contact> currentContacts = existingContacts.stream().filter(c -> c.getRole().isCurrent()).collect(Collectors.toList());
         // Ensure contact ORCID iDs are correct by getting from registry DB.
-        addOrcidsToContacts(existingContacts);
-        checkContactUpdatePermissions(existingContacts, contacts);
+        addOrcidsToContacts(currentContacts);
+        checkContactUpdatePermissions(currentContacts, contacts);
         // Need to remove roles with validation rules in SF first
-        existingContacts.stream().filter(c -> {
+        currentContacts.stream().filter(c -> {
             return ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType()) || ContactRoleType.AGREEMENT_SIGNATORY.equals(c.getRole().getRoleType())
                     || c.getRole().isVotingContact();
         }).forEach(c -> removeContactRole(c));
-        contacts.stream().forEach(c -> updateContact(c));
+        contacts.stream().forEach(c -> updateContact(c, existingContacts));
         // Update access control list for self-service
         updateAccessControl(contacts, accountId);
         salesForceContactsCache.remove(accountId);
@@ -605,8 +611,33 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         existingConnections.stream().filter(c -> !contactOrcids.contains(c.getOrcid())).forEach(c -> salesForceConnectionDao.remove(c));
         // Give access to any contacts that do not already have access
         List<String> existingConnectionsOrcids = existingConnections.stream().map(c -> c.getOrcid()).collect(Collectors.toList());
-        contacts.stream().filter(c -> c.getOrcid() != null && !existingConnectionsOrcids.contains(c.getOrcid()))
-                .forEach(c -> salesForceConnectionDao.persist(new SalesForceConnectionEntity(c.getOrcid(), c.getEmail(), accountId)));
+        contacts.stream().filter(c -> c.getOrcid() != null && !existingConnectionsOrcids.contains(c.getOrcid())).forEach(c -> addSalesForceConnection(accountId, c));
+    }
+
+    private void addSalesForceConnection(String accountId, Contact contact) {
+        String orcid = contact.getOrcid();
+        if (orcid == null) {
+            return;
+        }
+        List<SalesForceConnectionEntity> existingConnections = salesForceConnectionDao.findByOrcid(orcid);
+        if (existingConnections.stream().anyMatch(c -> accountId.equals(c.getSalesForceAccountId()))) {
+            return;
+        }
+        SalesForceConnectionEntity newConnection = new SalesForceConnectionEntity(orcid, contact.getEmail(), accountId);
+
+        if (existingConnections.isEmpty()) {
+            newConnection.setPrimary(true);
+        } else {
+            Member member = retrieveMember(accountId);
+            if (member != null && member.getConsortiumLeadId() == null) {
+                newConnection.setPrimary(true);
+                existingConnections.stream().filter(c -> c.isPrimary()).forEach(c -> {
+                    c.setPrimary(false);
+                    salesForceConnectionDao.merge(c);
+                });
+            }
+        }
+        salesForceConnectionDao.persist(newConnection);
     }
 
     @Override

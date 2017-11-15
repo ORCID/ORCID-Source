@@ -26,6 +26,10 @@ import { ModalModule }
     from './modalNg2/modal-ng.ts';
 import { NameModule } 
     from './name/name.ts';
+    import { ThanksForRegisteringModule } 
+    from './thanksForRegistering/thanksForRegistering.ts';
+import { ThanksForVerifyingModule } 
+    from './thanksForVerifying/thanksForVerifying.ts';
 import { WidgetModule } 
     from './widget/widget.ts';
 import { WorksPrivacyPreferencesModule } 
@@ -45,6 +49,8 @@ export const orcidApp = angular.module(
         EmailVerificationSentMesssageModule.name,
         ModalModule.name,
         NameModule.name,
+        ThanksForRegisteringModule.name,
+        ThanksForVerifyingModule.name,
         WidgetModule.name,
         WorksPrivacyPreferencesModule.name
     ]
