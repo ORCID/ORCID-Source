@@ -171,6 +171,12 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         orcidOauth2TokenDetailDao.disableAccessToken(accessToken);
     }
     
+    @Override
+    @Transactional
+    public void revokeAccessToken(String accessToken) {
+        orcidOauth2TokenDetailDao.revokeAccessToken(accessToken);
+    }
+    
     /**
      * This should NOT delete the row, but merely set it as disabled
      * 
@@ -270,6 +276,5 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Transactional
     public void disableAccessTokenByUserOrcid(String userOrcid) {
         orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid);
-    }
-    
+    }        
 }
