@@ -56,7 +56,11 @@ public enum Features implements Feature {
     TWO_FACTOR_AUTHENTICATION,
     
     @Label("API analytics debug logging")
-    API_ANALYTICS_DEBUG;
+    API_ANALYTICS_DEBUG,
+    
+    @Label("Turn on angular2 features that are on development")
+    ANGULAR2_DEV;
+    
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

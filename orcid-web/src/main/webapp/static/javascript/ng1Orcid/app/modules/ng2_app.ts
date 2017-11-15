@@ -26,40 +26,62 @@ import { UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated modules imports
+import { AffiliationNg2Module } 
+    from './affiliation/affiliation.ts';
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 import { CountryNg2Module } 
     from './country/country.ts';
 import { CountryFormNg2Module } 
     from './countryForm/countryForm.ts';
-import { EmailUnverifiedWarningNg2Module } from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
-import { EmailVerificationSentMesssageNg2Module } from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+import { EmailUnverifiedWarningNg2Module } 
+    from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
+import { EmailVerificationSentMesssageNg2Module } 
+    from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 import { NameNg2Module } 
     from './name/name.ts';
-import { ThanksForRegisteringNg2Module } from './thanksForRegistering/thanksForRegistering.ts';
-import { ThanksForVerifyingNg2Module } from './thanksForVerifying/thanksForVerifying.ts';
+import { ThanksForRegisteringNg2Module } 
+    from './thanksForRegistering/thanksForRegistering.ts';
+import { ThanksForVerifyingNg2Module } 
+    from './thanksForVerifying/thanksForVerifying.ts';
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
+//User generated filters
+import { OrderByPipe }
+    from '../filters/orderByNg2.ts'; 
+
 //User generated services
+import { AffiliationService } 
+    from '../shared/affiliationService.ts';
+
 import { BiographyService } 
     from '../shared/biographyService.ts';
+
 import { CountryService } 
     from '../shared/countryService.ts'; 
+
 import { CommonService }
     from '../shared/commonService.ts'
-import { ConfigurationService } 
-    from '../shared/configurationService.ts'; 
+
 import { EmailService } 
     from '../shared/emailService.ts'; 
+
+import { GroupedActivitiesUtilService } 
+    from '../shared/groupedActivitiesService.ts';
+
 import { ModalService } 
     from '../shared/modalService.ts';
+
 import { NameService } 
     from '../shared/nameService.ts'; 
+
+import { WorkspaceService } 
+    from '../shared/workspaceService.ts'; 
 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
@@ -89,7 +111,8 @@ export class RootCmp {
         RootCmp
     ],
     declarations: [
-        RootCmp
+        RootCmp,
+        //OrderByPipe
     ],
     imports: [
         /* Ng Modules */
@@ -100,6 +123,7 @@ export class RootCmp {
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
+        AffiliationNg2Module,
         BiographyNg2Module,
         CountryNg2Module,
         CountryFormNg2Module,
@@ -117,19 +141,21 @@ export class RootCmp {
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
         },
+        AffiliationService,
         BiographyService,
         CommonService,
-        ConfigurationService,
         CountryService,
         EmailService,
+        //GroupedActivitiesUtilService,
         ModalService,
-        NameService
+        NameService,
+        WorkspaceService
     ]
 
 })
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.98');
+        console.log('v0.99');
     }
 }
