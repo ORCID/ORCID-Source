@@ -579,7 +579,6 @@
 				        </div>        
 				        <div class="row">
 				            <div class="col-sm-12">
-				                <div class="table-container">
 				                    <table class="table">
 				                        <thead>
 				                            <tr>                      
@@ -587,7 +586,12 @@
 				                                <th><@orcid.msg 'duplicate_researcher.thEmail'/></th>
 				                                <th><@orcid.msg 'duplicate_researcher.thgivennames'/></th>
 				                                <th><@orcid.msg 'duplicate_researcher.thFamilyName'/></th>
-				                                <th><@orcid.msg 'duplicate_researcher.thInstitution'/></th>                       
+				                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
+				                                	<th><@orcid.msg 'workspace_bio.Affiliations'/></th>
+				                                </@orcid.checkFeatureStatus>
+				                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
+				                                	<th><@orcid.msg 'duplicate_researcher.thInstitution'/></th>
+				                                </@orcid.checkFeatureStatus>                   
 				                            </tr>
 				                        </thead>
 				                        <tbody>
@@ -596,11 +600,15 @@
 				                                <td>{{dup.email}}</td>
 				                                <td>{{dup.givenNames}}</td>
 				                                <td>{{dup.familyNames}}</td>
-				                                <td>{{dup.institution}}</td>
+				                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
+				                                	<td ng-bind="getAffiliations(dup)">{{dup['affiliations']}}</td>
+				                                </@orcid.checkFeatureStatus> 
+				                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
+				                                	<td>{{dup.institution}}</td>
+				                                </@orcid.checkFeatureStatus>  
 				                            </tr>
 				                        </tbody>
 				                    </table>
-				                </div>
 				            </div>
 				        </div>  
 				        <div class="row margin-top-box">

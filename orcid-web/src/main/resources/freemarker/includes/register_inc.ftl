@@ -243,28 +243,36 @@
     		</div>				
     		<div class="row">
     			<div class="col-sm-12">
-    				<div class="table-container">
-    					<table class="table">
-    						<thead>
-    							<tr>               				
-    			    				<th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-        							<th>${springMacroRequestContext.getMessage("duplicate_researcher.thEmail")}</th>
-        							<th>${springMacroRequestContext.getMessage("duplicate_researcher.thgivennames")}</th>
-        							<th>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</th>
-    	    						<th>${springMacroRequestContext.getMessage("duplicate_researcher.thInstitution")}</th>                				
-    							</tr>
-    						</thead>
-    						<tbody>
-    						 	<tr ng-repeat='dup in duplicates'>
-    					 			<td><a href="${baseUri}/{{dup.orcid}}" target="dup.orcid">${baseUri}/{{dup.orcid}}</a></td>
-            						<td>{{dup.email}}</td>
-            						<td>{{dup.givenNames}}</td>
-            						<td>{{dup.familyNames}}</td>
-            						<td>{{dup.institution}}</td>
-        						</tr>
-    						</tbody>
-    					</table>
-    				</div>
+    				<table class="table">
+                        <thead>
+                            <tr>                      
+                                <th><@orcid.msg 'search_results.thORCIDID'/></th>
+                                <th><@orcid.msg 'duplicate_researcher.thEmail'/></th>
+                                <th><@orcid.msg 'duplicate_researcher.thgivennames'/></th>
+                                <th><@orcid.msg 'duplicate_researcher.thFamilyName'/></th>
+                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
+                                    <th><@orcid.msg 'workspace_bio.Affiliations'/></th>
+                                </@orcid.checkFeatureStatus>
+                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
+                                    <th><@orcid.msg 'duplicate_researcher.thInstitution'/></th>
+                                </@orcid.checkFeatureStatus>                   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat='dup in duplicates'>
+                                <td><a href="${baseUri}/{{dup.orcid}}" target="dup.orcid">${baseUri}/{{dup.orcid}}</a></td>
+                                <td>{{dup.email}}</td>
+                                <td>{{dup.givenNames}}</td>
+                                <td>{{dup.familyNames}}</td>
+                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
+                                    <td ng-bind="getAffiliations(dup)">{{dup['institution']}}</td>
+                                </@orcid.checkFeatureStatus> 
+                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
+                                    <td>{{dup.institution}}</td>
+                                </@orcid.checkFeatureStatus>  
+                            </tr>
+                        </tbody>
+                    </table>
     			</div>
     		</div>	
     		<div class="row margin-top-box">
@@ -296,28 +304,36 @@
             </div>              
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>                            
-                                    <th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-                                    <th>${springMacroRequestContext.getMessage("duplicate_researcher.thEmail")}</th>
-                                    <th>${springMacroRequestContext.getMessage("duplicate_researcher.thgivennames")}</th>
-                                    <th>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</th>
-                                    <th>${springMacroRequestContext.getMessage("duplicate_researcher.thInstitution")}</th>                              
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat='dup in duplicates'>
-                                    <td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" target="dup.orcid">{{dup.orcid}}</a></td>
-                                    <td>{{dup.email}}</td>
-                                    <td>{{dup.givenNames}}</td>
-                                    <td>{{dup.familyNames}}</td>
+                    <table class="table">
+                        <thead>
+                            <tr>                      
+                                <th><@orcid.msg 'search_results.thORCIDID'/></th>
+                                <th><@orcid.msg 'duplicate_researcher.thEmail'/></th>
+                                <th><@orcid.msg 'duplicate_researcher.thgivennames'/></th>
+                                <th><@orcid.msg 'duplicate_researcher.thFamilyName'/></th>
+                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
+                                    <th><@orcid.msg 'workspace_bio.Affiliations'/></th>
+                                </@orcid.checkFeatureStatus>
+                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
+                                    <th><@orcid.msg 'duplicate_researcher.thInstitution'/></th>
+                                </@orcid.checkFeatureStatus>                   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat='dup in duplicates'>
+                                <td><a href="${baseUri}/{{dup.orcid}}" target="dup.orcid">${baseUri}/{{dup.orcid}}</a></td>
+                                <td>{{dup.email}}</td>
+                                <td>{{dup.givenNames}}</td>
+                                <td>{{dup.familyNames}}</td>
+                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
+                                    <td ng-bind="getAffiliations(dup)">{{dup['institution']}}</td>
+                                </@orcid.checkFeatureStatus> 
+                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
                                     <td>{{dup.institution}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                </@orcid.checkFeatureStatus>  
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>  
             <div class="row margin-top-box">

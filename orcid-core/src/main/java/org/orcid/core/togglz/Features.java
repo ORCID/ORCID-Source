@@ -51,6 +51,9 @@ public enum Features implements Feature {
     
     @Label("Ng2 search")
     SEARCH_NG2,
+    
+    @Label("Affiliations in search results")
+    SEARCH_RESULTS_AFFILIATIONS,
 
     @Label("Survey link")
     SURVEY,
