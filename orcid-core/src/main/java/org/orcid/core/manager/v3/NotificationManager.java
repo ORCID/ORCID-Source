@@ -38,11 +38,13 @@ public interface NotificationManager {
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
     void sendWelcomeEmail(String userOrcid, String email);
+    
+    void sendVerificationEmailToNonPrimaryEmails(String orcid);
 
     void sendVerificationEmail(String userOrcid, String email);
-
-    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
-
+    
+    void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
+    
     void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile);
     
     void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile);
@@ -132,5 +134,7 @@ public interface NotificationManager {
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
     
     boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile);
+
+    void processUnverifiedEmails7Days();
 
 }

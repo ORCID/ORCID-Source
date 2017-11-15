@@ -25,6 +25,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -291,6 +292,9 @@ public class RegistrationController extends BaseController {
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
+        Cookie justRegisteredCookie = new Cookie("justRegistered", "true");
+        justRegisteredCookie.setMaxAge(30000);
+        response.addCookie(justRegisteredCookie);
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;
@@ -616,6 +620,13 @@ public class RegistrationController extends BaseController {
             
             profileEntityManager.updateLocale(emailOrcid, org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
             redirectAttributes.addFlashAttribute("emailVerified", true);
+            
+            if (!emailEntity.getPrimary()) {
+                boolean isPrimaryEmailVerified = emailManager.isPrimaryEmailVerified(emailOrcid);
+                if (!isPrimaryEmailVerified) {
+                    redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
+                }
+            }
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
@@ -676,6 +687,7 @@ public class RegistrationController extends BaseController {
         LOGGER.debug("About to create profile from registration email={}, sessionid={}", email, sessionId);
         String newUserOrcid = registrationManager.createMinimalRegistration(registration, usedCaptcha, locale, ip);
         notificationManager.sendWelcomeEmail(newUserOrcid, email);
+        notificationManager.sendVerificationEmailToNonPrimaryEmails(newUserOrcid);
         request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
         LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
                 new Object[] { newUserOrcid, email, sessionId });

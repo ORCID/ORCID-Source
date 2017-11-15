@@ -18,9 +18,25 @@
 -->
 <@protected nav="record">
 <#escape x as x?html>
+
+<@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
+<#if justRegistered?? && justRegistered>
+<div class="alert alert-success">
+  <strong>
+    <thanks-for-registering-ng2></thanks-for-registering-ng2>
+  </strong>
+</div>
+</#if>
+</@orcid.checkFeatureStatus>
+
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
-  <strong><@spring.message "orcid.frontend.web.email_verified"/></strong>
+  <strong>
+    <@spring.message "orcid.frontend.web.email_verified"/>
+    <#if primaryEmailUnverified?? && primaryEmailUnverified>
+      <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
+    </#if>
+  </strong>
 </div>
 </#if>
 
@@ -741,8 +757,6 @@
   </div>
   </#if>
 </script>
-
-
 
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
