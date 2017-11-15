@@ -43,5 +43,21 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
         }
         return null;
     }
+    
+    @Override
+    public boolean exists(Long orgDisambiguatedId, String identifier, String identifierType) {
+        try {
+            TypedQuery<Long> query = entityManager.createQuery("SELECT count(identifier) FROM OrgDisambiguatedExternalIdentifierEntity WHERE orgDisambiguated.id = :orgDisambiguatedId AND identifier = :identifier AND identifierType = :identifierType",
+                    Long.class);
+            query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
+            query.setParameter("identifier", identifier);
+            query.setParameter("identifierType", identifierType);
+            Long result = query.getSingleResult();
+            return (result != null && result > 0);
+        } catch(NoResultException nre) {
+            //Ignore no result exception and return null
+        }
+        return false;
+    }
 
 }
