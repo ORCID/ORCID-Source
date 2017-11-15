@@ -63,7 +63,8 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
     private boolean isPersistent;
     private long version;
     private String authorizationCode;
-
+    private Date revocationDate;
+    
     /**
      * This should be implemented by all entity classes to return the id of the
      * entity represented by the &lt;T&gt; generic argument
@@ -272,4 +273,12 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
         this.authorizationCode = code;
     }
 
+    @Column(name = "revocation_date")
+    public Date getRevocationDate() {
+        return revocationDate;
+    }
+
+    public void setRevocationDate(Date revocationDate) {
+        this.revocationDate = revocationDate;
+    }    
 }

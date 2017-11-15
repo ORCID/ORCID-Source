@@ -62,4 +62,6 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
     int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID);
 
     void disableAccessTokenByUserOrcid(String userOrcid);
+    
+    void revokeAccessToken(String accessToken);
 }

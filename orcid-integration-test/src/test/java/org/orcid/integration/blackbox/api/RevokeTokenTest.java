@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Arrays;
+
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
@@ -217,6 +219,6 @@ public class RevokeTokenTest extends BlackBoxBase {
     }
 
     public String getAccessToken() throws InterruptedException, JSONException {
-        return getAccessToken(getScopes(ScopePathType.READ_LIMITED));
+        return getNonCachedAccessTokens(getUser1OrcidId(), getUser1Password(), Arrays.asList(ScopePathType.READ_LIMITED.value()), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
     }
 }

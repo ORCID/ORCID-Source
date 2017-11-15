@@ -64,7 +64,7 @@ public class RevokeController {
         if (token != null && (token.getTokenDisabled() == null || !token.getTokenDisabled())) {
             String tokenOwner = token.getClientDetailsId();
             if (clientId.equals(tokenOwner)) {
-                orcidOauth2TokenDetailService.disableAccessToken(token.getTokenValue());
+                orcidOauth2TokenDetailService.revokeAccessToken(token.getTokenValue());
             } else {
                 LOGGER.warn("Client {} is trying to revoke token that belongs to client {}", clientId, tokenOwner);
             }
