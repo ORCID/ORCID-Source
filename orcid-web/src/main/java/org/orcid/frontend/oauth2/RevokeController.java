@@ -20,7 +20,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
-import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -40,15 +39,8 @@ public class RevokeController {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
-    @Resource
-    private OrcidSecurityManager orcidSecurityManagerV3;
-
     public void setOrcidOauth2TokenDetailService(OrcidOauth2TokenDetailService orcidOauth2TokenDetailService) {
         this.orcidOauth2TokenDetailService = orcidOauth2TokenDetailService;
-    }
-
-    public void setOrcidSecurityManager(OrcidSecurityManager orcidSecurityManagerV3) {
-        this.orcidSecurityManagerV3 = orcidSecurityManagerV3;
     }
 
     @RequestMapping

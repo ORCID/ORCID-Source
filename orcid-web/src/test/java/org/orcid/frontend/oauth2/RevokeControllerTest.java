@@ -31,8 +31,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 
 public class RevokeControllerTest {
@@ -43,14 +43,8 @@ public class RevokeControllerTest {
     @Mock
     private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
 
-    @Mock
-    private OrcidSecurityManager mockOrcidSecurityManager;
-
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
-    @Resource
-    private OrcidSecurityManager orcidSecurityManager;
     
     private RevokeController revokeController = new RevokeController();
 
@@ -58,9 +52,7 @@ public class RevokeControllerTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         revokeController.setOrcidOauth2TokenDetailService(mockOrcidOauth2TokenDetailService);
-        revokeController.setOrcidSecurityManager(mockOrcidSecurityManager);
         when(request.getParameter("token")).thenReturn("token-value");
-        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("client-id");
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setClientDetailsId("client-id");
         token.setTokenValue("token-value");
@@ -68,44 +60,14 @@ public class RevokeControllerTest {
         token.setTokenDisabled(false);
         when(mockOrcidOauth2TokenDetailService.findNonDisabledByTokenValue("token-value")).thenReturn(token);
         when(mockOrcidOauth2TokenDetailService.findByRefreshTokenValue("refresh-token-value")).thenReturn(token);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("client-id");
     }
     
     @After
     public void after() {
         revokeController.setOrcidOauth2TokenDetailService(orcidOauth2TokenDetailService);
-        revokeController.setOrcidSecurityManager(orcidSecurityManager);        
     }
-
-    @Test
-    public void noClientIdTest() {
-        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
-        try {
-            revokeController.revoke(request);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Unable to validate client credentials", e.getMessage());
-        } catch (Exception e) {
-            fail();
-        }
-
-        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("");
-        try {
-            revokeController.revoke(request);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Unable to validate client credentials", e.getMessage());
-        } catch (Exception e) {
-            fail();
-        }
-
-        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("client-id");
-        try {
-            revokeController.revoke(request);
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
+    
     @Test
     public void noTokenTest() {
         when(request.getParameter("token")).thenReturn(null);
@@ -138,7 +100,7 @@ public class RevokeControllerTest {
 
     @Test
     public void notOwnerTest() {
-        when(mockOrcidSecurityManager.getClientIdFromAPIRequest()).thenReturn("other-client-id");
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("other-client-id");
         
         revokeController.revoke(request);
 
