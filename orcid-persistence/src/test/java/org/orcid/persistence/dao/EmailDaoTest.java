@@ -107,7 +107,7 @@ public class EmailDaoTest extends DBUnitTest {
     
     @Test
     public void testRemovePrimaryEmailCaseSensitive() {    	    	
-    	String primaryEmail = "LIMITED@email.com";
+    	String primaryEmail = "spike@milligan.com";
         assertTrue(emailDao.emailExists(primaryEmail));
         //Not the owner
         emailDao.removeEmail("4444-4444-4444-4443", primaryEmail, true);
