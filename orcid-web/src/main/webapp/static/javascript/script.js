@@ -722,6 +722,7 @@ $(function() {
 
     function show2FA() {
         $('#verificationCodeFor2FA').attr("style", "display: block");
+        $('#verificationCode').focus();
         $('#form-sign-in-button').html(om.get('orcid.frontend.security.2fa.authenticate'));
         $('#RequestPasswordResetCtr').hide();
         $('#2FAInstructions').show();
