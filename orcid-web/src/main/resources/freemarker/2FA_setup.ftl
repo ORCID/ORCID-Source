@@ -44,7 +44,7 @@
                     <input type="text" ng-model="twoFactorAuthRegistration.verificationCode" />
                     <div id="invalidCodeError" class="orcid-error" ng-show="showInvalidCodeError" ng-cloak">${springMacroRequestContext.getMessage("2FA.setup.invalidCode")}</div>
                     <hr>
-                    <button ng-click="sendVerificationCode()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.continue")}</button>
+                    <button id="sendVerificationCode" ng-click="sendVerificationCode()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.continue")}</button>
                     <a class="leftBuffer" id="cancel2FASetup" ng-click="cancel2FASetup()" href="javascript:void(0);">${springMacroRequestContext.getMessage("2FA.cancel")}</a>
                 </form>
              </div>

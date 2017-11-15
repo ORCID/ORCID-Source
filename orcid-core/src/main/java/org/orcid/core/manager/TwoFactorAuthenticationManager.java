@@ -18,6 +18,8 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+
 public interface TwoFactorAuthenticationManager {
 
     String getQRCode(String orcid);
@@ -33,5 +35,7 @@ public interface TwoFactorAuthenticationManager {
     List<String> getBackupCodes(String orcid);
 
     String getSecret(String orcid);
+
+    boolean verificationCodeIsValid(String code, ProfileEntity profileEntity);
 
 }
