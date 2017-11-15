@@ -56,18 +56,19 @@ angular.module('orcidApp').factory(
 
             consistentVis : function() {
                 var vis = null;
-                if (this.type == GroupedActivities.FUNDING)
+                if (this.type == GroupedActivities.FUNDING || this.type == GroupedActivities.ABBR_WORK)
                     vis = this.getDefault().visibility.visibility;
                 else
                     vis = this.getDefault().visibility;
 
                 for (var idx in this.activities) {
-                    if (this.type == GroupedActivities.FUNDING) {
+                    if (this.type == GroupedActivities.FUNDING || this.type == GroupedActivities.ABBR_WORK) {
                         if (this.activities[idx].visibility.visibility != vis){
                             return false;
                         }
                     } else {
                         if (this.activities[idx].visibility != vis) {
+                            console.log(this.activities[idx].visibility);
                             return false;
                         }
                     }
