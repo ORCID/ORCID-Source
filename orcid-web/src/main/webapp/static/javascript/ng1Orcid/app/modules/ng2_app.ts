@@ -80,14 +80,9 @@ import { ModalService }
 import { NameService } 
     from '../shared/nameService.ts'; 
 
-<<<<<<< HEAD
-    
-=======
 import { WorkspaceService } 
     from '../shared/workspaceService.ts'; 
 
-
->>>>>>> master
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
     }
