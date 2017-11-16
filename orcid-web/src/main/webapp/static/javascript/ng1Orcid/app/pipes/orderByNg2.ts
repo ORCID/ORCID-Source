@@ -1,5 +1,5 @@
 import { Injectable, Pipe, PipeTransform } 
-  from '@angular/core';
+    from '@angular/core';
 
 @Pipe({
     name: "orderBy"

@@ -52,8 +52,8 @@ import { WorksPrivacyPreferencesNg2Module }
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
 //User generated filters
-import { OrderByPipe }
-    from '../filters/orderByNg2.ts'; 
+//import { OrderByPipe }
+//    from '../pipes/orderByNg2.ts'; 
 
 //User generated services
 import { AffiliationService } 
