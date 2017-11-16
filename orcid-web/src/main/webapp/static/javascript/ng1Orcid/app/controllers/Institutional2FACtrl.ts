@@ -41,7 +41,12 @@ export const _Institutional2FACtrl = angular.module('orcidApp').controller(
                     success: function(data) {               
                         $scope.codes = data;
                         if (data.errors.length == 0) {
-                            window.location.href = data.redirectUrl;
+                            $timeout(
+                                function() {
+                                    window.location.href = data.redirectUrl;
+                                },
+                                0
+                            );
                         } else {
                             $scope.verificationCode = "";
                             $scope.recoveryCode = "";
