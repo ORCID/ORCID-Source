@@ -18,14 +18,8 @@ import { Subscription }
 import { NameService } 
     from '../../shared/nameService.ts'; 
 
-import { ConfigurationService } 
-    from '../../shared/configurationService.ts';
-
 import { EmailService } 
     from '../../shared/emailService.ts';
-
-import { ModalService } 
-    from '../../shared/modalService.ts'; 
 
 @Component({
     selector: 'name-ng2',
@@ -34,21 +28,17 @@ import { ModalService }
 export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    nameForm: any;
-    configuration: any;
-    emails: any;
+    emails: object;
     emailSrvc: any;
-    emailVerified: any;
-    lengthError: any;
-    originalData: any;
-    privacyHelp: boolean;
-    showEdit: any;
+    emailVerified: boolean;
+    lengthError: boolean;
+    nameForm: any;
+    originalData: object;
+    showEdit: boolean;
 
     constructor(
         private nameService: NameService,
-        private configurationService: ConfigurationService,
-        private emailService: EmailService,
-        private modalService: ModalService
+        private emailService: EmailService
     ) {
         
         this.emails = {};
@@ -56,7 +46,6 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         this.lengthError = false;
         this.nameForm = {};
         this.originalData = {};
-        this.privacyHelp = false;
         this.showEdit = false;
     }
 
@@ -74,7 +63,11 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         let display = false;
 
         if(
-            !(this.nameForm != null && (this.nameForm.creditName == null) || this.nameForm.givenNames.value.length == 0 )
+            !(this.nameForm != null 
+                && (this.nameForm.creditName == null 
+                    || this.nameForm.givenNames.value.length == 0
+                )
+            )
         ){
             display = true;
         }
@@ -149,7 +142,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         if ( event.keyCode == "13"){
             this.setNameForm( true );
         }
-    }
+    };
     
     toggleEdit(): void {
         this.showEdit = !this.showEdit;    
@@ -167,6 +160,5 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getNameForm();
-        this.configuration = this.configurationService.getInitialConfiguration();
     }; 
 }

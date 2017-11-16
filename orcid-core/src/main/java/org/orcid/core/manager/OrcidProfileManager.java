@@ -194,16 +194,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     
     void processUnclaimedProfilesForReminder();
 
-    /**
-     * Deactivate an Orcid user -this involves blanking out most fields and
-     * setting a flag
-     * 
-     * @param orcidProfile
-     * @return
-     */
-
-    public void processUnverifiedEmails7Days();
-    
     boolean lockProfile(String orcid, String lockReason, String description);
 
     boolean unlockProfile(String orcid);

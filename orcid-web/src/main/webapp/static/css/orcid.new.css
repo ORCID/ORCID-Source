@@ -642,7 +642,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 }
 
 .header .navigation>.menu>li.active-trail>a:hover,.header .navigation>.menu>li>.menu>li>a.active:hover,.header .search form .conditions a:hover {
-    color: #fff!important
+    color: #fff!important;
 }
 
 .header .search form .search_options {
@@ -798,7 +798,8 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 }
 
 .header .navigation>.menu>li.active-trail>a,.header .navigation>.menu>li:hover>a {
-    background: #a6ce39
+    background: #a6ce39;
+    width: 100%;
 }
 
 .header .navigation>.menu>li:hover>.menu {
@@ -1411,8 +1412,9 @@ ul.privacyHelp li.private {
     padding-left: 20px
 }
 
-#colorbox {
-    position: absolute
+#colorbox,
+.popover-ng2-bck {
+    position: fixed
 }
 
 #cboxOverlay,#cboxWrapper,#colorbox {
@@ -3144,6 +3146,16 @@ p.orcid-id-container {
     display: block;
     float: left;
     margin: 2px 2px 0 0;
+}
+
+.mini-orcid-icon-16 {
+    background: url(../img/orcid_16x16.png) no-repeat;
+    background-size: 14px 14px;
+    width: 14px;
+    height: 14px;
+    display: block;
+    float: left;
+    margin: 4px 2px 0 2px;
 }
 
 .mini-icon {
@@ -7837,7 +7849,7 @@ ul.comma li:last-child:after {
     height: 100%;
     left: 0;
     opacity: .9;
-    position: absolute;
+    position: fixed;
     top: 0;
     width: 100%;
     z-index: 9000
@@ -7979,6 +7991,14 @@ ul.comma li:last-child:after {
 
 .lang-rl .header .navigation>.menu>li.active-trail>.menu {
     flex-direction: row-reverse
+}
+
+.lang-rl .header .search form .conditions {
+    padding-right: 20px;
+}
+
+.lang-rl .header .search form#form-search input[type="search"] {
+    margin-right: 20px; 
 }
 
 .lang-rl .header .search form #search-box {

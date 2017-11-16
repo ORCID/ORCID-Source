@@ -67,6 +67,14 @@ public interface OrcidOauth2TokenDetailService {
      */
     void disableAccessToken(String accessToken);
 
+    /**
+     * This should NOT delete the row, but merely set it as disabled and store the revoke date
+     * 
+     * @param accessToken
+     *            the value to use to identify the row containing the access
+     *            token
+     */
+    void revokeAccessToken(String accessToken);
     
     /**
      * This should NOT delete the row, but merely set it as disabled

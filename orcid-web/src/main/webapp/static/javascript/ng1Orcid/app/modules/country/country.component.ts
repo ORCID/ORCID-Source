@@ -13,9 +13,6 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { ConfigurationService } 
-    from '../../shared/configurationService.ts';
-
 import { CountryService } 
     from '../../shared/countryService.ts';
 

@@ -154,7 +154,7 @@ export class EmailService {
     }
 
     verifyEmail(): Observable<any>  {
-        let _email = encodeURI(this.getEmailPrimary().value);
+        let _email = this.getEmailPrimary().value;
         let myParams = new URLSearchParams();
         myParams.append('email', _email);
         let options = new RequestOptions(

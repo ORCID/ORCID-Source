@@ -31,7 +31,7 @@
 		      <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		        <@emailMacros.msg "email.verify.thank_you" /><br /><br /><a href="${verificationUrl}?lang=${locale}" target="orcid.blank">${verificationUrl}</a> 
+		        <#if isPrimary?? && isPrimary><@emailMacros.msg "email.verify.primary_reminder" /><@emailMacros.space /></#if><@emailMacros.msg "email.verify.thank_you" /><br /><br /><a href="${verificationUrl}?lang=${locale}" target="orcid.blank">${verificationUrl}</a> 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<#if features["HTTPS_IDS"]?? && features["HTTPS_IDS"]>
