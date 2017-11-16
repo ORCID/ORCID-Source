@@ -18,27 +18,38 @@ package org.orcid.pojo;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
 import org.orcid.pojo.ajaxForm.Text;
 
 public class DelegateForm {
-    Text giverOrcid;
-    Text receiverOrcid;
+    OrcidIdentifier giverOrcid;
+    Text giverName;
+    OrcidIdentifier receiverOrcid;
     Text receiverName;
     XMLGregorianCalendar approvalDate;
+    XMLGregorianCalendar lastModifiedDate;
 
-    public Text getGiverOrcid() {
+    public OrcidIdentifier getGiverOrcid() {
         return giverOrcid;
     }
 
-    public void setGiverOrcid(Text giverOrcid) {
+    public void setGiverOrcid(OrcidIdentifier giverOrcid) {
         this.giverOrcid = giverOrcid;
     }
 
-    public Text getReceiverOrcid() {
+    public Text getGiverName() {
+        return giverName;
+    }
+
+    public void setGiverName(Text giverName) {
+        this.giverName = giverName;
+    }
+
+    public OrcidIdentifier getReceiverOrcid() {
         return receiverOrcid;
     }
 
-    public void setReceiverOrcid(Text receiverOrcid) {
+    public void setReceiverOrcid(OrcidIdentifier receiverOrcid) {
         this.receiverOrcid = receiverOrcid;
     }
 
@@ -56,6 +67,14 @@ public class DelegateForm {
 
     public void setApprovalDate(XMLGregorianCalendar approvalDate) {
         this.approvalDate = approvalDate;
+    }
+
+    public XMLGregorianCalendar getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(XMLGregorianCalendar lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
 }

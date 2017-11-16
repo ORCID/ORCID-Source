@@ -14,16 +14,15 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.impl;
+package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.GivenPermissionToManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.DelegationDetails;
@@ -43,21 +42,13 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
 
     @Resource
     private TransactionTemplate transactionTemplate;
-
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-
+    
     @Resource
     private NotificationManager notificationManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-
-    @Override
-    public GivenPermissionToEntity findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid) {
-        return givenPermissionToDao.findByGiverAndReceiverOrcid(giverOrcid, receiverOrcid);
-    }
-
+    
     @Override
     public void remove(String giverOrcid, String receiverOrcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -72,7 +63,7 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
 
     @Override
     public void create(String userOrcid, String delegateOrcid) {
-        GivenPermissionToEntity existing = findByGiverAndReceiverOrcid(userOrcid, delegateOrcid);
+        GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(userOrcid, delegateOrcid);
         if (existing == null) {
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 @Override

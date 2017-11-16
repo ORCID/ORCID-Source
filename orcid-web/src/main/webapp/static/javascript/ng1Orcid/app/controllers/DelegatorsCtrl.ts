@@ -47,7 +47,7 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.sort = {
-                column: 'delegateSummary.creditName.content',
+                column: 'delegateSummary.giverName.value',
                 descending: false
             };
 

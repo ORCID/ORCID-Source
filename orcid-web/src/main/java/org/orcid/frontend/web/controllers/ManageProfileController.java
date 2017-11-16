@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.GivenPermissionToManager;
+import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -47,6 +47,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
+import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.v3.dev1.record.Addresses;
@@ -137,6 +138,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private PreferenceManager preferenceManager;
     
+    @Resource
+    private OrcidIdentifierUtils orcidIdentifierUtils;
+    
     @RequestMapping
     public ModelAndView manageProfile() {
         return new ModelAndView("manage");
@@ -164,8 +168,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         if(currentProfile.getGivenPermissionTo() != null && !currentProfile.getGivenPermissionTo().isEmpty()) {
             for(GivenPermissionToEntity entity : currentProfile.getGivenPermissionTo()) {
                 DelegateForm form = new DelegateForm();
-                form.setGiverOrcid(Text.valueOf(currentOrcid));
-                form.setReceiverOrcid(Text.valueOf(entity.getReceiver().getId()));
+                form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(currentOrcid));
+                form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(entity.getReceiver().getId()));
                 form.setReceiverName(Text.valueOf(entity.getReceiver().getDisplayName()));
                 form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(entity.getApprovalDate()));
                 list.add(form);

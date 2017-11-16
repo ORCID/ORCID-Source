@@ -43,7 +43,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.GivenPermissionToManager;
+import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -345,13 +345,13 @@ public class ManageProfileControllerTest {
         for (DelegateForm form : list) {
             assertNotNull(form);
             assertNotNull(form.getApprovalDate());
-            assertEquals(USER_ORCID, form.getGiverOrcid().getValue());
+            assertEquals(USER_ORCID, form.getGiverOrcid().getPath());
             assertNotNull(form.getReceiverOrcid());
-            if (form.getReceiverOrcid().getValue().equals("0000-0000-0000-0004")) {
+            if (form.getReceiverOrcid().getPath().equals("0000-0000-0000-0004")) {
                 assertEquals("Credit Name", form.getReceiverName().getValue());
                 found1 = true;
             } else {
-                assertEquals("0000-0000-0000-0005", form.getReceiverOrcid().getValue());
+                assertEquals("0000-0000-0000-0005", form.getReceiverOrcid().getPath());
                 assertEquals("Given Names Family Name", form.getReceiverName().getValue());
                 found2 = true;
             }

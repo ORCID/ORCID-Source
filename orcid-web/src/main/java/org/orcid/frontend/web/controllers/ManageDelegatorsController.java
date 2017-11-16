@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,13 +25,15 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.jaxb.model.message.DelegateSummary;
-import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.pojo.DelegateForm;
+import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,49 +55,33 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;    
 
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Resource
+    private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
+    
+    @Resource
+    private OrcidIdentifierUtils orcidIdentifierUtils;
+    
     @RequestMapping
     public ModelAndView manageDelegators() {
-        ModelAndView mav = new ModelAndView("manage_delegators");
-        OrcidProfile profile = getEffectiveProfile();
-        mav.addObject("profile", profile);
-        return mav;
-    }
-
-    @RequestMapping(value = "/delegation.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Delegation getDelegatesJson() {
-        OrcidProfile realProfile = getRealProfile();
-        Delegation delegation = realProfile.getOrcidBio().getDelegation();
-        return delegation;
-    }
+        return new ModelAndView("manage_delegators");
+    }    
 
     @RequestMapping(value = "/delegators-and-me.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, Object> getDelegatorsPlusMeJson() {
+    public @ResponseBody Map<String, Object> getDelegatorsPlusMeJson() {
         Map<String, Object> map = new HashMap<>();
-        OrcidProfile realProfile = getRealProfile();
-        Delegation delegation = realProfile.getOrcidBio().getDelegation();
-        if (delegation != null) {
-            GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
-            String currentOrcid = getEffectiveUserOrcid();
-            if (givenPermissionBy != null) {
-                for (Iterator<DelegationDetails> delegationDetailsIterator = givenPermissionBy.getDelegationDetails().iterator(); delegationDetailsIterator.hasNext();) {
-                    if (currentOrcid.equals(delegationDetailsIterator.next().getDelegateSummary().getOrcidIdentifier().getPath())) {
-                        delegationDetailsIterator.remove();
-                    }
-                }
-            }
-            map.put("delegators", givenPermissionBy);
-        }
+        String realUserOrcid = getRealUserOrcid();
+        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid);
+        map.put("delegators", delegates);
+
         if (sourceManager.isInDelegationMode()) {
             // Add me, so I can switch back to me
-            DelegationDetails details = new DelegationDetails();
-            DelegateSummary summary = new DelegateSummary();
-            details.setDelegateSummary(summary);
-            String displayName = realProfile.getOrcidBio().getPersonalDetails().retrieveDisplayNameIgnoringVisibility();
-            summary.setCreditName(new CreditName(displayName));
-            summary.setOrcidIdentifier(realProfile.getOrcidIdentifier());
-            map.put("me", details);
+            DelegateForm form = new DelegateForm();
+            form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(realUserOrcid));
+            form.setGiverName(Text.valueOf(sourceNameCacheManager.retrieve(realUserOrcid)));
+            map.put("me", form);
         }
         return map;
     }
@@ -132,21 +117,22 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/search/{query}", method = RequestMethod.GET)
     public @ResponseBody
-    GivenPermissionBy searchDelegators(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+    List<DelegateForm> searchDelegators(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         Locale locale = getLocale();
         query = query.toLowerCase(locale);
-        GivenPermissionBy result = new GivenPermissionBy();
+        String realUserOrcid = getRealUserOrcid();
         String currentOrcid = getEffectiveUserOrcid();
-        for (DelegationDetails delegationDetails : getRealProfile().getOrcidBio().getDelegation().getGivenPermissionBy().getDelegationDetails()) {
-            DelegateSummary delegateSummary = delegationDetails.getDelegateSummary();
-            String creditName = delegateSummary.getCreditName().getContent().toLowerCase(locale);
-            String orcidUri = delegateSummary.getOrcidIdentifier().getUri();
-            String orcidPath = delegateSummary.getOrcidIdentifier().getPath();
-            if (creditName.contains(query) || orcidUri.contains(query) && !(currentOrcid.equals(orcidPath))) {
-                result.getDelegationDetails().add(delegationDetails);
+        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid);
+        List<DelegateForm> filtered = new ArrayList<DelegateForm>();
+        for(DelegateForm delegate : delegates) {
+            String name = delegate.getGiverName().getValue().toLowerCase(locale);
+            String orcidUri = delegate.getGiverOrcid().getUri();
+            String orcidPath = delegate.getGiverOrcid().getPath();
+            if((name.contains(query) || orcidUri.contains(query)) && !(currentOrcid.equals(orcidPath))) {
+                filtered.add(delegate);
             }
         }
-        return result;
+        return filtered;
     }
 
     private Map<String, Object> createDatumFromOrgDisambiguated(DelegationDetails delegationDetails) {

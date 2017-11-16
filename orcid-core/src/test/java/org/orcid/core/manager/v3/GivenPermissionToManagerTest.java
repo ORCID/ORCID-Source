@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -33,7 +33,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.pojo.DelegateForm;
 
 public class GivenPermissionToManagerTest extends BaseTest {
 
@@ -46,6 +48,9 @@ public class GivenPermissionToManagerTest extends BaseTest {
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
 
+    @Resource
+    private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
+    
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -63,10 +68,10 @@ public class GivenPermissionToManagerTest extends BaseTest {
 
     @Test
     public void testFindByGiverAndReceiverOrcid() {
-        GivenPermissionToEntity entity = givenPermissionToManager.findByGiverAndReceiverOrcid(GIVER, RECEIVER);
-        assertNotNull(entity);
-        assertEquals(GIVER, entity.getGiver());
-        assertEquals(RECEIVER, entity.getReceiver().getId());
+        DelegateForm form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(GIVER, RECEIVER);
+        assertNotNull(form);
+        assertEquals(GIVER, form.getGiverOrcid());
+        assertEquals(RECEIVER, form.getReceiverOrcid().getPath());
     }
 
     @Test
@@ -74,10 +79,10 @@ public class GivenPermissionToManagerTest extends BaseTest {
         // Create one
         givenPermissionToManager.create(RECEIVER, GIVER);
         // Find it
-        GivenPermissionToEntity entity = givenPermissionToManager.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
-        assertNotNull(entity);
-        assertEquals(RECEIVER, entity.getGiver());
-        assertEquals(GIVER, entity.getReceiver().getId());
+        DelegateForm form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
+        assertNotNull(form);
+        assertEquals(RECEIVER, form.getGiverOrcid().getPath());
+        assertEquals(GIVER, form.getReceiverOrcid().getPath());
 
         Date rLastModifiedBefore = profileEntityManager.getLastModifiedDate(RECEIVER);
         Date gLastModifiedBefore = profileEntityManager.getLastModifiedDate(GIVER);
@@ -85,8 +90,8 @@ public class GivenPermissionToManagerTest extends BaseTest {
         // Delete it
         givenPermissionToManager.remove(RECEIVER, GIVER);
         // Verify it was deleted
-        entity = givenPermissionToManager.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
-        assertNull(entity);
+        form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
+        assertNull(form);
 
         Date rLastModifiedAfter = profileEntityManager.getLastModifiedDate(RECEIVER);
         Date gLastModifiedAfter = profileEntityManager.getLastModifiedDate(GIVER);
@@ -103,10 +108,10 @@ public class GivenPermissionToManagerTest extends BaseTest {
         // Create one
         givenPermissionToManager.create(RECEIVER, GIVER);
 
-        GivenPermissionToEntity entity = givenPermissionToManager.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
-        assertNotNull(entity);
-        assertEquals(RECEIVER, entity.getGiver());
-        assertEquals(GIVER, entity.getReceiver().getId());
+        DelegateForm form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
+        assertNotNull(form);
+        assertEquals(RECEIVER, form.getGiverOrcid().getPath());
+        assertEquals(GIVER, form.getReceiverOrcid().getPath());
 
         Date rLastModifiedAfter = profileEntityManager.getLastModifiedDate(RECEIVER);
         Date gLastModifiedAfter = profileEntityManager.getLastModifiedDate(GIVER);
