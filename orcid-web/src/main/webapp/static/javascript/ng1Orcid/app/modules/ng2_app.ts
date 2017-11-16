@@ -59,6 +59,7 @@ import { ModalService }
 import { NameService } 
     from '../shared/nameService.ts'; 
 
+    
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
     }
