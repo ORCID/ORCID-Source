@@ -135,7 +135,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                         console.log("error getting name for " + orcid);
                     });  
                 } 
-        
                 return dup['institution'].join(", "); 
             };
 
@@ -145,7 +144,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     dataType: 'json',
                     success: function(data) {
                     	$scope.duplicates = data;
-                        console.log($scope.duplicates);
                         $scope.$apply();
                         if ($scope.duplicates.length > 0 ) {
                             $scope.showDuplicatesColorBox();

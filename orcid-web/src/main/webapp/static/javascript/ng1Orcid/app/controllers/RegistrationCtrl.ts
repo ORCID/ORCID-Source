@@ -74,7 +74,6 @@ export const RegistrationCtrl = angular.module('orcidApp').controller(
                         console.log("error getting name for " + orcid);
                     });  
                 } 
-        
                 return dup['institution'].join(", "); 
             };
 
