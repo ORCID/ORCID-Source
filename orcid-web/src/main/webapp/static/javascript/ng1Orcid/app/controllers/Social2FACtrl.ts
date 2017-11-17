@@ -10,9 +10,11 @@ export const _Social2FACtrl = angular.module('orcidApp').controller(
     [
         '$compile', 
         '$scope', 
+        '$timeout', 
         function (
             $compile,
-            $scope
+            $scope,
+            $timeout
         ) {
     
             $scope.init = function() {
