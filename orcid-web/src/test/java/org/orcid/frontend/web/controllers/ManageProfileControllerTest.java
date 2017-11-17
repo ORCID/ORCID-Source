@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +52,9 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.jaxb.model.v3.dev1.common.CreditName;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
@@ -107,6 +111,9 @@ public class ManageProfileControllerTest {
     
     @Mock
     private OrcidSecurityManager mockOrcidSecurityManager;
+    
+    @Mock
+    private OrcidIdentifierUtils mockOrcidIdentifierUtils;
 
     private RecordNameEntity getRecordName(String orcidId) {
         RecordNameEntity recordName = new RecordNameEntity();
@@ -127,14 +134,25 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
         TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager);        
-        TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);                
+        TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);  
+        TargetProxyHelper.injectIntoProxy(controller, "orcidIdentifierUtils", mockOrcidIdentifierUtils);
         
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.eq("invalid password"), Mockito.anyString())).thenReturn(false);
         when(mockProfileEntityManager.deprecateProfile(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
         when(mockProfileEntityManager.deprecateProfile(Mockito.eq(DEPRECATED_USER_ORCID), Mockito.eq(USER_ORCID))).thenReturn(true);
+        when(mockOrcidIdentifierUtils.buildOrcidIdentifier(Mockito.anyString())).thenAnswer(new Answer<OrcidIdentifier>() {
 
+            @Override
+            public OrcidIdentifier answer(InvocationOnMock invocation) throws Throwable {
+                OrcidIdentifier result = new OrcidIdentifier();
+                result.setPath(invocation.getArgument(0));
+                return result;
+            }
+            
+        });
+        
         when(mockLocaleManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenAnswer(new Answer<String>() {
 
             @Override
