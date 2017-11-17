@@ -53,21 +53,21 @@ import org.springframework.web.servlet.ModelAndView;
 public class ManageDelegatorsController extends BaseWorkspaceController {
 
     @Resource(name = "sourceManagerV3")
-    private SourceManager sourceManager;    
+    private SourceManager sourceManager;
 
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
-    
+
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
-    
+
     @Resource
     private OrcidIdentifierUtils orcidIdentifierUtils;
-    
+
     @RequestMapping
     public ModelAndView manageDelegators() {
         return new ModelAndView("manage_delegators");
-    }    
+    }
 
     @RequestMapping(value = "/delegators-and-me.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> getDelegatorsPlusMeJson() {
@@ -90,25 +90,23 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
      * Search delegators to suggest to user
      */
     @RequestMapping(value = "/search-for-data/{query}", method = RequestMethod.GET)
-    public @ResponseBody
-    List<Map<String, Object>> searchDelegatorsForData(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+    public @ResponseBody List<Map<String, Object>> searchDelegatorsForData(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, Object>> datums = new ArrayList<>();
         Locale locale = getLocale();
         query = query.toLowerCase(locale);
-        for (DelegationDetails delegationDetails : getRealProfile().getOrcidBio().getDelegation().getGivenPermissionBy().getDelegationDetails()) {
-            DelegateSummary delegateSummary = delegationDetails.getDelegateSummary();
-            String creditName = delegateSummary.getCreditName().getContent().toLowerCase(locale);
-            String orcid = delegateSummary.getOrcidIdentifier().getUri();
-            if (creditName.contains(query) || orcid.contains(query)) {
-                Map<String, Object> datum = createDatumFromOrgDisambiguated(delegationDetails);
+
+        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(getRealUserOrcid());
+        for (DelegateForm delegate : delegates) {
+            String name = delegate.getGiverName().getValue().toLowerCase(locale);
+            String orcid = delegate.getGiverOrcid().getPath();
+            if (name.contains(query) || orcid.contains(query)) {
+                Map<String, Object> datum = new HashMap<>();
+                datum.put("value", name);
+                datum.put("orcid", orcid);
                 datums.add(datum);
             }
         }
-        if (datums.isEmpty()) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("noResults", true);
-            datums.add(map);
-        }
+
         return datums;
     }
 
@@ -116,32 +114,24 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
      * Search DB for disambiguated affiliations to suggest to user
      */
     @RequestMapping(value = "/search/{query}", method = RequestMethod.GET)
-    public @ResponseBody
-    List<DelegateForm> searchDelegators(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+    public @ResponseBody List<DelegateForm> searchDelegators(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         Locale locale = getLocale();
         query = query.toLowerCase(locale);
         String realUserOrcid = getRealUserOrcid();
         String currentOrcid = getEffectiveUserOrcid();
         List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid);
         List<DelegateForm> filtered = new ArrayList<DelegateForm>();
-        for(DelegateForm delegate : delegates) {
+        for (DelegateForm delegate : delegates) {
             String name = delegate.getGiverName().getValue().toLowerCase(locale);
             String orcidUri = delegate.getGiverOrcid().getUri();
             String orcidPath = delegate.getGiverOrcid().getPath();
-            if((name.contains(query) || orcidUri.contains(query)) && !(currentOrcid.equals(orcidPath))) {
+            if ((name.contains(query) || orcidUri.contains(query)) && !(currentOrcid.equals(orcidPath))) {
                 filtered.add(delegate);
             }
         }
         return filtered;
     }
 
-    private Map<String, Object> createDatumFromOrgDisambiguated(DelegationDetails delegationDetails) {
-        Map<String, Object> datum = new HashMap<>();
-        datum.put("value", delegationDetails.getDelegateSummary().getCreditName().getContent());
-        datum.put("orcid", delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
-        return datum;
-    }
-    
     public OrcidProfile getRealProfile() {
         String realOrcid = getRealUserOrcid();
         return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid, LoadOptions.BIO_AND_INTERNAL_ONLY);

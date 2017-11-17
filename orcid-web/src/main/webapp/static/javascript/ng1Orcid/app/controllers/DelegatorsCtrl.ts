@@ -58,7 +58,7 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
                 },
                 template: function (datum) {
                     var forDisplay;
-                    if(datum.noResults){
+                    if(datum.length == 0){
                         forDisplay = "<span class=\'no-delegator-matches\'>" + om.get('delegators.nomatches') + "</span>";
                     }
                     else{
@@ -73,7 +73,8 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
             $("#delegatorsSearch").bind(
                 "typeahead:selected", 
                 function(datum) {
-                    if(!(<any>(datum)).noResults){
+                	console.log(angular.toJson(datum));
+                    if(!(<any>(datum)).length == 0){
                         $scope.selectDelegator(datum);
                     }
                     $scope.$apply();
