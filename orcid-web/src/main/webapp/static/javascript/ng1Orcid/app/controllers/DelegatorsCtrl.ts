@@ -43,7 +43,7 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.selectDelegator = function(datum) {
-                window.location.href = getBaseUri() + '/switch-user?j_username=' + datum.orcid;
+                window.location.href = getBaseUri() + '/switch-user?username=' + datum.orcid;
             };
 
             $scope.sort = {
@@ -72,13 +72,10 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
 
             $("#delegatorsSearch").bind(
                 "typeahead:selected", 
-                function(datum) {
-                	console.log(angular.toJson(datum));
-                    if(!(<any>(datum)).length == 0){
+                function(obj, datum) {
+                	if(datum.orcid != null){
                         $scope.selectDelegator(datum);
                     }
-                    $scope.$apply();
-                    return true;
                 }
             );
 

@@ -460,7 +460,7 @@
                 </div>
             </div>
         </div>
-    <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
+    <@orcid.checkFeatureStatus featureName='HTTPS_IDS'> 
         <div ng-controller="DelegatesCtrlV2" class="clearfix" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
@@ -489,19 +489,13 @@
                     </tbody>
                     <tbody ng-show="delegation.length > 0" ng-cloak>
                         <tr ng-repeat="delegationDetails in delegation | orderBy:sort.column:sort.descending">
-                            <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-                                <td><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
-                                <td><a href="${baseUri}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">${baseUri}/{{delegationDetails.receiverOrcid.value}}</a></td>
-                            </@orcid.checkFeatureStatus>
-                            <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-                                <td><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
-                                <td><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.value}}</a></td>
-                            </@orcid.checkFeatureStatus>
+                            <td><a href="{{delegationDetails.receiverOrcid.uri}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
+                            <td><a href="{{delegationDetails.receiverOrcid.uri}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.uri}}</a></td>
                             <td>{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
                             <td class="tooltip-container">
                                 <a
-                                ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
-                                ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
+                                ng-hide="realUserOrcid === delegationDetails.receiverOrcid.value || isPasswordConfirmationRequired"
+                                ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.path)"
                                 class="glyphicon glyphicon-trash grey">
                                     <div class="popover popover-tooltip top">
                                         <div class="arrow"></div>
@@ -510,7 +504,7 @@
                                         </div>
                                     </div>                            
                                 </a>
-                                <span ng-show="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+                                <span ng-show="realUserOrcid === delegationDetails.receiverOrcid.path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
                             </td>
                         </tr>
                     </tbody>
