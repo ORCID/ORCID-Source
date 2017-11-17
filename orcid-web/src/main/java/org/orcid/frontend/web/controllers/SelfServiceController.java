@@ -268,9 +268,6 @@ public class SelfServiceController extends BaseController {
                 votingContactCount++;
             }
         }
-        if (agreementSignatoryContactCount == 0) {
-            errors.add(getMessage("manage_consortium.contacts_must_have_agreement_signatory_contact"));
-        }
         if (agreementSignatoryContactCount > 1) {
             errors.add(getMessage("manage_consortium.contacts_must_not_have_more_than_one_agreement_signatory_contact"));
         }
