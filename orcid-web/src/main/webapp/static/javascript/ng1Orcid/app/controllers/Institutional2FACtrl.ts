@@ -9,10 +9,12 @@ export const _Institutional2FACtrl = angular.module('orcidApp').controller(
     'Institutional2FACtrl', 
     [
         '$compile', 
-        '$scope', 
+        '$scope',
+        '$timeout', 
         function (
             $compile,
-            $scope
+            $scope,
+            $timeout
         ) {
     
             $scope.init = function() {
