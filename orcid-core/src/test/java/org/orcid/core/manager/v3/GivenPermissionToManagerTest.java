@@ -70,7 +70,7 @@ public class GivenPermissionToManagerTest extends BaseTest {
     public void testFindByGiverAndReceiverOrcid() {
         DelegateForm form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(GIVER, RECEIVER);
         assertNotNull(form);
-        assertEquals(GIVER, form.getGiverOrcid());
+        assertEquals(GIVER, form.getGiverOrcid().getPath());
         assertEquals(RECEIVER, form.getReceiverOrcid().getPath());
     }
 
