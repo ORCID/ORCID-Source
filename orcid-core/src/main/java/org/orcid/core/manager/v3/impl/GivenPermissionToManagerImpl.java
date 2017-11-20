@@ -23,14 +23,9 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.v3.GivenPermissionToManager;
-import org.orcid.jaxb.model.message.ApprovalDate;
-import org.orcid.jaxb.model.message.DelegateSummary;
-import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
-import org.orcid.utils.DateUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -78,12 +73,7 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
                     givenPermissionToDao.merge(permission);
 
                     // Notify
-                    DelegationDetails details = new DelegationDetails();
-                    details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(approvalDate)));
-                    DelegateSummary summary = new DelegateSummary();
-                    summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
-                    details.setDelegateSummary(summary);
-                    notificationManager.sendNotificationToAddedDelegate(userOrcid, details);
+                    notificationManager.sendNotificationToAddedDelegate(userOrcid, delegateOrcid);
 
                     // Update last modified on delegate's profile so that the
                     // granting user is visible to them immediately
