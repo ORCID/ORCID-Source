@@ -16,12 +16,15 @@
  */
 package org.orcid.pojo;
 
+import java.io.Serializable;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
 import org.orcid.pojo.ajaxForm.Text;
 
-public class DelegateForm {
+public class DelegateForm implements Serializable {
+    private static final long serialVersionUID = 5765957766718405465L;
     OrcidIdentifier giverOrcid;
     Text giverName;
     OrcidIdentifier receiverOrcid;

@@ -22,9 +22,9 @@ import org.orcid.pojo.DelegateForm;
 
 public interface GivenPermissionToManagerReadOnly {
 
-    List<DelegateForm> findByGiver(String giverOrcid);
+    List<DelegateForm> findByGiver(String giverOrcid, long lastModified);
 
-    List<DelegateForm> findByReceiver(String receiverOrcid);
+    List<DelegateForm> findByReceiver(String receiverOrcid, long lastModified);
 
     DelegateForm findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid);
 }

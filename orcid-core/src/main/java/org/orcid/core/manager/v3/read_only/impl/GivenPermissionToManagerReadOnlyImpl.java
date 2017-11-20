@@ -29,6 +29,7 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
+import org.springframework.cache.annotation.Cacheable;
 
 public class GivenPermissionToManagerReadOnlyImpl implements GivenPermissionToManagerReadOnly {
 
@@ -39,7 +40,8 @@ public class GivenPermissionToManagerReadOnlyImpl implements GivenPermissionToMa
     private GivenPermissionToDao givenPermissionToDaoReadOnly;
     
     @Override
-    public List<DelegateForm> findByGiver(String giverOrcid) {
+    @Cacheable(value = "delegates-by-giver", key = "#giverOrcid.concat('-').concat(#lastModified)")
+    public List<DelegateForm> findByGiver(String giverOrcid, long lastModified) {
         List<DelegateForm> delegates = new ArrayList<DelegateForm>();
         List<GivenPermissionToEntity> list = givenPermissionToDaoReadOnly.findByGiver(giverOrcid);
         
@@ -56,7 +58,8 @@ public class GivenPermissionToManagerReadOnlyImpl implements GivenPermissionToMa
     }
 
     @Override
-    public List<DelegateForm> findByReceiver(String receiverOrcid) {
+    @Cacheable(value = "delegates-by-receiver", key = "#receiverOrcid.concat('-').concat(#lastModified)")
+    public List<DelegateForm> findByReceiver(String receiverOrcid, long lastModified) {
         List<DelegateForm> delegates = new ArrayList<DelegateForm>();
         List<GivenPermissionByEntity> list = givenPermissionToDaoReadOnly.findByReceiver(receiverOrcid);
         for(GivenPermissionByEntity element : list) {

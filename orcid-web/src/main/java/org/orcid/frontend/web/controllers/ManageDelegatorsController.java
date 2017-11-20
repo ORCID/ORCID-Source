@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,14 +25,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
-import org.orcid.jaxb.model.message.DelegateSummary;
-import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.stereotype.Controller;
@@ -63,17 +61,25 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
 
     @Resource
     private OrcidIdentifierUtils orcidIdentifierUtils;
+    
+    @Resource
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
 
     @RequestMapping
     public ModelAndView manageDelegators() {
         return new ModelAndView("manage_delegators");
     }
 
+    private long getLastModified(String orcid) {
+        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
     @RequestMapping(value = "/delegators-and-me.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> getDelegatorsPlusMeJson() {
         Map<String, Object> map = new HashMap<>();
         String realUserOrcid = getRealUserOrcid();
-        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid);
+        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid, getLastModified(realUserOrcid));
         map.put("delegators", delegates);
 
         if (sourceManager.isInDelegationMode()) {
@@ -94,8 +100,8 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         List<Map<String, Object>> datums = new ArrayList<>();
         Locale locale = getLocale();
         query = query.toLowerCase(locale);
-
-        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(getRealUserOrcid());
+        String realUserOrcid = getRealUserOrcid();
+        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid, getLastModified(realUserOrcid));
         for (DelegateForm delegate : delegates) {
             String name = delegate.getGiverName().getValue().toLowerCase(locale);
             String orcid = delegate.getGiverOrcid().getPath();
@@ -119,7 +125,7 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         query = query.toLowerCase(locale);
         String realUserOrcid = getRealUserOrcid();
         String currentOrcid = getEffectiveUserOrcid();
-        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid);
+        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid, getLastModified(realUserOrcid));
         List<DelegateForm> filtered = new ArrayList<DelegateForm>();
         for (DelegateForm delegate : delegates) {
             String name = delegate.getGiverName().getValue().toLowerCase(locale);
@@ -131,10 +137,4 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         }
         return filtered;
     }
-
-    public OrcidProfile getRealProfile() {
-        String realOrcid = getRealUserOrcid();
-        return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
-    }
-
 }
