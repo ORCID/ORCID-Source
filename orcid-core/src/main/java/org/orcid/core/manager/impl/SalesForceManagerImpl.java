@@ -420,7 +420,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         String userOrcid = sourceManager.retrieveRealUserOrcid();
         checkOpportunityUpdatePermissions(opportunity);
         Opportunity updatedOpportunity = new Opportunity();
-        updatedOpportunity.setId(updatedOpportunity.getId());
+        updatedOpportunity.setId(opportunity.getId());
         updatedOpportunity.setRemovalRequested(false);
         updatedOpportunity.setNextStep("Removal request cancelled by " + userOrcid);
         salesForceDao.updateOpportunity(updatedOpportunity);
