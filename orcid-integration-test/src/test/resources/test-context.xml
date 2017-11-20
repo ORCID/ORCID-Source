@@ -47,19 +47,11 @@
         <property name="properties" ref="jerseyProperties" />
     </bean>
         
-	<!-- Uncomment if you want to track the jersey calls to the server -->
-	<!--  
-	<bean id="addJerseyLoggingFilter" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetObject"><ref local="jerseyClient"/></property>
-        <property name="targetMethod"><value>addFilter</value></property>
-        <property name="arguments">
-            <list>
-                <bean class="com.sun.jersey.api.client.filter.LoggingFilter"/>
-            </list>
-        </property>
-    </bean>
-	-->
-        
+	<bean id="orcidJerseyConfigurer" class="org.orcid.core.utils.OrcidJerseyConfigurer">
+	    <property name="jerseyClient" ref="jerseyClient" />
+	    <property name="loggingEnabled" value="${org.orcid.jersey.client.logging.enabled:false}" />
+	</bean>
+	
 	<!-- 1.2 API -->      
     <bean id="t2OAuthClient" class="org.orcid.integration.blackbox.api.v12.T2OAuthOrcidApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}"/>
