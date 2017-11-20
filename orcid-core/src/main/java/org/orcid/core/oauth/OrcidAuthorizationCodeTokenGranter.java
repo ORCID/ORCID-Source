@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.togglz.Features;
@@ -100,7 +101,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
         if(codeDetails == null) {
             if (Features.REVOKE_TOKEN_ON_CODE_REUSE.isActive()){
-                int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId());
+                int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId(), RevokeReason.AUTH_CODE_REUSED);
                 if (numDisabled >0){
                     throw new InvalidGrantException("Reused authorization code: " + authorizationCode);                                
                 }                

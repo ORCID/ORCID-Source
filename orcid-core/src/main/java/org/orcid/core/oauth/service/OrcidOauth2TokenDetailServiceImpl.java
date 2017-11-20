@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -268,13 +269,13 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Override
     @Transactional
-    public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID) {
-        return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID);
+    public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID, RevokeReason reason) {
+        return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID, reason.name());
     }
 
     @Override
     @Transactional
-    public void disableAccessTokenByUserOrcid(String userOrcid) {
-        orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid);
+    public void disableAccessTokenByUserOrcid(String userOrcid, RevokeReason reason) {
+        orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid, reason.name());
     }        
 }

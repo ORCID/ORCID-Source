@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
@@ -667,7 +668,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         
         if(disableTokens) {
             // Disable any token that belongs to this record
-            orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(orcid);
+            orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(orcid, RevokeReason.RECORD_DEACTIVATED);
         }
         
         // Change default visibility to private

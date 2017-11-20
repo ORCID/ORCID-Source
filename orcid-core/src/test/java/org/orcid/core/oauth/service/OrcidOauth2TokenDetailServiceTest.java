@@ -36,6 +36,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -199,7 +200,7 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
             assertFalse(token.getTokenDisabled());
         }
         
-        orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(USER_ORCID_2);
+        orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(USER_ORCID_2, RevokeReason.RECORD_DEACTIVATED);
         
         tokensUser1 = orcidOauth2TokenDetailService.findByClientIdAndUserName(CLIENT_ID_1, USER_ORCID_2);
         assertEquals(3, tokensUser1.size());
