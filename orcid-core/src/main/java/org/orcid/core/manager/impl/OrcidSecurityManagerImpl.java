@@ -248,7 +248,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkScopes(ScopePathType requiredScope) {
+    public void checkScopes(ScopePathType... requiredScopes) {
         //Verify the client is not a public client
         checkClientType();
         
@@ -256,8 +256,10 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authorizationRequest.getScope());
         for (ScopePathType scope : requestedScopes) {
-            if (scope.hasScope(requiredScope)) {
-                return;
+            for (ScopePathType requiredScope : requiredScopes) {
+                if (scope.hasScope(requiredScope)) {
+                    return;
+                }
             }
         }
         throw new OrcidAccessControlException();
@@ -486,11 +488,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkClientAccessAndScopes(String orcid, ScopePathType requiredScope) {
+    public void checkClientAccessAndScopes(String orcid, ScopePathType... requiredScopes) {
         // Check the token belongs to the user
         isMyToken(orcid);
         // Check you have the required scopes
-        checkScopes(requiredScope);
+        checkScopes(requiredScopes);
     }
 
     /**

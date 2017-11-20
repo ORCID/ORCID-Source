@@ -316,7 +316,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response createWork(String orcid, Work work) {
-        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE);
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
         clearSource(work);
         Work w = workManager.createWork(orcid, work, true);
         sourceUtils.setSourceName(w);
@@ -405,7 +405,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response createFunding(String orcid, Funding funding) {
-        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_CREATE);
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         clearSource(funding);
         Funding f = profileFundingManager.createFunding(orcid, funding, true);
         sourceUtils.setSourceName(f);
@@ -477,7 +477,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response createEducation(String orcid, Education education) {
-        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE);
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(education);
         Education e = affiliationsManager.createEducationAffiliation(orcid, education, true);
         sourceUtils.setSourceName(e);
@@ -542,7 +542,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response createEmployment(String orcid, Employment employment) {
-        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE);
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(employment);
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true);
         sourceUtils.setSourceName(e);
@@ -614,7 +614,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response createPeerReview(String orcid, PeerReview peerReview) {
-        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.PEER_REVIEW_CREATE);
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_UPDATE);
         clearSource(peerReview);
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
         sourceUtils.setSourceName(newPeerReview);
