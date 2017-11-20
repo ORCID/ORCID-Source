@@ -25,6 +25,9 @@
 			<th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
 			<th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
 			<th>${springMacroRequestContext.getMessage("search_results.thOthernames")}</th>
+            <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'>
+                <th>${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</th>
+            </@orcid.checkFeatureStatus>
 		</tr>
 		</thead>
 		<tbody>
@@ -34,6 +37,9 @@
     				<td ng-bind="getNames(result)">{{result['given-names']}}</td>
     				<td>{{result['family-name']}}</td>
     				<td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
+                    <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'>
+                        <td ng-bind="getAffiliations(result)">{{result['affiliations']}}</td>
+                    </@orcid.checkFeatureStatus>
     			</tr>
             </@orcid.checkFeatureStatus>
             <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
