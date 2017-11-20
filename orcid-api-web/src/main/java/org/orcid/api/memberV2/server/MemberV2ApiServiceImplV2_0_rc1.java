@@ -54,9 +54,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.member.MemberApiServiceImplHelper;
-import org.orcid.api.member.server.validator.JSONInputValidator;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;

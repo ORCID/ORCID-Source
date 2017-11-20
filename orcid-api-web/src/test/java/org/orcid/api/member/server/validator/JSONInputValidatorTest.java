@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
+import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.InvalidJSONException;
 import org.orcid.jaxb.model.v3.dev1.common.Day;
