@@ -71,6 +71,8 @@ public class ApiVersionFilter extends OncePerRequestFilter {
             section = ApiSection.NOTIFICATIONS;
         } else if (version != null && version.startsWith("2.")) {
             section = ApiSection.V2;
+        } else if (version != null && version.startsWith("3.")) {
+            section = ApiSection.V3;
         }
         httpRequest.setAttribute(API_SECTION_REQUEST_ATTRIBUTE_NAME, section);
     }
