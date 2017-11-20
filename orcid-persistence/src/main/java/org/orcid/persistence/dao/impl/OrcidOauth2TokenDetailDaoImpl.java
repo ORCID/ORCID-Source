@@ -72,17 +72,6 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    public void removeByUserOrcidAndClientOrcid(String userOrcid, String clientOrcid) {
-        Query query = entityManager.createQuery("delete from OrcidOauth2TokenDetail where profile.id = :userOrcid and clientDetailsId = :clientOrcid");
-        query.setParameter("userOrcid", userOrcid);
-        query.setParameter("clientOrcid", clientOrcid);
-        int i = query.executeUpdate();
-        if (i == 0) {
-            LOGGER.info("Attempted to tokens for user {0} and client application {1} but none were present in the database", userOrcid, clientOrcid);
-        }
-    }
-
-    @Override
     public OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where refreshTokenValue = :refreshTokenValue",
                 OrcidOauth2TokenDetail.class);

@@ -33,8 +33,6 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
 
     void removeByRefreshTokenValue(String refreshTokenValue);
 
-    void removeByUserOrcidAndClientOrcid(String userOrcid, String clientOrcid);
-
     OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue);
 
     List<OrcidOauth2TokenDetail> findByAuthenticationKey(String authKey);
