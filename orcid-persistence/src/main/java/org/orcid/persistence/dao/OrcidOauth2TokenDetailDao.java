@@ -29,9 +29,7 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
 
     OrcidOauth2TokenDetail findByTokenValue(String token);
 
-    OrcidOauth2TokenDetail findNonDisabledByTokenValue(String tokenValue);
-
-    void removeByTokenValue(String tokenValue);
+    OrcidOauth2TokenDetail findNonDisabledByTokenValue(String tokenValue);    
 
     void removeByRefreshTokenValue(String refreshTokenValue);
 

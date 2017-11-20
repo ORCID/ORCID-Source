@@ -62,18 +62,6 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     @ExcludeFromProfileLastModifiedUpdate
-    public void removeByTokenValue(String tokenValue) {
-        Assert.hasText(tokenValue, "Attempt to retrieve a OrcidOauth2TokenDetail with a null or empty token value");
-        Query query = entityManager.createQuery("delete from OrcidOauth2TokenDetail where tokenValue = " + ":tokenValue");
-        query.setParameter("tokenValue", tokenValue);
-        int i = query.executeUpdate();
-        if (i == 0) {
-            LOGGER.info("Attempted to delete access token {0} but it was not present in the database", tokenValue);
-        }
-    }
-
-    @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public void removeByRefreshTokenValue(String refreshTokenValue) {
         Query query = entityManager.createQuery("delete from OrcidOauth2TokenDetail where refreshTokenValue = " + ":refreshToken");
         query.setParameter("refreshToken", refreshTokenValue);

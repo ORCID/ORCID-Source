@@ -79,18 +79,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     @Override
     @Transactional
-    public void remove(OrcidOauth2TokenDetail detail) {
-        orcidOauth2TokenDetailDao.remove(detail);
-    }
-
-    @Override
-    @Transactional
-    public void remove(String tokenValue) {
-        orcidOauth2TokenDetailDao.removeByTokenValue(tokenValue);
-    }
-
-    @Override
-    @Transactional
     public void saveOrUpdate(OrcidOauth2TokenDetail detail) {
         if (detail.getId() != null) detail = orcidOauth2TokenDetailDao.merge(detail);
         orcidOauth2TokenDetailDao.persist(detail);
@@ -99,12 +87,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     public Long getCount() {
         return orcidOauth2TokenDetailDao.countAll();
-    }
-
-    @Override
-    @Transactional
-    public void removeByTokenValue(String tokenValue) {
-        orcidOauth2TokenDetailDao.removeByTokenValue(tokenValue);
     }
 
     @Override

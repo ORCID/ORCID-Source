@@ -35,15 +35,9 @@ public interface OrcidOauth2TokenDetailService {
 
     List<OrcidOauth2TokenDetail> getAll();
 
-    void remove(OrcidOauth2TokenDetail e);
-
-    void remove(String id);
-
     void saveOrUpdate(OrcidOauth2TokenDetail e);
 
-    Long getCount();
-
-    void removeByTokenValue(String tokenValue);
+    Long getCount();    
 
     OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue);
 
