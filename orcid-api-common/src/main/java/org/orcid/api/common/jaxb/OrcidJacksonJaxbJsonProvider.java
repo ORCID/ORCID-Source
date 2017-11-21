@@ -16,10 +16,18 @@
  */
 package org.orcid.api.common.jaxb;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
+
+import org.orcid.api.common.exception.JSONInputValidator;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +42,8 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
 public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
+    
+    private JSONInputValidator jsonInputValidator = new JSONInputValidator();
 
     public OrcidJacksonJaxbJsonProvider() {
         super();
@@ -55,4 +65,16 @@ public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
         configure(SerializationFeature.INDENT_OUTPUT, false);
     }
 
+    /** This adds a validation step when converting JSON into ORCID models.
+     * 
+     */
+    @Override
+    public Object readFrom(Class<Object> arg0, Type arg1, Annotation[] arg2, MediaType arg3, MultivaluedMap<String, String> arg4, InputStream arg5) throws IOException {
+        Object o = super.readFrom(arg0, arg1, arg2, arg3, arg4, arg5);
+        if (jsonInputValidator.canValidate(o.getClass())){
+            jsonInputValidator.validateJSONInput(o);
+        }
+        return o;
+    }
+    
 }
