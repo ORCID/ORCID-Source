@@ -1,8 +1,10 @@
 import { Injectable, Pipe, PipeTransform } 
     from '@angular/core';
 
+/*
 import { UrlProtocolPipe }
     from '../urlProtocolNg2.ts';
+*/
 
 @Pipe({
     name: "affiliationExternalIdentifierHtml"
@@ -11,7 +13,7 @@ import { UrlProtocolPipe }
 @Injectable()
 export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
 
-    constructor( private urlProtocol: UrlProtocolPipe ){
+    constructor( /*private urlProtocol: UrlProtocolPipe*/ ){
 
     }
 
@@ -55,7 +57,7 @@ export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
         
  
         if(link != null) {
-            link = this.urlProtocol(link);
+            link = null;//this.urlProtocol(link);
             
             if(value != null) {
                 output += "<a href='" + link + "' class='truncate-anchor inline' target='orcid.blank' ng-mouseenter='showAffiliationExtIdPopOver(" + putCode + index +")' ng-mouseleave='hideAffiliationExtIdPopOver(" + putCode + index +")'>" + value.escapeHtml() + "</a>";

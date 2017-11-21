@@ -1,9 +1,10 @@
 import { Injectable, Pipe, PipeTransform } 
     from '@angular/core';
 
+/*
 import { UrlProtocolPipe }
-    from 'urlProtocolNg2.ts';
-
+    from './../urlProtocolNg2.ts';
+*/
 @Pipe({
     name: "externalIdentifierHtml"
 })
@@ -11,7 +12,7 @@ import { UrlProtocolPipe }
 @Injectable()
 export class ExternalIdentifierHtmlPipe implements PipeTransform {
 
-    constructor( private urlProtocol: UrlProtocolPipe ){
+    constructor( /*private urlProtocol: UrlProtocolPipe */ ){
 
     }
 
@@ -54,7 +55,7 @@ export class ExternalIdentifierHtmlPipe implements PipeTransform {
         }
  
         if(link != null) {
-            link = this.urlProtocol(link);
+            link = null;//this.urlProtocol(link);
             
             if(value != null) {
                 output += "<a href='" + link + "' class='truncate-anchor' target='orcid.blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
