@@ -144,42 +144,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
             LOGGER.debug("Cannot remove the refresh token {0}", refreshTokenValue);
         }
     }
-
-    @Override
-    @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
-    public void removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(String authenticationKey, String tokenValue, String refreshTokenValue) {
-        String or = " or ";
-        Map<String, String> queryParams = new HashMap<String, String>();
-
-        StringBuilder queryString = new StringBuilder("delete from OrcidOauth2TokenDetail where (");
-        if (StringUtils.isNotBlank(authenticationKey)) {
-            queryString.append("authenticationKey = :authenticationKey" + or);
-            queryParams.put("authenticationKey", authenticationKey);
-        }
-        if (StringUtils.isNotBlank(tokenValue)) {
-            queryString.append("tokenValue = :tokenValue" + or);
-            queryParams.put("tokenValue", tokenValue);
-        }
-        if (StringUtils.isNotBlank(refreshTokenValue)) {
-            queryString.append("refreshTokenValue = :refreshTokenValue" + or);
-            queryParams.put("refreshTokenValue", refreshTokenValue);
-        }
-
-        if (!queryParams.isEmpty()) {
-            queryString.replace(queryString.length() - or.length(), queryString.length(), ")");
-            Query query = entityManager.createQuery(queryString.toString());
-            for (String key : queryParams.keySet()) {
-                query.setParameter(key, queryParams.get(key));
-            }
-            int i = query.executeUpdate();
-            LOGGER.debug(i + " tokens deleted as a result of the parameters {}", queryParams);
-        } else {
-            LOGGER.info("Attempted to delete tokens with no parameters");
-        }
-
-    }
-
+    
     /**
      * Get the list of available scopes for a member over a client
      * 

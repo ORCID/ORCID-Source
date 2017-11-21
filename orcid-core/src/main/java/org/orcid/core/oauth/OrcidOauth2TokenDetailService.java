@@ -83,7 +83,7 @@ public interface OrcidOauth2TokenDetailService {
      */
     void disableAccessToken(Long tokenId, String userOrcid);        
 
-    void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail);
+    void createNew(OrcidOauth2TokenDetail detail);
     
     int findCountByUserName(String userName, long lastModified);
 

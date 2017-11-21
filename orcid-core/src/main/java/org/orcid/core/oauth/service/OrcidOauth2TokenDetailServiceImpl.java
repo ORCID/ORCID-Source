@@ -209,10 +209,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     @Override
     @Transactional
-    public void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail) {
-        // We should allow multiple tokens for the same combo user-scopes, thats why we will
-        // not delete based on the authentication key
-        orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(null, detail.getTokenValue(), detail.getRefreshTokenValue());
+    public void createNew(OrcidOauth2TokenDetail detail) {
         orcidOauth2TokenDetailDao.persist(detail);
     }        
 
