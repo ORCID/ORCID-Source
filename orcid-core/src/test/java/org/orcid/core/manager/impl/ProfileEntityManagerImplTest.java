@@ -279,18 +279,19 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void testDontGetDuplicatedApplications() {
+        Long seed = System.currentTimeMillis();
         Date expiration = new Date(System.currentTimeMillis() + 10000);
-        OrcidOauth2TokenDetail token1 = createToken(CLIENT_ID_1, "token-1", USER_ORCID, expiration, "/read-limited", false); // Displayed
-        OrcidOauth2TokenDetail token2 = createToken(CLIENT_ID_1, "token-2", USER_ORCID, expiration, "/orcid-profile/read-limited", false); // Displayed
-        OrcidOauth2TokenDetail token3 = createToken(CLIENT_ID_1, "token-3", USER_ORCID, expiration, "/activities/update", false); // Displayed
-        OrcidOauth2TokenDetail token4 = createToken(CLIENT_ID_1, "token-4", USER_ORCID, expiration, "/read-limited", false);
-        OrcidOauth2TokenDetail token5 = createToken(CLIENT_ID_1, "token-5", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
-        OrcidOauth2TokenDetail token6 = createToken(CLIENT_ID_1, "token-6", USER_ORCID, expiration, "/activities/update", false);
-        OrcidOauth2TokenDetail token7 = createToken(CLIENT_ID_1, "token-7", USER_ORCID, expiration, "/read-limited", false);
-        OrcidOauth2TokenDetail token8 = createToken(CLIENT_ID_1, "token-8", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
-        OrcidOauth2TokenDetail token9 = createToken(CLIENT_ID_1, "token-9", USER_ORCID, expiration, "/activities/update", false);
-        OrcidOauth2TokenDetail token10 = createToken(CLIENT_ID_1, "token-10", USER_ORCID, expiration, "/person/read-limited", false); // Displayed
-        OrcidOauth2TokenDetail token11 = createToken(CLIENT_ID_1, "token-11", USER_ORCID, expiration, "/person/read-limited", false);
+        OrcidOauth2TokenDetail token1 = createToken(CLIENT_ID_1, "token-1-" + seed, USER_ORCID, expiration, "/read-limited", false); // Displayed
+        OrcidOauth2TokenDetail token2 = createToken(CLIENT_ID_1, "token-2-" + seed, USER_ORCID, expiration, "/orcid-profile/read-limited", false); // Displayed
+        OrcidOauth2TokenDetail token3 = createToken(CLIENT_ID_1, "token-3-" + seed, USER_ORCID, expiration, "/activities/update", false); // Displayed
+        OrcidOauth2TokenDetail token4 = createToken(CLIENT_ID_1, "token-4-" + seed, USER_ORCID, expiration, "/read-limited", false);
+        OrcidOauth2TokenDetail token5 = createToken(CLIENT_ID_1, "token-5-" + seed, USER_ORCID, expiration, "/orcid-profile/read-limited", false);
+        OrcidOauth2TokenDetail token6 = createToken(CLIENT_ID_1, "token-6-" + seed, USER_ORCID, expiration, "/activities/update", false);
+        OrcidOauth2TokenDetail token7 = createToken(CLIENT_ID_1, "token-7-" + seed, USER_ORCID, expiration, "/read-limited", false);
+        OrcidOauth2TokenDetail token8 = createToken(CLIENT_ID_1, "token-8-" + seed, USER_ORCID, expiration, "/orcid-profile/read-limited", false);
+        OrcidOauth2TokenDetail token9 = createToken(CLIENT_ID_1, "token-9-" + seed, USER_ORCID, expiration, "/activities/update", false);
+        OrcidOauth2TokenDetail token10 = createToken(CLIENT_ID_1, "token-10-" + seed, USER_ORCID, expiration, "/person/read-limited", false); // Displayed
+        OrcidOauth2TokenDetail token11 = createToken(CLIENT_ID_1, "token-11-" + seed, USER_ORCID, expiration, "/person/read-limited", false);
         
         List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
