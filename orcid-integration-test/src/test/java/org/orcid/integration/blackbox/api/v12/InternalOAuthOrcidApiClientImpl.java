@@ -32,6 +32,7 @@ import org.orcid.api.common.T2OrcidApiService;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class InternalOAuthOrcidApiClientImpl implements OAuthInternalAPIService<ClientResponse> {
 
@@ -69,5 +70,32 @@ public class InternalOAuthOrcidApiClientImpl implements OAuthInternalAPIService<
         WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
         WebResource.Builder builder = resource.header("Authorization", "Bearer " + token);
         return builder.entity(formParams).post(ClientResponse.class);
+    }
+
+    @Override
+    @POST
+    @Path(T2OrcidApiService.OAUTH_REVOKE)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public ClientResponse revokeTokenWithBasicAuth(String token, String clientId, String clientSecret) {
+        orcidClientHelper.addBasicAuth(clientId, clientSecret);
+        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_REVOKE);
+        WebResource.Builder builder = resource.getRequestBuilder();
+        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl ();
+        formParams.add("token", token);
+        ClientResponse response = builder.entity(formParams).post(ClientResponse.class);
+        orcidClientHelper.removeBasicAuth();
+        return response;
+    }
+
+    @Override
+    public ClientResponse revokeTokenWithPlainCredentials(String token, String clientId, String clientSecret) {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("token", token);
+        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_REVOKE);
+        WebResource.Builder builder = resource.getRequestBuilder();
+        return builder.entity(params).post(ClientResponse.class);        
     }   
 }

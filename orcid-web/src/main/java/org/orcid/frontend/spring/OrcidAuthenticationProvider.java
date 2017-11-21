@@ -19,9 +19,9 @@ package org.orcid.frontend.spring;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.aerogear.security.otp.Totp;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -50,15 +50,18 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Resource
     private EmailDao emailDaoReadOnly;
-    
+
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource
     private BackupCodeManager backupCodeManager;
     
     @Resource
     private SlackManager slackManager;
+
+    @Resource
+    private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
@@ -66,7 +69,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         if (!result.isAuthenticated()) {
             return result;
         }
-        
+
         ProfileEntity profile = getProfileEntity(auth.getName());
         if ((profile == null)) {
             throw new BadCredentialsException("Invalid username or password");
@@ -83,9 +86,8 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 if (verificationCode == null || verificationCode.isEmpty()) {
                     throw new VerificationCodeFor2FARequiredException();
                 }
-    
-                Totp totp = new Totp(encryptionManager.decryptForInternalUse(profile.getSecretFor2FA()));
-                if (!isValidLong(verificationCode) || !totp.verify(verificationCode)) {
+
+                if (!twoFactorAuthenticationManager.verificationCodeIsValid(verificationCode, profile)) {
                     throw new Bad2FAVerificationCodeException();
                 }
             }
@@ -94,7 +96,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         authentication.setDetails(toOrcidProfileUserDetails(profile));
         return authentication;
     }
-    
+
     private OrcidProfileUserDetails toOrcidProfileUserDetails(ProfileEntity profileEntity) {
         String orcid = profileEntity.getId();
         
@@ -123,15 +125,6 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
             }
         }
         return profile;
-    }
-
-    private boolean isValidLong(String code) {
-        try {
-            Long.parseLong(code);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
     }
 
     @Override

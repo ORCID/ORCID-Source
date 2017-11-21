@@ -99,9 +99,28 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     @Override
     public boolean verificationCodeIsValid(String code, String orcid) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        return verificationCodeIsValid(code, profileEntity);
+    }
+    
+    @Override
+    public boolean verificationCodeIsValid(String code, ProfileEntity profileEntity) {
+        code = code.replaceAll("\\s", "");
+        if (!validLong(code)) {
+            return false;
+        }
+        
         String decryptedSecret = encryptionManager.decryptForInternalUse(profileEntity.getSecretFor2FA());
         Totp totp = new Totp(decryptedSecret);
         return totp.verify(code.replaceAll("\\s", ""));
+    }
+
+    private boolean validLong(String code) {
+        try {
+            Long.parseLong(code);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override

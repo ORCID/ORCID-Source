@@ -248,4 +248,14 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         query.setParameter("userOrcid", userOrcid);
         query.executeUpdate();        
     }
+
+    @Override
+    public void revokeAccessToken(String accessToken) {
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE, revocationDate=now() where tokenValue = :accessTokenValue");
+        query.setParameter("accessTokenValue", accessToken);
+        int count = query.executeUpdate();
+        if (count == 0) {
+            LOGGER.debug("Cannot remove the refresh token {0}", accessToken);
+        }
+    }
 }

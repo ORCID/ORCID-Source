@@ -83,7 +83,6 @@ import { NameService }
 import { WorkspaceService } 
     from '../shared/workspaceService.ts'; 
 
-
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
     }

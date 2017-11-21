@@ -41,4 +41,15 @@ public interface OAuthInternalAPIService<T> {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams);
 
+    @POST
+    @Path(T2OrcidApiService.OAUTH_REVOKE)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public ClientResponse revokeTokenWithBasicAuth(String token, String clientId, String clientSecret);
+    
+    @POST
+    @Path(T2OrcidApiService.OAUTH_REVOKE)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public ClientResponse revokeTokenWithPlainCredentials(String token, String clientId, String clientSecret);
 }
