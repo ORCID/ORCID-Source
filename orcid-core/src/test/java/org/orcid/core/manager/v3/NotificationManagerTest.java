@@ -69,15 +69,10 @@ import org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.DelegateSummary;
-import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Locale;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
@@ -341,17 +336,11 @@ public class NotificationManagerTest extends DBUnitTest {
             
         });
         
-        when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
-        
-        DelegationDetails firstNewDelegate = new DelegationDetails();
-        DelegateSummary firstNewDelegateSummary = new DelegateSummary();
-        firstNewDelegateSummary.setCreditName(new CreditName("Jimmy Dove"));
-        firstNewDelegate.setDelegateSummary(firstNewDelegateSummary);
-        firstNewDelegateSummary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
+        when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);        
 
         for(org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
             profile.setLocale(locale);
-            notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", firstNewDelegate);
+            notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", delegateOrcid);
         }
     }
 

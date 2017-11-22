@@ -433,6 +433,8 @@
         <property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
     </bean>
 	
+	<bean id="orcidIdentifierUtils" class="org.orcid.core.utils.v3.OrcidIdentifierUtils" />
+	
 	<!-- v3 managers -->
 	<bean id="activitiesSummaryManagerV3" class="org.orcid.core.manager.v3.impl.ActivitiesSummaryManagerImpl">
         <property name="affiliationsManager" ref="affiliationsManagerV3" />
@@ -1543,8 +1545,9 @@
 	<bean id="doiManager" class="org.orcid.core.manager.impl.DOIManagerImpl" />
 	<bean id="bibtexManager" class="org.orcid.core.manager.impl.BibtexManagerImpl" />
 	
+	<bean id="givenPermissionToManager" class="org.orcid.core.manager.v3.impl.GivenPermissionToManagerImpl"/>
 	
-	<bean id="givenPermissionToManager" class="org.orcid.core.manager.impl.GivenPermissionToManagerImpl"/>
+	<bean id="givenPermissionToManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.GivenPermissionToManagerReadOnlyImpl"/>
 	
 	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		

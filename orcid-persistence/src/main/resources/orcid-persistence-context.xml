@@ -199,6 +199,10 @@
 
     <bean id="givenPermissionToDao" class="org.orcid.persistence.dao.impl.GivenPermissionToDaoImpl" />
 
+	<bean id="givenPermissionToDaoReadOnly" class="org.orcid.persistence.dao.impl.GivenPermissionToDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>	
+
     <bean id="orcidOauth2TokenDetailDao" class="org.orcid.persistence.dao.impl.OrcidOauth2TokenDetailDaoImpl" />
     <bean id="orcidOauth2AuthoriziationCodeDetailDao" class="org.orcid.persistence.dao.impl.OrcidOauth2AuthoriziationCodeDetailDaoImpl" />
 
