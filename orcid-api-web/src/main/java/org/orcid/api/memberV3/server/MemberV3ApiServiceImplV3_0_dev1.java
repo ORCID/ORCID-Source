@@ -652,6 +652,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation( nickname="viewResearcherUrlV3dev", value = "Fetch one researcher url for an ORCID ID", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -699,6 +700,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
 
     // Other names
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation( nickname="viewOtherNameV3dev", value = "Fetch Other name", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -707,6 +709,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES)
     @ApiOperation( nickname="viewOtherNamesV3dev", value = "Fetch Other names", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -755,6 +758,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
 
     // External Identifiers
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
     @ApiOperation( nickname="viewExternalIdentifierV3dev", value = "Fetch external identifier", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -763,6 +767,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS)
     @ApiOperation( nickname="viewExternalIdentifiersV3dev", value = "Fetch external identifiers", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -810,6 +815,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
 
     // Keywords
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS + PUTCODE)
     @ApiOperation( nickname="viewKeywordV3dev", value = "Fetch keyword", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -818,6 +824,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS)
     @ApiOperation( nickname="viewKeywordsV3dev", value = "Fetch keywords", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -856,6 +863,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
 
     // Address
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS + PUTCODE)
     @ApiOperation( nickname="viewAddressV3dev", value = "Fetch an address", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -864,6 +872,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS)
     @ApiOperation( nickname="viewAddressesV3dev", value = "Fetch all addresses of a profile", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -902,6 +911,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
 
     // Person
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSON)
     @ApiOperation( nickname="viewPersonV3dev", value = "Fetch person details", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
@@ -911,6 +921,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
 
     // Record
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_SIMPLE)
     @ApiOperation( nickname="viewRecordV3dev", value = "Fetch record details", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })   
@@ -921,6 +932,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     
     // Record
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_RECORD)
     @ApiOperation( hidden=true,nickname="viewRecordRecordV3", value = "Fetch record details", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })   
