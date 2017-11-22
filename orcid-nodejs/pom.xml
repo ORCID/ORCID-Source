@@ -6,17 +6,17 @@
         <version>1.1.5-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <main.basedir>${project.parent.basedir}</main.basedir>
-        <nodejs.workingDirectory>~/git/ORCID-Source/orcid-web/static/javascript/ng1Orcid</nodejs.workingDirectory>
-        <webpackConfig>localhost</webpackConfig>
-    </properties>
     <artifactId>orcid-nodejs</artifactId>
     <name>ORCID - NodeJS</name>
     <description>NodeJS Environment Setup and Webpack Conf</description>
     <dependencies>     
     </dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+        <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/static/javascript/ng1Orcid</nodejs.workingDirectory>
+        <webpackConfig>localhost</webpackConfig>
+    </properties>
     <build>
         <finalName>orcid-nodejs</finalName>
         <plugins>
@@ -55,7 +55,11 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-                    <!-- keep commented to return terminal control during mvn execution -->
+                    <!-- ensure watch is set to false, or run webpack manually
+                    WORKSPACE=/home/myusername/git/ORCID-Source
+                    cd $WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid
+                    $WORKSPACE/orcid-nodejs/target/node/node $WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid/node_modules/webpack/bin/webpack.js  - -config $WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid/qa.webpack.config.js
+                    -->
                     <execution>
                         <id>webpack build</id>
                         <goals>
@@ -72,7 +76,7 @@
     </build>
     <profiles>
         <profile>
-            <id>env-qa-nodejs</id>
+            <id>qa</id>
             <activation>
                 <property>
                     <name>env</name>
@@ -80,6 +84,34 @@
                 </property>
             </activation>
             <properties>
+                <nodejs.workingDirectory>/home/orcid_tomcat/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
+                <webpackConfig>qa</webpackConfig>
+            </properties>
+        </profile>
+        <profile>
+            <id>localhost</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>local-nodejs</value>
+                </property>
+            </activation>
+            <properties>
+                <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
+                <webpackConfig>localhost</webpackConfig>
+            </properties>
+        </profile>
+        <profile>
+            <id>ci</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>ci-nodejs</value>
+                </property>
+            </activation>
+            <properties>
+                <nodejs.workingDirectory>/home/orcid_tomcat/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
+                <webpackConfig>ci</webpackConfig>
             </properties>
         </profile>
     </profiles>

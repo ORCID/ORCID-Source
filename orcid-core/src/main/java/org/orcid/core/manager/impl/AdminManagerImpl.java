@@ -34,9 +34,9 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
@@ -64,7 +64,7 @@ public class AdminManagerImpl implements AdminManager {
     private OrcidUrlManager orcidUrlManager;
     
     @Resource
-    private GivenPermissionToDao givenPermissionToDao;
+    private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
     
     @Resource(name = "profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -100,7 +100,7 @@ public class AdminManagerImpl implements AdminManager {
     public AdminDelegatesRequest startDelegationProcess(AdminDelegatesRequest request, String trusted, String managed) {
         boolean haveErrors = false;
         // The permission should not already exist
-        if (givenPermissionToDao.findByGiverAndReceiverOrcid(managed, trusted) != null) {
+        if (givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(managed, trusted) != null) {
             request.getErrors().add(localeManager.resolveMessage("admin.delegate.error.permission_already_exists", trusted, managed));
             haveErrors = true;
         }

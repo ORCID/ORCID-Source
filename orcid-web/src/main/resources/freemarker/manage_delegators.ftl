@@ -38,21 +38,21 @@
 					<input id="delegatorsSearch" type="text" placeholder="<@orcid.msg 'manage_delegators.search.placeholder' />" class="input-xlarge inline-input"></input>
 				</form>
 			</p>
-			<table class="table table-bordered settings-table normal-width" ng-show="delegators.delegationDetails" ng-cloak>
+			<table class="table table-bordered settings-table normal-width" ng-show="delegators.length > 0" ng-cloak>
 				<thead>
 					<tr>
-						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-						<th width="35%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-						<th width="15%" ng-click="changeSorting('approvalDate.value')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
+						<th width="35%" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th width="35%" ng-click="changeSorting('receiverOrcid.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+						<th width="15%" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+						<th width="15%" ng-click="changeSorting('lastModifiedDate')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="delegationDetails in delegators.delegationDetails | orderBy:sort.column:sort.descending">
-						<td width="35%"><a href="<@orcid.rootPath '/switch-user?username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}" target="delegationDetails.delegateSummary.creditName.content">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
-						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="delegationDetails.delegateSummary.orcidIdentifier.path">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
-						<td width="15%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
-						<td width="15%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date:'yyyy-MM-dd'}}</td>
+					<tr ng-repeat="delegationDetails in delegators | orderBy:sort.column:sort.descending">
+						<td width="35%"><a href="<@orcid.rootPath '/switch-user?username='/>{{giverOrcid.path}}" target="giverName.value">{{delegationDetails.giverName.value}}</a></td>
+						<td width="35%"><a href="{{delegationDetails.giverOrcid.uri}}" target="{{delegationDetails.giverOrcid.path}}">{{delegationDetails.giverOrcid.path}}</a></td>						
+						<td width="15%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
+						<td width="15%">{{delegationDetails.lastModifiedDate|date:'yyyy-MM-dd'}}</td>
 					</tr>
 				</tbody>
 			</table>

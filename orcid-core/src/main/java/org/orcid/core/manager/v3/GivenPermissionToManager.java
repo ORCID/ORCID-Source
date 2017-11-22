@@ -14,13 +14,9 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
-
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+package org.orcid.core.manager.v3;
 
 public interface GivenPermissionToManager {
-
-    GivenPermissionToEntity findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid);
 
     void remove(String giverOrcid, String receiverOrcid);
 

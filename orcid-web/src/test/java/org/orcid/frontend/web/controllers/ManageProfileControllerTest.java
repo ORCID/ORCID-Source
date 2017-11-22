@@ -20,16 +20,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -40,17 +45,20 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.GivenPermissionToManager;
+import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.jaxb.model.v3.dev1.common.CreditName;
+import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
@@ -59,6 +67,7 @@ import org.orcid.jaxb.model.v3.dev1.record.Emails;
 import org.orcid.jaxb.model.v3.dev1.record.FamilyName;
 import org.orcid.jaxb.model.v3.dev1.record.GivenNames;
 import org.orcid.jaxb.model.v3.dev1.record.Name;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -72,6 +81,7 @@ import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -106,7 +116,16 @@ public class ManageProfileControllerTest {
     private GivenPermissionToManager mockGivenPermissionToManager;
     
     @Mock
+    private GivenPermissionToManagerReadOnly mockGivenPermissionToManagerReadOnly;
+    
+    @Mock
     private OrcidSecurityManager mockOrcidSecurityManager;
+    
+    @Mock
+    private OrcidIdentifierUtils mockOrcidIdentifierUtils;
+    
+    @Mock
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
 
     private RecordNameEntity getRecordName(String orcidId) {
         RecordNameEntity recordName = new RecordNameEntity();
@@ -126,15 +145,29 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "emailManager", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
-        TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager);        
-        TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);                
-        
+        TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager); 
+        TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManagerReadOnly", mockGivenPermissionToManagerReadOnly); 
+        TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);  
+        TargetProxyHelper.injectIntoProxy(controller, "orcidIdentifierUtils", mockOrcidIdentifierUtils);
+        TargetProxyHelper.injectIntoProxy(controller, "profileLastModifiedAspect", profileLastModifiedAspect);
+                
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.eq("invalid password"), Mockito.anyString())).thenReturn(false);
         when(mockProfileEntityManager.deprecateProfile(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
         when(mockProfileEntityManager.deprecateProfile(Mockito.eq(DEPRECATED_USER_ORCID), Mockito.eq(USER_ORCID))).thenReturn(true);
+        when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
+        when(mockOrcidIdentifierUtils.buildOrcidIdentifier(Mockito.anyString())).thenAnswer(new Answer<OrcidIdentifier>() {
 
+            @Override
+            public OrcidIdentifier answer(InvocationOnMock invocation) throws Throwable {
+                OrcidIdentifier result = new OrcidIdentifier();
+                result.setPath(invocation.getArgument(0));
+                return result;
+            }
+            
+        });
+        
         when(mockLocaleManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenAnswer(new Answer<String>() {
 
             @Override
@@ -237,6 +270,29 @@ public class ManageProfileControllerTest {
                 email.setProfile(entity);
                 return email;
             }
+        });
+        
+        when(mockGivenPermissionToManagerReadOnly.findByGiver(anyString(), anyLong())).thenAnswer(new Answer<List<DelegateForm>>(){
+
+            @Override
+            public List<DelegateForm> answer(InvocationOnMock invocation) throws Throwable {
+                XMLGregorianCalendar now = DateUtils.convertToXMLGregorianCalendar(new Date());
+                List<DelegateForm> list = new ArrayList<DelegateForm>();
+                DelegateForm one = new DelegateForm();
+                one.setGiverOrcid(new OrcidIdentifier(USER_ORCID));
+                one.setReceiverOrcid(new OrcidIdentifier("0000-0000-0000-0004"));
+                one.setReceiverName(Text.valueOf("Credit Name"));
+                one.setApprovalDate(now);
+                list.add(one);
+                DelegateForm two = new DelegateForm();
+                two.setGiverOrcid(new OrcidIdentifier(USER_ORCID));
+                two.setReceiverOrcid(new OrcidIdentifier("0000-0000-0000-0005"));
+                two.setReceiverName(Text.valueOf("Given Names Family Name"));
+                two.setApprovalDate(now);
+                list.add(two);
+                return list;
+            }
+            
         });
     }
 
@@ -345,13 +401,13 @@ public class ManageProfileControllerTest {
         for (DelegateForm form : list) {
             assertNotNull(form);
             assertNotNull(form.getApprovalDate());
-            assertEquals(USER_ORCID, form.getGiverOrcid().getValue());
+            assertEquals(USER_ORCID, form.getGiverOrcid().getPath());
             assertNotNull(form.getReceiverOrcid());
-            if (form.getReceiverOrcid().getValue().equals("0000-0000-0000-0004")) {
+            if (form.getReceiverOrcid().getPath().equals("0000-0000-0000-0004")) {
                 assertEquals("Credit Name", form.getReceiverName().getValue());
                 found1 = true;
             } else {
-                assertEquals("0000-0000-0000-0005", form.getReceiverOrcid().getValue());
+                assertEquals("0000-0000-0000-0005", form.getReceiverOrcid().getPath());
                 assertEquals("Given Names Family Name", form.getReceiverName().getValue());
                 found2 = true;
             }

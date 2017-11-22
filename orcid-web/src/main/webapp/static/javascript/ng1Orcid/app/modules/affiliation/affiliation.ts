@@ -15,10 +15,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated filters
 import { OrderByPipe }
-    from '../../filters/orderByNg2.ts'; 
+    from '../../pipes/orderByNg2.ts'; 
 
 import { AjaxFormDateToISO8601Pipe }
-    from '../../filters/ajaxFormDateToISO8601Ng2.ts'; 
+    from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
 
 //User generated components
 import { AffiliationComponent } 

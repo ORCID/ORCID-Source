@@ -135,7 +135,11 @@ html {
 html[lang=ko] .email-pop-up .table-responsive .table,
 html[lang=ja] .email-pop-up .table-responsive .table,
 html[lang=zh_CN] .email-pop-up .table-responsive .table,
-html[lang=zh_TW] .email-pop-up .table-responsive .table {
+html[lang=zh_TW] .email-pop-up .table-responsive .table,
+html[lang=ko] table.account-settings .table,
+html[lang=ja] table.account-settings .table,
+html[lang=zh_CN] table.account-settings .table, 
+html[lang=zh_TW] table.account-settings .table {
     table-layout: fixed;
 }
 
@@ -3767,7 +3771,7 @@ ul#body-work-list>li {
     height: auto;
     margin: 10px 0;
     min-height: 50px;
-    width: 100%
+    width: 100%;
 }
 
 .workspace-profile .workspace-section input,.workspace-profile .workspace-section select {
@@ -5446,7 +5450,9 @@ ul.oauth-scopes li {
 }
 
 .emails-box {
-    word-wrap: break-word
+    margin-bottom: 5px;
+    word-break: break-all;
+    word-wrap: break-word;
 }
 
 .emails-box #privacy-bar {

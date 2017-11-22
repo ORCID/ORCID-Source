@@ -395,5 +395,14 @@
 	<cache name="clients-per-member" maxElementsInMemory="500" eternal="false"
 		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
 		<persistence strategy="localTempSwap" />
-	</cache>				
+	</cache>
+	
+	<cache name="delegates-by-giver" maxElementsInMemory="10000" eternal="false"
+		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
+		<persistence strategy="localTempSwap" />
+	</cache>
+	<cache name="delegates-by-receiver" maxElementsInMemory="10000" eternal="false"
+		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
+		<persistence strategy="localTempSwap" />
+	</cache>			
 </ehcache>

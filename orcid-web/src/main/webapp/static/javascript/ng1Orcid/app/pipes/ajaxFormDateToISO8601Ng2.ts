@@ -1,7 +1,7 @@
 declare var Number: any;
 
 import { Injectable, Pipe, PipeTransform } 
-  from '@angular/core';
+    from '@angular/core';
 
 @Pipe({
     name: "ajaxFormDateToISO8601"
