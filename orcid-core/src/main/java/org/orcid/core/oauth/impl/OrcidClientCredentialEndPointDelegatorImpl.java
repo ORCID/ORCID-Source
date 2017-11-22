@@ -241,13 +241,13 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         Object params[] = {grantType};
         if (token == null) {
-            LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
-                    clientId, grantType, code, scopes, state, redirectUri });
+            LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, code={}", new Object[] {
+                    clientId, grantType, code});
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }
         
-        LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
-                clientId, grantType, code, scopes, state, redirectUri, token });
+        LOGGER.info("OAuth2 access token granted: clientId={}, code={}, scopes={}", new Object[] {
+                clientId, code, scopes });
         
         return token;
     }

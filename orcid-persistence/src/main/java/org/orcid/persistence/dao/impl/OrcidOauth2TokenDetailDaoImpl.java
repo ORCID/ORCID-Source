@@ -16,14 +16,10 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -63,11 +59,11 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Override
     @ExcludeFromProfileLastModifiedUpdate
     public void removeByRefreshTokenValue(String refreshTokenValue) {
-        Query query = entityManager.createQuery("delete from OrcidOauth2TokenDetail where refreshTokenValue = " + ":refreshToken");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE, revokeReason = 'CLIENT_REVOKED' where refreshTokenValue = :refreshToken");
         query.setParameter("refreshToken", refreshTokenValue);
         int i = query.executeUpdate();
         if (i == 0) {
-            LOGGER.info("Attempted to delete refresh token {0} but it was not present in the database", refreshTokenValue);
+            LOGGER.info("Attempted to revoke using refresh token {0} but it was not present in the database", refreshTokenValue);
         }
     }
 

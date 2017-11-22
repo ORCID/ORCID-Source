@@ -19,25 +19,19 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
             
-    <changeSet id="ADD-UNIQUE-INDEX-ON-TOKEN" author="Angel Montenegro" dbms="postgresql">
-    	<preConditions>
+    <changeSet id="ADD-UNIQUE-INDEX-ON-TOKEN" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+    	<preConditions onFail="MARK_RAN">
     		<not>
     			<indexExists indexName="token_value_index" />
     		</not>
     	</preConditions>
-    	<sql>CREATE UNIQUE INDEX CONCURRENTLY token_value_index ON oauth2_token_detail(token_value)</sql>
-        <sql>DROP INDEX CONCURRENTLY token_index</sql>
-        <sql>ADD CONSTRAINT unique_token_value USING INDEX token_value_index</sql>
+    	<sql>CREATE UNIQUE INDEX CONCURRENTLY token_value_index ON oauth2_token_detail(token_value);</sql>
+        <sql>DROP INDEX CONCURRENTLY IF EXISTS token_index;</sql>
+        <sql>ALTER TABLE oauth2_token_detail ADD CONSTRAINT unique_token_value UNIQUE USING INDEX token_value_index;</sql>
     </changeSet>
     
     <changeSet id="ADD-UNIQUE-INDEX-ON-TOKEN-HSQLDB" author="Angel Montenegro" dbms="hsqldb">
-    	<preConditions>
-    		<not>
-    			<indexExists indexName="token_value_index" />
-    		</not>
-    	</preConditions>
-    	<dropIndex tableName="oauth2_token_detail" indexName="token_index"/>
-    	<addUniqueConstraint tableName="oauth2_token_detail" columnNames="token_value" />        
+    	<addUniqueConstraint tableName="oauth2_token_detail" columnNames="token_value" constraintName="unique_token_value"/>        
     </changeSet>
     
 </databaseChangeLog>

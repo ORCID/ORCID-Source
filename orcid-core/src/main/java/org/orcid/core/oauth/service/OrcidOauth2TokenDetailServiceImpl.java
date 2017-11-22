@@ -210,7 +210,8 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public void createNew(OrcidOauth2TokenDetail detail) {
-        orcidOauth2TokenDetailDao.persist(detail);
+        orcidOauth2TokenDetailDao.persist(detail); 
+        orcidOauth2TokenDetailDao.flush();
     }        
 
     @Override
