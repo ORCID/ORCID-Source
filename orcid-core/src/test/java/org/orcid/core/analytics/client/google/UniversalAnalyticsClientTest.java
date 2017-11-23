@@ -23,8 +23,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.orcid.core.analytics.AnalyticsData;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.util.UriEncoder;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 public class UniversalAnalyticsClientTest {
     

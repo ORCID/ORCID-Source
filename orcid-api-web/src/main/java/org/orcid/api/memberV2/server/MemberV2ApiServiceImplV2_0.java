@@ -46,7 +46,6 @@ import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_VIEW_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
-import static org.orcid.core.api.OrcidApiConstants.RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
@@ -79,6 +78,7 @@ import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.member.MemberApiServiceImplHelper;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
@@ -190,7 +190,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
     @ApiOperation(value = "Fetch all activities", response = ActivitiesSummary.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/activities-2.0.xsd")
     public Response viewActivities(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
@@ -200,7 +200,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK + PUTCODE)
     @ApiOperation(value = "Fetch a Work", response = Work.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewWork(orcid, getPutCode(putCode));
     }
@@ -209,7 +209,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS)
     @ApiOperation(value = "Fetch all works", response = Works.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewWorks(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewWorks(orcid);
     }
@@ -218,7 +218,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BULK_WORKS)
     @ApiOperation(value = "Fetch specified works", response = WorkBulk.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @PathParam("putCodes") String putCodes) {
         return serviceDelegator.viewBulkWorks(orcid, putCodes);
     }
@@ -227,7 +227,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch a Work Summary", response = WorkSummary.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewWorkSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewWorkSummary(orcid, getPutCode(putCode));
     }
@@ -286,7 +286,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING + PUTCODE)
     @ApiOperation(value = "Fetch a Funding", response = Funding.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewFunding(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewFunding(orcid, getPutCode(putCode));
     }
@@ -295,7 +295,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDINGS)
     @ApiOperation(value = "Fetch all fundings", response = Fundings.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewFundings(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewFundings(orcid);
     }
@@ -304,7 +304,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch a Funding Summary", response = FundingSummary.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewFundingSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewFundingSummary(orcid, getPutCode(putCode));
     }
@@ -349,7 +349,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION + PUTCODE)
     @ApiOperation(value = "Fetch an Education", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Education.class),
             @ApiResponse(code = 404, message = "putCode not found", response = String.class),
             @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
@@ -361,7 +361,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATIONS)
     @ApiOperation(value = "Fetch all educations", response = Educations.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewEducations(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEducations(orcid);
     }
@@ -370,7 +370,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch an Education summary", response = EducationSummary.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewEducationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewEducationSummary(orcid, getPutCode(putCode));
     }
@@ -380,7 +380,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION)
     @ApiOperation(value = "Create an Education", response = URI.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Education created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Education representation", response = String.class),
@@ -414,7 +414,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENT + PUTCODE)
     @ApiOperation(value = "Fetch an Employment", response = Employment.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewEmployment(orcid, getPutCode(putCode));
     }
@@ -423,7 +423,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENTS)
     @ApiOperation(value = "Fetch all employments", response = Employments.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewEmployments(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmployments(orcid);
     }
@@ -432,7 +432,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENT_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch an Employment Summary", response = EmploymentSummary.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewEmploymentSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewEmploymentSummary(orcid, getPutCode(putCode));
     }
@@ -476,7 +476,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEW + PUTCODE)
     @ApiOperation(value = "Fetch a Peer Review", response = PeerReview.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewPeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewPeerReview(orcid, getPutCode(putCode));
     }
@@ -485,7 +485,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEWS)
     @ApiOperation(value = "Fetch all peer reviews", response = PeerReviews.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewPeerReviews(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPeerReviews(orcid);
     }
@@ -494,7 +494,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEW_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch a Peer Review Summary", response = PeerReviewSummary.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewPeerReviewSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewPeerReviewSummary(orcid, getPutCode(putCode));
     }
@@ -651,15 +651,16 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS)
     @ApiOperation(value = "Fetch all researcher urls for an ORCID ID", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewResearcherUrls(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewResearcherUrls(orcid);
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation(value = "Fetch one researcher url for an ORCID ID", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewResearcherUrl(orcid, getPutCode(putCode));
     }
@@ -697,24 +698,26 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMAIL)
     @ApiOperation(value = "Fetch all emails for an ORCID ID", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewEmails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmails(orcid);
     }
 
     // Other names
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Fetch Other name", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewOtherName(orcid, getPutCode(putCode));
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES)
     @ApiOperation(value = "Fetch Other names", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewOtherNames(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewOtherNames(orcid);
     }
@@ -753,24 +756,26 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
     @ApiOperation(value = "Fetch personal details for an ORCID ID", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPersonalDetails(orcid);
     }
 
     // External Identifiers
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
     @ApiOperation(value = "Fetch external identifier", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewExternalIdentifier(orcid, getPutCode(putCode));
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS)
     @ApiOperation(value = "Fetch external identifiers", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewExternalIdentifiers(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewExternalIdentifiers(orcid);
     }
@@ -808,24 +813,26 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIOGRAPHY)
     @ApiOperation(value = "Get biography details", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewBiography(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewBiography(orcid);
     }
 
     // Keywords
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS + PUTCODE)
     @ApiOperation(value = "Fetch keyword", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewKeyword(orcid, getPutCode(putCode));
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS)
     @ApiOperation(value = "Fetch keywords", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewKeywords(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewKeywords(orcid);
     }
@@ -861,17 +868,19 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
 
     // Address
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS + PUTCODE)
     @ApiOperation(value = "Fetch an address", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewAddress(orcid, getPutCode(putCode));
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS)
     @ApiOperation(value = "Fetch all addresses of a profile", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewAddresses(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewAddresses(orcid);
     }
@@ -907,20 +916,33 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
 
     // Person
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSON)
     @ApiOperation(value = "Fetch person details", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewPerson(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPerson(orcid);
     }
 
     // Record
     @GET
-    @Path(RECORD)
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(OrcidApiConstants.RECORD_SIMPLE)
     @ApiOperation(value = "Fetch record details", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewRecord(orcid);
+    }
+    
+    // Record
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(OrcidApiConstants.RECORD_RECORD)
+    @ApiOperation(hidden=true, value = "Fetch record details", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
+    public Response viewRecordRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
     }
     
