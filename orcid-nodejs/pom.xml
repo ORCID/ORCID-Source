@@ -52,7 +52,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>install</arguments>
+                            <arguments>--production=false install</arguments>
                         </configuration>
                     </execution>
                     <!-- ensure watch is set to false, or run webpack manually
@@ -86,6 +86,19 @@
             <properties>
                 <nodejs.workingDirectory>/home/orcid_tomcat/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
                 <webpackConfig>qa</webpackConfig>
+            </properties>
+        </profile>
+        <profile>
+            <id>tmp-tomcat-orcid-web</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>tmp-tomcat-orcid-web-nodejs</value>
+                </property>
+            </activation>
+            <properties>
+                <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
+                <webpackConfig>tmp-tomcat-orcid-web</webpackConfig>
             </properties>
         </profile>
         <profile>
