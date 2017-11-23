@@ -155,11 +155,12 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
 
     @Test
     @Transactional
-    public void testRemoveRefreshToken() throws Exception {
-        OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-3");
+    public void testRemoveByRefreshToken() throws Exception {
+        OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-3");       
+        assertNotNull(token);
         orcidTokenStoreService.removeRefreshToken(token.getRefreshToken());
-        OAuth2RefreshToken refreshToken = orcidTokenStoreService.readRefreshToken("some-long-oauth2-refresh-value-3");
-        assertNull(refreshToken);
+        token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-3");
+        assertNull(token);
     }
 
     @Test
