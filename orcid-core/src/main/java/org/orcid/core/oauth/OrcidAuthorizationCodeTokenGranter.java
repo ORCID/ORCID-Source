@@ -86,7 +86,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         String authorizationCode = parameters.get("code");
         String redirectUri = parameters.get(OAuth2Utils.REDIRECT_URI);
 
-        LOGGER.info("Getting OAuth2 authentication: code={}, redirectUri={}, clientId={}, scope={}", new Object[] { authorizationCode, redirectUri,
+        LOGGER.info("Getting OAuth2 authentication: code={}, clientId={}, scope={}", new Object[] { authorizationCode, 
                 tokenRequest.getClientId(), tokenRequest.getScope() });
 
         if (authorizationCode == null) {
@@ -143,7 +143,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         //Regenerate the authorization request but now with the request parameters
         pendingAuthorizationRequest = pendingAuthorizationRequest.createOAuth2Request(parameters);
         
-        LOGGER.info("Found pending authorization request: redirectUri={}, clientId={}, scope={}, is_approved={}", new Object[] { pendingAuthorizationRequest.getRedirectUri(),
+        LOGGER.debug("Found pending authorization request: redirectUri={}, clientId={}, scope={}, is_approved={}", new Object[] { pendingAuthorizationRequest.getRedirectUri(),
                 pendingAuthorizationRequest.getClientId(), pendingAuthorizationRequest.getScope(), pendingAuthorizationRequest.isApproved() });
         // https://jira.springsource.org/browse/SECOAUTH-333
         // This might be null, if the authorization was done without the
@@ -156,8 +156,9 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
         String pendingClientId = pendingAuthorizationRequest.getClientId();
         String clientId = client.getClientId();
-        LOGGER.info("Comparing client ids: pendingClientId={}, authorizationRequest.clientId={}", pendingClientId, clientId);
         if (clientId != null && !clientId.equals(pendingClientId)) {
+            LOGGER.error("Exception exchanging authentication code {}, client ID mismatch: pendingClientId={}, authorizationRequest.clientId={}",
+                    new Object[] { authorizationCode, pendingClientId, clientId });
             // just a sanity check.
             throw new InvalidClientException("Client ID mismatch");
         }        
