@@ -31,10 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
@@ -57,7 +55,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * @author Angel Montenegro
@@ -83,12 +80,6 @@ public class AdminController extends BaseController {
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource(name = "orcidSecurityManagerV3")
-    OrcidSecurityManager orcidSecurityManager;
-    
-    @Resource(name = "emailManagerV3")
-    protected EmailManager emailManager;
-        
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_NOT_AVAILABLE = "N/A";
@@ -97,11 +88,6 @@ public class AdminController extends BaseController {
     @RequestMapping
     public ModelAndView getDeprecatedProfilesPage() {
         return new ModelAndView("admin_actions");        
-    }
-
-    @RequestMapping(value = { "/deprecate-profile/get-empty-deprecation-request.json" }, method = RequestMethod.GET)
-    public @ResponseBody ProfileDeprecationRequest getPendingDeprecationRequest() {
-        return new ProfileDeprecationRequest();
     }
 
     /**
@@ -340,7 +326,7 @@ public class AdminController extends BaseController {
      * Reset password
      */
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
-    public @ResponseBody String resetPassword(HttpServletRequest request, @RequestBody AdminChangePassword form) {
+    public @ResponseBody String resetPassword(@RequestBody AdminChangePassword form) {
         String orcidOrEmail = form.getOrcidOrEmail();
         String password = form.getPassword();        
         if (StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
@@ -410,7 +396,7 @@ public class AdminController extends BaseController {
      * Admin switch user
      */
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
-    public @ResponseBody Map<String, String> adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
+    public @ResponseBody Map<String, String> adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail) {
         if (StringUtils.isNotBlank(orcidOrEmail))
             orcidOrEmail = orcidOrEmail.trim();
         boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
@@ -449,9 +435,7 @@ public class AdminController extends BaseController {
     public @ResponseBody String adminVerifyEmail(@RequestBody String email) {
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
-            emailManager.verifyEmail(email);
-            String orcid = emailManager.findOrcidIdByEmail(email);
-            profileEntityManager.updateLastModifed(orcid);
+            emailManager.verifyEmail(email);            
         } else {
             result = getMessage("admin.verify_email.fail", email);
         }
