@@ -243,8 +243,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }
         
-        LOGGER.info("OAuth2 access token granted: clientId={}, code={}, scopes={}", new Object[] {
-                clientId, code, scopes });
+        Long tokenId = token.getAdditionalInformation() != null ? (Long) token.getAdditionalInformation().get(OrcidOauth2Constants.TOKEN_ID) : null;
+        
+        LOGGER.info("OAuth2 access token granted: tokenId={}, clientId={}, code={}, scopes={}", new Object[] {
+                tokenId, clientId, code, token.getScope() });
         
         return token;
     }
@@ -257,6 +259,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.PERSISTENT);
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.DATE_CREATED))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
+            if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_ID))
+                accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_ID);
         }
         
         return Response.ok((DefaultOAuth2AccessToken)accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();
