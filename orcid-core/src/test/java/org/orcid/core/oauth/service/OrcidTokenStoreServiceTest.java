@@ -111,7 +111,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         token.setScope(new HashSet<String>(Arrays.asList("/orcid-bio/read", "/orcid-works/read")));
         token.setTokenType("bearer");
         token.setExpiration(new Date());
-
+        token.setAdditionalInformation(new HashMap<String, Object>());
+        
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("client_id", clientId);
         parameters.put("state", "read");
@@ -194,7 +195,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         token.setScope(OAuth2Utils.parseParameterList("/orcid-profile/read,/orcid-profile/write"));
         token.setTokenType("bearer");
         token.setRefreshToken(new DefaultExpiringOAuth2RefreshToken("a-refresh-token", new Date()));
-
+        token.setAdditionalInformation(new HashMap<String, Object>());
+        
         orcidTokenStoreService.storeAccessToken(token, authentication);
 
         OAuth2AccessToken accessToken = orcidTokenStoreService.getAccessToken(authentication);
