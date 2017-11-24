@@ -41,6 +41,9 @@ public class OrgDisambiguatedSolrDocument {
 
     @Field(SolrConstants.ORG_DISAMBIGUATED_COUNTRY)
     private String orgDisambiguatedCountry;
+    
+    @Field(SolrConstants.ORG_DISAMBIGUATED_ID_FROM_SOURCE)
+    private String orgDisambiguatedIdFromSource;
 
     @Field(SolrConstants.ORG_DISAMBIGUATED_TYPE)
     private String orgDisambiguatedType;
@@ -92,6 +95,14 @@ public class OrgDisambiguatedSolrDocument {
 
     public void setOrgDisambiguatedCountry(String orgDisambiguatedCountry) {
         this.orgDisambiguatedCountry = orgDisambiguatedCountry;
+    }
+
+    public String getOrgDisambiguatedIdFromSource() {
+        return orgDisambiguatedIdFromSource;
+    }
+
+    public void setOrgDisambiguatedIdFromSource(String orgDisambiguatedIdFromSource) {
+        this.orgDisambiguatedIdFromSource = orgDisambiguatedIdFromSource;
     }
 
     public String getOrgDisambiguatedType() {
