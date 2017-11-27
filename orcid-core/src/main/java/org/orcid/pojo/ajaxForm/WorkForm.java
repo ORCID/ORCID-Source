@@ -211,35 +211,36 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     }
     
     private static void populateExternalIdentifiers(Work work, WorkForm workForm) {
-        List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
         if(work.getExternalIdentifiers() != null) {        
-            ExternalIDs extIds = work.getExternalIdentifiers();
-            if (extIds != null) {
-                for (ExternalID extId : extIds.getExternalIdentifier()) {
-                    
-                    if(extId.getRelationship() == null) {
-                        if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
-                            if(WorkType.BOOK.equals(work.getWorkType())) {
-                                extId.setRelationship(Relationship.PART_OF);
-                            } else {
-                                extId.setRelationship(Relationship.SELF);
-                            }
-                        } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
-                            if(WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
-                                extId.setRelationship(Relationship.PART_OF);
-                            } else {
-                                extId.setRelationship(Relationship.SELF);
-                            }
+            populateExternalIdentifiers(work.getExternalIdentifiers(), workForm, work.getWorkType());
+        }
+    }
+    
+    public static void populateExternalIdentifiers(ExternalIDs extIds, WorkForm workForm, WorkType workType) {
+        if (extIds != null) {
+            List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
+            for (ExternalID extId : extIds.getExternalIdentifier()) {
+                if(extId.getRelationship() == null) {
+                    if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
+                        if(WorkType.BOOK.equals(workType)) {
+                            extId.setRelationship(Relationship.PART_OF);
                         } else {
                             extId.setRelationship(Relationship.SELF);
                         }
+                    } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
+                        if(WorkType.BOOK_CHAPTER.equals(workType) || WorkType.CONFERENCE_PAPER.equals(workType)) {
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }
+                    } else {
+                        extId.setRelationship(Relationship.SELF);
                     }
-                    
-                    workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
                 }
+                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
             }
+            workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
         }
-        workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
     
     private static void populateExternalIdentifiers(WorkForm workForm, Work work) {

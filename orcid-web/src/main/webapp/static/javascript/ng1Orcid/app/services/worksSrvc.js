@@ -5,6 +5,8 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
         details: new Object(), // we should think about putting details in the
         groups: new Array(),
+        offset: 0,
+        showLoadMore: false,
         labelsMapping: {
             "default": {
                 types: [
@@ -222,54 +224,59 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         quickRef: {},
         worksToAddIds: null,
 
-        addAbbrWorksToScope: function(type) {
+        addAbbrWorksToScope: function(type, sort, sortAsc) {
             var url = getBaseUri();
-            var workIds = "";
             if (type == worksSrvc.constants.access_type.USER) {
-                url += '/works/works.json?workIds=';
-            }
-            else {
-                url += '/' + orcidVar.orcidId +'/works.json?workIds='; // public
-            } // use the anonymous url
-
-            if(worksSrvc.worksToAddIds.length != 0 ) {
-                worksSrvc.loading = true;
-                workIds = worksSrvc.worksToAddIds.splice(0,20).join();
-                
-                $.ajax({
-                    'url': url + workIds,
-                    'dataType': 'json',
-                    'success': function(data) {
-                        $timeout(function(){
-                            var dw = null;
-                            for (var i in data) {
-                                dw = data[i];
-                                removeBadContributors(dw);
-                                removeBadExternalIdentifiers(dw);
-                                worksSrvc.addBibtexJson(dw);
-                                groupedActivitiesUtil.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
-                            };
-                        });
-                        if(worksSrvc.worksToAddIds.length == 0 ) {
-                            $timeout(function() {
-                              worksSrvc.loading = false;
-                            });
-                            fixZindexIE7('.workspace-public workspace-body-list li',99999);
-                            fixZindexIE7('.workspace-toolbar',9999);
-                        } else {
-                            $timeout(function(){
-                                worksSrvc.addAbbrWorksToScope(type);
-                            },50);
-                        }
-                    }
-                }).fail(function(e) {
-                    worksSrvc.loading = false;
-                    console.log("Error fetching works: " + workIds);
-                    logAjaxError(e);
-                });
+                url += '/works/worksPage.json';
             } else {
+                url += '/' + orcidVar.orcidId +'/worksPage.json';
+            }
+            url += '?offset=' + worksSrvc.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
+            worksSrvc.loading = true;
+            $.ajax({
+                'url': url,
+                'dataType': 'json',
+                'success': function(data) {
+                    worksSrvc.handleWorkGroupData(data);
+                }
+            }).fail(function(e) {
                 worksSrvc.loading = false;
-            };
+                console.log("Error fetching works");
+                logAjaxError(e);
+            });
+        },
+        
+        resetWorkGroups: function() {
+            worksSrvc.offset = 0;
+            worksSrvc.groups = new Array();
+        },
+
+        refreshWorkGroups: function(sort, sortAsc) {
+            worksSrvc.groups = new Array();
+            var url = getBaseUri() + '/works/refreshWorks.json?limit=' + worksSrvc.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;;
+            worksSrvc.loading = true;
+            $.ajax({
+                'url': url,
+                'dataType': 'json',
+                'success': function(data) {
+                    worksSrvc.handleWorkGroupData(data);
+                }
+            }).fail(function(e) {
+                worksSrvc.loading = false;
+                console.log("Error fetching works");
+                logAjaxError(e);
+            });
+        },
+        
+        handleWorkGroupData: function(data) {
+            if (worksSrvc.groups == undefined) {
+                worksSrvc.groups = new Array();
+            }
+            worksSrvc.groups = worksSrvc.groups.concat(data.workGroups);
+            worksSrvc.groupsLabel = worksSrvc.groups.length + " of " + data.totalGroups;
+            worksSrvc.showLoadMore = worksSrvc.groups.length < data.totalGroups;
+            worksSrvc.loading = false;
+            worksSrvc.offset = data.nextOffset;
         },
 
         addBibtexJson: function(dw) {
@@ -483,30 +490,9 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             return null;
         },
 
-        loadAbbrWorks: function(access_type) {
-            if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
-                worksSrvc.worksToAddIds = orcidVar.workIds;
-                worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS);
-            } else {
-                worksSrvc.worksToAddIds = null;
-                worksSrvc.loading = true;
-                worksSrvc.groups = new Array();
-                worksSrvc.details = new Object();
-                $.ajax({
-                    url: getBaseUri() + '/works/workIds.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        $timeout(function(){
-                            worksSrvc.worksToAddIds = data;
-                            worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
-                        });
-                    }
-                }).fail(function(e){
-                    // something bad is happening!
-                    console.log("error fetching works");
-                    logAjaxError(e);
-                });
-            };
+        loadAbbrWorks: function(access_type, sort, sortAsc) {
+            worksSrvc.details = new Object();
+            worksSrvc.addAbbrWorksToScope(access_type, sort, sortAsc);
         },
 
         makeDefault: function(group, putCode) {

@@ -45,7 +45,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "month")
-public class Month implements Serializable {
+public class Month implements Serializable, Comparable<Month> {
 
     /**
      * 
@@ -115,5 +115,10 @@ public class Month implements Serializable {
     @Override
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
+    }
+
+    @Override
+    public int compareTo(Month otherMonth) {
+        return this.value.compareTo(otherMonth.value);
     }
 }

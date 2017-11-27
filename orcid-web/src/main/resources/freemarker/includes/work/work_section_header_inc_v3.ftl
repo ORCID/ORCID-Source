@@ -22,7 +22,7 @@
             <div ng-controller="WorkspaceSummaryCtrl">
                 <a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
                    <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-                   <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groups.length"></span>)
+                   <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groupsLabel"></span>)
                 </a>
                 <#if !(isPublicProfile??)> 
                     <div class="popover-help-container">

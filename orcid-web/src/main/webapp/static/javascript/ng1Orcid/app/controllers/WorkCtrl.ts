@@ -53,6 +53,9 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.bulkDeleteSubmit = false;
             $scope.canReadFiles = false;
             $scope.combiningWorks = false;
+            $scope.sortKey = "date";
+            $scope.sortAsc = true;
+            
             $scope.contentCopy = {
                 titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
                 titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
@@ -640,7 +643,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                         $scope.addingWork = false;
                                     });
                                     $.colorbox.close();
-                                    $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                                    $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sort, $scope.sortAsc);
                                 }
                             } else {
                                 $timeout(function(){
@@ -703,7 +706,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                             });
                             numToSave--;
                             if (numToSave == 0){
-                                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sort, $scope.sortAsc);
                                 savingBibtex = false;
                             }
                         });
@@ -712,6 +715,10 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 }
                 
             };
+            
+            $scope.loadMore = function() {
+                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortKey, $scope.sortAsc);
+            }
 
             $scope.serverValidate = function (relativePath) {
                 $.ajax({
@@ -767,7 +774,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     },
                     onClosed: function() {
                         $scope.closeAllMoreInfo();
-                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                        $scope.worksSrvc.refreshWorkGroups($scope.sort, $scope.sortAsc);
                     }
                 });
             };
@@ -783,7 +790,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     onComplete: function() {$.colorbox.resize();},
                     onClosed: function() {
                         $scope.closeAllMoreInfo();
-                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                        $scope.worksSrvc.refreshWorkGroups($scope.sort, $scope.sortAsc);
                     }
                 });
                 return false;
@@ -846,6 +853,14 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };  
 
             $scope.sort = function(key) {
+                if ($scope.sortKey == key) {
+                    $scope.sortAsc = !$scope.sortAsc;
+                } else {
+                    $scope.sortKey = key;
+                    $scope.sortAsc = true;
+                }
+                worksSrvc.resetWorkGroups();
+                worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortKey, $scope.sortAsc);
                 $scope.sortState.sortBy(key);
             };
 
@@ -988,7 +1003,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             }
     
             //init
-            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+            $scope.loadMore();
             loadWorkImportWizardList();
 
         }
