@@ -103,5 +103,19 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
             throw new NonTransientDataAccessResourceException(errorMessage, se);
         }
     }
+    
+    @Override
+    public List<OrgDisambiguatedSolrDocument> getOrgsForSelfService(String searchTerm, int firstResult, int maxResult) {
+        SolrQuery query = new SolrQuery();
+        query.setQuery("{!edismax qf='org-disambiguated-id-from-source^50.0 org-disambiguated-name^50.0 org-names^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}"
+                + searchTerm + "*").setFields("*");
+        try {
+            QueryResponse queryResponse = solrServerReadOnly.query(query);
+            return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
+        } catch (SolrServerException se) {
+            String errorMessage = MessageFormat.format("Error when attempting to search for orgs for self-service, with search term {0}", new Object[] { searchTerm });
+            throw new NonTransientDataAccessResourceException(errorMessage, se);
+        }
+    }
 
 }
