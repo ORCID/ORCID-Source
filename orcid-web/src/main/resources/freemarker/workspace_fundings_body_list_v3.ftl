@@ -20,6 +20,8 @@
 
 <#include "includes/funding/add_funding_inc.ftl"/>
 
+<funding-ng2></funding-ng2>
+
 <div ng-controller="FundingCtrl">
     <!-- Funding -->
     <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" >

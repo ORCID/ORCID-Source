@@ -404,7 +404,7 @@
             </div>
             <div *ngIf="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
                 <ul id="employments-list" ng-hide="!employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                    <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments ">***let group of affiliationsSrvc.employments | orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.putCode.value}}
+                    <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments | orderBy: sortState.predicate:sortState.reverse" [attr.employment-put-code]="group.putCode.value">
                         <div class="row"> 
                      
                 

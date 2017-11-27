@@ -38,6 +38,8 @@ import { EmailUnverifiedWarningNg2Module }
     from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
 import { EmailVerificationSentMesssageNg2Module } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+import { FundingNg2Module } 
+    from './funding/funding.ts';
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 import { NameNg2Module } 
@@ -69,7 +71,10 @@ import { CommonService }
     from '../shared/commonService.ts'
 
 import { EmailService } 
-    from '../shared/emailService.ts'; 
+    from '../shared/emailService.ts';
+
+import { FundingService } 
+    from '../shared/fundingService.ts';
 
 import { GroupedActivitiesUtilService } 
     from '../shared/groupedActivitiesService.ts';
@@ -128,6 +133,7 @@ export class RootCmp {
         CountryFormNg2Module,
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
+        FundingNg2Module,
         ModalNg2Module,
         NameNg2Module,
         ThanksForRegisteringNg2Module,
@@ -145,6 +151,7 @@ export class RootCmp {
         CommonService,
         CountryService,
         EmailService,
+        FundingService,
         //GroupedActivitiesUtilService,
         ModalService,
         NameService,

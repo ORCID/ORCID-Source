@@ -1,6 +1,111 @@
-/**
- * Fundings Service
- * */
+import { Injectable } 
+    from '@angular/core';
+
+import { Headers, Http, RequestOptions, Response } 
+    from '@angular/http';
+
+import { Observable } 
+    from 'rxjs/Observable';
+
+import 'rxjs/Rx';
+
+@Injectable()
+export class FundingService {
+    private fundingToAddIds: any;
+    private groups: any;
+    private headers: Headers;
+    private loading: any;
+    private urlFundingsById: string;
+    private urlFundingsId: string;
+
+    constructor( private http: Http ){
+        this.headers = new Headers(
+            { 
+                'Content-Type': 'application/json' 
+            }
+        );
+        this.fundingToAddIds = null;
+        this.groups = null;
+        this.urlFundingsById = getBaseUri() + '/fundings/fundings.json?fundingIds=';
+        this.urlFundingsId = getBaseUri() + '/fundings/fundingIds.json';
+    }
+
+    getFundingsById( idList ) {
+        this.loading = true;
+        this.fundingToAddIds = null;
+        console.log('getFundingsById', this.urlFundingsById + idList);
+        return this.http.get(
+            this.urlFundingsById + idList
+        )
+        .map((res:Response) => res.json()).share();
+        /*
+        if( fundingSrvc.fundingToAddIds.length != 0 ) {
+                var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
+                $.ajax({
+                    url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
+                    dataType: 'json',
+                    success: function(data) {
+                        for (var i in data) {
+                            var funding = data[i];
+                            groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
+                        };
+                        if (fundingSrvc.fundingToAddIds.length == 0) {
+                            $timeout(function() {
+                              fundingSrvc.loading = false;
+                            });
+                        } else {
+                            $timeout(function () {
+                                fundingSrvc.addFundingToScope(path);
+                            },50);
+                        }
+                    }
+                }).fail(function(e) {
+                    console.log("Error fetching fundings");
+                    logAjaxError(e);
+                });
+            } else {
+                fundingSrvc.loading = false;
+            };
+            */
+    }
+
+    getFundingsId() {
+        this.loading = true;
+        this.fundingToAddIds = null;
+        //this.groups.length = 0;
+        return this.http.get(
+            this.urlFundingsId
+        )
+        .map((res:Response) => res.json()).share();
+        /*
+        getFundings: function(path) {
+            //clear out current fundings
+            
+            //new way
+            
+            //get funding ids
+            $.ajax({
+                url: getBaseUri() + '/'  + path,
+                dataType: 'json',
+                success: function(data) {
+                    $timeout(function(){
+                        fundingSrvc.fundingToAddIds = data;
+                        fundingSrvc.addFundingToScope('fundings/fundings.json');
+                    });
+                }
+            }).fail(function(e){
+                // something bad is happening!
+                console.log("error fetching fundings");
+                logAjaxError(e);
+            });
+        },
+        */
+    }
+
+}
+
+/*
+
 angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', '$timeout', function ($rootScope, $timeout) {
     var fundingSrvc = {
         constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
@@ -17,7 +122,6 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', '$timeout', fun
                     url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
                     dataType: 'json',
                     success: function(data) {
-                        console.log('addFundingToScope', path, data);
                         for (var i in data) {
                             var funding = data[i];
                             groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
@@ -109,28 +213,7 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', '$timeout', fun
             }
             return null;
         },
-        getFundings: function(path) {
-            //clear out current fundings
-            fundingSrvc.loading = true;
-            fundingSrvc.fundingToAddIds = null;
-            //new way
-            fundingSrvc.groups.length = 0;
-            //get funding ids
-            $.ajax({
-                url: getBaseUri() + '/'  + path,
-                dataType: 'json',
-                success: function(data) {
-                    $timeout(function(){
-                        fundingSrvc.fundingToAddIds = data;
-                        fundingSrvc.addFundingToScope('fundings/fundings.json');
-                    });
-                }
-            }).fail(function(e){
-                // something bad is happening!
-                console.log("error fetching fundings");
-                logAjaxError(e);
-            });
-        },
+        
         getGroup: function(putCode) {
             for (var idx in fundingSrvc.groups) {
                 if (fundingSrvc.groups[idx].hasPut(putCode)){
@@ -208,3 +291,4 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', '$timeout', fun
     };
     return fundingSrvc;
 }]);
+*/
