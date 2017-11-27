@@ -671,51 +671,50 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     @Transactional
-    public void sendNotificationToAddedDelegate(String userGrantingPermission, DelegationDetails ... delegatesGrantedByUser) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);        
-        Locale userLocale = getUserLocaleFromProfileEntity(profile);        
+    public void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
 
-        for (DelegationDetails newDelegation : delegatesGrantedByUser) {
-            ProfileEntity delegateProfileEntity = profileDao.find(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath());
-            Boolean sendAdministrativeChangeNotifications = delegateProfileEntity.getSendAdministrativeChangeNotifications();
-            if (sendAdministrativeChangeNotifications == null || !sendAdministrativeChangeNotifications) {
-                LOGGER.debug("Not sending added delegate email, because option to send administrative change notifications not set to true for delegate: {}",
-                        delegateProfileEntity.getId());
-                return;
-            }
-
-            org.orcid.jaxb.model.v3.dev1.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);            
-            String grantingOrcidEmail = primaryEmail.getEmail();
-            String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
-            String email = delegateProfileEntity.getPrimaryEmail().getId();
-            Map<String, Object> templateParams = new HashMap<String, Object>();
-            templateParams.put("emailNameForDelegate", emailNameForDelegate);
-            templateParams.put("grantingOrcidValue", userGrantingPermission);
-            templateParams.put("grantingOrcidName", deriveEmailFriendlyName(profile));
-            templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-            templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-            templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
-            templateParams.put("subject", subject);
-
-            addMessageParams(templateParams, userLocale);
-
-            // Generate body from template
-            String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
-            // Generate html from template
-            String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
-
-            boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
-            if (notificationsEnabled) {
-                NotificationCustom notification = new NotificationCustom();
-                notification.setNotificationType(NotificationType.CUSTOM);
-                notification.setSubject(subject);
-                notification.setBodyHtml(html);
-                createNotification(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath(), notification);
-            } else {
-                mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
-            }
+        ProfileEntity delegateProfileEntity = profileDao.find(userReceivingPermission);
+        Boolean sendAdministrativeChangeNotifications = delegateProfileEntity.getSendAdministrativeChangeNotifications();
+        if (sendAdministrativeChangeNotifications == null || !sendAdministrativeChangeNotifications) {
+            LOGGER.debug("Not sending added delegate email, because option to send administrative change notifications not set to true for delegate: {}",
+                    delegateProfileEntity.getId());
+            return;
         }
+
+        org.orcid.jaxb.model.v3.dev1.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
+        String grantingOrcidEmail = primaryEmail.getEmail();
+        String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
+        String email = delegateProfileEntity.getPrimaryEmail().getId();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);
+        templateParams.put("grantingOrcidValue", userGrantingPermission);
+        templateParams.put("grantingOrcidName", deriveEmailFriendlyName(profile));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+        templateParams.put("subject", subject);
+
+        addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
+
+        boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
+        if (notificationsEnabled) {
+            NotificationCustom notification = new NotificationCustom();
+            notification.setNotificationType(NotificationType.CUSTOM);
+            notification.setSubject(subject);
+            notification.setBodyHtml(html);
+            createNotification(userReceivingPermission, notification);
+        } else {
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+        }
+
     }
 
     @Override

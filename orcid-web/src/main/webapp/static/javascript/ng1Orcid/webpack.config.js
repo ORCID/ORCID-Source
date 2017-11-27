@@ -16,9 +16,9 @@ module.exports = {
     },
     plugins: [
         new webpack.DefinePlugin({
-            'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+            'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
             'process.env':{
-                'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+                'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
             }
         })
     ],
@@ -28,5 +28,4 @@ module.exports = {
         }
     },
     watch: false
-};
-//console.log("CONFIG SET TO " + process.env.NODE_ENV)
+}

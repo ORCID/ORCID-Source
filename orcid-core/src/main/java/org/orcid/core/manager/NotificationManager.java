@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -53,7 +52,7 @@ public interface NotificationManager {
 
     public String deriveEmailFriendlyName(ProfileEntity profileEntity);
 
-    void sendNotificationToAddedDelegate(String userGrantingPermission, DelegationDetails ... delegatesGrantedByUser);
+    void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
 
     void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
 
