@@ -25,13 +25,16 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -50,6 +53,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -57,6 +63,9 @@ public class LoadRinggoldData {
     private static final String RINGGOLD_CHARACTER_ENCODING = "UTF-8";
     private static final String RINGGOLD_SOURCE_TYPE = "RINGGOLD";
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadRinggoldData.class);
+    
+    private static final List<String> ALLOWED_EXTERNAL_IDENTIFIERS = Arrays.asList("ISNI", "IPED", "NCES", "OFR");
+    
     @Option(name = "-z", usage = "Path to zip file containing Ringgold data to process")
     private File zipFile;
     @Option(name = "-d", usage = "Path to directory containing Ringgold data to process")
@@ -83,6 +92,8 @@ public class LoadRinggoldData {
     private Map<Integer, JsonNode> dnNameMap = new HashMap<>();
     private Map<Integer, Integer> deletedElementsMap = new HashMap<>();
 
+    private TransactionTemplate transactionTemplate;
+    
     public void setOrgDao(OrgDao orgDao) {
         this.orgDao = orgDao;
     }
@@ -129,6 +140,7 @@ public class LoadRinggoldData {
         orgDao = (OrgDao) context.getBean("orgDao");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
         orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
+        transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
@@ -146,7 +158,7 @@ public class LoadRinggoldData {
     }
 
     public void execute() {
-        LOGGER.info("Execute");
+        LOGGER.info("Execute");        
         if (zipFile != null) {
             try (ZipFile zip = new ZipFile(zipFile)) {
                 processAltNamesFile(zip);
@@ -260,7 +272,12 @@ public class LoadRinggoldData {
         LOGGER.info("Processing identifiers");
         identifiers.forEach(identifier -> {
             Integer ringgoldId = identifier.get("ringgold_id").asInt();
-            identifiersMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(identifier);
+            String identifierType = identifier.get("identifier_type").asText();
+            if(ALLOWED_EXTERNAL_IDENTIFIERS.contains(identifierType)) {
+                identifiersMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(identifier);
+            } else {
+                LOGGER.info("Ignoring identifier {} of type {}", ringgoldId, identifierType);
+            }
         });
     }
 
@@ -295,18 +312,21 @@ public class LoadRinggoldData {
     
     private void processInstitutions(JsonNode institutions) {
         LOGGER.info("Processing institutions");
-        institutions.forEach(institution -> {
-            OrgDisambiguatedEntity entity = processInstitution(institution);
-            Integer ringgoldId = institution.get("ringgold_id").asInt();
-            // Create external identifiers
-            if (identifiersMap.containsKey(ringgoldId)) {
-                generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
-            }
-
-            // Create orgs based on the alt names information
-            if (altNamesMap.containsKey(ringgoldId)) {
-                generateOrganizations(entity, altNamesMap.get(ringgoldId));
-            }
+        institutions.forEach(institution -> {            
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    OrgDisambiguatedEntity entity = processInstitution(institution);
+                    Integer ringgoldId = institution.get("ringgold_id").asInt();
+                    // Create external identifiers
+                    generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
+                    
+                    // Create orgs based on the alt names information
+                    if (altNamesMap.containsKey(ringgoldId)) {
+                        generateOrganizations(entity, altNamesMap.get(ringgoldId));
+                    }
+                }                
+            });                        
         });
     }
 
@@ -418,23 +438,45 @@ public class LoadRinggoldData {
     }
 
     private void generateExternalIdentifiers(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> identifiers) {
-        identifiers.forEach(identifierNode -> {
-            String type = identifierNode.get("identifier_type").asText();
-            LOGGER.info("Processing external identifier {} for {}", type, disambiguatedEntity.getId());
-            String value = identifierNode.get("value").asText();
-            if (!orgDisambiguatedExternalIdentifierDao.exists(disambiguatedEntity.getId(), value, type)) {
-                OrgDisambiguatedExternalIdentifierEntity newEntity = new OrgDisambiguatedExternalIdentifierEntity();
-                Date now = new Date();
-                newEntity.setDateCreated(now);
-                newEntity.setLastModified(now);
-                newEntity.setIdentifier(value);
-                newEntity.setIdentifierType(type);
-                newEntity.setOrgDisambiguated(disambiguatedEntity);
-                newEntity.setPreferred(false);
-                orgDisambiguatedExternalIdentifierDao.persist(newEntity);
-                numAddedExtIds++;
+        Set<OrgDisambiguatedExternalIdentifierEntity> existingExternalIdentifiers = disambiguatedEntity.getExternalIdentifiers();
+        Map<Pair<String, String>, OrgDisambiguatedExternalIdentifierEntity> existingExternalIdentifiersMap = new HashMap<>();
+        
+        if(existingExternalIdentifiers != null) {
+            for(OrgDisambiguatedExternalIdentifierEntity entity : existingExternalIdentifiers) {
+                Pair<String, String> id = Pair.of(entity.getIdentifierType(), entity.getIdentifier());
+                existingExternalIdentifiersMap.put(id, entity);
             }
-        });
+        }
+        
+        if(identifiers != null && !identifiers.isEmpty()) {
+            identifiers.forEach(identifierNode -> {
+                String type = identifierNode.get("identifier_type").asText();
+                LOGGER.info("Processing external identifier {} for {}", type, disambiguatedEntity.getId());
+                String value = identifierNode.get("value").asText();
+                Pair<String, String> id = Pair.of(type, value);
+                OrgDisambiguatedExternalIdentifierEntity existingEntity = existingExternalIdentifiersMap.get(id);
+                //If the external identifier doesn't exists or it doesn't belong to the disambiguatedEntity, lets create it 
+                if (existingEntity == null || !existingEntity.getOrgDisambiguated().getId().equals(disambiguatedEntity.getId())) {
+                    OrgDisambiguatedExternalIdentifierEntity newEntity = new OrgDisambiguatedExternalIdentifierEntity();
+                    Date now = new Date();
+                    newEntity.setDateCreated(now);
+                    newEntity.setLastModified(now);
+                    newEntity.setIdentifier(value);
+                    newEntity.setIdentifierType(type);
+                    newEntity.setOrgDisambiguated(disambiguatedEntity);
+                    newEntity.setPreferred(false);
+                    orgDisambiguatedExternalIdentifierDao.persist(newEntity);
+                    numAddedExtIds++;
+                } else {
+                    existingExternalIdentifiersMap.remove(id);
+                }
+            });
+        }        
+        
+        // Then, remove all existing external identifiers that are not present in the ringgold data anymore
+        for(OrgDisambiguatedExternalIdentifierEntity extIdToBeRemoved : existingExternalIdentifiersMap.values()) {
+            orgDisambiguatedExternalIdentifierDao.remove(extIdToBeRemoved.getId());
+        }
     }
 
     private void generateOrganizations(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> altNames) {
