@@ -30,13 +30,13 @@ import org.orcid.pojo.WorkGroup;
 
 public class WorksPaginator {
 
-    private static final int PAGE_SIZE = 50;
+    static final int PAGE_SIZE = 50;
 
-    private static final String TITLE_SORT_KEY = "title";
+    static final String TITLE_SORT_KEY = "title";
 
-    private static final String DATE_SORT_KEY = "date";
+    static final String DATE_SORT_KEY = "date";
 
-    private static final String TYPE_SORT_KEY = "type";
+    static final String TYPE_SORT_KEY = "type";
 
     @Resource
     private WorksCacheManager worksCacheManager;
