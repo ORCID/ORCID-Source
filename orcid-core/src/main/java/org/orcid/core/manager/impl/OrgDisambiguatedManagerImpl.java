@@ -113,6 +113,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         if (entity.getCountry() != null)
             document.setOrgDisambiguatedCountry(entity.getCountry().value());
         document.setOrgDisambiguatedIdFromSource(entity.getSourceId());
+        document.setOrgDisambiguatedIdSourceType(entity.getSourceType());
         document.setOrgDisambiguatedType(entity.getOrgType());
         document.setOrgDisambiguatedPopularity(entity.getPopularity());
         Set<String> orgNames = new HashSet<>();
@@ -178,6 +179,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setCountry(doc.getOrgDisambiguatedCountry());
         org.setOrgType(doc.getOrgDisambiguatedType());
         org.setDisambiguatedAffiliationIdentifier(Long.toString(doc.getOrgDisambiguatedId()));
+        org.setSourceType(doc.getOrgDisambiguatedIdSourceType());
         org.setSourceId(doc.getOrgDisambiguatedIdFromSource());
         return org;
     }

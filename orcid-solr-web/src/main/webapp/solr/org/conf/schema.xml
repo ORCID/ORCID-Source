@@ -518,14 +518,16 @@
 			multiValued="false" />
 		<field name="org-disambiguated-country" type="string" indexed="true" stored="true"
 			multiValued="false" />
-		<field name="org-disambiguated-id-from-source" type="string" indexed="true" stored="true"
-			multiValued="false" />
 		<field name="org-disambiguated-type" type="string" indexed="true" stored="true"
 			multiValued="false" />
 		<field name="org-disambiguated-popularity" type="int" indexed="true" stored="true"
 			multiValued="false" />
 		<field name="org-names" type="orcid_text_name" indexed="true" stored="true"
 			multiValued="true" />
+		<field name="org-disambiguated-id-from-source" type="string" indexed="true" stored="true"
+			multiValued="false" />
+		<field name="org-disambiguated-id-source-type" type="string" indexed="true" stored="true"
+			multiValued="false" />
 		<field name="is-funding-org" type="boolean" indexed="true" stored="true"
 			multiValued="false" />
 			
