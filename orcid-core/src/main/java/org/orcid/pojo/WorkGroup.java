@@ -80,12 +80,20 @@ public class WorkGroup implements Serializable {
         WorkForm workForm = new WorkForm();
         workForm.setPutCode(Text.valueOf(workSummary.getPutCode()));
         workForm.setTitle(Text.valueOf(workSummary.getTitle().getTitle().getContent()));
-        workForm.setJournalTitle(Text.valueOf(workSummary.getJournalTitle().getContent()));
-        workForm.setPublicationDate(getPublicationDate(workSummary.getPublicationDate()));
+        
+        if (workSummary.getJournalTitle() != null) {
+            workForm.setJournalTitle(Text.valueOf(workSummary.getJournalTitle().getContent()));
+        }
+        
+        if (workSummary.getPublicationDate() != null) {
+            workForm.setPublicationDate(getPublicationDate(workSummary.getPublicationDate()));
+        }
+        
         workForm.setSource(workSummary.getSource().retrieveSourcePath());
         if (workSummary.getSource().getSourceName() != null) {
             workForm.setSourceName(workSummary.getSource().getSourceName().getContent());
         }
+        
         workForm.setWorkType(Text.valueOf(workSummary.getType().value()));
         workForm.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(workSummary.getVisibility()));
         WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());

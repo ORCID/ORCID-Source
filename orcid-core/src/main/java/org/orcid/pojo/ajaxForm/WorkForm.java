@@ -63,7 +63,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     private List<Contributor> contributors;
 
-    private List<WorkExternalIdentifier> workExternalIdentifiers;
+    private List<WorkExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
     private String source;
 

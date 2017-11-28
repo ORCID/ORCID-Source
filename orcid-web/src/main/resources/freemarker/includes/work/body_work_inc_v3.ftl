@@ -39,6 +39,7 @@
                                         <ul class="workspace-private-toolbar">
                                             <#if !(isPublicProfile??)>
                                                 <li ng-if="bulkEditShow">
+                                                    <p ng-bind="group.activePutCode.value"></p>
                                                     <input type="checkbox" ng-model="bulkEditMap[group.activePutCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
                                                 </li>
                                             </#if>                                                                                  
@@ -126,7 +127,7 @@
                               </ul>
                                
                               <#if !(isPublicProfile??)>
-                                  <div ng-if="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
+                                  <div ng-if="!worksSrvc.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
                                     <div class="popover-help-container">
                                     <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
                                     <div class="popover vis-popover bottom" ng-if="showElement['vis-issue']">

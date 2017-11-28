@@ -110,6 +110,18 @@ public class WorksPaginator {
 
         @Override
         public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
+            if (o1.getWorkSummary().get(0).getPublicationDate() == null && o2.getWorkSummary().get(0).getPublicationDate() == null) {
+                return 0;
+            }
+            
+            if (o1.getWorkSummary().get(0).getPublicationDate() == null) {
+                return -1;
+            }
+            
+            if (o2.getWorkSummary().get(0).getPublicationDate() == null) {
+                return 1;
+            }
+            
             return o1.getWorkSummary().get(0).getPublicationDate().compareTo(o2.getWorkSummary().get(0).getPublicationDate());
         }
     }
@@ -118,8 +130,32 @@ public class WorksPaginator {
 
         @Override
         public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
+            if (o1.getWorkSummary().get(0).getTitle().getTitle() == null && o2.getWorkSummary().get(0).getTitle().getTitle() == null) {
+                return 0;
+            }
+            
+            if (o1.getWorkSummary().get(0).getTitle().getTitle() == null) {
+                return -1;
+            }
+            
+            if (o2.getWorkSummary().get(0).getTitle().getTitle() == null) {
+                return 1;
+            }
+            
             int comparison = o1.getWorkSummary().get(0).getTitle().getTitle().getContent().compareTo(o2.getWorkSummary().get(0).getTitle().getTitle().getContent());
             if (comparison == 0) {
+                if (o1.getWorkSummary().get(0).getTitle().getSubtitle() == null && o2.getWorkSummary().get(0).getTitle().getTitle() == null) {
+                    return 0;
+                }
+                
+                if (o1.getWorkSummary().get(0).getTitle().getSubtitle() == null) {
+                    return -1;
+                }
+                
+                if (o2.getWorkSummary().get(0).getTitle().getSubtitle() == null) {
+                    return 1;
+                }
+                
                 comparison = o1.getWorkSummary().get(0).getTitle().getSubtitle().getContent().compareTo(o2.getWorkSummary().get(0).getTitle().getSubtitle().getContent());
             }
             return comparison;
@@ -130,6 +166,18 @@ public class WorksPaginator {
 
         @Override
         public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
+            if (o1.getWorkSummary().get(0).getType() == null && o2.getWorkSummary().get(0).getType() == null) {
+                return 0;
+            }
+            
+            if (o1.getWorkSummary().get(0).getType() == null) {
+                return -1;
+            }
+            
+            if (o2.getWorkSummary().get(0).getType() == null) {
+                return 1;
+            }
+            
             return o1.getWorkSummary().get(0).getType().name().compareTo(o2.getWorkSummary().get(0).getType().name());
         }
     }

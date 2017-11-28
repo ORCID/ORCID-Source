@@ -253,7 +253,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
 
         refreshWorkGroups: function(sort, sortAsc) {
             worksSrvc.groups = new Array();
-            var url = getBaseUri() + '/works/refreshWorks.json?limit=' + worksSrvc.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;;
+            var url = getBaseUri() + '/works/refreshWorks.json?limit=' + worksSrvc.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
             worksSrvc.loading = true;
             $.ajax({
                 'url': url,
@@ -309,29 +309,34 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             return cloneW;
         },
 
-        deleteGroupWorks: function(putCodes) {
+        deleteGroupWorks: function(putCodes, sortKey, sortAsc) {
             var rmWorks = [];
             var rmGroups = [];
             for (var i in putCodes) {
                 for (var j in worksSrvc.groups) {
-                    if (worksSrvc.groups[j].hasPut(putCodes[i])) {
-                        rmGroups.push(j);
-                        for (var k in worksSrvc.groups[j].activities){
-                            rmWorks.push(worksSrvc.groups[j].activities[k].putCode.value);
+                    for (var k in worksSrvc.groups[j].works) {
+                        if (worksSrvc.groups[j].works[k].putCode.value == putCodes[i]) {
+                            rmGroups.push(j);
+                            for (var y in worksSrvc.groups[j].works){
+                                rmWorks.push(worksSrvc.groups[j].works[y].putCode.value);
+                            }
+                            break;
                         }
-                    };
+                    }
                 }
             }
             while (rmGroups.length > 0) {
                 worksSrvc.groups.splice(rmGroups.pop(),1);
             }
-            worksSrvc.removeWorks(rmWorks);
+            worksSrvc.removeWorks(rmWorks, function() {
+                worksSrvc.refreshWorkGroups(sortKey, sortAsc);
+            });
         },
 
-        deleteWork: function(putCode) {
+        deleteWork: function(putCode, sortKey, sortAsc) {
             worksSrvc.removeWorks([putCode], function() {
                 $timeout(function(){
-                    groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
+                    worksSrvc.refreshWorkGroups(sortKey, sortAsc);
                 });
             });
         },
@@ -420,11 +425,23 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                 }
             );
         },
+        
+        consistentVis: function(group) {
+            var visibility = group.works[0].visibility.visibility;
+            for(var i = 0; i < group.works.length; i++) {
+                if (group.works[i].visibility.visibility != visibility) {
+                    return false;
+                }
+            }
+            return true;
+        },
 
         getGroup: function(putCode) {
             for (var idx in worksSrvc.groups) {
-                if (worksSrvc.groups[idx].hasPut(putCode)){
-                    return worksSrvc.groups[idx];
+                for (var y in worksSrvc.groups[idx].works) {
+                    if (worksSrvc.groups[idx].works[y].putCode.value == putCode) {
+                        return worksSrvc.groups[idx];
+                    }
                 }
             }
             return null;
@@ -443,8 +460,8 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                 }
             };
 
-            for (var idx in group.activities) {
-                needsLoading.push(group.activities[idx].putCode.value)
+            for (var idx in group.works) {
+                needsLoading.push(group.works[idx].putCode.value)
             }
 
             popFunct();
@@ -468,11 +485,11 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         getUniqueDois : function(putCode){
             var dois = [];              
             var group = worksSrvc.getGroup(putCode);
-            for (var idx in group.activities) {                 
-                for (var i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
-                    if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
-                        if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
-                            dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+            for (var idx in group.works) {                 
+                for (var i = 0; i <= group.works[idx].workExternalIdentifiers.length - 1; i++) {
+                    if (group.works[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
+                        if (isIndexOf.call(dois, group.works[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
+                            dois.push(group.works[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
                         }
                     }
                 }
@@ -545,9 +562,9 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         setGroupPrivacy: function(putCode, priv) {
             var group = worksSrvc.getGroup(putCode);
             var putCodes = new Array();
-            for (var idx in group.activities) {
-                putCodes.push(group.activities[idx].putCode.value);
-                group.activities[idx].visibility.visibility = priv;
+            for (var idx in group.works) {
+                putCodes.push(group.works[idx].putCode.value);
+                group.works[idx].visibility.visibility = priv;
             }
             worksSrvc.updateVisibility(putCodes, priv);
         },
