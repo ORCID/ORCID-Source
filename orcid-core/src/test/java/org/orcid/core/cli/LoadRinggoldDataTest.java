@@ -52,6 +52,9 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class LoadRinggoldDataTest {
 
@@ -61,6 +64,8 @@ public class LoadRinggoldDataTest {
     private OrgDisambiguatedDao mockOrgDisambiguatedDao;
     @Mock
     private OrgDao mockOrgDao;
+    
+    private TransactionTemplate mockTransactionTemplate = new TransactionTemplateStub();
 
     private LoadRinggoldData loader = new LoadRinggoldData();
 
@@ -70,6 +75,7 @@ public class LoadRinggoldDataTest {
         loader.setOrgDao(mockOrgDao);
         loader.setOrgDisambiguatedDao(mockOrgDisambiguatedDao);
         loader.setOrgDisambiguatedExternalIdentifierDao(mockOrgDisambiguatedExternalIdentifierDao);
+        loader.setTransactionTemplate(mockTransactionTemplate);
     }
 
     @Test
@@ -550,6 +556,7 @@ public class LoadRinggoldDataTest {
     }
     
     private void setupInitialMocks() {
+        
         when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(anyString(), eq("RINGGOLD"))).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
 
             @Override
@@ -711,5 +718,14 @@ public class LoadRinggoldDataTest {
                     }
 
                 });
+    }
+    
+    @SuppressWarnings("serial")
+    private class TransactionTemplateStub extends TransactionTemplate {
+        @Override
+        public <T> T execute(TransactionCallback<T> action) throws TransactionException {
+            action.doInTransaction(null);
+            return null;            
+        }
     }
 }

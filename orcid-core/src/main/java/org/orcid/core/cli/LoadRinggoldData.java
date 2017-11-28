@@ -94,6 +94,10 @@ public class LoadRinggoldData {
 
     private TransactionTemplate transactionTemplate;
     
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
+
     public void setOrgDao(OrgDao orgDao) {
         this.orgDao = orgDao;
     }
