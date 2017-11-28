@@ -10,12 +10,9 @@ Simply download code via git clone then start tomcat with your orcid-web modules
 
 Open a terminal at your root project and run
 
-    mvn -f orcid-nodejs/pom.xml \
-    -Dnodejs.workingDirectory='${project.parent.basedir}/orcid-web/src/main/webapp/static/javascript/ng1Orcid' \
-    -DwebpackConfig=tmp-tomcat-orcid-web \
-    clean install
+    mvn -P tmp-tomcat-orcid-web clean install
 
-where **nodejs.workingDirectory** must be replaced with full path to folder containing _package.json_ and **webpackConfig** is a prefix of PREFIX.webpack.config.js file
+where **tmp-tomcat-orcid-web** must be replaced with full path to folder containing _package.json_ and **webpackConfig** is a prefix of PREFIX.webpack.config.js file
 
 ensure webpack config has proper values for output path and filename it should be pointing to the tomcat installation + folder containing the _angular_orcid_generated.js_
 
@@ -42,4 +39,8 @@ you could simply append next line at the top of file.
     alert('It works')
     
 then, browse to [localhost](https://localhost:8443/orcid-web/) and confirm _It works_ message comes up.
+
+00 26 82 70 23 5b
+
+c8 0a a9 60 28 00
 
