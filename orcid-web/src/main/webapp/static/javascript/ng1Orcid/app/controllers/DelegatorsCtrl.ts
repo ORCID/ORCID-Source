@@ -43,11 +43,11 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.selectDelegator = function(datum) {
-                window.location.href = getBaseUri() + '/switch-user?j_username=' + datum.orcid;
+                window.location.href = getBaseUri() + '/switch-user?username=' + datum.orcid;
             };
 
             $scope.sort = {
-                column: 'delegateSummary.creditName.content',
+                column: 'delegateSummary.giverName.value',
                 descending: false
             };
 
@@ -58,7 +58,7 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
                 },
                 template: function (datum) {
                     var forDisplay;
-                    if(datum.noResults){
+                    if(datum.length == 0){
                         forDisplay = "<span class=\'no-delegator-matches\'>" + om.get('delegators.nomatches') + "</span>";
                     }
                     else{
@@ -72,12 +72,10 @@ export const DelegatorsCtrl = angular.module('orcidApp').controller(
 
             $("#delegatorsSearch").bind(
                 "typeahead:selected", 
-                function(datum) {
-                    if(!(<any>(datum)).noResults){
+                function(obj, datum) {
+                	if(datum.orcid != null){
                         $scope.selectDelegator(datum);
                     }
-                    $scope.$apply();
-                    return true;
                 }
             );
 

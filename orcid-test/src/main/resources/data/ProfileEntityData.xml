@@ -1685,7 +1685,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="limited@email.com"
-        is_primary="true"
+        is_primary="false"
         is_current="true"
         is_verified="true"
         visibility="LIMITED"

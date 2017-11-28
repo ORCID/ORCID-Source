@@ -163,6 +163,41 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                 return name; 
             };
 
+            $scope.getAffiliations = function(result){
+                if(!result['affiliationsRequestSent']){
+                    result['affiliationsRequestSent'] = true;
+                    result['affiliations'] = [];
+                    var orcid = result['orcid-identifier'].path;
+                    var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
+                    $.ajax({
+                        url: url,
+                        dataType: 'json',
+                        headers: { Accept: 'application/json'},
+                        success: function(data) {
+                            if(data.employments){
+                                for(var i in data.employments['employment-summary']){
+                                    if (result['affiliations'].indexOf(data.employments['employment-summary'][i]['organization']['name']) < 0){
+                                        result['affiliations'].push(data.employments['employment-summary'][i]['organization']['name']);
+                                    }
+                                }
+                            }
+                            if(data.educations){
+                                for(var i in data.educations['education-summary']){
+                                    if (result['affiliations'].indexOf(data.educations['education-summary'][i]['organization']['name']) < 0){
+                                        result['affiliations'].push(data.educations['education-summary'][i]['organization']['name']);
+                                    }
+                                }
+                            }
+                        }
+                    }).fail(function(){
+                        // something bad is happening!
+                        console.log("error getting name for " + orcid);
+                    });  
+                } 
+        
+                return result['affiliations'].join(", "); 
+            };
+
             $scope.isValid = function(){
                 return orcidSearchUrlJs.isValidInput($scope.input);
             };

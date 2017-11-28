@@ -23,11 +23,11 @@ export const SwitchUserCtrl = angular.module('orcidApp').controller(
                 $.ajax({
                     url: getBaseUri() + '/delegators/delegators-and-me.json',
                     dataType: 'json',
-                    success: function(data) {
+                    success: function(data) {                    
                         $scope.delegators = data.delegators;
                         $scope.searchResultsCache[''] = $scope.delegators;
                         $scope.me = data.me;
-                        $scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.delegationDetails.length : 0;
+                        $scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.length : 0;
                         $scope.$apply();
                     }
                 }).fail(function(e) {

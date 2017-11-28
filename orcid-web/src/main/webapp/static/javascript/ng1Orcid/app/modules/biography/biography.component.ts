@@ -18,9 +18,6 @@ import { Subscription }
 import { BiographyService } 
     from '../../shared/biographyService.ts'; 
 
-import { ConfigurationService } 
-    from '../../shared/configurationService.ts';
-
 import { EmailService } 
     from '../../shared/emailService.ts';
 
@@ -35,16 +32,14 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     biographyForm: any;
-    configuration: any;
     emails: any;
     emailSrvc: any;
-    emailVerified: any;
+    //emailVerified: any;
     lengthError: any;
     showEdit: any;
 
     constructor(
         private biographyService: BiographyService,
-        private configurationService: ConfigurationService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
@@ -55,7 +50,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         
         this.emails = {};
-        this.emailVerified = false; //change to false once service is ready
+        //this.emailVerified = false;
         this.lengthError = false;
         this.showEdit = false;
     }
@@ -155,7 +150,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        console.log('initi biography component');
         this.getBiographyForm();
-        this.configuration = this.configurationService.getInitialConfiguration();
     }; 
 }

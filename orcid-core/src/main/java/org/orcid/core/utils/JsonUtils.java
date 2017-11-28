@@ -18,6 +18,7 @@ package org.orcid.core.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -114,5 +115,13 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException("Error extracting JsonNode from file", e);
         }
-    }    
+    }  
+    
+    public static JsonNode read(Reader reader) {
+        try {
+            return mapper.readTree(reader);
+        } catch (IOException e) {
+            throw new RuntimeException("Error extracting JsonNode from file", e);
+        }
+    }
 }

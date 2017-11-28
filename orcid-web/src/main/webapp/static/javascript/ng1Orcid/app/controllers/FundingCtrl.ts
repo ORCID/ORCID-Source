@@ -151,13 +151,18 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                             forDisplay += datum.city;
                         }
                         if(datum.region){
-                            forDisplay += ", " + datum.region;
+                            if(datum.city){
+                                forDisplay += ", ";
+                            }
+                            forDisplay += datum.region;
                         }
                         if (datum.orgType != null && datum.orgType.trim() != ''){
-                            forDisplay += ", " + datum.orgType;
+                            if(datum.city || datum.region){
+                                forDisplay += ", ";
+                            }
+                            forDisplay += datum.orgType;
                         }
                         forDisplay += '</span><hr />';
-
                         return forDisplay;
                     }
                 });

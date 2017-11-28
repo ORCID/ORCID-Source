@@ -1,0 +1,9 @@
+[{"rec_id":1,"ringgold_id":1,"identifier_type":"XXX1","value":"1"}
+,{"rec_id":2,"ringgold_id":1,"identifier_type":"XXX2","value":"2"}
+,{"rec_id":3,"ringgold_id":2,"identifier_type":"XXX3","value":"3"}
+,{"rec_id":4,"ringgold_id":2,"identifier_type":"XXX4","value":"4"}
+,{"rec_id":5,"ringgold_id":3,"identifier_type":"XXX5","value":"5"}
+,{"rec_id":6,"ringgold_id":3,"identifier_type":"XXX6","value":"6"}
+,{"rec_id":7,"ringgold_id":4,"identifier_type":"XXX7","value":"7"}
+,{"rec_id":8,"ringgold_id":4,"identifier_type":"XXX8","value":"8"}
+,{"rec_id":9,"ringgold_id":1,"identifier_type":"XXX9","value":"9"}]

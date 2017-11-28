@@ -55,22 +55,12 @@ angular.module('orcidApp').factory(
             },
 
             consistentVis : function() {
-                var vis = null;
-                if (this.type == GroupedActivities.FUNDING)
-                    vis = this.getDefault().visibility.visibility;
-                else
-                    vis = this.getDefault().visibility;
-
+                var vis = this.getDefault().visibility.visibility;
+                
                 for (var idx in this.activities) {
-                    if (this.type == GroupedActivities.FUNDING) {
-                        if (this.activities[idx].visibility.visibility != vis){
-                            return false;
-                        }
-                    } else {
-                        if (this.activities[idx].visibility != vis) {
-                            return false;
-                        }
-                    }
+                    if (this.activities[idx].visibility.visibility != vis){
+                        return false;
+                    }                    
                 }
                 return true;
             },

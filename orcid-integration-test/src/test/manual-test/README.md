@@ -24,7 +24,7 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 
 ## Reset password
 
-12. Visit https://qa.orcid.org/oauth/authorize?client_id=APP-AJPEHIAZIRSSY5UO&response_type=code&scope=/read-limited&redirect_uri=https://developers.google.com/oauthplayground
+12. Visit https://qa.orcid.org/signout
 13. Click the Forgotten Your Password link
 14. Enter ma_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
 15. Visit https://www.mailinator.com/inbox2.jsp?public_to=ma_test_[DD][month][YYYY]#/#public_maildirdiv
@@ -32,8 +32,6 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 17. Click (or copy/paste) password reset link
 18. Reset password with [DD][month][YYYY]
 19. You will be forward to the sign in page, sign in using the new password
-20. Check that you are returned to the Authorization Page
-21. Grant authorization
 22. Visit https://qa.orcid.org/signout
 
 ## Sign In
@@ -60,9 +58,9 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 39. Add a keyword: keyword
 40. Add a URL: website/https://qa.orcid.org
 41. Add a biography: Bio!
-42. Add an education item: 'ORCID' (select from dropdown list)
+42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
 43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'Wellcome Trust' (select from dropdown list)
-44. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “9999”
+44. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “0000”
 45. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com and change the visibility to public
 46. Visit public page (https://qa.orcid.org/[orcid-id])
     * Verify information added in the steps above is visible
@@ -98,39 +96,47 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 
 55. Attempt the call in step 53 again- check that an error is returned
 
+56. On https://qa.orcid.org/account add [orcid id] as a trusted individual
+
+
 ## Post ORCID Independent Tests
 
-56. Run the ORCID Independent Tests 2
+57. Run the ORCID Independent Tests 2
 	* user_login: ma_test_[DD][month][YYYY]	
  	* user_pass: [DD][month][YYYY]
  	* orcid_id: [orcid id]
  	* search_value: [DD][month][YYYY]
 
-57. Open Internet Explorer (version 10+) or Edge 
-
-58. Visit https://qa.orcid.org/register and check the page loads correctly
-
-59. Click the link to go to Sign-in, check that the sign-in page also loads correctly
+58. Visit https://qa.orcid.org/sign-in
 
 60. Sign into the account created earlier
 	* Email: ma_test_[DD][month][YYYY]@mailinator.com
 	* Password: [DD][month][YYYY]
 
 61. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
-	* 1 other name
-	* 1 county
-	* 2 keywords
-	* 2 websites
-	* 1 external id
-	* 2 education items
-	* 2 funding items
-	* 2 works
+	* 2 other names
+	* 2 counties
+	* 3 keywords
+	* 3 websites
+	* 2 external id
+	* 3 education items
+	* 3 funding items
+	* 2 works (one being a group of 2)
+	* 1 peer-review item
 	
 62. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
 
-63. Go to http://qa.orcid.org/inbox check notifications from the updates to the record have posted and the request for access notification has posted
+63. Go to http://qa.orcid.org/inbox check for:
+	* the request for access notification
+	* notifications of updates to the record
 
 64. Archive the first notification in the list
+
+65. Using IE 11 visit the follow pages and make sure everything loads
+	* https://qa.orcid.org/[orcid id]
+	* https://qa.orcid.org/register
+	* https://qa.orcid.org/sign-in
+	* sign into [orcid id] account and check that it also looks as expected
 
 * Finally help out by improving these instructions!      
    

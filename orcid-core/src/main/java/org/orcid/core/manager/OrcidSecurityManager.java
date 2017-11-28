@@ -52,9 +52,9 @@ public interface OrcidSecurityManager {
 
     void checkSource(IdentifierTypeEntity existingEntity);
 
-    void checkScopes(ScopePathType requiredScope);
+    void checkScopes(ScopePathType... requiredScopes);
 
-    void checkClientAccessAndScopes(String orcid, ScopePathType requiredScope);
+    void checkClientAccessAndScopes(String orcid, ScopePathType... requiredScopes);
 
     void checkAndFilter(String orcid, VisibilityType element, ScopePathType requiredScope);
 

@@ -318,6 +318,7 @@ public class PublicV2ApiServiceImplV2_0 {
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES)
     @ApiOperation(value = "Fetch Other names")
     public Response viewOtherNames(@PathParam("orcid") String orcid) {
@@ -325,6 +326,7 @@ public class PublicV2ApiServiceImplV2_0 {
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Fetch Other name")
     public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
@@ -332,14 +334,16 @@ public class PublicV2ApiServiceImplV2_0 {
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS)
     @ApiOperation(value = "Fetch external identifiers", authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     public Response viewExternalIdentifiers(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewExternalIdentifiers(orcid);
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
     @ApiOperation(value = "Fetch external identifier")
     public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
@@ -347,6 +351,7 @@ public class PublicV2ApiServiceImplV2_0 {
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS)
     @ApiOperation(value = "Fetch keywords")
     public Response viewKeywords(@PathParam("orcid") String orcid) {
@@ -354,6 +359,7 @@ public class PublicV2ApiServiceImplV2_0 {
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS + PUTCODE)
     @ApiOperation(value = "Fetch keyword")
     public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
@@ -361,6 +367,7 @@ public class PublicV2ApiServiceImplV2_0 {
     }
            
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS)
     @ApiOperation(value = "Fetch all addresses")
     public Response viewAddresses(@PathParam("orcid") String orcid) {
@@ -368,6 +375,7 @@ public class PublicV2ApiServiceImplV2_0 {
     }
             
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS + PUTCODE)
     @ApiOperation(value = "Fetch an address")
     public Response viewAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
@@ -383,6 +391,7 @@ public class PublicV2ApiServiceImplV2_0 {
     }
 
     @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSON)
     @ApiOperation(value = "Fetch person details")
     public Response viewPerson(@PathParam("orcid") String orcid) {
@@ -391,33 +400,33 @@ public class PublicV2ApiServiceImplV2_0 {
     
     //Record 
     @GET
-    @Path(RECORD)
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(OrcidApiConstants.RECORD_SIMPLE)
     @ApiOperation(value = "Fetch record details")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
     }
+
+    //Record 
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(OrcidApiConstants.RECORD_RECORD)
+    @ApiOperation(value = "Fetch record details2", hidden=true)
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
+    public Response viewRecordRecord(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewRecord(orcid);
+    }
     
     @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SEARCH_PATH)
     @ApiOperation(value = "Search records")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
-    public Response searchByQueryJSON(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+    public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
         return jsonQueryResults;
-    }
-
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(SEARCH_PATH)
-    @ApiOperation(value = "Search records")
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
-    public Response searchByQueryXML(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
-        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
-        Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
-        return xmlQueryResults;
     }
 
     @GET

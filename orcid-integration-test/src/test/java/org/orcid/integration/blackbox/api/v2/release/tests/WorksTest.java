@@ -128,6 +128,67 @@ public class WorksTest extends BlackBoxBaseV2Release {
         ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
+    
+    @Test
+    public void createViewUpdateAndDeleteWorkWithLegacyScope() throws JSONException, InterruptedException, URISyntaxException {
+        showMyOrcidPage();
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        long time = System.currentTimeMillis();
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0/samples/read_samples/work-2.0.xml", Work.class);
+        workToCreate.setPutCode(null);
+        workToCreate.setSource(null);
+        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+        
+        ExternalID wExtId = new ExternalID();
+        wExtId.setValue("Work Id " + time);
+        wExtId.setType("agr");
+        wExtId.setRelationship(Relationship.SELF);
+        wExtId.setUrl(new Url("http://test.orcid.org/" + time));
+        
+        workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
+        String accessToken = getAccessToken(getScopes(ScopePathType.ORCID_WORKS_UPDATE));
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0/" + this.getUser1OrcidId() + "/work/\\d+"));
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Work gotWork = getResponse.getEntity(Work.class);
+        
+        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
+        assertEquals("work:citation", gotWork.getWorkCitation().getCitation());
+        assertEquals(CitationType.FORMATTED_UNSPECIFIED, gotWork.getWorkCitation().getWorkCitationType());
+        
+        gotWork.getWorkTitle().getTitle().setContent("updated title");
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotWork.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotWork.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotWork.setVisibility(originalVisibility);
+        putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
+        
+        assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
+        assertEquals("work:citation", gotAfterUpdateWork.getWorkCitation().getCitation());
+        assertEquals(CitationType.FORMATTED_UNSPECIFIED, gotAfterUpdateWork.getWorkCitation().getWorkCitationType());
+        
+        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
         
     @Test
     public void testWorksWithPartOfRelationshipDontGetGrouped () throws JSONException, InterruptedException, URISyntaxException {

@@ -31,7 +31,7 @@ export const DelegatesCtrlV2 = angular.module('orcidApp').controller(
             $scope.showInitLoader = true;
             $scope.showLoader = false;
             $scope.sort = {
-                column: 'delegateSummary.creditName.content',
+                column: 'receiverName.value',
                 descending: false
             };
 

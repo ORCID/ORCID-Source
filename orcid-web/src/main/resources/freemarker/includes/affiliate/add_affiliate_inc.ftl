@@ -58,7 +58,7 @@
                     <div class="relative" style="font-weight: strong;">
                         <span ng-bind="disambiguatedAffiliation.value"></span> <br />
                         <div>
-                            <span ng-bind="disambiguatedAffiliation.city"></span><span ng-show="disambiguatedAffiliation.region"> (<span ng-bind="disambiguatedAffiliation.region"></span>)</span>, <span ng-bind="disambiguatedAffiliation.orgType"></span>
+                            <span ng-bind="disambiguatedAffiliation.city"></span><span ng-show="disambiguatedAffiliation.region"> (<span ng-bind="disambiguatedAffiliation.region"></span>)</span><span ng-show="disambiguatedAffiliation.orgType">, <span ng-bind="disambiguatedAffiliation.orgType"></span></span>
                         </div>
                     </div>
                 </div>

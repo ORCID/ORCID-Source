@@ -104,6 +104,40 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 $scope.authorizeRequest();
             };
 
+            $scope.getAffiliations = function(dup){
+                if(!dup['affiliationsRequestSent']){
+                    dup['affiliationsRequestSent'] = true;
+                    dup['institution'] = [];
+                    var orcid = dup.orcid;
+                    var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
+                    $.ajax({
+                        url: url,
+                        dataType: 'json',
+                        headers: { Accept: 'application/json'},
+                        success: function(data) {
+                            if(data.employments){
+                                for(var i in data.employments['employment-summary']){
+                                    if (dup['institution'].indexOf(data.employments['employment-summary'][i]['organization']['name']) < 0){
+                                        dup['institution'].push(data.employments['employment-summary'][i]['organization']['name']);
+                                    }
+                                }
+                            }
+                            if(data.educations){
+                                for(var i in data.educations['education-summary']){
+                                    if (dup['institution'].indexOf(data.educations['education-summary'][i]['organization']['name']) < 0){
+                                        dup['institution'].push(data.educations['education-summary'][i]['organization']['name']);
+                                    }
+                                }
+                            }
+                        }
+                    }).fail(function(){
+                        // something bad is happening!
+                        console.log("error getting name for " + orcid);
+                    });  
+                } 
+                return dup['institution'].join(", "); 
+            };
+
             $scope.getDuplicates = function(){
                 $.ajax({
                     url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.registrationForm.familyNames.value + '&givenNames=' + $scope.registrationForm.givenNames.value,

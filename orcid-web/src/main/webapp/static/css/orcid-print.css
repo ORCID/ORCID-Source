@@ -168,10 +168,10 @@
         content: url('https://orcid.org/sites/default/files/files/ID_symbol_B-W_16x16.png');
         display: block;
         float: left;
-        height: 16px;
+        height: 14px;
         margin-right: 4px;
         padding: 2px;
-        width: 16px;
+        width: 14px;
     }
     
     .bio-content {

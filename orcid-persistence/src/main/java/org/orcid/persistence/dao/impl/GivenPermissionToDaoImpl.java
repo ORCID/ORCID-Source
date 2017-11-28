@@ -23,6 +23,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.GivenPermissionToDao;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +56,22 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
         query.setParameter("giverOrcid", giverOrcid);
         query.setParameter("receiverOrcid", receiverOrcid);
         query.executeUpdate();
+    }
+
+    @Override
+    public List<GivenPermissionToEntity> findByGiver(String giverOrcid) {
+        TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver_orcid = :giverOrcid",
+                GivenPermissionToEntity.class);
+        query.setParameter("giverOrcid", giverOrcid);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<GivenPermissionByEntity> findByReceiver(String receiverOrcid) {
+        TypedQuery<GivenPermissionByEntity> query = entityManager.createQuery("from GivenPermissionByEntity where receiver_orcid = :receiverOrcid",
+                GivenPermissionByEntity.class);
+        query.setParameter("receiverOrcid", receiverOrcid);
+        return query.getResultList();
     }
 
 }

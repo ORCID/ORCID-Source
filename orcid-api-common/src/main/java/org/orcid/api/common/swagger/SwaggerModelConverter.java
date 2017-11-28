@@ -71,14 +71,16 @@ public class SwaggerModelConverter implements ModelConverter {
                     org.orcid.jaxb.model.common_rc2.Visibility.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.common_rc3.Visibility.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.common_rc4.Visibility.class.isAssignableFrom(cls) || 
-                    org.orcid.jaxb.model.common_v2.Visibility.class.isAssignableFrom(cls)) {
+                    org.orcid.jaxb.model.common_v2.Visibility.class.isAssignableFrom(cls) ||
+                    org.orcid.jaxb.model.v3.dev1.common.Visibility.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Visibility.class, null);
             }
             if (    org.orcid.jaxb.model.record_rc1.Citation.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.record_rc2.Citation.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.record_rc3.Citation.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.record_rc4.Citation.class.isAssignableFrom(cls) || 
-                    org.orcid.jaxb.model.record_v2.Citation.class.isAssignableFrom(cls)) {
+                    org.orcid.jaxb.model.record_v2.Citation.class.isAssignableFrom(cls) ||
+                    org.orcid.jaxb.model.v3.dev1.record.Citation.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Citation.class, null);
             }
         }
@@ -110,7 +112,12 @@ public class SwaggerModelConverter implements ModelConverter {
         /**
          * The PUBLIC should be publicly available.
          */
-        @XmlEnumValue("public") PUBLIC("public");
+        @XmlEnumValue("public") PUBLIC("public"),
+
+        /**
+         * The PRIVATE should be available to the source only
+         */
+        @XmlEnumValue("private") PRIVATE("private");
 
         private final String value;
 

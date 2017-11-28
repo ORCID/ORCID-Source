@@ -70,6 +70,7 @@ export const _2FASetupCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.sendVerificationCode = function() {
+                $('#sendVerificationCode').prop('disabled', true);
                 $.ajax({
                     url: getBaseUri() + '/2FA/register.json',
                     dataType: 'json',
@@ -83,13 +84,13 @@ export const _2FASetupCtrl = angular.module('orcidApp').controller(
                             $scope.recoveryCodes = data.backupCodes;
                             $scope.showInvalidCodeError=false;
                         } else {
+                            $('#sendVerificationCode').prop('disabled', false);
                             $scope.showInvalidCodeError=true;
                         }
                         $scope.$apply();
                     }
-                }).fail(function(xhr, status, error) {
-                    var err = eval("(" + xhr.responseText + ")");
-                    alert(err.Message);
+                }).fail(function() {
+                    console.log("error posting 2fa registration to server");
                 });
             };
 

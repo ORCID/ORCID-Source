@@ -32,8 +32,7 @@ import org.orcid.core.togglz.Features;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.util.UriEncoder;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 public class UniversalAnalyticsClient implements AnalyticsClient {
 

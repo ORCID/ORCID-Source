@@ -53,7 +53,7 @@ public class Day implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     @XmlValue
-    @ApiModelProperty(example = "1999")
+    @ApiModelProperty(example = "28")
     protected String value;
 
     public Day() {
