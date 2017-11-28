@@ -757,7 +757,6 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     }
                 }
                 
-                alert("putcodes length is " + putCodes.length);
                 if(putCodes.length > 0) {
                 	worksSrvc.updateVisibility(putCodes, priv);
                 }                

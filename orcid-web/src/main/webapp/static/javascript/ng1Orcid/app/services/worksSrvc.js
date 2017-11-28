@@ -499,9 +499,11 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         },
 
         getWork: function(putCode) {
-            for (var idx in worksSrvc.groups) {
-                if (worksSrvc.groups[idx].hasPut(putCode)) {
-                    return worksSrvc.groups[idx].getByPut(putCode);
+            for (var j in worksSrvc.groups) {
+                for (var k in worksSrvc.groups[j].works) {
+                    if (worksSrvc.groups[j].works[k].putCode.value == putCode) {
+                        return worksSrvc.groups[j].works[k];
+                    }
                 }
             }
             return null;
@@ -512,12 +514,12 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             worksSrvc.addAbbrWorksToScope(access_type, sort, sortAsc);
         },
 
-        makeDefault: function(group, putCode) {
-            group.makeDefault(putCode);
+        makeDefault: function(group, putCode, sortKey, sortAsc) {
             $.ajax({
                 url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
                 dataType: 'json',
                 success: function(data) {
+                    worksSrvc.refreshWorkGroups(sortKey, sortAsc);
                 }
             }).fail(function(){
                 // something bad is happening!

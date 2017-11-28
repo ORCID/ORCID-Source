@@ -184,7 +184,7 @@
                             <div ng-if="editSources[group.groupId]">
                                 <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                 <#if !(isPublicProfile??)>
-                                    <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-if="work.putCode.value != group.defaultPutCode">
+                                    <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortKey, sortAsc); " ng-if="work.putCode.value != group.defaultPutCode">
                                          <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                     </a>
                                 </#if>
@@ -247,7 +247,7 @@
                         <div class="col-md-3 col-sm-3 col-xs-10">
                              <#if !(isPublicProfile??)>
                                 <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-if="work.putCode.value != group.defaultPutCode">
+                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortKey, sortAsc); " ng-if="work.putCode.value != group.defaultPutCode">
                                    <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                 </a>
                             </#if>
