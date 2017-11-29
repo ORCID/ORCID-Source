@@ -513,7 +513,8 @@ $(function() {
 
     $('form#loginForm')
             .submit(
-                    function() {
+                    function(e) {
+                        e.preventDefault();
                         
                         var loginUrl = baseUrl + 'signin/auth.json';
 
@@ -556,7 +557,9 @@ $(function() {
                                             type : 'POST',
                                             data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()),
                                             dataType : 'json',
+                                            timeout: 60000,
                                             success : function(data) {
+                                                console.log("success");
                                                 if (data.success) {
                                                     if (basePath
                                                             .startsWith(baseUrl
@@ -646,6 +649,7 @@ $(function() {
                                     logAjaxError(e);
                                     window.location.reload();
                                 });
+                        
                         return false;
                     });
     
