@@ -83,5 +83,12 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * @return WorkBulk element containing the specified works
      */
     WorkBulk findWorkBulk(String orcid, String putCodesAsString);
+    
+    /**
+     * Returns a org.orcid.jaxb.model.v3.dev1.record.summary.Works object containing grouped WorkSummary objects for the given user.
+     * @param orcid
+     * @return org.orcid.jaxb.model.v3.dev1.record.summary.Works object
+     */
+    Works getWorksAsGroups(String orcid);
 
 }

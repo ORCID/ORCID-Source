@@ -30,6 +30,8 @@ export const PublicWorkCtrl = angular.module('orcidApp').controller(
             $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
             $scope.worksSrvc = worksSrvc;
             $scope.workspaceSrvc = workspaceSrvc;
+            $scope.sortKey = "date";
+            $scope.sortAsc = true;
 
             $scope.bibtexShowToggle = function (putCode) {
                 $scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);
@@ -160,10 +162,21 @@ export const PublicWorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.sort = function(key) {
+                if ($scope.sortKey == key) {
+                    $scope.sortAsc = !$scope.sortAsc;
+                } else {
+                    $scope.sortKey = key;
+                    $scope.sortAsc = true;
+                }
+                worksSrvc.resetWorkGroups();
+                worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortKey, $scope.sortAsc);
                 $scope.sortState.sortBy(key);
             };
             
-            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS);
+            $scope.loadMore = function() {
+                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortKey, $scope.sortAsc);
+            }
+            $scope.loadMore();
             
 
 

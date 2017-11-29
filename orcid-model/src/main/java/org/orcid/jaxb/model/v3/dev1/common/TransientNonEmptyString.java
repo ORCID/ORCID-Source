@@ -16,12 +16,17 @@
  */
 package org.orcid.jaxb.model.v3.dev1.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 @XmlType
-public class TransientNonEmptyString {
+public class TransientNonEmptyString implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+
     private String value;
     private final boolean transientValue = true;
 
