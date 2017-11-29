@@ -5,7 +5,7 @@ import { Headers, Http, Response, RequestOptions, Jsonp } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 
-import { Preferences } from './preferences';
+import { Preferences } from '../interfaces/preferences.ts';
 
 @Injectable()
 export class PrefsSrvc {

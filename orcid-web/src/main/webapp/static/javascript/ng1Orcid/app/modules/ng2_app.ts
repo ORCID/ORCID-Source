@@ -53,10 +53,6 @@ import { WidgetNg2Module }
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
-//User generated filters
-//import { OrderByPipe }
-//    from '../pipes/orderByNg2.ts'; 
-
 //User generated services
 import { AffiliationService } 
     from '../shared/affiliationService.ts';
@@ -64,11 +60,11 @@ import { AffiliationService }
 import { BiographyService } 
     from '../shared/biographyService.ts';
 
-import { CountryService } 
-    from '../shared/countryService.ts'; 
-
 import { CommonService }
     from '../shared/commonService.ts'
+
+import { CountryService } 
+    from '../shared/countryService.ts'; 
 
 import { EmailService } 
     from '../shared/emailService.ts';
@@ -76,8 +72,8 @@ import { EmailService }
 import { FundingService } 
     from '../shared/fundingService.ts';
 
-import { GroupedActivitiesUtilService } 
-    from '../shared/groupedActivitiesService.ts';
+//import { GroupedActivitiesUtilService } 
+//    from '../shared/groupedActivitiesService.ts';
 
 import { ModalService } 
     from '../shared/modalService.ts';
@@ -115,8 +111,7 @@ export class RootCmp {
         RootCmp
     ],
     declarations: [
-        RootCmp,
-        //OrderByPipe
+        RootCmp
     ],
     imports: [
         /* Ng Modules */
@@ -133,7 +128,7 @@ export class RootCmp {
         CountryFormNg2Module,
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
-        FundingNg2Module,
+        //FundingNg2Module,
         ModalNg2Module,
         NameNg2Module,
         ThanksForRegisteringNg2Module,
@@ -162,6 +157,6 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.99');
+        console.log('v0.100');
     }
 }

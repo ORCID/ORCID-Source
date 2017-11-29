@@ -20,7 +20,11 @@
 
 <#include "includes/funding/add_funding_inc.ftl"/>
 
+<@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
+<!--
 <funding-ng2></funding-ng2>
+-->
+</@orcid.checkFeatureStatus>
 
 <div ng-controller="FundingCtrl">
     <!-- Funding -->

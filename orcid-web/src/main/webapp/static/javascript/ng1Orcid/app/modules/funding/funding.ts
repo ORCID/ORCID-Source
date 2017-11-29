@@ -14,6 +14,9 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated components
+import { CommonNg2Module }
+    from './../common/common.ts';
+
 import { FundingComponent } 
     from './funding.component.ts';
 
@@ -37,13 +40,10 @@ export const FundingModule = angular.module(
 @NgModule(
     {
         imports: [
-            CommonModule,
-            FormsModule,
-            PrivacytoggleNg2Module
+            CommonNg2Module
         ],
         declarations: [ 
             FundingComponent,
-            OrderByPipe
         ],
         entryComponents: [ 
             FundingComponent 

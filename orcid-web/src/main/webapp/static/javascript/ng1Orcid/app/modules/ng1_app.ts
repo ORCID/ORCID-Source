@@ -52,7 +52,7 @@ export const orcidApp = angular.module(
         CountryFormModule.name,
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
-        FundingModule.name,
+        //FundingModule.name,
         ModalModule.name,
         NameModule.name,
         ThanksForRegisteringModule.name,
