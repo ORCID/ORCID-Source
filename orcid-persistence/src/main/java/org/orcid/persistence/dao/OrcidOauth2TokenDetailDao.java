@@ -16,9 +16,9 @@
  */
 package org.orcid.persistence.dao;
 
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-
 import java.util.List;
+
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 
 /**
  * 
@@ -29,13 +29,9 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
 
     OrcidOauth2TokenDetail findByTokenValue(String token);
 
-    OrcidOauth2TokenDetail findNonDisabledByTokenValue(String tokenValue);
-
-    void removeByTokenValue(String tokenValue);
+    OrcidOauth2TokenDetail findNonDisabledByTokenValue(String tokenValue);    
 
     void removeByRefreshTokenValue(String refreshTokenValue);
-
-    void removeByUserOrcidAndClientOrcid(String userOrcid, String clientOrcid);
 
     OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue);
 
@@ -51,17 +47,15 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
 
     void disableAccessTokenById(Long tokenId, String userOrcid);
     
-    void disableAccessTokenByRefreshToken(String refreshTokenValue);
-
-    void removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(String authKey, String tokenValue, String refreshTokenValue);
+    void disableAccessTokenByRefreshToken(String refreshTokenValue);    
     
     List<String> findAvailableScopesByUserAndClientId(String clientId, String userName);
 
     int findCountByUserName(String userName);
 
-    int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID);
+    int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID, String reason);
 
-    void disableAccessTokenByUserOrcid(String userOrcid);
+    void disableAccessTokenByUserOrcid(String userOrcid, String reason);
     
     void revokeAccessToken(String accessToken);
 }

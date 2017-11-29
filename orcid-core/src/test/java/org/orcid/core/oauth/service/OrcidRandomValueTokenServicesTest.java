@@ -245,7 +245,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         expiredToken.setTokenExpiration(new Date(System.currentTimeMillis() - 1000));
         expiredToken.setTokenValue("token-value");
         
-        orcidOauthTokenDetailService.removeConflictsAndCreateNew(expiredToken);
+        orcidOauthTokenDetailService.createNew(expiredToken);
         
         // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
         try {

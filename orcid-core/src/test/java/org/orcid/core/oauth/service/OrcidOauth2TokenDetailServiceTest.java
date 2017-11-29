@@ -36,6 +36,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -152,15 +153,16 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     
     @Test
     public void dontRemoveOtherClientScopesTest() {
-        Long token1Id = createToken(CLIENT_ID_1, "token-1", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId(); //Delete
-        Long token2Id = createToken(CLIENT_ID_1, "token-2", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update", false).getId(); 
-        Long token3Id = createToken(CLIENT_ID_1, "token-3", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update /read-limited", false).getId(); 
-        Long token4Id = createToken(CLIENT_ID_1, "token-4", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId(); //Delete
+        Long seed = System.currentTimeMillis();
+        Long token1Id = createToken(CLIENT_ID_1, "token-1-" + seed, USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId(); //Delete
+        Long token2Id = createToken(CLIENT_ID_1, "token-2-" + seed, USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update", false).getId(); 
+        Long token3Id = createToken(CLIENT_ID_1, "token-3-" + seed, USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update /read-limited", false).getId(); 
+        Long token4Id = createToken(CLIENT_ID_1, "token-4-" + seed, USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId(); //Delete
         
-        Long token5Id = createToken(CLIENT_ID_2, "token-5", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId();
-        Long token6Id = createToken(CLIENT_ID_2, "token-6", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update", false).getId();
-        Long token7Id = createToken(CLIENT_ID_2, "token-7", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update /read-limited", false).getId();
-        Long token8Id = createToken(CLIENT_ID_2, "token-8", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId();
+        Long token5Id = createToken(CLIENT_ID_2, "token-5-" + seed, USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId();
+        Long token6Id = createToken(CLIENT_ID_2, "token-6-" + seed, USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update", false).getId();
+        Long token7Id = createToken(CLIENT_ID_2, "token-7-" + seed, USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update /read-limited", false).getId();
+        Long token8Id = createToken(CLIENT_ID_2, "token-8-" + seed, USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId();
         
         List<OrcidOauth2TokenDetail> activeTokens = orcidOauth2TokenDetailService.findByUserName(USER_ORCID);
         assertNotNull(activeTokens);
@@ -180,12 +182,12 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     @Test
     public void disableAccessTokenByUserOrcidTest() {        
         Date date = new Date(System.currentTimeMillis() + 100000);
-        createToken(CLIENT_ID_1, "active-1", USER_ORCID_2, date, "/activities/update", false);
-        createToken(CLIENT_ID_1, "active-2", USER_ORCID_2, date, "/activities/update", false);
-        createToken(CLIENT_ID_1, "active-3", USER_ORCID_2, date, "/activities/update", false);
-        createToken(CLIENT_ID_1, "active-1", USER_ORCID_3, date, "/activities/update", false);
-        createToken(CLIENT_ID_1, "active-2", USER_ORCID_3, date, "/activities/update", false);
-        createToken(CLIENT_ID_1, "active-3", USER_ORCID_3, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-1-user-1", USER_ORCID_2, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-2-user-1", USER_ORCID_2, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-3-user-1", USER_ORCID_2, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-1-user-2", USER_ORCID_3, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-2-user-2", USER_ORCID_3, date, "/activities/update", false);
+        createToken(CLIENT_ID_1, "active-3-user-2", USER_ORCID_3, date, "/activities/update", false);
         
         List<OrcidOauth2TokenDetail> tokensUser1 = orcidOauth2TokenDetailService.findByClientIdAndUserName(CLIENT_ID_1, USER_ORCID_2);
         assertEquals(3, tokensUser1.size());
@@ -199,7 +201,7 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
             assertFalse(token.getTokenDisabled());
         }
         
-        orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(USER_ORCID_2);
+        orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(USER_ORCID_2, RevokeReason.RECORD_DEACTIVATED);
         
         tokensUser1 = orcidOauth2TokenDetailService.findByClientIdAndUserName(CLIENT_ID_1, USER_ORCID_2);
         assertEquals(3, tokensUser1.size());

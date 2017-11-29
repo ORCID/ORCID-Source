@@ -64,6 +64,7 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
     private long version;
     private String authorizationCode;
     private Date revocationDate;
+    private String revokeReason;
     
     /**
      * This should be implemented by all entity classes to return the id of the
@@ -280,5 +281,14 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
 
     public void setRevocationDate(Date revocationDate) {
         this.revocationDate = revocationDate;
-    }    
+    }
+
+    @Column(name = "revoke_reason")
+    public String getRevokeReason() {
+        return revokeReason;
+    }
+
+    public void setRevokeReason(String revokeReason) {
+        this.revokeReason = revokeReason;
+    }        
 }

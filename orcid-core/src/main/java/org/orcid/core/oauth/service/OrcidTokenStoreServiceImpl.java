@@ -108,7 +108,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Override
     public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
         OrcidOauth2TokenDetail detail = populatePropertiesFromTokenAndAuthentication(token, authentication, null);
-        orcidOauthTokenDetailService.removeConflictsAndCreateNew(detail);
+        orcidOauthTokenDetailService.createNew(detail);
+        // Set the token id in the additional details
+        token.getAdditionalInformation().put(OrcidOauth2Constants.TOKEN_ID, detail.getId());
     }
 
     /**
