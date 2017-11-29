@@ -514,7 +514,6 @@ $(function() {
     $('form#loginForm')
             .submit(
                     function() {
-                        
                         var loginUrl = baseUrl + 'signin/auth.json';
 
                         if (signinLocked) return false;
