@@ -233,7 +233,7 @@
                         </h4>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
-                        <button class="btn btn-primary" ng-click="oauth2ScreensPostRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+                        <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
                     </div>
                 </div>        
                 <div class="row">
@@ -263,7 +263,7 @@
                 </div>  
                 <div class="row margin-top-box">
                     <div class="col-md-12 col-sm-12 col-xs-12 right">
-                        <button class="btn btn-primary" ng-click="oauth2ScreensPostRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+                        <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
                     </div>
                 </div>
             </div>
@@ -279,7 +279,7 @@
                         </h4>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
-                        <button class="btn btn-primary" ng-click="oauth2ScreensPostRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+                        <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
                     </div>
                 </div>        
                 <div class="row">
@@ -308,7 +308,7 @@
                 </div>  
                 <div class="row margin-top-box">
                     <div class="col-md-12 col-sm-12 col-xs-12 right">
-                        <button class="btn btn-primary" ng-click="oauth2ScreensPostRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+                        <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
                     </div>
                 </div>
             </div>
