@@ -47,7 +47,7 @@ public class BiographyManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implem
         try {
             biographyEntity = biographyDao.getBiography(orcid, getLastModified(orcid));
         } catch(Exception e) {
-            LOGGER.warn("Couldn't find biography for " + orcid); 
+            LOGGER.debug("Couldn't find biography for " + orcid); 
         }
         if(biographyEntity != null) {
             Biography bio = new Biography();

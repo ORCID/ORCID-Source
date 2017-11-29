@@ -17,10 +17,12 @@
 package org.orcid.persistence.dao.impl;
 
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<OrgDisambiguatedExternalIdentifierEntity, Long>
         implements OrgDisambiguatedExternalIdentifierDao {
@@ -29,6 +31,14 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
         super(OrgDisambiguatedExternalIdentifierEntity.class);
     }
 
+    @Override
+    @Transactional
+    public void remove(Long id) {
+        Query query = entityManager.createNativeQuery("DELETE FROM org_disambiguated_external_identifier WHERE id = (:id)");        
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
+    
     @Override
     public OrgDisambiguatedExternalIdentifierEntity findByDetails(Long orgDisambiguatedId, String identifier, String identifierType) {
         try {

@@ -464,24 +464,26 @@ public class WorkspaceController extends BaseWorkspaceController {
                 //Clean old errors
                 w.setErrors(new ArrayList<String>());
                 
-                //Validate
-                if(!validateUrl(w.getUrl())) {
-                    w.getErrors().add(getMessage("common.invalid_url"));                
-                }
-                if(isLongerThan(w.getUrlName(), SiteConstants.URL_MAX_LENGTH)) {
-                    w.getErrors().add(getMessage("manualWork.length_less_X"));
+                // Validate url
+                validateUrl(w.getUrl());
+                copyErrors(w.getUrl(), w);
+                
+                // Validate url name
+                if(isLongerThan(w.getUrlName(), SiteConstants.URL_NAME_MAX_LENGTH)) {
+                    w.getErrors().add(getMessage("manualWork.length_less_X", SiteConstants.URL_NAME_MAX_LENGTH));
                 }         
                 
                 //Check there are no duplicates
-                if(existingUrls.contains(w.getUrl())) {
+                if(existingUrls.contains(w.getUrl().getValue())) {
                     w.getErrors().add(getMessage("researcher_url.error.duplicated", w.getUrl()));
                 } else {
-                    existingUrls.add(w.getUrl());
+                    existingUrls.add(w.getUrl().getValue());
                 }
                 //Validate visibility is not null
                 validateVisibility(w);
                  
                 copyErrors(w, ws);
+                copyErrors(w.getUrl(), ws);
                 copyErrors(w.getVisibility(), ws);
             }   
             

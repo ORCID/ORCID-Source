@@ -957,11 +957,10 @@ public class NotificationManagerImpl implements NotificationManager {
             return;
         }
 
-        org.orcid.jaxb.model.common_v2.Locale locale = managedEntity.getLocale();
         Locale userLocale = LocaleUtils.toLocale("en");
 
-        if (locale != null) {
-            userLocale = LocaleUtils.toLocale(locale.value());
+        if (managedEntity.getLocale() != null) {
+            userLocale = LocaleUtils.toLocale(managedEntity.getLocale().value());
         }
 
         addMessageParams(templateParams, userLocale);

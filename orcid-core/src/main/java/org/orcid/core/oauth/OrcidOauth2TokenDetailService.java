@@ -16,10 +16,11 @@
  */
 package org.orcid.core.oauth;
 
+import java.util.List;
+
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-
-import java.util.List;
 
 /**
  * @author Declan Newman (declan) Date: 19/04/2012
@@ -34,15 +35,9 @@ public interface OrcidOauth2TokenDetailService {
 
     List<OrcidOauth2TokenDetail> getAll();
 
-    void remove(OrcidOauth2TokenDetail e);
-
-    void remove(String id);
-
     void saveOrUpdate(OrcidOauth2TokenDetail e);
 
-    Long getCount();
-
-    void removeByTokenValue(String tokenValue);
+    Long getCount();    
 
     OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue);
 
@@ -76,6 +71,8 @@ public interface OrcidOauth2TokenDetailService {
      */
     void revokeAccessToken(String accessToken);
     
+    void disableAccessTokenByRefreshToken(String refreshTokenValue);
+    
     /**
      * This should NOT delete the row, but merely set it as disabled
      * 
@@ -84,22 +81,13 @@ public interface OrcidOauth2TokenDetailService {
      * @param userOrcid
      *            the id of the user owner of the token
      */
-    void disableAccessToken(Long tokenId, String userOrcid);
-    
-    /**
-     * This should NOT delete the row, but merely remove the value from it
-     * 
-     * @param refreshTokenValue
-     *            the value to use to identify the row containing the access
-     *            token
-     */
-    void disableAccessTokenByRefreshToken(String refreshTokenValue);
+    void disableAccessToken(Long tokenId, String userOrcid);        
 
-    void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail);
+    void createNew(OrcidOauth2TokenDetail detail);
     
     int findCountByUserName(String userName, long lastModified);
 
-    int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID);
+    int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID, RevokeReason reason);
     
     /**
      * This should NOT delete the row, but merely set it as disabled
@@ -107,6 +95,6 @@ public interface OrcidOauth2TokenDetailService {
      * @param userOrcid
      *            the id of the user owner of the token
      */
-    void disableAccessTokenByUserOrcid(String userOrcid);
+    void disableAccessTokenByUserOrcid(String userOrcid, RevokeReason reason);
     
 }

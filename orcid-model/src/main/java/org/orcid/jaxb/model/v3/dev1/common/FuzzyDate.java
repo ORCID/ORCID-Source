@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "fuzzyDate", propOrder = { "year", "month", "day" }, namespace = "http://www.orcid.org/ns/common")
 @XmlSeeAlso({ PublicationDate.class })
-public class FuzzyDate implements Serializable {
+public class FuzzyDate implements Serializable, Comparable<FuzzyDate> {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
@@ -206,6 +206,18 @@ public class FuzzyDate implements Serializable {
         } else if (!year.equals(other.year))
             return false;
         return true;
+    }
+
+    @Override
+    public int compareTo(FuzzyDate otherFuzzyDate) {
+        int comparison = this.year.compareTo(otherFuzzyDate.year);
+        if (comparison == 0) {
+            comparison = this.month.compareTo(otherFuzzyDate.month);
+            if (comparison == 0) {
+                comparison = this.day.compareTo(otherFuzzyDate.day);
+            }
+        }
+        return comparison;
     }
 
 }

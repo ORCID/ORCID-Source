@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -78,18 +79,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     @Override
     @Transactional
-    public void remove(OrcidOauth2TokenDetail detail) {
-        orcidOauth2TokenDetailDao.remove(detail);
-    }
-
-    @Override
-    @Transactional
-    public void remove(String tokenValue) {
-        orcidOauth2TokenDetailDao.removeByTokenValue(tokenValue);
-    }
-
-    @Override
-    @Transactional
     public void saveOrUpdate(OrcidOauth2TokenDetail detail) {
         if (detail.getId() != null) detail = orcidOauth2TokenDetailDao.merge(detail);
         orcidOauth2TokenDetailDao.persist(detail);
@@ -98,12 +87,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     public Long getCount() {
         return orcidOauth2TokenDetailDao.countAll();
-    }
-
-    @Override
-    @Transactional
-    public void removeByTokenValue(String tokenValue) {
-        orcidOauth2TokenDetailDao.removeByTokenValue(tokenValue);
     }
 
     @Override
@@ -226,11 +209,9 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     @Override
     @Transactional
-    public void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail) {
-        // We should allow multiple tokens for the same combo user-scopes, thats why we will
-        // not delete based on the authentication key
-        orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(null, detail.getTokenValue(), detail.getRefreshTokenValue());
-        orcidOauth2TokenDetailDao.persist(detail);
+    public void createNew(OrcidOauth2TokenDetail detail) {
+        orcidOauth2TokenDetailDao.persist(detail); 
+        orcidOauth2TokenDetailDao.flush();
     }        
 
     @Override
@@ -268,13 +249,13 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Override
     @Transactional
-    public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID) {
-        return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID);
+    public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID, RevokeReason reason) {
+        return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID, reason.name());
     }
 
     @Override
     @Transactional
-    public void disableAccessTokenByUserOrcid(String userOrcid) {
-        orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid);
+    public void disableAccessTokenByUserOrcid(String userOrcid, RevokeReason reason) {
+        orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid, reason.name());
     }        
 }
