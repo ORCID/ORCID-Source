@@ -49,7 +49,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="delegationDetails in delegators | orderBy:sort.column:sort.descending">
-						<td width="35%"><a href="<@orcid.rootPath '/switch-user?username='/>{{giverOrcid.path}}" target="giverName.value">{{delegationDetails.giverName.value}}</a></td>
+						<td width="35%"><a href="<@orcid.rootPath '/switch-user?username='/>{{delegationDetails.giverOrcid.path}}" target="giverName.value">{{delegationDetails.giverName.value}}</a></td>
 						<td width="35%"><a href="{{delegationDetails.giverOrcid.uri}}" target="{{delegationDetails.giverOrcid.path}}">{{delegationDetails.giverOrcid.path}}</a></td>						
 						<td width="15%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
 						<td width="15%">{{delegationDetails.lastModifiedDate|date:'yyyy-MM-dd'}}</td>
