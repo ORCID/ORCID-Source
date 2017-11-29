@@ -515,7 +515,7 @@ $(function() {
             .submit(
                     function(e) {
                         e.preventDefault();
-                        
+
                         var loginUrl = baseUrl + 'signin/auth.json';
 
                         if (signinLocked) return false;
@@ -559,7 +559,6 @@ $(function() {
                                             dataType : 'json',
                                             timeout: 60000,
                                             success : function(data) {
-                                                console.log("success");
                                                 if (data.success) {
                                                     if (basePath
                                                             .startsWith(baseUrl
@@ -649,7 +648,6 @@ $(function() {
                                     logAjaxError(e);
                                     window.location.reload();
                                 });
-                        
                         return false;
                     });
     
