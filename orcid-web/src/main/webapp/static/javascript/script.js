@@ -513,7 +513,7 @@ $(function() {
 
     $('form#loginForm')
             .submit(
-                    function(e) {
+                    function() {
 
                         var loginUrl = baseUrl + 'signin/auth.json';
 
