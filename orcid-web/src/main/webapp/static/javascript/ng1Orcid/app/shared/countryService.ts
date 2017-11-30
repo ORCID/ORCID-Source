@@ -7,12 +7,18 @@ import { Headers, Http, RequestOptions, Response }
 import { Observable } 
     from 'rxjs/Observable';
 
+import { Subject }
+    from 'rxjs/Subject';
+
 import 'rxjs/Rx';
 
 @Injectable()
 export class CountryService {
     private headers: Headers;
     private url: string;
+    private notify = new Subject<any>();
+    
+    notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: Http ){
         this.headers = new Headers(
@@ -28,6 +34,14 @@ export class CountryService {
             this.url
         )
         .map((res:Response) => res.json()).share();
+    }
+
+    notifyOther(data: any): void {
+        this.notify.next();
+        console.log('notify');
+        if (data) {
+            //console.log('notifyOther', data);
+        }
     }
 
     setCountryData( obj ): Observable<any> {

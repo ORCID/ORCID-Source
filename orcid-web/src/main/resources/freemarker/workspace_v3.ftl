@@ -116,10 +116,9 @@
     --------------------------
     -->
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
-    <!--
     <country-ng2></country-ng2>
-    -->
-    </@orcid.checkFeatureStatus> 
+    </@orcid.checkFeatureStatus>
+     
     <div ng-controller="CountryCtrl" class="workspace-section country">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
