@@ -1,4 +1,6 @@
 declare var $: any;
+declare var basePath: any;
+declare var baseUrl: any;
 declare var addShibbolethGa: any;
 declare var colorbox: any;
 declare var getBaseUri: any;
@@ -17,13 +19,15 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
         '$sce', 
         '$scope', 
         'commonSrvc', 
-        'vcRecaptchaService', 
+        'vcRecaptchaService',
+        'utilsService', 
         function (
             $compile,
             $sce, 
             $scope, 
             commonSrvc, 
-            vcRecaptchaService
+            vcRecaptchaService,
+            utilsService
         ){
             $scope.allowEmailAccess = true;
             $scope.authorizationForm = {};
@@ -143,27 +147,25 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.registrationForm.familyNames.value + '&givenNames=' + $scope.registrationForm.givenNames.value,
                     dataType: 'json',
                     success: function(data) {
-                    	$scope.duplicates = data;
+                    	var diffDate = new Date();
+                        $scope.duplicates = data;
                         $scope.$apply();
+                        // reg was filled out to fast reload the page
+                        if ($scope.loadTime + 5000 > diffDate.getTime()) {
+                            window.location.reload();
+                            return;
+                        }
                         if ($scope.duplicates.length > 0 ) {
                             $scope.showDuplicatesColorBox();
                         } else {
-                        	if(orcidVar.originalOauth2Process) {
-            					$scope.postRegisterConfirm();
-            				} else {
-            					$scope.oauth2ScreensPostRegisterConfirm();
-            				}                         	
+            				$scope.oauth2ScreensPostRegisterConfirm();                        	
                         }
                     }
                 }).fail(function(){
                     // something bad is happening!
                     console.log("error fetching dupicateResearcher.json");
                     // continue to registration, as solr dup lookup failed.
-                    if(orcidVar.originalOauth2Process) {
-    					$scope.postRegisterConfirm();
-    				} else {
-    					$scope.oauth2ScreensPostRegisterConfirm();
-    				}
+    				$scope.oauth2ScreensPostRegisterConfirm();
                 });
             };
 
@@ -612,19 +614,23 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             /////////////////////
             // Oauth 2 screens //
             /////////////////////
-            $scope.oauth2ScreensLoadRegistrationForm = function() {
+        
+            $scope.oauth2ScreensLoadRegistrationForm = function(givenName, familyName, email, linkFlag) {
             	$.ajax({
                     url: getBaseUri() + '/register.json',
                     type: 'GET',
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.registrationForm = data;  
+                        $scope.registrationForm = data; 
+                        $scope.registrationForm.givenNames.value=givenName;
+                        $scope.registrationForm.familyNames.value=familyName;
+                        $scope.registrationForm.email.value=email; 
                         $scope.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
-                        
+                        $scope.registrationForm.linkType=linkFlag;
                         $scope.$apply();
                                         
-                        // special handling of deactivation error
+                        // special handling of deactivation error for primary email
                         $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
                             $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
                             $scope.showReactivationSent = false;
@@ -643,13 +649,27 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 });
             };
             
-            $scope.oauth2ScreensRegister = function() {
+            $scope.oauth2ScreensRegister = function(linkFlag) {
+                var baseUri = getBaseUri();
+
+                if (location.href.startsWith(baseUri + '/signin?oauth')) {
+                    var clientName = $('div#RegistrationForm input[name="client_name"]').val();
+                    $scope.registrationForm.referredBy = $('div#RegistrationForm input[name="client_id"]').val();
+                    var clientGroupName = $('div#RegistrationForm input[name="client_group_name"]').val();
+                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
+                    $scope.registrationForm.creationType.value = "Member-referred";
+                } else {
+                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit', 'Website']);
+                    $scope.registrationForm.creationType.value = "Direct";
+                } 
+
                 // Adding the response to the register object
                 $scope.registrationForm.grecaptcha.value = $scope.recatchaResponse; 
                 $scope.registrationForm.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
                 
+                $scope.registrationForm.linkType = linkFlag;
                 $.ajax({
-                    url: getBaseUri() + '/register.json',
+                    url: baseUri + '/register.json',
                     type: 'POST',
                     data:  angular.toJson($scope.registrationForm),
                     contentType: 'application/json;charset=UTF-8',
@@ -668,9 +688,11 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             } else {
                                 $scope.emailTrustAsHtmlErrors = [];
                             }
+                            if ($scope.registrationForm.grecaptcha.errors.length == 0) {
+                                angular.element(document.querySelector('#recaptcha')).remove();
+                            }
                         }
-                        
-
+   
                         $scope.$apply();
                     }
                 }).fail(function() {
@@ -686,10 +708,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     baseUri += '/shibboleth';
                 }
             	
-            	var auth_scope_prefix = 'Authorize_';
-                if($scope.enablePersistentToken){
-                    auth_scope_prefix = 'AuthorizeP_';
-                }
                 $scope.showProcessingColorBox();
                 $scope.registrationForm.valNumClient = $scope.registrationForm.valNumServer / 2;
                 
@@ -706,7 +724,13 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             $scope.$apply();
                             $.colorbox.close();
                         } else {
-                            //TODO: Add GA code
+                            if (location.href.startsWith(baseUri + '/signin?oauth')){
+                                var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
+                                var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+                                orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
+                            } else {
+                                orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                            } 
 							orcidGA.windowLocationHrefDelay(data.url);
                         }                           
                     }
