@@ -67,11 +67,7 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
                 if (session != null)
                     new HttpSessionRequestCache().saveRequest(request, response);
                 
-                if(Features.OAUTH_2SCREENS.isActive() || (!PojoUtil.isEmpty(queryString) && queryString.contains(OrcidOauth2Constants.OAUTH_2SCREENS))) {
-                    response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);
-                } else {
-                    response.sendRedirect(orcidUrlManager.getBaseUrl() + "/oauth/signin?" + queryString);
-                }                                                
+                response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);                                             
                 return;
             }
         }

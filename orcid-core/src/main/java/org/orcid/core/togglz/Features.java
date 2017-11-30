@@ -40,9 +40,6 @@ public enum Features implements Feature {
     @Label("New footer")
     NEW_FOOTER,
     
-    @Label("Split oauth in 2 screens")
-    OAUTH_2SCREENS,
-    
     @Label("Mutiple emails on register form")
     REG_MULTI_EMAIL,
     
