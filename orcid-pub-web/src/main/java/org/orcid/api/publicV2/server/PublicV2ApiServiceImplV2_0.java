@@ -70,6 +70,7 @@ import javax.ws.rs.core.UriInfo;
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
@@ -82,15 +83,28 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
 import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_v2.PersonalDetails;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.jaxb.model.search_v2.Search;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.swagger.annotations.Api;
@@ -288,7 +302,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS)
-    @ApiOperation(value = "Fetch all researcher urls for an ORCID ID")
+    @ApiOperation(value = "Fetch all researcher urls for an ORCID ID", response = ResearcherUrls.class)
     public Response viewResearcherUrls(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewResearcherUrls(orcid);
     }
@@ -296,7 +310,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS + PUTCODE)
-    @ApiOperation(value = "Fetch one researcher url for an ORCID ID")
+    @ApiOperation(value = "Fetch one researcher url for an ORCID ID", response = ResearcherUrls.class)
     public Response viewResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewResearcherUrl(orcid, Long.valueOf(putCode));
     }
@@ -304,7 +318,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMAIL)
-    @ApiOperation(value = "Fetch all emails for an ORCID ID")
+    @ApiOperation(value = "Fetch all emails for an ORCID ID",response = Emails.class)
     public Response viewEmails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmails(orcid);
     }
@@ -312,7 +326,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
-    @ApiOperation(value = "Fetch personal details for an ORCID ID")
+    @ApiOperation(value = "Fetch personal details for an ORCID ID", response = PersonalDetails.class)
     public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPersonalDetails(orcid);
     }
@@ -320,7 +334,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES)
-    @ApiOperation(value = "Fetch Other names")
+    @ApiOperation(value = "Fetch Other names", response = OtherNames.class)
     public Response viewOtherNames(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewOtherNames(orcid);
     }
@@ -328,7 +342,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES + PUTCODE)
-    @ApiOperation(value = "Fetch Other name")
+    @ApiOperation(value = "Fetch Other name", response = OtherName.class)
     public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewOtherName(orcid, Long.valueOf(putCode));
     }
@@ -336,7 +350,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS)
-    @ApiOperation(value = "Fetch external identifiers", authorizations = {
+    @ApiOperation(value = "Fetch external identifiers", response = PersonExternalIdentifiers.class, authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     public Response viewExternalIdentifiers(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewExternalIdentifiers(orcid);
@@ -345,7 +359,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
-    @ApiOperation(value = "Fetch external identifier")
+    @ApiOperation(value = "Fetch external identifier", response = PersonExternalIdentifier.class)
     public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewExternalIdentifier(orcid, Long.valueOf(putCode));
     }
@@ -353,7 +367,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS)
-    @ApiOperation(value = "Fetch keywords")
+    @ApiOperation(value = "Fetch keywords", response = Keywords.class)
     public Response viewKeywords(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewKeywords(orcid);
     }
@@ -361,7 +375,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS + PUTCODE)
-    @ApiOperation(value = "Fetch keyword")
+    @ApiOperation(value = "Fetch keyword", response = Keyword.class)
     public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
     }
@@ -369,7 +383,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS)
-    @ApiOperation(value = "Fetch all addresses")
+    @ApiOperation(value = "Fetch all addresses", response = Addresses.class)
     public Response viewAddresses(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewAddresses(orcid);
     }
@@ -377,7 +391,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS + PUTCODE)
-    @ApiOperation(value = "Fetch an address")
+    @ApiOperation(value = "Fetch an address",response = Address.class)
     public Response viewAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewAddress(orcid, Long.valueOf(putCode));
     }
@@ -385,7 +399,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIOGRAPHY)
-    @ApiOperation(value = "Get biography details")
+    @ApiOperation(value = "Get biography details", response = Biography.class)
     public Response viewBiography(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewBiography(orcid);
     }
@@ -393,7 +407,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSON)
-    @ApiOperation(value = "Fetch person details")
+    @ApiOperation(value = "Fetch person details", response = Person.class)
     public Response viewPerson(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPerson(orcid);
     }
@@ -402,7 +416,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_SIMPLE)
-    @ApiOperation(value = "Fetch record details")
+    @ApiOperation(value = "Fetch record details", response = Record.class)
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
@@ -421,7 +435,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SEARCH_PATH)
-    @ApiOperation(value = "Search records")
+    @ApiOperation(value = "Search records", response = Search.class)
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
     public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
@@ -432,7 +446,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Path(CLIENT_PATH)
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Fetch client details")
+    @ApiOperation(value = "Fetch client details", response = ClientSummary.class)
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/client-2.0.xsd")
     public Response viewClient(@PathParam("client_id") String clientId) {
         return serviceDelegator.viewClient(clientId);
