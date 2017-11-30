@@ -704,8 +704,8 @@ public class BaseController {
     }
     
     protected void validateUrl(Text url, String errorCode) {
-        if(url.getErrors() == null)
-            url.setErrors(new ArrayList<String>());
+        // Clear previous errors
+        url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {
             // trim if required
             if (!url.getValue().equals(url.getValue().trim()))
