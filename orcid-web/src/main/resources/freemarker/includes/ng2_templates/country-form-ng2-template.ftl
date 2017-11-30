@@ -83,7 +83,7 @@
                             <div class="col-md-6">                                  
                                 <div class="aka">
                                     <select 
-                                        [(ngModel)]="country.iso2Country" 
+                                        [(ngModel)]="country.iso2Country.value" 
                                         [disabled]="country.source != orcidId"
                                         [ngClass]="{ 'not-allowed': country?.source != orcidId }"
                                         focus-me="newInput"
@@ -91,8 +91,14 @@
                                     >
 
                                         <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+
                                         <#list isoCountries?keys as key>
-                                            <option value="${key}">${isoCountries[key]}</option>
+                                        <option 
+                                            value="${key}"
+                                            [selected]="country.iso2Country.value == '${key}'"
+                                        >
+                                            ${isoCountries[key]}
+                                        </option>
                                         </#list>
                                     </select>                                      
                                 </div>         
@@ -132,18 +138,13 @@
                                         <@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />                               
                                     </li>
                                     <li>
-                                        <!--
-                                        <privacy-toggle-ng2 elementId="bio-privacy-toggle" [dataPrivacyObj]="country.visibility.visibility" (privacyUpdate)="privacyChange($event)"></privacy-toggle-ng2>
-                                        -->
-                                        <!--
-                                        -->
-                                        <@orcid.privacyToggle3  angularModel="country.visibility.visibility"
-                                            questionClick="toggleClickPrivacyHelp($index)"
-                                            clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-                                            publicClick="setPrivacyModal('PUBLIC', $event, country)" 
-                                            limitedClick="setPrivacyModal('LIMITED', $event, country)" 
-                                            privateClick="setPrivacyModal('PRIVATE', $event, country)"
-                                            elementId="$index"/>   
+                                        <privacy-toggle-ng2 
+                                        [dataPrivacyObj]="country" 
+                                        (privacyUpdate)="privacyChange($event)"
+                                        elementId="country-privacy-toggle" 
+                                        privacyNodeName="visibility" 
+                                        >    
+                                        </privacy-toggle-ng2>
                                     </li>
                                 </ul>
                                 <span class="created-date pull-right hidden-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
@@ -166,7 +167,7 @@
                             </div>
                         </div>
                     </span></a>                         
-                    <button class="btn btn-primary pull-right" (click)="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+                    <button class="btn btn-primary pull-right" (click)="setCountryForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
                     <a class="cancel-option pull-right" (click)="closeEditModal()"><@spring.message "freemarker.btncancel"/></a> 
                 </div>
             </div>

@@ -181,7 +181,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    setCountryForm(): void {
+    setCountryForm( closeAfterAction ): void {
 
         this.countryService.setCountryData( this.countryForm )
         .takeUntil(this.ngUnsubscribe)
@@ -190,10 +190,13 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.countryForm = data;
                 if (this.countryForm.errors.length == 0){
                     this.getCountryForm();
-                    //this.closeEditModal();
+                    if( closeAfterAction == true ) {
+                        this.closeEditModal();
+                    }
                 }else{
                     console.log(this.countryForm.errors);
                 }
+
             },
             error => {
                 console.log('setBiographyFormError', error);
@@ -202,10 +205,10 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.countryForm.visibility = null;
     };
     
-    ///
-    setPrivacy(priv, $event): void{
-        $event.preventDefault();
-        this.defaultVisibility = priv;
+    privacyChange( obj ): any {
+        console.log('privacyChange', obj);
+        this.countryForm.visibility.visibility = obj;
+        this.setCountryForm( false );   
     };
     
     ///
