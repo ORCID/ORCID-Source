@@ -622,8 +622,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody WorksPage getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
-        String orcid = getEffectiveUserOrcid();
+    public @ResponseBody WorksPage getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         return worksPaginator.getWorksPage(orcid, offset, true, sort, sortAsc);
     }
 
