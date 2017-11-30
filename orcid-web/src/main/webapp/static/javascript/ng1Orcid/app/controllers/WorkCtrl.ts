@@ -53,6 +53,9 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.bulkDeleteSubmit = false;
             $scope.canReadFiles = false;
             $scope.combiningWorks = false;
+            $scope.sortKey = "date";
+            $scope.sortAsc = true;
+            
             $scope.contentCopy = {
                 titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
                 titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
@@ -167,8 +170,8 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             $scope.bulkApply = function(func) {
                 for (var idx in worksSrvc.groups) {
-                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
-                        func(worksSrvc.groups[idx].getActive().putCode.value);
+                    if ($scope.bulkEditMap[worksSrvc.groups[idx].activePutCode]){
+                        func(worksSrvc.groups[idx].activePutCode);
                     }
                 }
             };
@@ -177,7 +180,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 $scope.bulkChecked = bool;
                 $scope.bulkDisplayToggle = false;
                 for (var idx in worksSrvc.groups){
-                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
+                    $scope.bulkEditMap[worksSrvc.groups[idx].activePutCode] = bool;
                 }
             };
 
@@ -243,11 +246,11 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 }
                 var delPuts = new Array();
                 for (var idx in worksSrvc.groups){
-                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
-                        delPuts.push(worksSrvc.groups[idx].getActive().putCode.value);
+                    if ($scope.bulkEditMap[worksSrvc.groups[idx].activePutCode]){
+                        delPuts.push(worksSrvc.groups[idx].activePutCode);
                     }
                 }
-                worksSrvc.deleteGroupWorks(delPuts);
+                worksSrvc.deleteGroupWorks(delPuts, $scope.sortKey, $scope.sortAsc);
                 $.colorbox.close();
                 $scope.bulkEditShow = false;
             };
@@ -258,7 +261,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 $scope.bulkDeleteSubmit = false;        
                 $scope.delCountVerify = 0;
                 for (idx in worksSrvc.groups){
-                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
+                    if ($scope.bulkEditMap[worksSrvc.groups[idx].activePutCode]){
                         $scope.bulkDeleteCount++;
                     }
                 }
@@ -273,10 +276,10 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             $scope.deleteByPutCode = function(putCode, deleteGroup) {
                 if (deleteGroup) {
-                   worksSrvc.deleteGroupWorks(putCode);
+                   worksSrvc.deleteGroupWorks(putCode, $scope.sortKey, $scope.sortAsc);
                 }
                 else {
-                   worksSrvc.deleteWork(putCode);
+                   worksSrvc.deleteWork(putCode, $scope.sortKey, $scope.sortAsc);
                 }
                 $.colorbox.close();
             };
@@ -640,7 +643,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                         $scope.addingWork = false;
                                     });
                                     $.colorbox.close();
-                                    $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                                    $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sort, $scope.sortAsc);
                                 }
                             } else {
                                 $timeout(function(){
@@ -703,7 +706,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                             });
                             numToSave--;
                             if (numToSave == 0){
-                                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sort, $scope.sortAsc);
                                 savingBibtex = false;
                             }
                         });
@@ -712,6 +715,10 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 }
                 
             };
+            
+            $scope.loadMore = function() {
+                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortKey, $scope.sortAsc);
+            }
 
             $scope.serverValidate = function (relativePath) {
                 $.ajax({
@@ -742,13 +749,14 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.setBulkGroupPrivacy = function(priv) {
             	var putCodes = new Array();
                 for (var idx in worksSrvc.groups){
-                	if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){    
-                        for (var idj in worksSrvc.groups[idx].activities) {
-                        	putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
-                            worksSrvc.groups[idx].activities[idj].visibility.visibility = priv;
+                	if ($scope.bulkEditMap[worksSrvc.groups[idx].activePutCode]){  
+                        for (var idj in worksSrvc.groups[idx].works) {
+                        	putCodes.push(worksSrvc.groups[idx].works[idj].putCode.value);
+                            worksSrvc.groups[idx].works[idj].visibility.visibility = priv;
                         }
                     }
                 }
+                
                 if(putCodes.length > 0) {
                 	worksSrvc.updateVisibility(putCodes, priv);
                 }                
@@ -767,7 +775,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     },
                     onClosed: function() {
                         $scope.closeAllMoreInfo();
-                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                        $scope.worksSrvc.refreshWorkGroups($scope.sortKey, $scope.sortAsc);
                     }
                 });
             };
@@ -783,7 +791,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     onComplete: function() {$.colorbox.resize();},
                     onClosed: function() {
                         $scope.closeAllMoreInfo();
-                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                        $scope.worksSrvc.refreshWorkGroups($scope.sortKey, $scope.sortAsc);
                     }
                 });
                 return false;
@@ -792,8 +800,8 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.showDetailsMouseClick = function(group, $event) {
                 $event.stopPropagation();
                 $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
-                for (var idx in group.activities){
-                    $scope.loadDetails(group.activities[idx].putCode.value, $event);
+                for (var idx in group.works){
+                    $scope.loadDetails(group.works[idx].putCode.value, $event);
                 }
             };
 
@@ -846,6 +854,14 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };  
 
             $scope.sort = function(key) {
+                if ($scope.sortKey == key) {
+                    $scope.sortAsc = !$scope.sortAsc;
+                } else {
+                    $scope.sortKey = key;
+                    $scope.sortAsc = true;
+                }
+                worksSrvc.resetWorkGroups();
+                worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortKey, $scope.sortAsc);
                 $scope.sortState.sortBy(key);
             };
 
@@ -859,7 +875,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.swapbulkChangeAll = function() {
                 $scope.bulkChecked = !$scope.bulkChecked;
                 for (var idx in worksSrvc.groups){
-                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = $scope.bulkChecked;
+                    $scope.bulkEditMap[worksSrvc.groups[idx].activePutCode] = $scope.bulkChecked;
                 }
                 $scope.bulkDisplayToggle = false;
             };
@@ -883,7 +899,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                         $scope.bulkEditMap = {};
                         $scope.bulkChecked = false;
                         for (var idx in worksSrvc.groups){
-                            $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+                            $scope.bulkEditMap[worksSrvc.groups[idx].activePutCode] = false;
                         }
                     };
                     $scope.bulkEditShow = !$scope.bulkEditShow;
@@ -988,7 +1004,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             }
     
             //init
-            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+            $scope.loadMore();
             loadWorkImportWizardList();
 
         }

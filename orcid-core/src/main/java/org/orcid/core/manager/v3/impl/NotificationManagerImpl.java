@@ -444,7 +444,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("emailFrequencyUrl", emailFrequencyUrl);
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
         String subject = getSubject("email.service_announcement.subject.imporant_information", orcidProfile);
         String text = templateManager.processTemplate("service_announcement_1_2015.ftl", templateParams);
         String html = templateManager.processTemplate("service_announcement_1_2015_html.ftl", templateParams);
@@ -472,22 +472,13 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
 
         String text = templateManager.processTemplate("priv_policy_upate_2014_03.ftl", templateParams);
         String html = templateManager.processTemplate("priv_policy_upate_2014_03_html.ftl", templateParams);
 
         return mailGunManager.sendEmail(UPDATE_NOTIFY_ORCID_ORG, email, ORCID_PRIVACY_POLICY_UPDATES, text, html);
-    }
-
-    public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
-        Map<String, Boolean> features = getFeatures();
-        templateParams.put("messages", this.messages);
-        templateParams.put("messageArgs", new Object[0]);
-        templateParams.put("locale", locale);
-        templateParams.put("features", features);
-    }
+    }    
 
     public void addMessageParams(Map<String, Object> templateParams, Locale locale) {
         Map<String, Boolean> features = getFeatures();
@@ -569,7 +560,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String resetUrl = createResetEmail(orcidProfile, orcidUrlManager.getBaseUrl());
         templateParams.put("passwordResetUrl", resetUrl);
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
 
         // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
@@ -591,7 +582,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String reactivationUrl = createReactivationUrl(submittedEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("reactivationUrl", reactivationUrl);
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
 
         // Generate body from template
         String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
@@ -647,7 +638,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
 
-        addMessageParams(templateParams, amendedProfile);
+        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(amendedProfile));
 
         // Generate body from template
         String body = templateManager.processTemplate("amend_email.ftl", templateParams);
@@ -748,36 +739,19 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendApiRecordCreationEmail(String toEmail, String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrieve(orcid);
-        sendApiRecordCreationEmail(toEmail, profile);
-    }
-
-    @Override
     @Transactional
-    public void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile) {
-        Source source = null;
+    public void sendApiRecordCreationEmail(String toEmail, String orcid) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
+        String sourceId = record.getSource() == null ? null : record.getSource().getSourceId();
+        String creatorName = record.getSource() == null ? null : record.getSource().getSourceName();
+        Locale userLocale = getUserLocaleFromProfileEntity(record);
         CustomEmailEntity customEmail = null;
-        if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
-            if (!PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().retrieveSourcePath())) {
-                source = createdProfile.getOrcidHistory().getSource();
-                customEmail = getCustomizedEmail(createdProfile.getOrcidHistory().getSource().retrieveSourcePath(), EmailType.CLAIM);
-            }
+        if (!PojoUtil.isEmpty(sourceId)) {
+            customEmail = getCustomizedEmail(sourceId, EmailType.CLAIM);
         }
-
-        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue().trim();
-        String emailName = deriveEmailFriendlyName(createdProfile);
-        String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());
-
-        String creatorName = "";
-        if (source != null) {
-            if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
-                creatorName = source.getSourceName().getContent();
-            } else if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                creatorName = source.retrieveSourcePath();
-            }
-        }
+        String email = emailManager.findPrimaryEmail(orcid).getEmail();
+        String emailName = deriveEmailFriendlyName(record);
+        String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());        
 
         String subject = null;
         String body = null;
@@ -788,7 +762,7 @@ public class NotificationManagerImpl implements NotificationManager {
             // Get the customized sender if available
             sender = PojoUtil.isEmpty(customEmail.getSender()) ? CLAIM_NOTIFY_ORCID_ORG : customEmail.getSender();
             // Get the customized subject is available
-            subject = PojoUtil.isEmpty(customEmail.getSubject()) ? getSubject("email.subject.api_record_creation", createdProfile) : customEmail.getSubject();
+            subject = PojoUtil.isEmpty(customEmail.getSubject()) ? getSubject("email.subject.api_record_creation", userLocale) : customEmail.getSubject();
             // Replace the wildcards
             subject = subject.replace(WILDCARD_USER_NAME, emailName);
             subject = subject.replace(WILDCARD_MEMBER_NAME, creatorName);
@@ -814,7 +788,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 }
             }
         } else {
-            subject = getSubject("email.subject.api_record_creation", createdProfile);
+            subject = getSubject("email.subject.api_record_creation", userLocale);
             // Create map of template params
             Map<String, Object> templateParams = new HashMap<String, Object>();
             templateParams.put("emailName", emailName);
@@ -825,7 +799,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
             templateParams.put("verificationUrl", verificationUrl);
 
-            addMessageParams(templateParams, createdProfile);
+            addMessageParams(templateParams, userLocale);
             // Generate body from template
             body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
             htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
@@ -886,7 +860,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
 
         String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template
@@ -1305,7 +1279,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
         
         String subject = getSubject("email.service_announcement.subject.imporant_information", orcidProfile);
         String text = templateManager.processTemplate("verified_required_announcement_2017.ftl", templateParams);
@@ -1377,5 +1351,4 @@ public class NotificationManagerImpl implements NotificationManager {
             }
         });
     }
-
 }

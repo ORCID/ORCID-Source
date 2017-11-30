@@ -199,6 +199,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         bulk.setBulk(works);
         return bulk;
     }
+    
+    @Override
+    public Works getWorksAsGroups(String orcid) {
+        return groupWorks(getWorksSummaryList(orcid), false);
+    }
 
     private String[] getPutCodeArray(String putCodesAsString) {
         String[] putCodeArray = putCodesAsString.split(BULK_PUT_CODES_DELIMITER);
