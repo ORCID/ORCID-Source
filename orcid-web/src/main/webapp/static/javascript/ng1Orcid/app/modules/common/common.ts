@@ -21,6 +21,9 @@ import { AjaxFormDateToISO8601Pipe }
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
+import { CountryService } 
+    from '../../shared/countryService.ts';
+
 // This is the Angular 2 part of the module
 @NgModule(
     {
@@ -44,6 +47,9 @@ import { PrivacytoggleNg2Module }
             OrderByPipe,
             //User Modules
             PrivacytoggleNg2Module
+        ],
+        providers: [
+            CountryService
         ]
     }
 )
