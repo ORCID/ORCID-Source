@@ -17,7 +17,6 @@
 
 -->
 <div id="register" class="oauth-registration">
-    new template!
     <!-- First name -->
     <div class="form-group clear-fix">
         <label for="givenNames" class="control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>

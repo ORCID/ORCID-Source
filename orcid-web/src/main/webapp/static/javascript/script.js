@@ -515,13 +515,12 @@ $(function() {
             .submit(
                     function() {
                         var loginUrl = baseUrl + 'signin/auth.json';
-                        var oauthSignin = location.href.startsWith(getBaseUri() + '/signin?oauth');
                         var gaString = angular.element($("#loginForm")).scope().gaString;
 
                         if (signinLocked) return false;
                         disableSignin();
                         
-                        if (oauthSignin) {
+                        if (gaString) {
                             orcidGA.gaPush([
                                     'send',
                                     'event',
@@ -550,7 +549,7 @@ $(function() {
                                             dataType : 'json',
                                             success : function(data) {
                                                 if (data.success) {
-                                                    if (oauthSignin) {
+                                                    if (gaString) {
 
                                                         orcidGA
                                                                 .gaPush([
