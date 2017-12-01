@@ -1,23 +1,18 @@
 import * as angular 
     from 'angular';
 
-import { CommonModule } 
-    from '@angular/common'; 
-
 import { Directive, NgModule } 
     from '@angular/core';
-
-import { FormsModule }
-    from '@angular/forms'; // <-- NgModel lives here
 
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
+//User generated components
+import { CommonNg2Module }
+    from './../common/common.ts';
+
 import { CountryComponent } 
     from './country.component.ts';
-
-import { PrivacytoggleComponent } 
-    from './../privacytoggle/privacyToggle.component.ts';
 
 // This is the Angular 1 part of the module
 export const CountryModule = angular.module(
@@ -36,8 +31,7 @@ export const CountryModule = angular.module(
             CountryComponent 
         ],
         imports: [
-            CommonModule,
-            FormsModule
+            CommonNg2Module
         ],
         providers: [
         ]

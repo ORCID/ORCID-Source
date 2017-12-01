@@ -146,6 +146,7 @@
         <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
         <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/country-ng2-template.ftl">
+        <#include "/includes/ng2_templates/funding-ng2-template.ftl">
     </#if>
     </@orcid.checkFeatureStatus> 
 

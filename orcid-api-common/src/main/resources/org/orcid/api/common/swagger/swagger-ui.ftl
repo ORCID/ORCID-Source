@@ -92,7 +92,11 @@
         jsonEditor: false,
         apisSorter: "alpha",
         defaultModelRendering: 'schema',
-        showRequestHeaders: false
+        showRequestHeaders: false,
+        operationsSorter: function (a, b) { 
+		    var order = { 'get': '0', 'post': '1', 'put': '2', 'delete': '3' }; 
+		    return (order[a.method]+a.path).localeCompare(order[b.method]+b.path);    
+		  }
       });
 
       function updateOauth(){

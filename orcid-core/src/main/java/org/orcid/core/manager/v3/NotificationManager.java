@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -66,9 +65,7 @@ public interface NotificationManager {
 
     void sendOrcidLockedEmail(String orcidToLock);
 
-    void sendApiRecordCreationEmail(String toEmail, String orcid);
-    
-    void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
+    void sendApiRecordCreationEmail(String toEmail, String orcid);        
 
     void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
 
@@ -109,10 +106,6 @@ public interface NotificationManager {
     Notification flagAsArchived(String orcid, Long id, boolean validateForApi) throws OrcidNotificationAlreadyReadException;
 
     public Notification setActionedAndReadDate(String orcid, Long id);
-
-    public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);
-
-    public String getSubject(String code, OrcidProfile orcidProfile);
 
     public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
 

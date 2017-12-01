@@ -28,6 +28,7 @@ import { ModalService }
 })
 export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
 
     countryForm: any;
     countryFormAddresses: any;
@@ -50,7 +51,7 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getCountryForm(): void {
         this.countryService.getCountryData()
-        .takeUntil(this.ngUnsubscribe)
+        //.takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.countryForm = data;
@@ -65,7 +66,7 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openEditModal(): void{      
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        //.takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.emails = data;
@@ -85,11 +86,17 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        this.subscription = this.countryService.notifyObservable$.subscribe(
+            (res) => {
+                this.getCountryForm();
+                console.log('notified', res);
+            }
+        );
     };
 
     ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
+        //this.ngUnsubscribe.next();
+        //this.ngUnsubscribe.complete();
     };
 
     ngOnInit() {

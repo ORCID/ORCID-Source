@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
@@ -219,7 +220,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     private void validateGroupId(PeerReview peerReview) {
         if (!PojoUtil.isEmpty(peerReview.getGroupId())) {
             if (!groupIdRecordManager.exists(peerReview.getGroupId())) {
-                throw new OrcidValidationException(localeManager.resolveMessage("peer_review.group_id.not_valid"));
+                throw new GroupIdRecordNotFoundException(localeManager.resolveMessage("peer_review.group_id.not_valid"));
             }
         }
     }
