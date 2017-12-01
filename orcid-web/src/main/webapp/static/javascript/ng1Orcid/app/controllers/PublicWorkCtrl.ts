@@ -111,8 +111,8 @@ export const PublicWorkCtrl = angular.module('orcidApp').controller(
             $scope.showDetailsMouseClick = function(group, $event) {
                 $event.stopPropagation();
                 $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
-                for (var idx in group.activities) {
-                    $scope.loadDetails(group.activities[idx].putCode.value, $event);
+                for (var idx in group.works) {
+                    $scope.loadDetails(group.works[idx].putCode.value, $event);
                 }
             };
 
