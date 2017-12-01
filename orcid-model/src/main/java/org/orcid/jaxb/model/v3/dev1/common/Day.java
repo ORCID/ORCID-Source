@@ -119,8 +119,4 @@ public class Day implements Serializable {
         return value != null ? value.hashCode() : 0;
     }
 
-    @Override
-    public int compareTo(Day otherDay) {
-        return this.value.compareTo(otherDay.value);
-    }
 }
