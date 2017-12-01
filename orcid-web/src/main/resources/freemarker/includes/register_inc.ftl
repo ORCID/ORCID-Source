@@ -20,15 +20,8 @@
     new template!
     <!-- First name -->
     <div class="form-group clear-fix">
-        <label for="givelNames" class="control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
+        <label for="givenNames" class="control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
         <div class="bottomBuffer">
-        	<#if (client_name)??>
-        	<#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
-	        <#assign js_client_name = client_name?replace('"', '&quot;')?js_string>	        
-        	<input type="hidden" name="client_group_name" value="${js_group_name}" />
-        	<input type="hidden" name="client_name" value="${js_client_name}" />
-        	<input type="hidden" name="client_id" value="${client_id}" />        	
-        	</#if>
             <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="" ng-model="registrationForm.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>                         
             <span class="required" ng-class="isValidClass(registrationForm.givenNames)">*</span>            
             <div class="popover-help-container">

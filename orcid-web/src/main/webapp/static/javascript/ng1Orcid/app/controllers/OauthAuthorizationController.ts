@@ -39,6 +39,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             $scope.model = {
                 key: orcidVar.recaptchaKey
             };
+            $scope.oauthSignin = false;
             $scope.personalLogin = true;
             $scope.recaptchaWidgetId = null;
             $scope.recatchaResponse = null;
@@ -271,7 +272,8 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                         })
                                                                                                                 
                         $scope.requestInfoForm = data;              
-                        $scope.gaString = orcidGA.buildClientString($scope.requestInfoForm.memberName, $scope.requestInfoForm.clientName);              
+                        $scope.gaString = orcidGA.buildClientString($scope.requestInfoForm.memberName, $scope.requestInfoForm.clientName); 
+                        console.log($scope.gaString);             
                         $scope.$apply();
                     }
                 }).fail(function() {
@@ -652,12 +654,10 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             $scope.oauth2ScreensRegister = function(linkFlag) {
                 var baseUri = getBaseUri();
 
-                if (location.href.startsWith(baseUri + '/signin?oauth')) {
-                    var clientName = $('div#RegistrationForm input[name="client_name"]').val();
-                    $scope.registrationForm.referredBy = $('div#RegistrationForm input[name="client_id"]').val();
-                    var clientGroupName = $('div#RegistrationForm input[name="client_group_name"]').val();
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
+                if ($scope.oauthSignin) {
+                    $scope.registrationForm.referredBy = $scope.requestInfoForm.clientId;
                     $scope.registrationForm.creationType.value = "Member-referred";
+                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + $scope.gaString]);
                 } else {
                     orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit', 'Website']);
                     $scope.registrationForm.creationType.value = "Direct";
@@ -724,10 +724,8 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             $scope.$apply();
                             $.colorbox.close();
                         } else {
-                            if (location.href.startsWith(baseUri + '/signin?oauth')){
-                                var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-                                var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-                                orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
+                            if ($scope.oauthSignin){
+                                orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth ' + $scope.gaString]);
                             } else {
                                 orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
                             } 
@@ -741,7 +739,11 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
 
             // Init
+            if(location.href.startsWith(getBaseUri() + '/signin?oauth')){
+                $scope.oauthSignin = true;
+            }
             if(orcidVar.oauth2Screens) {
+                $scope.loadRequestInfoForm();
                 $scope.showRegisterForm = !orcidVar.showLogin;
                 if(!$scope.showRegisterForm && orcidVar.oauthUserId){
                     $scope.authorizationForm = {
@@ -749,9 +751,9 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     } 
                 }
             }
-            if(orcidVar.originalOauth2Process) {                
+            if(orcidVar.originalOauth2Process) {             
                 $scope.loadRequestInfoForm();
-            }                     
+            }                   
         }
     ]
 );
