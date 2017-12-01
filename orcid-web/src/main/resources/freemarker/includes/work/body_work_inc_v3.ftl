@@ -39,7 +39,6 @@
                                         <ul class="workspace-private-toolbar">
                                             <#if !(isPublicProfile??)>
                                                 <li ng-if="bulkEditShow">
-                                                    <p ng-bind="group.activePutCode.value"></p>
                                                     <input type="checkbox" ng-model="bulkEditMap[group.activePutCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
                                                 </li>
                                             </#if>                                                                                  
