@@ -649,7 +649,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("RegistrationCtrl.serverValidate() error");
+                    console.log("serverValidate() error");
                 });
             };
 
