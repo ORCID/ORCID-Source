@@ -142,7 +142,9 @@ public class WorksPaginator {
                 return 1;
             }
             
-            int comparison = o1.getWorkSummary().get(0).getTitle().getTitle().getContent().compareTo(o2.getWorkSummary().get(0).getTitle().getTitle().getContent());
+            String firstTitle = o1.getWorkSummary().get(0).getTitle().getTitle().getContent().toLowerCase();
+            String secondTitle = o2.getWorkSummary().get(0).getTitle().getTitle().getContent().toLowerCase();
+            int comparison = firstTitle.compareTo(secondTitle);
             if (comparison == 0) {
                 if (o1.getWorkSummary().get(0).getTitle().getSubtitle() == null && o2.getWorkSummary().get(0).getTitle().getTitle() == null) {
                     return 0;
@@ -156,7 +158,9 @@ public class WorksPaginator {
                     return 1;
                 }
                 
-                comparison = o1.getWorkSummary().get(0).getTitle().getSubtitle().getContent().compareTo(o2.getWorkSummary().get(0).getTitle().getSubtitle().getContent());
+                String firstSubtitle = o1.getWorkSummary().get(0).getTitle().getSubtitle().getContent().toLowerCase();
+                String secondSubtitle = o2.getWorkSummary().get(0).getTitle().getSubtitle().getContent().toLowerCase();
+                comparison = firstSubtitle.compareTo(secondSubtitle);
             }
             return comparison;
         }
