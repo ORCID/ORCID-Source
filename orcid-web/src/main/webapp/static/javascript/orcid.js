@@ -318,7 +318,7 @@ var ActSortState = function(groupType) {
         _self.predicateKey = 'groupName';
     }
     _self.reverseKey = {};
-    _self.reverseKey['date']  = false;
+    _self.reverseKey['date']  = true;
     _self.reverseKey['title'] = false;
     _self.reverseKey['type']  = false;
     _self.reverseKey['groupName']  = false;
