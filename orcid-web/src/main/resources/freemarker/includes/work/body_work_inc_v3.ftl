@@ -39,7 +39,6 @@
                                         <ul class="workspace-private-toolbar">
                                             <#if !(isPublicProfile??)>
                                                 <li ng-if="bulkEditShow">
-                                                    <p ng-bind="group.activePutCode.value"></p>
                                                     <input type="checkbox" ng-model="bulkEditMap[group.activePutCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
                                                 </li>
                                             </#if>                                                                                  
@@ -184,7 +183,7 @@
                             <div ng-if="editSources[group.groupId]">
                                 <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                 <#if !(isPublicProfile??)>
-                                    <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortKey, sortAsc); " ng-if="work.putCode.value != group.defaultPutCode">
+                                    <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey]); " ng-if="work.putCode.value != group.defaultPutCode">
                                          <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                     </a>
                                 </#if>
@@ -247,7 +246,7 @@
                         <div class="col-md-3 col-sm-3 col-xs-10">
                              <#if !(isPublicProfile??)>
                                 <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortKey, sortAsc); " ng-if="work.putCode.value != group.defaultPutCode">
+                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey]); " ng-if="work.putCode.value != group.defaultPutCode">
                                    <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                 </a>
                             </#if>
@@ -301,7 +300,7 @@
                         </div>
                         
                         <div class="col-md-3 col-sm-3 col-xs-9">
-                              <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.works.length == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.works.length}}</a><span ng-hide="group.works.length == 1">)</span>
+                              <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.works.length == 1">(</span><a ng-click="showSources(group)" ng-hide="group.works.length == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.works.length}}</a><span ng-hide="group.works.length == 1">)</span>
 
                               <div class="popover popover-tooltip top sources-popover" ng-if="showElement[group.groupId+'-sources']">
                                    <div class="arrow"></div>
@@ -338,7 +337,7 @@
                                          />
                                     </li>
 
-                                     <li ng-hide="editSources[group.groupId] == true || group.activitiesCount == 1">
+                                     <li ng-hide="editSources[group.groupId] == true || group.works.length == 1">
                                         <a ng-click="showSources(group)" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
                                             <span class="glyphicon glyphicon-trash"></span>
                                         </a>
@@ -350,8 +349,8 @@
                                         </div>
                                      </li>
 
-                                     <li ng-if="group.activitiesCount == 1">
-                                        <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
+                                     <li ng-if="group.works.length == 1">
+                                        <a ng-click="deleteWorkConfirm(group.activePutCode, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
                                            <span class="glyphicon glyphicon-trash"></span>
                                         </a>
                                         <div class="popover popover-tooltip top delete-source-popover" ng-if="showElement[group.groupId+'-deleteSource']">

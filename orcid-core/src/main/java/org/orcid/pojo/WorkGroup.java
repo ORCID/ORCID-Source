@@ -77,13 +77,14 @@ public class WorkGroup implements Serializable {
         group.setGroupId(id);
         group.setWorks(new ArrayList<>());
 
-        Long maxDisplayIndex = 0L;
+        Long maxDisplayIndex = null;
         for (WorkSummary workSummary : workGroup.getWorkSummary()) {
             WorkForm workForm = getWorkForm(workSummary);
             group.getWorks().add(workForm);
 
             Long displayIndex = Long.parseLong(workSummary.getDisplayIndex());
-            if (displayIndex > maxDisplayIndex) {
+            if (maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
+                maxDisplayIndex = displayIndex;
                 group.setActivePutCode(workSummary.getPutCode());
                 group.setDefaultWork(workForm);
             }

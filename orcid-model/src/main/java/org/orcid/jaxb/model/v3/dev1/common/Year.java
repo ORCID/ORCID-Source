@@ -42,7 +42,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "year")
-public class Year implements Serializable, Comparable<Year> {
+public class Year implements Serializable {
 
     /**
      * 
@@ -106,8 +106,4 @@ public class Year implements Serializable, Comparable<Year> {
         return value != null ? value.hashCode() : 0;
     }
 
-    @Override
-    public int compareTo(Year otherYear) {
-        return this.value.compareTo(otherYear.getValue());
-    }
 }

@@ -22,7 +22,7 @@
     <changeSet id="ADD-UNIQUE-INDEX-ON-TOKEN" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
     	<preConditions onFail="MARK_RAN">
     		<not>
-    			<indexExists indexName="token_value_index" />
+    			<indexExists indexName="unique_token_value" />
     		</not>
     	</preConditions>
     	<sql>CREATE UNIQUE INDEX CONCURRENTLY token_value_index ON oauth2_token_detail(token_value);</sql>
