@@ -64,10 +64,10 @@ public class WorksPaginator {
         List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
 
         WorksPage worksPage = new WorksPage();
-        worksPage.setTotalGroups(works.getWorkGroup().size());
+        worksPage.setTotalGroups(sortedGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
-        for (int i = 0; i < limit; i++) {
+        for (int i = 0; i < limit && i < sortedGroups.size(); i++) {
             org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = sortedGroups.get(i);
             workGroups.add(WorkGroup.valueOf(group, i));
         }
