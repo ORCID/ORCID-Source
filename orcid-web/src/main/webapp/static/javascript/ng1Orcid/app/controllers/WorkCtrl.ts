@@ -428,7 +428,6 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             $scope.hideSources = function(group) {
                 $scope.editSources[group.groupId] = false;
-                group.activePutCode = group.defaultPutCode;
             };
 
             $scope.hideTooltip = function (key){        
