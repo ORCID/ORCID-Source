@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Random;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -95,6 +97,29 @@ public class WorksPaginatorTest {
             for (WorkForm workForm : workGroup.getWorks()) {
                 assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
             }
+        }
+    }
+    
+    @Test
+    public void testTitleSortCaseInsensitive() {
+        Works works = get1000PublicWorkGroups();
+        for (WorkGroup workGroup : works.getWorkGroup()) {
+            if (new Random().nextBoolean()) {
+                for (WorkSummary summary : workGroup.getWorkSummary()) {
+                    summary.getTitle().setTitle(new Title(summary.getTitle().getTitle().getContent().toUpperCase()));
+                }
+            }
+        }
+        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
+        WorksPage page = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.TITLE_SORT_KEY, true);
+        
+        org.orcid.pojo.WorkGroup previous = page.getWorkGroups().remove(0);
+        while (!page.getWorkGroups().isEmpty()) {
+            org.orcid.pojo.WorkGroup next = page.getWorkGroups().remove(0);
+            String previousTitle = previous.getWorks().get(0).getTitle().getValue();
+            String nextTitle = next.getWorks().get(0).getTitle().getValue();
+            assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) <= 0);
+            previous = next;
         }
     }
 
