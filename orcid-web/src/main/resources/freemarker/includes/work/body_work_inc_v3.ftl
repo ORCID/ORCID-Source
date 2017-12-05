@@ -57,12 +57,12 @@
                                             </li>
                                             <#if !(isPublicProfile??)>
                                                 <li>
-                                                    <@orcid.privacyToggle2 angularModel="group.getActive().visibility.visibility"
+                                                    <@orcid.privacyToggle2 angularModel="group.activeVisibility"
                                                         questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
-                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-                                                        publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-                                                        limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                        privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
+                                                        publicClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'PUBLIC', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"
+                                                        limitedClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'LIMITED', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"
+                                                        privateClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'PRIVATE', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"/>
                                                 </li>
                                             </#if>
                                         </ul>
@@ -118,9 +118,9 @@
                                           <@orcid.privacyToggle2 angularModel="work.visibility.visibility"
                                               questionClick="toggleClickPrivacyHelp(group.highestVis())"
                                               clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
-                                              publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
-                                              limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
-                                              privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
+                                              publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"
+                                              limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"
+                                              privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)" />
                                       </li>
                                   </#if>
                               </ul>
@@ -183,7 +183,7 @@
                             <div ng-if="editSources[group.groupId]">
                                 <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                 <#if !(isPublicProfile??)>
-                                    <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortKey, sortAsc); " ng-if="work.putCode.value != group.defaultPutCode">
+                                    <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey]); " ng-if="work.putCode.value != group.defaultPutCode">
                                          <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                     </a>
                                 </#if>
@@ -246,7 +246,7 @@
                         <div class="col-md-3 col-sm-3 col-xs-10">
                              <#if !(isPublicProfile??)>
                                 <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortKey, sortAsc); " ng-if="work.putCode.value != group.defaultPutCode">
+                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey]); " ng-if="work.putCode.value != group.defaultPutCode">
                                    <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                 </a>
                             </#if>

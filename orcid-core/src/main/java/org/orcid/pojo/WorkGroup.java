@@ -44,8 +44,10 @@ public class WorkGroup implements Serializable {
 
     private int groupId;
 
+    public String activeVisibility;
+
     private boolean userVersionPresent;
-    
+
     private List<WorkExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
     public List<WorkForm> getWorks() {
@@ -79,7 +81,7 @@ public class WorkGroup implements Serializable {
     public void setGroupId(int groupId) {
         this.groupId = groupId;
     }
-    
+
     public boolean isUserVersionPresent() {
         return userVersionPresent;
     }
@@ -87,7 +89,15 @@ public class WorkGroup implements Serializable {
     public void setUserVersionPresent(boolean userVersionPresent) {
         this.userVersionPresent = userVersionPresent;
     }
-    
+
+    public String getActiveVisibility() {
+        return activeVisibility;
+    }
+
+    public void setActiveVisibility(String activeVisibility) {
+        this.activeVisibility = activeVisibility;
+    }
+
     public List<WorkExternalIdentifier> getWorkExternalIdentifiers() {
         return workExternalIdentifiers;
     }
@@ -100,7 +110,7 @@ public class WorkGroup implements Serializable {
         WorkGroup group = new WorkGroup();
         group.setGroupId(id);
         group.setWorks(new ArrayList<>());
-        
+
         WorkType workType = null;
 
         Long maxDisplayIndex = null;
@@ -112,28 +122,29 @@ public class WorkGroup implements Serializable {
             if (maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
                 maxDisplayIndex = displayIndex;
                 group.setActivePutCode(workSummary.getPutCode());
+                group.setActiveVisibility(workSummary.getVisibility().name());
                 group.setDefaultWork(workForm);
             }
 
             if (workSummary.getSource().retrieveSourcePath().equals(orcid)) {
                 group.setUserVersionPresent(true);
             }
-            
+
             workType = workSummary.getType();
         }
-        
+
         if (workGroup.getIdentifiers() != null) {
             List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
             for (ExternalID extId : workGroup.getIdentifiers().getExternalIdentifier()) {
-                if(extId.getRelationship() == null) {
-                    if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
-                        if(WorkType.BOOK.equals(workType)) {
+                if (extId.getRelationship() == null) {
+                    if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
+                        if (WorkType.BOOK.equals(workType)) {
                             extId.setRelationship(Relationship.PART_OF);
                         } else {
                             extId.setRelationship(Relationship.SELF);
                         }
-                    } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
-                        if(WorkType.BOOK_CHAPTER.equals(workType) || WorkType.CONFERENCE_PAPER.equals(workType)) {
+                    } else if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
+                        if (WorkType.BOOK_CHAPTER.equals(workType) || WorkType.CONFERENCE_PAPER.equals(workType)) {
                             extId.setRelationship(Relationship.PART_OF);
                         } else {
                             extId.setRelationship(Relationship.SELF);
