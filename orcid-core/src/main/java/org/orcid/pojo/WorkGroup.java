@@ -39,6 +39,8 @@ public class WorkGroup implements Serializable {
     private WorkForm defaultWork;
 
     private int groupId;
+    
+    public String activeVisibility;
 
     public List<WorkForm> getWorks() {
         return works;
@@ -71,6 +73,14 @@ public class WorkGroup implements Serializable {
     public void setGroupId(int groupId) {
         this.groupId = groupId;
     }
+    
+    public String getActiveVisibility() {
+        return activeVisibility;
+    }
+
+    public void setActiveVisibility(String activeVisibility) {
+        this.activeVisibility = activeVisibility;
+    }
 
     public static WorkGroup valueOf(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup workGroup, int id) {
         WorkGroup group = new WorkGroup();
@@ -86,6 +96,7 @@ public class WorkGroup implements Serializable {
             if (maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
                 maxDisplayIndex = displayIndex;
                 group.setActivePutCode(workSummary.getPutCode());
+                group.setActiveVisibility(workSummary.getVisibility().name());
                 group.setDefaultWork(workForm);
             }
         }
