@@ -60,9 +60,9 @@
                                                     <@orcid.privacyToggle2 angularModel="group.activeVisibility"
                                                         questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
                                                         clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
-                                                        publicClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'PUBLIC', $event)"
-                                                        limitedClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'LIMITED', $event)"
-                                                        privateClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'PRIVATE', $event)"/>
+                                                        publicClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'PUBLIC', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"
+                                                        limitedClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'LIMITED', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"
+                                                        privateClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'PRIVATE', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"/>
                                                 </li>
                                             </#if>
                                         </ul>
@@ -118,9 +118,9 @@
                                           <@orcid.privacyToggle2 angularModel="work.visibility.visibility"
                                               questionClick="toggleClickPrivacyHelp(group.highestVis())"
                                               clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
-                                              publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
-                                              limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
-                                              privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
+                                              publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"
+                                              limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"
+                                              privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)" />
                                       </li>
                                   </#if>
                               </ul>
