@@ -4829,7 +4829,7 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
     left: -58px
 }
 
-.trash-source .edit-activeSource-popover,ul.sources-actions .edit-inactiveSource-popover,ul.sources-options .edit-source-popover {
+.trash-source .edit-activeSource-popover,ul.sources-actions .edit-inactiveSource-popover,ul.sources-options .edit-source-popover,ul.sources-options .edit-activeSource-popover,ul.sources-options .edit-inactiveSource-popover {
     top: -41px;
     left: -60px
 }
