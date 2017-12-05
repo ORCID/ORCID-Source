@@ -58,6 +58,8 @@ import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.v3.SourceUtils;
+import org.orcid.frontend.web.pagination.WorksPage;
+import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
@@ -113,6 +115,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
+    
+    @Resource
+    private WorksPaginator worksPaginator;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -614,6 +619,11 @@ public class PublicProfileController extends BaseWorkspaceController {
             fundings.add(form);
         }
         return fundings;
+    }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
+    public @ResponseBody WorksPage getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+        return worksPaginator.getWorksPage(orcid, offset, true, sort, sortAsc);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")

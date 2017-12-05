@@ -48,6 +48,7 @@ public class OrgDisambiguatedExternalIdentifierEntity extends BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "org_disambiguated_external_identifier_seq")
     @SequenceGenerator(name = "org_disambiguated_external_identifier_seq", sequenceName = "org_disambiguated_external_identifier_seq")
+    @Column(name = "id")
     public Long getId() {
         return id;
     }

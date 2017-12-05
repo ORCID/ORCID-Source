@@ -103,12 +103,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             }                       
         }        
         
-        LOGGER.info("OAuth2 authorization requested: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] { clientId,
-                grantType, refreshToken, code, scopes, state, redirectUri });
-
         Authentication client = getClientAuthentication();
         if (!client.isAuthenticated()) {
-            LOGGER.info("Not authenticated for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
+            LOGGER.error("Not authenticated for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
                     clientId, grantType, refreshToken, code, scopes, state, redirectUri });
             throw new InsufficientAuthenticationException(localeManager.resolveMessage("apiError.client_not_authenticated.exception"));
         }        
@@ -241,13 +238,15 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         Object params[] = {grantType};
         if (token == null) {
-            LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
-                    clientId, grantType, code, scopes, state, redirectUri });
+            LOGGER.error("Unsupported grant type for OAuth2: clientId={}, grantType={}, code={}", new Object[] {
+                    clientId, grantType, code});
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }
         
-        LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
-                clientId, grantType, code, scopes, state, redirectUri, token });
+        Long tokenId = token.getAdditionalInformation() != null ? (Long) token.getAdditionalInformation().get(OrcidOauth2Constants.TOKEN_ID) : null;
+        
+        LOGGER.info("OAuth2 access token granted: tokenId={}, clientId={}, code={}, scopes={}", new Object[] {
+                tokenId, clientId, code, token.getScope() });
         
         return token;
     }
@@ -260,6 +259,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.PERSISTENT);
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.DATE_CREATED))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
+            if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_ID))
+                accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_ID);
         }
         
         return Response.ok((DefaultOAuth2AccessToken)accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();

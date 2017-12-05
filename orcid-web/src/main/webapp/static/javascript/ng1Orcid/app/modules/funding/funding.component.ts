@@ -27,6 +27,9 @@ import { Subscription }
 import { EmailService } 
     from '../../shared/emailService.ts';
 
+import { FundingService } 
+    from '../../shared/fundingService.ts';
+
 import { GroupedActivitiesUtilService } 
     from '../../shared/groupedActivitiesService.ts';
 
@@ -57,6 +60,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     emails: any;
     employments: any;
     fixedTitle: string;
+    fundings: any;
+    groups: any;
     moreInfo: any;
     moreInfoCurKey: any;
     privacyHelp: any;
@@ -66,7 +71,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     sortState: any;
 
     constructor(
-        //private fundingService: FundingService,
+        private fundingService: FundingService,
         private emailService: EmailService,
         //private groupedActivitiesUtilService: GroupedActivitiesUtilService,
         private modalService: ModalService,
@@ -82,6 +87,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editFunding = {};
         this.emails = {};
         this.fixedTitle = '';
+        this.fundings = new Array();
+        this.groups = null;
         this.moreInfo = {};
         this.moreInfoCurKey = null;
         this.privacyHelp = {};
@@ -144,6 +151,54 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.closeModal();
     };
 
+    getFundingsById( ids ): any {
+        this.fundingService.getFundingsById( ids ).takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+
+                console.log('this.getFundingsById', data);
+                for (let i in data) {
+                    this.fundings.push(data[i]);
+                };
+
+            },
+            error => {
+                console.log('getBiographyFormError', error);
+            } 
+        );
+    }
+
+    getFundingsIds(): any {
+        this.fundingService.getFundingsId()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                console.log('getFundingsIds', data);
+                let funding = null;
+                for (let i in data) {
+                    funding = data[i];
+                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
+                };
+                /*
+                if (fundingSrvc.fundingToAddIds.length == 0) {
+                    $timeout(function() {
+                      fundingSrvc.loading = false;
+                    });
+                } else {
+                    $timeout(function () {
+                        fundingSrvc.addFundingToScope(path);
+                    },50);
+                }
+                */
+
+                let ids = data.splice(0,20).join();
+                this.getFundingsById( ids );
+            },
+            error => {
+                console.log('getBiographyFormError', error);
+            } 
+        );
+    };
 
 
     hideTooltip(element): void{        
@@ -283,7 +338,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        console.log('initi affiliation component');
+        console.log('initi funding component');
+        this.getFundingsIds();
     }; 
 }
 
@@ -895,9 +951,6 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                 }
                 return false;
             };
-
-            //init
-            fundingSrvc.getFundings('fundings/fundingIds.json');
 
         }
     ]

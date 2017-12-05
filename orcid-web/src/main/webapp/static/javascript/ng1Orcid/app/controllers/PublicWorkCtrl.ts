@@ -109,8 +109,8 @@ export const PublicWorkCtrl = angular.module('orcidApp').controller(
             $scope.showDetailsMouseClick = function(group, $event) {
                 $event.stopPropagation();
                 $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
-                for (var idx in group.activities) {
-                    $scope.loadDetails(group.activities[idx].putCode.value, $event);
+                for (var idx in group.works) {
+                    $scope.loadDetails(group.works[idx].putCode.value, $event);
                 }
             };
 
@@ -161,9 +161,14 @@ export const PublicWorkCtrl = angular.module('orcidApp').controller(
 
             $scope.sort = function(key) {
                 $scope.sortState.sortBy(key);
+                worksSrvc.resetWorkGroups();
+                worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[key]);
             };
             
-            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS);
+            $scope.loadMore = function() {
+                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+            }
+            $scope.loadMore();
             
 
 

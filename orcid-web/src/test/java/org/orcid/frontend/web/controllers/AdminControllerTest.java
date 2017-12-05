@@ -287,7 +287,7 @@ public class AdminControllerTest extends BaseControllerTest {
         AdminChangePassword form = new AdminChangePassword();
         form.setOrcidOrEmail("4444-4444-4444-4441");
         form.setPassword("password1");
-        adminController.resetPassword(null, form);
+        adminController.resetPassword(form);
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
         assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
     }
@@ -299,7 +299,7 @@ public class AdminControllerTest extends BaseControllerTest {
         AdminChangePassword form = new AdminChangePassword();
         form.setOrcidOrEmail("michael@bentine.com");
         form.setPassword("password1");
-        adminController.resetPassword(null, form);
+        adminController.resetPassword(form);
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
         assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
     }

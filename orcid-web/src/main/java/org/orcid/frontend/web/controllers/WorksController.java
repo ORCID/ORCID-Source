@@ -28,13 +28,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.v3.ActivityManager;
-import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ActivityManager;
+import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.frontend.web.pagination.WorksPage;
+import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
@@ -76,6 +78,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
+    
+    @Resource
+    private WorksPaginator worksPaginator;
 
     @Resource
     private IdentifierTypeManager identifierTypeManager;
@@ -671,6 +676,18 @@ public class WorksController extends BaseWorkspaceController {
         // Get cached profile
         List<String> workIds = createWorksIdList(request);
         return workIds;
+    }
+    
+    @RequestMapping(value = "/worksPage.json", method = RequestMethod.GET)
+    public @ResponseBody WorksPage getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+        String orcid = getEffectiveUserOrcid();
+        return worksPaginator.getWorksPage(orcid, offset, false, sort, sortAsc);
+    }
+    
+    @RequestMapping(value = "/refreshWorks.json", method = RequestMethod.GET)
+    public @ResponseBody WorksPage refreshWorkGroupsJson(@RequestParam("limit") int limit, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+        String orcid = getEffectiveUserOrcid();
+        return worksPaginator.refreshWorks(orcid, limit, sort, sortAsc);
     }
 
     /**

@@ -25,7 +25,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.persistence.PersistenceException;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -109,8 +111,30 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
 
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
-        OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
-        String userOrcid = authInfo.getUserOrcid();                
+        DefaultOAuth2AccessToken accessToken = generateAccessToken(authentication);
+        try {
+            orcidTokenStore.storeAccessToken(accessToken, authentication);
+        } catch(PersistenceException e) {
+            // In the unlikely case that there is a constraint violation, lets try to generate the token one more time
+            if(e.getCause() instanceof ConstraintViolationException) {
+                accessToken = generateAccessToken(authentication);
+                try {
+                    orcidTokenStore.storeAccessToken(accessToken, authentication);
+                    return accessToken;
+                } catch(Exception e2) {
+                    // Just throw the first exception
+                }
+                
+            }
+            OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
+            LOGGER.error("Exception creating access token for client {}, scopes {} and user {}", new Object[] {authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid()});
+            LOGGER.error("Error info", e);
+            throw e;
+        } 
+        return accessToken;
+    }
+    
+    private DefaultOAuth2AccessToken generateAccessToken(OAuth2Authentication authentication) {
         DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(UUID.randomUUID().toString());
         int validitySeconds = getAccessTokenValiditySeconds(authentication.getOAuth2Request());
         if (validitySeconds > 0) {
@@ -126,9 +150,6 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken(UUID.randomUUID().toString());
             accessToken.setRefreshToken(refreshToken);
         }
-        
-        orcidTokenStore.storeAccessToken(accessToken, authentication);
-        LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(), userOrcid });
         return accessToken;
     }
 

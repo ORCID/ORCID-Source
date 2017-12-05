@@ -13,14 +13,25 @@ import { FormsModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
+//User generated components
+import { CommonNg2Module }
+    from './../common/common.ts';
+
 import { FundingComponent } 
     from './funding.component.ts';
 
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
+//User generated filters
+import { OrderByPipe }
+    from '../../pipes/orderByNg2.ts'; 
+
+import { AjaxFormDateToISO8601Pipe }
+    from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
+
 // This is the Angular 1 part of the module
-export const AffiliationModule = angular.module(
+export const FundingModule = angular.module(
     'FundingModule', 
     []
 );
@@ -29,12 +40,10 @@ export const AffiliationModule = angular.module(
 @NgModule(
     {
         imports: [
-            CommonModule,
-            FormsModule,
-            PrivacytoggleNg2Module
+            CommonNg2Module
         ],
         declarations: [ 
-            FundingComponent
+            FundingComponent,
         ],
         entryComponents: [ 
             FundingComponent 
@@ -44,12 +53,12 @@ export const AffiliationModule = angular.module(
         ]
     }
 )
-export class AffiliationNg2Module {}
+export class FundingNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-AffiliationModule.directive(
-    'affiliationNg2', 
+FundingModule.directive(
+    'fundingNg2', 
     <any>downgradeComponent(
         {
             component: FundingComponent,

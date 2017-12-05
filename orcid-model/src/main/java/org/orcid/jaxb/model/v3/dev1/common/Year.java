@@ -105,4 +105,5 @@ public class Year implements Serializable {
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
     }
+
 }
