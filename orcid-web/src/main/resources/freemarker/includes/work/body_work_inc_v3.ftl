@@ -209,7 +209,7 @@
                                         </li>
                                     </#if>
                                     <li> 
-                                        <@orcid.editActivityIcon
+                                        <@orcid.editWorkIcon
                                             activity="work"
                                             click="openEditWork(work.putCode.value)"
                                             toolTipSuffix="editToolTipSource"
@@ -268,7 +268,7 @@
                                         </li>
                                     </#if>
                                     <li> 
-                                        <@orcid.editActivityIcon
+                                         <@orcid.editWorkIcon
                                             activity="work"
                                             click="openEditWork(work.putCode.value)"
                                             toolTipSuffix="editToolTipSourceActions"
@@ -329,7 +329,7 @@
                                     </#if>
 
                                     <li>
-                                        <@orcid.editActivityIcon
+                                        <@orcid.editWorkIcon
                                             activity="work"
                                             click="openEditWork(work.putCode.value)"
                                             toolTipSuffix="editToolTip"
