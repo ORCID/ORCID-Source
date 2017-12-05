@@ -4,43 +4,42 @@ This plugin is provided by [eirslett](https://github.com/eirslett/frontend-maven
 
 #### Ready to use from ORCID-Source
 
-Simply download code via git clone then start tomcat with your orcid-web modules.
+Simply download code via `git clone` and start tomcat with your orcid-web modules.
 
-#### Start listening for changes on your orcid.js file
+#### Software Requirements
 
-Open a terminal at your root project and run
+* Java 8+
+* Tomcat 8+
+* Maven 3.3+
+* git
 
+#### Deploy angular_orcid_generated.js file
+
+Next configuration assumes you are working inside a specific folder workspace called *~/tmp-tomcat-orcid-web*, you can
+
+Open a terminal at your workspace and run
+    
+    mkdir ~/tmp-tomcat-orcid-web
+    cd ~/tmp-tomcat-orcid-web
+    git clone https://github.com/ORCID/ORCID-Source.git
+    cd orcid-nodejs
     mvn -P tmp-tomcat-orcid-web clean install
 
-where **tmp-tomcat-orcid-web** must be replaced with full path to folder containing _package.json_ and **webpackConfig** is a prefix of PREFIX.webpack.config.js file
+review **ORCID-Source/orcid-nodejs/pom.xml** for available profiles/configurations
 
-ensure webpack config has proper values for output path and filename it should be pointing to the tomcat installation + folder containing the _angular_orcid_generated.js_
+e.g. nodejs workspace
 
-e.g.
-
-* C:/Documents and Settings/%USER%/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/orcid-web/static/javascript
-* ~/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript
-* /opt/apache-tomcat-8.0.21/webapps/orcid-web/static/javascript/ng1Orcid/
-
-so _localhost.webpack.config.js_
-
-    ...
-    output: {
-        path: "/Users/jperez/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript",
-        filename: "angular_orcid_generated.js"
-    },
-    ...
+* C:/Documents and Settings/%USER%/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/orcid-web/static/javascript/ng1Orcid
+* ~/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript/ng1Orcid
+* /home/orcid_tomcat/apache-tomcat-8.0.21/webapps/orcid-web/static/javascript/ng1Orcid
+* /home/developer1/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid
 
 #### Test changes are updated live
 
-edit file at _orcid-web/src/main/webapp/static/javascript/ng1Orcid/angularOrcidOriginal.js_
+Edit file at _orcid-web/src/main/webapp/static/javascript/ng1Orcid/angularOrcidOriginal.js_
 you could simply append next line at the top of file.
 
     alert('It works')
     
 then, browse to [localhost](https://localhost:8443/orcid-web/) and confirm _It works_ message comes up.
-
-00 26 82 70 23 5b
-
-c8 0a a9 60 28 00
 
