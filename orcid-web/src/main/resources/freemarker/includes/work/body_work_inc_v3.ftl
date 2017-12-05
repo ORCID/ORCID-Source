@@ -209,11 +209,11 @@
                                         </li>
                                     </#if>
                                     <li> 
-                                        <@orcid.editActivityIcon
+                                        <@orcid.editWorkIcon
                                             activity="work"
                                             click="openEditWork(work.putCode.value)"
-                                            toolTipSuffix="editToolTipSource"
-                                            toolTipClass="popover popover-tooltip top edit-activeSource-popover"
+                                            toolTipSuffix="editToolTip"
+                                            toolTipClass="popover popover-tooltip top edit-source-popover"
                                          />
                                     </li>
                                     <li>
@@ -268,11 +268,11 @@
                                         </li>
                                     </#if>
                                     <li> 
-                                        <@orcid.editActivityIcon
+                                         <@orcid.editWorkIcon
                                             activity="work"
                                             click="openEditWork(work.putCode.value)"
-                                            toolTipSuffix="editToolTipSourceActions"
-                                            toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
+                                            toolTipSuffix="editToolTip"
+                                            toolTipClass="popover popover-tooltip top edit-source-popover"
                                          />
                                     </li>
                                     <li>
@@ -329,7 +329,7 @@
                                     </#if>
 
                                     <li>
-                                        <@orcid.editActivityIcon
+                                        <@orcid.editWorkIcon
                                             activity="work"
                                             click="openEditWork(work.putCode.value)"
                                             toolTipSuffix="editToolTip"

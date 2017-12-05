@@ -52,7 +52,7 @@ public class WorksPaginator {
         List<WorkGroup> workGroups = new ArrayList<>();
         for (int i = offset; i < Math.min(offset + PAGE_SIZE, filteredGroups.size()); i++) {
             org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = filteredGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i));
+            workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
         worksPage.setWorkGroups(workGroups);
         worksPage.setNextOffset(offset + PAGE_SIZE);
@@ -69,7 +69,7 @@ public class WorksPaginator {
         List<WorkGroup> workGroups = new ArrayList<>();
         for (int i = 0; i < limit; i++) {
             org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = sortedGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i));
+            workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
         worksPage.setWorkGroups(workGroups);

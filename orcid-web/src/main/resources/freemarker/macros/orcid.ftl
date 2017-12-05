@@ -285,6 +285,30 @@ kind of variable. This temp value is only used in this macro lib -->
     </div>
 </#macro>  
 
+<#macro editWorkIcon activity click toolTipSuffix toolTipClass>   
+    <a ng-show="userIsSource(work)" ng-click="openEditWork(work.putCode.value)" ng-mouseenter="showTooltip(work.putCode.value+'-editToolTipSourceActions')" ng-mouseleave="hideTooltip(work.putCode.value+'-editToolTipSourceActions')">
+        <span class="glyphicon glyphicon-pencil"></span>
+    </a>
+    <a ng-show="!userIsSource(work) && group.userVersionPresent" ng-click="showSources(group)" ng-mouseenter="showTooltip(work.putCode.value+'-editToolTipSourceActions')" ng-mouseleave="hideTooltip(work.putCode.value+'-editToolTipSourceActions')">
+        <span class="glyphicons git_create grey"></span>
+    </a>
+    <a ng-show="!userIsSource(work) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0" ng-click="openEditWork(work.putCode.value)" ng-mouseenter="showTooltip(work.putCode.value+'-editToolTipSourceActions')" ng-mouseleave="hideTooltip(work.putCode.value+'-editToolTipSourceActions')">
+        <span class="glyphicons git_create"></span>
+    </a>
+    <a ng-show="!userIsSource(work) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0" ng-mouseenter="showTooltip(work.putCode.value+'-editToolTipSourceActions')" ng-mouseleave="hideTooltip(work.putCode.value+'-editToolTipSourceActions')">
+        <span class="glyphicons git_create grey"></span>
+    </a>
+    <div class="popover popover-tooltip top edit-inactiveSource-popover" ng-show="showElement[work.putCode.value+'-editToolTipSourceActions'] == true" ng-class="{'two-lines' : (!userIsSource(work) && group.userVersionPresent) || (!userIsSource(work) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0)}">
+        <div class="arrow"></div>
+        <div class="popover-content">              
+              <span ng-show="userIsSource(work)"><@orcid.msg 'groups.common.edit_my' /></span>                            
+              <span ng-show="!userIsSource(work) && group.userVersionPresent"><@orcid.msg 'groups.common.open_source_to' /></span>
+              <span ng-show="!userIsSource(work) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
+              <span ng-show="!userIsSource(work) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0"><@orcid.msg 'groups.common.items_must_have' /></span>
+        </div>
+    </div>
+</#macro>  
+
 <#macro privacyToggle2 angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
 	<div class="relative" id="privacy-bar">
 		<ul class="privacyToggle" ng-mouseenter="showTooltip(group.groupId+'-privacy')" ng-mouseleave="hideTooltip(group.groupId+'-privacy')">
