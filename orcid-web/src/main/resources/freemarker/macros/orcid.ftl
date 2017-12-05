@@ -298,7 +298,7 @@ kind of variable. This temp value is only used in this macro lib -->
     <a ng-show="!userIsSource(work) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0" ng-mouseenter="showTooltip(work.putCode.value+'-editToolTipSourceActions')" ng-mouseleave="hideTooltip(work.putCode.value+'-editToolTipSourceActions')">
         <span class="glyphicons git_create grey"></span>
     </a>
-    <div class="popover popover-tooltip top edit-inactiveSource-popover" ng-show="showElement[work.putCode.value+'-editToolTipSourceActions'] == true" ng-class="{'two-lines' : (!userIsSource(work) && group.userVersionPresent) || (!userIsSource(work) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0)}">
+    <div class="${toolTipClass}" ng-show="showElement[work.putCode.value+'-editToolTipSourceActions'] == true" ng-class="{'two-lines' : (!userIsSource(work) && group.userVersionPresent) || (!userIsSource(work) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0)}">
         <div class="arrow"></div>
         <div class="popover-content">              
               <span ng-show="userIsSource(work)"><@orcid.msg 'groups.common.edit_my' /></span>                            
