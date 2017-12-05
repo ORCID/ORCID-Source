@@ -57,12 +57,12 @@
                                             </li>
                                             <#if !(isPublicProfile??)>
                                                 <li>
-                                                    <@orcid.privacyToggle2 angularModel="group.getActive().visibility.visibility"
+                                                    <@orcid.privacyToggle2 angularModel="group.activeVisibility"
                                                         questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
-                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-                                                        publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-                                                        limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                        privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
+                                                        publicClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'PUBLIC', $event)"
+                                                        limitedClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'LIMITED', $event)"
+                                                        privateClick="worksSrvc.setGroupPrivacy(group.activePutCode, 'PRIVATE', $event)"/>
                                                 </li>
                                             </#if>
                                         </ul>
