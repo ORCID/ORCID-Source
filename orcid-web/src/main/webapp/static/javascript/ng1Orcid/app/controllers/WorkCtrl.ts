@@ -703,7 +703,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                             });
                             numToSave--;
                             if (numToSave == 0){
-                                $scope.worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+                                $scope.worksSrvc.refreshWorkGroups($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                                 savingBibtex = false;
                             }
                         });
