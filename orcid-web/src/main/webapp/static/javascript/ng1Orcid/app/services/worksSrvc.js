@@ -225,6 +225,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         worksToAddIds: null,
 
         addAbbrWorksToScope: function(type, sort, sortAsc) {
+            worksSrvc.details = new Object();
             var url = getBaseUri();
             if (type == worksSrvc.constants.access_type.USER) {
                 url += '/works/worksPage.json';
@@ -252,6 +253,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         },
 
         refreshWorkGroups: function(sort, sortAsc) {
+            worksSrvc.details = new Object();
             worksSrvc.groups = new Array();
             var url = getBaseUri() + '/works/refreshWorks.json?limit=' + worksSrvc.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
             worksSrvc.loading = true;
@@ -418,6 +420,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                                 if (bestMatch == null) {
                                     bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
                                 }
+                                
                                 callback(bestMatch);
                             }
                         );
@@ -507,11 +510,6 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                 }
             }
             return null;
-        },
-
-        loadAbbrWorks: function(access_type, sort, sortAsc) {
-            worksSrvc.details = new Object();
-            worksSrvc.addAbbrWorksToScope(access_type, sort, sortAsc);
         },
 
         makeDefault: function(group, putCode, sortKey, sortAsc) {

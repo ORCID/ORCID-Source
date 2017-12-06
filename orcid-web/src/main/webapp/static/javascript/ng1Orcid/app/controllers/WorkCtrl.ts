@@ -640,7 +640,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                         $scope.addingWork = false;
                                     });
                                     $.colorbox.close();
-                                    $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+                                    $scope.worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                                 }
                             } else {
                                 $timeout(function(){
@@ -703,7 +703,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                             });
                             numToSave--;
                             if (numToSave == 0){
-                                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+                                $scope.worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                                 savingBibtex = false;
                             }
                         });
@@ -714,7 +714,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
             
             $scope.loadMore = function() {
-                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+                $scope.worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
             }
 
             $scope.serverValidate = function (relativePath) {
@@ -853,7 +853,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.sort = function(key) {
                 $scope.sortState.sortBy(key);
                 worksSrvc.resetWorkGroups();
-                worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[key]);
+                worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[key]);
                
             };
 
