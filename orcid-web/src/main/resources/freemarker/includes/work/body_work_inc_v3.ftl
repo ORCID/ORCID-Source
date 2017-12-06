@@ -245,8 +245,8 @@
                         
                         <div class="col-md-3 col-sm-3 col-xs-10">
                              <#if !(isPublicProfile??)>
-                                <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey]); " ng-if="work.putCode.value != group.defaultPutCode">
+                                <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.group.defaultWork.putCode.value"></span><span ng-if="work.putCode.value == group.group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value, sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey]); " ng-if="work.putCode.value != group.group.defaultWork.putCode.value">
                                    <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                 </a>
                             </#if>
