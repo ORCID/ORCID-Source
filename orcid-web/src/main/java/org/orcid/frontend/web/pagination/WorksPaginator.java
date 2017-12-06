@@ -52,7 +52,7 @@ public class WorksPaginator {
         List<WorkGroup> workGroups = new ArrayList<>();
         for (int i = offset; i < Math.min(offset + PAGE_SIZE, filteredGroups.size()); i++) {
             org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = filteredGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i));
+            workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
         worksPage.setWorkGroups(workGroups);
         worksPage.setNextOffset(offset + PAGE_SIZE);
@@ -69,11 +69,29 @@ public class WorksPaginator {
         List<WorkGroup> workGroups = new ArrayList<>();
         for (int i = 0; i < limit && i < sortedGroups.size(); i++) {
             org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = sortedGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i));
+            workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
         worksPage.setWorkGroups(workGroups);
         worksPage.setNextOffset(limit);
+        return worksPage;
+    }
+    
+    public WorksPage getAllWorks(String orcid, String sort, boolean sortAsc) {
+        Works works = worksCacheManager.getGroupedWorks(orcid);
+        List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
+
+        WorksPage worksPage = new WorksPage();
+        worksPage.setTotalGroups(sortedGroups.size());
+
+        List<WorkGroup> workGroups = new ArrayList<>();
+        for (int i = 0; i < sortedGroups.size(); i++) {
+            org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = sortedGroups.get(i);
+            workGroups.add(WorkGroup.valueOf(group, i, orcid));
+        }
+
+        worksPage.setWorkGroups(workGroups);
+        worksPage.setNextOffset(sortedGroups.size());
         return worksPage;
     }
 
@@ -111,7 +129,7 @@ public class WorksPaginator {
         @Override
         public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
             if (o1.getWorkSummary().get(0).getPublicationDate() == null && o2.getWorkSummary().get(0).getPublicationDate() == null) {
-                return 0;
+                return new TitleComparator().compare(o1, o2);
             }
             
             if (o1.getWorkSummary().get(0).getPublicationDate() == null) {
@@ -185,4 +203,5 @@ public class WorksPaginator {
             return o1.getWorkSummary().get(0).getType().name().compareTo(o2.getWorkSummary().get(0).getType().name());
         }
     }
+
 }

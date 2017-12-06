@@ -225,6 +225,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         worksToAddIds: null,
 
         addAbbrWorksToScope: function(type, sort, sortAsc) {
+            worksSrvc.details = new Object();
             var url = getBaseUri();
             if (type == worksSrvc.constants.access_type.USER) {
                 url += '/works/worksPage.json';
@@ -252,6 +253,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         },
 
         refreshWorkGroups: function(sort, sortAsc) {
+            worksSrvc.details = new Object();
             worksSrvc.groups = new Array();
             var url = getBaseUri() + '/works/refreshWorks.json?limit=' + worksSrvc.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
             worksSrvc.loading = true;
@@ -268,7 +270,25 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             });
         },
         
-        handleWorkGroupData: function(data) {
+        loadAllWorkGroups: function(sort, sortAsc, callback) {
+            worksSrvc.details = new Object();
+            worksSrvc.groups = new Array();
+            var url = getBaseUri() + '/works/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
+            worksSrvc.loading = true;
+            $.ajax({
+                'url': url,
+                'dataType': 'json',
+                'success': function(data) {
+                    worksSrvc.handleWorkGroupData(data, callback);
+                }
+            }).fail(function(e) {
+                worksSrvc.loading = false;
+                console.log("Error fetching works");
+                logAjaxError(e);
+            });
+        },
+        
+        handleWorkGroupData: function(data, callback) {
             if (worksSrvc.groups == undefined) {
                 worksSrvc.groups = new Array();
             }
@@ -277,6 +297,10 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             worksSrvc.showLoadMore = worksSrvc.groups.length < data.totalGroups;
             worksSrvc.loading = false;
             worksSrvc.offset = data.nextOffset;
+            
+            if (callback != undefined) {
+                callback();
+            }
         },
 
         addBibtexJson: function(dw) {
@@ -418,6 +442,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                                 if (bestMatch == null) {
                                     bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
                                 }
+                                
                                 callback(bestMatch);
                             }
                         );
@@ -509,17 +534,13 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             return null;
         },
 
-        loadAbbrWorks: function(access_type, sort, sortAsc) {
-            worksSrvc.details = new Object();
-            worksSrvc.addAbbrWorksToScope(access_type, sort, sortAsc);
-        },
-
-        makeDefault: function(group, putCode, sortKey, sortAsc) {
+        makeDefault: function(group, putCode) {
             $.ajax({
                 url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
                 dataType: 'json',
                 success: function(data) {
-                    worksSrvc.refreshWorkGroups(sortKey, sortAsc);
+                    group.defaultWork = worksSrvc.getWork(putCode);
+                    group.activePutCode = group.defaultWork.putCode.value;
                 }
             }).fail(function(){
                 // something bad is happening!
@@ -572,7 +593,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
         },
 
         setPrivacy: function(putCode, priv) {
-            worksSrvc.updateVisibility([putCode], priv);
+            worksSrvc.updateVisibility([putCode], priv);  
         },
 
         updateVisibility: function(putCodes, priv) {
