@@ -41,9 +41,9 @@
 						<@orcid.privacyToggle angularModel="work.visibility.visibility" 
 						    questionClick="toggleClickPrivacyHelp(work.putCode.value)"
 						    clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
-							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)" 
-		                	limitedClick="setPrivacy(work.putCode.value, 'LIMITED', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)" 
-		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', sortState.predicateKey, !sortState.reverseKey[sortState.predicateKey], $event)"/>
+							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
+		                	limitedClick="setPrivacy(work.putCode.value, 'LIMITED', $event)" 
+		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
 		                </li>			
 					</ul>				
 				</#if>				
