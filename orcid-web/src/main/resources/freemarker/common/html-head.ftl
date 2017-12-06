@@ -141,11 +141,13 @@
     <!-- ***************************************************** -->
     <!-- Ng2 Templates - BEGIN -->
 
+
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
+    <!-- Under development -->
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
         <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
-        <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/country-ng2-template.ftl">
+        <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
+        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
     </#if>
     </@orcid.checkFeatureStatus> 
@@ -156,6 +158,8 @@
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
         <#include "/includes/ng2_templates/biography-ng2-template.ftl">
+        <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/country-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
         <#include "/includes/ng2_templates/modal-ng2-template.ftl">

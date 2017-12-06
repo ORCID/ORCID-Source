@@ -95,8 +95,8 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnDestroy() {
-        //this.ngUnsubscribe.next();
-        //this.ngUnsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     };
 
     ngOnInit() {

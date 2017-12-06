@@ -28,6 +28,10 @@ import { UpgradeModule }
 //User generated modules imports
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
+import { AlsoKnownAsNg2Module } 
+    from './alsoKnownAs/alsoKnownAs.ts';
+import { AlsoKnownAsFormNg2Module } 
+    from './alsoKnownAsForm/alsoKnownAsForm.ts';
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 import { CountryNg2Module } 
@@ -57,14 +61,14 @@ import { WorksPrivacyPreferencesNg2Module }
 import { AffiliationService } 
     from '../shared/affiliationService.ts';
 
+import { AlsoKnownAsService } 
+    from '../shared/alsoKnownAs.service.ts';
+
 import { BiographyService } 
     from '../shared/biographyService.ts';
 
 import { CommonService }
     from '../shared/commonService.ts'
-
-import { CountryService } 
-    from '../shared/countryService.ts'; 
 
 import { EmailService } 
     from '../shared/emailService.ts';
@@ -123,6 +127,8 @@ export class RootCmp {
         UpgradeModule,
         /* User Generated Modules */
         AffiliationNg2Module,
+        AlsoKnownAsNg2Module,
+        AlsoKnownAsFormNg2Module,
         BiographyNg2Module,
         CountryNg2Module,
         CountryFormNg2Module,
@@ -142,9 +148,9 @@ export class RootCmp {
             useClass: MetaXSRFStrategy
         },
         AffiliationService,
+        AlsoKnownAsService,
         BiographyService,
         CommonService,
-        //CountryService,
         EmailService,
         FundingService,
         //GroupedActivitiesUtilService,

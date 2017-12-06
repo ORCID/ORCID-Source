@@ -22,34 +22,34 @@
 <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
 <#if justRegistered?? && justRegistered>
 <div class="alert alert-success">
-  <strong>
-    <thanks-for-registering-ng2></thanks-for-registering-ng2>
-  </strong>
+    <strong>
+        <thanks-for-registering-ng2></thanks-for-registering-ng2>
+    </strong>
 </div>
 </#if>
 </@orcid.checkFeatureStatus>
 
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
-  <strong>
-    <@spring.message "orcid.frontend.web.email_verified"/>
-    <#if primaryEmailUnverified?? && primaryEmailUnverified>
-      <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
-    </#if>
-  </strong>
+    <strong>
+        <@spring.message "orcid.frontend.web.email_verified"/>
+        <#if primaryEmailUnverified?? && primaryEmailUnverified>
+        <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
+        </#if>
+    </strong>
 </div>
 </#if>
 
 <#if invalidVerifyUrl?? && invalidVerifyUrl>
 <div class="alert alert-success">
-  <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
+    <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
 </div>
 </#if>
 
 
 <#if invalidOrcid?? && invalidOrcid>
 <div class="alert alert-success">
-  <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
+    <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
 </div>
 </#if>
 
@@ -85,7 +85,12 @@
         </a>
       </div>
 
-      <!-- Other Names -->          
+      <!-- Other Names -->
+      <@orcid.checkFeatureStatus 'ANGULAR2_DEV'>
+
+      <also-known-as-ng2></also-known-as-ng2>
+    
+      </@orcid.checkFeatureStatus> 
       <div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
         <div class="workspace-section-header">
           <div class="workspace-section-title">
@@ -118,7 +123,8 @@
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <country-ng2></country-ng2>
     </@orcid.checkFeatureStatus>
-     
+
+    <!--
     <div ng-controller="CountryCtrl" class="workspace-section country">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
@@ -141,6 +147,7 @@
             </span>
         </div>
     </div>
+    -->
 
 
       <!-- Keywords -->         
@@ -768,6 +775,12 @@
 <modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
     <country-form-ng2></country-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
+
+<@orcid.checkFeatureStatus 'ANGULAR2_DEV'>
+<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645">
+    <also-known-as-form-ng2></also-known-as-form-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+</@orcid.checkFeatureStatus> 
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>

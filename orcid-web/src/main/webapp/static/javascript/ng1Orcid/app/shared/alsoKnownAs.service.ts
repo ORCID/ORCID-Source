@@ -36,12 +36,9 @@ export class AlsoKnownAsService {
         .map((res:Response) => res.json()).share();
     }
 
-    notifyOther(data: any): void {
+    notifyOther(): void {
         this.notify.next();
         console.log('notify');
-        if (data) {
-            //console.log('notifyOther', data);
-        }
     }
 
     setData( obj ): Observable<any> {

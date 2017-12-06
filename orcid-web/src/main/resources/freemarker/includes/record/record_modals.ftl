@@ -18,10 +18,10 @@
 -->
 
 <script type="text/ng-template" id="edit-aka">  
-    <!-- Other Names -->    
+  
     <div class="lightbox-container" id="aka-popover">
         <div class="edit-record edit-record-bulk-edit edit-aka">
-            <!-- Title -->
+
             <div class="row">           
                 <div class="col-md-12 col-sm-12 col-xs-12"> 
                     <h1 class="lightbox-title pull-left">
@@ -99,7 +99,7 @@
     </div>      
 </script>
 
-
+<!--
 <script type="text/ng-template" id="edit-country">
 
     <div class="lightbox-container" id="country-popover">
@@ -190,6 +190,7 @@
         </div>
     </div>  
 </script>
+-->
 
 <script type="text/ng-template" id="edit-keyword">
     <!-- Keywords -->
