@@ -559,21 +559,21 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             });
         },
 
-        setGroupPrivacy: function(putCode, priv, sort, sortAsc) {
+        setGroupPrivacy: function(putCode, priv) {
             var group = worksSrvc.getGroup(putCode);
             var putCodes = new Array();
             for (var idx in group.works) {
                 putCodes.push(group.works[idx].putCode.value);
                 group.works[idx].visibility.visibility = priv;
             }
-            worksSrvc.updateVisibility(putCodes, priv, sort, sortAsc);
+            worksSrvc.updateVisibility(putCodes, priv);
         },
 
-        setPrivacy: function(putCode, priv, sort, sortAsc) {
-            worksSrvc.updateVisibility([putCode], priv, sort, sortAsc);  
+        setPrivacy: function(putCode, priv) {
+            worksSrvc.updateVisibility([putCode], priv);  
         },
 
-        updateVisibility: function(putCodes, priv, sort, sortAsc) {
+        updateVisibility: function(putCodes, priv) {
             $.ajax({
                 url: getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv,
                 type: 'GET',
@@ -582,8 +582,6 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                 success: function(data) {
                     if (putCodes.length > 0) {
                         worksSrvc.updateVisibility(putCodes, priv);
-                    } else {
-                        worksSrvc.refreshWorkGroups(sort, sortAsc);
                     }
                 }
             }).fail(function() {
