@@ -111,7 +111,7 @@ public class WorksPaginator {
         @Override
         public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
             if (o1.getWorkSummary().get(0).getPublicationDate() == null && o2.getWorkSummary().get(0).getPublicationDate() == null) {
-                return 0;
+                return new TitleComparator().compare(o1, o2);
             }
             
             if (o1.getWorkSummary().get(0).getPublicationDate() == null) {
