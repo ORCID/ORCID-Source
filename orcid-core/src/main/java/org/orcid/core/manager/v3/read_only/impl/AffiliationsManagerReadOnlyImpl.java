@@ -26,13 +26,13 @@ import org.orcid.core.adapter.v3.JpaJaxbEmploymentAdapter;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements AffiliationsManagerReadOnly {
     
@@ -126,7 +126,13 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid) {
         List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
-        return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
+        List<EmploymentSummary> elements = jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
+        elements.sort((EmploymentSummary e1, EmploymentSummary e2) -> {
+            String sortString1 = PojoUtil.createDateSortString(e1);
+            String sortString2 = PojoUtil.createDateSortString(e2);
+            return sortString1.compareTo(sortString2);
+        });
+        return elements;
     }
 
     /**
@@ -140,7 +146,13 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public List<EducationSummary> getEducationSummaryList(String userOrcid) {
         List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getEducationSummaries(userOrcid, getLastModified(userOrcid));
-        return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+        List<EducationSummary> elements = jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+        elements.sort((EducationSummary e1, EducationSummary e2) -> {
+            String sortString1 = PojoUtil.createDateSortString(e1);
+            String sortString2 = PojoUtil.createDateSortString(e2);
+            return sortString1.compareTo(sortString2);
+        });
+        return elements;
     }    
     
     @Override
