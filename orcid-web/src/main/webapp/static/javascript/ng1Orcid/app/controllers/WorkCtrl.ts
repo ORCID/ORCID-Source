@@ -885,22 +885,23 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.toggleBulkEdit = function() {
-
-                if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-                    if (!$scope.bulkEditShow) {
-                        $scope.bulkEditMap = {};
-                        $scope.bulkChecked = false;
-                        for (var idx in worksSrvc.groups){
-                            $scope.bulkEditMap[worksSrvc.groups[idx].activePutCode] = false;
-                        }
-                    };
-                    $scope.bulkEditShow = !$scope.bulkEditShow;
-                    $scope.showBibtexImportWizard = false;
-                    $scope.workImportWizard = false;
-                    $scope.showBibtexExport = false;
-                }else{
-                    showEmailVerificationModal();
-                }
+                worksSrvc.loadAllWorkGroups($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey], function() {
+                    if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+                        if (!$scope.bulkEditShow) {
+                            $scope.bulkEditMap = {};
+                            $scope.bulkChecked = false;
+                            for (var idx in worksSrvc.groups){
+                                $scope.bulkEditMap[worksSrvc.groups[idx].activePutCode] = false;
+                            }
+                        };
+                        $scope.bulkEditShow = !$scope.bulkEditShow;
+                        $scope.showBibtexImportWizard = false;
+                        $scope.workImportWizard = false;
+                        $scope.showBibtexExport = false;
+                    }else{
+                        showEmailVerificationModal();
+                    }
+                });
             };
 
             $scope.toggleClickPrivacyHelp = function(key) {

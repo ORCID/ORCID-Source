@@ -270,7 +270,25 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             });
         },
         
-        handleWorkGroupData: function(data) {
+        loadAllWorkGroups: function(sort, sortAsc, callback) {
+            worksSrvc.details = new Object();
+            worksSrvc.groups = new Array();
+            var url = getBaseUri() + '/works/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
+            worksSrvc.loading = true;
+            $.ajax({
+                'url': url,
+                'dataType': 'json',
+                'success': function(data) {
+                    worksSrvc.handleWorkGroupData(data, callback);
+                }
+            }).fail(function(e) {
+                worksSrvc.loading = false;
+                console.log("Error fetching works");
+                logAjaxError(e);
+            });
+        },
+        
+        handleWorkGroupData: function(data, callback) {
             if (worksSrvc.groups == undefined) {
                 worksSrvc.groups = new Array();
             }
@@ -279,6 +297,10 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             worksSrvc.showLoadMore = worksSrvc.groups.length < data.totalGroups;
             worksSrvc.loading = false;
             worksSrvc.offset = data.nextOffset;
+            
+            if (callback != undefined) {
+                callback();
+            }
         },
 
         addBibtexJson: function(dw) {

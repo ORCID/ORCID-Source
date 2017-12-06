@@ -144,6 +144,15 @@ public class WorksPaginatorTest {
             previous = next;
         }
     }
+    
+    @Test
+    public void testGetAllWorks() {
+        Works works = get1000PublicWorkGroups();
+        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
+        WorksPage page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
+        assertEquals(1000, page.getTotalGroups());
+        assertEquals(1000, page.getWorkGroups().size());
+    }
 
     private Works getWorkGroupsWithNullDates() {
         Works works = get1000PublicWorkGroups();
