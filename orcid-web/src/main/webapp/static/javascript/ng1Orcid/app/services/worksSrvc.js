@@ -582,8 +582,6 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                 success: function(data) {
                     if (putCodes.length > 0) {
                         worksSrvc.updateVisibility(putCodes, priv);
-                    } else {
-                        worksSrvc.refreshWorkGroups(sort, sortAsc);
                     }
                 }
             }).fail(function() {
