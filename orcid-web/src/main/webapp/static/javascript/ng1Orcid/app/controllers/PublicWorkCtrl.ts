@@ -161,11 +161,11 @@ export const PublicWorkCtrl = angular.module('orcidApp').controller(
             $scope.sort = function(key) {
                 $scope.sortState.sortBy(key);
                 worksSrvc.resetWorkGroups();
-                worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[key]);
+                worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[key]);
             };
             
             $scope.loadMore = function() {
-                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+                $scope.worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
             }
             $scope.loadMore();
             
