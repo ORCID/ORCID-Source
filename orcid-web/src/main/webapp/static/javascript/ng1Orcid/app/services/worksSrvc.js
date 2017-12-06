@@ -512,12 +512,13 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             return null;
         },
 
-        makeDefault: function(group, putCode, sortKey, sortAsc) {
+        makeDefault: function(group, putCode) {
             $.ajax({
                 url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
                 dataType: 'json',
                 success: function(data) {
-                    worksSrvc.refreshWorkGroups(sortKey, sortAsc);
+                    group.defaultWork = worksSrvc.getWork(putCode);
+                    group.activePutCode = group.defaultWork.putCode.value;
                 }
             }).fail(function(){
                 // something bad is happening!
