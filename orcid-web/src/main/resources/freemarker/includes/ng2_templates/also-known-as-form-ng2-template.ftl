@@ -67,13 +67,12 @@
                                         <@orcid.tooltip elementId="'tooltip-aka-delete-'+index" message="common.modals.delete" />
                                     </li>
                                     <li>
-                                        <@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
-                                            questionClick="toggleClickPrivacyHelp(index)"
-                                            clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-                                            publicClick="setPrivacyModal('PUBLIC', $event, otherName)" 
-                                            limitedClick="setPrivacyModal('LIMITED', $event, otherName)" 
-                                            privateClick="setPrivacyModal('PRIVATE', $event, otherName)"
-                                            elementId="index" />   
+                                        <privacy-toggle-ng2 
+                                        [dataPrivacyObj]="otherName" 
+                                        (privacyUpdate)="privacyChange($event)"
+                                        elementId="also-known-as-privacy-toggle" 
+                                        privacyNodeName="visibility" 
+                                        ></privacy-toggle-ng2> 
                                     </li>
                                 </ul>
                                 <span class="created-date pull-right" *ngIf="otherName.createdDate" [ngClass]="{'hidden-xs' : otherName.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>

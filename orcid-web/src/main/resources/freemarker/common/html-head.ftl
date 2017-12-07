@@ -146,8 +146,6 @@
     <!-- Under development -->
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
         <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
-        <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
-        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
     </#if>
     </@orcid.checkFeatureStatus> 
@@ -157,6 +155,8 @@
     </#if>
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
+        <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
+        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/biography-ng2-template.ftl">
         <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/country-ng2-template.ftl">

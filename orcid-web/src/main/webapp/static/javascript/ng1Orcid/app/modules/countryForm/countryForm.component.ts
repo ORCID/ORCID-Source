@@ -196,19 +196,18 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.closeEditModal();
                     }
                 }else{
-                    console.log(this.countryForm.errors);
+                    //console.log(this.countryForm.errors);
                 }
 
             },
             error => {
-                console.log('setBiographyFormError', error);
+                //console.log('setBiographyFormError', error);
             } 
         );
         this.countryForm.visibility = null;
     };
     
     privacyChange( obj ): any {
-        console.log('privacyChange', obj);
         this.countryForm.visibility.visibility = obj;
         this.setCountryForm( false );   
     };
