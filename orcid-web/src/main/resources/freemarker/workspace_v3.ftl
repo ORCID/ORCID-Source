@@ -86,11 +86,11 @@
       </div>
 
       <!-- Other Names -->
-      <@orcid.checkFeatureStatus 'ANGULAR2_DEV'>
+
 
       <also-known-as-ng2></also-known-as-ng2>
-    
-      </@orcid.checkFeatureStatus> 
+        
+    <!--
       <div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
         <div class="workspace-section-header">
           <div class="workspace-section-title">
@@ -113,7 +113,7 @@
            </span>
         </div>
       </div>
-
+    -->
     
 
     <!--
