@@ -97,7 +97,7 @@
                 </property>
             </activation>
             <properties>
-                <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
+                <nodejs.workingDirectory>${env.HOME}/tmp-tomcat-orcid-web-nodejs/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
                 <webpackConfig>tmp-tomcat-orcid-web</webpackConfig>
             </properties>
         </profile>
