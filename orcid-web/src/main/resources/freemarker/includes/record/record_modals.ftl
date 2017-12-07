@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-
+<!--
 <script type="text/ng-template" id="edit-aka">  
   
     <div class="lightbox-container" id="aka-popover">
@@ -98,7 +98,7 @@
         </div>
     </div>      
 </script>
-
+-->
 <!--
 <script type="text/ng-template" id="edit-country">
 
