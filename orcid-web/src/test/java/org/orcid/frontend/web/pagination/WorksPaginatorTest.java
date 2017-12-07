@@ -130,17 +130,17 @@ public class WorksPaginatorTest {
     }
 
     @Test
-    public void testSecondarySortForNullDates() {
+    public void testReverseSecondaryTitleSortForNullDates() {
         Works works = getWorkGroupsWithNullDates();
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        WorksPage page = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.TITLE_SORT_KEY, true);
+        WorksPage page = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.DATE_SORT_KEY, true);
 
         org.orcid.pojo.WorkGroup previous = page.getWorkGroups().remove(0);
         while (!page.getWorkGroups().isEmpty()) {
             org.orcid.pojo.WorkGroup next = page.getWorkGroups().remove(0);
             String previousTitle = previous.getWorks().get(0).getTitle().getValue();
             String nextTitle = next.getWorks().get(0).getTitle().getValue();
-            assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) <= 0);
+            assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) >= 0);
             previous = next;
         }
     }
