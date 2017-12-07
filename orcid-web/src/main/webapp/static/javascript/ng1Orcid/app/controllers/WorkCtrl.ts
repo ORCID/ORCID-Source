@@ -273,6 +273,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.deleteByPutCode = function(putCode, deleteGroup) {
+                $scope.closeAllMoreInfo();
                 if (deleteGroup) {
                    worksSrvc.deleteGroupWorks(putCode, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                 }
@@ -703,6 +704,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                             });
                             numToSave--;
                             if (numToSave == 0){
+                                $scope.closeAllMoreInfo();
                                 $scope.worksSrvc.refreshWorkGroups($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                                 savingBibtex = false;
                             }
