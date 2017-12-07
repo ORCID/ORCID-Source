@@ -590,6 +590,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                 group.works[idx].visibility.visibility = priv;
             }
             worksSrvc.updateVisibility(putCodes, priv);
+            group.activeVisibility = priv;
         },
 
         setPrivacy: function(putCode, priv) {
