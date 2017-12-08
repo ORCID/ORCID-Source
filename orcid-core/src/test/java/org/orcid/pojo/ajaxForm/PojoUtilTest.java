@@ -58,7 +58,7 @@ public class PojoUtilTest {
         aff.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(0)));
         String dateSortString = PojoUtil.createDateSortString(aff);
         assertNotNull(dateSortString);
-        assertThat(dateSortString, anyOf(is("Z-1969-12-31"), is("Z-1970-01-01")));
+        assertThat(dateSortString, anyOf(is("Z-1969-12-31"), is("Z-1970-1-1")));
     }
 
     @Test
