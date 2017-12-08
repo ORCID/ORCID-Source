@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
@@ -287,66 +285,8 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     public void copyUpdatedContactDetailsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
        ContactDetails existingContactDetails = existing.getContactDetails();
        ContactDetails updatedContactDetails = updated.getContactDetails();
-//     copyUpdatedEmails(existingContactDetails, updatedContactDetails);
        copyUpdatedAddress(existingContactDetails, updatedContactDetails);
     }
-
-    //Not being used now as the client is not allowed to add or edit emails.
-    @SuppressWarnings("unused")
-	private void copyUpdatedEmails(ContactDetails existingContactDetails, ContactDetails updatedContactDetails) {
-    	String clientId = sourceManager.retrieveSourceOrcid();
-    	List<Email> allEmails = new ArrayList<Email>();
-		List<Email> existingEmails = existingContactDetails.getEmail();
-		
-		for(Email oldEmail : existingEmails) {
-			Email tempEmail = null;
-			if(updatedContactDetails != null) {
-				tempEmail = updatedContactDetails.getEmailByString(oldEmail.getValue());
-			}
-			String oldEmSource = (oldEmail.getSourceClientId() == null) ? oldEmail.getSource() : oldEmail.getSourceClientId();
-			if(clientId == null || (clientId != null && !clientId.equals(oldEmSource))) {
-				allEmails.add(oldEmail);
-				if(tempEmail != null) {
-					updatedContactDetails.getEmail().remove(tempEmail);
-				}
-			} else {
-				if(oldEmail.isPrimary()) {
-					if(tempEmail != null) {
-						updatedContactDetails.getEmail().remove(tempEmail);
-						if(!Visibility.PRIVATE.equals(oldEmail.getVisibility())) {
-							oldEmail.setVisibility(tempEmail.getVisibility());
-						}
-					}
-					allEmails.add(oldEmail);
-				} else if(Visibility.PRIVATE.equals(oldEmail.getVisibility())) {
-					if(tempEmail != null) {
-						updatedContactDetails.getEmail().remove(tempEmail);
-					}
-					allEmails.add(oldEmail);
-				} else {
-					if(tempEmail != null) {
-						updatedContactDetails.getEmail().remove(tempEmail);
-						tempEmail.setPrimary(false);
-						allEmails.add(tempEmail);
-					}
-				}
-			}
-		}
-		//Set primary = false for each remaining new email.
-		if(updatedContactDetails != null) {
-			for(Email newEmail : updatedContactDetails.getEmail()) {
-				newEmail.setPrimary(false);
-				allEmails.add(newEmail);
-			}
-		}
-		
-		for(Email email : allEmails) {
-			if(email.getVisibility() == null) {
-				email.setVisibility(OrcidVisibilityDefaults.ALTERNATIVE_EMAIL_DEFAULT.getVisibility());
-			}
-		}
-		existingContactDetails.setEmail(allEmails);
-	}
 
     private void copyUpdatedAddress(ContactDetails existingContactDetails, ContactDetails updatedContactDetails) {
 		if(updatedContactDetails == null) {

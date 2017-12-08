@@ -78,13 +78,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public void updatePrimary(String orcid, String primaryEmail) {
-        Query updatePrimaryQuery = entityManager.createQuery("update EmailEntity set primary = 'true' where orcid = :orcid and email = :primaryEmail");
-        Query updateNonPrimaryQuery = entityManager.createQuery("update EmailEntity set primary = 'false' where orcid = :orcid and email != :primaryEmail");
-        for (Query query : new Query[] { updatePrimaryQuery, updateNonPrimaryQuery }) {
-            query.setParameter("orcid", orcid);
-            query.setParameter("primaryEmail", primaryEmail);
-            query.executeUpdate();
-        }
+        Query query = entityManager.createNativeQuery("UPDATE email SET is_primary= CASE email WHEN :primaryEmail THEN true ELSE false END WHERE orcid = :orcid");
+        query.setParameter("orcid", orcid);        
+        query.setParameter("primaryEmail", primaryEmail);
+        query.executeUpdate();        
     }
 
     @Override
