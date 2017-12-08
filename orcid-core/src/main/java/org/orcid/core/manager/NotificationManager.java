@@ -66,13 +66,9 @@ public interface NotificationManager {
 
     void sendApiRecordCreationEmail(String toEmail, String orcid);
     
-    void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
-
     void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
-
-    public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile);
 
     void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link);
 
@@ -112,8 +108,6 @@ public interface NotificationManager {
 
     public String getSubject(String code, OrcidProfile orcidProfile);
 
-    public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
-
     public String createClaimVerificationUrl(String email, String baseUri);
 
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
@@ -130,12 +124,12 @@ public interface NotificationManager {
 
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
     
-    boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile);
-
     void processOldNotificationsToAutoArchive();
 
     void processOldNotificationsToAutoDelete();
 
     void removeNotification(Long notificationId);
 
+    String createUpdateEmailFrequencyUrl(String email);
+    
 }

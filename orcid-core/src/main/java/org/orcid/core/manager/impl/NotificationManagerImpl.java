@@ -141,9 +141,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private MailGunManager mailGunManager;
 
-    private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";
-
-    private String ORCID_PRIVACY_POLICY_UPDATES = "ORCID - Privacy Policy Updates";
+    private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";    
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
@@ -192,9 +190,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
-
-    @Resource
-    private OrcidProfileCacheManager orcidProfileCacheManager;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -376,58 +371,11 @@ public class NotificationManagerImpl implements NotificationManager {
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
-    }
+    }    
 
-    public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile) {
-        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = null;
-        verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        boolean needsVerification = !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()
-                && orcidProfile.getType().equals(org.orcid.jaxb.model.message.OrcidType.USER) && !orcidProfile.isDeactivated();
-        if (needsVerification) {
-            templateParams.put("verificationUrl", verificationUrl);
-        }
-        String emailFrequencyUrl = createUpdateEmailFrequencyUrl(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        templateParams.put("emailFrequencyUrl", emailFrequencyUrl);
-        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        addMessageParams(templateParams, orcidProfile);
-        String subject = getSubject("email.service_announcement.subject.imporant_information", orcidProfile);
-        String text = templateManager.processTemplate("service_announcement_1_2015.ftl", templateParams);
-        String html = templateManager.processTemplate("service_announcement_1_2015_html.ftl", templateParams);
-        boolean sent = mailGunManager.sendEmail("support@notify.orcid.org", email, subject, text, html);
-        return sent;
-    }
-
+    @Override
     public String createUpdateEmailFrequencyUrl(String email) {
         return createEmailBaseUrl(email, orcidUrlManager.getBaseUrl(), "notifications/frequencies");
-    }
-
-    // look like the following is our best best for i18n emails
-    // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
-    public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile) {
-        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
-        templateParams.put("emailName", emailFriendlyName);
-        if (!orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()) {
-            String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-            templateParams.put("verificationUrl", verificationUrl);
-        }
-        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-
-        addMessageParams(templateParams, orcidProfile);
-
-        String text = templateManager.processTemplate("priv_policy_upate_2014_03.ftl", templateParams);
-        String html = templateManager.processTemplate("priv_policy_upate_2014_03_html.ftl", templateParams);
-
-        return mailGunManager.sendEmail(UPDATE_NOTIFY_ORCID_ORG, email, ORCID_PRIVACY_POLICY_UPDATES, text, html);
     }
 
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
@@ -715,39 +663,22 @@ public class NotificationManagerImpl implements NotificationManager {
         String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
 
         mailGunManager.sendEmail(EMAIL_CHANGED_NOTIFY_ORCID_ORG, oldEmail, subject, body, html);
-    }
-
-    @Override
-    public void sendApiRecordCreationEmail(String toEmail, String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrieve(orcid);
-        sendApiRecordCreationEmail(toEmail, profile);
-    }
+    }    
 
     @Override
     @Transactional
-    public void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile) {
-        Source source = null;
+    public void sendApiRecordCreationEmail(String toEmail, String orcid) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
+        String sourceId = record.getSource() == null ? null : record.getSource().getSourceId();
+        String creatorName = record.getSource() == null ? null : record.getSource().getSourceName();
+        Locale userLocale = getUserLocaleFromProfileEntity(record);
         CustomEmailEntity customEmail = null;
-        if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
-            if (!PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().retrieveSourcePath())) {
-                source = createdProfile.getOrcidHistory().getSource();
-                customEmail = getCustomizedEmail(createdProfile.getOrcidHistory().getSource().retrieveSourcePath(), EmailType.CLAIM);
-            }
+        if (!PojoUtil.isEmpty(sourceId)) {
+            customEmail = getCustomizedEmail(sourceId, EmailType.CLAIM);
         }
-
-        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue().trim();
-        String emailName = deriveEmailFriendlyName(createdProfile);
-        String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());
-
-        String creatorName = "";
-        if (source != null) {
-            if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
-                creatorName = source.getSourceName().getContent();
-            } else if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                creatorName = source.retrieveSourcePath();
-            }
-        }
+        String email = emailManager.findPrimaryEmail(orcid).getEmail();
+        String emailName = deriveEmailFriendlyName(record);
+        String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());        
 
         String subject = null;
         String body = null;
@@ -758,7 +689,7 @@ public class NotificationManagerImpl implements NotificationManager {
             // Get the customized sender if available
             sender = PojoUtil.isEmpty(customEmail.getSender()) ? CLAIM_NOTIFY_ORCID_ORG : customEmail.getSender();
             // Get the customized subject is available
-            subject = PojoUtil.isEmpty(customEmail.getSubject()) ? getSubject("email.subject.api_record_creation", createdProfile) : customEmail.getSubject();
+            subject = PojoUtil.isEmpty(customEmail.getSubject()) ? getSubject("email.subject.api_record_creation", userLocale) : customEmail.getSubject();
             // Replace the wildcards
             subject = subject.replace(WILDCARD_USER_NAME, emailName);
             subject = subject.replace(WILDCARD_MEMBER_NAME, creatorName);
@@ -784,7 +715,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 }
             }
         } else {
-            subject = getSubject("email.subject.api_record_creation", createdProfile);
+            subject = getSubject("email.subject.api_record_creation", userLocale);
             // Create map of template params
             Map<String, Object> templateParams = new HashMap<String, Object>();
             templateParams.put("emailName", emailName);
@@ -795,7 +726,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
             templateParams.put("verificationUrl", verificationUrl);
 
-            addMessageParams(templateParams, createdProfile);
+            addMessageParams(templateParams, userLocale);
             // Generate body from template
             body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
             htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
@@ -1259,28 +1190,6 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public ActionableNotificationEntity findActionableNotificationEntity(Long id) {
         return (ActionableNotificationEntity) notificationDao.find(id);
-    }
-
-    public boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile) {
-        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
-        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        String emailFrequencyUrl = createUpdateEmailFrequencyUrl(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("emailFrequencyUrl", emailFrequencyUrl);
-        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-
-        addMessageParams(templateParams, orcidProfile);
-
-        String subject = getSubject("email.service_announcement.subject.imporant_information", orcidProfile);
-        String text = templateManager.processTemplate("verified_required_announcement_2017.ftl", templateParams);
-        String html = templateManager.processTemplate("verified_required_announcement_2017_html.ftl", templateParams);
-
-        return mailGunManager.sendEmail("support@notify.orcid.org", email, subject, text, html);
     }
 
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {

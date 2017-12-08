@@ -376,7 +376,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     public OrcidProfile createOrcidProfileAndNotify(OrcidProfile orcidProfile) {
         OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile, true, false);
-        notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
+        notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile.getOrcidIdentifier().getPath());
         return createdOrcidProfile;
     }
 

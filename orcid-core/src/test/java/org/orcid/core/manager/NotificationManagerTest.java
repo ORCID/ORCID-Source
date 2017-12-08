@@ -351,26 +351,10 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
+            notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile.getOrcidIdentifier().getPath());
         }
     }
-
-    @Test
-    public void testSendServiceAnnouncement_1_For_2015() throws JAXBException, IOException, URISyntaxException {
-        for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendServiceAnnouncement_1_For_2015(orcidProfile);
-        }
-    }
-
-    @Test
-    public void testSendVerifiedRequiredAnnouncement2017() throws JAXBException, IOException, URISyntaxException {
-        for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendVerifiedRequiredAnnouncement2017(orcidProfile);
-        }
-    }
-
+    
     @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
