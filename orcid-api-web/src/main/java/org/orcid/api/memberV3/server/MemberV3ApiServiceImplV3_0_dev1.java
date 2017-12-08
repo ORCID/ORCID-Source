@@ -542,7 +542,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD)
-    @ApiOperation( hidden=true, nickname="createGroupIdRecordV3dev", value = "Create a Group", authorizations = {
+    @ApiOperation( nickname="createGroupIdRecordV3dev", value = "Create a Group", authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Group created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Group resource", response = URI.class)),

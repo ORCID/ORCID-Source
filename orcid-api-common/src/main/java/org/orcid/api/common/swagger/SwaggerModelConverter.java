@@ -20,13 +20,9 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -35,7 +31,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.record_v2.CitationType;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.sun.xml.bind.v2.model.core.Element;
 
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
@@ -101,23 +96,6 @@ public class SwaggerModelConverter implements ModelConverter {
         }
     }
 
-    @XmlType
-    class OrcidXML {
-            /**
-             * Everything else
-             */
-            @Transient
-            @XmlAnyElement(lax = true)
-            private List<Element> any;
-
-
-            public List<Element> getAny() {
-                return any;
-            }
-
-    }
-    
-    
     /**
      * Abridged Visibility XML enumeration for swagger use
      */
