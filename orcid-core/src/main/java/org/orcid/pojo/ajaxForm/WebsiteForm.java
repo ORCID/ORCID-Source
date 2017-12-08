@@ -29,7 +29,7 @@ public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Seri
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
-    private String url;
+    private Text url;
     private String urlName;
     private String putCode;
     private Long displayIndex;
@@ -43,7 +43,7 @@ public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Seri
 
         if (researcherUrl != null) {
             if (!PojoUtil.isEmpty(researcherUrl.getUrl())) {
-                form.setUrl(researcherUrl.getUrl().getValue());
+                form.setUrl(Text.valueOf(researcherUrl.getUrl().getValue()));
             }
 
             if (!PojoUtil.isEmpty(researcherUrl.getUrlName())) {
@@ -94,7 +94,7 @@ public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Seri
     public ResearcherUrl toResearcherUrl() {
         ResearcherUrl researcherUrl = new ResearcherUrl();
         if (!PojoUtil.isEmpty(this.getUrl())) {
-            researcherUrl.setUrl(new Url(this.getUrl()));
+            researcherUrl.setUrl(new Url(this.getUrl().getValue()));
         }
 
         if (!PojoUtil.isEmpty(this.getUrlName())) {
@@ -127,11 +127,11 @@ public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Seri
         this.errors = errors;
     }
 
-    public String getUrl() {
+    public Text getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(Text url) {
         this.url = url;
     }
 

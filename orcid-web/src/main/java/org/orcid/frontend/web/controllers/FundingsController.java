@@ -687,8 +687,8 @@ public class FundingsController extends BaseWorkspaceController {
                 
                 if (!PojoUtil.isEmpty(extId.getType()) && extId.getType().getValue().length() > 255)
                     setError(extId.getType(), "fundings.lenght_less_255");
-                if (!PojoUtil.isEmpty(extId.getUrl()) && extId.getUrl().getValue().length() > 350)
-                    setError(extId.getUrl(), "fundings.length_less_350");
+                if (!PojoUtil.isEmpty(extId.getUrl()))
+                    validateUrl(extId.getUrl());
                 if (!PojoUtil.isEmpty(extId.getValue()) && extId.getValue().getValue().length() > 2084)
                     setError(extId.getValue(), "fundings.length_less_2084");                
                 if(!PojoUtil.isEmpty(extId.getUrl()) && PojoUtil.isEmpty(extId.getValue())) {

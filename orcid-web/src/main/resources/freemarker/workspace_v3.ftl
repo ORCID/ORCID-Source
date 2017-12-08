@@ -186,7 +186,7 @@
         </div>  
         <div class="workspace-section-content">
           <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
-            <a href="{{website.url}}" target="website.urlName" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
+            <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow">{{website.urlName != null? website.urlName : website.url.value}}</a>
           </div>
         </div>
       </div>
