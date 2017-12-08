@@ -21,7 +21,8 @@
   	<!-- Information -->
 	<div class="col-md-9 col-sm-9 col-xs-7">
 	    <h3 class="workspace-title">	
-	    	<span ng-bind="group.getActive().dateSortString"></span>
+            <span ng-bind="group.getActive().affiliationName.value"></span>:
+            <span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>
         </h3>
         <div class="info-detail">
         	<div class="info-date">        	        	

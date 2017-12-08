@@ -127,10 +127,11 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid) {
         List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
         List<EmploymentSummary> elements = jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
+        // UI sort it descending first, so,lets do the same for the API
         elements.sort((EmploymentSummary e1, EmploymentSummary e2) -> {
             String sortString1 = PojoUtil.createDateSortString(e1);
             String sortString2 = PojoUtil.createDateSortString(e2);
-            return sortString1.compareTo(sortString2);
+            return sortString2.compareTo(sortString1);
         });
         return elements;
     }
@@ -147,10 +148,11 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     public List<EducationSummary> getEducationSummaryList(String userOrcid) {
         List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getEducationSummaries(userOrcid, getLastModified(userOrcid));
         List<EducationSummary> elements = jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+        // UI sort it descending first, so,lets do the same for the API
         elements.sort((EducationSummary e1, EducationSummary e2) -> {
             String sortString1 = PojoUtil.createDateSortString(e1);
             String sortString2 = PojoUtil.createDateSortString(e2);
-            return sortString1.compareTo(sortString2);
+            return sortString2.compareTo(sortString1);
         });
         return elements;
     }    
