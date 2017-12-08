@@ -22,34 +22,34 @@
 <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
 <#if justRegistered?? && justRegistered>
 <div class="alert alert-success">
-  <strong>
-    <thanks-for-registering-ng2></thanks-for-registering-ng2>
-  </strong>
+    <strong>
+        <thanks-for-registering-ng2></thanks-for-registering-ng2>
+    </strong>
 </div>
 </#if>
 </@orcid.checkFeatureStatus>
 
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
-  <strong>
-    <@spring.message "orcid.frontend.web.email_verified"/>
-    <#if primaryEmailUnverified?? && primaryEmailUnverified>
-      <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
-    </#if>
-  </strong>
+    <strong>
+        <@spring.message "orcid.frontend.web.email_verified"/>
+        <#if primaryEmailUnverified?? && primaryEmailUnverified>
+        <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
+        </#if>
+    </strong>
 </div>
 </#if>
 
 <#if invalidVerifyUrl?? && invalidVerifyUrl>
 <div class="alert alert-success">
-  <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
+    <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
 </div>
 </#if>
 
 
 <#if invalidOrcid?? && invalidOrcid>
 <div class="alert alert-success">
-  <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
+    <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
 </div>
 </#if>
 
@@ -85,7 +85,12 @@
         </a>
       </div>
 
-      <!-- Other Names -->          
+      <!-- Other Names -->
+
+
+      <also-known-as-ng2></also-known-as-ng2>
+        
+    <!--
       <div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
         <div class="workspace-section-header">
           <div class="workspace-section-title">
@@ -108,7 +113,7 @@
            </span>
         </div>
       </div>
-
+    -->
     
 
     <!--
@@ -118,7 +123,8 @@
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <country-ng2></country-ng2>
     </@orcid.checkFeatureStatus>
-     
+
+    <!--
     <div ng-controller="CountryCtrl" class="workspace-section country">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
@@ -141,6 +147,7 @@
             </span>
         </div>
     </div>
+    -->
 
 
       <!-- Keywords -->         
@@ -600,42 +607,42 @@
 </script>
 
 <script type="text/ng-template" id="claimed-record-thanks">
-  <div class="lightbox-container">
-    <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-        <br />
-        <button class="btn btn-primary" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
-      </div>
+    <div class="lightbox-container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+                <br />
+                <button class="btn btn-primary" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
+            </div>
+        </div>
     </div>
-  </div>
 </script>
 
 <script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
-  <div class="lightbox-container">
-    <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-        <br />
-        <strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
-        <br />
-        <button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
-        <button class="btn btn-primary" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
-      </div>
+    <div class="lightbox-container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+                <br />
+                <strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
+                <br />
+                <button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
+                <button class="btn btn-primary" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
+            </div>
+        </div>
     </div>
-  </div>
 </script>
 
 <script type="text/ng-template" id="delete-external-id-modal">
-  <div class="lightbox-container">
-    <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
-        <button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'freemarker.btnDelete'/></button> 
-        <a ng-click="closeEditModal()"><@orcid.msg 'freemarker.btncancel'/></a>
-      </div>
-    </div>
-  </div> 
+    <div class="lightbox-container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
+                <button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'freemarker.btnDelete'/></button> 
+                <a ng-click="closeEditModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+            </div>
+        </div>
+    </div> 
 </script>
 
 <script type="text/ng-template" id="bulk-delete-modal">
@@ -757,16 +764,20 @@
   </#if>
 </script>
 
+<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645">
+    <also-known-as-form-ng2></also-known-as-form-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
+    <country-form-ng2></country-form-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
-</modalngcomponent><!-- Ng2 component --> 
-
-<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
-    <country-form-ng2></country-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <!-- Ng1 directive -->

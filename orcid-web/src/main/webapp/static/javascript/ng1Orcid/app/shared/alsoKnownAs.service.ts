@@ -13,7 +13,7 @@ import { Subject }
 import 'rxjs/Rx';
 
 @Injectable()
-export class CountryService {
+export class AlsoKnownAsService {
     private headers: Headers;
     private url: string;
     private notify = new Subject<any>();
@@ -26,10 +26,10 @@ export class CountryService {
                 'Content-Type': 'application/json' 
             }
         );
-        this.url = getBaseUri() + '/account/countryForm.json';
+        this.url = getBaseUri() + '/my-orcid/otherNamesForms.json';
     }
 
-    getCountryData(): Observable<any> {
+    getData(): Observable<any> {
         return this.http.get(
             this.url
         )
@@ -41,7 +41,7 @@ export class CountryService {
         console.log('notify');
     }
 
-    setCountryData( obj ): Observable<any> {
+    setData( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 

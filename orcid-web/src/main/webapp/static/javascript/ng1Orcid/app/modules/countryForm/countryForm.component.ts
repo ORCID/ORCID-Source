@@ -96,7 +96,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getCountryForm(): void{
         this.countryService.getCountryData()
-        //.takeUntil(this.ngUnsubscribe)
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.countryForm = data;
@@ -185,30 +185,29 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     setCountryForm( closeAfterAction ): void {
 
         this.countryService.setCountryData( this.countryForm )
-        //.takeUntil(this.ngUnsubscribe)
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.countryForm = data;
                 if (this.countryForm.errors.length == 0){
                     this.getCountryForm();
-                    this.countryService.notifyOther({action:'close', moduleId: 'modalCountryForm'});
+                    this.countryService.notifyOther();
                     if( closeAfterAction == true ) {
                         this.closeEditModal();
                     }
                 }else{
-                    console.log(this.countryForm.errors);
+                    //console.log(this.countryForm.errors);
                 }
 
             },
             error => {
-                console.log('setBiographyFormError', error);
+                //console.log('setBiographyFormError', error);
             } 
         );
         this.countryForm.visibility = null;
     };
     
     privacyChange( obj ): any {
-        console.log('privacyChange', obj);
         this.countryForm.visibility.visibility = obj;
         this.setCountryForm( false );   
     };
@@ -277,8 +276,8 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnDestroy() {
-        //this.ngUnsubscribe.next();
-        //this.ngUnsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     };
 
     ngOnInit() {
