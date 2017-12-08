@@ -16,8 +16,11 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
@@ -55,7 +58,7 @@ public class PojoUtilTest {
         aff.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(0)));
         String dateSortString = PojoUtil.createDateSortString(aff);
         assertNotNull(dateSortString);
-        assertEquals("Z-1969-12-31", dateSortString);
+        assertThat(dateSortString, anyOf(is("Z-1969-12-31"), is("Z-1970-01-01")));
     }
 
     @Test

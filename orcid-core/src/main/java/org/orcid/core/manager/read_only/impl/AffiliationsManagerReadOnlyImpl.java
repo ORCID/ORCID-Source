@@ -147,7 +147,14 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public List<EducationSummary> getEducationSummaryList(String userOrcid) {
         List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EDUCATION);
-        return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+        List<EducationSummary> elements = jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+        // UI sort it descending first, so,lets do the same for the API
+        elements.sort((EducationSummary e1, EducationSummary e2) -> {
+            String sortString1 = PojoUtil.createDateSortString(e1);
+            String sortString2 = PojoUtil.createDateSortString(e2);
+            return sortString2.compareTo(sortString1);
+        });
+        return elements;
     }    
     
     @Override
