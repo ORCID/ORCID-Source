@@ -254,47 +254,38 @@ public class OrcidCoreExceptionMapper {
         return orcidError;
     }
     
+    /** Gets a message for the error code from the properties. If no message, uses the full class name.
+     * Appends a localised version of "Full validation error:" followed by the message embedded in the code (in English) 
+     * 
+     * @param errorCode
+     * @param t
+     * @param params
+     * @return the error message
+     */
     private String getDeveloperMessage(int errorCode, Throwable t, Map<String, String> params) {
+        if (t== null)
+            return "";
         Locale locale = localeManager.getLocale();
-
+        
         // Returns an empty message if the key is not found
-        String devMessage = messageSource.getMessage("apiError." + errorCode + ".developerMessage", null, "", locale);
-
-        // Assign message from the exception
-        if ("".equals(devMessage)) {
-            if(t != null) {
-                devMessage = t.getClass().getCanonicalName();
-                Throwable cause = t.getCause();
-                String exceptionMessage = t.getLocalizedMessage();
-                String validationMessage = messageSource.getMessage("apiError.validation.message", null, "", locale);
-                if (exceptionMessage != null) {
-                    devMessage += " " + validationMessage + " " + exceptionMessage;
-                }
-
-                if (cause != null) {
-                    String causeMessage = cause.getLocalizedMessage();
-                    if (causeMessage != null) {
-                        devMessage += " (" + causeMessage + ")";
-                    }
-                }
-            }
-            return devMessage;
-        } else if (t != null && t.getCause() != null && javax.xml.bind.UnmarshalException.class.isAssignableFrom(t.getCause().getClass())) {
-            Throwable cause = t.getCause();
-            String exceptionMessage = t.getLocalizedMessage();
-            String validationMessage = messageSource.getMessage("apiError.validation.message", null, "", locale);
-            if (exceptionMessage != null) {
-                devMessage += " " + validationMessage + " " + exceptionMessage;
-            }
-
-            if (cause != null) {
-                String causeMessage = cause.getLocalizedMessage();
-                if (causeMessage != null) {
-                    devMessage += " (" + causeMessage + ")";
-                }
-            }
-
+        String devMessage = messageSource.getMessage("apiError." + errorCode + ".developerMessage", null, "", locale);        
+        if (devMessage == "")
+            devMessage = t.getClass().getCanonicalName();
+        
+        String exceptionMessage = t.getLocalizedMessage();
+        String validationMessage = messageSource.getMessage("apiError.validation.message", null, "", locale);
+        if (exceptionMessage != null) {
+            devMessage += " " + validationMessage + " " + exceptionMessage;
         }
+
+        Throwable cause = t.getCause();
+        if (cause != null) {
+            String causeMessage = cause.getLocalizedMessage();
+            if (causeMessage != null) {
+                devMessage += " (" + causeMessage + ")";
+            }
+        }
+        
         return resolveMessage(devMessage, params);
     }
 

@@ -18,6 +18,7 @@ package org.orcid.frontend.web.pagination;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
@@ -130,17 +131,17 @@ public class WorksPaginatorTest {
     }
 
     @Test
-    public void testSecondarySortForNullDates() {
+    public void testReverseSecondaryTitleSortForNullDates() {
         Works works = getWorkGroupsWithNullDates();
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        WorksPage page = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.TITLE_SORT_KEY, true);
+        WorksPage page = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.DATE_SORT_KEY, true);
 
         org.orcid.pojo.WorkGroup previous = page.getWorkGroups().remove(0);
         while (!page.getWorkGroups().isEmpty()) {
             org.orcid.pojo.WorkGroup next = page.getWorkGroups().remove(0);
             String previousTitle = previous.getWorks().get(0).getTitle().getValue();
             String nextTitle = next.getWorks().get(0).getTitle().getValue();
-            assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) <= 0);
+            assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) >= 0);
             previous = next;
         }
     }
@@ -152,6 +153,28 @@ public class WorksPaginatorTest {
         WorksPage page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
         assertEquals(1000, page.getTotalGroups());
         assertEquals(1000, page.getWorkGroups().size());
+    }
+    
+    /**
+     * Check null titles don't cause errors
+     */
+    @Test
+    public void testGetWorkWithNulltitle() {
+        WorkGroup workGroup = getPublicWorkGroup(0);
+        for (WorkSummary workSummary : workGroup.getWorkSummary()) {
+            workSummary.setTitle(null);
+        }
+        Works works = new Works();
+        works.getWorkGroup().add(workGroup);
+        
+        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
+        WorksPage page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
+        
+        for (org.orcid.pojo.WorkGroup group : page.getWorkGroups()) {
+            for (WorkForm work : group.getWorks()) {
+                assertEquals("", work.getTitle().getValue());
+            }
+        }
     }
 
     private Works getWorkGroupsWithNullDates() {

@@ -167,9 +167,10 @@ public class ClientsController extends BaseWorkspaceController {
         client.getWebsite().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getWebsite())) {
             setError(client.getWebsite(), "manage.developer_tools.group.error.website.empty");
-        } else if (!validateUrl(client.getWebsite().getValue())) {
-            setError(client.getWebsite(), "common.invalid_url");
+        } else {
+            validateUrl(client.getWebsite(), "common.invalid_url");            
         }
+        
         return client;
     }
 

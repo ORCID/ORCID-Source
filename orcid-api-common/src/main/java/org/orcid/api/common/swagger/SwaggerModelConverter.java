@@ -85,7 +85,7 @@ public class SwaggerModelConverter implements ModelConverter {
             }
             if (_type.getRawClass() != null && _type.getRawClass().getCanonicalName().contains("model.v3")){
                 //do not use v3 models.  Note this is brittle and depends on package name.
-                return null;
+                return context.resolveProperty(Object.class, null);
             }
             
         }

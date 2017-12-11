@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -190,11 +191,14 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void addOrcidsToContacts(List<Contact> contacts) {
-        List<String> emails = contacts.stream().map(c -> c.getEmail()).collect(Collectors.toList());
+        List<String> emails = contacts.stream().map(c -> c.getEmail()).filter(Objects::nonNull).collect(Collectors.toList());
         if (!emails.isEmpty()) {
             Map<String, String> emailsToOrcids = emailManager.findIdsByEmails(emails);
             contacts.stream().forEach(c -> {
-                c.setOrcid(emailsToOrcids.get(c.getEmail()));
+                String email = c.getEmail();
+                if (email != null) {
+                    c.setOrcid(emailsToOrcids.get(email));
+                }
             });
         }
     }

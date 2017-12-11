@@ -117,9 +117,7 @@ public class SelfServiceController extends BaseController {
     public @ResponseBody MemberDetailsForm validateMemberDetailsWebsite(@RequestBody MemberDetailsForm consortium) {
         // validate website url format
         consortium.getWebsite().setErrors(new ArrayList<String>());
-        if (!super.validateUrl(consortium.getWebsite().getValue())) {
-            setError(consortium.getWebsite(), "manage_consortium.add_submember_website_valid_format");
-        }
+        validateUrl(consortium.getWebsite(), "manage_consortium.add_submember_website_valid_format");
         return consortium;
     }
 
@@ -340,10 +338,8 @@ public class SelfServiceController extends BaseController {
             setError(subMember.getWebsite(), "manage_consortium.add_submember_website_required");
         }
         // validate website url
-        if (!super.validateUrl(subMember.getWebsite().getValue())) {
-            setError(subMember.getWebsite(), "manage_consortium.add_submember_website_valid_format");
-        }
-
+        validateUrl(subMember.getWebsite(), "manage_consortium.add_submember_website_valid_format");
+        
         return subMember;
     }
 

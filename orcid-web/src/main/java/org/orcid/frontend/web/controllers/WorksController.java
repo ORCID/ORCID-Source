@@ -615,6 +615,9 @@ public class WorksController extends BaseWorkspaceController {
                     && !wId.getWorkExternalIdentifierType().getValue().trim().isEmpty() 
                     && !types.keySet().contains(wId.getWorkExternalIdentifierType().getValue())){
                 setError(wId.getWorkExternalIdentifierType(), "manualWork.id_invalid");
+            
+            
+            validateUrl(wId.getUrl());            
             }
         }
 
