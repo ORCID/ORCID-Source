@@ -164,7 +164,9 @@ public class WorkGroup implements Serializable {
     private static WorkForm getWorkForm(WorkSummary workSummary) {
         WorkForm workForm = new WorkForm();
         workForm.setPutCode(Text.valueOf(workSummary.getPutCode()));
-        workForm.setTitle(Text.valueOf(workSummary.getTitle().getTitle().getContent()));
+
+        String title = workSummary.getTitle() != null && workSummary.getTitle().getTitle() != null ? workSummary.getTitle().getTitle().getContent() : "";
+        workForm.setTitle(Text.valueOf(title));
 
         if (workSummary.getJournalTitle() != null) {
             workForm.setJournalTitle(Text.valueOf(workSummary.getJournalTitle().getContent()));
