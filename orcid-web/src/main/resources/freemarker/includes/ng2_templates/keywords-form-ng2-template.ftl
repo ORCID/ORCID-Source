@@ -18,9 +18,10 @@
 -->
 
 <script type="text/ng-template" id="keywords-form-ng2-template">
-    <div class="edit-record <#if RequestParameters['bulkEdit']??>
-        edit-record-bulk-edit
-        </#if> edit-keyword">
+    <div class="edit-record 
+        <#if RequestParameters['bulkEdit']??>edit-record-bulk-edit</#if> 
+        edit-keyword"
+    >
         <!-- Title -->
         <div class="row">           
             <div class="col-md-12 col-sm-12 col-xs-12"> 
@@ -29,8 +30,10 @@
                 </h1>                   
             </div>          
         </div>
-        <div class="row bottomBuffer">                          
-            <div ng-include="'bulk-edit'"></div>                    
+        <div class="row bottomBuffer">
+            <!--                      
+            <div ng-include="'bulk-edit'"></div>
+            -->             
         </div>              
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
@@ -41,19 +44,19 @@
             <div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
                 <div class="fixed-area" scroll>             
                     <div class="scroll-area">       
-                        <div class="row aka-row" ng-repeat="keyword in form.keywords">      
+                        <div class="row aka-row" *ngFor="let keyword of form.keywords; let index = index; let first = first; let last = last;">      
                             <div class="col-md-6">
                                 <div class="aka">                                       
                                     <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" focus-me="newInput" />
                                     <span *ngIf="keyword.source != orcidId">{{keyword.content}}</span>                                     
                                 </div>
-                                <div class="source" *ngIf="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="keyword.sourceName">{{keyword.sourceName}}</span><span *ngIf="keyword.sourceName == null">{{orcidId}}</span></div>                                                                            
+                                <div class="source" *ngIf="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="keyword.sourceName">{{keyword.sourceName}}</span><span *ngIf="keyword.sourceName == null">{{orcidId}}</span></div>      
                             </div>
                             
                             <div class="col-md-6" style="position: static">
                                 <ul class="record-settings pull-right">
                                     <li>                            
-                                        <div class="glyphicon glyphicon-arrow-up circle" (click)="$first || swapUp(index)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-move-up-'+index, $event, 37, -33, 44)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-move-up-'+index)"></div>
+                                        <div class="glyphicon glyphicon-arrow-up circle" (click)="first || swapUp(index)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-move-up-'+index, $event, 37, -33, 44)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-move-up-'+index)"></div>
                                         <@orcid.tooltip elementId="'tooltip-keyword-move-up-'+index" message="common.modals.move_up"/>
                                     </li>
                                     <li>                                                                                        
@@ -68,7 +71,7 @@
                                         <privacy-toggle-ng2 
                                         [dataPrivacyObj]="keyword" 
                                         (privacyUpdate)="privacyChange($event)"
-                                        elementId="also-known-as-privacy-toggle" 
+                                        elementId="keywords-privacy-toggle" 
                                         privacyNodeName="visibility" 
                                         ></privacy-toggle-ng2> 
                                         <!--
@@ -89,7 +92,7 @@
                     </div>
                 </div>
                 <div class="record-buttons">                        
-                    <a (click)="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+                    <a (click)="addNew()"><span class="glyphicon glyphicon-plus pull-left">
                         <div class="popover popover-tooltip-add top">
                             <div class="arrow"></div>
                             <div class="popover-content">
@@ -97,7 +100,7 @@
                             </div>
                         </div>
                     </span></a>                         
-                    <button class="btn btn-primary pull-right" (click)="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+                    <button class="btn btn-primary pull-right" (click)="setForm( true )"><@spring.message "freemarker.btnsavechanges"/></button>
                     <a class="cancel-option pull-right" (click)="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
                 </div>
             </div>

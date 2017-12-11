@@ -779,7 +779,7 @@
 </modalngcomponent><!-- Ng2 component --> 
 
 <modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
-    <also-known-as-form-ng2></also-known-as-form-ng2>
+    <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <!-- Ng1 directive -->

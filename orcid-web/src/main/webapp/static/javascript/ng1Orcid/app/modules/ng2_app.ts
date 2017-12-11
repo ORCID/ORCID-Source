@@ -150,11 +150,11 @@ export class RootCmp {
         UpgradeModule,
         /* User Generated Modules */
         AffiliationNg2Module,
-        AlsoKnownAsNg2Module,
         AlsoKnownAsFormNg2Module,
+        AlsoKnownAsNg2Module,
         BiographyNg2Module,
-        CountryNg2Module,
         CountryFormNg2Module,
+        CountryNg2Module,
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         //FundingNg2Module,
@@ -189,6 +189,6 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.100');
+        console.log('v0.101');
     }
 }

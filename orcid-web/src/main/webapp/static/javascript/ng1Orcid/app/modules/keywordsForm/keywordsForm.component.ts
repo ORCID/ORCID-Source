@@ -54,6 +54,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.newElementDefaultVisibility = 'PRIVATE';
         this.newInput = false;
         this.orcidId = orcidVar.orcidId; //Do not remove
+        console.log('keyword form initial');
   
     }
 
