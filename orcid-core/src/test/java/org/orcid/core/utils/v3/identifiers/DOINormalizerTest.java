@@ -49,6 +49,8 @@ public class DOINormalizerTest {
             "http:/dx.doi.org/10.5965/1414573101242015147",
             "http://www.dx.doi.org/10.5935/1415-2762.20160006",
             "http://scitation.aip.org/content/aip/journal/jcp/115/11/10.1063/1.1395625",
+            "https://doi.org/10.1049/el:20000645",
+            "https://doi.org/10.1016/S0920-5632(02)80001-9",
             //these do not match
             "ijiv11i2a8",
             "doi:10.1038",
@@ -78,6 +80,8 @@ public class DOINormalizerTest {
             "10.5965/1414573101242015147",
             "10.5935/1415-2762.20160006",
             "10.1063/1.1395625",
+            "10.1049/el:20000645",
+            "10.1016/S0920-5632(02)80001-9",
             //these do not match
             "","","",""/*
             "ijiv11i2a8",
