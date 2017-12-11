@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 public class DOINormalizer implements Normalizer {
 
     private static final List<String> canHandle = Lists.newArrayList("doi");
-    private static final Pattern pattern = Pattern.compile("(10\\.[0-9a-zA-Z]+\\/[\\/0-9a-zA-Z\\._-]*[0-9a-zA-Z])");
+    private static final Pattern pattern = Pattern.compile("(10\\.[0-9a-zA-Z]+\\/[\\/0-9a-zA-Z\\._:()-]*[0-9a-zA-Z])");
     
     @Override
     public List<String> canHandle() {
