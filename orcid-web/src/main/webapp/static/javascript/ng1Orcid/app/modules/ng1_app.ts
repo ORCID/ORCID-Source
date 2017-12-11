@@ -14,6 +14,10 @@ import 'angular-route'
 //User generated imports
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
+import { AlsoKnownAsModule } 
+    from './alsoKnownAs/alsoKnownAs.ts';
+import { AlsoKnownAsFormModule } 
+    from './alsoKnownAsForm/alsoKnownAsForm.ts';
 import { BiographyModule } 
     from './biography/biography.ts';
 import { CountryModule } 
@@ -24,6 +28,8 @@ import { EmailUnverifiedWarningModule }
     from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
 import { EmailVerificationSentMesssageModule } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+import { FundingModule } 
+    from './funding/funding.ts';
 import { ModalModule } 
     from './modalNg2/modal-ng.ts';
 import { NameModule } 
@@ -45,11 +51,14 @@ export const orcidApp = angular.module(
         vcRecaptcha,
         uibootstraptypeahead,
         AffiliationModule.name,
+        AlsoKnownAsModule.name,
+        AlsoKnownAsFormModule.name,
         BiographyModule.name,
         CountryModule.name,
         CountryFormModule.name,
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
+        //FundingModule.name,
         ModalModule.name,
         NameModule.name,
         ThanksForRegisteringModule.name,

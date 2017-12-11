@@ -1,26 +1,18 @@
 import * as angular 
     from 'angular';
 
-import { CommonModule } 
-    from '@angular/common'; 
-
 import { Directive, NgModule } 
     from '@angular/core';
-
-import { FormsModule }
-    from '@angular/forms'; // <-- NgModel lives here
 
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
+//User generated
+import { CommonNg2Module }
+    from './../common/common.ts';
+
 import { NameComponent } 
     from './name.component.ts';
-
-import { PrivacytoggleComponent } 
-    from './../privacytoggle/privacyToggle.component.ts';
-
-import { PrivacytoggleNg2Module }
-    from './../privacytoggle/privacyToggle.ts';
 
 // This is the Angular 1 part of the module
 export const NameModule = angular.module(
@@ -32,9 +24,7 @@ export const NameModule = angular.module(
 @NgModule(
     {
         imports: [
-            CommonModule,
-            FormsModule,
-            PrivacytoggleNg2Module
+            CommonNg2Module
         ],
         declarations: [ 
             NameComponent

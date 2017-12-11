@@ -46,7 +46,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "day")
-public class Day implements Serializable, Comparable<Day> {
+public class Day implements Serializable {
 
     /**
      * 
@@ -119,8 +119,4 @@ public class Day implements Serializable, Comparable<Day> {
         return value != null ? value.hashCode() : 0;
     }
 
-    @Override
-    public int compareTo(Day otherDay) {
-        return this.value.compareTo(otherDay.value);
-    }
 }

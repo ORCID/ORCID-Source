@@ -83,6 +83,11 @@ public class SwaggerModelConverter implements ModelConverter {
                     org.orcid.jaxb.model.v3.dev1.record.Citation.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Citation.class, null);
             }
+            if (_type.getRawClass() != null && _type.getRawClass().getCanonicalName().contains("model.v3")){
+                //do not use v3 models.  Note this is brittle and depends on package name.
+                return context.resolveProperty(Object.class, null);
+            }
+            
         }
         if (chain.hasNext()) {
             return chain.next().resolveProperty(type, context, annotations, chain);

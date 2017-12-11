@@ -40,7 +40,7 @@ public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, 
 
     List<OrgDisambiguatedEntity> findByName(String name);
 
-    List<OrgDisambiguatedEntity> findOrgsByIndexingStatus(IndexingStatus indexingStatus, int firstResult, int maxResult);
+    List<OrgDisambiguatedEntity> findOrgsPendingIndexing(int firstResult, int maxResult);
 
     void updateIndexingStatus(Long orgDisambiguatedId, IndexingStatus indexingStatus);
 

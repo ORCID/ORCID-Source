@@ -615,6 +615,9 @@ public class WorksController extends BaseWorkspaceController {
                     && !wId.getWorkExternalIdentifierType().getValue().trim().isEmpty() 
                     && !types.keySet().contains(wId.getWorkExternalIdentifierType().getValue())){
                 setError(wId.getWorkExternalIdentifierType(), "manualWork.id_invalid");
+            
+            
+            validateUrl(wId.getUrl());            
             }
         }
 
@@ -682,6 +685,12 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody WorksPage getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.getWorksPage(orcid, offset, false, sort, sortAsc);
+    }
+    
+    @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
+    public @ResponseBody WorksPage getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+        String orcid = getEffectiveUserOrcid();
+        return worksPaginator.getAllWorks(orcid, sort, sortAsc);
     }
     
     @RequestMapping(value = "/refreshWorks.json", method = RequestMethod.GET)

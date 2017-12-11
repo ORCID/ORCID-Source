@@ -236,25 +236,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     displayEducation(): boolean {
         return this.workspaceSrvc.displayEducation;
-    }
-
-    getAffiliationsId(): void {
-        this.affiliationService.getAffiliationsId()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                console.log('getAffiliationsIds', data);
-
-                if( data.length != 0 ) {
-                    let affiliationIds = data.splice(0,20).join();
-                    this.getAffiliationsById( affiliationIds );
-                    
-                }
-            },
-            error => {
-                console.log('getBiographyFormError', error);
-            } 
-        );
     };
 
     getAffiliationsById( affiliationIds ): void {
@@ -354,6 +335,25 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             };
         }
         */
+        );
+    };
+
+    getAffiliationsId(): void {
+        this.affiliationService.getAffiliationsId()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                console.log('getAffiliationsIds', data);
+
+                if( data.length != 0 ) {
+                    let affiliationIds = data.splice(0,20).join();
+                    this.getAffiliationsById( affiliationIds );
+                    
+                }
+            },
+            error => {
+                console.log('getBiographyFormError', error);
+            } 
         );
     };
 

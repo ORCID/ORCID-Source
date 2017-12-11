@@ -142,7 +142,7 @@ public class ExternalIDValidator {
         if (!errors.isEmpty()) {
             StringBuffer errorString = new StringBuffer();
             errors.forEach(n -> errorString.append(" " + n));
-            throw new ActivityIdentifierValidationException("Invalid external-id " + errorString.toString());
+            throw new ActivityIdentifierValidationException("Invalid external-id" + errorString.toString());
         }
     }
 

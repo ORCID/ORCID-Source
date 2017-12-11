@@ -277,7 +277,12 @@ export const manageMembersCtrl = angular.module('orcidApp').controller(
                             $scope.client_id = "";
                             $scope.success_message = om.get('admin.edit_client.success');
                         } else {
-                            $scope.client.errors = data.errors;
+                        	$scope.client = data;
+                            $scope.member = null;
+                            for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
+                                $scope.client.redirectUris[i].actType.value = JSON.parse($scope.client.redirectUris[i].actType.value);
+                                $scope.client.redirectUris[i].geoArea.value = JSON.parse($scope.client.redirectUris[i].geoArea.value);
+                            } 
                         }
                         $scope.$apply();
                         $scope.closeModal();

@@ -104,10 +104,10 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
-    public List<OrgDisambiguatedEntity> findOrgsByIndexingStatus(IndexingStatus indexingStatus, int firstResult, int maxResult) {
-        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where indexingStatus = :indexingStatus",
+    public List<OrgDisambiguatedEntity> findOrgsPendingIndexing(int firstResult, int maxResult) {
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where indexingStatus != :indexingStatus",
                 OrgDisambiguatedEntity.class);
-        query.setParameter("indexingStatus", indexingStatus);
+        query.setParameter("indexingStatus", IndexingStatus.DONE);
         query.setFirstResult(0);
         query.setMaxResults(maxResult);
         return query.getResultList();

@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.pojo.WorkGroup;
 
@@ -52,7 +53,7 @@ public class WorksPaginator {
         List<WorkGroup> workGroups = new ArrayList<>();
         for (int i = offset; i < Math.min(offset + PAGE_SIZE, filteredGroups.size()); i++) {
             org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = filteredGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i));
+            workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
         worksPage.setWorkGroups(workGroups);
         worksPage.setNextOffset(offset + PAGE_SIZE);
@@ -64,16 +65,34 @@ public class WorksPaginator {
         List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
 
         WorksPage worksPage = new WorksPage();
-        worksPage.setTotalGroups(works.getWorkGroup().size());
+        worksPage.setTotalGroups(sortedGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
-        for (int i = 0; i < limit; i++) {
+        for (int i = 0; i < limit && i < sortedGroups.size(); i++) {
             org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = sortedGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i));
+            workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
         worksPage.setWorkGroups(workGroups);
         worksPage.setNextOffset(limit);
+        return worksPage;
+    }
+    
+    public WorksPage getAllWorks(String orcid, String sort, boolean sortAsc) {
+        Works works = worksCacheManager.getGroupedWorks(orcid);
+        List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
+
+        WorksPage worksPage = new WorksPage();
+        worksPage.setTotalGroups(sortedGroups.size());
+
+        List<WorkGroup> workGroups = new ArrayList<>();
+        for (int i = 0; i < sortedGroups.size(); i++) {
+            org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = sortedGroups.get(i);
+            workGroups.add(WorkGroup.valueOf(group, i, orcid));
+        }
+
+        worksPage.setWorkGroups(workGroups);
+        worksPage.setNextOffset(sortedGroups.size());
         return worksPage;
     }
 
@@ -111,7 +130,7 @@ public class WorksPaginator {
         @Override
         public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
             if (o1.getWorkSummary().get(0).getPublicationDate() == null && o2.getWorkSummary().get(0).getPublicationDate() == null) {
-                return 0;
+                return new TitleComparator().compare(o1, o2) * -1; // reverse secondary order
             }
             
             if (o1.getWorkSummary().get(0).getPublicationDate() == null) {
@@ -130,35 +149,73 @@ public class WorksPaginator {
 
         @Override
         public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
-            if (o1.getWorkSummary().get(0).getTitle().getTitle() == null && o2.getWorkSummary().get(0).getTitle().getTitle() == null) {
-                return 0;
-            }
+            String firstTitle = getTitle(o1.getWorkSummary().get(0));
+            String secondTitle = getTitle(o2.getWorkSummary().get(0));
             
-            if (o1.getWorkSummary().get(0).getTitle().getTitle() == null) {
+            if (firstTitle == null && secondTitle != null) {
                 return -1;
             }
             
-            if (o2.getWorkSummary().get(0).getTitle().getTitle() == null) {
+            if (secondTitle == null && firstTitle != null) {
                 return 1;
             }
             
-            int comparison = o1.getWorkSummary().get(0).getTitle().getTitle().getContent().compareTo(o2.getWorkSummary().get(0).getTitle().getTitle().getContent());
+            int comparison = 0;
+            if (firstTitle != null && secondTitle != null) {
+                comparison = firstTitle.compareTo(secondTitle);
+            }
+            
             if (comparison == 0) {
-                if (o1.getWorkSummary().get(0).getTitle().getSubtitle() == null && o2.getWorkSummary().get(0).getTitle().getTitle() == null) {
+                String firstSubtitle = getSubtitle(o1.getWorkSummary().get(0));
+                String secondSubtitle = getSubtitle(o2.getWorkSummary().get(0));
+                
+                if (firstSubtitle == null && secondSubtitle == null) {
                     return 0;
                 }
                 
-                if (o1.getWorkSummary().get(0).getTitle().getSubtitle() == null) {
+                if (firstSubtitle == null) {
                     return -1;
                 }
                 
-                if (o2.getWorkSummary().get(0).getTitle().getSubtitle() == null) {
+                if (secondSubtitle == null) {
                     return 1;
                 }
                 
-                comparison = o1.getWorkSummary().get(0).getTitle().getSubtitle().getContent().compareTo(o2.getWorkSummary().get(0).getTitle().getSubtitle().getContent());
+                comparison = firstSubtitle.compareTo(secondSubtitle);
             }
             return comparison;
+        }
+        
+        private String getTitle(WorkSummary workSummary) {
+            if (workSummary.getTitle() == null) {
+                return null;
+            }
+            
+            if (workSummary.getTitle().getTitle() == null) {
+                return null;
+            }
+            
+            if (workSummary.getTitle().getTitle().getContent() == null) {
+                return null;
+            }
+            
+            return workSummary.getTitle().getTitle().getContent().toLowerCase();
+        }
+        
+        private String getSubtitle(WorkSummary workSummary) {
+            if (workSummary.getTitle() == null) {
+                return null;
+            }
+            
+            if (workSummary.getTitle().getSubtitle() == null) {
+                return null;
+            }
+            
+            if (workSummary.getTitle().getSubtitle().getContent() == null) {
+                return null;
+            }
+            
+            return workSummary.getTitle().getSubtitle().getContent().toLowerCase();
         }
     }
     
@@ -181,4 +238,5 @@ public class WorksPaginator {
             return o1.getWorkSummary().get(0).getType().name().compareTo(o2.getWorkSummary().get(0).getType().name());
         }
     }
+
 }

@@ -5,7 +5,7 @@ import { Injectable, Pipe, PipeTransform }
     name: "orderBy"
 })
 
-@Injectable()
+//@Injectable()
 export class OrderByPipe implements PipeTransform {
     transform(array: Array<string>, args: string): Array<string> {
         array.sort((a: any, b: any) => {

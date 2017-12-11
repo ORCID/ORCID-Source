@@ -1,23 +1,18 @@
 import * as angular 
     from 'angular';
 
-import { CommonModule } 
-    from '@angular/common'; 
-
 import { Directive, NgModule } 
     from '@angular/core';
-
-import { FormsModule }
-    from '@angular/forms'; // <-- NgModel lives here
 
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
+//User generated
 import { BiographyComponent } 
     from './biography.component.ts';
 
-import { PrivacytoggleNg2Module }
-    from './../privacytoggle/privacyToggle.ts';
+import { CommonNg2Module }
+    from './../common/common.ts';
 
 // This is the Angular 1 part of the module
 export const BiographyModule = angular.module(
@@ -29,9 +24,7 @@ export const BiographyModule = angular.module(
 @NgModule(
     {
         imports: [
-            CommonModule,
-            FormsModule,
-            PrivacytoggleNg2Module
+            CommonNg2Module
         ],
         declarations: [ 
             BiographyComponent

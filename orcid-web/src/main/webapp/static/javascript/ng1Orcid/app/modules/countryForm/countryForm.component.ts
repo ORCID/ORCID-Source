@@ -30,6 +30,7 @@ import { ModalService }
 })
 export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
 
     bulkEditShow: any; ///
     countryForm: any;
@@ -67,7 +68,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 "errors":[],
                 "required":true,
                 "getRequiredMessage":null,
-                "visibility": null
+                "visibility": 'PUBLIC'
             },
             "displayIndex":1,
             "source":this.orcidId,
@@ -181,7 +182,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    setCountryForm(): void {
+    setCountryForm( closeAfterAction ): void {
 
         this.countryService.setCountryData( this.countryForm )
         .takeUntil(this.ngUnsubscribe)
@@ -190,22 +191,25 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.countryForm = data;
                 if (this.countryForm.errors.length == 0){
                     this.getCountryForm();
-                    //this.closeEditModal();
+                    this.countryService.notifyOther();
+                    if( closeAfterAction == true ) {
+                        this.closeEditModal();
+                    }
                 }else{
-                    console.log(this.countryForm.errors);
+                    //console.log(this.countryForm.errors);
                 }
+
             },
             error => {
-                console.log('setBiographyFormError', error);
+                //console.log('setBiographyFormError', error);
             } 
         );
         this.countryForm.visibility = null;
     };
     
-    ///
-    setPrivacy(priv, $event): void{
-        $event.preventDefault();
-        this.defaultVisibility = priv;
+    privacyChange( obj ): any {
+        this.countryForm.visibility.visibility = obj;
+        this.setCountryForm( false );   
     };
     
     ///
@@ -266,6 +270,9 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        this.subscription = this.countryService.notifyObservable$.subscribe(
+            (res) => {}
+        );
     };
 
     ngOnDestroy() {

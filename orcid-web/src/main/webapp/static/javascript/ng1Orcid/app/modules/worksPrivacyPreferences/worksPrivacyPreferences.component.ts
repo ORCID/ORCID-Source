@@ -7,7 +7,7 @@ import 'rxjs/add/operator/switchMap';
 import { PrefsSrvc } 
     from '../../shared/prefs.service.ts';
 import { Preferences } 
-    from '../../shared/preferences.ts';
+    from '../../interfaces/preferences.ts';
 import { CommonService } 
     from '../../shared/commonService.ts';
 

@@ -1,0 +1,109 @@
+import { NgFor, NgIf } 
+    from '@angular/common'; 
+
+import { AfterViewInit, Component, OnDestroy, OnInit } 
+    from '@angular/core';
+
+import { Observable } 
+    from 'rxjs/Rx';
+
+import { Subject } 
+    from 'rxjs/Subject';
+
+import { Subscription }
+    from 'rxjs/Subscription';
+
+import { AlsoKnownAsService } 
+    from '../../shared/alsoKnownAs.service.ts';
+
+import { EmailService } 
+    from '../../shared/emailService.ts';
+
+import { ModalService } 
+    from '../../shared/modalService.ts'; 
+
+@Component({
+    selector: 'also-known-as-ng2',
+    template:  scriptTmpl("also-known-as-ng2-template")
+})
+export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
+
+    formData: any;
+    emails: any;
+    emailSrvc: any;
+
+    constructor( 
+        private alsoKnownAsService: AlsoKnownAsService,
+        private emailService: EmailService,
+        private modalService: ModalService
+    ) {
+        this.formData = {
+        };
+        this.emails = {};
+    }
+
+    deleteOtherName(otherName): void{
+        let otherNames = this.formData.otherNames;
+        let len = otherNames.length;
+        while (len--) {            
+            if (otherNames[len] == otherName){                
+                otherNames.splice(len,1);
+            }
+        }        
+    };
+
+    getformData(): void {
+        this.alsoKnownAsService.getData()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.formData = data;
+                console.log('this.getForm', this.formData);
+            },
+            error => {
+                console.log('getAlsoKnownAsFormError', error);
+            } 
+        );
+    };
+
+    openEditModal(): void{      
+        this.emailService.getEmails()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalAlsoKnownAsForm'});
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                console.log('getEmails', error);
+            } 
+        );
+    };
+
+    //Default init functions provided by Angular Core
+    ngAfterViewInit() {
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        this.subscription = this.alsoKnownAsService.notifyObservable$.subscribe(
+            (res) => {
+                this.getformData();
+                console.log('notified', res);
+            }
+        );
+    };
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
+
+    ngOnInit() {
+        this.getformData();
+    };
+
+}
