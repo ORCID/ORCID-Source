@@ -162,6 +162,8 @@
         <#include "/includes/ng2_templates/country-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
+        <#include "/includes/ng2_templates/keywords-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/keywords-ng2-template.ftl">
         <#include "/includes/ng2_templates/modal-ng2-template.ftl">
         <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
         <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">

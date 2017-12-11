@@ -28,32 +28,52 @@ import { UpgradeModule }
 //User generated modules imports
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
+
 import { AlsoKnownAsNg2Module } 
     from './alsoKnownAs/alsoKnownAs.ts';
+
 import { AlsoKnownAsFormNg2Module } 
     from './alsoKnownAsForm/alsoKnownAsForm.ts';
+
 import { BiographyNg2Module } 
     from './biography/biography.ts';
+
 import { CountryNg2Module } 
     from './country/country.ts';
+
 import { CountryFormNg2Module } 
     from './countryForm/countryForm.ts';
+
 import { EmailUnverifiedWarningNg2Module } 
     from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
+
 import { EmailVerificationSentMesssageNg2Module } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+
 import { FundingNg2Module } 
     from './funding/funding.ts';
+
+import { KeywordsNg2Module } 
+    from './keywords/keywords.ts';
+
+import { KeywordsFormNg2Module } 
+    from './keywordsForm/keywordsForm.ts';
+
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
+
 import { NameNg2Module } 
     from './name/name.ts';
+
 import { ThanksForRegisteringNg2Module } 
     from './thanksForRegistering/thanksForRegistering.ts';
+
 import { ThanksForVerifyingNg2Module } 
     from './thanksForVerifying/thanksForVerifying.ts';
+
 import { WidgetNg2Module } 
     from './widget/widget.ts';
+
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
@@ -78,6 +98,9 @@ import { FundingService }
 
 //import { GroupedActivitiesUtilService } 
 //    from '../shared/groupedActivitiesService.ts';
+
+import { KeywordsService } 
+    from '../shared/keywords.service.ts';
 
 import { ModalService } 
     from '../shared/modalService.ts';
@@ -135,6 +158,8 @@ export class RootCmp {
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         //FundingNg2Module,
+        KeywordsFormNg2Module,
+        KeywordsNg2Module,
         ModalNg2Module,
         NameNg2Module,
         ThanksForRegisteringNg2Module,
@@ -154,6 +179,7 @@ export class RootCmp {
         EmailService,
         FundingService,
         //GroupedActivitiesUtilService,
+        KeywordsService,
         ModalService,
         NameService,
         WorkspaceService

@@ -88,7 +88,7 @@
       <!-- Other Names -->
 
 
-      <also-known-as-ng2></also-known-as-ng2>
+    <also-known-as-ng2></also-known-as-ng2>
         
     <!--
       <div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
@@ -120,9 +120,7 @@
     Original Code
     --------------------------
     -->
-    <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <country-ng2></country-ng2>
-    </@orcid.checkFeatureStatus>
 
     <!--
     <div ng-controller="CountryCtrl" class="workspace-section country">
@@ -149,7 +147,7 @@
     </div>
     -->
 
-
+    <keywords-ng2></keywords-ng2>
       <!-- Keywords -->         
       <div ng-controller="KeywordsCtrl" class="workspace-section keywords">
         <div class="workspace-section-header">
@@ -778,6 +776,10 @@
 
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
+    <also-known-as-form-ng2></also-known-as-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <!-- Ng1 directive -->
