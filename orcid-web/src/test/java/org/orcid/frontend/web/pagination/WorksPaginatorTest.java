@@ -18,6 +18,7 @@ package org.orcid.frontend.web.pagination;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
@@ -152,6 +153,28 @@ public class WorksPaginatorTest {
         WorksPage page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
         assertEquals(1000, page.getTotalGroups());
         assertEquals(1000, page.getWorkGroups().size());
+    }
+    
+    /**
+     * Check null titles don't cause errors
+     */
+    @Test
+    public void testGetWorkWithNulltitle() {
+        WorkGroup workGroup = getPublicWorkGroup(0);
+        for (WorkSummary workSummary : workGroup.getWorkSummary()) {
+            workSummary.setTitle(null);
+        }
+        Works works = new Works();
+        works.getWorkGroup().add(workGroup);
+        
+        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
+        WorksPage page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
+        
+        for (org.orcid.pojo.WorkGroup group : page.getWorkGroups()) {
+            for (WorkForm work : group.getWorks()) {
+                assertEquals("", work.getTitle().getValue());
+            }
+        }
     }
 
     private Works getWorkGroupsWithNullDates() {
