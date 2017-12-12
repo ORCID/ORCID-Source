@@ -92,7 +92,7 @@
             <also-known-as-ng2></also-known-as-ng2>
             </@orcid.checkFeatureStatus>
 
-            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=true>
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
               <div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
                 <div class="workspace-section-header">
                   <div class="workspace-section-title">
@@ -121,7 +121,7 @@
             <country-ng2></country-ng2>
             </@orcid.checkFeatureStatus>
 
-            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=true>
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
             <div ng-controller="CountryCtrl" class="workspace-section country">
                 <div class="workspace-section-header">
                     <div class="workspace-section-title">
@@ -150,7 +150,7 @@
             <keywords-ng2></keywords-ng2>
             </@orcid.checkFeatureStatus>
 
-            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=true>
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
               <!-- Keywords -->         
               <div ng-controller="KeywordsCtrl" class="workspace-section keywords">
                 <div class="workspace-section-header">
