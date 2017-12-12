@@ -57,7 +57,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
 
     formColorBoxResize(): void {
         if ( isMobile() ) {
-            console.log('isMobile');
+            //console.log('isMobile');
             $.colorbox.resize(
                 {
                     height: '100%',
@@ -66,7 +66,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
             );
         }
         else {
-            console.log('notmobile');
+            //console.log('notmobile');
             $.colorbox.resize(
                 {
                     width:'800px'
