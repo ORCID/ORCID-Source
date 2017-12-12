@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<!--
+<@orcid.checkFeatureStatus 'ANGULAR1_LEGACY'>
 <script type="text/ng-template" id="edit-aka">  
   
     <div class="lightbox-container" id="aka-popover">
@@ -98,8 +98,7 @@
         </div>
     </div>      
 </script>
--->
-<!--
+
 <script type="text/ng-template" id="edit-country">
 
     <div class="lightbox-container" id="country-popover">
@@ -190,7 +189,6 @@
         </div>
     </div>  
 </script>
--->
 
 <script type="text/ng-template" id="edit-keyword">
     <!-- Keywords -->
@@ -274,6 +272,7 @@
         </div>
     </div>
 </script>
+</@orcid.checkFeatureStatus>
 
 <script type="text/ng-template" id="edit-websites">
     <div class="lightbox-container" id="websites-popover">

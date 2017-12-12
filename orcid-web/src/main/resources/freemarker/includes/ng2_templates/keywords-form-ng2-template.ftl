@@ -74,15 +74,6 @@
                                         elementId="keywords-privacy-toggle" 
                                         privacyNodeName="visibility" 
                                         ></privacy-toggle-ng2> 
-                                        <!--
-                                        <@orcid.privacyToggle3  angularModel="keyword.visibility.visibility"
-                                            questionClick="toggleClickPrivacyHelp(index)"
-                                            clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-                                            publicClick="setPrivacyModal('PUBLIC', $event, keyword)" 
-                                            limitedClick="setPrivacyModal('LIMITED', $event, keyword)" 
-                                            privateClick="setPrivacyModal('PRIVATE', $event, keyword)"
-                                            elementId="index"/>
-                                            -->
                                     </li>
                                 </ul>
                                 <span class="created-date pull-right" *ngIf="keyword.createdDate" [ngClass]="{'hidden-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>

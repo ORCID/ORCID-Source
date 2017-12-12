@@ -63,7 +63,12 @@ public enum Features implements Feature {
     
     @Label("Turn on angular2 features that are on development")
     ANGULAR2_DEV;
-    
+
+    @Label("Turn on angular2 features that are ready for QA")
+    ANGULAR2_QA;
+
+    @Label("Turn off angular1 features that are legacy")
+    ANGULAR1_LEGACY;  
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

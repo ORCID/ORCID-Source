@@ -83,8 +83,8 @@
                             <div class="col-md-6">                                  
                                 <div class="aka">
                                     <select 
-                                        [(ngModel)]="country.iso2Country.value" 
-                                        [disabled]="country.source != orcidId"
+                                        [(ngModel)]="country?.iso2Country?.value" 
+                                        [disabled]="country?.source != orcidId"
                                         [ngClass]="{ 'not-allowed': country?.source != orcidId }"
                                         focus-me="newInput"
                                         name="country" 
@@ -95,7 +95,7 @@
                                         <#list isoCountries?keys as key>
                                         <option 
                                             value="${key}"
-                                            [selected]="country.iso2Country.value == '${key}'"
+                                            [selected]="country?.iso2Country?.value == '${key}'"
                                         >
                                             ${isoCountries[key]}
                                         </option>
@@ -103,8 +103,8 @@
                                     </select>                                      
                                 </div>         
                                                         
-                                <div class="source" *ngIf="country.sourceName || country?.sourceName == null">
-                                    <@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="country.sourceName">{{country.sourceName}}</span><span *ngIf="country.sourceName == null">{{orcidId}}</span>
+                                <div class="source" *ngIf="country?.sourceName || country?.sourceName == null">
+                                    <@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="country?.sourceName">{{country.sourceName}}</span><span *ngIf="country?.sourceName == null">{{orcidId}}</span>
                                 </div>
                                 
                             </div> 
@@ -147,8 +147,8 @@
                                         </privacy-toggle-ng2>
                                     </li>
                                 </ul>
-                                <span class="created-date pull-right hidden-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
-                                <span class="created-date pull-left visible-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+                                <span class="created-date pull-right hidden-xs" *ngIf="country?.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+                                <span class="created-date pull-left visible-xs" *ngIf="country?.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
                             </div>                                  
                         </div>                                          
                     </div>         
