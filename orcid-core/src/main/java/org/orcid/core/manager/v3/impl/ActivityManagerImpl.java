@@ -32,10 +32,8 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.WorkForm;
 
 public class ActivityManagerImpl extends Object implements ActivityManager {
     
@@ -51,15 +49,6 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
 
-    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid) {
-        LinkedHashMap<Long, WorkForm> workMap = new LinkedHashMap<>();
-        List<Work> works = workManager.findPublicWorks(orcid);
-        if (works != null)
-            for (Work work : works)                
-                workMap.put(work.getPutCode(), WorkForm.valueOf(work));                          
-        return workMap;
-    }
-    
     public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid) {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid);
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();

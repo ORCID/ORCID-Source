@@ -53,8 +53,6 @@ import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,10 +67,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller("worksController")
 @RequestMapping(value = { "/works" })
 public class WorksController extends BaseWorkspaceController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorksController.class);
-
-    private static final String WORKS_MAP = "WORKS_MAP";
 
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
 
@@ -115,50 +109,6 @@ public class WorksController extends BaseWorkspaceController {
             workManager.removeWorks(getEffectiveUserOrcid(), workIdLs);
         }
         return workIdLs;
-    }
-
-    /**
-     * List works associated with a profile
-     */
-    @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/works.json", method = RequestMethod.GET)
-    public @ResponseBody List<WorkForm> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
-        Map<String, String> countries = retrieveIsoCountries();
-        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        List<WorkForm> workList = new ArrayList<>();
-        WorkForm work = null;
-        String[] workIds = workIdsStr.split(",");
-
-        if (workIds != null) {
-            HashMap<String, WorkForm> worksMap = (HashMap<String, WorkForm>) request.getSession().getAttribute(WORKS_MAP);
-            // this should never happen, but just in case.
-            if (worksMap == null) {
-                createWorksIdList(request);
-                worksMap = (HashMap<String, WorkForm>) request.getSession().getAttribute(WORKS_MAP);
-            }
-            for (String workId : workIds) {
-                work = worksMap.get(Long.valueOf(workId));
-                // Set country name
-                if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-                    work.setCountryName(countryName);
-                }
-                // Set language name
-                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-                    work.setLanguageName(languageName);
-                }
-                // Set translated title language name
-                if (!(work.getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
-                    work.getTranslatedTitle().setLanguageName(languageName);
-                }
-
-                workList.add(work);
-            }
-        }
-
-        return workList;
     }
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
@@ -671,16 +621,6 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
-    /**
-     * List works ids associated with a profile
-     */
-    @RequestMapping(value = "/workIds.json", method = RequestMethod.GET)
-    public @ResponseBody List<String> getWorksJson(HttpServletRequest request) {
-        // Get cached profile
-        List<String> workIds = createWorksIdList(request);
-        return workIds;
-    }
-    
     @RequestMapping(value = "/worksPage.json", method = RequestMethod.GET)
     public @ResponseBody WorksPage getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
@@ -697,30 +637,6 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody WorksPage refreshWorkGroupsJson(@RequestParam("limit") int limit, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.refreshWorks(orcid, limit, sort, sortAsc);
-    }
-
-    /**
-     * created a work id list and sorts a map associated with the list in in the
-     * session
-     * 
-     */
-    private List<String> createWorksIdList(HttpServletRequest request) {
-        String orcid = getEffectiveUserOrcid();
-        List<Work> works = workManager.findWorks(orcid);
-        HashMap<Long, WorkForm> worksMap = new HashMap<Long, WorkForm>();
-        List<String> workIds = new ArrayList<String>();
-        if (works != null) {
-            for (Work work : works) {
-                try {
-                    worksMap.put(work.getPutCode(), WorkForm.valueOf(work));
-                    workIds.add(String.valueOf(work.getPutCode()));
-                } catch (Exception e) {
-                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getPutCode());
-                }
-            }
-            request.getSession().setAttribute(WORKS_MAP, worksMap);
-        }
-        return workIds;
     }
 
     /**
