@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<@orcid.checkFeatureStatus 'ANGULAR1_LEGACY'>
+<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=true>
 <script type="text/ng-template" id="edit-aka">  
   
     <div class="lightbox-container" id="aka-popover">
