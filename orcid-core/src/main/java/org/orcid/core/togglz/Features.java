@@ -34,6 +34,9 @@ public enum Features implements Feature {
     @Label("Https for links to iDs")
     HTTPS_IDS,
     
+    @Label("Arabic translation")
+    LANG_AR,
+    
     @Label("Last modified")
     LAST_MOD,
     
