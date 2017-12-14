@@ -17,10 +17,10 @@ import { AlsoKnownAsService }
     from '../../shared/alsoKnownAs.service.ts';
 
 import { CommonService } 
-    from '../../shared/commonService.ts';
+    from '../../shared/common.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'also-known-as-form-ng2',

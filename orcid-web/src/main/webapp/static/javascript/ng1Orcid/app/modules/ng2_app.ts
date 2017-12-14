@@ -79,37 +79,37 @@ import { WorksPrivacyPreferencesNg2Module }
 
 //User generated services
 import { AffiliationService } 
-    from '../shared/affiliationService.ts';
+    from '../shared/affiliation.service.ts';
 
 import { AlsoKnownAsService } 
     from '../shared/alsoKnownAs.service.ts';
 
 import { BiographyService } 
-    from '../shared/biographyService.ts';
+    from '../shared/biography.service.ts';
 
 import { CommonService }
-    from '../shared/commonService.ts'
+    from '../shared/common.service.ts'
 
 import { EmailService } 
-    from '../shared/emailService.ts';
+    from '../shared/email.service.ts';
 
 import { FundingService } 
-    from '../shared/fundingService.ts';
+    from '../shared/funding.service.ts';
 
 //import { GroupedActivitiesUtilService } 
-//    from '../shared/groupedActivitiesService.ts';
+//    from '../shared/groupedActivities.service.ts';
 
 import { KeywordsService } 
     from '../shared/keywords.service.ts';
 
 import { ModalService } 
-    from '../shared/modalService.ts';
+    from '../shared/modal.service.ts';
 
 import { NameService } 
-    from '../shared/nameService.ts'; 
+    from '../shared/name.service.ts'; 
 
 import { WorkspaceService } 
-    from '../shared/workspaceService.ts'; 
+    from '../shared/workspace.service.ts'; 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {

@@ -47,7 +47,7 @@
                     </li>
                     <li>
                         <privacy-toggle-ng2 
-                            [dataPrivacyObj]="biographyForm"  
+                            [dataPrivacyObj]="formData"  
                             (privacyUpdate)="privacyChange($event)"
                             elementId="bio-privacy-toggle" 
                             privacyNodeName="visibility" 
@@ -59,14 +59,14 @@
         
         <div class="row">
             <div class="col-md-12">   
-                <div style="white-space: pre-wrap" *ngIf="!showEdit" (click)="toggleEdit()">{{biographyForm?.biography?.value}}</div> 
+                <div style="white-space: pre-wrap" *ngIf="!showEdit" (click)="toggleEdit()">{{formData?.biography?.value}}</div> 
             </div>
         </div>
         
         <div *ngIf="showEdit" class="biography-edit">
             <div class="row">
                 <div class="col-md-12 col-xs-12 col-sm-12">
-                    <textarea id="biography" name="biography" class="input-xlarge" rows="20" (change)="checkLength()" [(ngModel)]="biographyForm.biography.value"></textarea>
+                    <textarea id="biography" name="biography" class="input-xlarge" rows="20" (change)="checkLength()" [(ngModel)]="formData.biography.value"></textarea>
                 </div>
             </div>
             <div class="row">
@@ -74,8 +74,8 @@
                     <span class="orcid-error" *ngIf="lengthError==true">
                         <div>${springMacroRequestContext.getMessage("Length.changePersonalInfoForm.biography")}</div>
                     </span>
-                    <span class="orcid-error" *ngIf="biographyForm?.biography?.errors?.length > 0">
-                        <div *ngFor='let error of biographyForm?.biography?.errors'>{{error}}</div>
+                    <span class="orcid-error" *ngIf="formData?.biography?.errors?.length > 0">
+                        <div *ngFor='let error of formData?.biography?.errors'>{{error}}</div>
                     </span>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="pull-right full-width">
                         <a class="cancel" (click)="cancel()"><@spring.message "freemarker.btncancel"/></a>
-                        <button class="btn btn-primary" (click)="setBiographyForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+                        <button class="btn btn-primary" (click)="setformData()"><@spring.message "freemarker.btnsavechanges"/></button>
                     </div>
                 </div>
             </div>                                                          

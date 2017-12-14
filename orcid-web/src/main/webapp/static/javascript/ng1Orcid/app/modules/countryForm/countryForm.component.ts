@@ -16,13 +16,13 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { CommonService } 
-    from '../../shared/commonService.ts';
+    from '../../shared/common.service.ts';
 
 import { CountryService } 
-    from '../../shared/countryService.ts';
+    from '../../shared/country.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'country-form-ng2',
@@ -47,7 +47,8 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService
     ) {
         this.bulkEditShow = false;
-        this.countryForm = null;
+        this.countryForm = {
+        };
         this.countryFormAddresses = [];
         this.countryFormErrors = [];
         this.defaultVisibility = null;
@@ -101,7 +102,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.countryForm = data;
                 this.countryFormAddresses = this.countryForm.addresses;
-                
+
                 if ( this.countryForm.addresses.length == 0 ){                  
                     this.addNewCountry();
                 } else {
@@ -117,7 +118,6 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( this.countryForm.errors != null ) {
                     this.countryFormErrors = this.countryForm.errors;
                 }
-                //console.log('this.countryForm', this.countryForm);
 
                 if( this.countryForm != null 
                     && this.countryForm.addresses != null 
@@ -168,7 +168,6 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.defaultVisibility = this.countryForm.visibility.visibility;                    
                 }
 
-                //console.log('this.countryForm2', this.countryForm); 
             },
             error => {
                 console.log('getCountryFormError', error);
