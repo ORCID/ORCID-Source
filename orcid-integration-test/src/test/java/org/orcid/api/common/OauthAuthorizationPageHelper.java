@@ -69,7 +69,7 @@ public class OauthAuthorizationPageHelper {
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());        
        
         try {
-            BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//p[contains(text(),'has asked for the following access to your ORCID Record')]")), webDriver);
+            BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(text(),'has asked for the following access to your ORCID Record')]")), webDriver);
             if (longLife == false) {
                 //disablePersistentToken
                 WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
@@ -80,9 +80,9 @@ public class OauthAuthorizationPageHelper {
                     }
                 }            
             }
-            
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
             By authorizeElementLocator = By.id("authorize");
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(authorizeElementLocator));
             WebElement authorizeButton = webDriver.findElement(By.id("authorize"));
             authorizeButton.click();
             (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
