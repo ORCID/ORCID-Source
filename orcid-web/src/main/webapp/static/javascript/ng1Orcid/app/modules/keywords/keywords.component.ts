@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { CountryService } 
-    from '../../shared/country.service.ts';
+import { KeywordsService } 
+    from '../../shared/keywords.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -23,55 +23,51 @@ import { ModalService }
     from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'country-ng2',
-    template:  scriptTmpl("country-ng2-template")
+    selector: 'keywords-ng2',
+    template:  scriptTmpl("keywords-ng2-template")
 })
-export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
+export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    countryForm: any;
-    countryFormAddresses: any;
+    form: any;
     emails: any;
     emailSrvc: any;
 
     constructor( 
-        private countryService: CountryService,
+        private keywordsService: KeywordsService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
 
-        this.countryForm = {
-            addresses: {
-            }
+        this.form = {
         };
-        this.countryFormAddresses = [];
+
         this.emails = {};
     }
 
-    getCountryForm(): void {
-        this.countryService.getCountryData()
-        //.takeUntil(this.ngUnsubscribe)
+    getData(): void {
+        this.keywordsService.getData()
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.countryForm = data;
-                this.countryFormAddresses = this.countryForm.addresses;
-                //console.log('this.countryForm', this.countryForm);
+                this.form = data;
+                //console.log('this.keywords', this.form);
             },
             error => {
-                console.log('getCountryFormError', error);
+                console.log('getKeywordsFormError', error);
             } 
         );
     };
 
     openEditModal(): void{      
         this.emailService.getEmails()
-        //.takeUntil(this.ngUnsubscribe)
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalCountryForm'});
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalKeywordsForm'});
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
@@ -86,9 +82,9 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-        this.subscription = this.countryService.notifyObservable$.subscribe(
+        this.subscription = this.keywordsService.notifyObservable$.subscribe(
             (res) => {
-                this.getCountryForm();
+                this.getData();
                 console.log('notified', res);
             }
         );
@@ -100,7 +96,8 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getCountryForm();
+        this.getData();
     };
 
 }
+

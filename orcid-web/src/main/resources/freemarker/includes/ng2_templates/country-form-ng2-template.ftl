@@ -81,11 +81,11 @@
                                     
                         <div class="row aka-row" *ngFor="let country of countryFormAddresses; let index = index; let first = first; let last = last">
                             <div class="col-md-6">                                  
-                                <div class="aka">
+                                <div class="aka" *ngIf="country.iso2country">
                                     <select 
-                                        [(ngModel)]="country.iso2Country.value" 
+                                        [(ngModel)]="country.iso2country.value" 
                                         [disabled]="country.source != orcidId"
-                                        [ngClass]="{ 'not-allowed': country?.source != orcidId }"
+                                        [ngClass]="{ 'not-allowed': country.source != orcidId }"
                                         focus-me="newInput"
                                         name="country" 
                                     >
@@ -95,15 +95,16 @@
                                         <#list isoCountries?keys as key>
                                         <option 
                                             value="${key}"
-                                            [selected]="country.iso2Country.value == '${key}'"
+                                            [selected]="country.iso2country.value == '${key}'"
                                         >
                                             ${isoCountries[key]}
                                         </option>
                                         </#list>
-                                    </select>                                      
+                                    </select>       
+
                                 </div>         
                                                         
-                                <div class="source" *ngIf="country.sourceName || country?.sourceName == null">
+                                <div class="source" *ngIf="country.sourceName || country.sourceName == null">
                                     <@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="country.sourceName">{{country.sourceName}}</span><span *ngIf="country.sourceName == null">{{orcidId}}</span>
                                 </div>
                                 

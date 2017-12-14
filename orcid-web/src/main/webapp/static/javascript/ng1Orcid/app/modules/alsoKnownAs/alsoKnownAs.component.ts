@@ -17,10 +17,10 @@ import { AlsoKnownAsService }
     from '../../shared/alsoKnownAs.service.ts';
 
 import { EmailService } 
-    from '../../shared/emailService.ts';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'also-known-as-ng2',
@@ -40,6 +40,7 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService
     ) {
         this.formData = {
+            otherNames: null
         };
         this.emails = {};
     }
@@ -60,7 +61,12 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.formData = data;
-                console.log('this.getForm', this.formData);
+
+                if( this.formData.otherNames == null ) {
+                    this.formData.otherNames = { value: null };
+                }
+
+                //console.log('this.getForm', this.formData);
             },
             error => {
                 console.log('getAlsoKnownAsFormError', error);

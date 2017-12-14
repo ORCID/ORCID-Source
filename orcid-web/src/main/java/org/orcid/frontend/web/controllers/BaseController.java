@@ -845,6 +845,23 @@ public class BaseController {
         return features;
     }
     
+    @ModelAttribute("featuresJson")
+    public String getFeaturesJson() {
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        
+        String featuresJson = "";
+        try {
+            featuresJson = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(features));
+        } catch (IOException e) {
+            LOGGER.error("getFeaturesJson error:" + e.toString(), e);
+        }
+
+        return featuresJson;
+    }
+    
     protected void validateVisibility(VisibilityForm form) {
         if(form == null) {
             return;
