@@ -1,5 +1,6 @@
 declare var getBaseUri: any;
 declare var locale_v3: any;
+declare var orcidVar: any;
 
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
@@ -67,10 +68,6 @@ export const languageCtrl = angular.module('orcidApp').controller(
             var testingLangList =
                 [
                     {
-                        "value": "ar",
-                        "label": "العربية"
-                    },
-                    {
                         "value": "cs",
                         "label": "čeština"
                     },
@@ -132,11 +129,29 @@ export const languageCtrl = angular.module('orcidApp').controller(
 
             if (location == parent.location 
                 && window.location.hostname.toLowerCase() != "orcid.org"){
+                //add AR if LANG_AR togglz feature enabled
+                //remove after AR is live and add to testingLangList
+                if (orcidVar.features['LANG_AR'] == true){
+                    testingLangList.unshift({
+                        "value": "ar",
+                        "label": "العربية"
+                    });
+                }
                 $scope.languages = testingLangList;
             }
             else{
+                //add AR if LANG_AR togglz feature enabled
+                //remove after AR is live and add to productionLangList
+                if (orcidVar.features['LANG_AR'] == true){
+                    productionLangList.unshift({
+                        "value": "ar",
+                        "label": "العربية"
+                    });
+                }
                 $scope.languages = productionLangList;
             }
+
+            
 
             //Load Language that is set in the cookie or set default language to english
             $scope.getCurrentLanguage = function(){
