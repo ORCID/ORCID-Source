@@ -14,13 +14,13 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { CountryService } 
-    from '../../shared/countryService.ts';
+    from '../../shared/country.service.ts';
 
 import { EmailService } 
-    from '../../shared/emailService.ts';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'country-ng2',

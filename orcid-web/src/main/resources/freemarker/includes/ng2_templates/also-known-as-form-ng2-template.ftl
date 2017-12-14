@@ -44,7 +44,7 @@
                     <div class="scroll-area">
                        <div class="row aka-row" *ngFor="let otherName of formData.otherNames; let index = index; let first = first; let last = last;" >                                                            
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                <div class="aka">   
+                                <div class="aka" *ngIf="otherName">   
                                     <input type="text" [(ngModel)]="otherName.content" *ngIf="otherName.source == orcidId" focus-me="newInput" />  
                                     <span *ngIf="otherName.source != orcidId && otherName.source != null">{{otherName.content}}</span>                                       
                                 </div>                                      

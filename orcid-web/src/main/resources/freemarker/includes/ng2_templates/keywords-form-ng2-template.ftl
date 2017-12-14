@@ -46,7 +46,7 @@
                     <div class="scroll-area">       
                         <div class="row aka-row" *ngFor="let keyword of form.keywords; let index = index; let first = first; let last = last;">      
                             <div class="col-md-6">
-                                <div class="aka">                                       
+                                <div class="aka" *ngIf="keyword">                                       
                                     <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" focus-me="newInput" />
                                     <span *ngIf="keyword.source != orcidId">{{keyword.content}}</span>                                     
                                 </div>

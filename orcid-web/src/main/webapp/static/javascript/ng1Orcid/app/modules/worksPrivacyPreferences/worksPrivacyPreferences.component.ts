@@ -4,12 +4,13 @@ import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild
 
 import 'rxjs/add/operator/switchMap';
 
-import { PrefsSrvc } 
-    from '../../shared/prefs.service.ts';
 import { Preferences } 
     from '../../interfaces/preferences.ts';
+    
 import { CommonService } 
-    from '../../shared/commonService.ts';
+    from '../../shared/common.service.ts';
+import { PrefsSrvc } 
+    from '../../shared/prefs.service.ts';
 
 
 @Component({

@@ -17,13 +17,13 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { CommonService } 
-    from '../../shared/commonService.ts';
+    from '../../shared/common.service.ts';
 
 import { KeywordsService } 
     from '../../shared/keywords.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'keywords-form-ng2',

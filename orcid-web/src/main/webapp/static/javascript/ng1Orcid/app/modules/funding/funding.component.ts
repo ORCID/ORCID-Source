@@ -22,22 +22,22 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 //import { FundingService } 
-//    from '../../shared/fundingService.ts';
+//    from '../../shared/funding.service.ts';
 
 import { EmailService } 
-    from '../../shared/emailService.ts';
+    from '../../shared/email.service.ts';
 
 import { FundingService } 
-    from '../../shared/fundingService.ts';
+    from '../../shared/funding.service.ts';
 
 import { GroupedActivitiesUtilService } 
-    from '../../shared/groupedActivitiesService.ts';
+    from '../../shared/groupedActivities.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspaceService.ts'; 
+    from '../../shared/workspace.service.ts'; 
 
 @Component({
     selector: 'funding-ng2',
