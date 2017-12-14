@@ -117,6 +117,16 @@ public class APIEndpointParserTest {
         assertEquals("1234-4321-1234-4321", parser.getOrcidId());
     }
     
+    @Test
+    public void testInvalidEventCategory() {
+        ContainerRequest request = getRequest("http://api.qa.orcid.org/orcid-api-web/v2.0/1234-4321-1234-4321/erm");
+        APIEndpointParser parser = new APIEndpointParser(request);
+        assertNotNull(parser.getApiVersion());
+        assertEquals("v2.0", parser.getApiVersion());
+        assertEquals(APIEndpointParser.INVALID_URL_CATEGORY, parser.getCategory());
+        assertEquals("1234-4321-1234-4321", parser.getOrcidId());
+    }
+    
     private ContainerRequest getRequest(String url) {
         InBoundHeaders headers = new InBoundHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");
@@ -125,5 +135,5 @@ public class APIEndpointParserTest {
         return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
                 URI.create(url), headers, null);
     }
-
+    
 }
