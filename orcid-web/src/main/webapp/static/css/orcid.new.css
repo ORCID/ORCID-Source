@@ -3144,7 +3144,6 @@ p.orcid-id-container {
     width: 100%
 }
 
-
 .mini-orcid-icon {
     background: url(../img/orcid_24x24.png) no-repeat;
     background-size: 16px 16px;
@@ -3161,10 +3160,6 @@ p.orcid-id-container {
     height: 14px;
     display: inline-block;
     margin: -2px 0 -2px 2px;
-}
-
-.lang-rl .mini-orcid-icon-16 {
-    margin: -2px 0;
 }
 
 .mini-icon {
@@ -8052,6 +8047,10 @@ ul.comma li:last-child:after {
     float: left
 }
 
+.lang-rl .mini-orcid-icon-16 {
+    margin: -2px 0;
+}
+
 .lang-rl .notification-top-bar .inline-list.pull-right {
     float: left!important
 }
@@ -8110,6 +8109,10 @@ ul.comma li:last-child:after {
     margin-right: 20px
 }
 
+.lang-rl .workspace-accordion-header .toggle-text span{
+    unicode-bidi: plaintext;
+}
+
 .lang-rl .workspace-affiliations ul.sources-options {
     margin-left: -10px
 }
@@ -8121,6 +8124,10 @@ ul.comma li:last-child:after {
 .lang-rl .workspace-private-toolbar {
     text-align: left;
     padding-left: 15px
+}
+
+.lang-rl .workspace-profile .inline-list.visible li{
+    float: right;
 }
 
 .lang-rl .workspace-profile .workspace-section .workspace-section-header .workspace-section-title,.lang-rl .workspace-section-content {
@@ -8152,7 +8159,12 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .privacyToggle+.popover-help-container {
-    right: 90px;
+    right: 100px;
+}
+
+.lang-rl .popover-registry .popover-help-container .popover {
+    left: initial;
+    right: -127px;
 }
 
 #verificationCodeFor2FA {
