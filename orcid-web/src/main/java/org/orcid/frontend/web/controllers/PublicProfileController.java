@@ -358,16 +358,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
         mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
 
-        LinkedHashMap<Long, WorkForm> minimizedWorksMap = new LinkedHashMap<>();
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
-
-        minimizedWorksMap = activityManager.pubMinWorksMap(orcid);
-        if (minimizedWorksMap.size() > 0) {
+        
+        if (worksPaginator.getWorksCount(orcid) > 0) {
             isProfileEmtpy = false;
-        } else {
-            mav.addObject("worksEmpty", true);
         }
 
         affiliationMap = activityManager.affiliationMap(orcid);
@@ -394,11 +390,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            String worksIdsJson = mapper.writeValueAsString(minimizedWorksMap.keySet());
             String affiliationIdsJson = mapper.writeValueAsString(affiliationMap.keySet());
             String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
             String peerReviewIdsJson = mapper.writeValueAsString(peerReviewMap.keySet());
-            mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
             mav.addObject("peerReviewIdsJson", StringEscapeUtils.escapeEcmaScript(peerReviewIdsJson));
@@ -624,41 +618,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
     public @ResponseBody WorksPage getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         return worksPaginator.getWorksPage(orcid, offset, true, sort, sortAsc);
-    }
-
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
-    public @ResponseBody List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
-        Map<String, String> countries = retrieveIsoCountries();
-        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-
-        HashMap<Long, WorkForm> minimizedWorksMap = activityManager.pubMinWorksMap(orcid);
-
-        List<WorkForm> works = new ArrayList<WorkForm>();
-        String[] workIds = workIdsStr.split(",");
-
-        for (String workId : workIds) {
-            if (minimizedWorksMap.containsKey(Long.valueOf(workId))) {
-                WorkForm work = minimizedWorksMap.get(Long.valueOf(workId));                
-                validateVisibility(work.getVisibility().getVisibility());
-                if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-                    work.setCountryName(countryName);
-                }
-                // Set language name
-                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-                    work.setLanguageName(languageName);
-                }
-                // Set translated title language name
-                if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
-                    work.getTranslatedTitle().setLanguageName(languageName);
-                }
-                works.add(work);                
-            }
-        }
-
-        return works;
     }
 
     /**
