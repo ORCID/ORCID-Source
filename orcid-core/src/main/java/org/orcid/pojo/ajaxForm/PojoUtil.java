@@ -24,9 +24,6 @@ import org.orcid.jaxb.model.message.Month;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Year;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 
 public class PojoUtil {
 	
