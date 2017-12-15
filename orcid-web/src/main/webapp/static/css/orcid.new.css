@@ -3144,9 +3144,6 @@ p.orcid-id-container {
     width: 100%
 }
 
-.orcid-id-info {
-    padding: 0 5px;
-}
 
 .mini-orcid-icon {
     background: url(../img/orcid_24x24.png) no-repeat;
@@ -3154,16 +3151,16 @@ p.orcid-id-container {
     width: 16px;
     height: 16px;
     display: block;
-    margin: 2px 2px 0 0;
+    margin: 2px 0;
 }
 
 .mini-orcid-icon-16 {
     background: url(../img/orcid_16x16.png) no-repeat;
     background-size: 14px 14px;
-    width: 14px;
     height: 14px;
     display: inline-block;
     margin: 4px 2px 0 2px;
+    width: 14px;
 }
 
 .mini-icon {
@@ -8053,6 +8050,10 @@ ul.comma li:last-child:after {
 
 .lang-rl .menu-container,.lang-rl .workspace-bar-menu {
     float: left
+}
+
+.lang-rl .mini-orcid-icon-16 {
+    margin: -2px 0;
 }
 
 .lang-rl .notification-top-bar .inline-list.pull-right {

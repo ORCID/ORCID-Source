@@ -72,6 +72,7 @@
         orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};
         orcidVar.version = "${ver}";
         orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
+        orcidVar.features = JSON.parse("${featuresJson}");
       
         <#if (oauth2Screens)??>
         orcidVar.oauth2Screens = true;
