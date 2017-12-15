@@ -109,7 +109,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
         Organization organization = affiliation.getOrganization();
 
-        form.setDateSortString(PojoUtil.createDateSortString(affiliation.getStartDate(), affiliation.getEndDate()));
+        form.setDateSortString(PojoUtil.createDateSortString(affiliation));
         form.setAffiliationName(Text.valueOf(organization.getName()));
         OrganizationAddress address = organization.getAddress();
         form.setCity(Text.valueOf(address.getCity()));
