@@ -40,8 +40,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -50,7 +50,6 @@ import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -89,20 +88,6 @@ public class WorksControllerTest extends BaseControllerTest {
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES));
-    }
-
-    @Test
-    public void testGetWorksJson() throws Exception {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0003"));
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-
-        List<String> work_ids = worksController.getWorksJson(servletRequest);
-
-        assertNotNull(work_ids);
-        assertEquals(5, work_ids.size());
-        work_ids.containsAll(Arrays.asList("11", "12", "13", "14", "15"));
     }
 
     @Test

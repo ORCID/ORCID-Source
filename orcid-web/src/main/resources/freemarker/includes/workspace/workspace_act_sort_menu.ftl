@@ -24,6 +24,20 @@
 				<span class="glyphicon glyphicon-sort"></span>							
 				<@orcid.msg 'manual_orcid_record_contents.sort'/>
 				<ul class="menu-options sort">
+					<li ng-class="{'checked':sortState.predicateKey=='endDate'}" ng-show="sortState.type == 'affiliation'">											
+						<a ng-click="sort('endDate');" class="action-option manage-button">
+							<@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
+							<span ng-show="sortState.reverseKey['endDate']" ng-class="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='endDate'}"></span>
+							<span ng-show="sortState.reverseKey['endDate'] == false" ng-class="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='endDate'}"></span>
+						</a>																					
+					</li>
+				    <li ng-class="{'checked':sortState.predicateKey=='startDate'}" ng-show="sortState.type == 'affiliation'">											
+						<a ng-click="sort('startDate');" class="action-option manage-button">
+							<@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
+							<span ng-show="sortState.reverseKey['startDate']" ng-class="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='startDate'}"></span>
+							<span ng-show="sortState.reverseKey['startDate'] == false" ng-class="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
+						</a>																					
+					</li>
 					<li ng-class="{'checked':sortState.predicateKey=='date'}" ng-hide="sortHideOption">											
 						<a ng-click="sort('date');" class="action-option manage-button">
 							<@orcid.msg 'manual_orcid_record_contents.sort_date'/>
@@ -45,7 +59,7 @@
 				    		<span ng-show="sortState.reverseKey['title'] == false" ng-class="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
 				    	</a>									    	
 				    </li>
-					<li ng-show="sortState.type != 'affiliation'" ng-class="{'checked':sortState.predicateKey=='type'}" ng-hide="sortHideOption">											
+					<li ng-class="{'checked':sortState.predicateKey=='type'}" ng-hide="sortHideOption || sortState.type == 'affiliation'">											
 						<a ng-click="sort('type');" class="action-option manage-button">
 							<@orcid.msg 'manual_orcid_record_contents.sort_type'/>
 							<span ng-show="sortState.reverseKey['type']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>

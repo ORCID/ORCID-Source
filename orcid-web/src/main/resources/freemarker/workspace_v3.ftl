@@ -282,7 +282,7 @@
         <#include "workspace_fundings_body_list_v3.ftl"/>
 
         <!-- Works -->                
-        <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
+        <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.loading != true}}">
           <#include "includes/work/work_section_header_inc_v3.ftl"/>
           <!-- Work Import Wizard -->
           <div ng-if="workImportWizard" class="work-import-wizard" ng-cloak>

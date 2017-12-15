@@ -313,15 +313,24 @@ GroupedActivities.prototype.unionCheck = function() {
 var ActSortState = function(groupType) {
     var _self = this;
     _self.type = groupType;    
-    _self.predicateKey = 'date';
-    if (_self.type == 'peerReview') {
-        _self.predicateKey = 'groupName';
-    }
+    
     _self.reverseKey = {};
     _self.reverseKey['date']  = true;
     _self.reverseKey['title'] = false;
     _self.reverseKey['type']  = false;
-    _self.reverseKey['groupName']  = false;
+    _self.reverseKey['groupName']  = false;    
+    _self.reverseKey['startDate']  = false;
+    _self.reverseKey['endDate']  = false;
+    
+    _self.predicateKey = 'date';
+    if (_self.type == 'peerReview') {
+        _self.predicateKey = 'groupName';
+    } else if (_self.type == 'affiliation') {
+        _self.predicateKey = 'endDate';
+        _self.reverseKey['date']  = false;
+        _self.reverseKey['endDate']  = true;        
+    }    
+    
     _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
 };
 
@@ -337,7 +346,8 @@ sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortStrin
 sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingTypeForDisplay','title', '-dateSortString'];
 
 sortPredicateMap[GroupedActivities.AFFILIATION] = {};
-sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
+sortPredicateMap[GroupedActivities.AFFILIATION]['endDate'] = ['-dateSortString', 'title'];
+sortPredicateMap[GroupedActivities.AFFILIATION]['startDate'] = ['-getDefault().startDate.year', '-getDefault().startDate.month', '-getDefault().startDate.day', 'title'];
 sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
 
 sortPredicateMap[GroupedActivities.PEER_REVIEW] = {};

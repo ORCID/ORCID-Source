@@ -41,6 +41,11 @@ public class WorksPaginator {
 
     @Resource
     private WorksCacheManager worksCacheManager;
+    
+    public int getWorksCount(String orcid) {
+        Works works = worksCacheManager.getGroupedWorks(orcid);
+        return works.getWorkGroup().size();
+    }
 
     public WorksPage getWorksPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
