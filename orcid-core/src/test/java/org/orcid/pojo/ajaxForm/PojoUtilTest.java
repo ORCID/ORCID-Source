@@ -121,4 +121,37 @@ public class PojoUtilTest {
         String dateSortString = PojoUtil.createDateSortString(aff);
         assertEquals("X-NaN-04-03-NaN-02-01", dateSortString);
     }
+    
+    @Test
+    public void affiliationsCreateDateSortString_StartDate_NullMonthNullDayTest() {
+        Affiliation aff = new Employment();
+        FuzzyDate start = new FuzzyDate();
+        start.setYear(new Year(2017));
+        aff.setStartDate(start);
+        String dateSortString = PojoUtil.createDateSortString(aff);
+        assertEquals("Y-2017-00-00", dateSortString);
+    }
+    
+    @Test
+    public void affiliationsCreateDateSortString_EndDate_NullMonthNullDayTest() {
+        Affiliation aff = new Employment();
+        FuzzyDate end = new FuzzyDate();
+        end.setYear(new Year(2017));
+        aff.setEndDate(end);
+        String dateSortString = PojoUtil.createDateSortString(aff);
+        assertEquals("X-2017-00-00", dateSortString);
+    }
+    
+    @Test
+    public void affiliationsCreateDateSortString_StartDateAndEndDate_NullMonthNullDayTest() {
+        Affiliation aff = new Employment();
+        FuzzyDate start = new FuzzyDate();
+        FuzzyDate end = new FuzzyDate();
+        start.setYear(new Year(1970));
+        end.setYear(new Year(2017));
+        aff.setStartDate(start);
+        aff.setEndDate(end);
+        String dateSortString = PojoUtil.createDateSortString(aff);
+        assertEquals("X-2017-00-00-1970-00-00", dateSortString);
+    }
 }
