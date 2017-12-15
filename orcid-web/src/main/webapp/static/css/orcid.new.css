@@ -3153,7 +3153,7 @@ p.orcid-id-container {
     background-size: 16px 16px;
     width: 16px;
     height: 16px;
-    display: inline-block;
+    display: block;
     margin: 2px 2px 0 0;
 }
 
@@ -3162,8 +3162,7 @@ p.orcid-id-container {
     background-size: 14px 14px;
     width: 14px;
     height: 14px;
-    display: block;
-    float: left;
+    display: inline-block;
     margin: 4px 2px 0 2px;
 }
 
@@ -8039,6 +8038,10 @@ ul.comma li:last-child:after {
     margin-right: -15px
 }
 
+.lang-rl .workspace-profile .inline-list.visible li{
+    float: right;
+}
+
 .lang-rl .lhs {
     float: right;
     padding-left: 20px!important
@@ -8110,6 +8113,10 @@ ul.comma li:last-child:after {
     margin-right: 20px
 }
 
+.lang-rl .workspace-accordion-header .toggle-text span{
+    unicode-bidi: plaintext;
+}
+
 .lang-rl .workspace-affiliations ul.sources-options {
     margin-left: -10px
 }
@@ -8152,7 +8159,12 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .privacyToggle+.popover-help-container {
-    right: 90px;
+    right: 100px;
+}
+
+.lang-rl .popover-registry .popover-help-container .popover {
+    left: initial;
+    right: -127px;
 }
 
 #verificationCodeFor2FA {
