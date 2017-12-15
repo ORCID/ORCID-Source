@@ -20,7 +20,7 @@
 <#escape x as x?html>
 <#setting date_format="yyyy-MM-dd">
 <div class="row workspace-top public-profile">
-    <div class="col-md-3 left-aside">
+    <div class="col-md-3 lhs left-aside">
         <div class="workspace-left workspace-profile" ng-controller="PublicRecordCtrl">
         	<div class="id-banner">
 	            <h2 class="full-name">	            	
