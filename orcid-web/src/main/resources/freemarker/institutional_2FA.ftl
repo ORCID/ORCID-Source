@@ -26,7 +26,17 @@
                         <p ng-bind="codes.errors[0]"></p>
                     </div>
     	            <div class="form-group">
-                        <p class="bold">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}</p>
+                        <div class="bold">${springMacroRequestContext.getMessage("2FA.orcid")} ${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}
+                            <div class="popover-help-container">
+                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <div id="social-login-help" class="popover bottom">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <p>${springMacroRequestContext.getMessage("2FA.social_inst.text")} <a href="http://support.orcid.org/knowledgebase/articles/1190068" target="common.learn_more">${springMacroRequestContext.getMessage("common.learn_more")}</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                                       
                         <input id="verificationCode" ng-model="codes.verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">     
                     </div>
