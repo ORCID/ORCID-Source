@@ -28,8 +28,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
@@ -74,6 +76,7 @@ import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -114,6 +117,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -233,13 +237,14 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
-    
+
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
 
-    private long getLastModifiedTime(String orcid) {
-        return profileEntityManager.getLastModified(orcid);
-    }
+    private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
+
+    @Resource
+    private MessageSource messageSource;
 
     @Override
     public Response viewStatusText() {
@@ -280,7 +285,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         contributorUtils.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
-        sourceUtils.setSourceName(w);        
+        sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
 
@@ -345,10 +350,23 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createWorks(String orcid, WorkBulk works) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
-        if(works != null) {
-            for(BulkElement b : works.getBulk()) {
-                if(Work.class.isAssignableFrom(b.getClass())) {
-                    clearSource((Work) b);
+        if (works != null) {
+            for (int i = 0; i < works.getBulk().size(); i++) {
+                if (Work.class.isAssignableFrom(works.getBulk().get(i).getClass())) {
+                    Work work = (Work) works.getBulk().get(i);
+
+                    try {
+                        schemaValidator.validate(work);
+                        clearSource(work);
+                    } catch (WebApplicationException e) {
+                        OrcidError error = new OrcidError();
+                        error.setUserMessage(messageSource.getMessage("apiError.9001.userMessage", null, localeManager.getLocale()));
+                        error.setMoreInfo(messageSource.getMessage("apiError.9001.moreInfo", null, localeManager.getLocale()));
+                        error.setErrorCode(9001);
+                        error.setResponseCode(400);
+                        works.getBulk().remove(i);
+                        works.getBulk().add(i, error);
+                    }
                 }
             }
         }
@@ -1094,10 +1112,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
         if (profileEntity == null) {
             throw new OrcidNoResultException("No such profile: " + orcid);
         }
-        
+
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        contributorUtils.filterContributorPrivateData(workBulk);        
+        contributorUtils.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();
@@ -1128,7 +1146,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         ClientSummary client = clientManagerReadOnly.getSummary(clientId);
         return Response.ok(client).build();
     }
-    
+
     private void clearSource(SourceAware element) {
         element.setSource(null);
     }

@@ -55,7 +55,7 @@
 					<xs:sequence>
 
 						<xs:element name="title" type="work:work-title"
-							minOccurs="0" />
+							minOccurs="1" />
 						<xs:element name="journal-title" type="work:journal-title"
 							minOccurs="0" maxOccurs="1" />
 						<xs:element name="short-description" type="common:short-description"
