@@ -408,6 +408,17 @@ kind of variable. This temp value is only used in this macro lib -->
    	</div>	
 </#macro>
 
+<#macro tooltipNg2 elementId message>
+    <div>   
+        <div class="popover popover-tooltip top" [ngClass]="commonSrvc.shownElement[${elementId}] == true ? 'block' : ''">
+            <div class="arrow"></div>
+            <div class="popover-content">
+                <span><@spring.message "${message}"/></span>
+            </div>
+        </div>                
+    </div>  
+</#macro>
+
 <#macro checkFeatureStatus featureName enabled=true>
 	<#if enabled>
 		<#if RequestParameters[featureName]??>
