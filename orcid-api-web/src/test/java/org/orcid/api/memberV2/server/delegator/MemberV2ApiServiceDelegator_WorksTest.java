@@ -32,9 +32,12 @@ import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
@@ -46,6 +49,7 @@ import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.common_v2.Title;
@@ -82,7 +86,11 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
 import org.orcid.utils.DateUtils;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
@@ -94,10 +102,15 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 
     // Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
-
+    
     @Resource(name = "memberV2ApiServiceDelegator")
     protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -425,6 +438,10 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 
     @Test
     public void testCreateWorksWithBulkAllOK() {
+        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0",  RequestAttributes.SCOPE_REQUEST);
+        RequestContextHolder.setRequestAttributes(attrs);
+        
         Long time = System.currentTimeMillis();
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
@@ -474,6 +491,52 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
             r = serviceDelegator.deleteWork(ORCID, w.getPutCode());
             assertNotNull(r);
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
+        }
+    }
+    
+    @Test
+    public void testCreateBulkWorksWithEmptyTitles() {
+        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0",  RequestAttributes.SCOPE_REQUEST);
+        RequestContextHolder.setRequestAttributes(attrs);
+        
+        Long time = System.currentTimeMillis();
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        WorkBulk bulk = new WorkBulk();
+        for (int i = 0; i < 5; i++) {
+            Work work = new Work();
+            WorkTitle title = new WorkTitle();
+            title.setTitle(i == 0 ? new Title(" ") : new Title("title " + i));
+            work.setWorkTitle(title);
+
+            ExternalIDs extIds = new ExternalIDs();
+            ExternalID extId = new ExternalID();
+            extId.setRelationship(Relationship.SELF);
+            extId.setType("doi");
+            extId.setUrl(new Url("http://doi/" + i + "/" + time));
+            extId.setValue("doi-" + i + "-" + time);
+            extIds.getExternalIdentifier().add(extId);
+            work.setWorkExternalIdentifiers(extIds);
+
+            work.setWorkType(WorkType.BOOK);
+            bulk.getBulk().add(work);
+        }
+
+        Response response = serviceDelegator.createWorks(ORCID, bulk);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        bulk = (WorkBulk) response.getEntity();
+        assertNotNull(bulk);
+        assertEquals(5, bulk.getBulk().size());
+
+        for (int i = 0; i < 5; i++) {
+            if (i == 0) {
+                assertTrue(bulk.getBulk().get(i) instanceof OrcidError);
+            } else {
+                assertTrue(bulk.getBulk().get(i) instanceof Work);
+                serviceDelegator.deleteWork(ORCID, ((Work) bulk.getBulk().get(i)).getPutCode());
+            }
         }
     }
 

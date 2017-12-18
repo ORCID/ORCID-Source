@@ -46,6 +46,7 @@ import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Subtitle;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
@@ -82,7 +83,11 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
 import org.orcid.utils.DateUtils;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
@@ -120,7 +125,53 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
         serviceDelegator.viewWorkSummary(ORCID, 11L);
     }
+    
+    @Test
+    public void testCreateBulkWorksWithEmptyTitles() {
+        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_dev1",  RequestAttributes.SCOPE_REQUEST);
+        RequestContextHolder.setRequestAttributes(attrs);
+        
+        Long time = System.currentTimeMillis();
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
+        WorkBulk bulk = new WorkBulk();
+        for (int i = 0; i < 5; i++) {
+            Work work = new Work();
+            WorkTitle title = new WorkTitle();
+            title.setTitle(i == 0 ? new Title(" ") : new Title("title " + i));
+            work.setWorkTitle(title);
+
+            ExternalIDs extIds = new ExternalIDs();
+            ExternalID extId = new ExternalID();
+            extId.setRelationship(Relationship.SELF);
+            extId.setType("doi");
+            extId.setUrl(new Url("http://doi/" + i + "/" + time));
+            extId.setValue("doi-" + i + "-" + time);
+            extIds.getExternalIdentifier().add(extId);
+            work.setWorkExternalIdentifiers(extIds);
+
+            work.setWorkType(WorkType.BOOK);
+            bulk.getBulk().add(work);
+        }
+
+        Response response = serviceDelegator.createWorks(ORCID, bulk);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        bulk = (WorkBulk) response.getEntity();
+        assertNotNull(bulk);
+        assertEquals(5, bulk.getBulk().size());
+
+        for (int i = 0; i < 5; i++) {
+            if (i == 0) {
+                assertTrue(bulk.getBulk().get(i) instanceof OrcidError);
+            } else {
+                assertTrue(bulk.getBulk().get(i) instanceof Work);
+                serviceDelegator.deleteWork(ORCID, ((Work) bulk.getBulk().get(i)).getPutCode());
+            }
+        }
+    }
+    
     @Test
     public void testViewWorkReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
@@ -425,6 +476,10 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
 
     @Test
     public void testCreateWorksWithBulkAllOK() {
+        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_dev1",  RequestAttributes.SCOPE_REQUEST);
+        RequestContextHolder.setRequestAttributes(attrs);
+        
         Long time = System.currentTimeMillis();
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
