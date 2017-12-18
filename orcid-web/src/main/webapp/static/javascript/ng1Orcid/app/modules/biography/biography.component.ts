@@ -148,7 +148,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        console.log('initi biography component');
         this.getformData();
     }; 
 }

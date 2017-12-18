@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="workspace-section-content">
-            <span *ngFor="let country of countryFormAddresses">
+            <span *ngFor="let country of formDataAddresses">
             <span *ngIf="country != null && country.countryName != null" >{{country.countryName}}</span>
             </span>
         </div>

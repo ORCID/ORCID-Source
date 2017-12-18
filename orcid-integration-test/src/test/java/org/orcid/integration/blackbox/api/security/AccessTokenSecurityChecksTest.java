@@ -292,7 +292,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
         OrcidMessage orcidMessage = response.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);        
         assertNotNull(orcidMessage.getErrorDesc());
-        assertEquals("Security problem : You do not have the required permissions.", orcidMessage.getErrorDesc().getContent());
+        assertEquals("Security problem : You do not have the requirCoed permissions.", orcidMessage.getErrorDesc().getContent());
     }
     
     @Test

@@ -56,15 +56,15 @@
                                 <ul class="record-settings pull-right">
                                     <li>
                                         <div class="glyphicon glyphicon-arrow-up circle" (click)="first || swapUp(index)" (mouseenter)="commonSrvc.showTooltip('tooltip-aka-move-up-'+index, $event, 37, -33, 44)" (mouseleave)="commonSrvc.hideTooltip('tooltip-aka-move-up-'+index)"></div>                                         
-                                        <@orcid.tooltip elementId="'tooltip-aka-move-up-'+index" message="common.modals.move_up"/>
+                                        <@orcid.tooltipNg2 elementId="'tooltip-aka-move-up-'+index" message="common.modals.move_up"/>
                                     </li>
                                     <li>                                                                                        
                                         <div class="glyphicon glyphicon-arrow-down circle" (click)="last || swapDown(index)" (mouseenter)="commonSrvc.showTooltip('tooltip-aka-move-down-'+index, $event, 37, -2, 53)" (mouseleave)="commonSrvc.hideTooltip('tooltip-aka-move-down-'+index)"></div>
-                                        <@orcid.tooltip elementId="'tooltip-aka-move-down-'+index" message="common.modals.move_down" />                                            
+                                        <@orcid.tooltipNg2 elementId="'tooltip-aka-move-down-'+index" message="common.modals.move_down" />                                            
                                     </li>
                                     <li>
                                         <div class="glyphicon glyphicon-trash" (click)="deleteOtherName(otherName)" (mouseenter)="commonSrvc.showTooltip('tooltip-aka-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-aka-delete-'+index)"></div>
-                                        <@orcid.tooltip elementId="'tooltip-aka-delete-'+index" message="common.modals.delete" />
+                                        <@orcid.tooltipNg2 elementId="'tooltip-aka-delete-'+index" message="common.modals.delete" />
                                     </li>
                                     <li>
                                         <privacy-toggle-ng2 

@@ -57,7 +57,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class OauthAuthorizationPageTest extends BlackBoxBase {
     private static final String STATE_PARAM = "MyStateParam";
     private static final String SCOPES = "/activities/update /read-limited";    
-    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.*)");
+    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.{6})");
     private static final Pattern STATE_PARAM_PATTERN = Pattern.compile("state=(.+)");
 
     @Resource(name = "t2OAuthClient")
@@ -113,16 +113,11 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         WebElement passwordElement = webDriver.findElement(By.id("password"));
         passwordElement.sendKeys(this.getUser1Password());
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        BBBUtil.ngAwareClick( webDriver.findElement(By.id("login-authorize-button")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getCurrentUrl().contains("/oauth/error/redirect-uri-mismatch");
-            }
-        }, webDriver);                
-        
+        BBBUtil.ngAwareClick( webDriver.findElement(By.id("form-sign-in-button")), webDriver);          
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//p[contains(text(),'Redirect URI')]")), webDriver);
         String currentUrl = webDriver.getCurrentUrl();
-        assertTrue("URL is:" + currentUrl, currentUrl.contains("/oauth/error/redirect-uri-mismatch"));
+        WebElement redirectError = webDriver.findElement(By.xpath("//p[contains(text(),'Redirect URI')]"));
+        assertTrue(redirectError.getText().contains("Redirect URI doesn't match your registered redirect URIs"));
         assertTrue("URL is:" + currentUrl, currentUrl.contains("client_id=" + this.getClient1ClientId()));
         assertTrue("URL is:" + currentUrl, currentUrl.contains("response_type=code"));
         assertTrue("URL is:" + currentUrl, currentUrl.contains("redirect_uri=" + invalidRedirectUri));
@@ -198,7 +193,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
                 ScopePathType.AFFILIATIONS_UPDATE.getContent(), this.getClient1RedirectUri());
         webDriver.get(url);
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        //(new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//p[contains(text(),'has asked for the following access to your ORCID Record')]")), webDriver);
     }
 
