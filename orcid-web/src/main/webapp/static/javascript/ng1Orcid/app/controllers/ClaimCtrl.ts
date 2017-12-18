@@ -76,7 +76,7 @@ export const ClaimCtrl = angular.module('orcidApp').controller(
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("RegistrationCtrl.postRegister() error");
+                    console.log("postClaim() error");
                     $scope.postingClaim = false;
                 });
             };
@@ -98,7 +98,7 @@ export const ClaimCtrl = angular.module('orcidApp').controller(
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("RegistrationCtrl.postRegisterValidate() error");
+                    console.log("serverValidate() error");
                 });
             };
 

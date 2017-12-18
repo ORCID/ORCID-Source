@@ -7,14 +7,18 @@ import {NgModule} from '@angular/core';
 export const LinkAccountController = angular.module('orcidApp').controller(
     'LinkAccountController',
     [
-        '$scope', 
+        '$scope',
+        '$timeout', 
         'discoSrvc', 
         function (
-            $scope, 
+            $scope,
+            $timeout, 
             discoSrvc
         ){
-    
+            
+            $scope.gaString = null; 
             $scope.loadedFeed = false;
+            $scope.requestInfoForm = null; 
             
             $scope.$watch(function() { return discoSrvc.feed; }, function(){
                 $scope.idpName = discoSrvc.getIdPName($scope.entityId);
@@ -28,10 +32,32 @@ export const LinkAccountController = angular.module('orcidApp').controller(
                 orcidGA.gaPush(['send', 'event', 'Sign-In-Link', eventAction, idp]);
                 return false;
             };
+
+            $scope.loadRequestInfoForm = function() {
+                $.ajax({
+                    url: getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json',
+                    type: 'GET',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        $timeout(function() {
+                            if(data){                                                                                        
+                                $scope.requestInfoForm = data;              
+                                $scope.gaString = orcidGA.buildClientString($scope.requestInfoForm.memberName, $scope.requestInfoForm.clientName);
+                            }
+                        });
+                    }
+                }).fail(function() {
+                    console.log("An error occured initializing the form.");
+                });
+            };
             
             $scope.setEntityId = function(entityId) {
                 $scope.entityId = entityId;
             };
+
+            // Init
+            $scope.loadRequestInfoForm();
         }
     ]
 );
