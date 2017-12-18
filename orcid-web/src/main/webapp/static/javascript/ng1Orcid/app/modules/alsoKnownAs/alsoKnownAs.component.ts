@@ -98,7 +98,6 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.subscription = this.alsoKnownAsService.notifyObservable$.subscribe(
             (res) => {
                 this.getformData();
-                console.log('notified', res);
             }
         );
     };
