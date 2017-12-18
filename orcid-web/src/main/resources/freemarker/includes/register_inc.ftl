@@ -161,7 +161,7 @@
    			</span>
         </div>
     </div>
-	<div style="margin-bottom: 20px; margin-top: 10px;">
+	<div style="margin-bottom: 20px; margin-top: 10px;" class="popover-registry">
         <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
         <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
     	<@orcid.privacyToggle 
