@@ -47,6 +47,8 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.core.web.filters.ApiVersionFilter;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Subtitle;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
@@ -55,12 +57,6 @@ import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Citation;
 import org.orcid.jaxb.model.v3.dev1.record.CitationType;
@@ -79,6 +75,10 @@ import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
 import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
@@ -128,6 +128,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     
     @Test
     public void testCreateBulkWorksWithEmptyTitles() {
+        RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
         attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_dev1",  RequestAttributes.SCOPE_REQUEST);
         RequestContextHolder.setRequestAttributes(attrs);
@@ -170,6 +171,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
                 serviceDelegator.deleteWork(ORCID, ((Work) bulk.getBulk().get(i)).getPutCode());
             }
         }
+        RequestContextHolder.setRequestAttributes(previousAttrs);
     }
     
     @Test
@@ -476,6 +478,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
 
     @Test
     public void testCreateWorksWithBulkAllOK() {
+        RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
         attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_dev1",  RequestAttributes.SCOPE_REQUEST);
         RequestContextHolder.setRequestAttributes(attrs);
@@ -530,6 +533,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
             assertNotNull(r);
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
         }
+        RequestContextHolder.setRequestAttributes(previousAttrs);
     }
 
     @Test

@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
@@ -438,6 +437,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 
     @Test
     public void testCreateWorksWithBulkAllOK() {
+        RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
         attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0",  RequestAttributes.SCOPE_REQUEST);
         RequestContextHolder.setRequestAttributes(attrs);
@@ -492,10 +492,12 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
             assertNotNull(r);
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
         }
+        RequestContextHolder.setRequestAttributes(previousAttrs);
     }
     
     @Test
     public void testCreateBulkWorksWithEmptyTitles() {
+        RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
         attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0",  RequestAttributes.SCOPE_REQUEST);
         RequestContextHolder.setRequestAttributes(attrs);
@@ -538,6 +540,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
                 serviceDelegator.deleteWork(ORCID, ((Work) bulk.getBulk().get(i)).getPutCode());
             }
         }
+        RequestContextHolder.setRequestAttributes(previousAttrs);
     }
 
     @Test
