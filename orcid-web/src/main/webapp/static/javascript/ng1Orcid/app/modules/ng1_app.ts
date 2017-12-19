@@ -30,6 +30,16 @@ import { ModalModule }
     from './modalNg2/modal-ng.ts';
 import { NameModule } 
     from './name/name.ts';
+import { SelfServiceModule } 
+    from './selfService/selfService.ts';
+import { SelfServiceAddContactModule } 
+    from './selfServiceAddContact/selfServiceAddContact.ts';
+import { SelfServiceExistingSubMemberModule } 
+    from './selfServiceExistingSubMember/selfServiceExistingSubMember.ts';
+import { SelfServiceRemoveContactModule } 
+    from './selfServiceRemoveContact/selfServiceRemoveContact.ts';
+import { SelfServiceRemoveSubMemberModule } 
+    from './selfServiceRemoveSubMember/selfServiceRemoveSubMember.ts';
 import { ThanksForRegisteringModule } 
     from './thanksForRegistering/thanksForRegistering.ts';
 import { ThanksForVerifyingModule } 
@@ -55,6 +65,11 @@ export const orcidApp = angular.module(
         //FundingModule.name,
         ModalModule.name,
         NameModule.name,
+        SelfServiceModule.name,
+        SelfServiceAddContactModule.name,
+        SelfServiceExistingSubMemberModule.name,
+        SelfServiceRemoveContactModule.name,
+        SelfServiceRemoveSubMemberModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
         WidgetModule.name,
