@@ -73,6 +73,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.ReleaseNameUtils;
 import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,11 +119,9 @@ public class BaseController {
 
     protected List<String> domainsAllowingRobots;
 
-    protected static final String STATIC_FOLDER_PATH = "/static";
+    protected static final String STATIC_FOLDER_PATH = "/static/" + ReleaseNameUtils.getReleaseName();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
-
-    private Date startupDate = new Date();
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);    
 
     private String staticContentPath;
 
@@ -286,18 +285,6 @@ public class BaseController {
 
     public void setDomainsAllowingRobots(List<String> domainsAllowingRobots) {
         this.domainsAllowingRobots = domainsAllowingRobots;
-    }
-
-    @ModelAttribute("startupDate")
-    public Date getStartupDate() {
-        // If the cdn config file is missing, we are in development env and we
-        // need to refresh the cache
-        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
-        if (!configFile.exists()) {
-            return new Date();
-        }
-
-        return startupDate;
     }
 
     protected OrcidProfileUserDetails getCurrentUser() {
