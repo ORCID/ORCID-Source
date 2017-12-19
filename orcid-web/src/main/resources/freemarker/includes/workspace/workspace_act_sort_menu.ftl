@@ -38,7 +38,7 @@
 							<span ng-show="sortState.reverseKey['startDate'] == false" ng-class="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
 						</a>																					
 					</li>
-					<li ng-class="{'checked':sortState.predicateKey=='date'}" ng-hide="sortHideOption">											
+					<li ng-class="{'checked':sortState.predicateKey=='date'}" ng-hide="sortHideOption || sortState.type == 'affiliation'">											
 						<a ng-click="sort('date');" class="action-option manage-button">
 							<@orcid.msg 'manual_orcid_record_contents.sort_date'/>
 							<span ng-show="sortState.reverseKey['date']" ng-class="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
