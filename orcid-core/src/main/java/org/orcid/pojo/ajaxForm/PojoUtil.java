@@ -16,6 +16,8 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.orcid.jaxb.model.message.Day;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Month;
@@ -141,7 +143,141 @@ public class PojoUtil {
                 day = end.getDay().getValue();
         }
         return year + "-" + month + '-' + day;
-    }       
+    }
+    
+    // Date sort string for 2.0 API
+    public static String createDateSortString(org.orcid.jaxb.model.record.summary_v2.EducationSummary education) {
+        return createDateSortStringForAffiliations(education.getStartDate(), education.getEndDate(), education.getCreatedDate());
+    }
+
+    public static String createDateSortString(org.orcid.jaxb.model.record.summary_v2.EmploymentSummary employment) {
+        return createDateSortStringForAffiliations(employment.getStartDate(), employment.getEndDate(), employment.getCreatedDate());
+    }
+
+    public static String createDateSortString(org.orcid.jaxb.model.record_v2.Affiliation affiliation) {
+        return createDateSortStringForAffiliations(affiliation.getStartDate(), affiliation.getEndDate(), affiliation.getCreatedDate());
+    }
+
+    private static String createDateSortStringForAffiliations(org.orcid.jaxb.model.common_v2.FuzzyDate startDate, org.orcid.jaxb.model.common_v2.FuzzyDate endDate,
+            org.orcid.jaxb.model.common_v2.CreatedDate createdDate) {
+        String dateSortString = "";
+        if (startDate == null && endDate == null) {
+            XMLGregorianCalendar date = createdDate.getValue();
+            dateSortString = "Z-" + date.getYear() + "-" + date.getMonth() + "-" + date.getDay();
+        } else {
+            if (endDate == null) {
+                dateSortString = "Y-";
+                dateSortString += startDate.getYear() == null ? "NaN" : startDate.getYear().getValue();
+                if (!PojoUtil.isEmpty(startDate.getMonth())) {
+                    dateSortString += "-" + startDate.getMonth().getValue();
+                } else {
+                    dateSortString += "-00";
+                }
+                if (!PojoUtil.isEmpty(startDate.getDay())) {
+                    dateSortString += "-" + startDate.getDay().getValue();
+                } else {
+                    dateSortString += "-00";
+                }
+            } else {
+                dateSortString = "X-";
+                dateSortString += endDate.getYear() == null ? "NaN" : endDate.getYear().getValue();
+                if (!PojoUtil.isEmpty(endDate.getMonth())) {
+                    dateSortString += "-" + endDate.getMonth().getValue();
+                } else {
+                    dateSortString += "-00";
+                }
+
+                if (!PojoUtil.isEmpty(endDate.getDay())) {
+                    dateSortString += "-" + endDate.getDay().getValue();
+                } else {
+                    dateSortString += "-00";
+                }
+
+                if (startDate != null) {
+                    dateSortString += startDate.getYear() == null ? "-NaN" : "-" + startDate.getYear().getValue();
+                    if (!PojoUtil.isEmpty(startDate.getMonth())) {
+                        dateSortString += "-" + startDate.getMonth().getValue();
+                    } else {
+                        dateSortString += "-00";
+                    }
+
+                    if (!PojoUtil.isEmpty(startDate.getDay())) {
+                        dateSortString += "-" + startDate.getDay().getValue();
+                    } else {
+                        dateSortString += "-00";
+                    }
+                }
+            }
+        }
+
+        return dateSortString;
+    }
+
+    // Date sort string for V3.dev1 API
+    public static String createDateSortString(org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary education) {
+        return createDateSortStringForAffiliations(education.getStartDate(), education.getEndDate(), education.getCreatedDate());
+    }
+
+    public static String createDateSortString(org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary employment) {
+        return createDateSortStringForAffiliations(employment.getStartDate(), employment.getEndDate(), employment.getCreatedDate());
+    }
+
+    public static String createDateSortString(org.orcid.jaxb.model.v3.dev1.record.Affiliation affiliation) {
+        return createDateSortStringForAffiliations(affiliation.getStartDate(), affiliation.getEndDate(), affiliation.getCreatedDate());
+    }
+
+    private static String createDateSortStringForAffiliations(org.orcid.jaxb.model.v3.dev1.common.FuzzyDate startDate,
+            org.orcid.jaxb.model.v3.dev1.common.FuzzyDate endDate, org.orcid.jaxb.model.v3.dev1.common.CreatedDate createdDate) {
+        String dateSortString = "";
+        if (startDate == null && endDate == null) {
+            XMLGregorianCalendar date = createdDate.getValue();
+            dateSortString = "Z-" + date.getYear() + "-" + date.getMonth() + "-" + date.getDay();
+        } else {
+            if (endDate == null) {
+                dateSortString = "Y-";
+                dateSortString += startDate.getYear() == null ? "NaN" : startDate.getYear().getValue();
+                if (!PojoUtil.isEmpty(startDate.getMonth())) {
+                    dateSortString += "-" + startDate.getMonth().getValue();
+                } else {
+                    dateSortString += "-00";
+                }
+
+                if (!PojoUtil.isEmpty(startDate.getDay())) {
+                    dateSortString += "-" + startDate.getDay().getValue();
+                } else {
+                    dateSortString += "-00";
+                }
+            } else {
+                dateSortString = "X-";
+                dateSortString += endDate.getYear() == null ? "NaN" : endDate.getYear().getValue();
+                if (!PojoUtil.isEmpty(endDate.getMonth())) {
+                    dateSortString += "-" + endDate.getMonth().getValue();
+                } else {
+                    dateSortString += "-00";
+                }
+                if (!PojoUtil.isEmpty(endDate.getDay())) {
+                    dateSortString += "-" + endDate.getDay().getValue();
+                } else {
+                    dateSortString += "-00";
+                }
+                if (startDate != null) {
+                    dateSortString += startDate.getYear() == null ? "-NaN" : "-" + startDate.getYear().getValue();
+                    if (!PojoUtil.isEmpty(startDate.getMonth())) {
+                        dateSortString += "-" + startDate.getMonth().getValue();
+                    } else {
+                        dateSortString += "-00";
+                    }
+                    if (!PojoUtil.isEmpty(startDate.getDay())) {
+                        dateSortString += "-" + startDate.getDay().getValue();
+                    } else {
+                        dateSortString += "-00";
+                    }
+                }
+            }
+        }
+
+        return dateSortString;
+    }
     
     public static boolean isEmpty(Date date) {
         if (date == null) return true;

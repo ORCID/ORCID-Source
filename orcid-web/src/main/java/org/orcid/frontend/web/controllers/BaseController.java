@@ -700,10 +700,11 @@ public class BaseController {
     }
 
     protected void validateUrl(Text url) {
-        validateUrl(url, SiteConstants.URL_MAX_LENGTH);
+        validateUrl(url, "common.invalid_url");
     }
-
-    protected void validateUrl(Text url, int maxLength) {
+    
+    protected void validateUrl(Text url, String errorCode) {
+        // Clear previous errors
         url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {
             // trim if required
@@ -711,22 +712,18 @@ public class BaseController {
                 url.setValue(url.getValue().trim());
 
             // check length
-            validateNoLongerThan(maxLength, url);
+            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, url);
 
-            // add protocall if missing
-            if (!validateUrl(url.getValue())) {
+            // add protocol if missing
+            if (!urlValidator.isValid(url.getValue())) {
                 String tempUrl = "http://" + url.getValue();
                 // test validity again
-                if (validateUrl(tempUrl))
+                if (urlValidator.isValid(tempUrl))
                     url.setValue("http://" + url.getValue());
                 else
-                    setError(url, "common.invalid_url");
+                    setError(url, errorCode);
             }
         }
-    }
-
-    protected boolean validateUrl(String url) {
-        return urlValidator.isValid(url);
     }
 
     protected void validateNoLongerThan(int maxLength, Text text) {
@@ -846,6 +843,23 @@ public class BaseController {
             features.put(f.name(), f.isActive());
         }
         return features;
+    }
+    
+    @ModelAttribute("featuresJson")
+    public String getFeaturesJson() {
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        
+        String featuresJson = "";
+        try {
+            featuresJson = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(features));
+        } catch (IOException e) {
+            LOGGER.error("getFeaturesJson error:" + e.toString(), e);
+        }
+
+        return featuresJson;
     }
     
     protected void validateVisibility(VisibilityForm form) {

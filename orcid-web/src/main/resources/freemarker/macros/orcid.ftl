@@ -285,6 +285,30 @@ kind of variable. This temp value is only used in this macro lib -->
     </div>
 </#macro>  
 
+<#macro editWorkIcon activity click toolTipSuffix toolTipClass>   
+    <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicon glyphicon-pencil"></span>
+    </a>
+    <a ng-show="!userIsSource(${activity}) && group.userVersionPresent" ng-click="showSources(group)" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create grey"></span>
+    </a>
+    <a ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create"></span>
+    </a>
+    <a ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create grey"></span>
+    </a>
+    <div class="${toolTipClass}" ng-show="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" ng-class="{'two-lines' : (!userIsSource(${activity}) && group.userVersionPresent) || (!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0)}">
+        <div class="arrow"></div>
+        <div class="popover-content">              
+              <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
+              <span ng-show="!userIsSource(${activity}) && group.userVersionPresent"><@orcid.msg 'groups.common.open_source_to' /></span>
+              <span ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
+              <span ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0"><@orcid.msg 'groups.common.items_must_have' /></span>
+        </div>
+    </div>
+</#macro>  
+
 <#macro privacyToggle2 angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
 	<div class="relative" id="privacy-bar">
 		<ul class="privacyToggle" ng-mouseenter="showTooltip(group.groupId+'-privacy')" ng-mouseleave="hideTooltip(group.groupId+'-privacy')">
@@ -382,6 +406,17 @@ kind of variable. This temp value is only used in this macro lib -->
 	    	</div>
 	   	</div>                
    	</div>	
+</#macro>
+
+<#macro tooltipNg2 elementId message>
+    <div>   
+        <div class="popover popover-tooltip top" [ngClass]="commonSrvc.shownElement[${elementId}] == true ? 'block' : ''">
+            <div class="arrow"></div>
+            <div class="popover-content">
+                <span><@spring.message "${message}"/></span>
+            </div>
+        </div>                
+    </div>  
 </#macro>
 
 <#macro checkFeatureStatus featureName enabled=true>

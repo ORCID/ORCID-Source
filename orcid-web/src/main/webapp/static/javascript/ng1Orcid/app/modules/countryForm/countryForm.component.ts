@@ -16,13 +16,13 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { CommonService } 
-    from '../../shared/commonService.ts';
+    from '../../shared/common.service.ts';
 
 import { CountryService } 
-    from '../../shared/countryService.ts';
+    from '../../shared/country.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'country-form-ng2',
@@ -33,9 +33,9 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private subscription: Subscription;
 
     bulkEditShow: any; ///
-    countryForm: any;
-    countryFormAddresses: any;
-    countryFormErrors: any;
+    formData: any;
+    formDataAddresses: any;
+    formDataErrors: any;
     defaultVisibility: any; ///
     newInput: boolean;
     orcidId: any;
@@ -47,16 +47,17 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService
     ) {
         this.bulkEditShow = false;
-        this.countryForm = null;
-        this.countryFormAddresses = [];
-        this.countryFormErrors = [];
-        this.defaultVisibility = null;
+        this.formData = {
+        };
+        this.formDataAddresses = [];
+        this.formDataErrors = [];
+        this.defaultVisibility = 'PRIVATE';
         this.newInput = false;    
         this.orcidId = orcidVar.orcidId;
         this.primaryElementIndex = null;   
     }
 
-    addNewCountry(): void {       
+    addNewCountry(): void {  
         var tmpObj = {
             "errors":[],
             "iso2Country": {
@@ -68,13 +69,13 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 "errors":[],
                 "required":true,
                 "getRequiredMessage":null,
-                "visibility": 'PUBLIC'
+                "visibility": this.defaultVisibility
             },
             "displayIndex":1,
             "source":this.orcidId,
             "sourceName":""
         };
-        this.countryForm.addresses.push(tmpObj);
+        this.formData.addresses.push(tmpObj);
         this.updateDisplayIndex();
         this.newInput = true; 
     };
@@ -84,51 +85,52 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     deleteCountry(country): void{
-        var countries = this.countryForm.addresses;
+        var countries = this.formData.addresses;
         var len = countries.length;
         while (len--) {
             if (countries[len] == country){
                 countries.splice(len,1);
-                this.countryForm.addresses = countries;
+                this.formData.addresses = countries;
             }       
         }
     };
 
-    getCountryForm(): void{
+    getformData(): void{
         this.countryService.getCountryData()
-        //.takeUntil(this.ngUnsubscribe)
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.countryForm = data;
-                this.countryFormAddresses = this.countryForm.addresses;
-                
-                if ( this.countryForm.addresses.length == 0 ){                  
+                this.formData = data;
+                //console.log('country data', this.formData);
+                this.formDataAddresses = this.formData.addresses;
+
+                if ( this.formData.addresses.length == 0 ){                  
                     this.addNewCountry();
                 } else {
-                    if ( this.countryForm.addresses.length == 1 ){
-                        if( this.countryForm.addresses[0].source == null ){
-                            this.countryForm.addresses[0].source = this.orcidId;
-                            this.countryForm.addresses[0].sourceName = "";
+                    if ( this.formData.addresses.length == 1 ){
+                        if( this.formData.addresses[0].source == null ){
+                            //this.formData.addresses[0].source = this.orcidId;
+                            //this.formData.addresses[0].sourceName = "";
+                            this.addNewCountry();
                         }
                     }
                     this.updateDisplayIndex();
                 } 
 
-                if( this.countryForm.errors != null ) {
-                    this.countryFormErrors = this.countryForm.errors;
+                if( this.formData.errors != null ) {
+                    this.formDataErrors = this.formData.errors;
                 }
-                //console.log('this.countryForm', this.countryForm);
 
-                if( this.countryForm != null 
-                    && this.countryForm.addresses != null 
-                    && this.countryForm.addresses.length > 0) {
+                if( this.formData != null 
+                    && this.formData.addresses != null 
+                    && this.formData.addresses.length > 0) {
                     let highestDisplayIndex = null;
                     let itemVisibility = null;
                     
-                    for(let i = 0; i < this.countryForm.addresses.length; i ++) {
-                        if( this.countryForm.addresses[i].visibility != null 
-                            && this.countryForm.addresses[i].visibility.visibility ) {
-                            itemVisibility = this.countryForm.addresses[i].visibility.visibility;
+                    for(let i = 0; i < this.formData.addresses.length; i ++) {
+                        if( this.formData.addresses[i].visibility != null 
+                            && this.formData.addresses[i].visibility.visibility ) {
+                            itemVisibility = this.formData.addresses[i].visibility.visibility;
                         }
                         /**
                          * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
@@ -156,66 +158,64 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         }                                                                   
                     }
                     //We have to iterate on them again to select the primary address
-                    for(let i = 0; i < this.countryForm.addresses.length; i ++) {
+                    for(let i = 0; i < this.formData.addresses.length; i ++) {
                         //Set the primary element based on the display index
                         if(this.primaryElementIndex == null 
-                            || highestDisplayIndex < this.countryForm.addresses[i].displayIndex) {
+                            || highestDisplayIndex < this.formData.addresses[i].displayIndex) {
                             this.primaryElementIndex = i;
-                            highestDisplayIndex = this.countryForm.addresses[i].displayIndex;
+                            highestDisplayIndex = this.formData.addresses[i].displayIndex;
                         }
                     }
                 } else {
-                    this.defaultVisibility = this.countryForm.visibility.visibility;                    
+                    this.defaultVisibility = this.formData.visibility.visibility;                    
                 }
 
-                //console.log('this.countryForm2', this.countryForm); 
             },
             error => {
-                console.log('getCountryFormError', error);
+                console.log('getformDataError', error);
             } 
         );
     };
 
     setBulkGroupPrivacy(priv): void{
-        for (var idx in this.countryForm.addresses){
-            this.countryForm.addresses[idx].visibility.visibility = priv;        
+        for (var idx in this.formData.addresses){
+            this.formData.addresses[idx].visibility.visibility = priv;        
         }
     };
 
-    setCountryForm( closeAfterAction ): void {
+    setformData( closeAfterAction ): void {
 
-        this.countryService.setCountryData( this.countryForm )
-        //.takeUntil(this.ngUnsubscribe)
+        this.countryService.setCountryData( this.formData )
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.countryForm = data;
-                if (this.countryForm.errors.length == 0){
-                    this.getCountryForm();
-                    this.countryService.notifyOther({action:'close', moduleId: 'modalCountryForm'});
+                this.formData = data;
+                if (this.formData.errors.length == 0){
+                    this.getformData();
+                    this.countryService.notifyOther();
                     if( closeAfterAction == true ) {
                         this.closeEditModal();
                     }
                 }else{
-                    console.log(this.countryForm.errors);
+                    //console.log(this.formData.errors);
                 }
 
             },
             error => {
-                console.log('setBiographyFormError', error);
+                //console.log('setBiographyFormError', error);
             } 
         );
-        this.countryForm.visibility = null;
+        this.formData.visibility = null;
     };
     
     privacyChange( obj ): any {
-        console.log('privacyChange', obj);
-        this.countryForm.visibility.visibility = obj;
-        this.setCountryForm( false );   
+        this.formData.visibility.visibility = obj;
+        this.setformData( false );   
     };
     
     ///
     setPrivacyModal(priv, $event, country): void{        
-        var countries = this.countryForm.addresses;        
+        var countries = this.formData.addresses;        
         var len = countries.length;   
 
         $event.preventDefault();
@@ -223,7 +223,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         while (len--) {
             if (countries[len] == country){            
                 countries[len].visibility.visibility = priv;
-                this.countryForm.addresses = countries;
+                this.formData.addresses = countries;
             }
         }
     };
@@ -231,14 +231,14 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     swapDown(index): void{
         let temp = null;
         let tempDisplayIndex = null;
-        if (index < this.countryForm.addresses.length - 1) {
-            temp = this.countryForm.addresses[index];
-            tempDisplayIndex = this.countryForm.addresses[index]['displayIndex'];
-            temp['displayIndex'] = this.countryForm.addresses[index + 1]['displayIndex']
+        if (index < this.formData.addresses.length - 1) {
+            temp = this.formData.addresses[index];
+            tempDisplayIndex = this.formData.addresses[index]['displayIndex'];
+            temp['displayIndex'] = this.formData.addresses[index + 1]['displayIndex']
             
-            this.countryForm.addresses[index] = this.countryForm.addresses[index + 1];
-            this.countryForm.addresses[index]['displayIndex'] = tempDisplayIndex;
-            this.countryForm.addresses[index + 1] = temp;
+            this.formData.addresses[index] = this.formData.addresses[index + 1];
+            this.formData.addresses[index]['displayIndex'] = tempDisplayIndex;
+            this.formData.addresses[index + 1] = temp;
         }
     };
 
@@ -246,25 +246,25 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         let temp = null;
         let tempDisplayIndex = null;
         if (index > 0) {
-            temp = this.countryForm.addresses[index];
-            tempDisplayIndex = this.countryForm.addresses[index]['displayIndex'];
-            temp['displayIndex'] = this.countryForm.addresses[index - 1]['displayIndex']
+            temp = this.formData.addresses[index];
+            tempDisplayIndex = this.formData.addresses[index]['displayIndex'];
+            temp['displayIndex'] = this.formData.addresses[index - 1]['displayIndex']
             
-            this.countryForm.addresses[index] = this.countryForm.addresses[index - 1];
-            this.countryForm.addresses[index]['displayIndex'] = tempDisplayIndex;
-            this.countryForm.addresses[index - 1] = temp;
+            this.formData.addresses[index] = this.formData.addresses[index - 1];
+            this.formData.addresses[index]['displayIndex'] = tempDisplayIndex;
+            this.formData.addresses[index - 1] = temp;
         }
     };
 
     updateDisplayIndex(): void{
         let displayIndex: any;
-        let countryFormAddressesLength: any;
+        let formDataAddressesLength: any;
         let idx: any;
         
-        for ( idx in this.countryForm.addresses ){
-            countryFormAddressesLength = this.countryForm.addresses.length;
-            displayIndex = countryFormAddressesLength - idx;
-            this.countryForm.addresses[idx]['displayIndex'] = displayIndex;
+        for ( idx in this.formData.addresses ){
+            formDataAddressesLength = this.formData.addresses.length;
+            displayIndex = formDataAddressesLength - idx;
+            this.formData.addresses[idx]['displayIndex'] = displayIndex;
         }
     };
 
@@ -277,11 +277,11 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnDestroy() {
-        //this.ngUnsubscribe.next();
-        //this.ngUnsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     };
 
     ngOnInit() {
-        this.getCountryForm();
+        this.getformData();
     };
 }

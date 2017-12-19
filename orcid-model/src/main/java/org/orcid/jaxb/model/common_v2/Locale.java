@@ -53,6 +53,9 @@ import java.io.Serializable;
 @XmlType(name = "locale")
 @XmlEnum
 public enum Locale implements Serializable {
+    @XmlEnumValue("ar")
+    AR("ar"),
+    
     @XmlEnumValue("en")
     EN("en"),
 

@@ -22,19 +22,19 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { AffiliationService } 
-    from '../../shared/affiliationService.ts';
+    from '../../shared/affiliation.service.ts';
 
 import { EmailService } 
-    from '../../shared/emailService.ts';
+    from '../../shared/email.service.ts';
 
 import { GroupedActivitiesUtilService } 
-    from '../../shared/groupedActivitiesService.ts';
+    from '../../shared/groupedActivities.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspaceService.ts'; 
+    from '../../shared/workspace.service.ts'; 
 
 @Component({
     selector: 'affiliation-ng2',
@@ -649,7 +649,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("RegistrationCtrl.serverValidate() error");
+                    console.log("serverValidate() error");
                 });
             };
 

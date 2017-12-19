@@ -49,7 +49,6 @@ public class OauthAuthorizationPageHelper {
             }
         }
         
-        formattedAuthorizationScreen += "#show_login";
         By userIdElementLocator = By.id("userId");
         webDriver.get(formattedAuthorizationScreen);
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
@@ -62,36 +61,45 @@ public class OauthAuthorizationPageHelper {
         WebElement passwordElement = webDriver.findElement(By.id("password"));
         passwordElement.sendKeys(password);
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        if (!longLife) {
-            //     disablePersistentToken
-            WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
-            if(persistentElement.isDisplayed()) {
-                if (persistentElement.isSelected()) {
-                    BBBUtil.ngAwareClick(persistentElement,webDriver);
-                }
-                (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-            }            
-        }
         
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("login-authorize-button")));
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("form-sign-in-button")));
         
+        webDriver.findElement(By.id("form-sign-in-button")).click();
+
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());        
+       
         try {
-	        BBBUtil.ngAwareClick(webDriver.findElement(By.id("login-authorize-button")),webDriver);
-	        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-	            public Boolean apply(WebDriver d) {
-	                return d.getTitle().equals("ORCID Playground");
-	            }
-	        });
-        } catch(TimeoutException e) {
-        	//It might be the case that we are already in the ORCID Playground page, so, lets check for that case
-        	(new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(text(),'has asked for the following access to your ORCID Record')]")), webDriver);
+            if (longLife == false) {
+                //disablePersistentToken
+                WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
+                if(persistentElement.isDisplayed()) {
+                    if (persistentElement.isSelected()) {
+                        persistentElement.click();
+                        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+                    }
+                }            
+            }
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            By authorizeElementLocator = By.id("authorize");
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(authorizeElementLocator));
+            WebElement authorizeButton = webDriver.findElement(By.id("authorize"));
+            authorizeButton.click();
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
                 public Boolean apply(WebDriver d) {
                     return d.getTitle().equals("ORCID Playground");
                 }
             });
-        }                
-        
-        return webDriver.getCurrentUrl();        
+        } catch(TimeoutException e) {
+           //It might be the case that we are already in the ORCID Playground page, so, lets check for that case
+           (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver d) {
+                    return d.getTitle().equals("ORCID Playground");
+                }
+            });
+        } 
+        String currentUrl = webDriver.getCurrentUrl();
+        return currentUrl;
     }
     
     public static String authorizeOnAlreadyLoggedInUser(final WebDriver loggedInDriver, String baseUrl, String clientId, String redirectUri, String scopes, String stateParam) {
@@ -103,23 +111,56 @@ public class OauthAuthorizationPageHelper {
         
         loggedInDriver.get(formattedAuthorizationScreen);
         
-        (new WebDriverWait(loggedInDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        
-        clickAuthorizeOnAuthorizeScreen(loggedInDriver);
-        
+        try {
+            BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//p[contains(text(),'has asked for the following access to your ORCID Record')]")), loggedInDriver);
+            By authorizeElementLocator = By.id("authorize");
+            (new WebDriverWait(loggedInDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));
+            WebElement authorizeButton = loggedInDriver.findElement(By.id("authorize"));
+            authorizeButton.click();
+            (new WebDriverWait(loggedInDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver d) {
+                    return d.getTitle().equals("ORCID Playground");
+                }
+            });
+        } catch(TimeoutException e) {
+           //It might be the case that we are already in the ORCID Playground page, so, lets check for that case
+           (new WebDriverWait(loggedInDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver d) {
+                    return d.getTitle().equals("ORCID Playground");
+                }
+            });
+        } 
+
         String result = loggedInDriver.getCurrentUrl();        
         return result;
     }
         
-    private static void clickAuthorizeOnAuthorizeScreen(final WebDriver webDriver) {
-        By userIdElementLocator = By.id("authorize");
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement authorizeButton = webDriver.findElement(By.id("authorize"));
-        authorizeButton.click();
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
+   public static void clickAuthorizeOnAuthorizeScreen(final WebDriver webDriver, boolean longLife) {
+        if (webDriver.getTitle().equals("ORCID Playground")){
+            return;
+        } else {
+                try {
+                    BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//p[contains(text(),'has asked for the following access to your ORCID Record')]")), webDriver);
+                    if (longLife == false) {
+                        //disablePersistentToken
+                        WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
+                        if(persistentElement.isDisplayed()) {
+                            if (persistentElement.isSelected()) {
+                                persistentElement.click();
+                            }
+                        }            
+                    }
+                    WebElement authorizeButton = webDriver.findElement(By.id("authorize"));
+                    authorizeButton.click();
+                } catch(TimeoutException e) {
+                    //It might be the case that we are already in the ORCID Playground page, so, lets check for that case
+                    (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+                        public Boolean apply(WebDriver d) {
+                            return d.getTitle().equals("ORCID Playground");
+                        }
+                    });
+                }
+                
             }
-        });
-    }    
+        }
 }

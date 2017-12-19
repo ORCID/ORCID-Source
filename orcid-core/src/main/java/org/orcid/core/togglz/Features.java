@@ -34,14 +34,14 @@ public enum Features implements Feature {
     @Label("Https for links to iDs")
     HTTPS_IDS,
     
+    @Label("Arabic translation")
+    LANG_AR,
+    
     @Label("Last modified")
     LAST_MOD,
     
     @Label("New footer")
     NEW_FOOTER,
-    
-    @Label("Split oauth in 2 screens")
-    OAUTH_2SCREENS,
     
     @Label("Mutiple emails on register form")
     REG_MULTI_EMAIL,
@@ -62,8 +62,13 @@ public enum Features implements Feature {
     API_ANALYTICS_DEBUG,
     
     @Label("Turn on angular2 features that are on development")
-    ANGULAR2_DEV;
-    
+    ANGULAR2_DEV,
+
+    @Label("Turn on angular2 features that are ready for QA")
+    ANGULAR2_QA,
+
+    @Label("Turn off angular1 features that are legacy")
+    ANGULAR1_LEGACY;  
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

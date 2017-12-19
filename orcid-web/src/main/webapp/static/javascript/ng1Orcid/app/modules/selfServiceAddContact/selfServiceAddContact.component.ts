@@ -14,10 +14,10 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { ConsortiaService }
-    from '../../shared/consortiaService.ts';
+    from '../../shared/consortia.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'self-service-add-contact-ng2',

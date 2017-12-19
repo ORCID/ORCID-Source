@@ -22,174 +22,183 @@
 <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
 <#if justRegistered?? && justRegistered>
 <div class="alert alert-success">
-  <strong>
-    <thanks-for-registering-ng2></thanks-for-registering-ng2>
-  </strong>
+    <strong>
+        <thanks-for-registering-ng2></thanks-for-registering-ng2>
+    </strong>
 </div>
 </#if>
 </@orcid.checkFeatureStatus>
 
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
-  <strong>
-    <@spring.message "orcid.frontend.web.email_verified"/>
-    <#if primaryEmailUnverified?? && primaryEmailUnverified>
-      <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
-    </#if>
-  </strong>
+    <strong>
+        <@spring.message "orcid.frontend.web.email_verified"/>
+        <#if primaryEmailUnverified?? && primaryEmailUnverified>
+        <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
+        </#if>
+    </strong>
 </div>
 </#if>
 
 <#if invalidVerifyUrl?? && invalidVerifyUrl>
 <div class="alert alert-success">
-  <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
+    <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
 </div>
 </#if>
 
 
 <#if invalidOrcid?? && invalidOrcid>
 <div class="alert alert-success">
-  <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
+    <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
 </div>
 </#if>
 
 <div class="row workspace-top public-profile">
 
-  <#-- hidden divs that trigger angular -->
-  <#if RequestParameters['recordClaimed']??>
-  <div ng-controller="ClaimThanks" style="display: hidden;"></div>      
-  <#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
-  <div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
-  </#if>
-  <!-- ID Banner and other account information -->
-  <div class="col-md-3 lhs left-aside">
-    <div class="workspace-profile">
+    <#-- hidden divs that trigger angular -->
+    <#if RequestParameters['recordClaimed']??>
+    <div ng-controller="ClaimThanks" style="display: hidden;"></div>      
+    <#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
+    <div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
+    </#if>
+  
+    <!-- ID Banner and other account information -->
+    <div class="col-md-3 lhs left-aside">
+        <div class="workspace-profile">
 
-      <#include "includes/id_banner.ftl"/>
+            <#include "includes/id_banner.ftl"/>
 
-      <#include "includes/orcid_public_record_widget.ftl"/>
+            <#include "includes/orcid_public_record_widget.ftl"/>
 
-      <#include "includes/print_record.ftl"/>
+            <#include "includes/print_record.ftl"/>
 
-      <div class="qrcode-container">
-        <a href="http://qrcode.orcid.org" target="workspace.qrcode.link.text"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
-          <div class="popover-help-container">
-            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-            <div id="qrcode-help" class="popover bottom">
-              <div class="arrow"></div>
-              <div class="popover-content">
-                <p><@orcid.msg 'workspace.qrcode.help'/></p>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Other Names -->          
-      <div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
-        <div class="workspace-section-header">
-          <div class="workspace-section-title">
-            <div class="edit-other-names edit-option" id="open-edit-other-names" ng-click="openEditModal()">                      
-              <div class="glyphicon glyphicon-pencil">
-                <div class="popover popover-tooltip top"> 
-                  <div class="arrow"></div>
-                  <div class="popover-content">
-                    <span><@orcid.msg 'manage_bio_settings.editOtherNames' /></span>
-                  </div>                
-                </div>                  
-              </div>
-            </div>
-            <div class="workspace-section-label"><@orcid.msg 'workspace.Alsoknownas'/></div>
-          </div>                
-        </div>
-        <div class="workspace-section-content">
-          <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
-            {{ $last?otherName.content:otherName.content + ", "}}
-           </span>
-        </div>
-      </div>
-
-    
-
-    <!--
-    Original Code
-    --------------------------
-    -->
-    <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
-    <country-ng2></country-ng2>
-    </@orcid.checkFeatureStatus>
-     
-    <div ng-controller="CountryCtrl" class="workspace-section country">
-        <div class="workspace-section-header">
-            <div class="workspace-section-title">
-                <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
-                    <div class="glyphicon glyphicon-pencil"> 
-                        <div class="popover popover-tooltip top"> 
+            <div class="qrcode-container">
+                <a href="http://qrcode.orcid.org" target="workspace.qrcode.link.text"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
+                    <div class="popover-help-container">
+                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <div id="qrcode-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">
-                                <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
-                            </div>                
+                                <p><@orcid.msg 'workspace.qrcode.help'/></p>
+                            </div>
                         </div>
-                    </div>                  
-                </div>
-                <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
+                    </div>
+                </a>
             </div>
-        </div>
-        <div class="workspace-section-content">
-            <span ng-repeat="country in countryForm.addresses">                                       
-                <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
-            </span>
-        </div>
-    </div>
 
+            <!-- Other Names -->
 
-      <!-- Keywords -->         
-      <div ng-controller="KeywordsCtrl" class="workspace-section keywords">
-        <div class="workspace-section-header">
-          <div class="workspace-section-title">
-            <div id="open-edit-keywords" class="edit-keywords edit-option" ng-click="openEditModal()">
-              <div class="glyphicon glyphicon-pencil">
-                <div class="popover popover-tooltip top">
-                  <div class="arrow"></div>
-                  <div class="popover-content">
-                    <span><@orcid.msg 'manage_bio_settings.editKeywords' /></span>
+            <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+            <also-known-as-ng2></also-known-as-ng2>
+            </@orcid.checkFeatureStatus>
+
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
+              <div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
+                <div class="workspace-section-header">
+                  <div class="workspace-section-title">
+                    <div class="edit-other-names edit-option" id="open-edit-other-names" ng-click="openEditModal()">                      
+                      <div class="glyphicon glyphicon-pencil">
+                        <div class="popover popover-tooltip top"> 
+                          <div class="arrow"></div>
+                          <div class="popover-content">
+                            <span><@orcid.msg 'manage_bio_settings.editOtherNames' /></span>
+                          </div>                
+                        </div>                  
+                      </div>
+                    </div>
+                    <div class="workspace-section-label"><@orcid.msg 'workspace.Alsoknownas'/></div>
                   </div>                
+                </div>
+                <div class="workspace-section-content">
+                  <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
+                    {{ $last?otherName.content:otherName.content + ", "}}
+                   </span>
                 </div>
               </div>
-            </div>
-            <div class="workspace-section-label"><@orcid.msg 'public_profile.labelKeywords'/></div>
-          </div>
-          <div class="workspace-section-content">
-            <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-              {{ $last?keyword.content:keyword.content+ ", "}}
-            </span>
-          </div>
-        </div>
-      </div>
+            </@orcid.checkFeatureStatus>
 
-      <!-- Websites  -->          
-      <div ng-controller="WebsitesCtrl" class="workspace-section websites">
-        <div class="workspace-section-header">
-          <div class="workspace-section-title">
-            <div id="open-edit-websites" class="edit-websites edit-option" ng-click="openEditModal()">
-              <div class="glyphicon glyphicon-pencil">
-                <div class="popover popover-tooltip top">
-                  <div class="arrow"></div>
-                  <div class="popover-content">
-                    <span><@orcid.msg 'manage_bio_settings.editWebsites' /></span>
-                  </div>                
+            <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+            <country-ng2></country-ng2>
+            </@orcid.checkFeatureStatus>
+
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
+            <div ng-controller="CountryCtrl" class="workspace-section country">
+                <div class="workspace-section-header">
+                    <div class="workspace-section-title">
+                        <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
+                            <div class="glyphicon glyphicon-pencil"> 
+                                <div class="popover popover-tooltip top"> 
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
+                                    </div>                
+                                </div>
+                            </div>                  
+                        </div>
+                        <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
+                    </div>
                 </div>
-              </div>         
+                <div class="workspace-section-content">
+                    <span ng-repeat="country in countryForm.addresses">                                       
+                        <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
+                    </span>
+                </div>
             </div>
-            <div class="workspace-section-label"><@orcid.msg 'public_profile.labelWebsites'/></div>
-          </div>
-        </div>  
-        <div class="workspace-section-content">
-          <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
-            <a href="{{website.url}}" target="website.urlName" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
-          </div>
-        </div>
-      </div>
+            </@orcid.checkFeatureStatus>
+
+            <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+            <keywords-ng2></keywords-ng2>
+            </@orcid.checkFeatureStatus>
+
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
+              <!-- Keywords -->         
+              <div ng-controller="KeywordsCtrl" class="workspace-section keywords">
+                <div class="workspace-section-header">
+                  <div class="workspace-section-title">
+                    <div id="open-edit-keywords" class="edit-keywords edit-option" ng-click="openEditModal()">
+                      <div class="glyphicon glyphicon-pencil">
+                        <div class="popover popover-tooltip top">
+                          <div class="arrow"></div>
+                          <div class="popover-content">
+                            <span><@orcid.msg 'manage_bio_settings.editKeywords' /></span>
+                          </div>                
+                        </div>
+                      </div>
+                    </div>
+                    <div class="workspace-section-label"><@orcid.msg 'public_profile.labelKeywords'/></div>
+                  </div>
+                  <div class="workspace-section-content">
+                    <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
+                      {{ $last?keyword.content:keyword.content+ ", "}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </@orcid.checkFeatureStatus>
+
+            <!-- Websites  -->          
+            <div ng-controller="WebsitesCtrl" class="workspace-section websites">
+                <div class="workspace-section-header">
+                    <div class="workspace-section-title">
+                        <div id="open-edit-websites" class="edit-websites edit-option" ng-click="openEditModal()">
+                            <div class="glyphicon glyphicon-pencil">
+                                <div class="popover popover-tooltip top">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <span><@orcid.msg 'manage_bio_settings.editWebsites' /></span>
+                                    </div>                
+                                </div>
+                            </div>         
+                        </div>
+                        <div class="workspace-section-label"><@orcid.msg 'public_profile.labelWebsites'/></div>
+                    </div>
+                </div>  
+                <div class="workspace-section-content">
+                    <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
+                        <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow">{{website.urlName != null? website.urlName : website.url.value}}</a>
+                    </div>
+                </div>
+            </div>
 
       <!-- Emails  -->          
       <div ng-controller="EmailsCtrl" class="workspace-section">
@@ -273,7 +282,7 @@
         <#include "workspace_fundings_body_list_v3.ftl"/>
 
         <!-- Works -->                
-        <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
+        <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.loading != true}}">
           <#include "includes/work/work_section_header_inc_v3.ftl"/>
           <!-- Work Import Wizard -->
           <div ng-if="workImportWizard" class="work-import-wizard" ng-cloak>
@@ -600,42 +609,42 @@
 </script>
 
 <script type="text/ng-template" id="claimed-record-thanks">
-  <div class="lightbox-container">
-    <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-        <br />
-        <button class="btn btn-primary" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
-      </div>
+    <div class="lightbox-container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+                <br />
+                <button class="btn btn-primary" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
+            </div>
+        </div>
     </div>
-  </div>
 </script>
 
 <script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
-  <div class="lightbox-container">
-    <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-        <br />
-        <strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
-        <br />
-        <button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
-        <button class="btn btn-primary" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
-      </div>
+    <div class="lightbox-container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+                <br />
+                <strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
+                <br />
+                <button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
+                <button class="btn btn-primary" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
+            </div>
+        </div>
     </div>
-  </div>
 </script>
 
 <script type="text/ng-template" id="delete-external-id-modal">
-  <div class="lightbox-container">
-    <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
-        <button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'freemarker.btnDelete'/></button> 
-        <a ng-click="closeEditModal()"><@orcid.msg 'freemarker.btncancel'/></a>
-      </div>
-    </div>
-  </div> 
+    <div class="lightbox-container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
+                <button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'freemarker.btnDelete'/></button> 
+                <a ng-click="closeEditModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+            </div>
+        </div>
+    </div> 
 </script>
 
 <script type="text/ng-template" id="bulk-delete-modal">
@@ -757,16 +766,26 @@
   </#if>
 </script>
 
+<@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645">
+    <also-known-as-form-ng2></also-known-as-form-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
+    <country-form-ng2></country-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
+    <keywords-form-ng2></keywords-form-ng2>
+</modalngcomponent><!-- Ng2 component -->  
+</@orcid.checkFeatureStatus> 
+
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
-</modalngcomponent><!-- Ng2 component --> 
-
-<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
-    <country-form-ng2></country-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <!-- Ng1 directive -->

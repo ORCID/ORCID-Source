@@ -40,7 +40,7 @@ public class WebDriverHelper {
 
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
 
-    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
+    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.{6})");
 
     private WebDriver webDriver;
 

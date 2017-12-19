@@ -515,27 +515,19 @@ $(function() {
             .submit(
                     function() {
                         var loginUrl = baseUrl + 'signin/auth.json';
+                        var gaString = angular.element($("#loginForm")).scope().gaString;
 
                         if (signinLocked) return false;
                         disableSignin();
                         
-                        if (basePath.startsWith(baseUrl + 'oauth')) {
-                            var clientName = $(
-                                    'form#loginForm input[name="client_name"]')
-                                    .val();
-                            var clientGroupName = $(
-                                    'form#loginForm input[name="client_group_name"]')
-                                    .val();
+                        if (gaString) {
                             orcidGA.gaPush([
                                     'send',
                                     'event',
                                     'RegGrowth',
                                     'Sign-In-Submit',
                                     'OAuth '
-                                            + orcidGA
-                                                    .buildClientString(
-                                                            clientGroupName,
-                                                            clientName) ]);
+                                            + gaString ]);
                         } else
                             orcidGA.gaPush([ 'send', 'event', 'RegGrowth',
                                     'Sign-In-Submit', 'Website' ]);
@@ -557,15 +549,8 @@ $(function() {
                                             dataType : 'json',
                                             success : function(data) {
                                                 if (data.success) {
-                                                    if (basePath
-                                                            .startsWith(baseUrl
-                                                                    + 'oauth/signin')) {
-                                                        var clientName = $(
-                                                                'form#loginForm input[name="client_name"]')
-                                                                .val();
-                                                        var clientGroupName = $(
-                                                                'div#RegistrationCtr input[name="client_group_name"]')
-                                                                .val();
+                                                    if (gaString) {
+
                                                         orcidGA
                                                                 .gaPush([
                                                                         'send',
@@ -573,10 +558,7 @@ $(function() {
                                                                         'RegGrowth',
                                                                         'Sign-In',
                                                                         'OAuth '
-                                                                                + orcidGA
-                                                                                        .buildClientString(
-                                                                                                clientGroupName,
-                                                                                                clientName) ]);
+                                                                                + gaString ]);
                                                     } else
                                                         orcidGA.gaPush([
                                                                 'send',

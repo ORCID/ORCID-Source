@@ -37,7 +37,7 @@
                     </div>
                     
                     <#if !(isPublicProfile??)>
-                    <h2 class="full-name">
+                    <h2 class="full-name" *ngIf="nameForm">
                         <span *ngIf="displayFullName()">{{nameForm?.creditName?.value}}
                         </span>
                         <span *ngIf="displayPublishedName()">

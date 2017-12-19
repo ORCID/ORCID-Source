@@ -114,9 +114,9 @@ export const WebsitesCtrl = angular.module('orcidApp').controller(
                         // -> set the default protocol when needed
                         if(len > 0) {
                             while (len--) {
-                                if(websites[len].url != null) {
-                                    if (!websites[len].url.toLowerCase().startsWith('http')) {
-                                        websites[len].url = 'http://' + websites[len].url;
+                                if(websites[len].url != null && websites[len].url.value != null) {
+                                    if (!websites[len].url.value.toLowerCase().startsWith('http')) {
+                                        websites[len].url.value = 'http://' + websites[len].url.value;
                                     }                            
                                 }     
 
@@ -241,7 +241,7 @@ export const WebsitesCtrl = angular.module('orcidApp').controller(
                 len = websites.length;
                 
                 while (len--) {
-                    if (websites[len].url == null || websites[len].url.trim() == ''){
+                    if (websites[len].url == null || websites[len].url.value == null || websites[len].url.value.trim() == ''){
                         websites.splice(len,1);
                     }
                 }

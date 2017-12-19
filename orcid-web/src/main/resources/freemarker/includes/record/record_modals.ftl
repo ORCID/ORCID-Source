@@ -16,12 +16,12 @@
     =============================================================================
 
 -->
-
+<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
 <script type="text/ng-template" id="edit-aka">  
-    <!-- Other Names -->    
+  
     <div class="lightbox-container" id="aka-popover">
         <div class="edit-record edit-record-bulk-edit edit-aka">
-            <!-- Title -->
+
             <div class="row">           
                 <div class="col-md-12 col-sm-12 col-xs-12"> 
                     <h1 class="lightbox-title pull-left">
@@ -98,7 +98,6 @@
         </div>
     </div>      
 </script>
-
 
 <script type="text/ng-template" id="edit-country">
 
@@ -273,6 +272,7 @@
         </div>
     </div>
 </script>
+</@orcid.checkFeatureStatus>
 
 <script type="text/ng-template" id="edit-websites">
     <div class="lightbox-container" id="websites-popover">
@@ -301,8 +301,8 @@
                                 <div class="col-md-6">
                                     <div class="aka">                                       
                                         <input type="text" ng-model="website.urlName" ng-show="website.source == orcidId" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>
-                                        <input type="text" ng-model="website.url" ng-show="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
-                                        <a href="{{website.url}}" target="website.urlName" rel="me nofollow" ng-show="website.source != orcidId" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>
+                                        <input type="text" ng-model="website.url.value" ng-show="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
+                                        <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow" ng-show="website.source != orcidId" ng-cloak>{{website.urlName != null? website.urlName : website.url.value}}</a>
                                     </div>
                                     <div class="source" ng-if="website.sourceName || website.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="website.sourceName">{{website.sourceName}}</span><span ng-if="website.sourceName == null">{{orcidId}}</span></div>                                                                            
                                 </div>

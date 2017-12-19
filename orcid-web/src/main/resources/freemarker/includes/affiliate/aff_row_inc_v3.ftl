@@ -20,9 +20,9 @@
          
   	<!-- Information -->
 	<div class="col-md-9 col-sm-9 col-xs-7">
-	    <h3 class="workspace-title">	    	
-        	<span ng-bind="group.getActive().affiliationName.value"></span>:
-        	<span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
+	    <h3 class="workspace-title">	
+            <span ng-bind="group.getActive().affiliationName.value"></span>:
+            <span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>
         </h3>
         <div class="info-detail">
         	<div class="info-date">        	        	
@@ -101,11 +101,11 @@
 				<div class="col-md-7 col-sm-7 col-xs-12">
 					<@orcid.msg 'groups.common.source'/>: {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}	
 				</div>
-                <@orcid.checkFeatureStatus featureName='AFFILIATION_ORG_ID' enabled=false>
-    				<div class="col-md-3 col-sm-3 col-xs-6">
-    					<@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
-    				</div>
-                </@orcid.checkFeatureStatus>			
+                <div class="col-md-3 col-sm-3 col-xs-6">
+                    <@orcid.checkFeatureStatus featureName='AFFILIATION_ORG_ID' enabled=false>
+					<@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
+                    </@orcid.checkFeatureStatus>			
+                </div>
 				<div class="col-md-2 col-sm-2 col-xs-6 pull-right">
 					<ul class="sources-options">
 						<#if !(isPublicProfile??)>

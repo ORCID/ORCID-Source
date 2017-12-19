@@ -516,7 +516,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public void updateLocale(String orcid, Locale locale) {
-        profileDao.updateLocale(orcid,  org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.name()));
+        profileDao.updateLocale(orcid,  org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
     }
 
     @Override

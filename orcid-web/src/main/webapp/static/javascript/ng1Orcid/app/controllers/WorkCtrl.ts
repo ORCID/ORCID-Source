@@ -273,6 +273,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.deleteByPutCode = function(putCode, deleteGroup) {
+                $scope.closeAllMoreInfo();
                 if (deleteGroup) {
                    worksSrvc.deleteGroupWorks(putCode, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                 }
@@ -428,7 +429,6 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             $scope.hideSources = function(group) {
                 $scope.editSources[group.groupId] = false;
-                group.activePutCode = group.defaultPutCode;
             };
 
             $scope.hideTooltip = function (key){        
@@ -641,7 +641,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                         $scope.addingWork = false;
                                     });
                                     $.colorbox.close();
-                                    $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+                                    $scope.worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                                 }
                             } else {
                                 $timeout(function(){
@@ -704,7 +704,8 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                             });
                             numToSave--;
                             if (numToSave == 0){
-                                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+                                $scope.closeAllMoreInfo();
+                                $scope.worksSrvc.refreshWorkGroups($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                                 savingBibtex = false;
                             }
                         });
@@ -715,7 +716,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
             
             $scope.loadMore = function() {
-                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
+                $scope.worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
             }
 
             $scope.serverValidate = function (relativePath) {
@@ -854,7 +855,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.sort = function(key) {
                 $scope.sortState.sortBy(key);
                 worksSrvc.resetWorkGroups();
-                worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[key]);
+                worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[key]);
                
             };
 
@@ -886,22 +887,23 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.toggleBulkEdit = function() {
-
-                if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-                    if (!$scope.bulkEditShow) {
-                        $scope.bulkEditMap = {};
-                        $scope.bulkChecked = false;
-                        for (var idx in worksSrvc.groups){
-                            $scope.bulkEditMap[worksSrvc.groups[idx].activePutCode] = false;
-                        }
-                    };
-                    $scope.bulkEditShow = !$scope.bulkEditShow;
-                    $scope.showBibtexImportWizard = false;
-                    $scope.workImportWizard = false;
-                    $scope.showBibtexExport = false;
-                }else{
-                    showEmailVerificationModal();
-                }
+                worksSrvc.loadAllWorkGroups($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey], function() {
+                    if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+                        if (!$scope.bulkEditShow) {
+                            $scope.bulkEditMap = {};
+                            $scope.bulkChecked = false;
+                            for (var idx in worksSrvc.groups){
+                                $scope.bulkEditMap[worksSrvc.groups[idx].activePutCode] = false;
+                            }
+                        };
+                        $scope.bulkEditShow = !$scope.bulkEditShow;
+                        $scope.showBibtexImportWizard = false;
+                        $scope.workImportWizard = false;
+                        $scope.showBibtexExport = false;
+                    }else{
+                        showEmailVerificationModal();
+                    }
+                });
             };
 
             $scope.toggleClickPrivacyHelp = function(key) {

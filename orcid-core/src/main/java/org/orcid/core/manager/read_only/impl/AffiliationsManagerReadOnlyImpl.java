@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements AffiliationsManagerReadOnly {
     @Resource
@@ -125,7 +126,14 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid) {
         List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
-        return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
+        List<EmploymentSummary> elements = jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
+        // UI sort it descending first, so,lets do the same for the API
+        elements.sort((EmploymentSummary e1, EmploymentSummary e2) -> {
+            String sortString1 = PojoUtil.createDateSortString(e1);
+            String sortString2 = PojoUtil.createDateSortString(e2);
+            return sortString2.compareTo(sortString1);
+        });
+        return elements;
     }
 
     /**
@@ -139,7 +147,14 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public List<EducationSummary> getEducationSummaryList(String userOrcid) {
         List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EDUCATION);
-        return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+        List<EducationSummary> elements = jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+        // UI sort it descending first, so,lets do the same for the API
+        elements.sort((EducationSummary e1, EducationSummary e2) -> {
+            String sortString1 = PojoUtil.createDateSortString(e1);
+            String sortString2 = PojoUtil.createDateSortString(e2);
+            return sortString2.compareTo(sortString1);
+        });
+        return elements;
     }    
     
     @Override

@@ -157,7 +157,7 @@ public class AddWorksTest extends BlackBoxBase {
     }
     
     public static void reloadWorks(WebDriver webDriver, WebDriverWait wait) {
-        ((JavascriptExecutor) webDriver).executeScript("angular.element(document.body).injector().get('worksSrvc').loadAbbrWorks()");
+        ((JavascriptExecutor) webDriver).executeScript("angular.element(document.body).injector().get('worksSrvc').addAbbrWorksToScope()");
         waitWorksLoaded(wait, webDriver);
     }
     

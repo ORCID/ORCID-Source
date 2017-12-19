@@ -11,13 +11,13 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { CommonService } 
-    from '../../shared/commonService.ts';
+    from '../../shared/common.service.ts';
 
 import { ConsortiaService }
-    from '../../shared/consortiaService.ts'
+    from '../../shared/consortia.service.ts'
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'self-service-ng2',

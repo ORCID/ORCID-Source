@@ -82,13 +82,10 @@ public class OauthGenericCallsController extends OauthControllerBase {
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
     public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request) throws UnsupportedEncodingException {                    
         RequestInfoForm requestInfoForm = null;
-        
+    
         if(request.getSession() != null && request.getSession().getAttribute(REQUEST_INFO_FORM) != null) {
             requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
-        } else {
-            throw new InvalidRequestException("Unable to find parameters");
-        }
-        
+        } 
         return requestInfoForm;
     }
         
