@@ -413,7 +413,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, locale);
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
@@ -442,26 +442,6 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
-        if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
-            PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();
-            // all this should never be null as given names are required for
-            // all...
-            if (personalDetails.getCreditName() != null)
-                if (!PojoUtil.isEmpty(personalDetails.getCreditName().getContent()))
-                    return personalDetails.getCreditName().getContent();
-            if (personalDetails.getGivenNames() != null) {
-                String givenName = personalDetails.getGivenNames().getContent();
-                String familyName = personalDetails.getFamilyName() != null && !StringUtils.isBlank(personalDetails.getFamilyName().getContent())
-                        ? " " + personalDetails.getFamilyName().getContent() : "";
-                return givenName + familyName;
-            }
-        }
-
-        return LAST_RESORT_ORCID_USER_EMAIL_NAME;
-    }
-
-    @Override
     public void sendPasswordResetEmail(String submittedEmail, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         
@@ -476,7 +456,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String resetUrl = createResetEmail(orcidProfile, orcidUrlManager.getBaseUrl());
         templateParams.put("passwordResetUrl", resetUrl);
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, locale);
 
         // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
@@ -499,7 +479,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String reactivationUrl = createReactivationUrl(submittedEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("reactivationUrl", reactivationUrl);
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, locale);
 
         // Generate body from template
         String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
@@ -556,7 +536,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
 
-        addMessageParams(templateParams, amendedProfile);
+        addMessageParams(templateParams, locale);
 
         // Generate body from template
         String body = templateManager.processTemplate("amend_email.ftl", templateParams);
@@ -778,7 +758,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, locale);
 
         String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template

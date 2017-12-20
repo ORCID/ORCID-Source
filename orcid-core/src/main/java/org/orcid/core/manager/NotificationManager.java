@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -45,8 +44,6 @@ public interface NotificationManager {
     void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile);
 
     public String createVerificationUrl(String email, String baseUri);
-
-    public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
     public String deriveEmailFriendlyName(ProfileEntity profileEntity);
 

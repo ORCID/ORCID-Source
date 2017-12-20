@@ -465,27 +465,7 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         return result;
     }
-
-    @Override
-    public String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
-        if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
-            PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();
-            // all this should never be null as given names are required for
-            // all...
-            if (personalDetails.getCreditName() != null)
-                if (!PojoUtil.isEmpty(personalDetails.getCreditName().getContent()))
-                    return personalDetails.getCreditName().getContent();
-            if (personalDetails.getGivenNames() != null) {
-                String givenName = personalDetails.getGivenNames().getContent();
-                String familyName = personalDetails.getFamilyName() != null && !StringUtils.isBlank(personalDetails.getFamilyName().getContent())
-                        ? " " + personalDetails.getFamilyName().getContent() : "";
-                return givenName + familyName;
-            }
-        }
-
-        return LAST_RESORT_ORCID_USER_EMAIL_NAME;
-    }
-
+    
     @Override
     public void sendPasswordResetEmail(String submittedEmail, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);

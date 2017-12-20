@@ -47,8 +47,6 @@ public interface NotificationManager {
 
     public String createVerificationUrl(String email, String baseUri);
 
-    public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
-
     public String deriveEmailFriendlyName(ProfileEntity profileEntity);
 
     void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
