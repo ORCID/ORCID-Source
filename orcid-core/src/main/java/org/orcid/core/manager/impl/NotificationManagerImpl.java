@@ -377,15 +377,6 @@ public class NotificationManagerImpl implements NotificationManager {
         return createEmailBaseUrl(email, orcidUrlManager.getBaseUrl(), "notifications/frequencies");
     }
 
-    public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
-        Map<String, Boolean> features = getFeatures();
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
-        templateParams.put("messages", this.messages);
-        templateParams.put("messageArgs", new Object[0]);
-        templateParams.put("locale", locale);
-        templateParams.put("features", features);
-    }
-
     public void addMessageParams(Map<String, Object> templateParams, Locale locale) {
         Map<String, Boolean> features = getFeatures();
         templateParams.put("messages", this.messages);

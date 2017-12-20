@@ -102,8 +102,6 @@ public interface NotificationManager {
 
     public Notification setActionedAndReadDate(String orcid, Long id);
 
-    public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);
-
     public String createClaimVerificationUrl(String email, String baseUri);
 
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
