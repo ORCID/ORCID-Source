@@ -33,8 +33,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
 
-    // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
-
     void sendWelcomeEmail(String userOrcid, String email);
     
     void sendVerificationEmailToNonPrimaryEmails(String orcid);

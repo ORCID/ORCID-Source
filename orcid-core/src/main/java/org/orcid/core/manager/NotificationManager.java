@@ -34,8 +34,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
 
-    // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
-
     void sendWelcomeEmail(String userOrcid, String email);
 
     void sendVerificationEmail(String userOrcid, String email);
@@ -105,8 +103,6 @@ public interface NotificationManager {
     public Notification setActionedAndReadDate(String orcid, Long id);
 
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);
-
-    public String getSubject(String code, OrcidProfile orcidProfile);
 
     public String createClaimVerificationUrl(String email, String baseUri);
 

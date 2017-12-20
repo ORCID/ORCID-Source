@@ -48,7 +48,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
@@ -441,13 +440,7 @@ public class NotificationManagerImpl implements NotificationManager {
             features.put(f.name(), f.isActive());
         }
         return features;
-    }
-    
-
-    public String getSubject(String code, OrcidProfile orcidProfile) {
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
-        return messages.getMessage(code, null, locale);
-    }
+    }        
 
     private String getSubject(String code, Locale locale) {
         return messages.getMessage(code, null, locale);
@@ -495,46 +488,48 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendPasswordResetEmail(String submittedEmail, OrcidProfile orcidProfile) {
-
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("subject", getSubject("email.subject.reset", orcidProfile));
+        templateParams.put("subject", getSubject("email.subject.reset", locale));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         // Generate body from template
         String resetUrl = createResetEmail(orcidProfile, orcidUrlManager.getBaseUrl());
         templateParams.put("passwordResetUrl", resetUrl);
 
-        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
+        addMessageParams(templateParams, locale);
 
         // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", locale), body, htmlBody);
     }
 
     @Override
     public void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile) {
-
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("subject", getSubject("email.subject.reactivation", orcidProfile));
+        templateParams.put("subject", getSubject("email.subject.reactivation", locale));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         // Generate body from template
         String reactivationUrl = createReactivationUrl(submittedEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("reactivationUrl", reactivationUrl);
 
-        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
+        addMessageParams(templateParams, locale);
 
         // Generate body from template
         String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reactivation_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reactivation", orcidProfile), body, htmlBody);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reactivation", locale), body, htmlBody);
     }
 
     @Override
@@ -555,6 +550,8 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> items) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
+        Locale locale = localeManager.getLocaleFromOrcidProfile(amendedProfile);
+        
         if (amenderOrcid == null) {
             LOGGER.debug("Not sending amend email, because amender is null: {}", amendedProfile);
             return;
@@ -574,7 +571,7 @@ public class NotificationManagerImpl implements NotificationManager {
             return;
         }
 
-        String subject = getSubject("email.subject.amend", amendedProfile);
+        String subject = getSubject("email.subject.amend", locale);
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -585,7 +582,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
 
-        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(amendedProfile));
+        addMessageParams(templateParams, locale);
 
         // Generate body from template
         String body = templateManager.processTemplate("amend_email.ftl", templateParams);
@@ -780,12 +777,13 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation) {
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
         String orcid = orcidProfile.getOrcidIdentifier().getPath();
         templateParams.put("orcid", orcid);
-        templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
+        templateParams.put("subject", getSubject("email.subject.claim_reminder", locale));
         Source source = orcidProfile.getOrcidHistory().getSource();
         String creatorName = "";
         if (source != null) {
@@ -807,7 +805,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
 
-        addMessageParams(templateParams, localeManager.getLocaleFromOrcidProfile(orcidProfile));
+        addMessageParams(templateParams, locale);
 
         String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template
@@ -816,12 +814,11 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.claim_reminder", orcidProfile), body, htmlBody);
+            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.claim_reminder", locale), body, htmlBody);
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.CLAIM_REMINDER_SENT));
         } else {
             LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
         }
-
     }
 
     private String extractAmenderName(OrcidProfile orcidProfile, String amenderId) {
