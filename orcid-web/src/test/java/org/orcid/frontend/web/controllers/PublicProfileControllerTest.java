@@ -203,9 +203,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals("http://ext-id/public_ref", publicExternalIdentifiers.get(0).getUrl().getValue());
         assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());
         
-        assertTrue(model.containsKey("workIdsJson"));
-        assertEquals("[11]", model.get("workIdsJson"));
-        
         assertTrue(model.containsKey("affiliationIdsJson"));
         assertEquals("[17,20]", model.get("affiliationIdsJson"));
         

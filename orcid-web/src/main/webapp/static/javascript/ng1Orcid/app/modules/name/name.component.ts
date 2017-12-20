@@ -16,10 +16,10 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { NameService } 
-    from '../../shared/nameService.ts'; 
+    from '../../shared/name.service.ts'; 
 
 import { EmailService } 
-    from '../../shared/emailService.ts';
+    from '../../shared/email.service.ts';
 
 @Component({
     selector: 'name-ng2',

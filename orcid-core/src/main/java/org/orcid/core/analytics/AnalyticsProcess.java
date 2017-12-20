@@ -18,7 +18,6 @@ package org.orcid.core.analytics;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -40,7 +39,7 @@ public class AnalyticsProcess implements Runnable {
     private static final String PROFILE_NOT_FOUND = "not-found";
 
     private static final String DEFAULT_CONTENT_TYPE = "default";
-
+    
     private ContainerRequest request;
 
     private ContainerResponse response;

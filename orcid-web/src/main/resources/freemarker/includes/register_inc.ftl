@@ -16,63 +16,49 @@
     =============================================================================
 
 -->
-<#include "/common/browser-checks.ftl" />
-<#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
-	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('${RequestParameters.firstName?js_string}', '${RequestParameters.lastName?js_string}', '${RequestParameters.emailId?js_string}', '${RequestParameters.linkRequest?js_string}')">
-<#else>
-	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('', '', '', '')">
-</#if>
-<fn-form update-fn="postRegister()">
-	<!-- span class="orcid-error" ng-show="register.errors.length > 0">
-		<div ng-repeat='error in register.errors' ng-bind-html="error"></div>
-   	</span -->
-	<div>
-        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelfirstname")}
-        </label>
-        <div class="relative">
-        	<#if (client_name)??>
-        	<#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
-	        <#assign js_client_name = client_name?replace('"', '&quot;')?js_string>	        
-        	<input type="hidden" name="client_group_name" value="${js_group_name}" />
-        	<input type="hidden" name="client_name" value="${js_client_name}" />
-        	<input type="hidden" name="client_id" value="${client_id}" />        	
-        	</#if>
-            <input name="givenNames234" type="text" tabindex="1" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>
-            <span class="required" ng-class="isValidClass(register.givenNames)">*</span>
-			<div class="popover-help-container">
+<div id="register" class="oauth-registration">
+    <!-- First name -->
+    <div class="form-group clear-fix">
+        <label for="givenNames" class="control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
+        <div class="bottomBuffer">
+            <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="" ng-model="registrationForm.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>                         
+            <span class="required" ng-class="isValidClass(registrationForm.givenNames)">*</span>            
+            <div class="popover-help-container">
                 <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
                 <div id="name-help" class="popover bottom">
-			        <div class="arrow"></div>
-			        <div class="popover-content">
-			            <p><@orcid.msg ''/></p>
-						<p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
-						<p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
-						<a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="orcid.frontend.register.help.more_info.link.text"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
-			        </div>
-			    </div>
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <p><@orcid.msg 'orcid.frontend.register.help.first_name'/></p>
+                        <p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
+                        <p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
+                        <a href="<@orcid.msg 'orcid.frontend.register.help.more_info.link.url'/>" target="orcid.frontend.register.help.more_info.link.text"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
+                    </div>
+                </div>
             </div>
-			<span class="orcid-error" ng-show="register.givenNames.errors.length > 0">
-				<div ng-repeat='error in register.givenNames.errors' ng-bind-html="error"></div>
-   			</span>
+            <span class="orcid-error" ng-show="registrationForm.givenNames.errors.length > 0">
+                <div ng-repeat='error in registrationForm.givenNames.errors' ng-bind-html="error"></div>
+            </span>
         </div>
     </div>				
-	<div>
-        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labellastname")}</label>
-        <div class="relative">
-            <input name="familyNames234" type="text" tabindex="2" class="input-xlarge"  ng-model="register.familyNames.value" ng-model-onblur/>
-            <span class="orcid-error" ng-show="register.familyNames.errors.length > 0">
-				<div ng-repeat='error in register.familyNames.errors' ng-bind-html="error"></div>
-   			</span>
+	<!-- Last name -->
+    <div class="form-group clear-fix">
+        <label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
+        <div class="bottomBuffer">
+            <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class=""  ng-model="registrationForm.familyNames.value" ng-model-onblur/>
+            <span class="orcid-error" ng-show="registrationForm.familyNames.errors.length > 0">
+                <div ng-repeat='error in registrationForm.familyNames.errors' ng-bind-html="error"></div>
+            </span>
         </div>
     </div>
     <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
-        <div>
+        <!-- Primary email -->
+        <div class="form-group clear-fix">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
             <div class="relative">          
-                <input name="emailprimary234" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-blur="serverValidate('Email')"/>
+                <input name="emailprimary234" type="text" tabindex="3" class="input-xlarge" ng-model="registrationForm.email.value" ng-blur="serverValidate('Email')"/>
                 <span class="required" ng-class="isValidClass(register.email)">*</span>
-                <span class="orcid-error" ng-show="register.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
-                    <div ng-repeat='error in register.email.errors' ng-bind-html="error"></div>
+                <span class="orcid-error" ng-show="registrationForm.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
+                    <div ng-repeat='error in registrationForm.email.errors' ng-bind-html="error"></div>
                 </span>
                 <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
@@ -82,10 +68,11 @@
                 </span>
             </div>
         </div>  
-        <div ng-repeat="emailAdditional in register.emailsAdditional track by $index">
+        <!-- Additional emails -->
+        <div class="form-group clear-fix" ng-repeat="emailAdditional in registrationForm.emailsAdditional track by $index">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
             <div class="relative">
-                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="register.emailsAdditional[$index].value" focus-last-input="$index == focusIndex" ng-blur="serverValidate('EmailsAdditional')"/>
+                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="registrationForm.emailsAdditional[$index].value" focus-last-input="$index == focusIndex" ng-blur="serverValidate('EmailsAdditional')"/>
                 <div ng-show="$first" class="popover-help-container leftBuffer">
                     <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
                     <div id="email-additional-help" class="popover bottom">
@@ -97,10 +84,10 @@
                     </div>
                 </div>
                 <div ng-show="!$first" class="popover-help-container leftBuffer">
-                    <button class="btn-white-no-border" ng-click="removeEmailField($index)"><i class="glyphicon glyphicon-remove-sign"></i></button>
+                    <a class="btn-white-no-border" ng-click="removeEmailField($index)"><i class="glyphicon glyphicon-remove-sign"></i></a>
                 </div>
-                <span class="orcid-error" ng-show="register.emailsAdditional[$index].errors.length > 0 && !showEmailsAdditionalDeactivatedError[$index] && !showEmailsAdditionalReactivationSent[$index]">
-                    <div ng-repeat='error in register.emailsAdditional[$index].errors track by $index' ng-bind-html="error"></div>
+                <span class="orcid-error" ng-show="registrationForm.emailsAdditional[$index].errors.length > 0 && !showEmailsAdditionalDeactivatedError[$index] && !showEmailsAdditionalReactivationSent[$index]">
+                    <div ng-repeat='error in registrationForm.emailsAdditional[$index].errors track by $index' ng-bind-html="error"></div>
                 </span>
                 <span class="orcid-error" ng-show="showEmailsAdditionalDeactivatedError[$index]" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendEmailsAdditionalReactivationEmail($index)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
@@ -110,270 +97,118 @@
                 </span>
             </div>
         </div>
-        <button ng-click="addEmailField()" class="btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>
+        <button ng-click="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>
     </@orcid.checkFeatureStatus>
-    <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL' enabled=false>	
-        <div>
-            <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemail")}</label>
-            <div class="relative">          
-                <input name="email234" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-blur="serverValidate('Email')"/>
-                <span class="required" ng-class="isValidClass(register.email)">*</span>
-                <span class="orcid-error" ng-show="register.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
-                    <div ng-repeat='error in register.email.errors' ng-bind-html="error"></div>
+    <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL' enabled=false> 
+        <!-- Email -->                  
+        <div class="form-group clear-fix">
+            <label class="control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
+            <div class="bottomBuffer">
+                <input id="register-form-email" name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
+                <span class="required" ng-class="isValidClass(registrationForm.email)">*</span> <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0 && !showDeactivatedError && !showReactivationSent">
+                    <div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
                 </span>
                 <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
+                </span>                                             
+            </div>
+        </div>
+        <!--Re-enter email-->
+        <div class="form-group clear-fix">
+            <label class="control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
+            <div class="bottomBuffer">
+                <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
+                <span class="required" ng-class="isValidClass(registrationForm.emailConfirm)">*</span>                  
+                <span class="orcid-error" ng-show="registrationForm.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
+                    <div ng-repeat='error in registrationForm.emailConfirm.errors' ng-bind-html="error"></div>
                 </span>
             </div>
-        </div>		
-        <div>
-            <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelreenteremail")}</label>
-            <div class="relative">
-                <input name="confirmedEmail234" type="email" tabindex="4" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur />
-                <span class="required" ng-class="isValidClass(register.emailConfirm)">*</span>
-                <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
-    				<div ng-repeat='error in register.emailConfirm.errors' ng-bind-html="error"></div>
-       			</span>
-            </div>
-        </div>	
-    </@orcid.checkFeatureStatus>			
-    <div class="control-group">
-        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelpassword")}</label>
-        <div class="relative">
-            <input type="password" name="password" tabindex="5" class="input-xlarge" ng-model="register.password.value" ng-change="serverValidate('Password')"/>
-            <span class="required" ng-class="isValidClass(register.password)">*</span>
-   			<@orcid.passwordHelpPopup />
-            <span class="orcid-error" ng-show="register.password.errors.length > 0">
-				<div ng-repeat='error in register.password.errors' ng-bind-html="error"></div>
-   			</span>
+        </div>
+    </@orcid.checkFeatureStatus>
+    <!--Password-->
+    <div class="form-group clear-fix">
+        <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
+        <div class="bottomBuffer">
+            <input id="register-form-password" type="password" name="password" tabindex="5" class="" ng-model="registrationForm.password.value" ng-change="serverValidate('Password')"/>
+            <span class="required" ng-class="isValidClass(registrationForm.password)">*</span>
+            <@orcid.passwordHelpPopup />
+            <span class="orcid-error" ng-show="registrationForm.password.errors.length > 0">
+                <div ng-repeat='error in registrationForm.password.errors' ng-bind-html="error"></div>
+            </span>
         </div>
     </div>
-    <div>
-        <label class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.labelconfirmpassword")}</label>
-        <div class="relative">
-            <input type="password" name="confirmPassword" tabindex="6" class="input-xlarge" ng-model="register.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
-            <span class="required" ng-class="isValidClass(register.passwordConfirm)">*</span>
-            <span class="orcid-error" ng-show="register.passwordConfirm.errors.length > 0">
-				<div ng-repeat='error in register.passwordConfirm.errors' ng-bind-html="error"></div>
-   			</span>
+    <!--Confirm password-->
+    <div class="form-group clear-fix">
+        <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
+        <div class="bottomBuffer">
+            <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" ng-model="registrationForm.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
+            <span class="required" ng-class="isValidClass(registrationForm.passwordConfirm)">*</span>                 
+            <span class="orcid-error" ng-show="registrationForm.passwordConfirm.errors.length > 0">
+                <div ng-repeat='error in registrationForm.passwordConfirm.errors' ng-bind-html="error"></div>
+            </span>
         </div>
     </div>
-	<div style="margin-bottom: 20px; margin-top: 10px;">
-        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
-        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
-    	<@orcid.privacyToggle 
-    	    angularModel="register.activitiesVisibilityDefault.visibility" 
-    	    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
-			clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-			publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
-			limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
-			privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
-    </div>                    
-    <div>
-        <div class="relative">
-            <@orcid.registrationEmailFrequencySelector angularElementName="register" />
-         </div>
-	</div>
-    <div>
-        <div class="relative recaptcha"  id="recaptcha" style="margin-bottom: 15px;">			
-			 <div
-                vc-recaptcha
-                theme="'light'"
-                key="model.key"
-                on-create="setRecaptchaWidgetId(widgetId)"
-                on-success="setRecatchaResponse(response)"
-            ></div>
-            <span class="orcid-error" ng-show="register.grecaptcha.errors.length > 0">
-				<div ng-repeat='error in register.grecaptcha.errors track by $index' ng-bind-html="error"></div>
-   			</span>
+    <!--Visibility default-->
+    <div class="form-group clear-fix popover-registry">
+        <div class="oauth-privacy">                      
+            <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
+            <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
+            <@orcid.privacyToggle 
+                angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
+                questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+                clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
+                publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
+                limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
+                privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
         </div>
-	</div>   
+    </div>
+    <!--Email frequency-->
     <div>
-        <div class="relative"  style="margin-bottom: 15px;">
-            <label class="dark-label">${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
-            <div class="checkbox">
-	            <label class="checkbox dark-label">            
-	            	<input type="checkbox" tabindex="9" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
-	            	${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}
-	            </label>
-	        </div>
-            
-            <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
-				<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
-   			</span>
+        <div class="relative">              
+            <@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
         </div>
-	</div>  
-	<div ng-show="generalRegistrationError != null">
-        <div class="relative"  style="margin-bottom: 15px;">
-        	<div class="col-sm-12">
-        		<span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
-        	</div>
+    </div>
+    <!--Recaptcha-->
+    <div>
+        <div class="bottomBuffer relative recaptcha"  id="recaptcha">
+            <div vc-recaptcha
+            theme="'light'"
+            key="model.key"
+            on-create="setRecaptchaWidgetId(widgetId)"
+            on-success="setRecatchaResponse(response)"></div>
+                <span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
+                    <div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
+                </span>
         </div>
-	</div>	 
-    <div class="relative">
+    </div>
+    <!--Terms and conditions-->
+    <div class="bottomBuffer">
+        <label for="termsConditions">
+            <@orcid.msg 'register.labelTermsofUse'/>
+            <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span>
+        </label>
+        <p>
+            <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
+            <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
+        </p>
+        <span class="orcid-error" ng-show="registrationForm.termsOfUse.errors.length > 0">
+            <div ng-repeat='error in registrationForm.termsOfUse.errors' ng-bind-html="error"></div>
+        </span>
+    </div>
+    <!--Registration error-->
+    <div style="margin-bottom: 15px;" ng-show="generalRegistrationError != null">
+        <span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
+    </div>	 
+    <!-- Buttons  -->
+    <div class="bottomBuffer col-xs-12 col-sm-3">
     	<#if (RequestParameters['linkRequest'])??>
-			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
+			<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
 		<#else>
-			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
+			<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
 		</#if>
     </div>  
-</fn-form>
-
-<@orcid.checkFeatureStatus featureName='HTTPS_IDS'> 
-    <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
-        <script type="text/ng-template" id="duplicates">
-            <div class="lightbox-container" id="duplicates-records">
-                <div class="row margin-top-box">      
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <h4><@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
-                            <@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@orcid.rootPath "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
-                        </h4>
-                    </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
-                        <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
-                    </div>
-                </div>        
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table class="table">
-                            <thead>
-                                <tr>                      
-                                    <th><@orcid.msg 'search_results.thORCIDID'/></th>
-                                    <th><@orcid.msg 'duplicate_researcher.thEmail'/></th>
-                                    <th><@orcid.msg 'duplicate_researcher.thgivennames'/></th>
-                                    <th><@orcid.msg 'duplicate_researcher.thFamilyName'/></th>
-                                    <th><@orcid.msg 'workspace_bio.Affiliations'/></th>              
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat='dup in duplicates'>
-                                    <td><a href="${baseUri}/{{dup.orcid}}" target="dup.orcid">${baseUri}/{{dup.orcid}}</a></td>
-                                    <td>{{dup.email}}</td>
-                                    <td>{{dup.givenNames}}</td>
-                                    <td>{{dup.familyNames}}</td>
-                                    <td ng-bind="getAffiliations(dup)">{{dup['affiliations']}}</td>
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>  
-                <div class="row margin-top-box">
-                    <div class="col-md-12 col-sm-12 col-xs-12 right">
-                        <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
-                    </div>
-                </div>
-            </div>
-        </script>
-    </@orcid.checkFeatureStatus>
-    <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
-        <script type="text/ng-template" id="duplicates">
-            <div class="lightbox-container" id="duplicates-records">
-                <div class="row margin-top-box">      
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <h4><@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
-                            <@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@orcid.rootPath "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
-                        </h4>
-                    </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
-                        <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
-                    </div>
-                </div>        
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table class="table">
-                            <thead>
-                                <tr>                      
-                                    <th><@orcid.msg 'search_results.thORCIDID'/></th>
-                                    <th><@orcid.msg 'duplicate_researcher.thEmail'/></th>
-                                    <th><@orcid.msg 'duplicate_researcher.thgivennames'/></th>
-                                    <th><@orcid.msg 'duplicate_researcher.thFamilyName'/></th>
-                                    <th><@orcid.msg 'duplicate_researcher.thInstitution'/></th>                
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat='dup in duplicates'>
-                                    <td><a href="${baseUri}/{{dup.orcid}}" target="dup.orcid">${baseUri}/{{dup.orcid}}</a></td>
-                                    <td>{{dup.email}}</td>
-                                    <td>{{dup.givenNames}}</td>
-                                    <td>{{dup.familyNames}}</td>
-                                    <td>{{dup.institution}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>  
-                <div class="row margin-top-box">
-                    <div class="col-md-12 col-sm-12 col-xs-12 right">
-                        <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
-                    </div>
-                </div>
-            </div>
-        </script>
-    </@orcid.checkFeatureStatus> 
-</@orcid.checkFeatureStatus>  
-<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false> 
-    <script type="text/ng-template" id="duplicates">
-        <div class="lightbox-container" id="duplicates-records">
-            <div class="row margin-top-box">            
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <h4>${springMacroRequestContext.getMessage("duplicate_researcher.wefoundfollowingrecords")}
-                    ${springMacroRequestContext.getMessage("duplicate_researcher.to_access.1")}
-                        <#if request.requestURI?ends_with("/oauth/signin")>
-                            <a href="javascript:$.colorbox.close()">
-                        <#else>
-                            <a href="<@orcid.rootPath "/signin" />" target="signin">
-                        </#if>
-                        ${springMacroRequestContext.getMessage("duplicate_researcher.to_access.2")}</a>${springMacroRequestContext.getMessage("duplicate_researcher.to_access.3")}
-                    </h4>
-                </div>
-                <div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
-                    <button class="btn btn-primary" ng-click="postRegisterConfirm()">${springMacroRequestContext.getMessage("duplicate_researcher.btncontinuetoregistration")}</button>
-                </div>
-            </div>              
-            <div class="row">
-                <div class="col-sm-12">
-                    <table class="table">
-                        <thead>
-                            <tr>                      
-                                <th><@orcid.msg 'search_results.thORCIDID'/></th>
-                                <th><@orcid.msg 'duplicate_researcher.thEmail'/></th>
-                                <th><@orcid.msg 'duplicate_researcher.thgivennames'/></th>
-                                <th><@orcid.msg 'duplicate_researcher.thFamilyName'/></th>
-                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
-                                    <th><@orcid.msg 'workspace_bio.Affiliations'/></th>
-                                </@orcid.checkFeatureStatus>
-                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
-                                    <th><@orcid.msg 'duplicate_researcher.thInstitution'/></th>
-                                </@orcid.checkFeatureStatus>                   
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat='dup in duplicates'>
-                                <td><a href="${baseUri}/{{dup.orcid}}" target="dup.orcid">${baseUri}/{{dup.orcid}}</a></td>
-                                <td>{{dup.email}}</td>
-                                <td>{{dup.givenNames}}</td>
-                                <td>{{dup.familyNames}}</td>
-                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'> 
-                                    <td ng-bind="getAffiliations(dup)">{{dup['institution']}}</td>
-                                </@orcid.checkFeatureStatus> 
-                                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS' enabled=false> 
-                                    <td>{{dup.institution}}</td>
-                                </@orcid.checkFeatureStatus>  
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>  
-            <div class="row margin-top-box">
-                <div class="col-md-12 col-sm-12 col-xs-12 right">
-                    <button class="btn btn-primary" ng-click="postRegisterConfirm()">${springMacroRequestContext.getMessage("duplicate_researcher.btncontinuetoregistration")}</button>
-                </div>
-            </div>
-        </div>
-    </script> 
-</@orcid.checkFeatureStatus>        
 </div>
+<#include "/includes/duplicates_modal_inc.ftl" />        

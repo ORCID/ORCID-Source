@@ -359,7 +359,7 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("RegistrationCtrl.serverValidate() error");
+                    console.log("serverValidate() error");
                 });
             };
 

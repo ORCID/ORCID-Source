@@ -16,13 +16,13 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { BiographyService } 
-    from '../../shared/biographyService.ts'; 
+    from '../../shared/biography.service.ts'; 
 
 import { EmailService } 
-    from '../../shared/emailService.ts';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'biography-ng2',
@@ -31,10 +31,9 @@ import { ModalService }
 export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    biographyForm: any;
+    formData: any;
     emails: any;
     emailSrvc: any;
-    //emailVerified: any;
     lengthError: any;
     showEdit: any;
 
@@ -43,25 +42,24 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         private emailService: EmailService,
         private modalService: ModalService
     ) {
-        this.biographyForm = {
+        this.formData = {
             biography: {
                 value: ''
             }
         };
         
         this.emails = {};
-        //this.emailVerified = false;
         this.lengthError = false;
         this.showEdit = false;
     }
 
     cancel(): void {
-        this.getBiographyForm();
+        this.getformData();
         this.showEdit = false;
     };
 
     checkLength(): any {
-        if ( this.biographyForm.biography.value.length > 5000 ) {
+        if ( this.formData.biography.value.length > 5000 ) {
             this.lengthError = true;
         } else {
             this.lengthError = false;
@@ -74,16 +72,16 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showEdit = false;
     };
 
-    getBiographyForm(): void {
+    getformData(): void {
         this.biographyService.getBiographyData()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.biographyForm = data;
-                //console.log('this.biographyForm', this.biographyForm);
+                this.formData = data;
+                //console.log('this.formData', this.formData);
 
-                if( this.biographyForm.biography == null  ) {
-                    this.biographyForm.biography = {
+                if( this.formData.biography == null  ) {
+                    this.formData.biography = {
                         errors: [],
                         getRequiredMessage: null,
                         required: true,
@@ -92,30 +90,30 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getBiographyFormError', error);
+                console.log('getformDataError', error);
             } 
         );
     };
 
     privacyChange( obj ): any {
-        this.biographyForm.visibility.visibility = obj;
-        this.setBiographyForm();   
+        this.formData.visibility.visibility = obj;
+        this.setformData();   
     };
 
-    setBiographyForm(): any{
+    setformData(): any{
         if( this.checkLength() == false ){    
             return; // do nothing if there is a length error
         }
-        this.biographyService.setBiographyData( this.biographyForm )
+        this.biographyService.setBiographyData( this.formData )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.biographyForm = data;
-                //console.log('this.biographyForm response', this.biographyForm);
+                this.formData = data;
+                //console.log('this.formData response', this.formData);
                 this.close();
             },
             error => {
-                console.log('setBiographyFormError', error);
+                console.log('setformDataError', error);
             } 
         );
     };
@@ -150,7 +148,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        console.log('initi biography component');
-        this.getBiographyForm();
+        this.getformData();
     }; 
 }

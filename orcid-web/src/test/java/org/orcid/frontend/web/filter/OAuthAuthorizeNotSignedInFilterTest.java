@@ -103,7 +103,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
-        verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
+        verify(response).sendRedirect("http://test.com/signin?oauth&test_param=param");
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
     }
 
@@ -117,7 +117,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
-        verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
+        verify(response).sendRedirect("http://test.com/signin?oauth&test_param=param");
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
     }
 
@@ -132,7 +132,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
-        verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
+        verify(response).sendRedirect("http://test.com/signin?oauth&test_param=param");
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
     }
 
@@ -157,7 +157,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
     @Test
     public void notUriOauthAuthorize() throws IOException, ServletException {
         when(request.getContextPath()).thenReturn("http://test.com");
-        when(request.getRequestURI()).thenReturn("http://test.com/oauth/signin");
+        when(request.getRequestURI()).thenReturn("http://test.com/signin?oauth");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession(false)).thenReturn(null);
 
@@ -176,25 +176,9 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);
 
-        togglzRule.enable(Features.OAUTH_2SCREENS);
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);        
         
         verify(response).sendRedirect("http://test.com/signin?oauth&test_param=param");
-        verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
-    }
-    
-    @Test
-    public void oauth2ScreensFeatureDisabledTest() throws IOException, ServletException {
-        when(request.getContextPath()).thenReturn("http://test.com");
-        when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
-        when(request.getQueryString()).thenReturn("test_param=param");
-        when(request.getSession()).thenReturn(session);
-        when(request.getSession(false)).thenReturn(session);
-        when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);
-        
-        oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
-        
-        verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
     }
 

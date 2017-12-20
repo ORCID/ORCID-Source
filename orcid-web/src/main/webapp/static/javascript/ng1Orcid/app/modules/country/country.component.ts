@@ -14,13 +14,13 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { CountryService } 
-    from '../../shared/countryService.ts';
+    from '../../shared/country.service.ts';
 
 import { EmailService } 
-    from '../../shared/emailService.ts';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'country-ng2',
@@ -30,8 +30,8 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    countryForm: any;
-    countryFormAddresses: any;
+    formData: any;
+    formDataAddresses: any;
     emails: any;
     emailSrvc: any;
 
@@ -41,32 +41,32 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService
     ) {
 
-        this.countryForm = {
+        this.formData = {
             addresses: {
             }
         };
-        this.countryFormAddresses = [];
+        this.formDataAddresses = [];
         this.emails = {};
     }
 
-    getCountryForm(): void {
+    getformData(): void {
         this.countryService.getCountryData()
-        //.takeUntil(this.ngUnsubscribe)
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.countryForm = data;
-                this.countryFormAddresses = this.countryForm.addresses;
-                //console.log('this.countryForm', this.countryForm);
+                this.formData = data;
+                this.formDataAddresses = this.formData.addresses;
+                //console.log('this.formData', this.formData);
             },
             error => {
-                console.log('getCountryFormError', error);
+                console.log('getformDataError', error);
             } 
         );
     };
 
     openEditModal(): void{      
         this.emailService.getEmails()
-        //.takeUntil(this.ngUnsubscribe)
+        .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.emails = data;
@@ -88,7 +88,7 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.countryService.notifyObservable$.subscribe(
             (res) => {
-                this.getCountryForm();
+                this.getformData();
                 console.log('notified', res);
             }
         );
@@ -100,7 +100,7 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getCountryForm();
+        this.getformData();
     };
 
 }

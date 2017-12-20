@@ -73,6 +73,20 @@ Example request in curl
 ```
 curl -i -L -H 'Accept: application/json' -d 'client_id=APP-674MCQQR985VZZQ2' -d 'client_secret=d08b711e-9411-788d-a474-46efd3956652' -d 'scope=/read-public' -d 'grant_type=client_credentials' 'https://sandbox.orcid.org/oauth/token'
 ```
+## API Limits
+
+**v1.2**
+* Request a second - 8
+* Burst - 40
+
+**v2.0 and above**
+* Request a second - 24
+* Burst - 40
+
+Burst - Number of request we will allow to be queued before rejecting. Requests in the queue are slowed down to the rate of requests a second. If you exceed the burst, you'll get a 503 response.
+
+Request a second - Number of request that can be made a second.
+
 ## Further documentation
 
 * [About the ORCID XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)

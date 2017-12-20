@@ -29,19 +29,21 @@ public class APIEndpointParser {
     private static final String API_VERSION_REGEX = "v\\d{1,}.*";
 
     private static final String API_VERSION_2X_REGEX = "v2.*";
-    
+
     private static final String API_VERSION_3X_REGEX = "v3.*";
 
     private static final String RECORD_CATEGORY = "record";
 
     private static final String ORCID_BIO_CATEGORY = "orcid-bio";
 
+    static final String INVALID_URL_CATEGORY = "INVALID-URL";
+
     private String orcidId;
-    
+
     private String apiVersion;
 
     private String category;
-    
+
     public APIEndpointParser(ContainerRequest request) {
         parse(request);
     }
@@ -82,6 +84,19 @@ public class APIEndpointParser {
             // no category in URL: version 1.x so category is orcid-bio
             category = ORCID_BIO_CATEGORY;
         }
+
+        if (!validAnalyticsEventCategory(category)) {
+            category = INVALID_URL_CATEGORY;
+        }
+    }
+
+    private boolean validAnalyticsEventCategory(String category) {
+        for (AnalyticsEventCategory validCategory : AnalyticsEventCategory.values()) {
+            if (validCategory.getValue().equals(category)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getApiVersion() {

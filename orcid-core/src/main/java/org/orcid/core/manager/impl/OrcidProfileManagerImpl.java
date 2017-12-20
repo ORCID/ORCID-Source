@@ -1053,59 +1053,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
             }
         }
-
+        
         // Then, if it already have works
         if (existingWorkList != null && existingWorkList.size() > 0) {
-            // Check for duplicates in existing works, if any is found, log it
-            for (int i = 0; i < existingWorkList.size(); i++) {
-                OrcidWork existingWork = existingWorkList.get(i);
-                Source workSource = existingWork.getSource();
-                for (int j = 0; j < existingWorkList.size(); j++) {
-                    // If it is not the same index
-                    if (i != j) {
-                        OrcidWork existingWorkToCompare = existingWorkList.get(j);
-                        Source workSourceToCompare = existingWorkToCompare.getSource();
-                        // If both works have the same source
-                        if (isTheSameSource(workSource, workSourceToCompare)) {
-                            // If the work have external identifiers
-                            if (existingWork.getWorkExternalIdentifiers() != null && existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null
-                                    && !existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
-                                // Compare each external identifier
-                                for (WorkExternalIdentifier workExtId : existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
-                                    // If the workToCompare have ext ids
-                                    if (existingWorkToCompare.getWorkExternalIdentifiers() != null
-                                            && existingWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null
-                                            && !existingWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
-                                        // Compare each ext ids, following the
-                                        // rules:
-                                        for (WorkExternalIdentifier workToCompareExtId : existingWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
-                                            // If the ext ids are the same
-                                            if (workExtId.equals(workToCompareExtId)) {
-                                                // Compare the titles, if they
-                                                // are different, set it as
-                                                // duplicated
-                                                Title title = (existingWork.getWorkTitle() == null || existingWork.getWorkTitle().getTitle() == null) ? null
-                                                        : existingWork.getWorkTitle().getTitle();
-                                                Title titleToCompare = (existingWorkToCompare.getWorkTitle() == null
-                                                        || existingWorkToCompare.getWorkTitle().getTitle() == null) ? null
-                                                                : existingWorkToCompare.getWorkTitle().getTitle();
-                                                if (!isTheSameTitle(title, titleToCompare)) {
-                                                    String extIdContent = (workExtId.getWorkExternalIdentifierId() == null
-                                                            || PojoUtil.isEmpty(workExtId.getWorkExternalIdentifierId().getContent())) ? ""
-                                                                    : workExtId.getWorkExternalIdentifierId().getContent();
-                                                    LOG.error("Works {} and {} have the same external identifier {}",
-                                                            new Object[] { existingWork.getPutCode(), existingWorkToCompare.getPutCode(), extIdContent });
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
             // Check for duplicates between the existing works and the new works
             if (newOrcidWorksList != null) {
                 for (OrcidWork orcidWork : newOrcidWorksList) {

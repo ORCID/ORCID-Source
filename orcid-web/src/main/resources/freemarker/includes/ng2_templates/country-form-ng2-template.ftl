@@ -79,13 +79,13 @@
                 <div class="fixed-area" scroll>             
                     <div class="scroll-area">       
                                     
-                        <div class="row aka-row" *ngFor="let country of countryFormAddresses; let index = index; let first = first; let last = last">
-                            <div class="col-md-6">                                  
-                                <div class="aka">
+                        <div class="row aka-row" *ngFor="let country of formDataAddresses; let index = index; let first = first; let last = last">
+                            <div class="col-md-6">                                
+                                <div class="aka" *ngIf="country.iso2Country != undefined">
                                     <select 
                                         [(ngModel)]="country.iso2Country.value" 
                                         [disabled]="country.source != orcidId"
-                                        [ngClass]="{ 'not-allowed': country?.source != orcidId }"
+                                        [ngClass]="{ 'not-allowed': country.source != orcidId }"
                                         focus-me="newInput"
                                         name="country" 
                                     >
@@ -100,10 +100,11 @@
                                             ${isoCountries[key]}
                                         </option>
                                         </#list>
-                                    </select>                                      
+                                    </select>       
+
                                 </div>         
                                                         
-                                <div class="source" *ngIf="country.sourceName || country?.sourceName == null">
+                                <div class="source" *ngIf="country.sourceName || country.sourceName == null">
                                     <@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="country.sourceName">{{country.sourceName}}</span><span *ngIf="country.sourceName == null">{{orcidId}}</span>
                                 </div>
                                 
@@ -152,8 +153,8 @@
                             </div>                                  
                         </div>                                          
                     </div>         
-                    <div *ngIf="countryForm?.errors?.length > 0">
-                        <div *ngFor="let error of countryFormErrors">
+                    <div *ngIf="formData?.errors?.length > 0">
+                        <div *ngFor="let error of formDataErrors">
                             <span class="red">{{error}}</span>
                         </div>
                     </div>
@@ -167,7 +168,7 @@
                             </div>
                         </div>
                     </span></a>                         
-                    <button class="btn btn-primary pull-right" (click)="setCountryForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
+                    <button class="btn btn-primary pull-right" (click)="setformData(true)"><@spring.message "freemarker.btnsavechanges"/></button>
                     <a class="cancel-option pull-right" (click)="closeEditModal()"><@spring.message "freemarker.btncancel"/></a> 
                 </div>
             </div>

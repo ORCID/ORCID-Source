@@ -17,10 +17,10 @@ import { AlsoKnownAsService }
     from '../../shared/alsoKnownAs.service.ts';
 
 import { CommonService } 
-    from '../../shared/commonService.ts';
+    from '../../shared/common.service.ts';
 
 import { ModalService } 
-    from '../../shared/modalService.ts'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'also-known-as-form-ng2',
@@ -49,7 +49,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.emails = {};
         this.formData = {
         };
-        this.newElementDefaultVisibility = null;
+        this.newElementDefaultVisibility = 'PRIVATE';
         this.orcidId = orcidVar.orcidId; 
         this.privacyHelp = false;
         this.scrollTop = 0;
@@ -74,7 +74,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
             "displayIndex": 1
         };        
         this.formData.otherNames.push(tmpObj);        
-        this.updateDisplayIndex();          
+        this.updateDisplayIndex();    
         //this.newInput = true;
     };
 
@@ -93,12 +93,16 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     getformData(): void {
+        let _formDataBeforeChange = null;
         this.alsoKnownAsService.getData()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.formData = data;
                 //console.log('this.getForm', this.formData);
+                if ( this.formData.otherNames.length == 0 ) {
+                    this.addNew();
+                }
             },
             error => {
                 console.log('getAlsoKnownAsFormError', error);
@@ -170,12 +174,6 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
-        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-        this.subscription = this.alsoKnownAsService.notifyObservable$.subscribe(
-            (res) => {
-                this.getformData();
-            }
-        );
     };
 
     ngOnDestroy() {
