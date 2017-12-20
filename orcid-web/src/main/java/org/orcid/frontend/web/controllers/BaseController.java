@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -592,7 +591,7 @@ public class BaseController {
             if (!request.isSecure()) {
                 generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
             }
-            return generatedStaticContentPath + STATIC_FOLDER_PATH;
+            this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;
     }
@@ -615,8 +614,16 @@ public class BaseController {
         if (configFile.exists()) {
             try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String uri = br.readLine();
-                if (uri != null)
+                if (uri != null) {
+                    String releaseVersion = ReleaseNameUtils.getReleaseName();
+                    if(!uri.contains(releaseVersion)) {
+                        if(!uri.endsWith("/")) {
+                            uri += '/';
+                        }
+                        uri += releaseVersion;
+                    }
                     this.staticCdnPath = uri;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
