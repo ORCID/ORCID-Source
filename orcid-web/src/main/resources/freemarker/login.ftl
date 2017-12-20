@@ -123,7 +123,7 @@
 					</div><!--institution login-->
 				</div><!--ng show !registion form-->
 			   	<!-- REGISTRATION FORM-->
-				<div class="personal-account-login" id="RegistrationForm" ng-show="personalLogin == true && showRegisterForm" ng-init="oauth2ScreensLoadRegistrationForm('', '', '', '')" ng-cloak>
+				<div class="personal-account-login" id="RegistrationForm" ng-show="personalLogin == true && showRegisterForm" ng-init="oauth2ScreensLoadRegistrationForm()" ng-cloak>
 					<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
 					<#include "/includes/register_inc.ftl" />
 				</div><!--personal-account-login-->
