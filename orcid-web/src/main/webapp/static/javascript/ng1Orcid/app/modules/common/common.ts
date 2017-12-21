@@ -25,6 +25,9 @@ import { PrivacytoggleNg2Module }
 import { CountryService } 
     from '../../shared/country.service.ts';
 
+import { WebsitesService } 
+    from '../../shared/websites.service.ts';
+
 // This is the Angular 2 part of the module
 @NgModule(
     {
@@ -50,7 +53,8 @@ import { CountryService }
             PrivacytoggleNg2Module
         ],
         providers: [
-            CountryService
+            CountryService,
+            WebsitesService
         ]
     }
 )

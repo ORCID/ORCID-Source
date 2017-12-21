@@ -14,36 +14,64 @@ import 'angular-route'
 //User generated imports
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
+
 import { AlsoKnownAsModule } 
     from './alsoKnownAs/alsoKnownAs.ts';
+
 import { AlsoKnownAsFormModule } 
     from './alsoKnownAsForm/alsoKnownAsForm.ts';
+
 import { BiographyModule } 
     from './biography/biography.ts';
+
 import { CountryModule } 
     from './country/country.ts';
+
 import { CountryFormModule } 
     from './countryForm/countryForm.ts';
+
+import { EmailsModule } 
+    from './emails/emails.ts';
+
+import { EmailsFormModule } 
+    from './emailsForm/emailsForm.ts';
+
 import { EmailUnverifiedWarningModule } 
     from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
+
 import { EmailVerificationSentMesssageModule } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+
 import { FundingModule } 
     from './funding/funding.ts';
+
 import { KeywordsFormModule } 
     from './keywordsForm/keywordsForm.ts';
+
 import { KeywordsModule } 
     from './keywords/keywords.ts';
+
 import { ModalModule } 
     from './modalNg2/modal-ng.ts';
+
 import { NameModule } 
     from './name/name.ts';
+
 import { ThanksForRegisteringModule } 
     from './thanksForRegistering/thanksForRegistering.ts';
+
 import { ThanksForVerifyingModule } 
     from './thanksForVerifying/thanksForVerifying.ts';
+
+import { WebsitesModule } 
+    from './websites/websites.ts';
+
+import { WebsitesFormModule } 
+    from './websitesForm/websitesForm.ts';
+
 import { WidgetModule } 
     from './widget/widget.ts';
+
 import { WorksPrivacyPreferencesModule } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts'
 
@@ -60,6 +88,8 @@ export const orcidApp = angular.module(
         BiographyModule.name,
         CountryModule.name,
         CountryFormModule.name,
+        EmailsFormModule.name,
+        EmailsModule.name,
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
         //FundingModule.name,
@@ -69,6 +99,8 @@ export const orcidApp = angular.module(
         NameModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
+        WebsitesFormModule.name,
+        WebsitesModule.name,
         WidgetModule.name,
         WorksPrivacyPreferencesModule.name
     ]

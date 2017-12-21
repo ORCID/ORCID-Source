@@ -44,6 +44,12 @@ import { CountryNg2Module }
 import { CountryFormNg2Module } 
     from './countryForm/countryForm.ts';
 
+import { EmailsNg2Module } 
+    from './emails/emails.ts';
+
+import { EmailsFormNg2Module } 
+    from './emailsForm/emailsForm.ts';
+
 import { EmailUnverifiedWarningNg2Module } 
     from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
 
@@ -70,6 +76,12 @@ import { ThanksForRegisteringNg2Module }
 
 import { ThanksForVerifyingNg2Module } 
     from './thanksForVerifying/thanksForVerifying.ts';
+
+import { WebsitesNg2Module } 
+    from './websites/websites.ts';
+
+import { WebsitesFormNg2Module } 
+    from './websitesForm/websitesForm.ts';
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
@@ -155,6 +167,8 @@ export class RootCmp {
         BiographyNg2Module,
         CountryFormNg2Module,
         CountryNg2Module,
+        EmailsFormNg2Module,
+        EmailsNg2Module,
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         //FundingNg2Module,
@@ -164,6 +178,8 @@ export class RootCmp {
         NameNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
+        WebsitesFormNg2Module,
+        WebsitesNg2Module,
         WidgetNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],

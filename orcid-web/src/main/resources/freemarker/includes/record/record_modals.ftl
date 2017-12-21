@@ -272,7 +272,6 @@
         </div>
     </div>
 </script>
-</@orcid.checkFeatureStatus>
 
 <script type="text/ng-template" id="edit-websites">
     <div class="lightbox-container" id="websites-popover">
@@ -361,6 +360,7 @@
         </div>
     </div>
 </script>
+</@orcid.checkFeatureStatus>
 
 <script type="text/ng-template" id="edit-external-identifiers">
     <div class="lightbox-container" id="extids-popover">

@@ -311,6 +311,7 @@ privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container{
     margin: initial !important;
     right: calc(50% - 121px);
     top: initial;
+    width: 270px;
 }
 
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle {
@@ -1446,7 +1447,8 @@ ul.privacyHelp li.private {
 }
 
 #cboxLoadedContent {
-    overflow: scroll
+    /*overflow: scroll!important;*/
+    overflow: visible!important;
 }
 
 #cboxTitle {

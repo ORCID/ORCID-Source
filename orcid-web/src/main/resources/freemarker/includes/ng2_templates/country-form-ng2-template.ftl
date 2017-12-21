@@ -118,7 +118,7 @@
                                             (mouseleave)="commonSrvc.hideTooltip('tooltip-country-move-up-'+index)"
                                             class="glyphicon glyphicon-arrow-up circle" 
                                         ></div>
-                                        <@orcid.tooltip elementId="'tooltip-country-move-up-'+index" message="common.modals.move_up"/>                                         
+                                        <@orcid.tooltipNg2 elementId="'tooltip-country-move-up-'+index" message="common.modals.move_up"/>                                         
                                     </li>
                                     <li>
                                         <div 
@@ -127,7 +127,7 @@
                                             (mouseenter)="commonSrvc.showTooltip('tooltip-country-move-down-'+index, $event, 37, -2, 53)" 
                                             (mouseleave)="commonSrvc.hideTooltip('tooltip-country-move-down-'+index)"
                                         ></div>
-                                        <@orcid.tooltip elementId="'tooltip-country-move-down-'+index" message="common.modals.move_down" />
+                                        <@orcid.tooltipNg2 elementId="'tooltip-country-move-down-'+index" message="common.modals.move_down" />
                                     </li>
                                     <li>
                                         <div 
@@ -136,7 +136,7 @@
                                             (mouseleave)="commonSrvc.hideTooltip('tooltip-country-delete-'+$index)"
                                             class="glyphicon glyphicon-trash" 
                                         ></div>
-                                        <@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />                               
+                                        <@orcid.tooltipNg2 elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />                               
                                     </li>
                                     <li>
                                         <privacy-toggle-ng2 

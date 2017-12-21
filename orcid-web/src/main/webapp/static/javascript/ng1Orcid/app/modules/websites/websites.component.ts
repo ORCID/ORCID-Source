@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { KeywordsService } 
-    from '../../shared/keywords.service.ts';
+import { WebsitesService } 
+    from '../../shared/websites.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -23,10 +23,10 @@ import { ModalService }
     from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'keywords-ng2',
-    template:  scriptTmpl("keywords-ng2-template")
+    selector: 'websites-ng2',
+    template:  scriptTmpl("websites-ng2-template")
 })
-export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
+export class WebsitesComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -35,27 +35,51 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
     emailSrvc: any;
 
     constructor( 
-        private keywordsService: KeywordsService,
+        private websitesService: WebsitesService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
-
         this.formData = {
+            websites: null
         };
-
         this.emails = {};
     }
 
-    getData(): void {
-        this.keywordsService.getData()
+    getformData(): void {
+        this.websitesService.getData()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.formData = data;
-                //console.log('this.keywords', this.form);
+
+                let itemVisibility = null;
+                let len = null;
+                let websites = null;
+
+                this.formData = data;
+                //this.newElementDefaultVisibility = this.websitesForm.visibility.visibility;
+                
+                websites = this.formData.websites;
+                len = websites.length;
+                //Iterate over all elements to:
+                // -> see if they have the same visibility, to set the default visibility element
+                // -> set the default protocol when needed
+                if(len > 0) {
+                    while (len--) {
+                        if(websites[len].url != null && websites[len].url.value != null) {
+                            if (!websites[len].url.value.toLowerCase().startsWith('http')) {
+                                websites[len].url.value = 'http://' + websites[len].url.value;
+                            }                            
+                        }     
+
+                                     
+                    }
+                }
+
+                console.log('this.getForm websites', this.formData);
             },
             error => {
-                console.log('getKeywordsFormError', error);
+                console.log('getWebsitesFormError', error);
             } 
         );
     };
@@ -67,7 +91,7 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalKeywordsForm'});
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalWebsitesForm'});
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
@@ -78,14 +102,12 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-        this.subscription = this.keywordsService.notifyObservable$.subscribe(
+        this.subscription = this.websitesService.notifyObservable$.subscribe(
             (res) => {
-                this.getData();
-                //console.log('notified', res);
+                this.getformData();
             }
         );
     };
@@ -96,7 +118,7 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getData();
+        this.getformData();
     };
 
 }

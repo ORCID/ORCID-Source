@@ -176,7 +176,12 @@
               </div>
             </@orcid.checkFeatureStatus>
 
-            <!-- Websites  -->          
+            <!-- Websites  -->
+            <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+            <websites-ng2></websites-ng2>
+            </@orcid.checkFeatureStatus>
+            
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>         
             <div ng-controller="WebsitesCtrl" class="workspace-section websites">
                 <div class="workspace-section-header">
                     <div class="workspace-section-title">
@@ -199,8 +204,14 @@
                     </div>
                 </div>
             </div>
+            </@orcid.checkFeatureStatus>
 
-      <!-- Emails  -->          
+      <!-- Emails  -->
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+        <emails-ng2></emails-ng2>
+        </@orcid.checkFeatureStatus>
+
+      <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>      
       <div ng-controller="EmailsCtrl" class="workspace-section">
         <div class="workspace-section-header">
           <div class="workspace-section-title">                  
@@ -223,6 +234,7 @@
           </div>
         </div>
       </div>
+      </@orcid.checkFeatureStatus>
 
       <!--  External Identifiers -->          
       <div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
@@ -777,6 +789,10 @@
 
 <modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
     <keywords-form-ng2></keywords-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
+    <websites-form-ng2></websites-form-ng2>
 </modalngcomponent><!-- Ng2 component -->  
 </@orcid.checkFeatureStatus> 
 

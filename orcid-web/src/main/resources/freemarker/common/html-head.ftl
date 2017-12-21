@@ -158,6 +158,10 @@
         <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/country-ng2-template.ftl">
+        <#include "/includes/ng2_templates/emails-ng2-template.ftl">
+        <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
     </#if>
     </@orcid.checkFeatureStatus> 
 
