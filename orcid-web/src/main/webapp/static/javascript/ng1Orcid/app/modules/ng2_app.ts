@@ -65,6 +65,9 @@ import { ModalNg2Module }
 import { NameNg2Module } 
     from './name/name.ts';
 
+import { SearchNg2Module } 
+    from './search/search.ts';
+
 import { ThanksForRegisteringNg2Module } 
     from './thanksForRegistering/thanksForRegistering.ts';
 
@@ -107,6 +110,9 @@ import { ModalService }
 
 import { NameService } 
     from '../shared/name.service.ts'; 
+
+import { SearchService } 
+    from '../shared/search.service.ts'; 
 
 import { WorkspaceService } 
     from '../shared/workspace.service.ts'; 
@@ -162,6 +168,7 @@ export class RootCmp {
         KeywordsNg2Module,
         ModalNg2Module,
         NameNg2Module,
+        SearchNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
         WidgetNg2Module,
@@ -182,6 +189,7 @@ export class RootCmp {
         KeywordsService,
         ModalService,
         NameService,
+        SearchService,
         WorkspaceService
     ]
 

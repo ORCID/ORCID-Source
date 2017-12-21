@@ -38,6 +38,8 @@ import { ModalModule }
     from './modalNg2/modal-ng.ts';
 import { NameModule } 
     from './name/name.ts';
+import { SearchModule } 
+    from './search/search.ts';
 import { ThanksForRegisteringModule } 
     from './thanksForRegistering/thanksForRegistering.ts';
 import { ThanksForVerifyingModule } 
@@ -67,6 +69,7 @@ export const orcidApp = angular.module(
         KeywordsModule.name,
         ModalModule.name,
         NameModule.name,
+        SearchModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
         WidgetModule.name,
