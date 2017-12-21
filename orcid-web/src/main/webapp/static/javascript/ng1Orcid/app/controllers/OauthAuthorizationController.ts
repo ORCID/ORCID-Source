@@ -512,7 +512,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             // Init
             $scope.loadRequestInfoForm();
             if(orcidVar.oauth2Screens) {
-                console.log(orcidVar);
                 if(orcidVar.oauthUserId && orcidVar.showLogin){
                     $scope.showRegisterForm = false;
                     $scope.authorizationForm = {
