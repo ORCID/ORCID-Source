@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
+import org.orcid.integration.api.t2.OrcidJerseyT2ClientOAuthConfig;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,7 +63,6 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
@@ -226,10 +226,9 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         try{
             params.put("prompt", "none");
             String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, getClient1ClientId(), "token", "openid", getClient1RedirectUri());
-            ClientConfig config = new DefaultClientConfig();
+            ClientConfig config = new OrcidJerseyT2ClientOAuthConfig();
             config.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
             Client client = Client.create(config);
-            //Client client = Client.create();
             WebResource webResource1 = client.resource(formattedAuthorizationScreen+"&prompt=none");
             ClientResponse noneResponse1 = webResource1.get(ClientResponse.class);
             WebResource webResource2 = client.resource(noneResponse1.getLocation());

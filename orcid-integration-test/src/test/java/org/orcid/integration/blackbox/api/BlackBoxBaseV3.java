@@ -699,7 +699,7 @@ public class BlackBoxBaseV3 {
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
-        By urlXpath = By.xpath("(//input[@ng-model='website.url'])[last()]");
+        By urlXpath = By.xpath("(//input[@ng-model='website.url.value'])[last()]");
         waitForElementVisibility(urlXpath);
         WebElement urlInput = findElement(urlXpath);
         urlInput.sendKeys(url);
