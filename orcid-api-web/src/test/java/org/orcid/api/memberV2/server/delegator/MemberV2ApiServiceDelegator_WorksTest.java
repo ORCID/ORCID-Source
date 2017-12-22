@@ -496,7 +496,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
     }
     
     @Test
-    public void testCreateBulkWorksWithEmptyTitles() {
+    public void testCreateBulkWorksWithBlankTitles() {
         RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
         attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0",  RequestAttributes.SCOPE_REQUEST);

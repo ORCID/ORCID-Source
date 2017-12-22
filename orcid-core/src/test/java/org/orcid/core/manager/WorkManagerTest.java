@@ -32,6 +32,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,6 +41,7 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
+import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -60,6 +62,10 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -79,6 +85,8 @@ public class WorkManagerTest extends BaseTest {
     @Resource
     private WorkDao workDao;
     
+    private RequestAttributes previousAttrs;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -87,6 +95,15 @@ public class WorkManagerTest extends BaseTest {
     @Before
     public void before() {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
+        previousAttrs = RequestContextHolder.getRequestAttributes();
+        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0",  RequestAttributes.SCOPE_REQUEST);
+        RequestContextHolder.setRequestAttributes(attrs);
+    }
+    
+    @After
+    public void after() {
+        RequestContextHolder.setRequestAttributes(previousAttrs);
     }
     
     @AfterClass
