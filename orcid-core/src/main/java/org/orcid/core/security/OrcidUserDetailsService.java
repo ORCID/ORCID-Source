@@ -88,7 +88,7 @@ public class OrcidUserDetailsService implements UserDetailsService {
             throw new DisabledException("Account not active, please call helpdesk");
         }
         if (!profile.getClaimed() && !securityMgr.isAdmin()) {
-            throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
+            throw new UnclaimedProfileExistsException("Unclaimed profile");
         }
 
         String primaryEmail = null;

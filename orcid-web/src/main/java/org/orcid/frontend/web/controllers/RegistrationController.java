@@ -395,9 +395,8 @@ public class RegistrationController extends BaseController {
                 	} else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
                 		//If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
                 		String resendUrl = createResendClaimUrl(emailAddress, request);
-                        String[] codes = { "orcid.frontend.verify.unclaimed_email" };
-                        args = new String[] { emailAddress, resendUrl };
-                		mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
+                        String message = getVerifyUnclaimedMessage(emailAddress, resendUrl);
+            		mbr.addError(new FieldError("email", "email", message));                        
                     } else {
                         LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");
                     }
@@ -408,21 +407,18 @@ public class RegistrationController extends BaseController {
         for (ObjectError oe : mbr.getAllErrors()) {
             Object[] arguments = oe.getArguments();
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
-                // XXX
-                reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", arguments));
+                String message = getMessage("oauth.registration.duplicate_email_1", arguments[0]);
+                message += "<a ng-click=\"showToLoginForm()\">";
+                message += getMessage("oauth.registration.duplicate_email_2");
+                message += "</a>";
+                message += getMessage("oauth.registration.duplicate_email_3", arguments[1]);
+                reg.getEmail().getErrors().add(message);
             } else if (oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
                 Object email = "";
                 if (arguments != null && arguments.length > 0) {
                     email = arguments[0];
                 }
-                String link = "/signin";
-                String linkType = reg.getLinkType();
-                if ("social".equals(linkType)) {
-                    link = "/social/access";
-                } else if ("shibboleth".equals(linkType)) {
-                    link = "/shibboleth/signin";
-                }
-                reg.getEmail().getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
+                reg.getEmail().getErrors().add(getMessage(oe.getCode(), email));
             }
             else if(oe.getCode().equals("orcid.frontend.verify.deactivated_email")){
                 // Handle this message in angular to allow AJAX action
@@ -489,9 +485,8 @@ public class RegistrationController extends BaseController {
                                     } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
                                             //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
                                             String resendUrl = createResendClaimUrl(emailAddressAdditional, request);
-                                    String[] codes = { "orcid.frontend.verify.unclaimed_email" };
-                                    args = new String[] { emailAddressAdditional, resendUrl };
-                                            mbr.addError(new FieldError("email", "email", emailAddressAdditional, false, codes, args, "Unclaimed record exists"));                        
+                                    String message = getVerifyUnclaimedMessage(emailAddressAdditional, resendUrl);
+                                    mbr.addError(new FieldError("email", "email", message));                                     
                                 } else {
                                     LOGGER.info("Email " + emailAddressAdditional + " belongs to a unclaimed record and can be auto deprecated");
                                 }
@@ -502,8 +497,12 @@ public class RegistrationController extends BaseController {
                     for (ObjectError oe : mbr.getAllErrors()) {
                         Object[] arguments = oe.getArguments();
                         if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
-                            // XXX
-                            emailAdditional.getErrors().add(getMessage("oauth.registration.duplicate_email", arguments));
+                            String message = getMessage("oauth.registration.duplicate_email_1", arguments[0]);
+                            message += "<a ng-click=\"showToLoginForm()\">";
+                            message += getMessage("oauth.registration.duplicate_email_2");
+                            message += "</a>";
+                            message += getMessage("oauth.registration.duplicate_email_3", arguments[1]);
+                            emailAdditional.getErrors().add(message);
                         } else if (oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
                             Object email = "";
                             if (arguments != null && arguments.length > 0) {

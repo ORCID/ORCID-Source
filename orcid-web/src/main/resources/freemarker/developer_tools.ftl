@@ -53,7 +53,13 @@
 									<li><@orcid.msg 'developer_tools.client_types.description.bullet.3' /></li>
 									<li><@orcid.msg 'developer_tools.client_types.description.bullet.4' /></li>
 								</ul>
-								<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
+								<p>
+								    <@orcid.msg 'developer_tools.client_types.description.oauth2_1' />
+								    <a href\="http\://oauth.net/2/" target\="oauth2">
+								    <@orcid.msg 'developer_tools.client_types.description.oauth2_2' />
+								    </a>
+								    <@orcid.msg 'developer_tools.client_types.description.oauth2_3' />
+								</p>
 							</div>
 						</div>
 						<div class="row">
@@ -92,7 +98,13 @@
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<p class="reset"><strong><@orcid.msg 'developer_tools.public_member.enabled' /></strong></p>
-							<p><@orcid.msg 'developer_tools.public_member.enabled.terms' /></p>							
+							<p>
+							    <@orcid.msg 'developer_tools.public_member.enabled.terms_1' />
+							    <a href\="http\://orcid.org/content/orcid-public-client-terms-service" target\="terms_of_service">
+							    <@orcid.msg 'developer_tools.public_member.enabled.terms_2' />
+							    </a>
+							    <@orcid.msg 'developer_tools.public_member.enabled.terms_3' />
+							</p>							
 							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
@@ -411,7 +423,13 @@
 								<li><@orcid.msg 'developer_tools.client_types.description.bullet.3' /></li>
 								<li><@orcid.msg 'developer_tools.client_types.description.bullet.4' /></li>
 							</ul>
-							<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
+							<p>
+                                <@orcid.msg 'developer_tools.client_types.description.oauth2_1' />
+                                <a href\="http\://oauth.net/2/" target\="oauth2">
+                                <@orcid.msg 'developer_tools.client_types.description.oauth2_2' />
+                                </a>
+                                <@orcid.msg 'developer_tools.client_types.description.oauth2_3' />
+                            </p>
 						</div>
 					</div>
 					<div class="row">
@@ -457,14 +475,25 @@
 					<h2 class="bottomBuffer"><@orcid.msg 'developer_tools.public_member.terms.title' /></h2>
 				</div>
 				<div class="col-md-12 col-xs-12 col-sm-12">
-					<span><@orcid.msg 'developer_tools.public_member.terms.description' /></span>				
+					<span>
+					   <@orcid.msg 'developer_tools.public_member.terms.description_1' />
+					   <a href\="http\://orcid.org/content/orcid-public-client-terms-service" target\="terms_of_service">
+					   <@orcid.msg 'developer_tools.public_member.terms.description_2' />
+					   </a>
+					   <@orcid.msg 'developer_tools.public_member.terms.description_3' />
+					</span>				
 				</div>				
 			</div> 		
 			<div class="row">
 				<div class="col-md-8 col-xs-8 col-sm-12">
 					<div class="row">
 						<span class="col-md-1 col-xs-1 col-sm-1 vertical-align-middle"><input type="checkbox" name="accepted" ng-model="accepted" /></span>	
-						<span class="col-md-11 col-xs-11 col-sm-11"><@orcid.msg 'developer_tools.public_member.terms.check' /></span>
+						<span class="col-md-11 col-xs-11 col-sm-11">
+						  <@orcid.msg 'developer_tools.public_member.terms.check_1' />
+						  <a href\="http\://orcid.org/content/orcid-public-client-terms-service" target\="terms_of_service">
+						  <@orcid.msg 'developer_tools.public_member.terms.check_2' />
+						  </a>
+						</span>
 					</div>
 					<div class="row" ng-show="mustAcceptTerms">
 						<span class="col-md-1 col-xs-1 col-sm-1">&nbsp;</span>	
