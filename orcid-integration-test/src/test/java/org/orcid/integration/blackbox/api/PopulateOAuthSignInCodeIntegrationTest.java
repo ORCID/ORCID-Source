@@ -58,7 +58,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         getUrlAndWait(authorizeScreen);
         switchToRegisterForm();
         // make sure we are on the page
-        By emailElement = By.xpath("//input[@name='emailprimary234']");
+        By emailElement = By.xpath("//input[@name='email']");
         waitForElementVisibility(emailElement);        
         assertTrue(findElement(emailElement).getAttribute("value").equals(""));
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals(""));
@@ -73,7 +73,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         String url = authorizeScreen + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
         getUrlAndWait(url);        
         
-        By element = By.xpath("//input[@name='emailprimary234']");
+        By element = By.xpath("//input[@name='email']");
         waitForElementVisibility(element);       
         assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
@@ -105,7 +105,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         String url = authorizeScreen + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";                
         getUrlAndWait(url);
         
-        By element = By.xpath("//input[@name='emailprimary234']");
+        By element = By.xpath("//input[@name='email']");
         waitForElementVisibility(element);
         assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
