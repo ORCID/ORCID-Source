@@ -60,7 +60,7 @@
             <#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
                 <div ng-controller="OauthAuthorizationController" id="RegistrationForm" ng-init="oauth2ScreensLoadRegistrationForm('${RequestParameters.firstName?js_string}', '${RequestParameters.lastName?js_string}', '${RequestParameters.emailId?js_string}', '${RequestParameters.linkRequest?js_string}')">
             <#else>
-                <div ng-controller="OauthAuthorizationController" id="RegistrationCtr" ng-init="oauth2ScreensLoadRegistrationForm('', '', '', '')">
+                <div ng-controller="OauthAuthorizationController" id="RegistrationCtr" ng-init="oauth2ScreensLoadRegistrationForm()">
             </#if>
     		  <#include "/includes/register_inc.ftl" />
             </div>

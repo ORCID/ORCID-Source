@@ -140,10 +140,13 @@ public class LoginController extends OauthControllerBase {
         }
 
         ModelAndView mav = new ModelAndView("login");
-        // Check orcid and email params to decide if the login form should be
-        // displayed by default
         boolean showLogin = false;
-        if (PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
+        // Check orcid, email and show_login params to decide if the login form should be
+        // displayed by default
+        // orcid and email take precedence over show_login param
+        if (PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && PojoUtil.isEmpty(requestInfoForm.getUserEmail()) && queryString.toLowerCase().contains("show_login=false")) {
+            showLogin = false;
+        } else if (PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
             showLogin = true;
         } else if (!PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && profileEntityManager.orcidExists(requestInfoForm.getUserOrcid())) {
             mav.addObject("oauth_userId", requestInfoForm.getUserOrcid());
@@ -154,13 +157,7 @@ public class LoginController extends OauthControllerBase {
                 showLogin = true;
             }            
         }
-        // Check show_login param and change form 
-        // takes precendence over orcid and email params
-        if (queryString.toLowerCase().contains("show_login=true"))
-            showLogin = true;
-        else if (queryString.toLowerCase().contains("show_login=false"))
-            showLogin = false;
-
+        
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("oauth2Screens", true);
