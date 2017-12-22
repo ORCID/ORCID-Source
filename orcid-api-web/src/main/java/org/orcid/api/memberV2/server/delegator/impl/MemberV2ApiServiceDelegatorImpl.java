@@ -91,7 +91,6 @@ import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
@@ -114,6 +113,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -233,13 +233,12 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
-    
+
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
 
-    private long getLastModifiedTime(String orcid) {
-        return profileEntityManager.getLastModified(orcid);
-    }
+    @Resource
+    private MessageSource messageSource;
 
     @Override
     public Response viewStatusText() {
@@ -280,7 +279,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         contributorUtils.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
-        sourceUtils.setSourceName(w);        
+        sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
 
@@ -345,13 +344,6 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createWorks(String orcid, WorkBulk works) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
-        if(works != null) {
-            for(BulkElement b : works.getBulk()) {
-                if(Work.class.isAssignableFrom(b.getClass())) {
-                    clearSource((Work) b);
-                }
-            }
-        }
         works = workManager.createWorks(orcid, works);
         sourceUtils.setSourceName(works);
         return Response.ok(works).build();
@@ -1094,10 +1086,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
         if (profileEntity == null) {
             throw new OrcidNoResultException("No such profile: " + orcid);
         }
-        
+
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        contributorUtils.filterContributorPrivateData(workBulk);        
+        contributorUtils.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();
@@ -1128,7 +1120,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         ClientSummary client = clientManagerReadOnly.getSummary(clientId);
         return Response.ok(client).build();
     }
-    
+
     private void clearSource(SourceAware element) {
         element.setSource(null);
     }
