@@ -228,18 +228,18 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
-        String _351Chars = new String();
-        for (int i = 0; i < 531; i++) {
-            _351Chars += "a";
+        String _2001Chars = new String();
+        for (int i = 0; i < 2001; i++) {
+            _2001Chars += "a";
         }
 
-        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc2.Url(_351Chars));
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc2.Url(_2001Chars));
         postResponse = memberV2ApiClient_rc2.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
         rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc2.Url("http://myurl.com"));
-        rUrlToCreate.setUrlName(_351Chars);
+        rUrlToCreate.setUrlName(_2001Chars);
         postResponse = memberV2ApiClient_rc2.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
@@ -401,18 +401,18 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
-        String _351Chars = new String();
-        for (int i = 0; i < 531; i++) {
-            _351Chars += "a";
+        String _2001Chars = new String();
+        for (int i = 0; i < 2001; i++) {
+            _2001Chars += "a";
         }
 
-        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc3.Url(_351Chars));
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc3.Url(_2001Chars));
         postResponse = memberV2ApiClient_rc3.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
         rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc3.Url("http://myurl.com"));
-        rUrlToCreate.setUrlName(_351Chars);
+        rUrlToCreate.setUrlName(_2001Chars);
         postResponse = memberV2ApiClient_rc3.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
@@ -574,18 +574,18 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
-        String _351Chars = new String();
-        for (int i = 0; i < 531; i++) {
-            _351Chars += "a";
+        String _2001Chars = new String();
+        for (int i = 0; i < 2001; i++) {
+            _2001Chars += "a";
         }
 
-        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc4.Url(_351Chars));
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc4.Url(_2001Chars));
         postResponse = memberV2ApiClient_rc4.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
         rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_rc4.Url("http://myurl.com"));
-        rUrlToCreate.setUrlName(_351Chars);
+        rUrlToCreate.setUrlName(_2001Chars);
         postResponse = memberV2ApiClient_rc4.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
@@ -746,18 +746,18 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
-        String _351Chars = new String();
-        for (int i = 0; i < 531; i++) {
-            _351Chars += "a";
+        String _2001Chars = new String();
+        for (int i = 0; i < 2001; i++) {
+            _2001Chars += "a";
         }
 
-        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url(_351Chars));
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url(_2001Chars));
         postResponse = memberV2ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
         rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url("http://myurl.com"));
-        rUrlToCreate.setUrlName(_351Chars);
+        rUrlToCreate.setUrlName(_2001Chars);
         postResponse = memberV2ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
@@ -918,18 +918,18 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
-        String _351Chars = new String();
-        for (int i = 0; i < 531; i++) {
-            _351Chars += "a";
+        String _2001Chars = new String();
+        for (int i = 0; i < 2001; i++) {
+            _2001Chars += "a";
         }
 
-        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url(_351Chars));
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url(_2001Chars));
         postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
         rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url("http://myurl.com"));
-        rUrlToCreate.setUrlName(_351Chars);
+        rUrlToCreate.setUrlName(_2001Chars);
         postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
