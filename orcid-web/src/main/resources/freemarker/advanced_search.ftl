@@ -17,20 +17,16 @@
 
 -->
 <@public classes=['home'] >
-	<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-		<div ng-controller="SearchCtrlV2" id="SearchCtrl">
-	</@orcid.checkFeatureStatus>
-	<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-		<div ng-controller="SearchCtrl" id="SearchCtrl">
-	</@orcid.checkFeatureStatus>
+<script type="text/ng-template" id="search-ng2-template">
+	<div>
+		<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-offset-9 col-xs-12">
 		<div class="row">
-			<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-offset-9 col-xs-12">
 				<div class="main-search">
 					<div class="row">
 						<h1>${springMacroRequestContext.getMessage("orcid_bio_search.h1advancedsearch")}</h1>
 						<p>${springMacroRequestContext.getMessage("orcid_bio_search.searchpublicly")}</p>
 					</div>
-					<form id="searchForm" class="form-horizontal" ng-submit="getFirstResults()">
+			    	<form id="searchForm" class="form-horizontal" (ngSubmit)="getFirstResults(input)">
 					    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						<fieldset>
 							<div class="row">
@@ -38,14 +34,14 @@
 									<!-- Given name -->
 									<label for="givenName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelfirstname")}</label>
 									<div class="controls">
-										<input type="text" class="input-xlarge" name="givenNames" id="givenNames" ng-model="input.givenNames">
+										<input type="text" class="input-xlarge" name="givenNames" id="givenNames" [(ngModel)]="input.givenNames">
 									</div>
 								</div>
 								<div class="control-group col-md-6">
 									<!-- Family name -->
 									<label for="familyName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labellastname")}</label>
 									<div class="controls">
-										<input type="text" class="input-xlarge" name="familyName" id="familyName" ng-model="input.familyName">
+										<input type="text" class="input-xlarge" name="familyName" id="familyName" [(ngModel)]="input.familyName">
 									</div>
 								</div>
 							</div>
@@ -54,7 +50,7 @@
 									<div class="checkbox">
 										<!-- Other names -->
 										<label for="otherNamesSearchable">
-										<input type="checkbox" name="otherNamesSearchable" id="otherNamesSearchable" ng-model="input.searchOtherNames">
+										<input type="checkbox" name="otherNamesSearchable" id="otherNamesSearchable" [(ngModel)]="input.searchOtherNames">
 										${springMacroRequestContext.getMessage("orcid_bio_search.labelalsosearchothernames")}</label>
 									</div>
 								</div>
@@ -73,7 +69,7 @@
 							            </div>
 							         </div>
 									<div class="controls">
-										<input type="text" class="input-xlarge" name="affiliationOrg" id="affiliationOrg" ng-model="input.affiliationOrg">
+										<input type="text" class="input-xlarge" name="affiliationOrg" id="affiliationOrg" [(ngModel)]="input.affiliationOrg">
 									</div>
 								</div>
 								<div class="control-group col-md-6">
@@ -89,7 +85,7 @@
 							            </div>
 							         </div>
 									<div class="controls">
-											<input type="text" class="input-xlarge" name="keyword" id="keyword" ng-model="input.keyword">
+											<input type="text" class="input-xlarge" name="keyword" id="keyword" [(ngModel)]="input.keyword">
 									</div>
 								</div>
 							</div>
@@ -102,15 +98,15 @@
 									<!-- Search by ORCID iD -->
 									<label for="orcid" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelsearchbyorcid")}</label>
 									<div class="controls">
-										<input type="text" class="input-xlarge" name="orcid" id="orcid" ng-model="input.text">
-										<span id="invalid-orcid" class="orcid-error"ng-cloak ng-hide="isValidOrcidId()"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
+										<input type="text" class="input-xlarge" name="orcid" id="orcid" [(ngModel)]="input.text">
+										<span id="invalid-orcid" class="orcid-error" *ngIf="!isValidOrcidId()"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
 									</div>
 								</div>
 							</div>
 						</fieldset>
 						<hr>
 						<div class="row">
-							<p ng-if="hasErrors" ng-cloak><span class="orcid-error">${springMacroRequestContext.getMessage("orcid_bio_search.pyoumustpopulate")}</span></p>
+							<p *ngIf="hasErrors"><span class="orcid-error">${springMacroRequestContext.getMessage("orcid_bio_search.pyoumustpopulate")}</span></p>
 							<div class="control-group">
 								<div class="controls">
 									<button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")}</button>
@@ -124,12 +120,37 @@
 		</div>
 		<div class="row search-results">
 			<div class="col-md-12">
-				<#if noResultsFound??>
-					<!-- no results -->
-				<#else>
-					<#include "includes/search/search_results.ftl"/>
-				</#if>
-			</div>
-		</div>
-	</div>
+				<p *ngIf="areResults()">${springMacroRequestContext.getMessage("search_results.showing")} {{resultsShowing}} ${springMacroRequestContext.getMessage("search_results.of")} {{numFound}} <span *ngIf="numFound==1">${springMacroRequestContext.getMessage("search_results.result")}</span><span *ngIf="numFound>1">${springMacroRequestContext.getMessage("search_results.results")}</span></p>
+				<table class="table table-striped" *ngIf="areResults()">
+					<thead>
+						<tr>
+							<th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thOthernames")}</th>
+							<th>${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</th>
+						</tr>
+					</thead>
+		            <tbody>
+		                <tr *ngFor="let result of results">
+		                    <td class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}">{{result['orcid-identifier'].uri}}</a></td>
+    						<td [textContent]="getNames(result)"></td>
+    						<td>{{result['family-name']}}</td>	
+    						<td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
+    						<td [textContent]="getAffiliations(result)"></td>
+		                </tr>
+		            </tbody>
+		        </table>
+		        <div id="show-more-button-container">
+					<button id="show-more-button" type="submit" class="btn btn-primary" (click)="getMoreResults()" *ngIf="areMoreResults">Show more</button>
+					<span id="ajax-loader-show-more" class="orcid-hide"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+				</div>
+				<div id="no-results-alert" class="orcid-hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
+			    <div id="search-error-alert" class="orcid-hide alert alert-error"><@spring.message "orcid.frontend.web.search_error"/></div>
+	        </div>
+        </div>
+        
+    <div>
+</script> 
+<search-ng2></search-ng2>
 </@public>
