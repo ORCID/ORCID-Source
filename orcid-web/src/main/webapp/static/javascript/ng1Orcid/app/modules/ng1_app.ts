@@ -72,6 +72,9 @@ import { WebsitesFormModule }
 import { WidgetModule } 
     from './widget/widget.ts';
 
+import { WorksModule } 
+    from './works/works.ts';
+
 import { WorksPrivacyPreferencesModule } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts'
 
@@ -102,6 +105,7 @@ export const orcidApp = angular.module(
         WebsitesFormModule.name,
         WebsitesModule.name,
         WidgetModule.name,
+        WorksModule.name,
         WorksPrivacyPreferencesModule.name
     ]
 );

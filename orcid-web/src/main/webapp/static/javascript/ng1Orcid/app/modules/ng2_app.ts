@@ -86,42 +86,11 @@ import { WebsitesFormNg2Module }
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 
+import { WorksNg2Module } 
+    from './works/works.ts';
+
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
-
-//User generated services
-import { AffiliationService } 
-    from '../shared/affiliation.service.ts';
-
-import { AlsoKnownAsService } 
-    from '../shared/alsoKnownAs.service.ts';
-
-import { BiographyService } 
-    from '../shared/biography.service.ts';
-
-import { CommonService }
-    from '../shared/common.service.ts'
-
-import { EmailService } 
-    from '../shared/email.service.ts';
-
-import { FundingService } 
-    from '../shared/funding.service.ts';
-
-//import { GroupedActivitiesUtilService } 
-//    from '../shared/groupedActivities.service.ts';
-
-import { KeywordsService } 
-    from '../shared/keywords.service.ts';
-
-import { ModalService } 
-    from '../shared/modal.service.ts';
-
-import { NameService } 
-    from '../shared/name.service.ts'; 
-
-import { WorkspaceService } 
-    from '../shared/workspace.service.ts'; 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -181,24 +150,14 @@ export class RootCmp {
         WebsitesFormNg2Module,
         WebsitesNg2Module,
         WidgetNg2Module,
+        WorksNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
     providers: [
         { 
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
-        },
-        AffiliationService,
-        AlsoKnownAsService,
-        BiographyService,
-        CommonService,
-        EmailService,
-        FundingService,
-        //GroupedActivitiesUtilService,
-        KeywordsService,
-        ModalService,
-        NameService,
-        WorkspaceService
+        }
     ]
 
 })

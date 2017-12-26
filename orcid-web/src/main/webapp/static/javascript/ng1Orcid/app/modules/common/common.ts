@@ -22,11 +22,48 @@ import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
 //User generated services
+
+import { AffiliationService } 
+    from '../../shared/affiliation.service.ts';
+
+import { AlsoKnownAsService } 
+    from '../../shared/alsoKnownAs.service.ts';
+
+import { BiographyService } 
+    from '../../shared/biography.service.ts';
+
+import { CommonService }
+    from '../../shared/common.service.ts'
+
 import { CountryService } 
     from '../../shared/country.service.ts';
 
+import { EmailService } 
+    from '../../shared/email.service.ts';
+
+import { FundingService } 
+    from '../../shared/funding.service.ts';
+
+//import { GroupedActivitiesUtilService } 
+//    from '../shared/groupedActivities.service.ts';
+
+import { KeywordsService } 
+    from '../../shared/keywords.service.ts';
+
+import { ModalService } 
+    from '../../shared/modal.service.ts';
+
+import { NameService } 
+    from '../../shared/name.service.ts'; 
+
 import { WebsitesService } 
     from '../../shared/websites.service.ts';
+
+import { WorkspaceService } 
+    from '../../shared/workspace.service.ts'; 
+
+import { WorksService } 
+    from '../../shared/works.service.ts';
 
 // This is the Angular 2 part of the module
 @NgModule(
@@ -53,8 +90,20 @@ import { WebsitesService }
             PrivacytoggleNg2Module
         ],
         providers: [
+            AffiliationService,
+            AlsoKnownAsService,
+            BiographyService,
+            CommonService,
             CountryService,
-            WebsitesService
+            EmailService,
+            FundingService,
+            //GroupedActivitiesUtilService,
+            KeywordsService,
+            ModalService,
+            NameService,
+            WebsitesService,
+            WorksService,
+            WorkspaceService
         ]
     }
 )

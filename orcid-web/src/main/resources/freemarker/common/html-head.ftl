@@ -162,6 +162,7 @@
         <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/works-ng2-template.ftl">
     </#if>
     </@orcid.checkFeatureStatus> 
 
