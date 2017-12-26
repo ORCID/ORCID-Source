@@ -19,6 +19,8 @@ export class WorksService {
     private offset: Number;
     private url: string;
 
+    public bibtexJson: any;
+    public details: any;
     public groups: any;
     public groupsLabel: any;
     public loading: boolean;
@@ -27,13 +29,15 @@ export class WorksService {
     notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: Http ){
+        this.bibtexJson = {};
+        this.details = new Object();
+        this.groups = new Array();
+        this.groupsLabel = null;
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 
             }
         );
-        this.groups = new Array();
-        this.groupsLabel = null;
         this.offset = 0;
         this.showLoadMore = false;
         this.url = getBaseUri() + '/my-orcid/worksForms.json';
@@ -253,7 +257,7 @@ export class WorksService {
 /*
 angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', function ($rootScope, $timeout) {
     var worksSrvc = {
-        bibtexJson: {},
+        ,
         blankWork: null,
         constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
         details: new Object(), // we should think about putting details in the

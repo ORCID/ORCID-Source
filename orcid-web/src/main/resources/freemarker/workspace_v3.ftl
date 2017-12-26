@@ -294,7 +294,7 @@
         <#include "workspace_fundings_body_list_v3.ftl"/>
 
         <!-- Works -->
-        <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
         <works-ng2></works-ng2>
         </@orcid.checkFeatureStatus>         
         <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
