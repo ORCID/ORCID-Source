@@ -1,3 +1,7 @@
+declare var ActSortState: any;
+declare var GroupedActivities: any;
+declare var om: any;
+
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
@@ -12,6 +16,9 @@ import { Subject }
 
 import { Subscription }
     from 'rxjs/Subscription';
+
+import { CommonService } 
+    from '../../shared/common.service.ts';
 
 import { WorksService } 
     from '../../shared/works.service.ts';
@@ -33,46 +40,112 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
+    bulkEditShow: boolean;
     formData: any;
     emails: any;
     emailSrvc: any;
+    geoArea: any;
+    noLinkFlag: boolean;
+    selectedGeoArea: any;
+    selectedWorkType: any;
+    showBibtexImportWizard: boolean;
+    sortState: any;
+    workImportWizardsOriginal: any;
+    workType: any;
 
     constructor( 
-        private worksService: WorksService,
+        private commonService: CommonService,
         private emailService: EmailService,
         private modalService: ModalService,
-        private workspaceSrvc: WorkspaceService
+        private workspaceSrvc: WorkspaceService,
+        private worksService: WorksService
     ) {
         console.log('works component init');
 
+        this.bulkEditShow = false;
+        this.emails = {};
         this.formData = {
             works: null
         };
-        this.emails = {};
+        this.geoArea = ['All'];
+        this.noLinkFlag = true;
+        this.selectedGeoArea = null;
+        this.selectedWorkType = null;
+        this.showBibtexImportWizard = false;
+        this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+        this.workImportWizardsOriginal = null;
+        this.workType = ['All'];
     }
 
     getformData(): void {
-        this.worksService.getData()
+        this.worksService.addAbbrWorksToScope( 
+            this.sortState.predicateKey, 
+            !this.sortState.reverseKey[this.sortState.predicateKey]
+        )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.formData = data;
 
+                console.log('this.getForm works', this.formData);
+
                 let itemVisibility = null;
                 let len = null;
 
                 this.formData = data;
+                this.worksService.handleWorkGroupData( this.formData );
                 //this.newElementDefaultVisibility = this.formData.visibility.visibility;
-
-                console.log('this.getForm works', this.formData);
+                this.worksService.loading = false;
             },
             error => {
+                this.worksService.loading = false;
                 console.log('getWorksFormError', error);
             } 
         );
     };
 
-    openEditModal(): void{      
+    loadWorkImportWizardList(): void {
+        this.worksService.loadWorkImportWizardList()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                console.log('this.getForm works loadWorkImportWizardList', data);
+
+                if(data == null || data.length == 0) {
+                    this.noLinkFlag = false;
+                }
+                this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+                this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+                this.workImportWizardsOriginal = data;
+                this.bulkEditShow = false;
+                this.showBibtexImportWizard = false;
+                for(var idx in data) {                            
+                    for(var i in data[idx].actTypes) {
+                        if(!this.commonService.contains(this.workType, data[idx].actTypes[i])) {
+                            this.workType.push(data[idx].actTypes[i]);
+                        }                                
+                    }
+                    for(var j in data[idx].geoAreas) {
+                        if(!this.commonService.contains(this.geoArea, data[idx].geoAreas[j])) {
+                            this.geoArea.push(data[idx].geoAreas[j]);
+                        }                                
+                    }                            
+                }
+            },
+            error => {
+                console.log('WorkImportWizardError', error);
+            } 
+        );
+    }
+
+    loadMore(): void {
+        this.worksService.addAbbrWorksToScope( 
+            this.sortState.predicateKey, 
+            !this.sortState.reverseKey[this.sortState.predicateKey]
+        );
+    }
+
+    openEditModal(): void {      
         this.emailService.getEmails()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -107,8 +180,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getformData();
+        this.loadWorkImportWizardList();
     };
-
 }
 
 /*
@@ -146,13 +219,13 @@ export const WorkCtrl = angular.module('orcidApp').controller(
         'commonSrvc', 
         'emailSrvc', 
         'initialConfigService', 
-        'utilsService', 
+        'this.commonService', 
         'worksSrvc', 
         'workspaceSrvc',     
-        function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService, worksSrvc, workspaceSrvc ) {
+        function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, initialConfigService, this.commonService, worksSrvc, workspaceSrvc ) {
 
             var savingBibtex = false;
-            var utilsService = utilsService;
+            var this.commonService = this.commonService;
 
             actBulkSrvc.initScope($scope);
            
@@ -180,17 +253,16 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.externalIDNamesToDescriptions = [];//caches name->description lookup so we can display the description not the name after selection
             $scope.externalIDTypeCache = [];//cache responses
             $scope.generatingBibtex = false;
-            $scope.geoArea = ['All'];
+            
             $scope.moreInfo = {};
             $scope.moreInfoOpen = false;
-            $scope.noLinkFlag = true;
+            
             $scope.privacyHelp = {};
             $scope.scriptsLoaded = false;
             $scope.showBibtex = {};
             $scope.showBibtexExport = false;
-            $scope.showBibtexImportWizard = false;
+            
             $scope.showElement = {};
-            $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
             $scope.textFiles = [];
             $scope.types = null;
             $scope.wizardDescExpanded = {};
@@ -198,7 +270,6 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.worksFromBibtex = null;
             $scope.workspaceSrvc = workspaceSrvc;
             $scope.worksSrvc = worksSrvc;
-            $scope.workType = ['All'];
 
             /////////////////////// Begin of verified email logic for work
             var configuration = initialConfigService.getInitialConfiguration();
@@ -487,48 +558,11 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 }
             };
 
-            $scope.formatExternalIDType = function(model) {
-                if (!model){
-                    return "";
-                }
-                if ($scope.externalIDNamesToDescriptions[model]){
-                    return $scope.externalIDNamesToDescriptions[model].description;
-                }
-                //not loaded any descriptions yet, fetch them
-                var url = getBaseUri()+'/works/idTypes.json?query='+model;
-                var ajax = $.ajax({
-                    url: url,
-                    dataType: 'json',
-                    cache: true,
-                    async: false,
-                  }).done(function(data) {
-                      for (var key in data) {
-                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
-                      }
-                  });   
-                $scope.externalIDTypeCache[model] = ajax;
-                return $scope.externalIDNamesToDescriptions[model].description;   
-            };
+            
             //--typeahead end
 
             //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
-            $scope.getExternalIDTypes = function(query){  
-                var url = getBaseUri()+'/works/idTypes.json?query='+query;
-                var ajax = $scope.externalIDTypeCache[query];
-                if (!ajax){
-                    ajax = $.ajax({
-                        url: url,
-                        dataType: 'json',
-                        cache: true,
-                      }).done(function(data) {
-                          for (var key in data) {
-                              $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
-                          }
-                      });   
-                    $scope.externalIDTypeCache[query] = ajax;
-                }
-                return ajax;
-            };
+            
 
             $scope.hasCombineableEIs = function(work) {
                 if (work.workExternalIdentifiers != null){
@@ -629,50 +663,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 }
             };
 
-            $scope.loadWorkTypes = function(){
-                var workCategory = "";
-                if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != ""){
-                    workCategory = $scope.editWork.workCategory.value;
-                }
-                else{
-                    return; //do nothing if we have not types
-                }
-                $.ajax({
-                    url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        $timeout(function() {
-                            $scope.types = data;
-                            if($scope.editWork != null && $scope.editWork.workCategory != null) {
-                                // if the edit works doesn't have a value that matches types
-                                var hasType = false;
-                                for (var idx in $scope.types){
-                                    if ($scope.types[idx].key == $scope.editWork.workType.value) hasType = true;
-                                }
-                                if(!hasType) {
-                                    switch ($scope.editWork.workCategory.value){
-                                    case "conference":
-                                        $scope.editWork.workType.value="conference-paper";
-                                        break;
-                                    case "intellectual_property":
-                                        $scope.editWork.workType.value="patent";
-                                        break;
-                                    case "other_output":
-                                        $scope.editWork.workType.value="data-set";
-                                        break;
-                                    case "publication":
-                                        $scope.editWork.workType.value="journal-article";
-                                        break;
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }).fail(function() {
-                    console.log("Error loading work types.");
-                });
-            };
+            
 
             // remove once grouping is live
             $scope.moreInfoClick = function(work, $event) {
@@ -828,31 +819,9 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 }
                 
             };
-            
-            $scope.loadMore = function() {
-                $scope.worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
-            }
+           
 
-            $scope.serverValidate = function (relativePath) {
-                $.ajax({
-                    url: getBaseUri() + '/' + relativePath,
-                    type: 'POST',
-                    data:  angular.toJson($scope.editWork),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        $timeout(function(){
-                            commonSrvc.copyErrorsLeft($scope.editWork, data);
-                            if ( relativePath == 'works/work/citationValidate.json') {
-                                $scope.validateCitation();
-                            }
-                        });
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("WorkCtrl.serverValidate() error");
-                });
-            };
+            
 
             $scope.setAddWorkPrivacy = function(priv, $event) {
                 $event.preventDefault();
@@ -882,7 +851,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     html: $compile($('#add-work-modal').html())($scope),
                     onLoad: function() {$('#cboxClose').remove();},
                     // start the colorbox off with the correct width
-                    width: utilsService.formColorBoxResize(),
+                    width: this.commonService.formColorBoxResize(),
                     onComplete: function() {
                         //resize to insure content fits
                     },
@@ -900,7 +869,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     html: $compile($('#combine-work-template').html())($scope),
                     onLoad: function() {$('#cboxClose').remove();},
                     // start the colorbox off with the correct width
-                    width: utilsService.formColorBoxResize(),
+                    width: this.commonService.formColorBoxResize(),
                     onComplete: function() {$.colorbox.resize();},
                     onClosed: function() {
                         $scope.closeAllMoreInfo();
@@ -1074,47 +1043,6 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     return $scope.hasCombineableEIs(work);
                 }
             };
-
-            function loadWorkImportWizardList() {
-                $.ajax({
-                    url: getBaseUri() + '/workspace/retrieve-work-import-wizards.json',
-                    type: 'GET',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {                                             
-                        $timeout(function(){
-                            if(data == null || data.length == 0) {
-                                $scope.noLinkFlag = false;
-                            }
-                            $scope.selectedWorkType = om.get('workspace.works.import_wizzard.all');
-                            $scope.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
-                            $scope.workImportWizardsOriginal = data;
-                            $scope.bulkEditShow = false;
-                            $scope.showBibtexImportWizard = false;
-                            for(var idx in data) {                            
-                                for(var i in data[idx].actTypes) {
-                                    if(!utilsService.contains($scope.workType, data[idx].actTypes[i])) {
-                                        $scope.workType.push(data[idx].actTypes[i]);
-                                    }                                
-                                }
-                                for(var j in data[idx].geoAreas) {
-                                    if(!utilsService.contains($scope.geoArea, data[idx].geoAreas[j])) {
-                                        $scope.geoArea.push(data[idx].geoAreas[j]);
-                                    }                                
-                                }                            
-                            }
-                        });                                                
-                    }
-                }).fail(function(e) {
-                    // something bad is happening!
-                    console.log("WorkImportWizardError");
-                    logAjaxError(e);
-                });
-            }
-    
-            //init
-            $scope.loadMore();
-            loadWorkImportWizardList();
 
         }
     ]

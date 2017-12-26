@@ -26,7 +26,7 @@
                     <div>
                         <a href="" (click)="workspaceSrvc.toggleWorks($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-                           <@orcid.msg 'workspace.Works'/> (<span>{{worksSrvc.groupsLabel}}</span>)
+                           <@orcid.msg 'workspace.Works'/> (<span>{{worksService.groupsLabel}}</span>)
                         </a>
                         <#if !(isPublicProfile??)> 
                         <div class="popover-help-container">
@@ -97,13 +97,13 @@
                     <#if !(isPublicProfile??)>
                     <ul class="workspace-bar-menu">
                 
-                        <li *ngIf="worksSrvc.groups.length > 1" >
+                        <li *ngIf="worksService.groups.length > 1" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
                                 <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                             </a>
                         </li>
 
-                        <li *ngIf="worksSrvc.groups.length > 0" >
+                        <li *ngIf="worksService.groups.length > 0" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : showBibtexExport}" (click)="toggleBibtexExport()">
                                 <span class="glyphicon glyphicon-save"></span>
                                 <@orcid.msg 'groups.common.export_works'/>

@@ -293,7 +293,11 @@
         <!-- Fundings -->
         <#include "workspace_fundings_body_list_v3.ftl"/>
 
-        <!-- Works -->                
+        <!-- Works -->
+        <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
+        <works-ng2></works-ng2>
+        </@orcid.checkFeatureStatus>         
+        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
         <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.loading != true}}">
           <#include "includes/work/work_section_header_inc_v3.ftl"/>
           <!-- Work Import Wizard -->
@@ -545,6 +549,8 @@
             <#include "includes/work/body_work_inc_v3.ftl"/>            
           </div>
         </div>
+        </@orcid.checkFeatureStatus>
+
         <div ng-controller="PeerReviewCtrl">
           <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
             <#include "workspace_peer_review_body_list.ftl"/>
