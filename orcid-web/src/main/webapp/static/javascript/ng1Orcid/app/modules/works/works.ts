@@ -14,6 +14,10 @@ import { CommonNg2Module }
 import { WorksComponent } 
     from './works.component.ts';
 
+//User generated filters
+import { FilterImportWizardsPipe }
+    from '../../pipes/filterImportWizardsNg2.ts'; 
+
 // This is the Angular 1 part of the module
 export const WorksModule = angular.module(
     'WorksModule', 

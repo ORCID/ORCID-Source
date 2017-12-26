@@ -43,6 +43,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService
     ) {
+        console.log('works component init');
+
         this.formData = {
             works: null
         };

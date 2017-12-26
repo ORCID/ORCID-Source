@@ -76,11 +76,10 @@ public class ActivityValidator {
     
     @Resource
     private NormalizationService norm;
-
-
+    
     public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
-        if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
+        if (title == null || title.getTitle() == null || PojoUtil.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
         }
 

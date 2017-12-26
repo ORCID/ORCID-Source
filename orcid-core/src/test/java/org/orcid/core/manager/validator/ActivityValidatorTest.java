@@ -110,6 +110,13 @@ public class ActivityValidatorTest {
         activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
+    @Test(expected = ActivityTitleValidationException.class)
+    public void validateWorkBlankTitleTest() {
+        Work work = getWork();
+        work.getWorkTitle().getTitle().setContent("  ");
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
+    }
+    
     @Test(expected = OrcidValidationException.class)
     public void validateWork_emptyTranslatedTitleWithLanguageCodeTest() {
         Work work = getWork();

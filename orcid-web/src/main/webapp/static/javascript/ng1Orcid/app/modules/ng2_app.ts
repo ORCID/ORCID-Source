@@ -71,6 +71,21 @@ import { ModalNg2Module }
 import { NameNg2Module } 
     from './name/name.ts';
 
+import { SelfServiceNg2Module } 
+    from './selfService/selfService.ts';
+
+import { SelfServiceAddContactNg2Module } 
+    from './selfServiceAddContact/selfServiceAddContact.ts';
+
+import { SelfServiceExistingSubMemberNg2Module } 
+    from './selfServiceExistingSubMember/selfServiceExistingSubMember.ts';
+
+import { SelfServiceRemoveContactNg2Module } 
+    from './selfServiceRemoveContact/selfServiceRemoveContact.ts';
+
+import { SelfServiceRemoveSubMemberNg2Module } 
+    from './selfServiceRemoveSubMember/selfServiceRemoveSubMember.ts';
+
 import { ThanksForRegisteringNg2Module } 
     from './thanksForRegistering/thanksForRegistering.ts';
 
@@ -145,6 +160,11 @@ export class RootCmp {
         KeywordsNg2Module,
         ModalNg2Module,
         NameNg2Module,
+        SelfServiceNg2Module,
+        SelfServiceAddContactNg2Module,
+        SelfServiceExistingSubMemberNg2Module,
+        SelfServiceRemoveContactNg2Module,
+        SelfServiceRemoveSubMemberNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
         WebsitesFormNg2Module,
@@ -158,6 +178,7 @@ export class RootCmp {
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
         }
+
     ]
 
 })

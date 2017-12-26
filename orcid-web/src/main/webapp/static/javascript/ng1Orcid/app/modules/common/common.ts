@@ -11,11 +11,20 @@ import { FormsModule }
     from '@angular/forms'; // <-- NgModel lives here
 
 //User generated filters
+import { AjaxFormDateToISO8601Pipe }
+    from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
+
+import { FilterImportWizardsPipe }
+    from '../../pipes/filterImportWizardsNg2.ts'
+
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
 
-import { AjaxFormDateToISO8601Pipe }
-    from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
+import { UrlProtocolPipe }
+    from '../../pipes/urlProtocolNg2.ts';
+
+import { WorkExternalIdentifierHtmlPipe }
+    from '../../pipes/workExternalIdentifierHtmlNg2.ts';
 
 //User generated modules
 import { PrivacytoggleNg2Module }
@@ -34,6 +43,9 @@ import { BiographyService }
 
 import { CommonService }
     from '../../shared/common.service.ts'
+
+import { ConsortiaService }
+    from '../../shared/consortia.service.ts'
 
 import { CountryService } 
     from '../../shared/country.service.ts';
@@ -77,7 +89,10 @@ import { WorksService }
         ],
         declarations: [ 
             AjaxFormDateToISO8601Pipe,
+            FilterImportWizardsPipe,
             OrderByPipe,
+            UrlProtocolPipe,
+            WorkExternalIdentifierHtmlPipe
         ],
         exports: [
             //Angular Libraries
@@ -85,7 +100,10 @@ import { WorksService }
             FormsModule,
             //User Pipes
             AjaxFormDateToISO8601Pipe,
+            FilterImportWizardsPipe,
             OrderByPipe,
+            UrlProtocolPipe,
+            WorkExternalIdentifierHtmlPipe,
             //User Modules
             PrivacytoggleNg2Module
         ],
@@ -94,6 +112,7 @@ import { WorksService }
             AlsoKnownAsService,
             BiographyService,
             CommonService,
+            ConsortiaService,
             CountryService,
             EmailService,
             FundingService,

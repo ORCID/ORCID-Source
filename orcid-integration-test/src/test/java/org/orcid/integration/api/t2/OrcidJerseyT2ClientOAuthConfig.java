@@ -42,10 +42,19 @@ public class OrcidJerseyT2ClientOAuthConfig extends OrcidJerseyT2ClientConfig {
 
     public OrcidJerseyT2ClientOAuthConfig(Set<Class<?>> providers) {
         super(providers);
+        allowInvalidCerts();
+    }
+
+    public OrcidJerseyT2ClientOAuthConfig() {
+        allowInvalidCerts();
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        
+    }
+
+    private void allowInvalidCerts() {
         SSLContext ctx = createSslContext();
         HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
         getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(new HostnameVerifier() {
@@ -71,7 +80,6 @@ public class OrcidJerseyT2ClientOAuthConfig extends OrcidJerseyT2ClientConfig {
     }
 
     private static class DefaultTrustManager implements X509TrustManager {
-
         @Override
         public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
         }

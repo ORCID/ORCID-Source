@@ -19,7 +19,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,11 +46,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -64,6 +63,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
@@ -260,7 +260,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	assertNotNull(reg.getEmail());
     	assertNotNull(reg.getEmail().getErrors());
     	assertEquals(1, reg.getEmail().getErrors().size());
-    	assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href=\"http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org\">resend the claim email</a>?", reg.getEmail().getErrors().get(0));    	
+    	assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href='http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org'>resend the claim email</a>?", reg.getEmail().getErrors().get(0));    	
     }
     
     @Test
@@ -287,7 +287,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
             assertNotNull(emailAdditionalListItem.getErrors());
             assertEquals(1, emailAdditionalListItem.getErrors().size());
-            assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href=\"http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org\">resend the claim email</a>?", emailAdditionalListItem.getErrors().get(0));
+            assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href='http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org'>resend the claim email</a>?", emailAdditionalListItem.getErrors().get(0));
         }
     }
     
@@ -417,7 +417,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
             assertNotNull(emailAdditionalListItem.getErrors());
             assertEquals(1, emailAdditionalListItem.getErrors().size());
-            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system. Would you like to"));
+            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system."));
         }     
     }
     
@@ -441,7 +441,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	assertNotNull(reg.getEmail());
     	assertNotNull(reg.getEmail().getErrors());
     	assertEquals(1, reg.getEmail().getErrors().size());
-    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system. Would you like to"));    	
+    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system."));    	
     }             
     
     protected OrcidProfile createBasicProfile() {

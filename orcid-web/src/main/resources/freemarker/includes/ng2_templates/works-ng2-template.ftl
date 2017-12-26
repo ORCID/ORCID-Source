@@ -18,8 +18,8 @@
 -->
 
 <script type="text/ng-template" id="works-ng2-template">
-    <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" orcid-loaded="{{worksSrvc.loading != true}}">
-          
+    <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active">
+         
         <div class="workspace-accordion-header clearfix">
             <div class="row">
                 <div class="col-md-4 col-sm-3 col-xs-12">
@@ -96,7 +96,7 @@
                     </div>
                     <#if !(isPublicProfile??)>
                     <ul class="workspace-bar-menu">
-                        <!-- Bulk Edit -->
+                
                         <li *ngIf="worksSrvc.groups.length > 1" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
                                 <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
@@ -110,28 +110,28 @@
                             </a>
                         </li>
 
-                        <li class="hidden-xs"><!-- Workaround for mobile view -->
+                        <li class="hidden-xs">
                             <div class="menu-container" id="add-work-container">
                                 <ul class="toggle-menu">
                                     <li [ngClass]="{'green-bg' : showBibtexImportWizard == true || workImportWizard == true}"> 
                                         <span class="glyphicon glyphicon-plus"></span>
                                         <@orcid.msg 'groups.common.add_works'/>
                                         <ul class="menu-options works">
-                                            <!-- Search & Link -->
+                                          
                                             <li *ngIf="noLinkFlag">
                                                 <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="showWorkImportWizard()">
                                                     <span class="glyphicon glyphicon-cloud-upload"></span>
                                                     <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                                 </a>
                                             </li>
-                                            <!-- Bibtex -->
+                                            
                                             <li>
                                                 <a class="action-option manage-button" (click)="openBibTextWizard()">
                                                     <span class="glyphicons file_import bibtex-wizard"></span>
                                                     <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
                                                 </a>
                                             </li>
-                                            <!-- Add Manually -->
+                                          
                                             <li>
                                                 <a id="add-work" class="action-option manage-button" (click)="addWorkModal()">
                                                     <span class="glyphicon glyphicon-plus"></span>
@@ -143,21 +143,21 @@
                                 </ul>
                             </div>
                         </li>
-                        <!-- Search & Link -->
+                    
                         <li class="hidden-md hidden-sm visible-xs-inline">
                             <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="showWorkImportWizard()">
                                 <span class="glyphicon glyphicon-cloud-upload"></span>
                                 <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                             </a>
                         </li>
-                        <!-- Bibtex -->
+                  
                         <li class="hidden-md hidden-sm visible-xs-inline">
                             <a class="action-option manage-button" (click)="openBibTextWizard()">
                                 <span class="glyphicons file_import bibtex-wizard"></span>
                                 <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
                             </a>
                         </li>
-                        <!-- Mobile Workaround -->
+                    
                         <li class="hidden-md hidden-sm visible-xs-inline">
                             <a class="action-option manage-button" (click)="addWorkModal()">
                                 <span class="glyphicon glyphicon-plus"></span>
@@ -188,27 +188,33 @@
                 </div>
                 <div class="row">
                     <div id="workFilters">
-                    <form class="form-inline">
-                        <div class="col-md-5 col-sm-5 col-xs-12">
-                            <div class="form-group">
-                                <label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label>   
-                                <select id="work-type" ng-options="wt as wt for wt in workType | orderBy: 'toString()'" ng-model="selectedWorkType"></select>                    
-                            </div> 
-                        </div>
-                        <div class="col-md-7 col-sm-7 col-xs-12">
-                            <div class="form-group geo-area-group">
-                                <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>  
-                                <select ng-options="ga as ga for ga in geoArea | orderBy: 'toString()'" ng-model="selectedGeoArea"></select>                      
+                        <form class="form-inline">
+                            <div class="col-md-5 col-sm-5 col-xs-12">
+                                <div class="form-group">
+                                    <label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label> 
+                                     
+                                    <select id="work-type" ng-options="wt as wt for wt in workType | orderBy: 'toString()'" ng-model="selectedWorkType"></select>    
+                                                   
+                                </div> 
                             </div>
-                        </div>  
-                    </form>
-                    <hr />
+                            <div class="col-md-7 col-sm-7 col-xs-12">
+                                <div class="form-group geo-area-group">
+                                    <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>  
+                                    
+                                    <select ng-options="ga as ga for ga in geoArea | orderBy: 'toString()'" ng-model="selectedGeoArea"></select>  
+                                                       
+                                </div>
+                            </div>  
+                        </form>
+                        <hr />
                     </div>
                 </div>         
                 <div class="row wizards">               
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div *ngFor="let wtw of workImportWizardsOriginal | orderBy: 'name' | filterImportWizards : selectedWorkType : selectedGeoArea">
-                            <strong><a (click)="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong><br />                                                                                    
+                            <strong><a (click)="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong>
+
+                            <br />                                                                                    
                             <div class="justify">                       
                                 <p class="wizard-description" [ngClass]="{'ellipsis-on' : wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null}">
                                     {{wtw.description}}
@@ -223,7 +229,8 @@
             </div>            
         </div>
 
-        <!-- Bulk Edit -->          
+        <!-- Bulk Edit --> 
+            
         <div *ngIf="bulkEditShow && workspaceSrvc.displayWorks" >           
             <div class="bulk-edit">
                 <div class="row">
@@ -237,7 +244,7 @@
                     <div class="col-md-5 col-sm-5 col-xs-12">
                         <ul class="bulk-edit-toolbar">
 
-                            <li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
+                            <li class="bulk-edit-toolbar-item work-multiple-selector">
                                 <label><@orcid.msg 'workspace.bulkedit.select'/></label>
                                 <div id="custom-control-x">
                                     <div class="custom-control-x" > 
@@ -256,15 +263,17 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="bulk-edit-toolbar-item"><!-- Privacy control -->
+                            <li class="bulk-edit-toolbar-item">
                                 <label><@orcid.msg 'workspace.bulkedit.edit'/></label>
                                 <div class="bulk-edit-privacy-control">
+                         
                                     <@orcid.privacyToggle2 angularModel="groupPrivacy()" 
                                     questionClick=""
                                     clickedClassCheck=""
                                     publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
                                     limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
                                     privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+                                  
                                 </div>                      
                             </li>                   
                         </ul>
@@ -285,10 +294,11 @@
                 </div>              
             </div>
         </div>
+    
 
-        <!-- BibTeX Export Layout -->         
+        <!-- BibTeX Export Layout -->        
         <div *ngIf="showBibtexExport && workspaceSrvc.displayWorks" class="bibtex-box">
-            <div class=box-border" *ngIf="canReadFiles" >
+            <div class="box-border" *ngIf="canReadFiles" >
                 <h4><@orcid.msg 'workspace.bibtexExporter.export_bibtex'/></h4><span (click)="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
                 <div class="row full-height-row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
@@ -304,6 +314,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="bottomBuffer" *ngIf="bibtexLoading && !bibtexExportError" >
                 <span class="dotted-bar"></span>
                 <ul class="inline-list">
@@ -315,14 +326,16 @@
                     </li>
                 </ul>
             </div>
+    
             <div class="alert alert-block" *ngIf="bibtexExportError">
                 <strong><@orcid.msg 'workspace.bibtexExporter.error'/></strong>
             </div>
-        </div>    
+          
+        </div>   
 
         <!-- Bibtex Importer Wizard -->
         <div *ngIf="showBibtexImportWizard && workspaceSrvc.displayWorks"  class="bibtex-box">
-            <div class=box-border" *ngIf="canReadFiles" >
+            <div class="box-border" *ngIf="canReadFiles" >
                 <h4><@orcid.msg 'workspace.bibtexImporter.link_bibtex'/></h4><span (click)="openBibTextWizard()" class="hide-importer"><@orcid.msg 'workspace.bibtexImporter.hide_link_bibtex'/></span>
                 <div class="row full-height-row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
@@ -345,7 +358,6 @@
             </div>
             <span class="dotted-bar" *ngIf="worksFromBibtex.length > 0"></span>
 
-            <!-- Bibtex Import Results List -->
             <div *ngFor="let work of worksFromBibtex"  class="bottomBuffer">             
                 <div class="row full-height-row">   
                     <div class="col-md-9 col-sm-9 col-xs-7">
@@ -358,11 +370,11 @@
                         <div class="info-detail">
                             <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate.day">-</span><span *ngIf="work.publicationDate.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
 
-                            <!-- Work Type -->
+                  
                             <span class="capitalize" *ngIf="work.workType.value.length > 0">{{work.workType.value}}</span>
                             <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 
-                            <!-- Active Row Identifiers / URL / Validations / Versions -->
+                     
 
                         </div>
                         <div class="row" *ngIf="group.activePutCode == work.putCode.value">
@@ -372,7 +384,7 @@
                                         <ul class="id-details">
                                             <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
 
-                                                <span *ngIf="work.workExternalIdentifiers[0].workExternalIdentifierId.value.length > 0" bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                                                <span *ngIf="work.workExternalIdentifiers[0].workExternalIdentifierId.value.length > 0" >bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'</span>
                                             </li>
                                         </ul>                                   
                                     </li>
@@ -405,6 +417,7 @@
                 </div>
             </div>
         </div>
+
         <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
             include "includes/work/add_work_modal_inc.ftl"
             include "includes/work/del_work_modal_inc.ftl"

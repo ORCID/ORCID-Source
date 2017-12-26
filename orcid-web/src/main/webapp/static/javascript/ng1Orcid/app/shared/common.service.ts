@@ -67,4 +67,9 @@ export class CommonService {
         
         this.shownElement[elem] = true;
     };
+    
+    isEmail(email) {
+        let re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
 }
