@@ -31,6 +31,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -137,6 +138,19 @@ public class LoginController extends OauthControllerBase {
         } catch (InvalidScopeException e) {
             String redirectUriWithParams = redirectUri + "?error=invalid_scope&error_description=" + e.getMessage();
             return new ModelAndView(new RedirectView(redirectUriWithParams));
+        }
+        
+       //handle openID behaviour
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
+            String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
+            if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
+                String redirectUriWithParams = requestInfoForm.getRedirectUrl();
+                redirectUriWithParams += "?error=login_required";
+                RedirectView rView = new RedirectView(redirectUriWithParams);
+                ModelAndView error = new ModelAndView();
+                error.setView(rView);
+                return error;
+            }
         }
 
         ModelAndView mav = new ModelAndView("login");
