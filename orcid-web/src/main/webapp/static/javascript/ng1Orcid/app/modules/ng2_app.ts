@@ -44,6 +44,12 @@ import { CountryNg2Module }
 import { CountryFormNg2Module } 
     from './countryForm/countryForm.ts';
 
+import { EmailsNg2Module } 
+    from './emails/emails.ts';
+
+import { EmailsFormNg2Module } 
+    from './emailsForm/emailsForm.ts';
+
 import { EmailUnverifiedWarningNg2Module } 
     from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
 
@@ -86,51 +92,20 @@ import { ThanksForRegisteringNg2Module }
 import { ThanksForVerifyingNg2Module } 
     from './thanksForVerifying/thanksForVerifying.ts';
 
+import { WebsitesNg2Module } 
+    from './websites/websites.ts';
+
+import { WebsitesFormNg2Module } 
+    from './websitesForm/websitesForm.ts';
+
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 
+import { WorksNg2Module } 
+    from './works/works.ts';
+
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
-
-//User generated services
-import { AffiliationService } 
-    from '../shared/affiliation.service.ts';
-
-import { AlsoKnownAsService } 
-    from '../shared/alsoKnownAs.service.ts';
-
-import { BiographyService } 
-    from '../shared/biography.service.ts';
-
-import { CommonService }
-    from '../shared/common.service.ts'
-
-import { ConsortiaService }
-    from '../shared/consortia.service.ts'
-
-import { CountryService } 
-    from '../shared/country.service.ts'; 
-
-import { EmailService } 
-    from '../shared/email.service.ts';
-
-import { FundingService } 
-    from '../shared/funding.service.ts';
-
-//import { GroupedActivitiesUtilService } 
-//    from '../shared/groupedActivities.service.ts';
-
-import { KeywordsService } 
-    from '../shared/keywords.service.ts';
-
-import { ModalService } 
-    from '../shared/modal.service.ts';
-
-import { NameService } 
-    from '../shared/name.service.ts'; 
-
-import { WorkspaceService } 
-    from '../shared/workspace.service.ts'; 
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -176,6 +151,8 @@ export class RootCmp {
         BiographyNg2Module,
         CountryFormNg2Module,
         CountryNg2Module,
+        EmailsFormNg2Module,
+        EmailsNg2Module,
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         //FundingNg2Module,
@@ -190,26 +167,18 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
+        WebsitesFormNg2Module,
+        WebsitesNg2Module,
         WidgetNg2Module,
+        WorksNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
     providers: [
         { 
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
-        },
-        AffiliationService,
-        AlsoKnownAsService,
-        BiographyService,
-        CommonService,
-        ConsortiaService,
-        EmailService,
-        FundingService,
-        //GroupedActivitiesUtilService,
-        KeywordsService,
-        ModalService,
-        NameService,
-        WorkspaceService
+        }
+
     ]
 
 })

@@ -45,16 +45,6 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
     }
 
-    deleteOtherName(otherName): void{
-        let otherNames = this.formData.otherNames;
-        let len = otherNames.length;
-        while (len--) {            
-            if (otherNames[len] == otherName){                
-                otherNames.splice(len,1);
-            }
-        }        
-    };
-
     getformData(): void {
         this.alsoKnownAsService.getData()
         .takeUntil(this.ngUnsubscribe)

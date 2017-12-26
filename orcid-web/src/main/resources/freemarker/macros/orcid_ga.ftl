@@ -40,7 +40,7 @@
 	                } else {
 	                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5], {'anonymizeIp': true});
 	                }                
-	                console.log("_gap.push for " + trackArray);
+	                //console.log("_gap.push for " + trackArray);
 	            }
 	            
 	            setTimeout(function(){
@@ -53,7 +53,7 @@
 	                }
 	            }, 200); 
 	        } else {
-	            console.log("no _gap.push for " + trackArray);
+	            //console.log("no _gap.push for " + trackArray);
 	            if (typeof trackArray === 'function')
 	                trackArray();                      
 	        }

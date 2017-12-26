@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { AlsoKnownAsService } 
-    from '../../shared/alsoKnownAs.service.ts';
+import { EmailService } 
+    from '../../shared/email.service.ts';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -23,10 +23,10 @@ import { ModalService }
     from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'also-known-as-form-ng2',
-    template:  scriptTmpl("also-known-as-form-ng2-template")
+    selector: 'emails-form-ng2',
+    template:  scriptTmpl("emails-ng2-template")
 })
-export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnInit {
+export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -42,7 +42,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     showElement: any;
 
     constructor( 
-        private alsoKnownAsService: AlsoKnownAsService,
+        private emailService: EmailService,
         private commonSrvc: CommonService,
         private modalService: ModalService
     ) {
@@ -95,7 +95,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     getformData(): void {
-        this.alsoKnownAsService.getData()
+        this.emailService.getData()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -119,14 +119,14 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     setFormData( closeAfterAction ): void {
-        this.alsoKnownAsService.setData( this.formData )
+        this.emailService.setData( this.formData )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.formData = data;
                 if (this.formData.errors.length == 0){
                     this.getformData();
-                    this.alsoKnownAsService.notifyOther();
+                    this.emailService.notifyOther();
                     if( closeAfterAction == true ) {
                         this.closeEditModal();
                     }
