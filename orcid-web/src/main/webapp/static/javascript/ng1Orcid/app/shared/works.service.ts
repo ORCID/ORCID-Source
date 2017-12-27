@@ -20,6 +20,7 @@ export class WorksService {
     private url: string;
 
     public bibtexJson: any;
+    public constants: any;
     public details: any;
     public groups: any;
     public groupsLabel: any;
@@ -30,6 +31,12 @@ export class WorksService {
 
     constructor( private http: Http ){
         this.bibtexJson = {};
+        this.constants = { 
+            'access_type': { 
+                'USER': 'user', 
+                'ANONYMOUS': 'anonymous'
+            }
+        };
         this.details = new Object();
         this.groups = new Array();
         this.groupsLabel = null;
@@ -42,15 +49,6 @@ export class WorksService {
         this.showLoadMore = false;
         this.url = getBaseUri() + '/my-orcid/worksForms.json';
     }
-
-    /*
-    getDisambiguatedAffiliation( id ): Observable<any> {
-        return this.http.get(
-            this.urlAffiliationDisambiguated + id
-        )
-        .map((res:Response) => res.json()).share();
-    }
-    */
 
     addAbbrWorksToScope( sort, sortAsc): Observable<any> {
         let url = getBaseUri() + '/works/worksPage.json' + '?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
@@ -65,6 +63,27 @@ export class WorksService {
             url
         )
         .map((res:Response) => res.json()).share();
+    }
+
+    consistentVis(group): boolean {
+        let visibility = group.works[0].visibility.visibility;
+        for(let i = 0; i < group.works.length; i++) {
+            if (group.works[i].visibility.visibility != visibility) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    getGroup(putCode): any {
+        for (var idx in this.groups) {
+            for (var y in this.groups[idx].works) {
+                if (this.groups[idx].works[y].putCode.value == putCode) {
+                    return this.groups[idx];
+                }
+            }
+        }
+        return null;
     }
 
     handleWorkGroupData(data, callback?): void {
@@ -82,6 +101,44 @@ export class WorksService {
         }
     }
 
+    getGroupDetails(putCode, type, callback?): void {
+        let group = this.getGroup(putCode);
+        let needsLoading =  new Array();
+        
+        let popFunct = function () {
+            if (needsLoading.length > 0) {
+                this.getDetails(needsLoading.pop(), type, popFunct);
+            }
+            else if (callback != undefined) {
+                callback();
+            }
+        };
+
+        for (var idx in group.works) {
+            needsLoading.push(group.works[idx].putCode.value)
+        }
+
+        popFunct();
+    }
+
+    loadAllWorkGroups(sort, sortAsc, callback): any {
+        this.details = new Object();
+        this.groups = new Array();
+        var url = getBaseUri() + '/works/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
+        this.loading = true;
+        $.ajax({
+            'url': url,
+            'dataType': 'json',
+            'success': function(data) {
+                this.handleWorkGroupData(data, callback);
+            }
+        }).fail(function(e) {
+            this.loading = false;
+            console.log("Error fetching works");
+            logAjaxError(e);
+        });
+    }
+
     loadWorkImportWizardList(): Observable<any> {
         let url = getBaseUri() + '/workspace/retrieve-work-import-wizards.json';
 
@@ -89,6 +146,44 @@ export class WorksService {
             url
         )
         .map((res:Response) => res.json()).share();
+    }
+
+    makeDefault(group, putCode): any {
+        /*
+        $.ajax({
+            url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
+            dataType: 'json',
+            success: function(data) {
+                group.defaultWork = worksSrvc.getWork(putCode);
+                group.activePutCode = group.defaultWork.putCode.value;
+            }
+        }).fail(function(){
+            // something bad is happening!
+            console.log("some bad is hppending");
+        });
+        */
+    }
+
+    putWork(work,sucessFunc, failFunc): any {
+        /*
+        $.ajax({
+            url: getBaseUri() + '/works/work.json',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            type: 'POST',
+            data: angular.toJson(work),
+            success: function(data) {
+                sucessFunc(data);
+            }
+        }).fail(function(){
+            failFunc();
+        });
+        */
+    }
+
+    resetWorkGroups(): void {
+        this.offset = 0;
+        this.groups = new Array();
     }
 
     /*
@@ -259,7 +354,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
     var worksSrvc = {
         ,
         blankWork: null,
-        constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+        ,
         details: new Object(), // we should think about putting details in the
         groups: new Array(),
         ,
@@ -482,10 +577,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
 
         ,
         
-        resetWorkGroups: function() {
-            worksSrvc.offset = 0;
-            worksSrvc.groups = new Array();
-        },
+        
 
         refreshWorkGroups: function(sort, sortAsc) {
             worksSrvc.details = new Object();
@@ -505,23 +597,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             });
         },
         
-        loadAllWorkGroups: function(sort, sortAsc, callback) {
-            worksSrvc.details = new Object();
-            worksSrvc.groups = new Array();
-            var url = getBaseUri() + '/works/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
-            worksSrvc.loading = true;
-            $.ajax({
-                'url': url,
-                'dataType': 'json',
-                'success': function(data) {
-                    worksSrvc.handleWorkGroupData(data, callback);
-                }
-            }).fail(function(e) {
-                worksSrvc.loading = false;
-                console.log("Error fetching works");
-                logAjaxError(e);
-            });
-        },
+        ,
         
         ,
 
@@ -673,46 +749,6 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             );
         },
         
-        consistentVis: function(group) {
-            var visibility = group.works[0].visibility.visibility;
-            for(var i = 0; i < group.works.length; i++) {
-                if (group.works[i].visibility.visibility != visibility) {
-                    return false;
-                }
-            }
-            return true;
-        },
-
-        getGroup: function(putCode) {
-            for (var idx in worksSrvc.groups) {
-                for (var y in worksSrvc.groups[idx].works) {
-                    if (worksSrvc.groups[idx].works[y].putCode.value == putCode) {
-                        return worksSrvc.groups[idx];
-                    }
-                }
-            }
-            return null;
-        },
-
-        getGroupDetails: function(putCode, type, callback) {
-            var group = worksSrvc.getGroup(putCode);
-            var needsLoading =  new Array();
-            
-            var popFunct = function () {
-                if (needsLoading.length > 0) {
-                    worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
-                }
-                else if (callback != undefined) {
-                    callback();
-                }
-            };
-
-            for (var idx in group.works) {
-                needsLoading.push(group.works[idx].putCode.value)
-            }
-
-            popFunct();
-        },
 
         getLabelMapping: function(workCategory, workType){
             var result = this.labelsMapping.default.types[0];
@@ -756,34 +792,9 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             return null;
         },
 
-        makeDefault: function(group, putCode) {
-            $.ajax({
-                url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
-                dataType: 'json',
-                success: function(data) {
-                    group.defaultWork = worksSrvc.getWork(putCode);
-                    group.activePutCode = group.defaultWork.putCode.value;
-                }
-            }).fail(function(){
-                // something bad is happening!
-                console.log("some bad is hppending");
-            });
-        },
+        ,
 
-        putWork: function(work,sucessFunc, failFunc) {
-            $.ajax({
-                url: getBaseUri() + '/works/work.json',
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                type: 'POST',
-                data: angular.toJson(work),
-                success: function(data) {
-                    sucessFunc(data);
-                }
-            }).fail(function(){
-                failFunc();
-            });
-        },
+        
 
         removeWorks: function(putCodes,callback) {
             $.ajax({

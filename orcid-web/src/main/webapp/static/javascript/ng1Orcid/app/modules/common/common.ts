@@ -20,6 +20,9 @@ import { ContributorFilterPipe }
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
+import { LatexPipe }
+    from '../../pipes/latexNg2.ts';
+
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
 
@@ -94,6 +97,7 @@ import { WorksService }
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
+            LatexPipe,
             OrderByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe
@@ -106,6 +110,7 @@ import { WorksService }
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
+            LatexPipe,
             OrderByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,

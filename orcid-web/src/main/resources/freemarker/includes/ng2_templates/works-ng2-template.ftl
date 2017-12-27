@@ -62,28 +62,28 @@
                                             <span *ngIf="sortState.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
                                         </a>                                                                                    
                                     </li>
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='date'}" ng-hide="sortHideOption || sortState.type == 'affiliation'">                                          
+                                    <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
                                         <a (click)="sort('date');" class="action-option manage-button">
                                             <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
                                             <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
                                             <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
                                         </a>                                                                                    
                                     </li>
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" ng-hide="sortHideOption == null">
+                                    <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="sortHideOption != null">
                                         <a (click)="sort('groupName');" class="action-option manage-button">
                                             <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
                                             <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
                                             <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
                                         </a>                                            
                                     </li>
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='title'}" ng-hide="sortHideOption">                                            
+                                    <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
                                         <a (click)="sort('title');" class="action-option manage-button">
                                             <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
                                             <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
                                             <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
                                         </a>                                            
                                     </li>
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='type'}" ng-hide="sortHideOption || sortState.type == 'affiliation'">                                          
+                                    <li [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
                                         <a (click)="sort('type');" class="action-option manage-button">
                                             <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
                                             <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
@@ -192,8 +192,10 @@
                             <div class="col-md-5 col-sm-5 col-xs-12">
                                 <div class="form-group">
                                     <label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label> 
-                                     
-                                    <select id="work-type" ng-options="wt as wt for wt in workType | orderBy: 'toString()'" [(ngModel)]="selectedWorkType"></select>    
+                                    
+                                    <!-- ***
+                                    <select id="work-type" ng-options="wt as wt for wt in workType | orderBy: 'toString()'" [(ngModel)]="selectedWorkType"></select>  
+                                    -->  
                                                    
                                 </div> 
                             </div>
@@ -201,8 +203,9 @@
                                 <div class="form-group geo-area-group">
                                     <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>  
                                     
+                                    <!-- ***
                                     <select ng-options="ga as ga for ga in geoArea | orderBy: 'toString()'" [(ngModel)]="selectedGeoArea"></select>  
-                                                       
+                                    -->
                                 </div>
                             </div>  
                         </form>
@@ -266,13 +269,14 @@
                             <li class="bulk-edit-toolbar-item">
                                 <label><@orcid.msg 'workspace.bulkedit.edit'/></label>
                                 <div class="bulk-edit-privacy-control">
-                         
+                                    <!-- ***
                                     <@orcid.privacyToggle2 angularModel="groupPrivacy()" 
                                     questionClick=""
                                     clickedClassCheck=""
                                     publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
                                     limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
                                     privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+                                    -->
                                   
                                 </div>                      
                             </li>                   
@@ -309,7 +313,7 @@
                     <div class="col-md-3 col-sm-3 col-xs-4">
                         <span class="bibtext-options">                                        
                             <a class="bibtex-cancel" (click)="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.cancel'/></a>             
-                            <span ng-hide="worksFromBibtex.length > 0" class="import-label" (click)="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
+                            <span *ngIf="!(worksFromBibtex.length > 0)" class="import-label" (click)="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
                         </span>                   
                     </div>
                 </div>
@@ -346,9 +350,9 @@
                     <div class="col-md-3 col-sm-3 col-xs-4">
                         <span class="bibtext-options">                                        
                             <a class="bibtex-cancel" (click)="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>            
-                            <span ng-hide="worksFromBibtex.length > 0" class="import-label" (click)="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
+                            <span *ngIf="!(worksFromBibtex.length > 0)" class="import-label" (click)="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
                             <span *ngIf="worksFromBibtex.length > 0" class="import-label" (click)="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>                                              
-                            <input id="inputBibtex" type="file" class="upload-button" [(ngModel)]="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
+                            <input id="inputBibtex" type="file" class="upload-button" [(ngModel)]="textFiles" accept="*" /><!-- *** update-fn="loadBibtexJs()"  app-file-text-reader multiple  -->
                         </span>                   
                     </div>
                 </div>
@@ -360,23 +364,21 @@
             <div *ngFor="let work of worksFromBibtex" class="bottomBuffer">             
                 <div class="row full-height-row">   
                     <div class="col-md-9 col-sm-9 col-xs-7">
-                        <h3 class="workspace-title" [ngClass]="work.title.value == null ? 'bibtex-content-missing' :  ''">
-                            <span *ngIf="work.title.value != null">{{work.title.value}}</span>
-                            <span *ngIf="work.title.value == null">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</span>
-                            <span class="journaltitle" *ngIf="work.journalTitle.value">{{work.journalTitle.value}}</span>
+                        <h3 class="workspace-title" [ngClass]="work.title?.value == null ? 'bibtex-content-missing' :  ''">
+                            <span *ngIf="work.title?.value != null">{{work.title.value}}</span>
+                            <span *ngIf="work.title?.value == null">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</span>
+                            <span class="journaltitle" *ngIf="work.journalTitle?.value">{{work.journalTitle.value}}</span>
                         </h3>
 
                         <div class="info-detail">
-                            <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate.day">-</span><span *ngIf="work.publicationDate.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
+                            <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate?.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate?.day">-</span><span *ngIf="work.publicationDate?.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
 
                   
-                            <span class="capitalize" *ngIf="work.workType.value.length > 0">{{work.workType.value}}</span>
-                            <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
-
-                     
+                            <span class="capitalize" *ngIf="work.workType?.value.length > 0">{{work.workType.value}}</span>
+                            <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 
                         </div>
-                        <div class="row" *ngIf="group.activePutCode == work.putCode.value">
+                        <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
                             <div class="col-md-12 col-sm-12 bottomBuffer">
                                 <ul class="id-details">
                                     <li class="url-work">
@@ -388,7 +390,7 @@
                                         </ul>                                   
                                     </li>
 
-                                    <li *ngIf="work.url.value" class="url-popover url-work">
+                                    <li *ngIf="work.url?.value" class="url-popover url-work">
                                         <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver(work.putCode.value)" (mouseleave)="hideURLPopOver(work.putCode.value)" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
                                         <div class="popover-pos">                                   
                                             <div class="popover-help-container">
@@ -424,14 +426,6 @@
 
             <ul *ngIf="worksService.groups.length" class="workspace-publications bottom-margin-medium" id="body-work-list">
                 <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of worksService.groups">
-
-
-                    *********
-                    group.groupId: {{group.groupId}}
-                    <br>
-                    group: {{group | json}}
-                    ---------
-                    <!--
                     <div class="work-list-container">
                         <ul class="sources-edit-list">
                             <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}" [(ngModel)]="group.works">
@@ -439,6 +433,7 @@
                                     <div class="row">
                                         <div class="col-md-7 col-sm-7 col-xs-6">
                                             <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" (click)="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
+                            
                                         </div>
                                         
                                         <div class="col-md-2 col-sm-2 hidden-xs">
@@ -468,12 +463,14 @@
                                                     </li>
                                                     <#if !(isPublicProfile??)>
                                                     <li>
+                                                        <!-- ***
                                                         <@orcid.privacyToggle2 angularModel="group.activeVisibility"
                                                             questionClick="toggleClickPrivacyHelp(group.activePutCode)"
                                                             clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
                                                             publicClick="worksService.setGroupPrivacy(group.activePutCode, 'PUBLIC', $event)"
                                                             limitedClick="worksService.setGroupPrivacy(group.activePutCode, 'LIMITED', $event)"
                                                             privateClick="worksService.setGroupPrivacy(group.activePutCode, 'PRIVATE', $event)"/>
+                                                        -->
                                                     </li>
                                                     </#if>
                                                 </ul>
@@ -483,16 +480,17 @@
                                 </div>
                             </li>
 
-                            <li *ngFor="let work of group.works"><! --  orcid-put-code="{{work.putCode.value}}"*** - - >
+                            <li *ngFor="let work of group.works"><!--  orcid-put-code="{{work.putCode.value}}"*** -->
                                 <div *ngIf="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
-                                    <div class="row" *ngIf="group.activePutCode == work.putCode.value">
+
+                                    <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
                                         <div class="col-md-9 col-sm-9 col-xs-7">
                                             <h3 class="workspace-title">
                                                 <span>{{work.title.value}}</span>
-                                                <span class="journaltitle" *ngIf="work.journalTitle.value">{{work.journalTitle.value}}</span>                                
+                                                <span class="journaltitle" *ngIf="work.journalTitle?.value">{{work.journalTitle.value}}</span>                                
                                             </h3>                                                        
                                             <div class="info-detail">
-                                                <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate.day">-</span><span *ngIf="work.publicationDate.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
+                                                <span *ngIf="work.publicationDate?.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate?.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate?.day">-</span><span *ngIf="work.publicationDate?.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate?.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
                                             </div>
                                         </div>
 
@@ -522,12 +520,14 @@
 
                                                 <#if !(isPublicProfile??)>
                                                 <li>
+                                                    <!-- ***
                                                     <@orcid.privacyToggle2 angularModel="work.visibility.visibility"
                                                     questionClick="toggleClickPrivacyHelp(group.highestVis())"
                                                     clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
                                                     publicClick="worksService.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
                                                     limitedClick="worksService.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
                                                     privateClick="worksService.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
+                                                    -->
                                                 </li>
                                                 </#if>
                                             </ul>
@@ -547,17 +547,18 @@
                                             </#if>
                                         </div>
                                     </div>
+                               
                                     <div class="row" *ngIf="group.activePutCode == work.putCode.value">
                                         <div class="col-md-12 col-sm-12 bottomBuffer">
                                             <ul class="id-details clearfix">
                                                 <li class="url-work clearfix">
                                                     <ul class="id-details clearfix">
                                                         <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
-                                                            <span>bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'</span>
+                                                            <span><!-- ***bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'--></span>
                                                         </li>
                                                     </ul>                                   
                                                 </li>
-                                                <li *ngIf="work.url.value" class="url-popover url-work">
+                                                <li *ngIf="work.url?.value" class="url-popover url-work">
                                                     <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver(work.putCode.value)" (mouseleave)="hideURLPopOver(work.putCode.value)" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
                                                     <div class="popover-pos">          
                                                         <div class="popover-help-container">
@@ -573,7 +574,7 @@
                                             </ul>
                                         </div>
                                     </div>
-
+ 
                                     <div class="more-info" *ngIf="moreInfo[group.groupId] && group.activePutCode == work.putCode.value">
                                         <div id="ajax-loader" *ngIf="workService.details[work.putCode.value] == undefined">
                                             <span id="ajax-loader"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x4 green"></i></span>
@@ -594,7 +595,7 @@
                                                     <div class="bottomBuffer">                  
                                                         <strong><@orcid.msg
                                                             'manual_work_form_contents.labellanguage'/></strong>
-                                                        <div ng-bind="workService.details[work.putCode.value].languageName.value"></div>                  
+                                                        <div>{{workService.details[work.putCode.value].languageName.value}}</div>                  
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6" *ngIf="workService.details[work.putCode.value].subtitle.value" >
@@ -656,10 +657,10 @@
                                                             <div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{bibJSON.citationKey}}</div>                               
                                                             <div *ngFor="let bibEntry of bibJSON.entryTags">
                                                                 {{bibEntry | json}}
-                                                                < ! --****(entKey,entVal)
+                                                                <!--****(entKey,entVal)
                                                                 <div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{entKey}}</div>
                                                                 <div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{entVal | latex}}</div>
-                                                                - - >
+                                                                -->
                                                             </div>
                                                             
                                                         </div>                 
@@ -707,6 +708,7 @@
                                             
                                         </div>  
                                     </div>
+
                                     <div class="row source-line" *ngIf="group.activePutCode == work.putCode.value">
                                         <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
                                             {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
@@ -741,12 +743,14 @@
                                                     </li>
                                                     </#if>
                                                     <li> 
+                                                        <!-- ***
                                                         <@orcid.editWorkIcon
                                                             activity="work"
                                                             click="openEditWork(work.putCode.value)"
                                                             toolTipSuffix="editToolTipSource"
                                                             toolTipClass="popover popover-tooltip top edit-activeSource-popover"
                                                          />
+                                                         -->
                                                     </li>
                                                     <li>
                                                         <a (click)="deleteWorkConfirm(work.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}" (mouseenter)="showTooltip(work.putCode.value+'-deleteActiveSource')" (mouseleave)="hideTooltip(work.putCode.value+'-deleteActiveSource')">
@@ -765,9 +769,10 @@
                                             </div>
                                       </div>
                                     </div>
+
                                     <div *ngIf="group.activePutCode != work.putCode.value" class="row source-line">
                                         <div class="col-md-7 col-sm-7 col-xs-12">
-                                            <a (click)="group.activePutCode = work.putCode.value;;showMozillaBadges(group.activePutCode);">                                
+                                            <a (click)="group.activePutCode = work.putCode.value;showMozillaBadges(group.activePutCode);">                                
                                                 {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                                             </a>
                                         </div>
@@ -796,12 +801,13 @@
                                                 </li>
                                                 </#if>
                                                 <li> 
-                                                     <@orcid.editWorkIcon
+                                                    <!-- ***
+                                                    <@orcid.editWorkIcon
                                                         activity="work"
                                                         click="openEditWork(work.putCode.value)"
                                                         toolTipSuffix="editToolTipSourceActions"
                                                         toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
-                                                     />
+                                                     />-->
                                                 </li>
                                                 <li>
                                                     <a (click)="deleteWorkConfirm(work.putCode.value, false)" (mouseenter)="showTooltip(work.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(work.putCode.value+'-deleteInactiveSource')">
@@ -818,7 +824,8 @@
                                             </ul>
                                             </#if>
                                         </div>
-                                    </div>                     
+                                    </div> 
+
                                     <div class="row source-line" *ngIf="editSources[group.groupId] == false">                        
                                         
                                         <div class="col-md-7 col-sm-7 col-xs-12">
@@ -826,7 +833,7 @@
                                         </div>
                                         
                                         <div class="col-md-3 col-sm-3 col-xs-9">
-                                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.works.length == 1">(</span><a (click)="showSources(group)" *ngIf="group.works.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.works.length}}</a><span *ngIf="group.works.length != 1">)</span>
+                                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group.works.length != 1">(</span><a (click)="showSources(group)" *ngIf="group.works.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.works.length}}</a><span *ngIf="group.works.length != 1">)</span>
 
                                             <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
                                                 <div class="arrow"></div>
@@ -855,12 +862,14 @@
                                                 </#if>
 
                                                 <li>
+                                                    <!-- ***
                                                     <@orcid.editWorkIcon
                                                         activity="work"
                                                         click="openEditWork(work.putCode.value)"
                                                         toolTipSuffix="editToolTip"
                                                         toolTipClass="popover popover-tooltip top edit-source-popover"
-                                                     />
+                                                    />
+                                                    -->
                                                 </li>
 
                                                 <li *ngIf="!(editSources[group.groupId] == true || group.works.length == 1)">
@@ -890,11 +899,12 @@
                                             </ul>
                                         </div>
                                     </div>
+
                                 </div>
                             </li>
+                            
                         </ul>
                     </div>
-                    -->
                 </li>
             </ul>
             <button *ngIf="worksService.showLoadMore" (click)="loadMore()" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace.works.load_more")}</button>

@@ -107,7 +107,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData = data;
                 this.newElementDefaultVisibility = this.formData.visibility.visibility;
 
-                console.log('this.getForm websites', this.formData);
+                //console.log('this.getForm websites', this.formData);
 
                 if( this.formData.websites == null ) {
                     this.formData.websites = { value: null };
