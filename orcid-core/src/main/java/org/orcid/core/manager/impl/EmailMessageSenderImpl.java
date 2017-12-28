@@ -107,8 +107,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);        
-        String primaryEmail = emailManagerReadOnly.findPrimaryEmail(orcid).getEmail();
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);                
         Locale locale = getUserLocaleFromProfileEntity(record);
         int totalMessageCount = 0;
         int orcidMessageCount = 0;

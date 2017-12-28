@@ -237,7 +237,7 @@ public class NotificationManagerTest extends DBUnitTest {
             getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
             when(mockEncypter.encryptForExternalUse(any(String.class)))
                     .thenReturn("Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
-            notificationManager.sendPasswordResetEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
+            notificationManager.sendPasswordResetEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile.getOrcidIdentifier().getPath());
         }
     }
 
@@ -252,7 +252,7 @@ public class NotificationManagerTest extends DBUnitTest {
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
             long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;
             OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendAmendEmail(orcidProfile, AmendedSection.UNKNOWN);
+            notificationManager.sendAmendEmail(orcidProfile.getOrcidIdentifier().getPath(), AmendedSection.UNKNOWN, null);
             // New notification entity should have been created
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
@@ -359,7 +359,7 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendVerificationReminderEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+            notificationManager.sendVerificationReminderEmail(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         }
     }
 
@@ -367,7 +367,7 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendClaimReminderEmail(orcidProfile, 2);
+            notificationManager.sendClaimReminderEmail(orcidProfile.getOrcidIdentifier().getPath(), 2);
         }
     }
 
@@ -400,7 +400,7 @@ public class NotificationManagerTest extends DBUnitTest {
         String email = "original@email.com";
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendReactivationEmail(email, orcidProfile);
+            notificationManager.sendReactivationEmail(email, orcidProfile.getOrcidIdentifier().getPath());
         }
     }
 

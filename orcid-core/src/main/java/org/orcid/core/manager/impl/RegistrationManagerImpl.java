@@ -39,7 +39,6 @@ import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -102,13 +101,13 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
     
     @Override
-    public void resetUserPassword(String toEmail, OrcidProfile orcidProfile) {
-        LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcidIdentifier().getPath());
-        if (!orcidProfile.getOrcidHistory().isClaimed()) {
-            LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcidProfile.getOrcidIdentifier().getPath());
-            notificationManager.sendApiRecordCreationEmail(toEmail, orcidProfile.getOrcidIdentifier().getPath());
+    public void resetUserPassword(String toEmail, String userOrcid, Boolean isClaimed) {
+        LOGGER.debug("Resetting password for Orcid: {}", userOrcid);
+        if (isClaimed == null || !isClaimed) {
+            LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", userOrcid);
+            notificationManager.sendApiRecordCreationEmail(toEmail, userOrcid);
         } else {
-            notificationManager.sendPasswordResetEmail(toEmail, orcidProfile);
+            notificationManager.sendPasswordResetEmail(toEmail, userOrcid);
         }
     }
 
