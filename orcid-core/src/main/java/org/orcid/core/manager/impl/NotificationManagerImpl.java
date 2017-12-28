@@ -46,7 +46,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -54,16 +53,11 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.message.Delegation;
-import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.SendChangeNotifications;
-import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
@@ -91,6 +85,7 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
@@ -193,6 +188,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource(name = "emailManagerReadOnly")
     private EmailManagerReadOnly emailManager;
+    
+    @Resource
+    private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -489,40 +487,29 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection) {
-        sendAmendEmail(amendedProfile, amendedSection, null);
-    }
-
-    @Override
-    public void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item) {
-        OrcidProfile amendedProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
-        Collection<Item> items = new ArrayList<Item>(1);
-        if (item != null) {
-            items.add(item);
-        }
-        sendAmendEmail(amendedProfile, amendedSection, items);
-    }
-
-    @Override
-    public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> items) {
+    public void sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> items) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
-        Locale locale = localeManager.getLocaleFromOrcidProfile(amendedProfile);
+        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
+        Locale locale = getUserLocaleFromProfileEntity(record);
         
         if (amenderOrcid == null) {
-            LOGGER.debug("Not sending amend email, because amender is null: {}", amendedProfile);
+            LOGGER.info("Not sending amend email to {} because amender is null", userOrcid);
             return;
         }
-        if (amenderOrcid.equals(amendedProfile.getOrcidIdentifier().getPath())) {
-            LOGGER.debug("Not sending amend email, because self edited: {}", amendedProfile);
+        if (amenderOrcid.equals(userOrcid)) {
+            LOGGER.debug("Not sending amend email, because self edited: {}", userOrcid);
             return;
         }
-        SendChangeNotifications sendChangeNotifications = amendedProfile.getOrcidInternal().getPreferences().getSendChangeNotifications();
-        if (sendChangeNotifications == null || !sendChangeNotifications.isValue()) {
-            LOGGER.debug("Not sending amend email, because option to send change notifications not set to true: {}", amendedProfile);
+        
+        Boolean sendChangeNotifications = record.getSendChangeNotifications();
+        
+        if (sendChangeNotifications == null || !sendChangeNotifications) {
+            LOGGER.debug("Not sending amend email, because option to send change notifications is disabled: {}", userOrcid);
             return;
         }
-        if (OrcidType.ADMIN.equals(profileDao.retrieveOrcidType(amenderOrcid))) {
-            LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, amendedProfile);
+        org.orcid.jaxb.model.common_v2.OrcidType amenderType = profileDao.retrieveOrcidType(amenderOrcid);
+        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.fromValue(amenderType.value()))) {
+            LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, userOrcid);
             return;
         }
 
@@ -530,9 +517,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(amendedProfile));
-        templateParams.put("orcid", amendedProfile.getOrcidIdentifier().getPath());
-        templateParams.put("amenderName", extractAmenderName(amendedProfile, amenderOrcid));
+        templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("amenderName", extractAmenderName(userOrcid, amenderOrcid));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
@@ -544,7 +531,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
 
-        boolean notificationsEnabled = profileEntityCacheManager.retrieve(amendedProfile.getOrcidIdentifier().getPath()).getEnableNotifications();
+        boolean notificationsEnabled = record.getEnableNotifications();
         if (notificationsEnabled) {
             NotificationAmended notification = new NotificationAmended();
             notification.setNotificationType(NotificationType.AMENDED);
@@ -552,10 +539,10 @@ public class NotificationManagerImpl implements NotificationManager {
             if (items != null) {
                 notification.setItems(new Items(new ArrayList<>(items)));
             }
-            createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
+            createNotification(userOrcid, notification);
         } else {
-            String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);
+            String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, primaryEmail, subject, body, html);
         }
     }
 
@@ -730,62 +717,57 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation) {
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+    public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
+        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+        Locale locale = getUserLocaleFromProfileEntity(record);
+
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
-        String orcid = orcidProfile.getOrcidIdentifier().getPath();
-        templateParams.put("orcid", orcid);
+        templateParams.put("emailName", deriveEmailFriendlyName(record));        
+        templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.claim_reminder", locale));
-        Source source = orcidProfile.getOrcidHistory().getSource();
+        SourceEntity source = record.getSource();
         String creatorName = "";
         if (source != null) {
-            if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
-                creatorName = source.getSourceName().getContent();
+            if (!PojoUtil.isEmpty(source.getSourceName())) {
+                creatorName = source.getSourceName();
             } else {
-                creatorName = source.retrieveSourcePath();
+                creatorName = source.getSourceId();
             }
         }
         templateParams.put("creatorName", creatorName);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("daysUntilActivation", daysUntilActivation);
-        Email primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         if (primaryEmail == null) {
-            LOGGER.info("Cant send claim reminder email if primary email is null: {}", orcid);
+            LOGGER.info("Cant send claim reminder email if primary email is null: {}", userOrcid);
             return;
         }
-        String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), orcidUrlManager.getBaseUrl());
+        String verificationUrl = createClaimVerificationUrl(primaryEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
 
         addMessageParams(templateParams, locale);
 
-        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template
         String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("claim_reminder_email_html.ftl", templateParams);
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.claim_reminder", locale), body, htmlBody);
-            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.CLAIM_REMINDER_SENT));
+            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.claim_reminder", locale), body, htmlBody);
+            profileEventDao.persist(new ProfileEventEntity(userOrcid, ProfileEventType.CLAIM_REMINDER_SENT));
         } else {
             LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
         }
-
     }
 
-    private String extractAmenderName(OrcidProfile orcidProfile, String amenderId) {
-        Delegation delegation = orcidProfile.getOrcidBio().getDelegation();
-        if (delegation != null && delegation.getGivenPermissionTo() != null && !delegation.getGivenPermissionTo().getDelegationDetails().isEmpty()) {
-            for (DelegationDetails delegationDetails : delegation.getGivenPermissionTo().getDelegationDetails()) {
-                if (amenderId.equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath())) {
-                    return delegationDetails.getDelegateSummary().getCreditName().getContent();
-                }
-            }
+    private String extractAmenderName(String userOrcid, String amenderId) {
+        DelegateForm delegateForm = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(userOrcid, amenderId);
+        if(!PojoUtil.isEmpty(delegateForm.getReceiverName())) {
+            return delegateForm.getReceiverName().getValue();
         }
-
+        
         ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(amenderId);
         if (clientDetailsEntity != null) {
             return clientDetailsEntity.getClientName();

@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
@@ -49,11 +48,7 @@ public interface NotificationManager {
 
     void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
 
-    void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
-
-    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
-
-    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> activities);
+    void sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(String userOrcid);
 
@@ -63,7 +58,7 @@ public interface NotificationManager {
     
     void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
 
-    void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
+    void sendClaimReminderEmail(String userOrcid, int daysUntilActivation);
 
     void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link);
 
