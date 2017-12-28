@@ -319,6 +319,54 @@ kind of variable. This temp value is only used in this macro lib -->
               </span>
         </div>
     </div>
+</#macro>
+
+<#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass> 
+    <!--  
+    <a 
+        *ngIf="userIsSource(${activity})" 
+        (click)="${click}" 
+        (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" 
+        (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
+        <span class="glyphicon glyphicon-pencil"></span>
+    </a>
+    <a 
+        *ngIf"!userIsSource(${activity}) && group.userVersionPresent" 
+        (click)="showSources(group)" 
+        (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" 
+        (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
+        <span class="glyphicons git_create grey"></span>
+    </a>
+    <a 
+        *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0" 
+        (click)="${click}" 
+        (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" 
+        (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create"></span>
+    </a>
+    -->
+    <a 
+        *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0" 
+        (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" 
+        (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create grey"></span>
+    </a>
+    <div 
+        class="${toolTipClass}" 
+        *ngIf="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" 
+        [ngClass]="{'two-lines' : (!userIsSource(${activity}) && group.userVersionPresent) || (!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0)}">
+        <div class="arrow"></div>
+        <div class="popover-content">              
+            <span *ngIf="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
+            <span *ngIf="!userIsSource(${activity}) && group.userVersionPresent"><@orcid.msg 'groups.common.open_source_to' /></span>
+            <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
+            <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0">
+                <@orcid.msg 'groups.common.items_must_have_1' />
+                <br />
+                <@orcid.msg 'groups.common.items_must_have_2' />
+            </span>
+        </div>
+    </div>
 </#macro>  
 
 <#macro privacyToggle2 angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	

@@ -214,7 +214,7 @@
                 </div>         
                 <div class="row wizards">               
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div *ngFor="let wtw of workImportWizardsOriginal | orderBy: 'name' | filterImportWizards : selectedWorkType : selectedGeoArea">
+                        <div *ngFor="let wtw of workImportWizardsOriginal | orderBy: 'name' | filterImportWizards : selectedWorkType : selectedGeoArea; let index = index; let first = first; let last = last;">
                             <strong><a (click)="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong>
 
                             <br />                                                                                    
@@ -361,7 +361,7 @@
                 <strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
             </div>
             <span class="dotted-bar" *ngIf="worksFromBibtex.length > 0"></span>
-            <div *ngFor="let work of worksFromBibtex" class="bottomBuffer">             
+            <div *ngFor="let work of worksFromBibtex; let index = index; let first = first; let last = last;" class="bottomBuffer">             
                 <div class="row full-height-row">   
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <h3 class="workspace-title" [ngClass]="work.title?.value == null ? 'bibtex-content-missing' :  ''">
@@ -383,9 +383,9 @@
                                 <ul class="id-details">
                                     <li class="url-work">
                                         <ul class="id-details">
-                                            <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
+                                            <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
 
-                                                <span *ngIf="work.workExternalIdentifiers[0].workExternalIdentifierId.value.length > 0" >bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'</span>
+                                                <span *ngIf="work.workExternalIdentifiers[0].workExternalIdentifierId.value.length > 0" >{{ie | workExternalIdentifierHtml:first:last:work.workExternalIdentifiers.length:moreInfo[group.groupId]}}</span>
                                             </li>
                                         </ul>                                   
                                     </li>
@@ -480,7 +480,7 @@
                                 </div>
                             </li>
 
-                            <li *ngFor="let work of group.works"><!--  orcid-put-code="{{work.putCode.value}}"*** -->
+                            <li *ngFor="let work of group.works; let index = index; let first = first; let last = last;"><!--  orcid-put-code="{{work.putCode.value}}"*** -->
                                 <div *ngIf="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
 
                                     <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
@@ -554,7 +554,7 @@
                                                 <li class="url-work clearfix">
                                                     <ul class="id-details clearfix">
                                                         <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
-                                                            <span><!-- ***bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'--></span>
+                                                            <span [innerHTML]="ie | workExternalIdentifierHtml:first:last:work.workExternalIdentifiers.length:moreInfo[group.groupId]"></span>
                                                         </li>
                                                     </ul>                                   
                                                 </li>
@@ -651,11 +651,11 @@
                                                     </div>
                                                     
                                                     
-                                                    <div class="row" *ngFor='let bibJSON of workService.bibtexJson[work.putCode.value]'>    
+                                                    <div class="row" *ngFor='let bibJSON of workService.bibtexJson[work.putCode.value]; let index = index; let first = first; let last = last;'>    
                                                         <div *ngIf="showBibtex[work.putCode.value]">
                                                             <div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{bibJSON.entryType}}</div>
                                                             <div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{bibJSON.citationKey}}</div>                               
-                                                            <div *ngFor="let bibEntry of bibJSON.entryTags">
+                                                            <div *ngFor="let bibEntry of bibJSON.entryTags; let index = index; let first = first; let last = last;">
                                                                 {{bibEntry | json}}
                                                                 <!--****(entKey,entVal)
                                                                 <div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{entKey}}</div>
@@ -688,7 +688,7 @@
                                                 <div class="col-md-6" *ngIf="workService.details[work.putCode.value].contributors.length > 0" >
                                                     <div class="bottomBuffer">          
                                                         <strong> Contributor </strong>
-                                                        <div *ngFor="let contributor of workService.details[work.putCode.value].contributors">
+                                                        <div *ngFor="let contributor of workService.details[work.putCode.value].contributors; let index = index; let first = first; let last = last;">
                                                             {{contributor.creditName.value}} <span>{{contributor | contributorFilter}}</span>
                                                         </div>
                                                     </div>                                      
@@ -743,17 +743,21 @@
                                                     </li>
                                                     </#if>
                                                     <li> 
-                                                        <!-- ***
-                                                        <@orcid.editWorkIcon
+                                                        
+                                                        <@orcid.editWorkIconNg2
                                                             activity="work"
                                                             click="openEditWork(work.putCode.value)"
                                                             toolTipSuffix="editToolTipSource"
                                                             toolTipClass="popover popover-tooltip top edit-activeSource-popover"
                                                          />
-                                                         -->
+                                                        
                                                     </li>
                                                     <li>
-                                                        <a (click)="deleteWorkConfirm(work.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}" (mouseenter)="showTooltip(work.putCode.value+'-deleteActiveSource')" (mouseleave)="hideTooltip(work.putCode.value+'-deleteActiveSource')">
+                                                        <a 
+                                                            (click)="deleteWorkConfirm(work.putCode.value, false)"  
+                                                            title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}" 
+                                                            (mouseenter)="showTooltip(work.putCode.value+'-deleteActiveSource')" 
+                                                            (mouseleave)="hideTooltip(work.putCode.value+'-deleteActiveSource')">
                                                             <span class="glyphicon glyphicon-trash"></span>
                                                         </a>
 
@@ -801,13 +805,12 @@
                                                 </li>
                                                 </#if>
                                                 <li> 
-                                                    <!-- ***
-                                                    <@orcid.editWorkIcon
+                                                    <@orcid.editWorkIconNg2
                                                         activity="work"
                                                         click="openEditWork(work.putCode.value)"
                                                         toolTipSuffix="editToolTipSourceActions"
                                                         toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
-                                                     />-->
+                                                     />
                                                 </li>
                                                 <li>
                                                     <a (click)="deleteWorkConfirm(work.putCode.value, false)" (mouseenter)="showTooltip(work.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(work.putCode.value+'-deleteInactiveSource')">
@@ -862,14 +865,12 @@
                                                 </#if>
 
                                                 <li>
-                                                    <!-- ***
-                                                    <@orcid.editWorkIcon
+                                                    <@orcid.editWorkIconNg2
                                                         activity="work"
                                                         click="openEditWork(work.putCode.value)"
                                                         toolTipSuffix="editToolTip"
                                                         toolTipClass="popover popover-tooltip top edit-source-popover"
                                                     />
-                                                    -->
                                                 </li>
 
                                                 <li *ngIf="!(editSources[group.groupId] == true || group.works.length == 1)">
