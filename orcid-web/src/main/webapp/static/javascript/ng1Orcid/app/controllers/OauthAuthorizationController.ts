@@ -393,10 +393,12 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.registrationForm = data; 
-                        $scope.registrationForm.givenNames.value=givenName;
-                        $scope.registrationForm.familyNames.value=familyName;
-                        $scope.registrationForm.email.value=email; 
+                        $scope.registrationForm = data;
+                        if(givenName || familyName || email || linkFlag){
+                            $scope.registrationForm.givenNames.value=givenName;
+                            $scope.registrationForm.familyNames.value=familyName;
+                            $scope.registrationForm.email.value=email; 
+                        }
                         $scope.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
                         $scope.registrationForm.linkType=linkFlag;
                         $scope.$apply();
@@ -510,11 +512,13 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             // Init
             $scope.loadRequestInfoForm();
             if(orcidVar.oauth2Screens) {
-                $scope.showRegisterForm = !orcidVar.showLogin;
-                if(!$scope.showRegisterForm && orcidVar.oauthUserId){
+                if(orcidVar.oauthUserId){
+                    $scope.showRegisterForm = false;
                     $scope.authorizationForm = {
                         userName:  {value: orcidVar.oauthUserId}
                     } 
+                } else{
+                    $scope.showRegisterForm = !orcidVar.showLogin;
                 }
             }                 
         }
