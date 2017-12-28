@@ -764,7 +764,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String extractAmenderName(String userOrcid, String amenderId) {
         DelegateForm delegateForm = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(userOrcid, amenderId);
-        if(!PojoUtil.isEmpty(delegateForm.getReceiverName())) {
+        if(delegateForm != null && !PojoUtil.isEmpty(delegateForm.getReceiverName())) {
             return delegateForm.getReceiverName().getValue();
         }
         

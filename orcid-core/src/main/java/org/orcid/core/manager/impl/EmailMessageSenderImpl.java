@@ -146,7 +146,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("messageArgs", new Object[0]);        
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);
-        params.put("frequency", String.valueOf(record.getSendEmailFrequencyDays()));
+        params.put("emailFrequencyString", String.valueOf(record.getSendEmailFrequencyDays()));
         params.put("totalMessageCount", String.valueOf(totalMessageCount));
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
