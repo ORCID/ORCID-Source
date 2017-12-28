@@ -39,11 +39,11 @@ public interface NotificationManager {
 
     void sendVerificationEmail(String userOrcid, String email);
     
-    void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
+    void sendVerificationReminderEmail(String userOrcid, String email);
     
-    void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile);
+    void sendPasswordResetEmail(String toEmail, String userOrcid);
     
-    void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile);
+    void sendReactivationEmail(String submittedEmail, String userOrcid);
 
     public String createVerificationUrl(String email, String baseUri);
 

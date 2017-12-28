@@ -33,7 +33,6 @@ import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
@@ -53,10 +52,10 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -64,7 +63,6 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
@@ -209,8 +207,8 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource(name = "emailManagerV3")
-    private EmailManager emailManager;
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManager;
     
     @Resource
     private GenericDao<EmailEventEntity, Long> emailEventDao;
@@ -387,17 +385,14 @@ public class NotificationManagerImpl implements NotificationManager {
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
     }
 
-    private String createSubjectForVerificationEmail(String email, String primaryEmail, Locale userLocale) {
-        return getSubject(primaryEmail.equalsIgnoreCase(email) ? "email.subject.verify_reminder_primary" : "email.subject.verify_reminder", userLocale);
-    }
-
     @Override
-    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
-        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+    public void sendVerificationReminderEmail(String userOrcid, String email) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
+        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+        String emailFriendlyName = deriveEmailFriendlyName(record);
+        Locale locale = getUserLocaleFromProfileEntity(record);
         String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, orcidProfile.getOrcidIdentifier().getPath(), email,
+        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email,
                 primaryEmail, locale);
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
@@ -405,6 +400,10 @@ public class NotificationManagerImpl implements NotificationManager {
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
     }
 
+    private String createSubjectForVerificationEmail(String email, String primaryEmail, Locale userLocale) {
+        return getSubject(primaryEmail.equalsIgnoreCase(email) ? "email.subject.verify_reminder_primary" : "email.subject.verify_reminder", userLocale);
+    }
+    
     private Map<String, Object> createParamsForVerificationEmail(String subject, String emailFriendlyName, String orcid, String email, String primaryEmail,
             Locale locale) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -467,18 +466,20 @@ public class NotificationManagerImpl implements NotificationManager {
     }
     
     @Override
-    public void sendPasswordResetEmail(String submittedEmail, OrcidProfile orcidProfile) {
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+    public void sendPasswordResetEmail(String submittedEmail, String userOrcid) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
+        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+        Locale locale = getUserLocaleFromProfileEntity(record);
         
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
-        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("subject", getSubject("email.subject.reset", locale));
+        templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("subject", getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         // Generate body from template
-        String resetUrl = createResetEmail(orcidProfile, orcidUrlManager.getBaseUrl());
+        String resetUrl = createResetEmail(primaryEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("passwordResetUrl", resetUrl);
 
         addMessageParams(templateParams, locale);
@@ -490,13 +491,14 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile) {
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+    public void sendReactivationEmail(String submittedEmail, String userOrcid) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
+        Locale locale = getUserLocaleFromProfileEntity(record);
         
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
-        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
+        templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.reactivation", locale));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
@@ -827,24 +829,15 @@ public class NotificationManagerImpl implements NotificationManager {
         return createEmailBaseUrl(email, baseUri, "verify-email");
     }
 
-    private String createResetEmail(OrcidProfile orcidProfile, String baseUri) {
-        String resetParams = createResetParams(orcidProfile);
-        return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
-    }
-
-    private String createResetParams(OrcidProfile orcidProfile) {
-        String userEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        return createResetParams(userEmail);
-    }
-
-    private String createResetParams(String userEmail) {
+    private String createResetEmail(String userEmail, String baseUri) {
         XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
         String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
-        return resetParams;
+        return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
     }
-
+    
     private String createReactivationUrl(String userEmail, String baseUri) {
-        String resetParams = createResetParams(userEmail);
+        XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
+        String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
         return createEmailBaseUrl(resetParams, baseUri, "reactivation");
     }
 
