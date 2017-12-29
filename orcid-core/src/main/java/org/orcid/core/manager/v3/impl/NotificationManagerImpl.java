@@ -559,11 +559,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     @Transactional
     public void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);
-        Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        String subject = getSubject("email.subject.added_as_delegate", userLocale);
-
-        ProfileEntity delegateProfileEntity = profileDao.find(userReceivingPermission);
+        ProfileEntity delegateProfileEntity = profileEntityCacheManager.retrieve(userReceivingPermission);
         Boolean sendAdministrativeChangeNotifications = delegateProfileEntity.getSendAdministrativeChangeNotifications();
         if (sendAdministrativeChangeNotifications == null || !sendAdministrativeChangeNotifications) {
             LOGGER.debug("Not sending added delegate email, because option to send administrative change notifications not set to true for delegate: {}",
@@ -571,10 +567,14 @@ public class NotificationManagerImpl implements NotificationManager {
             return;
         }
 
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);
+        Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
+        String subject = getSubject("email.subject.added_as_delegate", userLocale);
+        
         org.orcid.jaxb.model.v3.dev1.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
         String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
-        String email = delegateProfileEntity.getPrimaryEmail().getId();
+        String email = emailManager.findPrimaryEmail(userReceivingPermission).getEmail();
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("grantingOrcidValue", userGrantingPermission);
