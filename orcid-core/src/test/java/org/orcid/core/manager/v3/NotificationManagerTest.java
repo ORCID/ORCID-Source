@@ -321,6 +321,9 @@ public class NotificationManagerTest extends DBUnitTest {
         Email email = new Email();
         email.setEmail("test@email.com");
         
+        Email delegateEmail = new Email();
+        delegateEmail.setEmail("delegate@email.com");
+        
         when(mockProfileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>(){
             @Override
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -340,7 +343,8 @@ public class NotificationManagerTest extends DBUnitTest {
         });
         
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);        
-
+        when(mockEmailManager.findPrimaryEmail(delegateOrcid)).thenReturn(delegateEmail);
+        
         for(org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
             profile.setLocale(locale);
             notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", delegateOrcid);
