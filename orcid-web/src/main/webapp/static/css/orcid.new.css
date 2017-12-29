@@ -1443,6 +1443,7 @@ ul.privacyHelp li.private {
 }
 
 #cboxContent {
+    overflow-y: scroll;
     position: relative
 }
 
