@@ -145,12 +145,21 @@ public class PasswordResetController extends BaseController {
         String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile == null) {
-            errors.add(getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " " + getMessage("orcid.frontend.reset.password.email_not_found_2"));
+            String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
+            message += "<a href=\"mailto:support@orcid.org\">";
+            message += getMessage("orcid.frontend.reset.password.email_not_found_3");
+            message += "</a>";
+            message += getMessage("orcid.frontend.reset.password.email_not_found_4");
+            errors.add(message);
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
         if (profile.getDeactivationDate() != null) {
-            errors.add(getMessage("orcid.frontend.reset.password.disabled_account", passwordResetRequest.getEmail()));
+            String message = getMessage("orcid.frontend.reset.password.disabled_account_1");
+            message += "<a href=\"/help/contact-us\">";
+            message += getMessage("orcid.frontend.reset.password.disabled_account_2");
+            message += "</a>";
+            errors.add(message);
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
@@ -202,7 +211,11 @@ public class PasswordResetController extends BaseController {
         
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
         if (isTokenExpired(passwordResetToken)) {
-            setError(oneTimeResetPasswordForm, "orcid.frontend.reset.password.resetLinkExpired");
+            String message = getMessage("orcid.frontend.reset.password.resetLinkExpired_1");
+            message += "<a href='/reset-password'>";
+            message += getMessage("orcid.frontend.reset.password.resetLinkExpired_2");
+            message += "</a>";
+            oneTimeResetPasswordForm.getErrors().add(message);
             return oneTimeResetPasswordForm;
         }
 

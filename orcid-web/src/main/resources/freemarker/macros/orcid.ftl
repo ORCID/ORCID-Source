@@ -252,7 +252,10 @@ kind of variable. This temp value is only used in this macro lib -->
 							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
 						</ul>
 					</li>
-					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
+					<li>
+					   ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_1")}<br/>
+					   ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_2")}
+					</li>
 				</ul>                         
 				<p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/10_million_password_list_top_1000.txt" target="password_one_time_reset.commonpasswordslink">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>
 				<p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
@@ -278,9 +281,15 @@ kind of variable. This temp value is only used in this macro lib -->
         <div class="arrow"></div>
         <div class="popover-content">        	   
               <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
-              <span ng-show="!userIsSource(${activity}) && group.hasUserVersion()"><@orcid.msg 'groups.common.open_source_to' /></span>
+              <span ng-show="!userIsSource(${activity}) && group.hasUserVersion()">
+                <@orcid.msg 'groups.common.open_source_to_1' /><br />
+                <@orcid.msg 'groups.common.open_source_to_2' />
+              </span>
               <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && group.hasKeys()"><@orcid.msg 'groups.common.make_a_copy' /></span>
-              <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()"><@orcid.msg 'groups.common.items_must_have' /></span>
+              <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()">
+                <@orcid.msg 'groups.common.items_must_have_1' /><br />
+                <@orcid.msg 'groups.common.items_must_have_2' />
+              </span>
         </div>
     </div>
 </#macro>  
@@ -304,7 +313,10 @@ kind of variable. This temp value is only used in this macro lib -->
               <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
               <span ng-show="!userIsSource(${activity}) && group.userVersionPresent"><@orcid.msg 'groups.common.open_source_to' /></span>
               <span ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
-              <span ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0"><@orcid.msg 'groups.common.items_must_have' /></span>
+              <span ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0">
+                <@orcid.msg 'groups.common.items_must_have_1' /><br />
+                <@orcid.msg 'groups.common.items_must_have_2' />
+              </span>
         </div>
     </div>
 </#macro>  
@@ -385,7 +397,11 @@ kind of variable. This temp value is only used in this macro lib -->
 <div>	
     <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
     <label class="control-label dark-label">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency")}
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}
+        <a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}
+        </a>
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
     </label>
     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
     	class="input-xlarge"

@@ -481,19 +481,34 @@ public class BaseController {
                         } else {
                             codes = new String[] { "orcid.frontend.verify.duplicate_email" };
                         }
+                        bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Email already exists"));
                     } else {
-                        codes = new String[] { "orcid.frontend.verify.claimed_email" };
-                        args = new String[] { email, orcidUrlManager.getBaseUrl() + "/account#editDeprecate" };
+                        bindingResult.addError(new FieldError("email", "email", getVerifyClaimedMessage(email)));
                     }
-                    bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Email already exists"));
                 } else {
                     String resendUrl = createResendClaimUrl(email, request);
-                    String[] codes = { "orcid.frontend.verify.unclaimed_email" };
-                    String[] args = { email, resendUrl };
-                    bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Unclaimed record exists"));
+                    String message = getVerifyUnclaimedMessage(email, resendUrl);
+                    bindingResult.addError(new FieldError("email", "email", message));
                 }
             }
         }
+    }
+    
+    protected String getVerifyUnclaimedMessage(String email, String resendUrl) {
+        String message = getMessage("orcid.frontend.verify.unclaimed_email_1", email);
+        message += "<a href='" + resendUrl + "'>";
+        message += getMessage("orcid.frontend.verify.unclaimed_email_2");
+        message += "</a>";
+        message += getMessage("orcid.frontend.verify.unclaimed_email_3");
+        return message;
+    }
+    
+    private String getVerifyClaimedMessage(String email) {
+        String message = getMessage("orcid.frontend.verify.claimed_email_1", email);
+        message += "<a href=\"" + orcidUrlManager.getBaseUrl() + "/account#editDeprecate\" target=\"deprecate\">";
+        message += getMessage("orcid.frontend.verify.claimed_email_2");
+        message += "</a>" + getMessage("orcid.frontend.verify.claimed_email_3");
+        return message;
     }
 
     /**

@@ -55,7 +55,9 @@
                             ${springMacroRequestContext.getMessage("manage.service_announcements")} 
                             <br>
                             ${springMacroRequestContext.getMessage("unsubscribe.email_for_more_info")}
+                            <a href\="https\://orcid.org/privacy-policy\#How_we_use_information" target\="privacy_policy">
                             ${springMacroRequestContext.getMessage("unsubscribe.email_link_privacy_policy")}
+                            </a>
                         </div>
                         <div>
                             <small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>

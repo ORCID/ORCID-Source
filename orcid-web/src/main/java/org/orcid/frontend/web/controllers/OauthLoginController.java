@@ -188,8 +188,10 @@ public class OauthLoginController extends OauthControllerBase {
                     } else if(ae.getCause() instanceof UnclaimedProfileExistsException) {
                         String email = PojoUtil.isEmpty(form.getUserName()) ? null : form.getUserName().getValue();
                         String resendEmailUrl = createResendClaimUrl(email, request);
-                        String errorMessage = getMessage("orcid.frontend.security.unclaimed_exists");
-                        errorMessage = errorMessage.replace("{{resendClaimUrl}}", resendEmailUrl);
+                        String errorMessage = getMessage("orcid.frontend.security.unclaimed_exists_1");
+                        errorMessage += "<a href=\"" + resendEmailUrl + "\">";
+                        errorMessage += getMessage("orcid.frontend.security.unclaimed_exists_2");
+                        errorMessage += "</a>" + getMessage("orcid.frontend.security.unclaimed_exists_3");
                         form.getErrors().add(errorMessage);
                     } else if (ae instanceof VerificationCodeFor2FARequiredException) {
                         form.setVerificationCodeRequired(true);

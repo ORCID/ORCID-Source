@@ -34,7 +34,7 @@
                 <div class="workspace-section-label"><@orcid.msg 'public_profile.labelKeywords'/></div>
             </div>
             <div class="workspace-section-content">
-                <span *ngFor="let keyword of form.keywords; let index = index; let first = first; let last = last;">
+                <span *ngFor="let keyword of formData.keywords; let index = index; let first = first; let last = last;">
                 {{ last?keyword.content:keyword.content+ ", "}}
                 </span>
             </div>

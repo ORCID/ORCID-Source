@@ -7,6 +7,9 @@ import { Headers, Http, RequestOptions, Response, URLSearchParams }
 import { Observable } 
     from 'rxjs/Observable';
 
+import { Subject }
+    from 'rxjs/Subject';
+
 import 'rxjs/Rx';
 
 @Injectable()
@@ -15,9 +18,12 @@ export class EmailService {
     private emails: any;
     private headers: Headers;          
     private inputEmail: any;
+    private notify = new Subject<any>();
     private primaryEmail: any;
     private unverifiedSetPrimary: boolean;
     private url: string;
+
+    notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: Http ){
         this.delEmail = null;
@@ -101,6 +107,8 @@ export class EmailService {
         .share();
     }
 
+    getData = this.getEmails;
+
     initInputEmail(): void {
         this.inputEmail = {
             "current":true,
@@ -112,7 +120,35 @@ export class EmailService {
         };
     }
 
+    notifyOther(): void {
+        this.notify.next();
+        console.log('notify');
+    }
+
     saveEmail(): Observable<any> {
+        let encoded_data = JSON.stringify( this.emails );
+        
+        return this.http.post( 
+            this.url, 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {
+                this.inputEmail = data;
+                if (this.inputEmail.errors.length == 0) {
+                    this.initInputEmail();
+                    this.getEmails();
+                }                         
+            }
+        )
+        .share();
+    }
+
+    setData( obj ): Observable<any> {
         let encoded_data = JSON.stringify( this.emails );
         
         return this.http.post( 

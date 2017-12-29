@@ -32,6 +32,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,6 +42,7 @@ import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
+import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
@@ -61,6 +63,10 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -80,6 +86,8 @@ public class WorkManagerTest extends BaseTest {
     @Resource
     private WorkDao workDao;
     
+    private RequestAttributes previousAttrs;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -88,6 +96,15 @@ public class WorkManagerTest extends BaseTest {
     @Before
     public void before() {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
+        previousAttrs = RequestContextHolder.getRequestAttributes();
+        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_dev1",  RequestAttributes.SCOPE_REQUEST);
+        RequestContextHolder.setRequestAttributes(attrs);
+    }
+    
+    @After
+    public void after() {
+        RequestContextHolder.setRequestAttributes(previousAttrs);
     }
     
     @AfterClass
@@ -398,13 +415,8 @@ public class WorkManagerTest extends BaseTest {
         
         //Work # 1 - Fine
         Work work1 = getWork(null);        
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("doi");
-        extId.setUrl(new Url("http://doi/1"));
-        extId.setValue("doi-1");
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        work1.getExternalIdentifiers().getExternalIdentifier().add(extId);
+        work1.getExternalIdentifiers().getExternalIdentifier().add(getDuplicateExternalId());
         work1.getWorkTitle().getTitle().setContent("Work # 1");
         bulk.getBulk().add(work1);
         
@@ -416,7 +428,7 @@ public class WorkManagerTest extends BaseTest {
         //Work # 3 - Duplicated of Work # 1
         Work work3 = getWork(null);
         work3.getExternalIdentifiers().getExternalIdentifier().clear();
-        work3.getExternalIdentifiers().getExternalIdentifier().add(extId);
+        work3.getExternalIdentifiers().getExternalIdentifier().add(getDuplicateExternalId());
         work3.getWorkTitle().getTitle().setContent("Work # 3");
         bulk.getBulk().add(work3);
         
@@ -502,12 +514,7 @@ public class WorkManagerTest extends BaseTest {
         work.setWorkTitle(workTitle);
         
         ExternalIDs extIds = new ExternalIDs();
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("doi");
-        extId.setUrl(new Url("http://doi/1"));
-        extId.setValue("doi-1");
-        extIds.getExternalIdentifier().add(extId);
+        extIds.getExternalIdentifier().add(getDuplicateExternalId());
         work.setWorkExternalIdentifiers(extIds);
         
         work.setWorkType(WorkType.BOOK);
@@ -530,7 +537,7 @@ public class WorkManagerTest extends BaseTest {
         
         //Work # 4: Ext id already exists
         Work work4 = getWork("work # 4 " + System.currentTimeMillis());
-        work4.getExternalIdentifiers().getExternalIdentifier().add(extId);
+        work4.getExternalIdentifiers().getExternalIdentifier().add(getDuplicateExternalId());
         
         bulk.getBulk().add(work1);
         bulk.getBulk().add(work2);
@@ -566,6 +573,15 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(workManager.checkSourceAndRemoveWork(orcid, putCode));         
     }
     
+    private ExternalID getDuplicateExternalId() {
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://doi/1"));
+        extId.setValue("doi-1");
+        return extId;
+    }
+
     @Test
     public void testGroupWorks() {
         /**

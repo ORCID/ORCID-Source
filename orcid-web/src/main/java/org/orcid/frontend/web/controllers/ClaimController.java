@@ -245,7 +245,12 @@ public class ClaimController extends BaseController {
         }
 
         if (!emailManager.emailExists(email)) {
-            errors.add(getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + email + " " + getMessage("orcid.frontend.reset.password.email_not_found_2"));
+            String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + email + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
+            message += "<a href=\"mailto:support@orcid.org\">";
+            message += getMessage("orcid.frontend.reset.password.email_not_found_3");
+            message += "</a>";
+            message += getMessage("orcid.frontend.reset.password.email_not_found_4");
+            errors.add(message);
             return resendClaimRequest;
         }
 
@@ -253,7 +258,12 @@ public class ClaimController extends BaseController {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
 
         if (profile != null && profile.getClaimed()) {
-            errors.add(getMessage("orcid.frontend.security.already_claimed_with_link"));
+            String message = getMessage("orcid.frontend.security.already_claimed_with_link_1");
+            message += "<a href=\"./signin\">";
+            message += getMessage("orcid.frontend.security.already_claimed_with_link_2");
+            message += "</a>";
+            message += getMessage("orcid.frontend.security.already_claimed_with_link_3");
+            errors.add(message);
             return resendClaimRequest;
         }
 

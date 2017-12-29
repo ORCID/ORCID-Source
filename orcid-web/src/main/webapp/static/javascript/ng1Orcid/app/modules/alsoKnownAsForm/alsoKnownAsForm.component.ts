@@ -33,6 +33,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     defaultVisibility: any;
     emails: any;
     formData: any;
+    formDataBeforeChange: any;
     newElementDefaultVisibility: any;
     orcidId: any;
     privacyHelp: any;
@@ -49,6 +50,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.emails = {};
         this.formData = {
         };
+        this.formDataBeforeChange = {};
         this.newElementDefaultVisibility = 'PRIVATE';
         this.orcidId = orcidVar.orcidId; 
         this.privacyHelp = false;
@@ -75,10 +77,10 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
         };        
         this.formData.otherNames.push(tmpObj);        
         this.updateDisplayIndex();    
-        //this.newInput = true;
     };
 
     closeEditModal(): void{
+        this.formData = this.formDataBeforeChange;
         this.modalService.notifyOther({action:'close', moduleId: 'modalAlsoKnownAsForm'});
     };
 
@@ -93,12 +95,13 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     getformData(): void {
-        let _formDataBeforeChange = null;
         this.alsoKnownAsService.getData()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
+                this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
                 this.formData = data;
+                this.newElementDefaultVisibility = this.formData.visibility.visibility;
                 //console.log('this.getForm', this.formData);
                 if ( this.formData.otherNames.length == 0 ) {
                     this.addNew();

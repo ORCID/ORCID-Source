@@ -36,6 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
 
@@ -233,6 +234,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = null;
+    
+    private ConcurrentMap<String, Object> addWorksLock = new ConcurrentHashMap<>();
     
     public NotificationManager getNotificationManager() {
         return notificationManager;
@@ -893,43 +896,62 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return profileToReturn;
     }
 
+    private Object getLock(String orcid) {
+        Object newLock = new Object();
+        Object existingLock = addWorksLock.putIfAbsent(orcid, newLock);
+        return existingLock == null ? newLock : existingLock;
+    }
+    
+    private void releaseLock(String orcid) {
+        addWorksLock.remove(orcid);
+    }        
+    
     @Override
     @Transactional
     public void addOrcidWorks(OrcidProfile updatedOrcidProfile) {
         String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
-        OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
-        if (existingProfile == null) {
-            throw new IllegalArgumentException("No record found for " + orcid);
-        }
-        OrcidWorks existingOrcidWorks = existingProfile.retrieveOrcidWorks();
-        OrcidWorks updatedOrcidWorks = updatedOrcidProfile.retrieveOrcidWorks();
-        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
-        Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
-        setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);        
-        if(updatedOrcidWorks != null) {
-            addSourceToWorks(updatedOrcidWorks, getSource());
-        }
-        updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
-        List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
+        
+        OrcidProfile existingProfile = null;
+        List<OrcidWork> updatedOrcidWorksList = null;
+        
+        try {
+            synchronized (getLock(orcid)) {
+                existingProfile = retrieveOrcidProfile(orcid);
+                if (existingProfile == null) {
+                    throw new IllegalArgumentException("No record found for " + orcid);
+                }
+                OrcidWorks existingOrcidWorks = existingProfile.retrieveOrcidWorks();
+                OrcidWorks updatedOrcidWorks = updatedOrcidProfile.retrieveOrcidWorks();
+                Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
+                Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
+                setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);        
+                if(updatedOrcidWorks != null) {
+                    addSourceToWorks(updatedOrcidWorks, getSource());
+                }
+                updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
+                updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
+        
+                checkUserCanHoldMoreElement(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
 
-        checkUserCanHoldMoreElement(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
-
-        if (compareWorksUsingScopusWay) {
-            checkForAlreadyExistingWorks(orcid, existingOrcidWorks, updatedOrcidWorksList);
-            if (existingOrcidWorks != null)
-                checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
-            else
-                checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, null);
-        } else {
-            checkForAlreadyExistingWorksLegacyMode(existingOrcidWorks, updatedOrcidWorksList);
-        }
-
-        // workDao.increaseDisplayIndexOnAllElements(orcid);
-        persistAddedWorks(orcid, updatedOrcidWorksList);
-        profileDao.flush();
-
+                if (compareWorksUsingScopusWay) {
+                    checkForAlreadyExistingWorks(orcid, existingOrcidWorks, updatedOrcidWorksList);
+                    if (existingOrcidWorks != null)
+                        checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
+                    else
+                        checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, null);
+                } else {
+                    checkForAlreadyExistingWorksLegacyMode(existingOrcidWorks, updatedOrcidWorksList);
+                }
+        
+                persistAddedWorks(orcid, updatedOrcidWorksList);
+                profileDao.flush();
+            }
+        } finally {
+            releaseLock(orcid);
+        }        
+        
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
-        if (notificationsEnabled) {
+        if (notificationsEnabled && updatedOrcidWorksList != null) {
             List<Item> activities = new ArrayList<>();
             for (OrcidWork updatedWork : updatedOrcidWorksList) {
                 Item activity = new Item();
@@ -1173,22 +1195,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {        
-        Set<String> titles = new HashSet<String>();
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
             // Create the work entity
             WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(orcid, updatedOrcidWork, null);            
             workDao.persist(workEntity);
-            updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));
-            if (updatedOrcidWork.getWorkTitle() != null && updatedOrcidWork.getWorkTitle().getTitle() != null) {
-                String title = updatedOrcidWork.getWorkTitle().getTitle().getContent();
-                if (titles.contains(title)) {
-                    LOG.warn("Request from {} contains dupplicated works on title '{}' and put-code '{}' \n {}",
-                            new Object[] { sourceManager.retrieveSourceOrcid(), title, workEntity.getId(), updatedOrcidWork });
-                } else {
-                    titles.add(title);
-                }
-            }
+            updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));            
         }
         orcidProfileCacheManager.remove(orcid);
     }

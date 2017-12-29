@@ -176,7 +176,12 @@
               </div>
             </@orcid.checkFeatureStatus>
 
-            <!-- Websites  -->          
+            <!-- Websites  -->
+            <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+            <websites-ng2></websites-ng2>
+            </@orcid.checkFeatureStatus>
+            
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>         
             <div ng-controller="WebsitesCtrl" class="workspace-section websites">
                 <div class="workspace-section-header">
                     <div class="workspace-section-title">
@@ -199,8 +204,14 @@
                     </div>
                 </div>
             </div>
+            </@orcid.checkFeatureStatus>
 
-      <!-- Emails  -->          
+      <!-- Emails  -->
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+        <emails-ng2></emails-ng2>
+        </@orcid.checkFeatureStatus>
+
+      <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>      
       <div ng-controller="EmailsCtrl" class="workspace-section">
         <div class="workspace-section-header">
           <div class="workspace-section-title">                  
@@ -223,6 +234,7 @@
           </div>
         </div>
       </div>
+      </@orcid.checkFeatureStatus>
 
       <!--  External Identifiers -->          
       <div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
@@ -258,13 +270,13 @@
       <div class="workspace-inner workspace-header">
         <div class="alert alert-error readme" ng-cloak>
           <strong><@orcid.msg 'workspace.locked.header'/></strong>
-          <p><@orcid.msg 'workspace.locked.message'/></p>
+          <p><@orcid.msg 'workspace.locked.message_1'/><a href\="http\://orcid.org/help/contact-us" target\="Orcid_support"><@orcid.msg 'workspace.locked.message_2'/></a><@orcid.msg 'workspace.locked.message_3'/></p>
         </div>                
       </div>                
       </#if>
       <div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
         <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
-          <strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong>
+          <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/><a href\="https\://support.orcid.org/knowledgebase/articles/460004" target\="get_started" style\="word-break\: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a><@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
         </div>                
       </div>
       <div class="workspace-accordion" id="workspace-accordion">
@@ -281,7 +293,11 @@
         <!-- Fundings -->
         <#include "workspace_fundings_body_list_v3.ftl"/>
 
-        <!-- Works -->                
+        <!-- Works -->
+        <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
+        <works-ng2></works-ng2>
+        </@orcid.checkFeatureStatus>         
+        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
         <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.loading != true}}">
           <#include "includes/work/work_section_header_inc_v3.ftl"/>
           <!-- Work Import Wizard -->
@@ -296,7 +312,7 @@
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                   <p class="wizard-content">
-                    <@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
+                    <@orcid.msg 'workspace.LinkResearchActivities.description'/> <a href\="https\://support.orcid.org/knowledgebase/articles/188278-import-works-website-user" target\="more_information"><@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/></a>
                   </p>
                 </div>
               </div>
@@ -406,7 +422,11 @@
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                   <p>
-                    <@orcid.msg 'workspace.bibtexExporter.intro'/>
+                    <@orcid.msg 'workspace.bibtexExporter.intro_1'/>
+                    <a href\="https\://support.orcid.org/knowledgebase/articles/1807552-exporting-works-into-a-bibtex-file" target\="exporting_bibtex" style\="word-break\: normal;">
+                    <@orcid.msg 'workspace.bibtexExporter.intro_2'/>
+                    </a>
+                    <@orcid.msg 'workspace.bibtexExporter.intro_3'/>
                   </p> 
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4">
@@ -529,6 +549,8 @@
             <#include "includes/work/body_work_inc_v3.ftl"/>            
           </div>
         </div>
+        </@orcid.checkFeatureStatus>
+
         <div ng-controller="PeerReviewCtrl">
           <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
             <#include "workspace_peer_review_body_list.ftl"/>
@@ -777,6 +799,10 @@
 
 <modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
     <keywords-form-ng2></keywords-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
+    <websites-form-ng2></websites-form-ng2>
 </modalngcomponent><!-- Ng2 component -->  
 </@orcid.checkFeatureStatus> 
 

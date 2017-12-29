@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.jaxb;
+package org.orcid.core.jaxb;
 
 import java.io.IOException;
 import java.util.HashMap;
