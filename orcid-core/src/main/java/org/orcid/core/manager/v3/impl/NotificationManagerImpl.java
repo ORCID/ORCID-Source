@@ -36,23 +36,19 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
@@ -172,12 +168,6 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
 
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
-
     @Resource
     private NotificationDao notificationDao;    
     
@@ -188,16 +178,10 @@ public class NotificationManagerImpl implements NotificationManager {
     private SourceManager sourceManager;
 
     @Resource
-    private LocaleManager localeManager;
-
-    @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -280,7 +264,7 @@ public class NotificationManagerImpl implements NotificationManager {
             // If the source is not the user itself
             if (sourceId != null && !sourceId.equals(orcidId)) {
                 if (!PojoUtil.isEmpty(sourceName)) {
-                    String paramValue = " " + localeManager.resolveMessage("common.through") + " " + sourceName + ".";
+                    String paramValue = " " + messages.getMessage("common.through", null, userLocale) + " " + sourceName + ".";
                     templateParams.put("source_name_if_exists", paramValue);
                 } else {
                     templateParams.put("source_name_if_exists", ".");
