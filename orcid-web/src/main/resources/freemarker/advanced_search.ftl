@@ -134,10 +134,10 @@
 		            <tbody>
 		                <tr *ngFor="let result of results">
 		                    <td class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}">{{result['orcid-identifier'].uri}}</a></td>
-    						<td [textContent]="getNames(result)"></td>
+    						<td>{{result['given-names']}}</td>
     						<td>{{result['family-name']}}</td>	
     						<td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
-    						<td [textContent]="getAffiliations(result)"></td>
+    						<td>{{result['affiliations']}}</td>
 		                </tr>
 		            </tbody>
 		        </table>

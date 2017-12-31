@@ -33,6 +33,8 @@ export class SearchComponent {
     numFound: any;
     searchResults: any;
     results: any;
+    resultsWithNames: any;
+    resultsObservable: any;
     resultsShowing: any;
     url: string;
     constructor(
@@ -107,8 +109,6 @@ export class SearchComponent {
                 }
             );
         } 
-
-        return result['affiliations'].join(", "); 
     };
 
     getNames(result: any){
@@ -130,13 +130,17 @@ export class SearchComponent {
                 }
             );
         } 
+    }
 
-        if (result['given-names']) {
-            name = result['given-names'];
-        } else {
-            name = "";
-        }           
-        return name; 
+    getAllNames(orcidList: any) {
+       //let resultsObservable:Observable<Response>[]=[];
+       console.log(orcidList);
+       for(var i = 0; i < orcidList.length; i++){
+            console.log(orcidList[i]);
+            this.getNames(orcidList[i]);
+            this.getAffiliations(orcidList[i]);
+       }
+       //return Observable.merge(resultsObservable);
     }
 
     search(input: any) {
@@ -150,14 +154,22 @@ export class SearchComponent {
                 $('#ajax-loader-search').hide();
                 $('#ajax-loader-show-more').hide();
                 var orcidList = searchResults['result'];
+
+                this.resultsWithNames = this.getAllNames(orcidList);
                 
                 this.numFound = searchResults['num-found'];
+
+                for(var i = 0; i < orcidList.length; i++){
+                    this.getNames(orcidList[i]);
+                    this.getAffiliations(orcidList[i]);
+               }
 
                 this.results = this.results.concat(orcidList); 
                 
                 if(!this.numFound){
                     $('#no-results-alert').fadeIn(1200);
                 }
+
                 
                 this.areMoreResults = this.numFound > (this.input.start + this.input.rows);
                 
