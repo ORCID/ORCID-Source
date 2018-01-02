@@ -53,6 +53,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.jaxb.model.message.DeactivationDate;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -99,7 +100,10 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
     @Mock
     private HttpServletResponse servletResponse;
-
+    
+    @Mock
+    private EmailManagerReadOnly mockEmailManagerReadOnly;
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -116,6 +120,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(passwordResetController, "registrationManager", registrationManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "orcidProfileManager", orcidProfileManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "encryptionManager", encryptionManager);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManagerReadOnly", mockEmailManagerReadOnly);
     }
 
     @Test
@@ -199,6 +204,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(servletRequest.getSession()).thenReturn(session);
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
         when(bindingResult.hasErrors()).thenReturn(true);
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
         assertFalse(oneTimeResetPasswordForm.getErrors().isEmpty());
 
