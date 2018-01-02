@@ -282,6 +282,10 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
 
     public void validate(Object toValidate) {
         String apiVersion = getApiVersion();
+        validate(toValidate, apiVersion);
+    }
+    
+    private void validate(Object toValidate, String apiVersion) {
         String schemaFilenamePrefix = getSchemaFilenamePrefix(toValidate.getClass(), apiVersion);
         try {
             Schema schema = getSchema(schemaFilenamePrefix, apiVersion);
@@ -292,9 +296,16 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         } catch (SAXException | JAXBException | IOException e) {
             //Validation exceptions should return BAD_REQUEST status
             throw new WebApplicationException(e, Status.BAD_REQUEST.getStatusCode());
-        }         
+        }       
     }
     
+    /**
+     * Validation for v2.0 objects, where API version is not taken from request attributes.
+     * @param toValidate
+     */
+    public void validateV2(Object toValidate) {
+        validate(toValidate, "2.0");
+    }
     
     private JAXBContext getJAXBContext(String apiVersion) {
         try {
