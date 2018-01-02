@@ -101,6 +101,16 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.fieldBToA("Last_membership_end_date__c", "lastMembershipEndDate");
         classMap.customize(new CustomMapper<Member, JSONObject>() {
             @Override
+            public void mapAtoB(Member a, JSONObject b, MappingContext context) {
+                if (a.getWebsiteUrl() == null) {
+                    try {
+                        b.put("Website", JSONObject.NULL);
+                    } catch (JSONException e) {
+                        new RuntimeException("Error setting website to null", e);
+                    }
+                }
+            }
+            @Override
             public void mapBtoA(JSONObject b, Member a, MappingContext context) {
                 JSONObject opportunitiesObject = b.optJSONObject("Opportunities");
                 if (opportunitiesObject != null) {
