@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -40,8 +39,6 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -223,16 +220,9 @@ public class PasswordResetController extends BaseController {
             setError(oneTimeResetPasswordForm, "Pattern.registrationForm.password");
             return oneTimeResetPasswordForm;
         }
-
-        OrcidProfile profileToUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
+        String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword());
         
-        profileToUpdate.setPassword(oneTimeResetPasswordForm.getPassword());
-        if (oneTimeResetPasswordForm.isSecurityDetailsPopulated()) {
-            profileToUpdate.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(oneTimeResetPasswordForm.getSecurityQuestionId()));
-            profileToUpdate.setSecurityQuestionAnswer(oneTimeResetPasswordForm.getSecurityQuestionAnswer());
-        }
-
-        orcidProfileManager.updatePasswordInformation(profileToUpdate);
         String redirectUrl = calculateRedirectUrl(request, response);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         return oneTimeResetPasswordForm;

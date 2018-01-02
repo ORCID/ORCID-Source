@@ -72,7 +72,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
