@@ -601,7 +601,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         validateEmailAddress(email.getValue(), false, false, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
-            errors.add(getMessage(oe.getCode(), oe.getArguments()));
+            if (oe.getCode() != null) {
+                errors.add(getMessage(oe.getCode(), oe.getArguments()));
+            } else {
+                errors.add(oe.getDefaultMessage());
+            }
         }
         
         if (errors.isEmpty()) {
