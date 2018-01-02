@@ -121,6 +121,17 @@ export class WorksService {
         popFunct();
     }
 
+    getWork(putCode): any {
+        for (let j in this.groups) {
+            for (var k in this.groups[j].works) {
+                if (this.groups[j].works[k].putCode.value == putCode) {
+                    return this.groups[j].works[k];
+                }
+            }
+        }
+        return null;
+    }
+
     loadAllWorkGroups(sort, sortAsc, callback): any {
         this.details = new Object();
         this.groups = new Array();
@@ -781,16 +792,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             return dois;
         },
 
-        getWork: function(putCode) {
-            for (var j in worksSrvc.groups) {
-                for (var k in worksSrvc.groups[j].works) {
-                    if (worksSrvc.groups[j].works[k].putCode.value == putCode) {
-                        return worksSrvc.groups[j].works[k];
-                    }
-                }
-            }
-            return null;
-        },
+        ,
 
         ,
 
