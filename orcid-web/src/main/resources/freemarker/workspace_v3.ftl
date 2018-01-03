@@ -270,13 +270,13 @@
       <div class="workspace-inner workspace-header">
         <div class="alert alert-error readme" ng-cloak>
           <strong><@orcid.msg 'workspace.locked.header'/></strong>
-          <p><@orcid.msg 'workspace.locked.message_1'/><a href\="http\://orcid.org/help/contact-us" target\="Orcid_support"><@orcid.msg 'workspace.locked.message_2'/></a><@orcid.msg 'workspace.locked.message_3'/></p>
+          <p><@orcid.msg 'workspace.locked.message_1'/><a href="http://orcid.org/help/contact-us" target="Orcid_support"><@orcid.msg 'workspace.locked.message_2'/></a><@orcid.msg 'workspace.locked.message_3'/></p>
         </div>
       </div>                
       </#if>
       <div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
         <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
-          <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/><a href\="https\://support.orcid.org/knowledgebase/articles/460004" target\="get_started" style\="word-break\: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a><@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
+          <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/><a href="https://support.orcid.org/knowledgebase/articles/460004" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a><@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
         </div>                
       </div>
       <div class="workspace-accordion" id="workspace-accordion">
@@ -312,7 +312,7 @@
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                   <p class="wizard-content">
-                    <@orcid.msg 'workspace.LinkResearchActivities.description'/> <a href\="https\://support.orcid.org/knowledgebase/articles/188278-import-works-website-user" target\="more_information"><@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/></a>
+                    <@orcid.msg 'workspace.LinkResearchActivities.description'/> <a href="https://support.orcid.org/knowledgebase/articles/188278-import-works-website-user" target="more_information"><@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/></a>
                   </p>
                 </div>
               </div>
@@ -422,7 +422,7 @@
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                   <p>
-                    <@orcid.msg 'workspace.bibtexExporter.intro_1'/><a href\="https\://support.orcid.org/knowledgebase/articles/1807552-exporting-works-into-a-bibtex-file" target\="exporting_bibtex" style\="word-break\: normal;"><@orcid.msg 'workspace.bibtexExporter.intro_2'/></a><@orcid.msg 'workspace.bibtexExporter.intro_3'/>
+                    <@orcid.msg 'workspace.bibtexExporter.intro_1'/><a href="https://support.orcid.org/knowledgebase/articles/1807552-exporting-works-into-a-bibtex-file" target="exporting_bibtex" style="word-break\: normal;"><@orcid.msg 'workspace.bibtexExporter.intro_2'/></a><@orcid.msg 'workspace.bibtexExporter.intro_3'/>
                   </p> 
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4">
