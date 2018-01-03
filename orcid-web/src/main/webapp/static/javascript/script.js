@@ -445,11 +445,11 @@ $(function() {
             wHtml = wHtml + '<strong>';
             wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
                     '{{curentDomian}}', window.location.hostname);
-            wHtml = wHtml + '<a href\="http\://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
+            wHtml = wHtml + '<a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
             wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
-            wHtml = wHtml + '<a href\="http\://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
+            wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
             wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
-            wHtml = wHtml + '<a href\="http\://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
+            wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
             wHtml = wHtml + '</strong> ';
             // don't let the warning be disabled for test-warn-dismiss
             if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
@@ -510,7 +510,7 @@ $(function() {
         var wHtml = '<div class="alert" id="browser-warn-div">';
         wHtml = wHtml + '<strong>';
         wHtml = wHtml + om.get('common.old.browser_1');
-        wHtml = wHtml + '<a href\="http\://support.orcid.org/knowledgebase/articles/159728-upgrade-your-browser">' + om.get('common.old.browser_2') + '</a>';
+        wHtml = wHtml + '<a href="http://support.orcid.org/knowledgebase/articles/159728-upgrade-your-browser">' + om.get('common.old.browser_2') + '</a>';
         wHtml = wHtml + om.get('common.old.browser_2');
         wHtml = wHtml + '</strong>';
         wHtml = wHtml + '</div>';
@@ -609,7 +609,7 @@ $(function() {
                                                         message = om
                                                                 .get(
                                                                         'orcid.frontend.security.unclaimed_exists_1');
-                                                        message = message + '<a href\="' + resendClaimUrl + '">';
+                                                        message = message + '<a href="' + resendClaimUrl + '">';
                                                         message = message + om.get('orcid.frontend.security.unclaimed_exists_2');
                                                         message = message + '</a>';
                                                         message = message + om.get('orcid.frontend.security.unclaimed_exists_3');
