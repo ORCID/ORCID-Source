@@ -11,6 +11,9 @@
 	xmlns:history="http://www.orcid.org/ns/history" xmlns:person="http://www.orcid.org/ns/person"
 	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record"
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:distinction="http://www.orcid.org/ns/distinction" xmlns:invited-position="http://www.orcid.org/ns/invited-position" 
+	xmlns:membership="http://www.orcid.org/ns/membership" xmlns:qualification="http://www.orcid.org/ns/qualification" 
+	xmlns:service="http://www.orcid.org/ns/service" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-3.0_dev1.xsd ">
 	<common:orcid-identifier>
@@ -166,6 +169,46 @@
 	</person:person>
 	<activities:activities-summary>
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+		<activities:distinctions path="http://orcid.org/v3.0_dev1/8888-8888-8888-8880/distinctions">
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<distinction:distinction-summary put-code="0"
+				visibility="private" display-index="0"> 
+				<common:created-date>2001-12-31T12:00:00</common:created-date>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+				<common:source>
+					<common:source-orcid>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:source-orcid>
+					<common:source-name />
+				</common:source>
+				<distinction:department-name>distinction:department-name</distinction:department-name>
+				<distinction:role-title>distinction:role-title</distinction:role-title>
+				<common:start-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:start-date>
+				<common:end-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:end-date>
+				<distinction:organization>
+					<common:name>common:name</common:name>
+					<common:address>
+						<common:city>common:city</common:city>
+						<common:region>common:region</common:region>
+						<common:country>AF</common:country>
+					</common:address>
+					<common:disambiguated-organization>
+						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+					</common:disambiguated-organization>
+				</distinction:organization>
+			</distinction:distinction-summary>
+		</activities:distinctions>
 		<activities:educations>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<education:education-summary put-code="0"
@@ -306,6 +349,126 @@
 				</funding:funding-summary>
 			</activities:group>
 		</activities:fundings>
+		<activities:invited-positions path="http://orcid.org/v3.0_dev1/8888-8888-8888-8880/invited-positions">
+		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+		<invited-position:invited-position-summary put-code="0"
+			visibility="private" display-index="0"> 
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name />
+			</common:source>
+			<invited-position:department-name>invited-position:department-name</invited-position:department-name>
+			<invited-position:role-title>invited-position:role-title</invited-position:role-title>
+			<common:start-date>
+				<common:year>2014</common:year>
+				<common:month>12</common:month>
+				<common:day>20</common:day>
+			</common:start-date>
+			<common:end-date>
+				<common:year>2014</common:year>
+				<common:month>12</common:month>
+				<common:day>20</common:day>
+			</common:end-date>
+			<invited-position:organization>
+				<common:name>common:name</common:name>
+				<common:address>
+					<common:city>common:city</common:city>
+					<common:region>common:region</common:region>
+					<common:country>AF</common:country>
+				</common:address>
+				<common:disambiguated-organization>
+					<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+				</common:disambiguated-organization>
+			</invited-position:organization>
+		</invited-position:invited-position-summary>
+	</activities:invited-positions>
+	<activities:memberships path="http://orcid.org/v3.0_dev1/8888-8888-8888-8880/memberships">
+		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+		<membership:membership-summary put-code="0"
+			visibility="private" display-index="0"> 
+				<common:created-date>2001-12-31T12:00:00</common:created-date>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+				<common:source>
+					<common:source-orcid>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:source-orcid>
+					<common:source-name />
+				</common:source>
+				<membership:department-name>membership:department-name</membership:department-name>
+				<membership:role-title>membership:role-title</membership:role-title>
+				<common:start-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:start-date>
+				<common:end-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:end-date>
+				<membership:organization>
+					<common:name>common:name</common:name>
+					<common:address>
+						<common:city>common:city</common:city>
+						<common:region>common:region</common:region>
+						<common:country>AF</common:country>
+					</common:address>
+					<common:disambiguated-organization>
+						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+					</common:disambiguated-organization>
+				</membership:organization>
+			</membership:membership-summary>
+		</activities:memberships>
+		<activities:qualifications path="http://orcid.org/v3.0_dev1/8888-8888-8888-8880/qualifications">
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<qualification:qualification-summary put-code="0"
+				visibility="private" display-index="0"> 
+				<common:created-date>2001-12-31T12:00:00</common:created-date>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+				<common:source>
+					<common:source-orcid>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:source-orcid>
+					<common:source-name />
+				</common:source>
+				<qualification:department-name>qualification:department-name</qualification:department-name>
+				<qualification:role-title>qualification:role-title</qualification:role-title>
+				<common:start-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:start-date>
+				<common:end-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:end-date>
+				<qualification:organization>
+					<common:name>common:name</common:name>
+					<common:address>
+						<common:city>common:city</common:city>
+						<common:region>common:region</common:region>
+						<common:country>AF</common:country>
+					</common:address>
+					<common:disambiguated-organization>
+						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+					</common:disambiguated-organization>
+				</qualification:organization>
+			</qualification:qualification-summary>
+		</activities:qualifications>
 		<activities:peer-reviews>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>
@@ -359,6 +522,46 @@
 				</peer-review:peer-review-summary>
 			</activities:group>
 		</activities:peer-reviews>
+		<activities:services path="http://orcid.org/v3.0_dev1/8888-8888-8888-8880/services">
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<service:service-summary put-code="0"
+				visibility="private" display-index="0"> 
+				<common:created-date>2001-12-31T12:00:00</common:created-date>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+				<common:source>
+					<common:source-orcid>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:source-orcid>
+					<common:source-name />
+				</common:source>
+				<service:department-name>service:department-name</service:department-name>
+				<service:role-title>service:role-title</service:role-title>
+				<common:start-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:start-date>
+				<common:end-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:end-date>
+				<service:organization>
+					<common:name>common:name</common:name>
+					<common:address>
+						<common:city>common:city</common:city>
+						<common:region>common:region</common:region>
+						<common:country>AF</common:country>
+					</common:address>
+					<common:disambiguated-organization>
+						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+					</common:disambiguated-organization>
+				</service:organization>
+			</service:service-summary>
+		</activities:services>
 		<activities:works>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>
