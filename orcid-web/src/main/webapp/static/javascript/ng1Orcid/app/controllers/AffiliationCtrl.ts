@@ -1,3 +1,5 @@
+//Migrated
+
 declare var $: any;
 declare var ActSortState: any;
 declare var colorbox: any;

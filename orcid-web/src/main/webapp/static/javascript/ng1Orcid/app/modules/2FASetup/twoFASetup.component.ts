@@ -27,11 +27,23 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
     private subscription: Subscription;
 
     recoveryCodes: string;
+    show2FARecoveryCodes: boolean;
+    showInvalidCodeError: boolean;
+    showQRCode: boolean;
+    showSetup2FA: boolean;
+    showTextCode: boolean;
+    twoFactorAuthRegistration: any;
 
     constructor( 
         private twoFAStateService: TwoFAStateService,
     ) {
         this.recoveryCodes = '';
+        this.show2FARecoveryCodes = false;
+        this.showInvalidCodeError = false;
+        this.showQRCode = false;
+        this.showSetup2FA = false;
+        this.showTextCode = false;
+        this.twoFactorAuthRegistration = {};
     }
 
     cancel2FASetup(): void {
@@ -116,15 +128,37 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         return recoveryCodesString;
     }
 
-    /*
-    disable2FA(): void {
-        this.twoFASetupService.disable()
+    register(): void {
+        this.twoFAStateService.register()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 console.log('this.getForm', data);
-                this.update2FAStatus( data );
+                this.twoFactorAuthRegistration = data;
+            },
+            error => {
+                console.log('An error occurred disabling user 2FA', error);
+            } 
+        );
+    }
 
+    sendVerificationCode(): void {
+        $('#sendVerificationCode').prop('disabled', true);
+
+        this.twoFAStateService.sendVerificationCode( this.twoFactorAuthRegistration )
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                console.log('this.getForm', data);
+                if (data.valid) {
+                    this.showSetup2FA = false;
+                    this.show2FARecoveryCodes = true;
+                    this.recoveryCodes = data.backupCodes;
+                    this.showInvalidCodeError=false;
+                } else {
+                    $('#sendVerificationCode').prop('disabled', false);
+                    this.showInvalidCodeError=true;
+                }
             },
             error => {
                 console.log('An error occurred disabling user 2FA', error);
@@ -132,32 +166,26 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    enable2FA(): void {
-        window.location.href = getBaseUri() + '/2FA/setup';
-    };
-
-    update2FAStatus(status): void {
-        this.showEnabled2FA = status.enabled;
-        this.showDisabled2FA = !status.enabled;
-        //$scope.$apply();
-    };
-
-    check2FASetup(): void {
-        this.twoFASetupService.checkSetup()
+    startSetup(): void {
+        this.twoFAStateService.startSetup()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 console.log('this.getForm', data);
-                this.update2FAStatus( data );
+                $("#2FA-QR-code").attr("src", data.url);
+                this.showSetup2FA = true;
+                this.showQRCode = true;
+                this.showTextCode = false;
+                this.show2FARecoveryCodes = false;
 
+                this.register();
             },
             error => {
                 console.log('getTwoFASetupFormError', error);
             } 
         );
-    };
-    */
 
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
@@ -172,87 +200,3 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
 }
-
-/*
-declare var getBaseUri: any;
-
-import * as angular from 'angular';
-import {NgModule} from '@angular/core';
-
-// This is the Angular 1 part of the module
-
-export const _2FASetupCtrl = angular.module('orcidApp').controller(
-    '2FASetupCtrl', 
-    [
-        '$compile', 
-        '$scope', 
-        function (
-            $compile,
-            $scope
-        ) {
-            
-            
-            
-
-            $scope.sendVerificationCode = function() {
-                $('#sendVerificationCode').prop('disabled', true);
-                $.ajax({
-                    url: getBaseUri() + '/2FA/register.json',
-                    dataType: 'json',
-                    data: angular.toJson($scope.twoFactorAuthRegistration),
-                    contentType: 'application/json;charset=UTF-8',
-                    type: 'POST',
-                    success: function(data) {               
-                        if (data.valid) {
-                            $scope.showSetup2FA = false;
-                            $scope.show2FARecoveryCodes = true;
-                            $scope.recoveryCodes = data.backupCodes;
-                            $scope.showInvalidCodeError=false;
-                        } else {
-                            $('#sendVerificationCode').prop('disabled', false);
-                            $scope.showInvalidCodeError=true;
-                        }
-                        $scope.$apply();
-                    }
-                }).fail(function() {
-                    console.log("error posting 2fa registration to server");
-                });
-            };
-
-            $scope.startSetup = function() {
-                $.ajax({
-                    url: getBaseUri() + '/2FA/QRCode.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        $("#2FA-QR-code").attr("src", data.url);
-                        $scope.showSetup2FA = true;
-                        $scope.showQRCode = true;
-                        $scope.showTextCode = false;
-                        $scope.show2FARecoveryCodes = false;
-                        
-                        $.ajax({
-                            url: getBaseUri() + '/2FA/register.json',
-                            dataType: 'json',
-                            success: function(data) {
-                                $scope.twoFactorAuthRegistration = data;
-                                $scope.$apply();
-                            }
-                        }).fail(function(err) {
-                            console.log("An error occurred getting 2FA registration object");
-                        });
-                    }
-                }).fail(function(err) {
-                    console.log("An error occurred getting user's 2FA QR code");
-                });
-            };
-            
-            //Convert to angular...
-            
-        }
-    ]
-);
-
-// This is the Angular 2 part of the module
-@NgModule({})
-export class _2FASetupCtrlNg2Module {}
-*/
