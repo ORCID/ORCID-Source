@@ -1,3 +1,54 @@
+//Import all the angular components
+
+import { NgFor, NgIf } 
+    from '@angular/common'; 
+
+import { AfterViewInit, Component, OnDestroy, OnInit } 
+    from '@angular/core';
+
+import { Observable } 
+    from 'rxjs/Rx';
+
+import { Subject } 
+    from 'rxjs/Subject';
+
+import { Subscription }
+    from 'rxjs/Subscription';
+
+import { AccountService } 
+    from '../../shared/account.service.ts'; 
+
+
+@Component({
+    selector: 'deprecate-account-form-ng2',
+    template:  scriptTmpl("deprecate-account-form-ng2-template")
+})
+export class DeprecateAccountFormComponent implements AfterViewInit, OnDestroy, OnInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+   
+    constructor(
+        private accountService: AccountService
+    ) {
+
+    }
+
+ 
+
+    //Default init functions provided by Angular Core
+    ngAfterViewInit() {
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+    };
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
+
+    ngOnInit() {
+    }; 
+}
+
+/*
 //migrated
 
 declare var $: any;
@@ -104,3 +155,4 @@ export const DeprecateAccountCtrl = angular.module('orcidApp').controller(
 // This is the Angular 2 part of the module
 @NgModule({})
 export class DeprecateAccountCtrlNg2Module {}
+*/

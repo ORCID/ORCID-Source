@@ -1,3 +1,107 @@
+//Import all the angular components
+
+import { NgFor, NgIf } 
+    from '@angular/common'; 
+
+import { AfterViewInit, Component, OnDestroy, OnInit } 
+    from '@angular/core';
+
+import { Observable } 
+    from 'rxjs/Rx';
+
+import { Subject } 
+    from 'rxjs/Subject';
+
+import { Subscription }
+    from 'rxjs/Subscription';
+
+import { AccountService } 
+    from '../../shared/account.service.ts'; 
+
+
+@Component({
+    selector: 'deprecate-account-ng2',
+    template:  scriptTmpl("deprecate-account-ng2-template")
+})
+export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
+   
+    constructor(
+        private accountService: AccountService
+    ) {
+
+    }
+
+    /*
+    checkClaimedStatus( whichField ): void {
+        let orcidOrEmail = '';
+        if(whichField == 'trusted') {
+            this.trusted_verified = false;
+            orcidOrEmail = this.request.trusted.value;
+        } else {
+            this.managed_verified = false;
+            orcidOrEmail = this.request.managed.value;
+        }
+
+        this.adminDelegatesService.getFormData( orcidOrEmail )
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                if(data) {
+                    if(whichField == 'trusted') {
+                        this.trusted_verified = true;
+                    } else {
+                        this.managed_verified = true;
+                    }
+                }
+            },
+            error => {
+                console.log('getformDataError', error);
+            } 
+        );
+ 
+    };
+
+    confirmDelegatesProcess(): void {
+        this.success = false;
+        this.adminDelegatesService.setFormData( this.request )
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.request = data;
+                if(data.successMessage) {
+                    this.success = true;
+                }
+            },
+            error => {
+                console.log('setformDataError', error);
+            } 
+        );
+    };
+
+    toggleSection(): void{
+        this.showSection = !this.showSection;
+        $('#delegates_section').toggle();
+    };
+    */
+   
+
+    //Default init functions provided by Angular Core
+    ngAfterViewInit() {
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+    };
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
+
+    ngOnInit() {
+    }; 
+}
+
+/*
 //migrated
 
 declare var $: any;
@@ -104,3 +208,4 @@ export const DeprecateAccountCtrl = angular.module('orcidApp').controller(
 // This is the Angular 2 part of the module
 @NgModule({})
 export class DeprecateAccountCtrlNg2Module {}
+*/
