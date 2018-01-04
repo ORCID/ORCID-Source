@@ -541,6 +541,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                 success: function(data) {
                     group.defaultWork = worksSrvc.getWork(putCode);
                     group.activePutCode = group.defaultWork.putCode.value;
+                    group.activeVisibility = group.defaultWork.visibility.visibility;
                 }
             }).fail(function(){
                 // something bad is happening!

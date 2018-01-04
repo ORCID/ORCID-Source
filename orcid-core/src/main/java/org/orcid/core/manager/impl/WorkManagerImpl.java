@@ -214,7 +214,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                     try {
                         work.setSource(null);
                         activityValidator.validateWork(work, sourceEntity, true, true, null);
-                        schemaValidator.validate(work);
+                        schemaValidator.validateV2(work);
                        
                         //Validate it is not duplicated
                         if(work.getExternalIdentifiers() != null) {

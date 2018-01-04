@@ -311,7 +311,10 @@ kind of variable. This temp value is only used in this macro lib -->
         <div class="arrow"></div>
         <div class="popover-content">              
               <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
-              <span ng-show="!userIsSource(${activity}) && group.userVersionPresent"><@orcid.msg 'groups.common.open_source_to' /></span>
+              <span ng-show="!userIsSource(${activity}) && group.userVersionPresent">
+                <@orcid.msg 'groups.common.open_source_to_1' /><br />
+                <@orcid.msg 'groups.common.open_source_to_2' />
+              </span>
               <span ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
               <span ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0">
                 <@orcid.msg 'groups.common.items_must_have_1' /><br />
@@ -445,11 +448,7 @@ kind of variable. This temp value is only used in this macro lib -->
 <div>	
     <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
     <label class="control-label dark-label">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}
-        <a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}
-        </a>
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
     </label>
     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
     	class="input-xlarge"

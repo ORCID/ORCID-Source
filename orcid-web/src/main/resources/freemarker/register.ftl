@@ -50,7 +50,7 @@
             </#if>
             <p>
                 ${springMacroRequestContext.getMessage("register.labelClause_1")}
-                <a href\="http\://orcid.org/content/orcid-terms-use" target\="terms_and_conditions">
+                <a href="http://orcid.org/content/orcid-terms-use" target="terms_and_conditions">
                 ${springMacroRequestContext.getMessage("register.labelClause_2")}
                 </a>
                 ${springMacroRequestContext.getMessage("register.labelClause_3")}
