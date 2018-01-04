@@ -448,7 +448,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private List<Member> retrieveMembersByWebsiteFromSalesForce(String accessToken, String websiteUrl) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of members from SalesForce by website");
         WebResource resource = createQueryResource(String.format(
-                "SELECT Account.Id, Account.Public_Display_Name__c, Account.Website, Account.CreatedDate from Account WHERE Account.Website Like '%%%s%%' Order By Active_Member__c Desc, Account.CreatedDate Asc",
+                "SELECT Account.Id, Name, Account.Public_Display_Name__c, Account.Website, Account.CreatedDate from Account WHERE Account.Website Like '%%%s%%' Order By Active_Member__c Desc, Account.CreatedDate Asc",
                 escapeStringInput(websiteUrl)));
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
