@@ -16,8 +16,7 @@
     =============================================================================
 
 -->
-<#assign verDateTime = startupDate?datetime>
-<#macro base ver="${verDateTime?iso_utc}">
+<#macro base>
 <!DOCTYPE html>
 <html class="no-js oldie" lang="en">
 <#include "/common/html-head.ftl" />

@@ -41,13 +41,13 @@
 
 <script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
+<script type="text/javascript" src="${staticCdn}/javascript/plugins.js"></script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>
+<script type="text/javascript" src="${staticCdn}/javascript/orcid.js"></script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
+<script type="text/javascript" src="${staticCdn}/javascript/script.js"></script>
 
-<script src="${staticCdn}/javascript/angular_orcid_generated.js?v=${ver}"></script>
+<script src="${staticCdn}/javascript/angular_orcid_generated.js"></script>
 
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');

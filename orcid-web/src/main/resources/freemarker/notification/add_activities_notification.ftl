@@ -19,8 +19,6 @@
 <!DOCTYPE html>
 <html>
 <#import "/macros/orcid.ftl" as orcid />
-<#assign verDateTime = startupDate?datetime>
-<#assign ver="${verDateTime?iso_utc}">
 
 <#assign aworks = 0>
 <#assign tworks = "">
@@ -60,9 +58,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.min.js"></script>
-    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css"/>
+    <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <style> 
 		body, html{			
 			color: #494A4C;
@@ -127,7 +125,7 @@
 		});
 	</script>
 	<!--  Do not remove -->
-	<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js?v=${ver}"></script>
+	<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js"></script>
 </head>
 <body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController">
 	
