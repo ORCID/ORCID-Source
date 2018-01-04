@@ -18,7 +18,7 @@
 -->
 <#if !(affiliationsEmpty)??>
     <!-- Education -->
-    <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEduAffiliation" ng-hide="!affiliationsSrvc.educations.length" ng-cloack>        
+    <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEduAffiliation" ng-hide="!affiliationsSrvc.educations.length" ng-cloak>        
     
         <#include "includes/affiliate/edu_section_header_inc.ftl" />
         <div ng-if="workspaceSrvc.displayEducation" class="workspace-accordion-content">
@@ -26,7 +26,7 @@
         </div>           
     </div>
     <!-- Employment -->
-    <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEmpAffiliation" ng-hide="!affiliationsSrvc.employments.length" ng-cloack>
+    <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEmpAffiliation" ng-hide="!affiliationsSrvc.employments.length" ng-cloak>
         <#include "includes/affiliate/emp_section_header_inc.ftl" />
         <div ng-if="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
             <#include "includes/affiliate/emp_body_inc.ftl" />  
@@ -36,7 +36,7 @@
   
 <!-- Funding -->
 <#if !(fundingEmpty)??>     
-    <div id="workspace-funding" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicFundingCtrl" ng-cloack>
+    <div id="workspace-funding" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicFundingCtrl" ng-cloak>
         <#include "includes/funding/funding_section_header_inc_v3.ftl" />
         <div ng-if="workspaceSrvc.displayFunding" class="workspace-accordion-content">
             <#include "includes/funding/body_funding_inc_v3.ftl" /> 
@@ -45,7 +45,7 @@
 </#if>
 
 <!-- Works -->
-<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-cloak>
+<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-hide="!worksSrvc.groups.length" ng-cloak>
     <#include "includes/work/work_section_header_inc_v3.ftl"/>
     <div ng-if="workspaceSrvc.displayWorks" class="workspace-accordion-content">
         <#include "includes/work/public_works_body_list.ftl" />
