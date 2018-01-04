@@ -45,27 +45,25 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.v3.BiographyManager;
-import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -74,6 +72,7 @@ import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -98,24 +97,16 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     protected OrcidProfileManager orcidProfileManager;
 
-    @Resource
-    private EncryptionManager encryptionManager;
-
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
-    @Resource
-    private EmailDao emailDao;
-
-    @Resource
-    ClientsController groupAdministratorController;
-
-    @Resource(name = "recordNameManagerV3")
-    private RecordNameManager recordNameManager;
-
-    @Resource(name = "biographyManagerV3")
-    private BiographyManager biographyManager;
-
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
+    
+    @Mock
+    private NotificationManager mockNotificationManager;
+    
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
@@ -306,10 +297,12 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Test
     public void verifyEmailTest() {
+        TargetProxyHelper.injectIntoProxy(emailManager, "notificationManager", mockNotificationManager);
+
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpSession session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
-
+        
         // Add not verified email
         Email email = new Email();
         email.setEmail("not-verified@email.com");
@@ -321,9 +314,10 @@ public class AdminControllerTest extends BaseControllerTest {
 
         // Verify the email
         adminController.adminVerifyEmail("not-verified@email.com");
-        EmailEntity emailEntity = emailDao.find("not-verified@email.com");
+        EmailEntity emailEntity = emailManager.find("not-verified@email.com");
         assertNotNull(emailEntity);
         assertTrue(emailEntity.getVerified());
+        TargetProxyHelper.injectIntoProxy(emailManager, "notificationManager", notificationManager);
     }
 
     @Test

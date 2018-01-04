@@ -20,10 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
@@ -34,31 +32,23 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
 
-    // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
-
     void sendWelcomeEmail(String userOrcid, String email);
 
     void sendVerificationEmail(String userOrcid, String email);
 
-    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
+    public void sendVerificationReminderEmail(String userOrcid, String email);
 
-    void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile);
+    void sendPasswordResetEmail(String toEmail, String userOrcid);
     
-    void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile);
+    void sendReactivationEmail(String submittedEmail, String userOrcid);
 
     public String createVerificationUrl(String email, String baseUri);
-
-    public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
     public String deriveEmailFriendlyName(ProfileEntity profileEntity);
 
     void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
 
-    void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
-
-    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
-
-    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> activities);
+    void sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(String userOrcid);
 
@@ -66,13 +56,9 @@ public interface NotificationManager {
 
     void sendApiRecordCreationEmail(String toEmail, String orcid);
     
-    void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
-
     void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
 
-    void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
-
-    public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile);
+    void sendClaimReminderEmail(String userOrcid, int daysUntilActivation);
 
     void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link);
 
@@ -108,12 +94,6 @@ public interface NotificationManager {
 
     public Notification setActionedAndReadDate(String orcid, Long id);
 
-    public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);
-
-    public String getSubject(String code, OrcidProfile orcidProfile);
-
-    public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
-
     public String createClaimVerificationUrl(String email, String baseUri);
 
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
@@ -130,12 +110,12 @@ public interface NotificationManager {
 
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
     
-    boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile);
-
     void processOldNotificationsToAutoArchive();
 
     void processOldNotificationsToAutoDelete();
 
     void removeNotification(Long notificationId);
 
+    String createUpdateEmailFrequencyUrl(String email);
+    
 }

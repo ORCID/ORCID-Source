@@ -17,12 +17,12 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
-import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.NotificationManager;
@@ -126,7 +126,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItem(entity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity));
         return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
     }
 
@@ -173,17 +173,16 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         updatedEntity.setOrg(updatedOrganization);
         updatedEntity = peerReviewDao.merge(updatedEntity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItem(updatedEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(updatedEntity));
         return jpaJaxbPeerReviewAdapter.toPeerReview(updatedEntity);
     }
 
     @Override
     public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
-        orcidSecurityManager.checkSource(pr);
-        Item item = createItem(pr);
+        orcidSecurityManager.checkSource(pr);        
         boolean result = deletePeerReview(pr, orcid);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, item);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr));
         return result;
     }
 
@@ -225,12 +224,12 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
     }
 
-    private Item createItem(PeerReviewEntity peerReviewEntity) {
+    private List<Item> createItemList(PeerReviewEntity peerReviewEntity) {
         Item item = new Item();
         item.setItemName(peerReviewEntity.getSubjectName());
         item.setItemType(ItemType.PEER_REVIEW);
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
-        return item;
+        return Arrays.asList(item);
     }
 
     @Override

@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -177,7 +178,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
@@ -352,7 +353,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         workDao.merge(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
@@ -361,11 +362,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
         orcidSecurityManager.checkSource(workEntity);
-        try {
-            Item item = createItem(workEntity);
+        try {            
             workDao.removeWork(orcid, workId);
             workDao.flush();
-            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, item);
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;
@@ -383,11 +383,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
     }
 
-    private Item createItem(WorkEntity workEntity) {
+    private List<Item> createItemList(WorkEntity workEntity) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
-        return item;
+        return Arrays.asList(item);
     }
 }

@@ -23,7 +23,6 @@ import java.util.List;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.v3.dev1.common.Locale;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -47,7 +46,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     boolean enableDeveloperTools(String orcid);
 
-    boolean disableDeveloperTools(OrcidProfile profile);
+    boolean disableDeveloperTools(String orcid);
 
     boolean isProfileClaimed(String orcid);
     

@@ -18,16 +18,25 @@ package org.orcid.core.profileEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.impl.MailGunManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
@@ -39,6 +48,21 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
 
     @Resource
     private MessageSource messages;
+    
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    private ProfileDao profileDaoReadOnly;
+
+    @Resource
+    private LocaleManager localeManager;
+    
+    @Resource
+    private TemplateManager templateManager;
+    
+    @Resource
+    private MailGunManager mailGunManager;
 
     private OrcidProfile orcidProfile;
 
@@ -83,7 +107,7 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
             return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_HAS_VALIDATED_2017);
         } else {
             try {
-                boolean sent = notificationManager.sendVerifiedRequiredAnnouncement2017(orcidProfile);
+                boolean sent = sendVerifiedRequiredAnnouncement2017(orcidProfile);
                 if (sent) {
                     return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_SENT_2017);
                 } else {
@@ -99,6 +123,39 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
     @Override
     public List<ProfileEventType> outcomes() {
         return pes;
+    }
+    
+    public boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile) {
+        String orcid = orcidProfile.getOrcidIdentifier().getPath();
+        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(profileDaoReadOnly.find(orcid));
+        String verificationUrl = notificationManager.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
+        String emailFrequencyUrl = notificationManager.createUpdateEmailFrequencyUrl(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("emailFrequencyUrl", emailFrequencyUrl);
+        templateParams.put("orcid", orcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("messages", this.messages);
+        templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("locale", locale);
+        templateParams.put("features", features);
+        
+
+        String subject = messages.getMessage("email.service_announcement.subject.imporant_information", null, locale);
+        String text = templateManager.processTemplate("verified_required_announcement_2017.ftl", templateParams);
+        String html = templateManager.processTemplate("verified_required_announcement_2017_html.ftl", templateParams);
+
+        return mailGunManager.sendEmail("support@notify.orcid.org", email, subject, text, html);
     }
 
 }
