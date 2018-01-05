@@ -210,20 +210,20 @@
 
 	<xs:complexType name="invited-positions">
 		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" >
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				ref="invited-position:invited-position-summary" >
-		<xs:sequence>
-		<xs:attribute name="path" type="common:element-path" use="optional" >
-	<xs:complexType>
+				ref="invited-position:invited-position-summary" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
 
 	<xs:element name="invited-positions">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="activities:invited-positions" >
-			<xs:complexContent>
-		<xs:complexType>
-	<xs:element>
+				<xs:extension base="activities:invited-positions" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 
 	<xs:complexType name="funding-group">
 		<xs:sequence>
@@ -255,20 +255,20 @@
 
 	<xs:complexType name="memberships">
 		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" >
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				ref="membership:membership-summary" >
-		<xs:sequence>
-		<xs:attribute name="path" type="common:element-path" use="optional" >
-	<xs:complexType>
+				ref="membership:membership-summary" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
 
 	<xs:element name="memberships">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="activities:memberships" >
-			<xs:complexContent>
-		<xs:complexType>
-	<xs:element>
+				<xs:extension base="activities:memberships" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 
 	<xs:complexType name="peer-review-group">
 		<xs:sequence>
@@ -300,37 +300,37 @@
 	
 	<xs:complexType name="qualifications">
 		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" >
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				ref="qualification:qualification-summary" >
-		<xs:sequence>
-		<xs:attribute name="path" type="common:element-path" use="optional" >
-	<xs:complexType>
+				ref="qualification:qualification-summary" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
 
 	<xs:element name="qualifications">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="activities:qualifications" >
-			<xs:complexContent>
-		<xs:complexType>
-	<xs:element>
+				<xs:extension base="activities:qualifications" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 	
 	<xs:complexType name="services">
 		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" >
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				ref="service:service-summary" >
-		<xs:sequence>
-		<xs:attribute name="path" type="common:element-path" use="optional" >
-	<xs:complexType>
+				ref="service:service-summary" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
 
 	<xs:element name="services">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="activities:services" >
-			<xs:complexContent>
-		<xs:complexType>
-	<xs:element>
+				<xs:extension base="activities:services" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 	
 	<xs:complexType name="work-group">
 		<xs:sequence>

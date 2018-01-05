@@ -20,11 +20,12 @@ import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
 import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Organization;
+import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 
-public interface Affiliation {
+public interface Affiliation extends OrganizationHolder {
     String getDepartmentName();
 
     void setDepartmentName(String value);

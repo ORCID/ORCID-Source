@@ -72,49 +72,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      */
     @Override
     public Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        activityValidator.validateEducation(education, sourceEntity, true, isApiRequest, null);
-
-        if (isApiRequest) {
-            checkAffiliationExternalIDsForDuplicates(orcid, education, sourceEntity);
-        }
-
-        OrgAffiliationRelationEntity educationEntity = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education);
-
-        // Updates the give organization with the latest organization from
-        // database
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
-        educationEntity.setOrg(updatedOrganization);
-
-        // Set source id
-        if (sourceEntity.getSourceProfile() != null) {
-            educationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-
-        if (sourceEntity.getSourceClient() != null) {
-            educationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        }
-
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        educationEntity.setProfile(profile);
-        setIncomingWorkPrivacy(educationEntity, profile);
-        educationEntity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
-        orgAffiliationRelationDao.persist(educationEntity);
-        orgAffiliationRelationDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
-        return jpaJaxbEducationAdapter.toEducation(educationEntity);
-    }
-
-    private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, SourceEntity sourceEntity) {
-        List<Affiliation> affiliations = getAffiliations(orcid);
-        if (affiliations != null) {
-            for (Affiliation affiliation : affiliations) {
-                if (incoming.getClass().isAssignableFrom(affiliation.getClass())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(incoming.getExternalIDs(), affiliation.getExternalIDs(), affiliation.getSource(),
-                            sourceEntity);
-                }
-            }
-        }
+        return (Education) createAffiliation(orcid, education, isApiRequest, AffiliationType.EDUCATION);
     }
 
     /**
@@ -128,39 +86,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      */
     @Override
     public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
-        OrgAffiliationRelationEntity educationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, education.getPutCode());
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        // Save the original source
-        String existingSourceId = educationEntity.getSourceId();
-        String existingClientSourceId = educationEntity.getClientSourceId();
-
-        org.orcid.jaxb.model.common_v2.Visibility originalVisibility = educationEntity.getVisibility();
-        orcidSecurityManager.checkSource(educationEntity);
-
-        activityValidator.validateEducation(education, sourceEntity, false, isApiRequest,
-                org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(originalVisibility.value()));
-
-        if (isApiRequest) {
-            checkAffiliationExternalIDsForDuplicates(orcid, education, sourceEntity);
-        }
-
-        jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education, educationEntity);
-        educationEntity.setVisibility(originalVisibility);
-
-        // Be sure it doesn't overwrite the source
-        educationEntity.setSourceId(existingSourceId);
-        educationEntity.setClientSourceId(existingClientSourceId);
-
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
-        educationEntity.setOrg(updatedOrganization);
-
-        educationEntity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);
-        educationEntity = orgAffiliationRelationDao.merge(educationEntity);
-        orgAffiliationRelationDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
-        return jpaJaxbEducationAdapter.toEducation(educationEntity);
+        return (Education) updateAffiliation(orcid, education, isApiRequest, AffiliationType.EDUCATION);
     }
 
     /**
@@ -174,37 +100,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      */
     @Override
     public Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        activityValidator.validateEmployment(employment, sourceEntity, true, isApiRequest, null);
-
-        if (isApiRequest) {
-            checkAffiliationExternalIDsForDuplicates(orcid, employment, sourceEntity);
-        }
-
-        OrgAffiliationRelationEntity employmentEntity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment);
-
-        // Updates the give organization with the latest organization from
-        // database
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
-        employmentEntity.setOrg(updatedOrganization);
-
-        // Set source id
-        if (sourceEntity.getSourceProfile() != null) {
-            employmentEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-
-        if (sourceEntity.getSourceClient() != null) {
-            employmentEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        }
-
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        employmentEntity.setProfile(profile);
-        setIncomingWorkPrivacy(employmentEntity, profile);
-        employmentEntity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);
-        orgAffiliationRelationDao.persist(employmentEntity);
-        orgAffiliationRelationDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
-        return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
+        return (Employment) createAffiliation(orcid, employment, isApiRequest, AffiliationType.EMPLOYMENT);
     }
 
     /**
@@ -218,40 +114,116 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      */
     @Override
     public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
-        OrgAffiliationRelationEntity employmentEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, employment.getPutCode());
-        org.orcid.jaxb.model.common_v2.Visibility originalVisibility = employmentEntity.getVisibility();
+        return (Employment) updateAffiliation(orcid, employment, isApiRequest, AffiliationType.EMPLOYMENT);
+    }
+    
+    private Affiliation createAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        activityValidator.validateAffiliation(affiliation, sourceEntity, true, isApiRequest, null);
+
+        if (isApiRequest) {
+                checkAffiliationExternalIDsForDuplicates(orcid, affiliation, sourceEntity);
+        }
+
+        OrgAffiliationRelationEntity entity = null;
+        
+        if(type.equals(AffiliationType.EDUCATION)) {
+            entity = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity((Education) affiliation);
+        } else if(type.equals(AffiliationType.EMPLOYMENT)) {
+            entity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity((Employment) affiliation);
+        }
+        
+        // Updates the give organization with the latest organization from
+        // database
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
+        entity.setOrg(updatedOrganization);
+
+        // Set source id
+        if (sourceEntity.getSourceProfile() != null) {
+            entity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+
+        if (sourceEntity.getSourceClient() != null) {
+            entity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        }
+
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        entity.setProfile(profile);
+        setIncomingWorkPrivacy(entity, profile);
+        if(type.equals(AffiliationType.EDUCATION)) {
+            entity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);
+        } else if(type.equals(AffiliationType.EMPLOYMENT)) {
+            entity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);
+        }
+        orgAffiliationRelationDao.persist(entity);
+        orgAffiliationRelationDao.flush();
+        
+        Affiliation result = null;
+        if(type.equals(AffiliationType.EDUCATION)) {
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(entity));
+            result = jpaJaxbEducationAdapter.toEducation(entity);
+        } else if (type.equals(AffiliationType.EMPLOYMENT)) {
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(entity));
+            result = jpaJaxbEmploymentAdapter.toEmployment(entity);
+        }
+        return result;
+    }
+    
+    public Affiliation updateAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
+        OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliation.getPutCode());
+
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Save the original source
-        String existingSourceId = employmentEntity.getSourceId();
-        String existingClientSourceId = employmentEntity.getClientSourceId();
+        String existingSourceId = entity.getSourceId();
+        String existingClientSourceId = entity.getClientSourceId();
 
-        orcidSecurityManager.checkSource(employmentEntity);
+        org.orcid.jaxb.model.common_v2.Visibility originalVisibility = entity.getVisibility();
+        orcidSecurityManager.checkSource(entity);
 
-        activityValidator.validateEmployment(employment, sourceEntity, false, isApiRequest,
+        activityValidator.validateAffiliation(affiliation, sourceEntity, false, isApiRequest,
                 org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(originalVisibility.value()));
 
         if (isApiRequest) {
-            checkAffiliationExternalIDsForDuplicates(orcid, employment, sourceEntity);
+            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, sourceEntity);
         }
 
-        jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment, employmentEntity);
-        employmentEntity.setVisibility(originalVisibility);
+        if(type.equals(AffiliationType.EDUCATION)) {
+            jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity((Education) affiliation, entity);            
+        } else if(type.equals(AffiliationType.EMPLOYMENT)) {
+            jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity((Employment) affiliation, entity);            
+        }
+        
+        entity.setVisibility(originalVisibility);
 
         // Be sure it doesn't overwrite the source
-        employmentEntity.setSourceId(existingSourceId);
-        employmentEntity.setClientSourceId(existingClientSourceId);
+        entity.setSourceId(existingSourceId);
+        entity.setClientSourceId(existingClientSourceId);
 
         // Updates the give organization with the latest organization from
         // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
-        employmentEntity.setOrg(updatedOrganization);
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
+        entity.setOrg(updatedOrganization);
 
-        employmentEntity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);
-        employmentEntity = orgAffiliationRelationDao.merge(employmentEntity);
+        if(type.equals(AffiliationType.EDUCATION)) {
+            entity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);            
+        } else if(type.equals(AffiliationType.EMPLOYMENT)) {
+            entity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);            
+        }
+        
+        entity = orgAffiliationRelationDao.merge(entity);
         orgAffiliationRelationDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
-        return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
+        
+        Affiliation result = null;
+        if(type.equals(AffiliationType.EDUCATION)) {
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(entity));
+            result = jpaJaxbEducationAdapter.toEducation(entity);
+        } else if(type.equals(AffiliationType.EMPLOYMENT)) {
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(entity));
+            result = jpaJaxbEmploymentAdapter.toEmployment(entity);
+        }
+        
+        return result;
     }
 
     /**
@@ -319,5 +291,17 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Override
     public void removeAllAffiliations(String orcid) {
         orgAffiliationRelationDao.removeAllAffiliations(orcid);
+    }
+    
+    private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, SourceEntity sourceEntity) {
+        List<Affiliation> affiliations = getAffiliations(orcid);
+        if (affiliations != null) {
+            for (Affiliation affiliation : affiliations) {
+                if (incoming.getClass().isAssignableFrom(affiliation.getClass())) {
+                    activityValidator.checkExternalIdentifiersForDuplicates(incoming.getExternalIDs(), affiliation.getExternalIDs(), affiliation.getSource(),
+                            sourceEntity);
+                }
+            }
+        }
     }
 }
