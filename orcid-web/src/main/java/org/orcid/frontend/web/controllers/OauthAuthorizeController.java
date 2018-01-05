@@ -153,13 +153,17 @@ public class OauthAuthorizeController extends OauthControllerBase {
 
                 requestParams.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
 
-                // Check if the client have persistent tokens enabled
-                if (requestParams.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN) == null){
+                boolean hasPersistent = hasPersistenTokensEnabled(requestInfoForm.getClientId());
+                // Don't let non persistent clients persist
+                if (!hasPersistent && "true".equals(requestParams.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN))){
                     requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
-                    if (hasPersistenTokensEnabled(requestInfoForm.getClientId())) {
-                        // Then check if the client granted the persistent token
+                }
+                //default to client default if not set
+                if (requestParams.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN) == null) {
+                    if (hasPersistent)
                         requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
-                    }                    
+                    else
+                        requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
                 }
 
                 // Session status
