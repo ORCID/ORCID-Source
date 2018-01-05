@@ -280,7 +280,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         }
         
         for(OAuth2AccessToken token : existingTokens) {
-            if(!token.isExpired() && token.getExpiration().after(java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(1)))) {
+            if (token.getAdditionalInformation().get("persistent") != null && Boolean.valueOf((token.getAdditionalInformation().get("persistent").toString()))){
                 if(token.getScope().containsAll(scopes) && scopes.containsAll(token.getScope())) {
                     return true;
                 }

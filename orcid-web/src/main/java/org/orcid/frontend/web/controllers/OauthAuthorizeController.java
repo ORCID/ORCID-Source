@@ -131,13 +131,6 @@ public class OauthAuthorizeController extends OauthControllerBase {
             }else if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)){
                 request.getParameterMap().remove(OrcidOauth2Constants.PROMPT);
                 return oauthLoginController.loginGetHandler(request,response,new ModelAndView());
-            }else if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
-                String redirectUriWithParams = requestInfoForm.getRedirectUrl();
-                redirectUriWithParams += "?error=interaction_required";
-                RedirectView rView = new RedirectView(redirectUriWithParams);
-                ModelAndView error = new ModelAndView();
-                error.setView(rView);
-                return error;
             }
         }
 
@@ -161,10 +154,12 @@ public class OauthAuthorizeController extends OauthControllerBase {
                 requestParams.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
 
                 // Check if the client have persistent tokens enabled
-                requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
-                if (hasPersistenTokensEnabled(requestInfoForm.getClientId())) {
-                    // Then check if the client granted the persistent token
-                    requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
+                if (requestParams.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN) == null){
+                    requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
+                    if (hasPersistenTokensEnabled(requestInfoForm.getClientId())) {
+                        // Then check if the client granted the persistent token
+                        requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
+                    }                    
                 }
 
                 // Session status
@@ -183,6 +178,18 @@ public class OauthAuthorizeController extends OauthControllerBase {
                 return authCodeView;
             }
         }                                
+        
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
+            String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
+            if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
+                String redirectUriWithParams = requestInfoForm.getRedirectUrl();
+                redirectUriWithParams += "?error=interaction_required";
+                RedirectView rView = new RedirectView(redirectUriWithParams);
+                ModelAndView error = new ModelAndView();
+                error.setView(rView);
+                return error;
+            }
+        }
         
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("originalOauth2Process", true);
