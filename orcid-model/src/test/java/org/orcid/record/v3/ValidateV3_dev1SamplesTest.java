@@ -1085,6 +1085,24 @@ public class ValidateV3_dev1SamplesTest {
         marshall(object, "/record_3.0_dev1/education-3.0_dev1.xsd");
     }
     
+    @Test
+    public void testMarshallEducations() throws JAXBException, SAXException, URISyntaxException {
+        Educations object = (Educations) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/educations-3.0_dev1.xml", Educations.class);
+        marshall(object, "/record_3.0_dev1/activities-3.0_dev1.xsd");
+    }
+    
+    @Test
+    public void testMarshallEmployment() throws JAXBException, SAXException, URISyntaxException {
+        Employment object = (Employment) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/employment-3.0_dev1.xml", Employment.class);
+        marshall(object, "/record_3.0_dev1/employment-3.0_dev1.xsd");
+    }
+    
+    @Test
+    public void testMarshallEmployments() throws JAXBException, SAXException, URISyntaxException {
+        Employments object = (Employments) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/employments-3.0_dev1.xml", Employments.class);
+        marshall(object, "/record_3.0_dev1/activities-3.0_dev1.xsd");
+    }
+    
     private Object unmarshallFromPath(String path, Class<?> type) throws SAXException, URISyntaxException {
         return unmarshallFromPath(path, type, null);
     }
@@ -1141,6 +1159,12 @@ public class ValidateV3_dev1SamplesTest {
                 result = (Works) obj;
             } else if(Education.class.equals(type)) {
                 result = (Education) obj;
+            } else if(Educations.class.equals(type)) {
+                result = (Educations) obj;
+            } else if(Employment.class.equals(type)) {
+                result = (Employment) obj;
+            } else if(Employments.class.equals(type)) {
+                result = (Employments) obj;
             }
             return result;
         } catch (IOException e) {

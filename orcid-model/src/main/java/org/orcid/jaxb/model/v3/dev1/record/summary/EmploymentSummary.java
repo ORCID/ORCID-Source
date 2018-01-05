@@ -41,15 +41,15 @@ import org.orcid.jaxb.model.v3.dev1.record.SourceAware;
 public class EmploymentSummary implements VisibilityType, Activity, Serializable, SourceAware {
             
     private static final long serialVersionUID = 6988028860521476955L;
-    @XmlElement(name="department-name", namespace = "http://www.orcid.org/ns/employment")
+    @XmlElement(name="department-name", namespace = "http://www.orcid.org/ns/common")
     protected String departmentName;
-    @XmlElement(name="role-title", namespace = "http://www.orcid.org/ns/employment")
+    @XmlElement(name="role-title", namespace = "http://www.orcid.org/ns/common")
     protected String roleTitle;
     @XmlElement(name="start-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
     @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
-    @XmlElement(name="organization", namespace = "http://www.orcid.org/ns/employment")
+    @XmlElement(name="organization", namespace = "http://www.orcid.org/ns/common")
     protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
@@ -57,7 +57,6 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name="created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
-
     @XmlAttribute(name="put-code")
     protected Long putCode;
     @XmlAttribute(name="path")

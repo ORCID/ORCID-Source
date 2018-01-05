@@ -19,14 +19,25 @@
 			</common:source-orcid>
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
-		<employment:department-name>employment</employment:department-name>
-		<employment:organization>
+		<common:department-name>employment</common:department-name>
+		<common:role-title>employment:role-title</common:role-title>
+		<common:start-date>
+			<common:year>1848</common:year>
+			<common:month>02</common:month>
+			<common:day>02</common:day>
+		</common:start-date>
+		<common:end-date>
+			<common:year>1848</common:year>
+			<common:month>02</common:month>
+			<common:day>02</common:day>
+		</common:end-date>	
+		<common:organization>
 			<common:name>employment</common:name>
 			<common:address>
 				<common:city>x</common:city>
 				<common:country>AS</common:country>
 			</common:address>
-		</employment:organization>
+		</common:organization>
 	</employment:employment-summary>
 	<employment:employment-summary put-code="1"
 		path="/8888-8888-8888-8888/employment/1" visibility="public">
@@ -40,13 +51,24 @@
 			</common:source-orcid>
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
-		<employment:department-name>employment</employment:department-name>
-		<employment:organization>
+		<common:department-name>employment</common:department-name>
+		<common:role-title>employment:role-title</common:role-title>
+		<common:start-date>
+			<common:year>1848</common:year>
+			<common:month>02</common:month>
+			<common:day>02</common:day>
+		</common:start-date>
+		<common:end-date>
+			<common:year>1848</common:year>
+			<common:month>02</common:month>
+			<common:day>02</common:day>
+		</common:end-date>	
+		<common:organization>
 			<common:name>employment</common:name>
 			<common:address>
 				<common:city>x</common:city>
 				<common:country>AS</common:country>
 			</common:address>
-		</employment:organization>
+		</common:organization>
 	</employment:employment-summary>
 </activities:employments>

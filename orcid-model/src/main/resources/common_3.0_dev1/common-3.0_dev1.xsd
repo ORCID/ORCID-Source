@@ -1634,7 +1634,7 @@
 	 
 	<xs:complexType name="affiliation">
 		<xs:complexContent>
-			<xs:extension base="common:affiliation-summary">
+			<xs:extension base="common:element-summary">
 				<xs:sequence>
 					<xs:element name="department-name" type="common:long-text"
 						minOccurs="0" maxOccurs="1" />

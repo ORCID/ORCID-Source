@@ -58,15 +58,15 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 public class Employment implements Serializable, Affiliation, Filterable, Activity, OrganizationHolder, SourceAware {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "department-name")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "department-name")
     protected String departmentName;
-    @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "role-title")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "role-title")
     protected String roleTitle;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date", required = true)
     protected FuzzyDate startDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "end-date")
     protected FuzzyDate endDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/employment", required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", required = true)
     protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
@@ -74,7 +74,7 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/employment")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Url url;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs employmentExternalIdentifiers;

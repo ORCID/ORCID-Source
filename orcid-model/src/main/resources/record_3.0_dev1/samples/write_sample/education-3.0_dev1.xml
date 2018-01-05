@@ -15,7 +15,7 @@
 		<common:month>05</common:month>
 		<common:day>01</common:day>
 	</common:end-date>
-	<education:organization>
+	<common:organization>
 		<common:name>Massachusetts Institute of Technology</common:name>
 		<common:address>
 			<common:city>Cambridge</common:city>
@@ -26,8 +26,8 @@
 			<common:disambiguated-organization-identifier>2167</common:disambiguated-organization-identifier>
 			<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 		</common:disambiguated-organization>
-	</education:organization>
-	<education:url>http://tempuri.org</education:url>	
+	</common:organization>
+	<common:url>http://tempuri.org</common:url>	
 	<common:external-ids>
         <common:external-id>
             <common:external-id-type>grant_number</common:external-id-type>

@@ -41,15 +41,15 @@ import org.orcid.jaxb.model.v3.dev1.record.SourceAware;
 public class EducationSummary implements Filterable, Activity, Serializable, SourceAware {
             
     private static final long serialVersionUID = 6988028860521476955L;
-    @XmlElement(name="department-name", namespace = "http://www.orcid.org/ns/education")
+    @XmlElement(name="department-name", namespace = "http://www.orcid.org/ns/common")
     protected String departmentName;
-    @XmlElement(name="role-title", namespace = "http://www.orcid.org/ns/education")
+    @XmlElement(name="role-title", namespace = "http://www.orcid.org/ns/common")
     protected String roleTitle;
     @XmlElement(name="start-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
     @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
-    @XmlElement(name="organization", namespace = "http://www.orcid.org/ns/education")
+    @XmlElement(name="organization", namespace = "http://www.orcid.org/ns/common")
     protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
