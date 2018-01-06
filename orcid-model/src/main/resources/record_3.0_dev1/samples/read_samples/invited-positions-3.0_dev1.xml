@@ -19,14 +19,14 @@
 			</common:source-orcid>
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
-		<invited-position:department-name>invited-position</invited-position:department-name>
-		<invited-position:organization>
+		<common:department-name>invited-position</common:department-name>
+		<common:organization>
 			<common:name>invited-position</common:name>
 			<common:address>
 				<common:city>x</common:city>
 				<common:country>AS</common:country>
 			</common:address>
-		</invited-position:organization>
+		</common:organization>
 	</invited-position:invited-position-summary>
 	<invited-position:invited-position-summary put-code="1"
 		path="/8888-8888-8888-8888/employment/1" visibility="public">
@@ -40,13 +40,13 @@
 			</common:source-orcid>
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
-		<invited-position:department-name>invited-position</invited-position:department-name>
-		<invited-position:organization>
+		<common:department-name>invited-position</common:department-name>
+		<common:organization>
 			<common:name>invited-position</common:name>
 			<common:address>
 				<common:city>x</common:city>
 				<common:country>AS</common:country>
 			</common:address>
-		</invited-position:organization>
+		</common:organization>
 	</invited-position:invited-position-summary>
 </activities:invited-positions>

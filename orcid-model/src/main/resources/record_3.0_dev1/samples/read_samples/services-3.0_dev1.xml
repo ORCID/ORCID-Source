@@ -19,14 +19,14 @@
 			</common:source-orcid>
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
-		<service:department-name>service</service:department-name>
-		<service:organization>
+		<common:department-name>service</common:department-name>
+		<common:organization>
 			<common:name>service</common:name>
 			<common:address>
 				<common:city>x</common:city>
 				<common:country>AS</common:country>
 			</common:address>
-		</service:organization>
+		</common:organization>
 	</service:service-summary>
 	<service:service-summary put-code="1"
 		path="/8888-8888-8888-8888/employment/1" visibility="public">
@@ -40,13 +40,13 @@
 			</common:source-orcid>
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
-		<service:department-name>service</service:department-name>
-		<service:organization>
+		<common:department-name>service</common:department-name>
+		<common:organization>
 			<common:name>service</common:name>
 			<common:address>
 				<common:city>x</common:city>
 				<common:country>AS</common:country>
 			</common:address>
-		</service:organization>
+		</common:organization>
 	</service:service-summary>
 </activities:services>

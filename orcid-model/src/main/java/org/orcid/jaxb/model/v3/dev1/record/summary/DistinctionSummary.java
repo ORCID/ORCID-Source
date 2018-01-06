@@ -20,11 +20,11 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
-public class EducationSummary extends AffiliationSummary implements Serializable {
+@XmlRootElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
+public class DistinctionSummary extends AffiliationSummary implements Serializable {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 5825435929626191645L;
+    private static final long serialVersionUID = 3789966609440238219L;
 }

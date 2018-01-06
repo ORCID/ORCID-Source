@@ -19,14 +19,14 @@
 			</common:source-orcid>
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
-		<qualification:department-name>qualification</qualification:department-name>
-		<qualification:organization>
+		<common:department-name>qualification</common:department-name>
+		<common:organization>
 			<common:name>qualification</common:name>
 			<common:address>
 				<common:city>x</common:city>
 				<common:country>AS</common:country>
 			</common:address>
-		</qualification:organization>
+		</common:organization>
 	</qualification:qualification-summary>
 	<qualification:qualification-summary put-code="1"
 		path="/8888-8888-8888-8888/employment/1" visibility="public">
@@ -40,13 +40,13 @@
 			</common:source-orcid>
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
-		<qualification:department-name>qualification</qualification:department-name>
-		<qualification:organization>
+		<common:department-name>qualification</common:department-name>
+		<common:organization>
 			<common:name>qualification</common:name>
 			<common:address>
 				<common:city>x</common:city>
 				<common:country>AS</common:country>
 			</common:address>
-		</qualification:organization>
+		</common:organization>
 	</qualification:qualification-summary>
 </activities:qualifications>

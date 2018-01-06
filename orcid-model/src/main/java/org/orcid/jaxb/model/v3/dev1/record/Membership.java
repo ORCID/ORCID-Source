@@ -37,11 +37,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * 
  */
-@XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
-public class Education extends Affiliation implements Serializable {
+@XmlRootElement(name = "membership", namespace = "http://www.orcid.org/ns/membership")
+public class Membership extends Affiliation implements Serializable {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -7968319458844382574L;
+    private static final long serialVersionUID = -5980230510197401171L;
+
 }

@@ -13,8 +13,8 @@
 		</common:source-orcid>
 		<common:source-name />
 	</common:source>
-	<invited-position:department-name>invited-position:department-name</invited-position:department-name>
-	<invited-position:role-title>invited-position:role-title</invited-position:role-title>
+	<common:department-name>invited-position:department-name</common:department-name>
+	<common:role-title>invited-position:role-title</common:role-title>
 	<common:start-date>
 		<common:year>1848</common:year>
 		<common:month>02</common:month>
@@ -25,7 +25,7 @@
 		<common:month>02</common:month>
 		<common:day>02</common:day>
 	</common:end-date>
-	<invited-position:organization>
+	<common:organization>
 		<common:name>common:name</common:name>
 		<common:address>
 			<common:city>common:city</common:city>
@@ -36,8 +36,8 @@
             <common:disambiguated-organization-identifier>http://dx.doi.org/10.13039/100000001</common:disambiguated-organization-identifier>
             <common:disambiguation-source>FUNDREF</common:disambiguation-source>
         </common:disambiguated-organization>
-	</invited-position:organization>		
-	<invited-position:url>http://tempuri.org</invited-position:url> 
+	</common:organization>		
+	<common:url>http://tempuri.org</common:url> 
 	<common:external-ids>
         <common:external-id>
             <common:external-id-type>grant_number</common:external-id-type>

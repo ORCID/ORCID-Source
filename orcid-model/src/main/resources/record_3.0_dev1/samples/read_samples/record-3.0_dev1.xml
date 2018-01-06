@@ -183,8 +183,8 @@
 					</common:source-orcid>
 					<common:source-name />
 				</common:source>
-				<distinction:department-name>distinction:department-name</distinction:department-name>
-				<distinction:role-title>distinction:role-title</distinction:role-title>
+				<common:department-name>distinction:department-name</common:department-name>
+				<common:role-title>distinction:role-title</common:role-title>
 				<common:start-date>
 					<common:year>2014</common:year>
 					<common:month>12</common:month>
@@ -195,7 +195,7 @@
 					<common:month>12</common:month>
 					<common:day>20</common:day>
 				</common:end-date>
-				<distinction:organization>
+				<common:organization>
 					<common:name>common:name</common:name>
 					<common:address>
 						<common:city>common:city</common:city>
@@ -206,7 +206,7 @@
 						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 					</common:disambiguated-organization>
-				</distinction:organization>
+				</common:organization>
 			</distinction:distinction-summary>
 		</activities:distinctions>
 		<activities:educations>
@@ -223,8 +223,8 @@
 					</common:source-orcid>
 					<common:source-name />
 				</common:source>
-				<education:department-name>education:department-name</education:department-name>
-				<education:role-title>education:role-title</education:role-title>
+				<common:department-name>education:department-name</common:department-name>
+				<common:role-title>education:role-title</common:role-title>
 				<common:start-date>
 					<common:year>1848</common:year>
 					<common:month>02</common:month>
@@ -235,7 +235,7 @@
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:end-date>
-				<education:organization>
+				<common:organization>
 					<common:name>common:name</common:name>
 					<common:address>
 						<common:city>common:city</common:city>
@@ -246,7 +246,7 @@
 						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 					</common:disambiguated-organization>
-				</education:organization>
+				</common:organization>
 			</education:education-summary>
 		</activities:educations>
 		<activities:employments>
@@ -264,8 +264,8 @@
 					</common:source-orcid>
 					<common:source-name />
 				</common:source>
-				<employment:department-name>employment:department-name</employment:department-name>
-				<employment:role-title>employment:role-title</employment:role-title>
+				<common:department-name>employment:department-name</common:department-name>
+				<common:role-title>employment:role-title</common:role-title>
 				<common:start-date>
 					<common:year>1848</common:year>
 					<common:month>02</common:month>
@@ -276,7 +276,7 @@
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:end-date>
-				<employment:organization>
+				<common:organization>
 					<common:name>common:name</common:name>
 					<common:address>
 						<common:city>common:city</common:city>
@@ -287,7 +287,7 @@
 						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 					</common:disambiguated-organization>
-				</employment:organization>
+				</common:organization>
 			</employment:employment-summary>
 		</activities:employments>
 		<activities:fundings>
@@ -363,8 +363,8 @@
 				</common:source-orcid>
 				<common:source-name />
 			</common:source>
-			<invited-position:department-name>invited-position:department-name</invited-position:department-name>
-			<invited-position:role-title>invited-position:role-title</invited-position:role-title>
+			<common:department-name>invited-position:department-name</common:department-name>
+			<common:role-title>invited-position:role-title</common:role-title>
 			<common:start-date>
 				<common:year>2014</common:year>
 				<common:month>12</common:month>
@@ -375,7 +375,7 @@
 				<common:month>12</common:month>
 				<common:day>20</common:day>
 			</common:end-date>
-			<invited-position:organization>
+			<common:organization>
 				<common:name>common:name</common:name>
 				<common:address>
 					<common:city>common:city</common:city>
@@ -386,7 +386,7 @@
 					<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 					<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 				</common:disambiguated-organization>
-			</invited-position:organization>
+			</common:organization>
 		</invited-position:invited-position-summary>
 	</activities:invited-positions>
 	<activities:memberships path="http://orcid.org/v3.0_dev1/8888-8888-8888-8880/memberships">
@@ -403,8 +403,8 @@
 					</common:source-orcid>
 					<common:source-name />
 				</common:source>
-				<membership:department-name>membership:department-name</membership:department-name>
-				<membership:role-title>membership:role-title</membership:role-title>
+				<common:department-name>membership:department-name</common:department-name>
+				<common:role-title>membership:role-title</common:role-title>
 				<common:start-date>
 					<common:year>2014</common:year>
 					<common:month>12</common:month>
@@ -415,7 +415,7 @@
 					<common:month>12</common:month>
 					<common:day>20</common:day>
 				</common:end-date>
-				<membership:organization>
+				<common:organization>
 					<common:name>common:name</common:name>
 					<common:address>
 						<common:city>common:city</common:city>
@@ -426,7 +426,7 @@
 						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 					</common:disambiguated-organization>
-				</membership:organization>
+				</common:organization>
 			</membership:membership-summary>
 		</activities:memberships>
 		<activities:qualifications path="http://orcid.org/v3.0_dev1/8888-8888-8888-8880/qualifications">
@@ -443,8 +443,8 @@
 					</common:source-orcid>
 					<common:source-name />
 				</common:source>
-				<qualification:department-name>qualification:department-name</qualification:department-name>
-				<qualification:role-title>qualification:role-title</qualification:role-title>
+				<common:department-name>qualification:department-name</common:department-name>
+				<common:role-title>qualification:role-title</common:role-title>
 				<common:start-date>
 					<common:year>2014</common:year>
 					<common:month>12</common:month>
@@ -455,7 +455,7 @@
 					<common:month>12</common:month>
 					<common:day>20</common:day>
 				</common:end-date>
-				<qualification:organization>
+				<common:organization>
 					<common:name>common:name</common:name>
 					<common:address>
 						<common:city>common:city</common:city>
@@ -466,7 +466,7 @@
 						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 					</common:disambiguated-organization>
-				</qualification:organization>
+				</common:organization>
 			</qualification:qualification-summary>
 		</activities:qualifications>
 		<activities:peer-reviews>
@@ -536,8 +536,8 @@
 					</common:source-orcid>
 					<common:source-name />
 				</common:source>
-				<service:department-name>service:department-name</service:department-name>
-				<service:role-title>service:role-title</service:role-title>
+				<common:department-name>service:department-name</common:department-name>
+				<common:role-title>service:role-title</common:role-title>
 				<common:start-date>
 					<common:year>2014</common:year>
 					<common:month>12</common:month>
@@ -548,7 +548,7 @@
 					<common:month>12</common:month>
 					<common:day>20</common:day>
 				</common:end-date>
-				<service:organization>
+				<common:organization>
 					<common:name>common:name</common:name>
 					<common:address>
 						<common:city>common:city</common:city>
@@ -559,7 +559,7 @@
 						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 					</common:disambiguated-organization>
-				</service:organization>
+				</common:organization>
 			</service:service-summary>
 		</activities:services>
 		<activities:works>
