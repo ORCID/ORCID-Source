@@ -631,6 +631,80 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
+    
+    
+    
+    
+    
+    
+    
+    //TODO!!!!!
+    public MapperFacade getDistinctionMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("distinctionExternalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
+        
+        ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
+        addV3CommonFields(educationClassMap);
+        registerSourceConverters(mapperFactory, educationClassMap);                
+        educationClassMap.fieldBToA("org.name", "organization.name");
+        educationClassMap.fieldBToA("org.city", "organization.address.city");
+        educationClassMap.fieldBToA("org.region", "organization.address.region");
+        educationClassMap.fieldBToA("org.country", "organization.address.country");
+        educationClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
+        educationClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
+        educationClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
+        
+        educationClassMap.fieldAToB("url.value", "url");
+        educationClassMap.fieldBToA("url", "url.value");
+        
+        educationClassMap.fieldMap("educationExternalIdentifiers", "externalIdentifiersJson").converter("educationExternalIdentifiersConverterId").add();
+        
+        educationClassMap.field("departmentName", "department");
+        educationClassMap.field("roleTitle", "title");
+        educationClassMap.register();
+
+        ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> educationSummaryClassMap = mapperFactory.classMap(EducationSummary.class,
+                OrgAffiliationRelationEntity.class);
+        addV3CommonFields(educationSummaryClassMap);
+        registerSourceConverters(mapperFactory, educationSummaryClassMap);
+        educationSummaryClassMap.fieldBToA("org.name", "organization.name");
+        educationSummaryClassMap.fieldBToA("org.city", "organization.address.city");
+        educationSummaryClassMap.fieldBToA("org.region", "organization.address.region");
+        educationSummaryClassMap.fieldBToA("org.country", "organization.address.country");
+        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
+        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
+        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
+        educationSummaryClassMap.field("departmentName", "department");
+        educationSummaryClassMap.field("roleTitle", "title");
+        educationSummaryClassMap.register();
+
+        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
+        return mapperFactory.getMapperFacade();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     public MapperFacade getPeerReviewMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();

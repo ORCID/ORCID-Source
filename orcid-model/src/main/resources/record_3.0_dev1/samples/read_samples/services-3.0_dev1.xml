@@ -5,7 +5,7 @@
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:service="http://www.orcid.org/ns/service"
 	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.0.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-3.0_dev1.xsd ">
 	<common:last-modified-date>2017-01-18T13:32:45.500-06:00</common:last-modified-date>
 	<service:service-summary put-code="1"
 		path="/8888-8888-8888-8888/employment/1" visibility="public">
@@ -20,6 +20,11 @@
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
 		<common:department-name>service</common:department-name>
+		<common:start-date>
+			<common:year>1848</common:year>
+			<common:month>02</common:month>
+			<common:day>02</common:day>
+		</common:start-date>
 		<common:organization>
 			<common:name>service</common:name>
 			<common:address>
@@ -41,6 +46,11 @@
 			<common:source-name>User One Credit name</common:source-name>
 		</common:source>
 		<common:department-name>service</common:department-name>
+		<common:start-date>
+			<common:year>1848</common:year>
+			<common:month>02</common:month>
+			<common:day>02</common:day>
+		</common:start-date>
 		<common:organization>
 			<common:name>service</common:name>
 			<common:address>
