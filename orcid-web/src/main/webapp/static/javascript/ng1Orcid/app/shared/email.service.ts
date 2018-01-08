@@ -81,6 +81,28 @@ export class EmailService {
         .share();
     }
 
+    getEmailFrequencies(): Observable<any> {
+        return this.http.get(
+            window.location.href + '/email-frequencies.json'
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {
+                this.emails = data;
+                
+                for (let i in data.emails){
+                    //console.log('data.emails[i]', data.emails[i]);
+                    if (data.emails[i].primary == true){
+                        this.primaryEmail = data.emails[i];
+                    }
+                }                                                
+            }
+        )
+        .share();
+    }
+
     getEmailPrimary(): any {
         return this.primaryEmail;
     }
@@ -130,6 +152,29 @@ export class EmailService {
         
         return this.http.post( 
             this.url, 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {
+                this.inputEmail = data;
+                if (this.inputEmail.errors.length == 0) {
+                    this.initInputEmail();
+                    this.getEmails();
+                }                         
+            }
+        )
+        .share();
+    }
+
+    saveEmailFrequencies( obj ): Observable<any> {
+        let encoded_data = JSON.stringify( obj );
+        
+        return this.http.post( 
+            window.location.href + '/email-frequencies.json', 
             encoded_data, 
             { headers: this.headers }
         )

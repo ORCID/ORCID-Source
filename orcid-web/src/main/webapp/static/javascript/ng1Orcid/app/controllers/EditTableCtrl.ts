@@ -1,3 +1,5 @@
+//migrated
+
 declare var fixZindexIE7: any;
 declare var om: any;
 

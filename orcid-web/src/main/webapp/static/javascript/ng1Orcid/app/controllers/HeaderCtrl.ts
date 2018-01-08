@@ -1,3 +1,5 @@
+//migrated
+
 declare var getWindowWidth: any;
 
 import * as angular from 'angular';
