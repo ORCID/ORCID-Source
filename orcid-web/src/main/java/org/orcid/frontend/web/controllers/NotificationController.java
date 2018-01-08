@@ -180,11 +180,13 @@ public class NotificationController extends BaseController {
 
     @RequestMapping(value = "/AMENDED/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
     public ModelAndView getAmendedNotificationHtml(@PathVariable("id") String id) {
+        String orcid = getEffectiveUserOrcid();
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         addSourceDescription(notification);
         mav.addObject("notification", notification);
-        mav.addObject("emailName", notificationManager.deriveEmailFriendlyName(getEffectiveProfile()));
+        mav.addObject("emailName", notificationManager.deriveEmailFriendlyName(record));
         mav.setViewName("notification/amended_notification");
         mav.addObject("noIndex", true);
         return mav;

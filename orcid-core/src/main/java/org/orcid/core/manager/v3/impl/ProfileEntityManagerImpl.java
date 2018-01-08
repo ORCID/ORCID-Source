@@ -31,18 +31,18 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.BiographyManager;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.PeerReviewManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
@@ -53,11 +53,10 @@ import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.common.Locale;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
 import org.orcid.jaxb.model.v3.dev1.record.CreditName;
@@ -239,14 +238,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     /**
      * Disable developer tools
      * 
-     * @param profile
-     *            The profile to update
+     * @param orcid
+     *            The orcid to update
      * @return true if the developer tools where disabeled on that profile
      */
     @Override
-    public boolean disableDeveloperTools(OrcidProfile profile) {
-        boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
-        return result;
+    public boolean disableDeveloperTools(String orcid) {
+        return profileDao.updateDeveloperTools(orcid, false);
     }
 
     @Override

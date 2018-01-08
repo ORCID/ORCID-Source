@@ -1,3 +1,5 @@
+//Migrated
+
 declare var getBaseUri: any;
 declare var locale_v3: any;
 declare var orcidVar: any;

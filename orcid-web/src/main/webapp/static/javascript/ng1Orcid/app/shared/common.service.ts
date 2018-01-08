@@ -69,7 +69,7 @@ export class CommonService {
         return date.toUTCString();
     };
 
-        formColorBoxResize(): void {
+    formColorBoxResize(): void {
         if ( isMobile() ) {
             $.colorbox.resize({width: this.formColorBoxWidth(), height: '100%'});
         }

@@ -14,8 +14,14 @@ import { FormsModule }
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
 
+import { ContributorFilterPipe }
+    from '../../pipes/contributorFilterNg2.ts';
+
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
+
+import { LatexPipe }
+    from '../../pipes/latexNg2.ts';
 
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
@@ -89,7 +95,9 @@ import { WorksService }
         ],
         declarations: [ 
             AjaxFormDateToISO8601Pipe,
+            ContributorFilterPipe,
             FilterImportWizardsPipe,
+            LatexPipe,
             OrderByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe
@@ -100,7 +108,9 @@ import { WorksService }
             FormsModule,
             //User Pipes
             AjaxFormDateToISO8601Pipe,
+            ContributorFilterPipe,
             FilterImportWizardsPipe,
+            LatexPipe,
             OrderByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,

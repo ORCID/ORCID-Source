@@ -131,6 +131,13 @@ public class OauthAuthorizeController extends OauthControllerBase {
             }else if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)){
                 request.getParameterMap().remove(OrcidOauth2Constants.PROMPT);
                 return oauthLoginController.loginGetHandler(request,response,new ModelAndView());
+            }else if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
+                String redirectUriWithParams = requestInfoForm.getRedirectUrl();
+                redirectUriWithParams += "?error=interaction_required";
+                RedirectView rView = new RedirectView(redirectUriWithParams);
+                ModelAndView error = new ModelAndView();
+                error.setView(rView);
+                return error;
             }
         }
 

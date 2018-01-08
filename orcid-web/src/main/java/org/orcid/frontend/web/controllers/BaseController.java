@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,6 +72,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.ReleaseNameUtils;
 import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,11 +118,9 @@ public class BaseController {
 
     protected List<String> domainsAllowingRobots;
 
-    protected static final String STATIC_FOLDER_PATH = "/static";
+    protected static final String STATIC_FOLDER_PATH = "/static/" + ReleaseNameUtils.getReleaseName();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
-
-    private Date startupDate = new Date();
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);    
 
     private String staticContentPath;
 
@@ -286,18 +284,6 @@ public class BaseController {
 
     public void setDomainsAllowingRobots(List<String> domainsAllowingRobots) {
         this.domainsAllowingRobots = domainsAllowingRobots;
-    }
-
-    @ModelAttribute("startupDate")
-    public Date getStartupDate() {
-        // If the cdn config file is missing, we are in development env and we
-        // need to refresh the cache
-        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
-        if (!configFile.exists()) {
-            return new Date();
-        }
-
-        return startupDate;
     }
 
     protected OrcidProfileUserDetails getCurrentUser() {
@@ -620,7 +606,7 @@ public class BaseController {
             if (!request.isSecure()) {
                 generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
             }
-            return generatedStaticContentPath + STATIC_FOLDER_PATH;
+            this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;
     }
@@ -643,8 +629,16 @@ public class BaseController {
         if (configFile.exists()) {
             try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String uri = br.readLine();
-                if (uri != null)
+                if (uri != null) {
+                    String releaseVersion = ReleaseNameUtils.getReleaseName();
+                    if(!uri.contains(releaseVersion)) {
+                        if(!uri.endsWith("/")) {
+                            uri += '/';
+                        }
+                        uri += releaseVersion;
+                    }
                     this.staticCdnPath = uri;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
