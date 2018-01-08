@@ -201,18 +201,18 @@ public class ResearcherUrlsTest extends BlackBoxBaseV3_0_dev1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
-        String _351Chars = new String();
-        for (int i = 0; i < 531; i++) {
-            _351Chars += "a";
+        String _2001Chars = new String();
+        for (int i = 0; i < 2001; i++) {
+            _2001Chars += "a";
         }
 
-        rUrlToCreate.setUrl(new org.orcid.jaxb.model.v3.dev1.common.Url(_351Chars));
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.v3.dev1.common.Url(_2001Chars));
         postResponse = memberV3Dev1ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
 
         rUrlToCreate.setUrl(new org.orcid.jaxb.model.v3.dev1.common.Url("http://myurl.com"));
-        rUrlToCreate.setUrlName(_351Chars);
+        rUrlToCreate.setUrlName(_2001Chars);
         postResponse = memberV3Dev1ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());

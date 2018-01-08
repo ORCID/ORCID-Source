@@ -548,6 +548,12 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
                 console.log("some bad is hppending");
             });
         },
+        
+        switchWork: function(group, putCode) {
+            group.activePutCode = putCode;
+            var work = worksSrvc.getWork(putCode);
+            group.activeVisibility = work.visibility.visibility;
+        },
 
         putWork: function(work,sucessFunc, failFunc) {
             $.ajax({

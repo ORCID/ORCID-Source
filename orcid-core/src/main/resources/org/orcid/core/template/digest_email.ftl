@@ -72,7 +72,7 @@ ${(notification.subject)}
 <@emailMacros.msg "email.digest.plaintext.viewyourinbox" /><@emailMacros.space />${baseUri}/inbox
 
 <#assign frequency>
-    <#switch orcidProfile.orcidInternal.preferences.sendEmailFrequencyDays>
+    <#switch emailFrequencyString>
         <#case "0.0"><@emailMacros.msg "email.digest.frequency.immediate" /><#break>
         <#case "7.0"><@emailMacros.msg "email.digest.frequency.weekly" /><#break>
         <#case "91.3105"><@emailMacros.msg "email.digest.frequency.quarterly" /><#break>

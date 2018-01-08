@@ -5,7 +5,9 @@
 
 To creating a client locally see [OAUTH_DEV.md](OAUTH_DEV.md).
 
-## Generate a three step access token
+## Authenticating users and using OAuth / OpenID Connect
+
+### Generate a three step access token
 Generating an access token requires interacting with the Registry interface as a user would when granting access
 
 1. Create an Authorization URL to request access
@@ -56,7 +58,7 @@ Example response:
 
 See the current [XSD documentation](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources) for possible calls.
 
-## Generate a two step (read-public) access token
+### Generate a two step (read-public) access token
 
 Send a request to the ORCID API for a two step token
 
@@ -73,6 +75,11 @@ Example request in curl
 ```
 curl -i -L -H 'Accept: application/json' -d 'client_id=APP-674MCQQR985VZZQ2' -d 'client_secret=d08b711e-9411-788d-a474-46efd3956652' -d 'scope=/read-public' -d 'grant_type=client_credentials' 'https://sandbox.orcid.org/oauth/token'
 ```
+
+### Using OpenID Connect
+
+Please refer to [ORCID's OpenID Connect HOWTO Guide](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/OPEN_ID_CONNECT_HOWTO.md)
+
 ## API Limits
 
 **v1.2**

@@ -69,8 +69,7 @@
         orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
-        orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};
-        orcidVar.version = "${ver}";
+        orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
         orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
         orcidVar.features = JSON.parse("${featuresJson}");
       
@@ -93,31 +92,31 @@
 
     <#include "/macros/orcid_ga.ftl">
     
-    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css?v=${ver}"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
-    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>    
+    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
+    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css"/>
+    <link rel="stylesheet" href="${staticLoc}/css/social.css"/>
+    <link rel="stylesheet" href="${staticLoc}/css/filetypes.css"/>    
     
     <!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
-    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
     
     <#if locale?? && (locale == 'rl' || locale == 'ar' )>
     <!-- just a prototype to show what RTL, expect to switch the cdn to ours -->
     <!-- Load Bootstrap RTL theme from RawGit -->
-    <link rel="stylesheet" href="${staticCdn}/css/bootstrap-rtl.min.css?v=${ver}"> <!-- Src: //cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css -->
+    <link rel="stylesheet" href="${staticCdn}/css/bootstrap-rtl.min.css"> <!-- Src: //cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css -->
     </#if>
 
-    <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     
     <#if springMacroRequestContext.requestUri?contains("/print")>
     <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>
     </#if>
 
-    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css"/>
     
     <!-- this is a manually patched version, we should update when they accept our changes -->
-    <script src="${staticCdn}/javascript/respond.src.js?v=${ver}"></script>
+    <script src="${staticCdn}/javascript/respond.src.js"></script>
     
     <!-- Respond.js proxy on external server -->
     <link href="${staticCdn}/html/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
@@ -137,7 +136,7 @@
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />  
-    <link rel="stylesheet" href="${staticLoc}/css/noto-font.css?v=${ver}"/> 
+    <link rel="stylesheet" href="${staticLoc}/css/noto-font.css"/> 
 
     <!-- ***************************************************** -->
     <!-- Ng2 Templates - BEGIN -->
