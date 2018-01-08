@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URISyntaxException;
 
+import javax.validation.OverridesAttribute.List;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -41,14 +42,55 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.dev1.common.*;
-import org.orcid.jaxb.model.v3.dev1.record.*;
+import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.dev1.common.Locale;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.Addresses;
+import org.orcid.jaxb.model.v3.dev1.record.Biography;
 import org.orcid.jaxb.model.v3.dev1.record.CreditName;
 import org.orcid.jaxb.model.v3.dev1.record.Deprecated;
-import org.orcid.jaxb.model.v3.dev1.record.summary.*;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
+import org.orcid.jaxb.model.v3.dev1.record.Education;
+import org.orcid.jaxb.model.v3.dev1.record.Email;
+import org.orcid.jaxb.model.v3.dev1.record.Emails;
+import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.History;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.dev1.record.Keyword;
+import org.orcid.jaxb.model.v3.dev1.record.Keywords;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.Name;
+import org.orcid.jaxb.model.v3.dev1.record.OtherName;
+import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
+import org.orcid.jaxb.model.v3.dev1.record.Person;
+import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.dev1.record.Preferences;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.dev1.record.Record;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
+import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.xml.sax.SAXException;
 
@@ -747,7 +789,9 @@ public class ValidateV3_dev1SamplesTest {
         Educations educations = activities.getEducations();
         assertNotNull(educations.getLastModifiedDate());
         assertEquals(1, educations.getSummaries().size());
-        EducationSummary education = educations.getSummaries().get(0);
+        java.util.List<? extends AffiliationSummary> educationsList = educations.getSummaries();
+        assertTrue(educationsList.get(0) instanceof EducationSummary);
+        EducationSummary education = (EducationSummary) educationsList.get(0);
         assertEquals(Long.valueOf(0), education.getPutCode());
         assertEquals(Visibility.PRIVATE, education.getVisibility());
         assertEquals("education:department-name", education.getDepartmentName());
@@ -770,7 +814,9 @@ public class ValidateV3_dev1SamplesTest {
         Employments employments = activities.getEmployments();
         assertNotNull(employments.getLastModifiedDate());
         assertEquals(1, employments.getSummaries().size());
-        EmploymentSummary employment = employments.getSummaries().get(0);
+        java.util.List<? extends AffiliationSummary> employmentsList = employments.getSummaries();
+        assertTrue(employmentsList.get(0) instanceof EmploymentSummary);
+        EmploymentSummary employment = (EmploymentSummary) employmentsList.get(0);
         assertEquals(Long.valueOf(0), employment.getPutCode());
         assertEquals(Visibility.PRIVATE, employment.getVisibility());
         assertEquals("employment:department-name", employment.getDepartmentName());
@@ -1256,6 +1302,26 @@ public class ValidateV3_dev1SamplesTest {
                 result = (Employment) obj;
             } else if(Employments.class.equals(type)) {
                 result = (Employments) obj;
+            } else if(Distinction.class.equals(type)) {
+                result = (Distinction) obj;
+            } else if(Distinctions.class.equals(type)) {
+                result = (Distinctions) obj;
+            } else if(InvitedPosition.class.equals(type)) {
+                result = (InvitedPosition) obj;
+            } else if(InvitedPositions.class.equals(type)) {
+                result = (InvitedPositions) obj;
+            } else if(Membership.class.equals(type)) {
+                result = (Membership) obj;
+            } else if(Memberships.class.equals(type)) {
+                result = (Memberships) obj;
+            } else if(Qualification.class.equals(type)) {
+                result = (Qualification) obj;
+            } else if(Qualifications.class.equals(type)) {
+                result = (Qualifications) obj;
+            } else if(Service.class.equals(type)) {
+                result = (Service) obj;
+            } else if(Services.class.equals(type)) {
+                result = (Services) obj;
             }
             return result;
         } catch (IOException e) {

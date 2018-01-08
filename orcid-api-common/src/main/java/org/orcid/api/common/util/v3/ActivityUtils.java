@@ -18,6 +18,15 @@ package org.orcid.api.common.util.v3;
 
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.v3.dev1.common.Contributor;
+import org.orcid.jaxb.model.v3.dev1.record.Activity;
+import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
+import org.orcid.jaxb.model.v3.dev1.record.Education;
+import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
+import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
@@ -32,15 +41,6 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
-import org.orcid.jaxb.model.v3.dev1.record.Activity;
-import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityUtils {

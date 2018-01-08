@@ -22,26 +22,27 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
-public class Employments extends Affiliations<EmploymentSummary> implements Serializable {
+@XmlRootElement(name = "qualifications", namespace = "http://www.orcid.org/ns/activities")
+public class Qualifications extends Affiliations<QualificationSummary> implements Serializable {
+
     /**
      * 
      */
-    private static final long serialVersionUID = 2620166422482125404L;
+    private static final long serialVersionUID = -4227026264367214274L;
 
-    public Employments() {
+    public Qualifications() {
 
     }
 
-    public Employments(List<EmploymentSummary> summaries) {
+    public Qualifications(List<QualificationSummary> summaries) {
         super();
         this.summaries = summaries;
     }
 
     @Override
-    public List<EmploymentSummary> getSummaries() {
+    public List<QualificationSummary> getSummaries() {
         if (this.summaries == null) {
-            this.summaries = new ArrayList<EmploymentSummary>();
+            this.summaries = new ArrayList<QualificationSummary>();
         }
         return this.summaries;
     }
