@@ -330,6 +330,10 @@ function getBaseUri() {
             : orcidVar.baseUriHttp;
 }
 
+function getStaticCdnPath() {
+    return orcidVar.staticCdn;
+}
+
 function myTest() {
     return 'a success';
 }
