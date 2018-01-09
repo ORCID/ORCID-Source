@@ -35,8 +35,13 @@ import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -62,6 +67,34 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
 
+    /**
+     * Add a new distinction to the given user
+     * 
+     * @param orcid
+     *            The user to add the distinction
+     * @param distinction
+     *            The distinction to add
+     * @return the added employment
+     */
+    @Override
+    public Distinction createDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest) {
+        return (Distinction) createAffiliation(orcid, distinction, isApiRequest, AffiliationType.DISTINCTION);
+    }
+
+    /**
+     * Updates a distinction that belongs to the given user
+     * 
+     * @param orcid
+     *            The user
+     * @param distinction
+     *            The distinction to update
+     * @return the updated distinction
+     */
+    @Override
+    public Distinction updateDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest) {
+        return (Distinction) updateAffiliation(orcid, distinction, isApiRequest, AffiliationType.DISTINCTION);
+    }
+    
     /**
      * Add a new education to the given user
      * 
@@ -118,6 +151,118 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         return (Employment) updateAffiliation(orcid, employment, isApiRequest, AffiliationType.EMPLOYMENT);
     }
     
+    /**
+     * Add a new invitedPosition to the given user
+     * 
+     * @param orcid
+     *            The user to add the invitedPosition
+     * @param invitedPosition
+     *            The invitedPosition to add
+     * @return the added invitedPosition
+     */
+    @Override
+    public InvitedPosition createInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest) {
+        return (InvitedPosition) createAffiliation(orcid, invitedPosition, isApiRequest, AffiliationType.INVITED_POSITION);
+    }
+
+    /**
+     * Updates a invitedPosition that belongs to the given user
+     * 
+     * @param orcid
+     *            The user
+     * @param invitedPosition
+     *            The invitedPosition to update
+     * @return the updated invitedPosition
+     */
+    @Override
+    public InvitedPosition updateInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest) {
+        return (InvitedPosition) updateAffiliation(orcid, invitedPosition, isApiRequest, AffiliationType.INVITED_POSITION);
+    }
+
+    /**
+     * Add a new membership to the given user
+     * 
+     * @param orcid
+     *            The user to add the membership
+     * @param membership
+     *            The membership to add
+     * @return the added membership
+     */
+    @Override
+    public Membership createMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest) {
+        return (Membership) createAffiliation(orcid, membership, isApiRequest, AffiliationType.MEMBERSHIP);
+    }
+
+    /**
+     * Updates a membership that belongs to the given user
+     * 
+     * @param orcid
+     *            The user
+     * @param membership
+     *            The membership to update
+     * @return the updated membership
+     */
+    @Override
+    public Membership updateMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest) {
+        return (Membership) updateAffiliation(orcid, membership, isApiRequest, AffiliationType.MEMBERSHIP);
+    }
+
+    /**
+     * Add a new qualification to the given user
+     * 
+     * @param orcid
+     *            The user to add the qualification
+     * @param qualification
+     *            The qualification to add
+     * @return the added qualification
+     */
+    @Override
+    public Qualification createQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest) {
+        return (Qualification) createAffiliation(orcid, qualification, isApiRequest, AffiliationType.QUALIFICATION);
+    }
+
+    /**
+     * Updates a qualification that belongs to the given user
+     * 
+     * @param orcid
+     *            The user
+     * @param qualification
+     *            The qualification to update
+     * @return the updated qualification
+     */
+    @Override
+    public Qualification updateQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest) {
+        return (Qualification) updateAffiliation(orcid, qualification, isApiRequest, AffiliationType.QUALIFICATION);
+    }
+
+    /**
+     * Add a new service to the given user
+     * 
+     * @param orcid
+     *            The user to add the service
+     * @param service
+     *            The service to add
+     * @return the added service
+     */
+    @Override
+    public Service createServiceAffiliation(String orcid, Service service, boolean isApiRequest) {
+        return (Service) createAffiliation(orcid, service, isApiRequest, AffiliationType.SERVICE);
+    }
+
+    /**
+     * Updates a service that belongs to the given user
+     * 
+     * @param orcid
+     *            The user
+     * @param service
+     *            The service to update
+     * @return the updated service
+     */
+    @Override
+    public Service updateServiceAffiliation(String orcid, Service service, boolean isApiRequest) {
+        return (Service) updateAffiliation(orcid, service, isApiRequest, AffiliationType.SERVICE);        
+    }
+    
     private Affiliation createAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateAffiliation(affiliation, sourceEntity, true, isApiRequest, null);
@@ -132,6 +277,23 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             entity = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity((Education) affiliation);
         } else if(type.equals(AffiliationType.EMPLOYMENT)) {
             entity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity((Employment) affiliation);
+        }
+        
+        switch(type) {
+        case DISTINCTION:
+            break;
+        case EDUCATION:
+            break;
+        case EMPLOYMENT:
+            break;
+        case INVITED_POSITION:
+            break;
+        case MEMBERSHIP:
+            break;
+        case QUALIFICATION:
+            break;
+        case SERVICE:
+            break;
         }
         
         // Updates the give organization with the latest organization from
@@ -166,6 +328,22 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         } else if (type.equals(AffiliationType.EMPLOYMENT)) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(entity));
             result = jpaJaxbEmploymentAdapter.toEmployment(entity);
+        }
+        switch(type) {
+        case DISTINCTION:
+            break;
+        case EDUCATION:
+            break;
+        case EMPLOYMENT:
+            break;
+        case INVITED_POSITION:
+            break;
+        case MEMBERSHIP:
+            break;
+        case QUALIFICATION:
+            break;
+        case SERVICE:
+            break;
         }
         return result;
     }

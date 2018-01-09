@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.message.Month;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Year;
+import org.orcid.jaxb.model.v3.dev1.record.summary.AffiliationSummary;
 
 public class PojoUtil {
 	
@@ -146,12 +147,8 @@ public class PojoUtil {
     }
     
     // Date sort string for 2.0 API
-    public static String createDateSortString(org.orcid.jaxb.model.record.summary_v2.EducationSummary education) {
-        return createDateSortStringForAffiliations(education.getStartDate(), education.getEndDate(), education.getCreatedDate());
-    }
-
-    public static String createDateSortString(org.orcid.jaxb.model.record.summary_v2.EmploymentSummary employment) {
-        return createDateSortStringForAffiliations(employment.getStartDate(), employment.getEndDate(), employment.getCreatedDate());
+    public static String createDateSortString(AffiliationSummary affiliation) {
+        return createDateSortStringForAffiliations(affiliation.getStartDate(), affiliation.getEndDate(), affiliation.getCreatedDate());
     }
 
     public static String createDateSortString(org.orcid.jaxb.model.record_v2.Affiliation affiliation) {
