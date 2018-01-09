@@ -120,20 +120,20 @@
 					</xs:annotation>										
 				</xs:element>
 				
-				<xs:element name="qualifications" type="activities:qualifications" minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>Container for the list of qualifications associated
-							with the researcher or contributor
-						</xs:documentation>
-					</xs:annotation>										
-				</xs:element>
-				
 				<xs:element name="peer-reviews" type="activities:peer-reviews" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the funding received by the
 							researcher or contributor
 						</xs:documentation>
 					</xs:annotation>					
+				</xs:element>
+				
+				<xs:element name="qualifications" type="activities:qualifications" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Container for the list of qualifications associated
+							with the researcher or contributor
+						</xs:documentation>
+					</xs:annotation>										
 				</xs:element>
 				
 				<xs:element name="services" type="activities:services" minOccurs="0" maxOccurs="1">

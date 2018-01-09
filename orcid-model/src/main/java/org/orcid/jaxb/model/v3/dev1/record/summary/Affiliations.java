@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.v3.dev1.record.Activity;
 public abstract class Affiliations<T extends AffiliationSummary> implements ActivitiesContainer {
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElements({ @XmlElement(namespace = "http://www.orcid.org/ns/distiction", name = "distinction-summary", type = DistinctionSummary.class),
+    @XmlElements({ @XmlElement(namespace = "http://www.orcid.org/ns/distinction", name = "distinction-summary", type = DistinctionSummary.class),
             @XmlElement(namespace = "http://www.orcid.org/ns/invited-position", name = "invited-position-summary", type = InvitedPositionSummary.class),
             @XmlElement(namespace = "http://www.orcid.org/ns/education", name = "education-summary", type = EducationSummary.class),
             @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "employment-summary", type = EmploymentSummary.class),

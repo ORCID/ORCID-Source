@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
+@XmlRootElement(name = "invited-position-summary", namespace = "http://www.orcid.org/ns/invited-position")
 public class InvitedPositionSummary extends AffiliationSummary implements Serializable {
 
     /**
