@@ -5,12 +5,16 @@ import { CookieXSRFStrategy, HttpModule, XSRFStrategy } from '@angular/http';
 import { JsonpModule } from '@angular/http';
 import { Headers, Http, Response, RequestOptions, Jsonp } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import 'rxjs/Rx';
 
 //import { Preferences } from './preferences';
 
 @Injectable()
 export class SearchService {
+    private notify = new Subject<any>();
+    
+    notifyObservable$ = this.notify.asObservable();
 
     constructor(
         private http: Http,
@@ -61,7 +65,13 @@ export class SearchService {
           })
         });
 
-        return this.http.get(url, options).map(( res: Response ) => res.json()).catch(this.handleError);
+        //return this.http.get(url, options).map(( res: Response ) => res.json()).catch(this.handleError);
+        return this.http.get(url, options).map((res:Response) => res.json()).share();
+    }
+
+    notifyOther(): void {
+        this.notify.next();
+        console.log('notify');
     }
 
 }

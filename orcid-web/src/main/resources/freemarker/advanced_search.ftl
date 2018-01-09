@@ -18,15 +18,15 @@
 -->
 <@public classes=['home'] >
 <script type="text/ng-template" id="search-ng2-template">
-	<div>
+	<div class="row">
 		<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-offset-9 col-xs-12">
-		<div class="row">
+			
 				<div class="main-search">
 					<div class="row">
 						<h1>${springMacroRequestContext.getMessage("orcid_bio_search.h1advancedsearch")}</h1>
 						<p>${springMacroRequestContext.getMessage("orcid_bio_search.searchpublicly")}</p>
 					</div>
-			    	<form id="searchForm" class="form-horizontal" (ngSubmit)="getFirstResults(input)">
+			    	<form id="searchForm" class="form-horizontal" (ngSubmit)="getFirstResults(input, results)">
 					    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						<fieldset>
 							<div class="row">
@@ -115,8 +115,8 @@
 							</div>
 						</div>
 					</form>
-				</div>
-			</div>
+				</div><!--main search-->
+			</div><!--row-->
 		</div>
 		<div class="row search-results">
 			<div class="col-md-12">
@@ -132,7 +132,7 @@
 						</tr>
 					</thead>
 		            <tbody>
-		                <tr *ngFor="let result of results">
+		                <tr *ngFor="let result of allResults" class="new-search-result">
 		                    <td class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}">{{result['orcid-identifier'].uri}}</a></td>
     						<td>{{result['given-names']}}</td>
     						<td>{{result['family-name']}}</td>	
@@ -147,10 +147,8 @@
 				</div>
 				<div id="no-results-alert" class="orcid-hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
 			    <div id="search-error-alert" class="orcid-hide alert alert-error"><@spring.message "orcid.frontend.web.search_error"/></div>
-	        </div>
-        </div>
-        
-    <div>
+	        </div><!--col 12-->
+        </div><!--search results-->
 </script> 
 <search-ng2></search-ng2>
 </@public>

@@ -5,7 +5,7 @@ declare var orcidVar: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit, OnChanges, DoCheck, ChangeDetectorRef } 
     from '@angular/core';
 
 import { Observable } 
@@ -26,10 +26,15 @@ import { SearchService }
     template:  scriptTmpl("search-ng2-template"),
     providers: [SearchService]
 })
-export class SearchComponent {
+export class SearchComponent implements OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
+
+    allResults: any;
     areMoreResults: any;
     hasErrors: any;
     input: any;
+    newResults: any;
     numFound: any;
     searchResults: any;
     results: any;
@@ -38,10 +43,11 @@ export class SearchComponent {
     resultsShowing: any;
     url: string;
     constructor(
-
+        private cdr:ChangeDetectorRef,
         private searchSrvc: SearchService,
        
     ) {
+        this.allResults = new Array();
         this.areMoreResults = false;
         this.hasErrors = false;
         this.input = {};
@@ -64,7 +70,7 @@ export class SearchComponent {
 
     getFirstResults(input: any){
         $('#no-results-alert').hide();
-        this.results = new Array();
+        this.allResults = new Array();
         this.numFound = 0;
         this.input.start = 0;
         this.input.rows = 10;
@@ -84,6 +90,70 @@ export class SearchComponent {
         this.input.start += 10;
         this.search(this.input);
     };
+
+    search(input: any) {
+        this.searchSrvc.getResults(orcidSearchUrlJs.buildUrl(this.input)).takeUntil(this.ngUnsubscribe).subscribe(
+            searchResults => {
+                this.newResults = searchResults['result'];
+                this.numFound = searchResults['num-found'];
+                $('#ajax-loader-search').hide();
+                $('#ajax-loader-show-more').hide();
+
+                this.getDetails(this.newResults);
+
+                this.allResults = this.allResults.concat(this.newResults); 
+
+                this.cdr.detectChanges();
+                
+                if(!this.numFound){
+                    $('#no-results-alert').fadeIn(1200);
+                }
+
+                this.areMoreResults = this.numFound > (this.input.start + this.input.rows);
+                
+                //if less than 10 results, show total number found
+                if(this.numFound && this.numFound <= this.input.rows){
+                    this.resultsShowing = this.numFound;
+                }
+
+                //if more than 10 results increment num found by 10
+                if(this.numFound && this.numFound > this.input.rows){
+                    if(this.numFound > (this.input.start + this.input.rows)){
+                        this.resultsShowing = this.input.start + this.input.rows;
+                    } else {
+                        this.resultsShowing = (this.input.start + this.input.rows) - (this.input.rows - (this.numFound % this.input.rows));
+                    }
+                }
+                
+                var bottom = null;
+                var newSearchResults = null;
+                var newSearchResultsTop = null;
+                var showMoreButtonTop = null;
+                newSearchResults = $('.new-search-result');
+                
+                if(newSearchResults.length > 0){
+                    newSearchResults.fadeIn(1200);
+                    newSearchResults.removeClass('new-search-result');
+                    newSearchResultsTop = newSearchResults.offset().top;
+                    showMoreButtonTop = $('#show-more-button-container').offset().top;
+                    bottom = $(window).height();
+                    if(showMoreButtonTop > bottom){
+                        $('html, body').animate(
+                            {
+                                scrollTop: newSearchResultsTop
+                            },
+                            1000,
+                            'easeOutQuint'
+                        );
+                    }
+                }
+
+                this.cdr.detectChanges();
+                
+            }
+
+        );
+    }
 
     getAffiliations(result: any){
         if(!result['affiliationsRequestSent']){
@@ -132,85 +202,19 @@ export class SearchComponent {
         } 
     }
 
-    getAllNames(orcidList: any) {
-       //let resultsObservable:Observable<Response>[]=[];
+    getDetails(orcidList: any) {
        console.log(orcidList);
        for(var i = 0; i < orcidList.length; i++){
             console.log(orcidList[i]);
             this.getNames(orcidList[i]);
             this.getAffiliations(orcidList[i]);
        }
-       //return Observable.merge(resultsObservable);
     }
 
-    search(input: any) {
-        this.searchSrvc.getResults(orcidSearchUrlJs.buildUrl(this.input)).subscribe(
-            searchResults => {
-                this.searchResults = searchResults;
-                var bottom = null;
-                var newSearchResults = null;
-                var newSearchResultsTop = null;
-                var showMoreButtonTop = null;
-                $('#ajax-loader-search').hide();
-                $('#ajax-loader-show-more').hide();
-                var orcidList = searchResults['result'];
-
-                this.resultsWithNames = this.getAllNames(orcidList);
-                
-                this.numFound = searchResults['num-found'];
-
-                for(var i = 0; i < orcidList.length; i++){
-                    this.getNames(orcidList[i]);
-                    this.getAffiliations(orcidList[i]);
-               }
-
-                this.results = this.results.concat(orcidList); 
-                
-                if(!this.numFound){
-                    $('#no-results-alert').fadeIn(1200);
-                }
-
-                
-                this.areMoreResults = this.numFound > (this.input.start + this.input.rows);
-                
-                //if less than 10 results, show total number found
-                if(this.numFound && this.numFound <= this.input.rows){
-                    this.resultsShowing = this.numFound;
-                }
-
-                //if more than 10 results increment num found by 10
-                if(this.numFound && this.numFound > this.input.rows){
-                    if(this.numFound > (this.input.start + this.input.rows)){
-                        this.resultsShowing = this.input.start + this.input.rows;
-                    } else {
-                        this.resultsShowing = (this.input.start + this.input.rows) - (this.input.rows - (this.numFound % this.input.rows));
-                    }
-                }
-                
-                newSearchResults = $('.new-search-result');
-                
-                if(newSearchResults.length > 0){
-                    newSearchResults.fadeIn(1200);
-                    newSearchResults.removeClass('new-search-result');
-                    newSearchResultsTop = newSearchResults.offset().top;
-                    showMoreButtonTop = $('#show-more-button-container').offset().top;
-                    bottom = $(window).height();
-                    if(showMoreButtonTop > bottom){
-                        $('html, body').animate(
-                            {
-                                scrollTop: newSearchResultsTop
-                            },
-                            1000,
-                            'easeOutQuint'
-                        );
-                    }
-                }
-            }
-        );
-    }
+    
 
     areResults(): any {
-        return this.results.length > 0;
+        return this.allResults.length > 0;
     }
 
     isValid(): any {
@@ -223,5 +227,10 @@ export class SearchComponent {
         }
         return false;
     }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
 
 }
