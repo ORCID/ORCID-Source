@@ -18,8 +18,13 @@ package org.orcid.core.manager.v3;
 
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 
 public interface AffiliationsManager extends AffiliationsManagerReadOnly {
     /**
@@ -61,6 +66,117 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * @return the updated employment
      * */
     Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest);
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Add a new distinction to the given user
+     * @param orcid
+     *          The user to add the distinction
+     * @param distinction
+     *          The distinction to add
+     * @return the added distinction
+     * */
+    Distinction createDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest);
+    
+    /**
+     * Updates a distinction that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param distinction
+     *          The distinction to update
+     * @return the updated distinction
+     * */
+    Distinction updateDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest);
+    
+    /**
+     * Add a new invitedPosition to the given user
+     * @param orcid
+     *          The user to add the invitedPosition
+     * @param invitedPosition
+     *          The invitedPosition to add
+     * @return the added invitedPosition
+     * */
+    InvitedPosition createInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest);
+    
+    /**
+     * Updates a invitedPosition that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param invitedPosition
+     *          The invitedPosition to update
+     * @return the updated invitedPosition
+     * */
+    InvitedPosition updateInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest);
+    
+    /**
+     * Add a new membership to the given user
+     * @param orcid
+     *          The user to add the membership
+     * @param membership
+     *          The membership to add
+     * @return the added membership
+     * */
+    Membership createMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest);
+    
+    /**
+     * Updates a membership that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param membership
+     *          The membership to update
+     * @return the updated membership
+     * */
+    Membership updateMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest);
+    
+    /**
+     * Add a new qualification to the given user
+     * @param orcid
+     *          The user to add the qualification
+     * @param qualification
+     *          The qualification to add
+     * @return the added membership
+     * */
+    Qualification createQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest);
+    
+    /**
+     * Updates a qualification that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param qualification
+     *          The qualification to update
+     * @return the updated qualification
+     * */
+    Qualification updateQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest);
+    
+    /**
+     * Add a new service to the given user
+     * @param orcid
+     *          The user to add the service
+     * @param service
+     *          The service to add
+     * @return the added service
+     * */
+    Service createServiceAffiliation(String orcid, Service service, boolean isApiRequest);
+    
+    /**
+     * Updates a service that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param service
+     *          The service to update
+     * @return the updated service
+     * */
+    Service updateServiceAffiliation(String orcid, Service service, boolean isApiRequest);
+    
+    
+    
+    
+    
     
     /**
      * Deletes a given affiliation, if and only if, the client that requested the delete is the source of the affiliation

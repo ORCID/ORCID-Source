@@ -62,24 +62,36 @@ import org.orcid.jaxb.model.v3.dev1.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
 import org.orcid.jaxb.model.v3.dev1.record.FundingContributors;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.Name;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.SourceAware;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkContributors;
+import org.orcid.jaxb.model.v3.dev1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
@@ -545,57 +557,92 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getEducationMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         
-        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("educationExternalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
+        ClassMapBuilder<Education, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
         
-        ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
-        addV3CommonFields(educationClassMap);
-        registerSourceConverters(mapperFactory, educationClassMap);                
-        educationClassMap.fieldBToA("org.name", "organization.name");
-        educationClassMap.fieldBToA("org.city", "organization.address.city");
-        educationClassMap.fieldBToA("org.region", "organization.address.region");
-        educationClassMap.fieldBToA("org.country", "organization.address.country");
-        educationClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
-        educationClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
-        educationClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        
-        educationClassMap.fieldAToB("url.value", "url");
-        educationClassMap.fieldBToA("url", "url.value");
-        
-        educationClassMap.fieldMap("educationExternalIdentifiers", "externalIdentifiersJson").converter("educationExternalIdentifiersConverterId").add();
-        
-        educationClassMap.field("departmentName", "department");
-        educationClassMap.field("roleTitle", "title");
-        educationClassMap.register();
-
-        ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> educationSummaryClassMap = mapperFactory.classMap(EducationSummary.class,
+        ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(EducationSummary.class,
                 OrgAffiliationRelationEntity.class);
-        addV3CommonFields(educationSummaryClassMap);
-        registerSourceConverters(mapperFactory, educationSummaryClassMap);
-        educationSummaryClassMap.fieldBToA("org.name", "organization.name");
-        educationSummaryClassMap.fieldBToA("org.city", "organization.address.city");
-        educationSummaryClassMap.fieldBToA("org.region", "organization.address.region");
-        educationSummaryClassMap.fieldBToA("org.country", "organization.address.country");
-        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
-        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
-        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        educationSummaryClassMap.field("departmentName", "department");
-        educationSummaryClassMap.field("roleTitle", "title");
-        educationSummaryClassMap.register();
-
-        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
-        return mapperFactory.getMapperFacade();
+        
+        return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
     }
 
     public MapperFacade getEmploymentMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         
-        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("employmentExternalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
-        
         ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
+        
+        ClassMapBuilder<EmploymentSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(EmploymentSummary.class,
+                OrgAffiliationRelationEntity.class);
+        
+        return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
+    }
+    
+    public MapperFacade getDistinctionMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ClassMapBuilder<Distinction, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Distinction.class, OrgAffiliationRelationEntity.class);
+        
+        ClassMapBuilder<DistinctionSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(DistinctionSummary.class,
+                OrgAffiliationRelationEntity.class);
+        
+        return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
+    }
+    
+    public MapperFacade getInvitedPositionMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ClassMapBuilder<InvitedPosition, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(InvitedPosition.class, OrgAffiliationRelationEntity.class);
+        
+        ClassMapBuilder<InvitedPositionSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(InvitedPositionSummary.class,
+                OrgAffiliationRelationEntity.class);
+        
+        return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
+    }
+    
+    public MapperFacade getMembershipMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ClassMapBuilder<Membership, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Membership.class, OrgAffiliationRelationEntity.class);
+        
+        ClassMapBuilder<MembershipSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(MembershipSummary.class,
+                OrgAffiliationRelationEntity.class);
+        
+        return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
+    }
+    
+    public MapperFacade getQualificationMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ClassMapBuilder<Qualification, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Qualification.class, OrgAffiliationRelationEntity.class);
+        
+        ClassMapBuilder<QualificationSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(QualificationSummary.class,
+                OrgAffiliationRelationEntity.class);
+        
+        return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
+    }
+    
+    public MapperFacade getServiceMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ClassMapBuilder<Service, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Service.class, OrgAffiliationRelationEntity.class);
+        
+        ClassMapBuilder<ServiceSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(ServiceSummary.class,
+                OrgAffiliationRelationEntity.class);
+        
+        return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
+    }
+    
+    /**
+     * Configure fields for affiliations
+     * */
+    private MapperFacade generateMapperFacadeForAffiliation(MapperFactory mapperFactory, ClassMapBuilder<? extends Affiliation, OrgAffiliationRelationEntity> classMap,
+            ClassMapBuilder<? extends AffiliationSummary, OrgAffiliationRelationEntity> summaryClassMap) {
+        
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("externalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
+    
+        // Configure element class map
         addV3CommonFields(classMap);
-        registerSourceConverters(mapperFactory, classMap);
+        registerSourceConverters(mapperFactory, classMap);                
         classMap.fieldBToA("org.name", "organization.name");
         classMap.fieldBToA("org.city", "organization.address.city");
         classMap.fieldBToA("org.region", "organization.address.region");
@@ -607,105 +654,30 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldAToB("url.value", "url");
         classMap.fieldBToA("url", "url.value");
         
-        classMap.fieldMap("employmentExternalIdentifiers", "externalIdentifiersJson").converter("employmentExternalIdentifiersConverterId").add();
+        classMap.fieldMap("externalIdentifiersConverterId", "externalIdentifiersJson").converter("membershipExternalIdentifiersConverterId").add();
         
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
         classMap.register();
 
-        ClassMapBuilder<EmploymentSummary, OrgAffiliationRelationEntity> employmentSummaryClassMap = mapperFactory.classMap(EmploymentSummary.class,
-                OrgAffiliationRelationEntity.class);
-        addV3CommonFields(employmentSummaryClassMap);
-        registerSourceConverters(mapperFactory, employmentSummaryClassMap);
-        employmentSummaryClassMap.fieldBToA("org.name", "organization.name");
-        employmentSummaryClassMap.fieldBToA("org.city", "organization.address.city");
-        employmentSummaryClassMap.fieldBToA("org.region", "organization.address.region");
-        employmentSummaryClassMap.fieldBToA("org.country", "organization.address.country");
-        employmentSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
-        employmentSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
-        employmentSummaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        employmentSummaryClassMap.field("departmentName", "department");
-        employmentSummaryClassMap.field("roleTitle", "title");
-        employmentSummaryClassMap.register();
+        // Configure element summary class map
+        addV3CommonFields(summaryClassMap);
+        registerSourceConverters(mapperFactory, summaryClassMap);
+        summaryClassMap.fieldBToA("org.name", "organization.name");
+        summaryClassMap.fieldBToA("org.city", "organization.address.city");
+        summaryClassMap.fieldBToA("org.region", "organization.address.region");
+        summaryClassMap.fieldBToA("org.country", "organization.address.country");
+        summaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
+        summaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
+        summaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
+        summaryClassMap.field("departmentName", "department");
+        summaryClassMap.field("roleTitle", "title");
+        summaryClassMap.register();
 
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
     
-    
-    
-    
-    
-    
-    
-    //TODO!!!!!
-    public MapperFacade getDistinctionMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
-        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("distinctionExternalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
-        
-        ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
-        addV3CommonFields(educationClassMap);
-        registerSourceConverters(mapperFactory, educationClassMap);                
-        educationClassMap.fieldBToA("org.name", "organization.name");
-        educationClassMap.fieldBToA("org.city", "organization.address.city");
-        educationClassMap.fieldBToA("org.region", "organization.address.region");
-        educationClassMap.fieldBToA("org.country", "organization.address.country");
-        educationClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
-        educationClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
-        educationClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        
-        educationClassMap.fieldAToB("url.value", "url");
-        educationClassMap.fieldBToA("url", "url.value");
-        
-        educationClassMap.fieldMap("educationExternalIdentifiers", "externalIdentifiersJson").converter("educationExternalIdentifiersConverterId").add();
-        
-        educationClassMap.field("departmentName", "department");
-        educationClassMap.field("roleTitle", "title");
-        educationClassMap.register();
-
-        ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> educationSummaryClassMap = mapperFactory.classMap(EducationSummary.class,
-                OrgAffiliationRelationEntity.class);
-        addV3CommonFields(educationSummaryClassMap);
-        registerSourceConverters(mapperFactory, educationSummaryClassMap);
-        educationSummaryClassMap.fieldBToA("org.name", "organization.name");
-        educationSummaryClassMap.fieldBToA("org.city", "organization.address.city");
-        educationSummaryClassMap.fieldBToA("org.region", "organization.address.region");
-        educationSummaryClassMap.fieldBToA("org.country", "organization.address.country");
-        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
-        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
-        educationSummaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        educationSummaryClassMap.field("departmentName", "department");
-        educationSummaryClassMap.field("roleTitle", "title");
-        educationSummaryClassMap.register();
-
-        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
-        return mapperFactory.getMapperFacade();
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
     public MapperFacade getPeerReviewMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
