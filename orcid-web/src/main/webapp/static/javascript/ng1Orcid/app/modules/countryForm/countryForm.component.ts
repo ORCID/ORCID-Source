@@ -36,7 +36,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     formData: any;
     formDataAddresses: any;
     formDataErrors: any;
-    defaultVisibility: any; ///
+    newElementDefaultVisibility: any; ///
     newInput: boolean;
     orcidId: any;
     primaryElementIndex: any;  
@@ -51,7 +51,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.formDataAddresses = [];
         this.formDataErrors = [];
-        this.defaultVisibility = 'PRIVATE';
+        this.newElementDefaultVisibility = 'PRIVATE';
         this.newInput = false;    
         this.orcidId = orcidVar.orcidId;
         this.primaryElementIndex = null;   
@@ -69,12 +69,13 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 "errors":[],
                 "required":true,
                 "getRequiredMessage":null,
-                "visibility": this.defaultVisibility
+                "visibility": this.newElementDefaultVisibility
             },
             "displayIndex":1,
             "source":this.orcidId,
             "sourceName":""
         };
+        console.log('country add tmp', tmpObj);
         this.formData.addresses.push(tmpObj);
         this.updateDisplayIndex();
         this.newInput = true; 
@@ -103,6 +104,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData = data;
                 //console.log('country data', this.formData);
                 this.formDataAddresses = this.formData.addresses;
+                this.newElementDefaultVisibility = this.formData.visibility.visibility;
 
                 if ( this.formData.addresses.length == 0 ){                  
                     this.addNewCountry();
@@ -131,31 +133,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         if( this.formData.addresses[i].visibility != null 
                             && this.formData.addresses[i].visibility.visibility ) {
                             itemVisibility = this.formData.addresses[i].visibility.visibility;
-                        }
-                        /**
-                         * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
-                         * 
-                         * Rules: 
-                         * - If the default visibility is null:
-                         *  - If the item visibility is not null, set the default visibility to the item visibility
-                         * - If the default visibility is not null:
-                         *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-                         * */
-                        if(this.defaultVisibility == null) {
-                            if(itemVisibility != null) {
-                                this.defaultVisibility = itemVisibility;
-                            }                           
-                        } else {
-                            if(itemVisibility != null) {
-                                if(this.defaultVisibility != itemVisibility) {
-                                    this.defaultVisibility = null;
-                                    break;
-                                }
-                            } else {
-                                this.defaultVisibility = null;
-                                break;
-                            }
-                        }                                                                   
+                        }                                                                
                     }
                     //We have to iterate on them again to select the primary address
                     for(let i = 0; i < this.formData.addresses.length; i ++) {
@@ -166,8 +144,6 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             highestDisplayIndex = this.formData.addresses[i].displayIndex;
                         }
                     }
-                } else {
-                    this.defaultVisibility = this.formData.visibility.visibility;                    
                 }
 
             },

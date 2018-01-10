@@ -311,6 +311,7 @@ privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container{
     margin: initial !important;
     right: calc(50% - 121px);
     top: initial;
+    width: 270px;
 }
 
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle {
@@ -1442,11 +1443,13 @@ ul.privacyHelp li.private {
 }
 
 #cboxContent {
+    overflow-y: scroll;
     position: relative
 }
 
 #cboxLoadedContent {
-    overflow: scroll
+    /*overflow: scroll!important;*/
+    overflow: visible!important;
 }
 
 #cboxTitle {
@@ -6324,7 +6327,7 @@ a:hover .mozilla-badge {
 }
 
 #institution-login-help,#social-login-help {
-    left: -115px
+    left: -125px
 }
 
 #qrcode-help {

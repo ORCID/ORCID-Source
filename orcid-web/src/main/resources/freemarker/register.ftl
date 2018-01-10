@@ -48,7 +48,14 @@
                 <h2>${springMacroRequestContext.getMessage("register.labelRegisterforanORCIDiD")}</h2>
                 <p>${springMacroRequestContext.getMessage("register.labelORCIDprovides")}</p>
             </#if>
-            <p>${springMacroRequestContext.getMessage("register.labelClause")}<br /><br /></p>
+            <p>
+                ${springMacroRequestContext.getMessage("register.labelClause_1")}
+                <a href="http://orcid.org/content/orcid-terms-use" target="terms_and_conditions">
+                ${springMacroRequestContext.getMessage("register.labelClause_2")}
+                </a>
+                ${springMacroRequestContext.getMessage("register.labelClause_3")}
+                <br /><br />
+            </p>
             <#include "/common/browser-checks.ftl" />
             <#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
                 <div ng-controller="OauthAuthorizationController" id="RegistrationForm" ng-init="oauth2ScreensLoadRegistrationForm('${RequestParameters.firstName?js_string}', '${RequestParameters.lastName?js_string}', '${RequestParameters.emailId?js_string}', '${RequestParameters.linkRequest?js_string}')">

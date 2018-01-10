@@ -28,20 +28,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -78,9 +78,6 @@ public class PasswordResetController extends BaseController {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
-    @Resource
-    private OrcidProfileCacheManager orcidProfileCacheManager;
-
     @Autowired
     private SocialContext socialContext;
 
@@ -95,6 +92,12 @@ public class PasswordResetController extends BaseController {
 
     @Resource
     private RegistrationController registrationController;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
     
     private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
@@ -136,18 +139,28 @@ public class PasswordResetController extends BaseController {
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetRequest.getEmail(), LoadOptions.BIO_ONLY);
+        String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile == null) {
-            errors.add(getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " " + getMessage("orcid.frontend.reset.password.email_not_found_2"));
+            String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
+            message += "<a href=\"mailto:support@orcid.org\">";
+            message += getMessage("orcid.frontend.reset.password.email_not_found_3");
+            message += "</a>";
+            message += getMessage("orcid.frontend.reset.password.email_not_found_4");
+            errors.add(message);
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
-        if (profile.isDeactivated()) {
-            errors.add(getMessage("orcid.frontend.reset.password.disabled_account", passwordResetRequest.getEmail()));
+        if (profile.getDeactivationDate() != null) {
+            String message = getMessage("orcid.frontend.reset.password.disabled_account_1");
+            message += "<a href=\"/help/contact-us\">";
+            message += getMessage("orcid.frontend.reset.password.disabled_account_2");
+            message += "</a>";
+            errors.add(message);
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
-        registrationManager.resetUserPassword(passwordResetRequest.getEmail(), profile);
+        registrationManager.resetUserPassword(passwordResetRequest.getEmail(), orcid, profile.getClaimed());
         passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
         return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
     }
@@ -195,7 +208,11 @@ public class PasswordResetController extends BaseController {
         
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
         if (isTokenExpired(passwordResetToken)) {
-            setError(oneTimeResetPasswordForm, "orcid.frontend.reset.password.resetLinkExpired");
+            String message = getMessage("orcid.frontend.reset.password.resetLinkExpired_1");
+            message += "<a href='/reset-password'>";
+            message += getMessage("orcid.frontend.reset.password.resetLinkExpired_2");
+            message += "</a>";
+            oneTimeResetPasswordForm.getErrors().add(message);
             return oneTimeResetPasswordForm;
         }
 
@@ -203,15 +220,9 @@ public class PasswordResetController extends BaseController {
             setError(oneTimeResetPasswordForm, "Pattern.registrationForm.password");
             return oneTimeResetPasswordForm;
         }
-
-        OrcidProfile profileToUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
-        profileToUpdate.setPassword(oneTimeResetPasswordForm.getPassword());
-        if (oneTimeResetPasswordForm.isSecurityDetailsPopulated()) {
-            profileToUpdate.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(oneTimeResetPasswordForm.getSecurityQuestionId()));
-            profileToUpdate.setSecurityQuestionAnswer(oneTimeResetPasswordForm.getSecurityQuestionAnswer());
-        }
-
-        orcidProfileManager.updatePasswordInformation(profileToUpdate);
+        String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword());
+        
         String redirectUrl = calculateRedirectUrl(request, response);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         return oneTimeResetPasswordForm;
@@ -244,14 +255,13 @@ public class PasswordResetController extends BaseController {
         } else {
             orcid = orcidOrEmail;
         }
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);
-        
-        //If email is null it means the user used the orcid id to login, so, retrieve the email from the orcidProfile
+        //If email is null it means the user used the orcid id to login, so, retrieve the email from the DB
         if(email == null) {
-            email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            Email entity = emailManager.findPrimaryEmail(orcid);
+            email = entity.getEmail();
         }
         
-        notificationManager.sendReactivationEmail(email, orcidProfile);
+        notificationManager.sendReactivationEmail(email, orcid);
     }
 
     @RequestMapping(value = "/reactivation/{resetParams}", method = RequestMethod.GET)

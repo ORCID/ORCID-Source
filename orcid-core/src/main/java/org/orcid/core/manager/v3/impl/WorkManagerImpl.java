@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.v3.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,8 +26,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ws.rs.WebApplicationException;
 
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -88,6 +91,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Resource
     private NormalizationService norm;
+    
+    private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
     
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
@@ -178,7 +183,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
@@ -213,8 +218,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
                     Work work = (Work) bulk.get(i);
                     try {
-                        //Validate the work
+                        work.setSource(null);
                         activityValidator.validateWork(work, sourceEntity, true, true, null);
+                        schemaValidator.validate(work);
+
                         //Validate it is not duplicated
                         if(work.getExternalIdentifiers() != null) {
                             for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
@@ -255,6 +262,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Add the work extIds to the list of existing external identifiers
                         addExternalIdsToExistingSet(updatedWork, existingExternalIdentifiers);
+                    } catch (WebApplicationException e) {
+                        OrcidError error = new OrcidError();
+                        error.setUserMessage(messageSource.getMessage("apiError.9001.userMessage", null, localeManager.getLocale()));
+                        error.setMoreInfo(messageSource.getMessage("apiError.9001.moreInfo", null, localeManager.getLocale()));
+                        error.setErrorCode(9001);
+                        error.setResponseCode(400);
+                        bulk.remove(i);
+                        bulk.add(i, error);
                     } catch(Exception e) {
                         //Get the exception 
                         OrcidError orcidError = orcidCoreExceptionMapper.getV3OrcidError(e);
@@ -345,7 +360,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         workDao.merge(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
@@ -355,10 +370,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         WorkEntity workEntity = workDao.getWork(orcid, workId);
         orcidSecurityManager.checkSource(workEntity);
         try {
-            Item item = createItem(workEntity);
             workDao.removeWork(orcid, workId);
             workDao.flush();
-            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, item);
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;
@@ -376,11 +390,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
     }
 
-    private Item createItem(WorkEntity workEntity) {
+    private List<Item> createItemList(WorkEntity workEntity) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
-        return item;
+        return Arrays.asList(item);
     }
 }

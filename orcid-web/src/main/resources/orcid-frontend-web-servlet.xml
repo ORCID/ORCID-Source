@@ -40,8 +40,7 @@
 
     <import resource="classpath*:orcid-frontend-security.xml"/>
     <import resource="classpath*:orcid-solr-config.xml"/>
-    <mvc:resources location="/static/" mapping="/static/**" cache-period="1206297260"/>
-
+    
     <context:component-scan base-package="org.orcid"/>
     <mvc:annotation-driven ignore-default-model-on-redirect="true" />
 	<task:annotation-driven />

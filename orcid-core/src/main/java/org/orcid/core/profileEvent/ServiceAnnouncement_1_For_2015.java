@@ -18,16 +18,25 @@ package org.orcid.core.profileEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.impl.MailGunManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.togglz.Features;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.orcid.core.manager.NotificationManager;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
 
@@ -38,7 +47,22 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
 
     @Resource
     private MessageSource messages;
+    
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    private ProfileDao profileDaoReadOnly;
 
+    @Resource
+    private LocaleManager localeManager;
+    
+    @Resource
+    private TemplateManager templateManager;
+    
+    @Resource
+    private MailGunManager mailGunManager;
+    
     private OrcidProfile orcidProfile;
 
     /*
@@ -98,7 +122,7 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
 
         ProfileEventResult pes = new ProfileEventResult(orcidId, ProfileEventType.SERVICE_ANNOUNCEMENT_SENT_1_FOR_2015);
         try {
-            boolean sent = notificationManager.sendServiceAnnouncement_1_For_2015(orcidProfile);
+            boolean sent = sendServiceAnnouncement_1_For_2015(orcidProfile);
             if (!sent)
                 pes = new ProfileEventResult(orcidId, ProfileEventType.SERVICE_ANNOUNCEMENT_FAIL_1_FOR_2015);
         } catch (Exception e) {
@@ -112,6 +136,40 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
     @Override
     public List<ProfileEventType> outcomes() {
         return pes;
-	}
+    }
+    
+    public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile) {
+        String orcid = orcidProfile.getOrcidIdentifier().getPath();
+        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(profileDaoReadOnly.find(orcid));
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", emailFriendlyName);
+        String verificationUrl = notificationManager.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
+        boolean needsVerification = !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()
+                && orcidProfile.getType().equals(org.orcid.jaxb.model.message.OrcidType.USER) && !orcidProfile.isDeactivated();
+        if (needsVerification) {
+            templateParams.put("verificationUrl", verificationUrl);
+        }
+        String emailFrequencyUrl = notificationManager.createUpdateEmailFrequencyUrl(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        templateParams.put("emailFrequencyUrl", emailFrequencyUrl);
+        templateParams.put("orcid", orcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        templateParams.put("messages", this.messages);
+        templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("locale", locale);
+        templateParams.put("features", features);
+        
+        String subject = messages.getMessage("email.service_announcement.subject.imporant_information", null, locale);
+        String text = templateManager.processTemplate("service_announcement_1_2015.ftl", templateParams);
+        String html = templateManager.processTemplate("service_announcement_1_2015_html.ftl", templateParams);
+        return mailGunManager.sendEmail("support@notify.orcid.org", email, subject, text, html);
+    }
 
 }

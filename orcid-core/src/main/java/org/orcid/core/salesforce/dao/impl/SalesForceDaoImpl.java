@@ -448,7 +448,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private List<Member> retrieveMembersByWebsiteFromSalesForce(String accessToken, String websiteUrl) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of members from SalesForce by website");
         WebResource resource = createQueryResource(String.format(
-                "SELECT Account.Id, Account.Public_Display_Name__c, Account.Website, Account.CreatedDate from Account WHERE Account.Website Like '%%%s%%' Order By Active_Member__c Desc, Account.CreatedDate Asc",
+                "SELECT Account.Id, Name, Account.Public_Display_Name__c, Account.Website, Account.CreatedDate from Account WHERE Account.Website Like '%%25%s%%25' Order By Active_Member__c Desc, Account.CreatedDate Asc",
                 escapeStringInput(websiteUrl)));
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
@@ -486,7 +486,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get consortium from SalesForce");
         validateSalesForceId(consortiumId);
         WebResource resource = createQueryResource(
-                "SELECT (SELECT Id, AccountId, Account.Name, Account.Public_Display_Name__c, StageName, NextStep, Consortium_member_removal_requested__c, Consortia_Lead__c FROM ConsortiaOpportunities__r WHERE StageName In ('Negotiation/Review', 'Invoice Paid') AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='%s'",
+                "SELECT (SELECT Id, AccountId, Account.Name, Account.Public_Display_Name__c, StageName, NextStep, Consortium_member_removal_requested__c, Consortia_Lead__c FROM ConsortiaOpportunities__r WHERE StageName In ('Negotiation/Review', 'Invoice Paid') AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Account.Public_Display_Name__c) from Account WHERE Id='%s'",
                 consortiumId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);

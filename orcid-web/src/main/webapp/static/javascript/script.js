@@ -330,6 +330,10 @@ function getBaseUri() {
             : orcidVar.baseUriHttp;
 }
 
+function getStaticCdnPath() {
+    return orcidVar.staticCdn;
+}
+
 function myTest() {
     return 'a success';
 }
@@ -443,9 +447,13 @@ $(function() {
         if (!warnMessCookie) {
             var wHtml = '<div class="alert" id="test-warn-div">';
             wHtml = wHtml + '<strong>';
-            wHtml = wHtml
-                    + om.get('common.js.domain.warn.template').replace(
-                            '{{curentDomian}}', window.location.hostname);
+            wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
+                    '{{curentDomian}}', window.location.hostname);
+            wHtml = wHtml + '<a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
+            wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
+            wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
+            wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
+            wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
             wHtml = wHtml + '</strong> ';
             // don't let the warning be disabled for test-warn-dismiss
             if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
@@ -505,7 +513,9 @@ $(function() {
     if (oldBrowserFlag && location == parent.location) {
         var wHtml = '<div class="alert" id="browser-warn-div">';
         wHtml = wHtml + '<strong>';
-        wHtml = wHtml + om.get('common.old.browser');
+        wHtml = wHtml + om.get('common.old.browser_1');
+        wHtml = wHtml + '<a href="http://support.orcid.org/knowledgebase/articles/159728-upgrade-your-browser">' + om.get('common.old.browser_2') + '</a>';
+        wHtml = wHtml + om.get('common.old.browser_2');
         wHtml = wHtml + '</strong>';
         wHtml = wHtml + '</div>';
         $('body').prepend(wHtml);
@@ -602,10 +612,11 @@ $(function() {
                                                         }
                                                         message = om
                                                                 .get(
-                                                                        'orcid.frontend.security.unclaimed_exists')
-                                                                .replace(
-                                                                        "{{resendClaimUrl}}",
-                                                                       resendClaimUrl);
+                                                                        'orcid.frontend.security.unclaimed_exists_1');
+                                                        message = message + '<a href="' + resendClaimUrl + '">';
+                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_2');
+                                                        message = message + '</a>';
+                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_3');
                                                     } else if (data.badVerificationCode) {
                                                         message = om
                                                         .get('orcid.frontend.security.2fa.bad_verification_code');

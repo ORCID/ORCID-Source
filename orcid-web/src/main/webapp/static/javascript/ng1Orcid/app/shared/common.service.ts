@@ -1,3 +1,7 @@
+declare var $: any;
+declare var colorbox: any;
+declare var isMobile: any;
+
 import { Injectable } from '@angular/core';
 
 @Injectable()
@@ -7,6 +11,23 @@ export class CommonService {
     constructor() { 
         this.shownElement = [];
     }
+
+    addComma(str): string {
+        if (str.length > 0){
+            return str + ', ';
+        } 
+        return str;
+    };
+
+    contains(arr, obj): boolean {
+        let index = arr.length;
+        while (index--) {
+            if (arr[index] === obj) {
+               return true;
+            }
+        }
+        return false;
+    };
 
     copyErrorsLeft( data1, data2 ): void {
         for (let key in data1) {
@@ -20,8 +41,104 @@ export class CommonService {
         };
     };
 
+    emptyTextField(field): boolean {
+        if (field != null
+            && field.value != null
+            && field.value.trim() != '') {
+            return false;
+        }
+        return true;
+    };
+
+    formatDate(oldDate): string {
+        let date:any = new Date(oldDate);
+        let day:any = date.getDate();
+        let month:any = date.getMonth() + 1;
+        let year:any = date.getFullYear();
+        if(month < 10) {
+            month = '0' + month;
+        }
+        if(day < 10) {
+            day = '0' + day;
+        }
+        return (year + '-' + month + '-' + day);
+    };
+
+    formatTime(unixTimestamp): string {
+        var date = new Date(unixTimestamp);
+        return date.toUTCString();
+    };
+
+    formColorBoxResize(): void {
+        if ( isMobile() ) {
+            $.colorbox.resize({width: this.formColorBoxWidth(), height: '100%'});
+        }
+        else {
+            // IE8 and below doesn't take auto height
+            // however the default div height
+            // is auto anyway
+            $.colorbox.resize({width:'800px'});
+            
+        }
+    };
+
+    formColorBoxWidth(): string {
+        return isMobile()? '100%': '800px';
+    };
+
+    getParameterByName( name ): any {
+        let _name = name,
+            regex = new RegExp("[\\?&]" + _name + "=([^&#]*)"),
+            results = regex.exec(location.search)
+        ;
+        
+        _name = _name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    };
+
+    getScripts(scripts, callback): void {
+        let progress = 0;
+        let internalCallback = function () {        
+            if (++progress == scripts.length - 1) {
+                callback();
+            }
+        };    
+        scripts.forEach(
+            function(script) {        
+                $.getScript(script, internalCallback);        
+            }
+        );
+    };
+
     hideTooltip(elem): void{
         this.shownElement[elem] = false;
+    };
+
+    isEmail(email): boolean {
+        let re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    };
+
+    isPrintView(path): boolean {
+        let re = new RegExp("(/print)(.*)?$");
+        if (re.test(path)) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    openImportWizardUrl(url): void {
+        let win = window.open(url, "_target");
+        setTimeout( function() {
+            if(!win || win.outerHeight === 0) {
+                //First Checking Condition Works For IE & Firefox
+                //Second Checking Condition Works For Chrome
+                window.location.href = url;
+            }
+        }, 250);
+        $.colorbox.close();
     };
 
     showPrivacyHelp(elem, event, offsetArrow): void{
@@ -67,4 +184,5 @@ export class CommonService {
         
         this.shownElement[elem] = true;
     };
+            
 }

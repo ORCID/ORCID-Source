@@ -1,3 +1,5 @@
+//Migrated
+
 declare var $: any;
 declare var om: any;
 declare var ActSortState: any;
@@ -969,6 +971,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     dataType: 'json',
                     success: function(data) {                    	                     
                         $timeout(function(){
+                            console.log('crtl works loadWorkImportWizardList', data);
 	                        if(data == null || data.length == 0) {
 	                            $scope.noLinkFlag = false;
 	                        }

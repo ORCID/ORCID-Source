@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
@@ -152,6 +153,9 @@ public class MemberDetailsForm implements ErrorsInterface, Serializable {
         if (websiteUrl != null) {
             form.setWebsite(Text.valueOf(websiteUrl.toString()));
         }
+        else {
+            form.setWebsite(Text.valueOf((String) null));
+        }
         form.setEmail(Text.valueOf(member.getPublicDisplayEmail()));
         form.setDescription(Text.valueOf(member.getDescription()));
         CommunityType researchCommunity = member.getResearchCommunity();
@@ -171,10 +175,12 @@ public class MemberDetailsForm implements ErrorsInterface, Serializable {
         if (website != null) {
             try {
                 String websiteValue = website.getValue();
-                if (!websiteValue.startsWith("http")) {
-                    websiteValue = "http://" + websiteValue;
+                if (StringUtils.isNotBlank(websiteValue)) {
+                    if (!websiteValue.startsWith("http")) {
+                        websiteValue = "http://" + websiteValue;
+                    }
+                    member.setWebsiteUrl(new URL(websiteValue));
                 }
-                member.setWebsiteUrl(new URL(websiteValue));
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Error parsing website", e);
             }

@@ -66,6 +66,7 @@ import org.orcid.utils.ReleaseNameUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcid", "orcidId", "orcidIdentifier", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
 @XmlRootElement(name = "orcid-profile")
+@Deprecated
 public class OrcidProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;

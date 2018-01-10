@@ -125,6 +125,17 @@ public class SalesForceAdapterTest {
                 "{\"Name\":\"Org 1 Consortium Lead New Name\",\"Public_Display_Name__c\":\"Org 1 Consortium Lead New Name\",\"Website\":\"http:\\/\\/org1newsite.org\"}",
                 record.toString());
     }
+    
+    @Test
+    public void testCreateSalesForceRecordFromMemberWithNoWebsite() throws MalformedURLException {
+        Member member = new Member();
+        member.setName("Org 1 Consortium Lead New Name");
+        member.setWebsiteUrl(null);
+        JSONObject record = salesForceAdapter.createSaleForceRecordFromMember(member);
+        assertEquals(
+                "{\"Name\":\"Org 1 Consortium Lead New Name\",\"Public_Display_Name__c\":\"Org 1 Consortium Lead New Name\",\"Website\":null}",
+                record.toString());
+    }
 
     @Test
     public void testCreateOpportunityFromSalesForceRecord() throws IOException, JSONException {

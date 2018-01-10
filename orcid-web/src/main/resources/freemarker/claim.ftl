@@ -49,7 +49,10 @@
 														<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
 													</ul>
 												</li>
-												<li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
+												<li>
+												${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_1")}<br/>
+                                                ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_2")}
+												</li>
 											</ul>                         
 											<p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/10_million_password_list_top_1000.txt" target="password_one_time_reset.commonpasswordslink">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>
 											<p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
