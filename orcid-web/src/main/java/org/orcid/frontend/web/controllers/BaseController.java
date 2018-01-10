@@ -70,6 +70,7 @@ import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.ReleaseNameUtils;
@@ -816,6 +817,14 @@ public class BaseController {
             passwordConfirmValidate(passwordConfirm, password);
         }
         
+    }
+    
+    void activitiesVisibilityDefaultValidate(Visibility activitiesVisibilityDefault) {
+        // validate given name isn't blank
+        activitiesVisibilityDefault.setErrors(new ArrayList<String>());
+        if (activitiesVisibilityDefault.getVisibility() == null) {
+            setError(activitiesVisibilityDefault, "NotBlank.registrationForm.defaultVisibility");
+        }
     }
     
     protected void termsOfUserValidate(Checkbox termsOfUser) {
