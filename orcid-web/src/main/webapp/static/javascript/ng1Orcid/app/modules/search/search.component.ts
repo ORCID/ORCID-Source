@@ -5,7 +5,7 @@ declare var orcidVar: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, OnChanges, DoCheck, ChangeDetectorRef } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef } 
     from '@angular/core';
 
 import { Observable } 
@@ -26,7 +26,7 @@ import { SearchService }
     template:  scriptTmpl("search-ng2-template"),
     providers: [SearchService]
 })
-export class SearchComponent implements OnDestroy {
+export class SearchComponent implements OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -203,15 +203,11 @@ export class SearchComponent implements OnDestroy {
     }
 
     getDetails(orcidList: any) {
-       console.log(orcidList);
        for(var i = 0; i < orcidList.length; i++){
-            console.log(orcidList[i]);
             this.getNames(orcidList[i]);
             this.getAffiliations(orcidList[i]);
        }
     }
-
-    
 
     areResults(): any {
         return this.allResults.length > 0;
@@ -232,5 +228,13 @@ export class SearchComponent implements OnDestroy {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     };
+
+    ngOnInit() {
+        this.input.text = $('#SearchCtrl').data('search-query');
+        if(typeof this.input.text !== 'undefined'){
+            $('#ajax-loader-search').show();
+            this.search(this.input);
+        }
+    }
 
 }
