@@ -103,6 +103,11 @@ public class OrcidTokenEnhancer implements TokenEnhancer {
                             return true;
                         }
                     }
+                } else if (params.get(OrcidOauth2Constants.RESPONSE_TYPE_PARAM) != null 
+                        && params.get(OrcidOauth2Constants.RESPONSE_TYPE_PARAM).contains(OrcidOauth2Constants.IMPLICIT_TOKEN_RESPONSE_TYPE) 
+                        && "true".equals(params.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN))){
+                    //for implicit generation, use the query string parameter.
+                    return true;
                 }
             }
         }
