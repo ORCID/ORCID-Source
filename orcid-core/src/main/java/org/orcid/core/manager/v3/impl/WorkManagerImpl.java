@@ -26,14 +26,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.ws.rs.WebApplicationException;
 
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
-import org.orcid.core.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
@@ -91,8 +89,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Resource
     private NormalizationService norm;
-    
-    private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
     
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
@@ -218,9 +214,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
                     Work work = (Work) bulk.get(i);
                     try {
-                        work.setSource(null);
                         activityValidator.validateWork(work, sourceEntity, true, true, null);
-                        schemaValidator.validate(work);
 
                         //Validate it is not duplicated
                         if(work.getExternalIdentifiers() != null) {
@@ -262,14 +256,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Add the work extIds to the list of existing external identifiers
                         addExternalIdsToExistingSet(updatedWork, existingExternalIdentifiers);
-                    } catch (WebApplicationException e) {
-                        OrcidError error = new OrcidError();
-                        error.setUserMessage(messageSource.getMessage("apiError.9001.userMessage", null, localeManager.getLocale()));
-                        error.setMoreInfo(messageSource.getMessage("apiError.9001.moreInfo", null, localeManager.getLocale()));
-                        error.setErrorCode(9001);
-                        error.setResponseCode(400);
-                        bulk.remove(i);
-                        bulk.add(i, error);
                     } catch(Exception e) {
                         //Get the exception 
                         OrcidError orcidError = orcidCoreExceptionMapper.getV3OrcidError(e);
