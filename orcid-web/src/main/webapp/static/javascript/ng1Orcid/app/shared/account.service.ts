@@ -26,12 +26,11 @@ export class AccountService {
                 'Content-Type': 'application/json' 
             }
         );
-        this.url = getBaseUri() + '/my-orcid/otherNamesForms.json';
     }
 
-    getData(): Observable<any> {
+    getChangePassword(): Observable<any> {
         return this.http.get(
-            this.url
+            getBaseUri() + '/account/change-password.json'
         )
         .map((res:Response) => res.json()).share();
     }
@@ -41,11 +40,11 @@ export class AccountService {
         console.log('notify');
     }
 
-    setData( obj ): Observable<any> {
+    saveChangePassword( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
-            this.url, 
+            getBaseUri() + '/account/change-password.json', 
             encoded_data, 
             { headers: this.headers }
         )

@@ -1,3 +1,5 @@
+//migrated
+
 declare var iframeResize: any;
 
 // Controller for notifications
