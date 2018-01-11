@@ -31,6 +31,7 @@ import org.orcid.core.adapter.v3.JpaJaxbServiceAdapter;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
@@ -194,7 +195,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                if(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
+                if(AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
                 } else {
                     result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));

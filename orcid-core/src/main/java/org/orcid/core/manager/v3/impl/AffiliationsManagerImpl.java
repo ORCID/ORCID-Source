@@ -314,9 +314,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         entity.setProfile(profile);
         setIncomingWorkPrivacy(entity, profile);
         if(type.equals(AffiliationType.EDUCATION)) {
-            entity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);
+            entity.setAffiliationType(AffiliationType.EDUCATION);
         } else if(type.equals(AffiliationType.EMPLOYMENT)) {
-            entity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);
+            entity.setAffiliationType(AffiliationType.EMPLOYMENT);
         }
         orgAffiliationRelationDao.persist(entity);
         orgAffiliationRelationDao.flush();
@@ -385,9 +385,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         entity.setOrg(updatedOrganization);
 
         if(type.equals(AffiliationType.EDUCATION)) {
-            entity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);            
+            entity.setAffiliationType(AffiliationType.EDUCATION);            
         } else if(type.equals(AffiliationType.EMPLOYMENT)) {
-            entity.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);            
+            entity.setAffiliationType(AffiliationType.EMPLOYMENT);            
         }
         
         entity = orgAffiliationRelationDao.merge(entity);
