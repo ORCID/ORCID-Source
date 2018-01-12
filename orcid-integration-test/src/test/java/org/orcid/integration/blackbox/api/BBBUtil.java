@@ -36,7 +36,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.helper.SystemPropertiesHelper;
-import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -91,7 +90,7 @@ public class BBBUtil {
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
 
-        SigninTest.signIn(webDriver, userName, password);
+        signIn(webDriver, userName, password);
 
         // Switch to accounts settings page
         By accountSettingsMenuLink = By.id("accountSettingMenuLink");
@@ -350,5 +349,37 @@ public class BBBUtil {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
         // this is really evil, suggest JPA isn't flushing/persisting as quick as we would like
         try {Thread.sleep(500);} catch(Exception e) {};
+    }
+    
+    public static void signIn(WebDriver webDriver, String username, String password) {
+        BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
+        emailEl.sendKeys(username);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        WebElement passwordEl = webDriver.findElement(By.xpath("//input[@name='password']"));
+        passwordEl.sendKeys(password);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='form-sign-in-button']"));
+        BBBUtil.ngAwareClick(buttonEl, webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }
+    
+    public static void dismissVerifyEmailModal() {
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), 10);
+        List<WebElement> weList = getWebDriver().findElements(By.xpath("//div[@ng-controller='VerifyEmailCtrl']"));
+        if (weList.size() > 0) {// we need to wait for the color box to appear
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@ng-controller='VerifyEmailCtrl' and @orcid-loading='false']")));
+            ((JavascriptExecutor) getWebDriver()).executeScript("$.colorbox.close();");
+            colorBoxIsClosed(wait);
+        }
+    }
+    
+    public static void colorBoxIsClosed(WebDriverWait wait) {
+        wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='colorbox']"))));
     }
 }
