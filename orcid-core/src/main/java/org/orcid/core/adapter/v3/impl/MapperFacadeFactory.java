@@ -636,7 +636,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
      * */
     private MapperFacade generateMapperFacadeForAffiliation(MapperFactory mapperFactory, ClassMapBuilder<? extends Affiliation, OrgAffiliationRelationEntity> classMap,
             ClassMapBuilder<? extends AffiliationSummary, OrgAffiliationRelationEntity> summaryClassMap) {
-        
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("externalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
     
@@ -654,7 +653,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldAToB("url.value", "url");
         classMap.fieldBToA("url", "url.value");
         
-        classMap.fieldMap("externalIdentifiersConverterId", "externalIdentifiersJson").converter("membershipExternalIdentifiersConverterId").add();
+        classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();        
         
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");

@@ -34,7 +34,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url",
-        "educationExternalIdentifiers" })
+        "externalIdentifiers" })
 public abstract class Affiliation implements OrganizationHolder, Filterable, Activity, SourceAware {
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "department-name")
     protected String departmentName;
@@ -55,7 +55,7 @@ public abstract class Affiliation implements OrganizationHolder, Filterable, Act
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Url url;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
-    protected ExternalIDs educationExternalIdentifiers;
+    protected ExternalIDs externalIdentifiers;
 
     @XmlAttribute(name = "put-code")
     protected Long putCode;
@@ -297,20 +297,20 @@ public abstract class Affiliation implements OrganizationHolder, Filterable, Act
         this.url = value;
     }
 
-    public ExternalIDs getEducationExternalIdentifiers() {
-        return educationExternalIdentifiers;
+    public ExternalIDs getExternalIdentifiers() {
+        return externalIdentifiers;
     }
 
-    public void setEducationExternalIdentifiers(ExternalIDs educationExternalIdentifiers) {
-        this.educationExternalIdentifiers = educationExternalIdentifiers;
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
     }
 
     public ExternalIDs getExternalIDs() {
-        return educationExternalIdentifiers;
+        return externalIdentifiers;
     }
 
     public void setExternalIDs(ExternalIDs externalIDs) {
-        this.educationExternalIdentifiers = externalIDs;
+        this.externalIdentifiers = externalIDs;
     }
 
     /**
@@ -331,7 +331,7 @@ public abstract class Affiliation implements OrganizationHolder, Filterable, Act
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
-        result = prime * result + ((educationExternalIdentifiers == null) ? 0 : educationExternalIdentifiers.hashCode());
+        result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
         return result;
     }
 
@@ -387,10 +387,10 @@ public abstract class Affiliation implements OrganizationHolder, Filterable, Act
                 return false;
         } else if (!url.equals(other.url))
             return false;
-        if (educationExternalIdentifiers == null) {
-            if (other.educationExternalIdentifiers != null)
+        if (externalIdentifiers == null) {
+            if (other.externalIdentifiers != null)
                 return false;
-        } else if (!educationExternalIdentifiers.equals(other.educationExternalIdentifiers))
+        } else if (!externalIdentifiers.equals(other.externalIdentifiers))
             return false;
 
         /*
