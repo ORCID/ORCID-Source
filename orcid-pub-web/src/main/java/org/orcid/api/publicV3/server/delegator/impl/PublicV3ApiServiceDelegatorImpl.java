@@ -331,7 +331,7 @@ public class PublicV3ApiServiceDelegatorImpl
             }
         }
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicEducations);
-        ActivityUtils.setPathToEducations(publicEducations, orcid);
+        ActivityUtils.setPathToAffiliations(publicEducations, orcid);
         return Response.ok(publicEducations).build();
     }
 
@@ -365,7 +365,7 @@ public class PublicV3ApiServiceDelegatorImpl
             }
         }
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicEmployments);
-        ActivityUtils.setPathToEmployments(publicEmployments, orcid);
+        ActivityUtils.setPathToAffiliations(publicEmployments, orcid);
         return Response.ok(publicEmployments).build();
     }
 

@@ -80,13 +80,16 @@ import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Addresses;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
 import org.orcid.jaxb.model.v3.dev1.record.Keywords;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
@@ -94,13 +97,17 @@ import org.orcid.jaxb.model.v3.dev1.record.Person;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.Record;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.SourceAware;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
@@ -118,7 +125,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MemberV3ApiServiceDelegatorImpl implements
-        MemberV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> {
+        MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> {
 
     // Managers that goes to the primary database
     @Resource(name = "workManagerV3")
@@ -444,7 +451,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
         orcidSecurityManager.checkAndFilter(orcid, educationsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Educations educations = new Educations(educationsList);
-        ActivityUtils.setPathToEducations(educations, orcid);
+        ActivityUtils.setPathToAffiliations(educations, orcid);
         sourceUtils.setSourceName(educations);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(educations);
         return Response.ok(educations).build();
@@ -509,7 +516,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
         orcidSecurityManager.checkAndFilter(orcid, employmentsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Employments employments = new Employments(employmentsList);
-        ActivityUtils.setPathToEmployments(employments, orcid);
+        ActivityUtils.setPathToAffiliations(employments, orcid);
         sourceUtils.setSourceName(employments);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(employments);
         return Response.ok(employments).build();
@@ -1115,6 +1122,175 @@ public class MemberV3ApiServiceDelegatorImpl implements
     
     private void clearSource(SourceAware element) {
         element.setSource(null);
+    }
+
+    @Override
+    public Response viewDistinction(String orcid, Long putCode) {
+        Distinction e = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
+    }
+
+    @Override
+    public Response viewDistinctions(String orcid) {
+        List<DistinctionSummary> distinctionsList = affiliationsManagerReadOnly.getDistinctionSummaryList(orcid);
+
+        // Lets copy the list so we don't modify the cached collection
+        List<DistinctionSummary> filteredList = null;
+        if (distinctionsList != null) {
+            filteredList = new ArrayList<DistinctionSummary>(distinctionsList);
+        }
+        distinctionsList = filteredList;
+
+        orcidSecurityManager.checkAndFilter(orcid, distinctionsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        Distinctions distinctions = new Distinctions(distinctionsList);
+        ActivityUtils.setPathToAffiliations(distinctions, orcid);
+        sourceUtils.setSourceName(distinctions);
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(distinctions);
+        return Response.ok(distinctions).build();
+    }
+
+    @Override
+    public Response viewDistinctionSummary(String orcid, Long putCode) {
+        DistinctionSummary es = affiliationsManagerReadOnly.getDistinctionSummary(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(es, orcid);
+        sourceUtils.setSourceName(es);
+        return Response.ok(es).build();
+    }
+
+    @Override
+    public Response createDistinction(String orcid, Distinction distinction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateDistinction(String orcid, Long putCode, Distinction distinction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewInvitedPosition(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewInvitedPositions(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewInvitedPositionSummary(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createInvitedPosition(String orcid, InvitedPosition invitedPosition) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateInvitedPosition(String orcid, Long putCode, InvitedPosition invitedPosition) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewMembership(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewMemberships(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewMembershipSummary(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createMembership(String orcid, Membership membership) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateMembership(String orcid, Long putCode, Membership membership) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewQualification(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewQualifications(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewQualificationSummary(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createQualification(String orcid, Qualification qualification) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateQualification(String orcid, Long putCode, Qualification qualification) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewService(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewServices(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewServiceSummary(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createService(String orcid, Service service) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateService(String orcid, Long putCode, Service service) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
