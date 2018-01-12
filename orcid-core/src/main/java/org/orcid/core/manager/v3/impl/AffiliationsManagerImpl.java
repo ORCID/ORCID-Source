@@ -314,11 +314,8 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         entity.setProfile(profile);
         setIncomingWorkPrivacy(entity, profile);
-        if(type.equals(AffiliationType.EDUCATION)) {
-            entity.setAffiliationType(AffiliationType.EDUCATION);
-        } else if(type.equals(AffiliationType.EMPLOYMENT)) {
-            entity.setAffiliationType(AffiliationType.EMPLOYMENT);
-        }
+        entity.setAffiliationType(type);
+        
         orgAffiliationRelationDao.persist(entity);
         orgAffiliationRelationDao.flush();
 

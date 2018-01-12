@@ -164,6 +164,12 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     }
     
     @Override
+    @Cacheable(value = "distinctions-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<OrgAffiliationRelationEntity> getDistinctionSummaries(String userOrcid, long lastModified) {
+        return getByUserAndType(userOrcid, AffiliationType.DISTINCTION);
+    }
+    
+    @Override
     @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getEducationSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AffiliationType.EDUCATION);
@@ -173,6 +179,30 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getEmploymentSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
+    }
+    
+    @Override
+    @Cacheable(value = "invited-positions-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<OrgAffiliationRelationEntity> getInvitedPositionSummaries(String userOrcid, long lastModified) {
+        return getByUserAndType(userOrcid, AffiliationType.INVITED_POSITION);
+    }
+    
+    @Override
+    @Cacheable(value = "memberships-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<OrgAffiliationRelationEntity> getMembershipSummaries(String userOrcid, long lastModified) {
+        return getByUserAndType(userOrcid, AffiliationType.MEMBERSHIP);
+    }
+    
+    @Override
+    @Cacheable(value = "qualifications-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<OrgAffiliationRelationEntity> getQualificationSummaries(String userOrcid, long lastModified) {
+        return getByUserAndType(userOrcid, AffiliationType.QUALIFICATION);
+    }
+    
+    @Override
+    @Cacheable(value = "services-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<OrgAffiliationRelationEntity> getServiceSummaries(String userOrcid, long lastModified) {
+        return getByUserAndType(userOrcid, AffiliationType.SERVICE);
     }
     
     /**

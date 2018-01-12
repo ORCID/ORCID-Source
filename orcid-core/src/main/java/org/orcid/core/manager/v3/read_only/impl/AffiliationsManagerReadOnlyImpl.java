@@ -220,7 +220,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
 
     @Override
     public List<DistinctionSummary> getDistinctionSummaryList(String userOrcid) {
-        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
+        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getDistinctionSummaries(userOrcid, getLastModified(userOrcid));
         List<DistinctionSummary> elements = jpaJaxbDistinctionAdapter.toDistinctionSummary(entities);
         // UI sort it descending first, so,lets do the same for the API
         elements.sort((DistinctionSummary e1, DistinctionSummary e2) -> {
@@ -245,7 +245,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
 
     @Override
     public List<InvitedPositionSummary> getInvitedPositionSummaryList(String userOrcid) {
-        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
+        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getInvitedPositionSummaries(userOrcid, getLastModified(userOrcid));
         List<InvitedPositionSummary> elements = jpaJaxbInvitedPositionAdapter.toInvitedPositionSummary(entities);
         // UI sort it descending first, so,lets do the same for the API
         elements.sort((InvitedPositionSummary e1, InvitedPositionSummary e2) -> {
@@ -270,7 +270,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
 
     @Override
     public List<MembershipSummary> getMembershipSummaryList(String userOrcid) {
-        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
+        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getMembershipSummaries(userOrcid, getLastModified(userOrcid));
         List<MembershipSummary> elements = jpaJaxbMembershipAdapter.toMembershipSummary(entities);
         // UI sort it descending first, so,lets do the same for the API
         elements.sort((MembershipSummary e1, MembershipSummary e2) -> {
@@ -295,7 +295,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
 
     @Override
     public List<QualificationSummary> getQualificationSummaryList(String userOrcid) {
-        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
+        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getQualificationSummaries(userOrcid, getLastModified(userOrcid));
         List<QualificationSummary> elements = jpaJaxbQualificationAdapter.toQualificationSummary(entities);
         // UI sort it descending first, so,lets do the same for the API
         elements.sort((QualificationSummary e1, QualificationSummary e2) -> {
@@ -320,7 +320,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
 
     @Override
     public List<ServiceSummary> getServiceSummaryList(String userOrcid) {
-        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getEmploymentSummaries(userOrcid, getLastModified(userOrcid));
+        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationDao.getServiceSummaries(userOrcid, getLastModified(userOrcid));
         List<ServiceSummary> elements = jpaJaxbServiceAdapter.toServiceSummary(entities);
         // UI sort it descending first, so,lets do the same for the API
         elements.sort((ServiceSummary e1, ServiceSummary e2) -> {
