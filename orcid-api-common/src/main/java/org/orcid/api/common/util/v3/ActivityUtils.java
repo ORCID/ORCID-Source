@@ -202,8 +202,13 @@ public class ActivityUtils {
     public static void setPathToActivity(ActivitiesSummary activitiesSummary, String orcid) {
         if (activitiesSummary != null) {
             activitiesSummary.setPath(OrcidApiConstants.ACTIVITIES.replace("{orcid}", orcid));
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getDistinctions(), orcid);
             ActivityUtils.setPathToAffiliations(activitiesSummary.getEducations(), orcid);
             ActivityUtils.setPathToAffiliations(activitiesSummary.getEmployments(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getInvitedPositions(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getMemberships(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getQualifications(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getServices(), orcid);
             ActivityUtils.setPathToFundings(activitiesSummary.getFundings(), orcid);
             ActivityUtils.setPathToWorks(activitiesSummary.getWorks(), orcid);
             ActivityUtils.setPathToPeerReviews(activitiesSummary.getPeerReviews(), orcid);

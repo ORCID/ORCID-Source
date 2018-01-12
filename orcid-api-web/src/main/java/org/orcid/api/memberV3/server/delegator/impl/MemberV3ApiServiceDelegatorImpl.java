@@ -114,8 +114,16 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.jaxb.model.v3.dev1.search.Search;
@@ -1120,10 +1128,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
         return Response.ok(client).build();
     }
     
-    private void clearSource(SourceAware element) {
-        element.setSource(null);
-    }
-
     @Override
     public Response viewDistinction(String orcid, Long putCode) {
         Distinction e = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, putCode);
@@ -1163,134 +1167,293 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createDistinction(String orcid, Distinction distinction) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
+        clearSource(distinction);
+        Distinction e = affiliationsManager.createDistinctionAffiliation(orcid, distinction, true);
+        sourceUtils.setSourceName(e);
+        try {
+            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createdistinction_response.exception"), ex);
+        }
     }
 
     @Override
     public Response updateDistinction(String orcid, Long putCode, Distinction distinction) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
+        if (!putCode.equals(distinction.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(distinction.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        clearSource(distinction);
+        Distinction e = affiliationsManager.updateDistinctionAffiliation(orcid, distinction, true);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewInvitedPosition(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        InvitedPosition e = affiliationsManagerReadOnly.getInvitedPositionAffiliation(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewInvitedPositions(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<InvitedPositionSummary> inivitedPositionsList = affiliationsManagerReadOnly.getInvitedPositionSummaryList(orcid);
+
+        // Lets copy the list so we don't modify the cached collection
+        List<InvitedPositionSummary> filteredList = null;
+        if (inivitedPositionsList != null) {
+            filteredList = new ArrayList<InvitedPositionSummary>(inivitedPositionsList);
+        }
+        inivitedPositionsList = filteredList;
+
+        orcidSecurityManager.checkAndFilter(orcid, inivitedPositionsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        InvitedPositions inivitedPositions = new InvitedPositions(inivitedPositionsList);
+        ActivityUtils.setPathToAffiliations(inivitedPositions, orcid);
+        sourceUtils.setSourceName(inivitedPositions);
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(inivitedPositions);
+        return Response.ok(inivitedPositions).build();
     }
 
     @Override
     public Response viewInvitedPositionSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        InvitedPositionSummary es = affiliationsManagerReadOnly.getInvitedPositionSummary(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(es, orcid);
+        sourceUtils.setSourceName(es);
+        return Response.ok(es).build();
     }
 
     @Override
     public Response createInvitedPosition(String orcid, InvitedPosition invitedPosition) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
+        clearSource(invitedPosition);
+        InvitedPosition e = affiliationsManager.createInvitedPositionAffiliation(orcid, invitedPosition, true);
+        sourceUtils.setSourceName(e);
+        try {
+            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createdistinction_response.exception"), ex);
+        }
     }
 
     @Override
     public Response updateInvitedPosition(String orcid, Long putCode, InvitedPosition invitedPosition) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
+        if (!putCode.equals(invitedPosition.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(invitedPosition.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        clearSource(invitedPosition);
+        InvitedPosition e = affiliationsManager.updateInvitedPositionAffiliation(orcid, invitedPosition, true);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewMembership(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        Membership e = affiliationsManagerReadOnly.getMembershipAffiliation(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewMemberships(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<MembershipSummary> membershipsList = affiliationsManagerReadOnly.getMembershipSummaryList(orcid);
+
+        // Lets copy the list so we don't modify the cached collection
+        List<MembershipSummary> filteredList = null;
+        if (membershipsList != null) {
+            filteredList = new ArrayList<MembershipSummary>(membershipsList);
+        }
+        membershipsList = filteredList;
+
+        orcidSecurityManager.checkAndFilter(orcid, membershipsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        Memberships memberships = new Memberships(membershipsList);
+        ActivityUtils.setPathToAffiliations(memberships, orcid);
+        sourceUtils.setSourceName(memberships);
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(memberships);
+        return Response.ok(memberships).build();
     }
 
     @Override
     public Response viewMembershipSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        MembershipSummary es = affiliationsManagerReadOnly.getMembershipSummary(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(es, orcid);
+        sourceUtils.setSourceName(es);
+        return Response.ok(es).build();
     }
 
     @Override
     public Response createMembership(String orcid, Membership membership) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
+        clearSource(membership);
+        Membership e = affiliationsManager.createMembershipAffiliation(orcid, membership, true);
+        sourceUtils.setSourceName(e);
+        try {
+            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createdistinction_response.exception"), ex);
+        }
     }
 
     @Override
     public Response updateMembership(String orcid, Long putCode, Membership membership) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
+        if (!putCode.equals(membership.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(membership.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        clearSource(membership);
+        Membership e = affiliationsManager.updateMembershipAffiliation(orcid, membership, true);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewQualification(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        Qualification e = affiliationsManagerReadOnly.getQualificationAffiliation(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewQualifications(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<QualificationSummary> qualificationsList = affiliationsManagerReadOnly.getQualificationSummaryList(orcid);
+
+        // Lets copy the list so we don't modify the cached collection
+        List<QualificationSummary> filteredList = null;
+        if (qualificationsList != null) {
+            filteredList = new ArrayList<QualificationSummary>(qualificationsList);
+        }
+        qualificationsList = filteredList;
+
+        orcidSecurityManager.checkAndFilter(orcid, qualificationsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        Qualifications qualifications = new Qualifications(qualificationsList);
+        ActivityUtils.setPathToAffiliations(qualifications, orcid);
+        sourceUtils.setSourceName(qualifications);
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(qualifications);
+        return Response.ok(qualifications).build();
     }
 
     @Override
     public Response viewQualificationSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        QualificationSummary es = affiliationsManagerReadOnly.getQualificationSummary(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(es, orcid);
+        sourceUtils.setSourceName(es);
+        return Response.ok(es).build();
     }
 
     @Override
     public Response createQualification(String orcid, Qualification qualification) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
+        clearSource(qualification);
+        Qualification e = affiliationsManager.createQualificationAffiliation(orcid, qualification, true);
+        sourceUtils.setSourceName(e);
+        try {
+            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createdistinction_response.exception"), ex);
+        }
     }
 
     @Override
     public Response updateQualification(String orcid, Long putCode, Qualification qualification) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
+        if (!putCode.equals(qualification.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(qualification.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        clearSource(qualification);
+        Qualification e = affiliationsManager.updateQualificationAffiliation(orcid, qualification, true);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewService(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        Service e = affiliationsManagerReadOnly.getServiceAffiliation(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewServices(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<ServiceSummary> servicesList = affiliationsManagerReadOnly.getServiceSummaryList(orcid);
+
+        // Lets copy the list so we don't modify the cached collection
+        List<ServiceSummary> filteredList = null;
+        if (servicesList != null) {
+            filteredList = new ArrayList<ServiceSummary>(servicesList);
+        }
+        servicesList = filteredList;
+
+        orcidSecurityManager.checkAndFilter(orcid, servicesList, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        Services services = new Services(servicesList);
+        ActivityUtils.setPathToAffiliations(services, orcid);
+        sourceUtils.setSourceName(services);
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(services);
+        return Response.ok(services).build();
     }
 
     @Override
     public Response viewServiceSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        ServiceSummary es = affiliationsManagerReadOnly.getServiceSummary(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(es, orcid);
+        sourceUtils.setSourceName(es);
+        return Response.ok(es).build();
     }
 
     @Override
     public Response createService(String orcid, Service service) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
+        clearSource(service);
+        Service e = affiliationsManager.createServiceAffiliation(orcid, service, true);
+        sourceUtils.setSourceName(e);
+        try {
+            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createdistinction_response.exception"), ex);
+        }
     }
 
     @Override
     public Response updateService(String orcid, Long putCode, Service service) {
-        // TODO Auto-generated method stub
-        return null;
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
+        if (!putCode.equals(service.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(service.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        clearSource(service);
+        Service e = affiliationsManager.updateServiceAffiliation(orcid, service, true);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
     }
 
+    private void clearSource(SourceAware element) {
+        element.setSource(null);
+    }
 }
