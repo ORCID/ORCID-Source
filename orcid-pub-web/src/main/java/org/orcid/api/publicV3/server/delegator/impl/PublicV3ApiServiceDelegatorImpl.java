@@ -72,10 +72,8 @@ import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
 import org.orcid.jaxb.model.v3.dev1.record.Keywords;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
@@ -83,14 +81,14 @@ import org.orcid.jaxb.model.v3.dev1.record.Person;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.Record;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
@@ -111,7 +109,7 @@ import de.undercouch.citeproc.csl.CSLItemData;
 
 @Component
 public class PublicV3ApiServiceDelegatorImpl
-        implements PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> {
+        implements PublicV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> {
 
     // Activities managers
     @Resource(name = "workManagerReadOnlyV3")
@@ -649,20 +647,36 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewDistinction(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        Distinction e = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(e);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtilsReadOnly.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewDistinctions(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<DistinctionSummary> distinctions = affiliationsManagerReadOnly.getDistinctionSummaryList(orcid);
+        Distinctions publicDistinctions = new Distinctions();
+        for (DistinctionSummary summary : distinctions) {
+            if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtilsReadOnly.setSourceName(summary);
+                publicDistinctions.getSummaries().add(summary);
+            }
+        }
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicDistinctions);
+        ActivityUtils.setPathToAffiliations(publicDistinctions, orcid);
+        return Response.ok(publicDistinctions).build();
     }
 
     @Override
     public Response viewDistinctionSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        DistinctionSummary s = affiliationsManagerReadOnly.getDistinctionSummary(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(s);
+        ActivityUtils.setPathToActivity(s, orcid);
+        sourceUtilsReadOnly.setSourceName(s);
+        return Response.ok(s).build();
     }
 
     @Override
