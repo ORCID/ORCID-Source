@@ -315,7 +315,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertNotNull(originalSummary.getQualifications().getSummaries());
         assertNotNull(originalSummary.getQualifications().getSummaries().get(0));
         Utils.verifyLastModified(originalSummary.getQualifications().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(5, originalSummary.getQualifications().getSummaries().size());
+        assertEquals(6, originalSummary.getQualifications().getSummaries().size());
 
         response = serviceDelegator.createQualification(ORCID, (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION));
         assertNotNull(response);
@@ -334,7 +334,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getQualifications());
         Utils.verifyLastModified(summaryWithNewElement.getQualifications().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getQualifications().getSummaries());
-        assertEquals(6, summaryWithNewElement.getQualifications().getSummaries().size());
+        assertEquals(7, summaryWithNewElement.getQualifications().getSummaries().size());
         
         boolean haveNew = false;
 
@@ -357,8 +357,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertNotNull(response);
         ActivitiesSummary summaryAfterRemovingNewElement = (ActivitiesSummary) response.getEntity();
         assertNotNull(summaryAfterRemovingNewElement);
-        assertEquals(5, summaryAfterRemovingNewElement.getQualifications().getSummaries().size());
-        
+        assertEquals(6, summaryAfterRemovingNewElement.getQualifications().getSummaries().size());        
     }
     
     @Test(expected = OrcidValidationException.class)
