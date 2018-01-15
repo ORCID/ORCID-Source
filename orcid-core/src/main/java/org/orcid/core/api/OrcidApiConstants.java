@@ -56,9 +56,9 @@ public class OrcidApiConstants {
     public static final String DISTINCTION = "/{orcid}/distinction";
     public static final String DISTINCTIONS = "/{orcid}/distinctions";
     public static final String DISTINCTION_SUMMARY = "/{orcid}/distinction/summary";
-    public static final String INVITED_POSITION = "/{orcid}/invited-postion";
-    public static final String INVITED_POSITIONS = "/{orcid}/invited-postions";
-    public static final String INVITED_POSITION_SUMMARY = "/{orcid}/invited-postion/summary";
+    public static final String INVITED_POSITION = "/{orcid}/invited-position";
+    public static final String INVITED_POSITIONS = "/{orcid}/invited-positions";
+    public static final String INVITED_POSITION_SUMMARY = "/{orcid}/invited-position/summary";
     public static final String MEMBERSHIP = "/{orcid}/membership";
     public static final String MEMBERSHIPS = "/{orcid}/memberships";
     public static final String MEMBERSHIP_SUMMARY = "/{orcid}/membership/summary";

@@ -70,8 +70,8 @@ import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
@@ -79,7 +79,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
-public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
+public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest {
     protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
@@ -103,138 +103,138 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
-    public void testViewDistinctionsWrongToken() {
+    public void testViewInvitedPositionsWrongToken() {
         SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewDistinctions(ORCID);
+        serviceDelegator.viewInvitedPositions(ORCID);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
-    public void testViewDistinctionWrongToken() {
+    public void testViewInvitedPositionWrongToken() {
         SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewDistinction(ORCID, 20L);
+        serviceDelegator.viewInvitedPosition(ORCID, 20L);
     }
 
     @Test
-    public void testViewDistinctionReadPublic() {
+    public void testViewInvitedPositionReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewDistinction(ORCID, 20L);
-        Distinction element = (Distinction) r.getEntity();
+        Response r = serviceDelegator.viewInvitedPosition(ORCID, 20L);
+        InvitedPosition element = (InvitedPosition) r.getEntity();
         assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/distinction/20", element.getPath());
+        assertEquals("/0000-0000-0000-0003/invited-position/20", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
-    public void testViewDistinctionSummaryWrongToken() {
+    public void testViewInvitedPositionSummaryWrongToken() {
         SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewDistinctionSummary(ORCID, 20L);
+        serviceDelegator.viewInvitedPositionSummary(ORCID, 20L);
     }
 
     @Test
-    public void testViewDistinctionsReadPublic() {
+    public void testViewInvitedPositionsReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewDistinctions(ORCID);
-        Distinctions element = (Distinctions) r.getEntity();
+        Response r = serviceDelegator.viewInvitedPositions(ORCID);
+        InvitedPositions element = (InvitedPositions) r.getEntity();
         assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/distinctions", element.getPath());
+        assertEquals("/0000-0000-0000-0003/invited-positions", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
-    public void testViewDistinctionSummaryReadPublic() {
+    public void testViewInvitedPositionSummaryReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewDistinctionSummary(ORCID, 20L);
-        DistinctionSummary element = (DistinctionSummary) r.getEntity();
+        Response r = serviceDelegator.viewInvitedPositionSummary(ORCID, 20L);
+        InvitedPositionSummary element = (InvitedPositionSummary) r.getEntity();
         assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/distinction/20", element.getPath());
+        assertEquals("/0000-0000-0000-0003/invited-position/20", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
-    public void testViewPublicDistinction() {
+    public void testViewPublicInvitedPosition() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewDistinction(ORCID, 27L);
+        Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
-        Distinction distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        Utils.verifyLastModified(distinction.getLastModifiedDate());
-        assertEquals(Long.valueOf(27L), distinction.getPutCode());
-        assertEquals("/0000-0000-0000-0003/distinction/27", distinction.getPath());
-        assertEquals("PUBLIC Department", distinction.getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), distinction.getVisibility().value());
+        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
+        assertEquals(Long.valueOf(32L), invitedPosition.getPutCode());
+        assertEquals("/0000-0000-0000-0003/invited-position/32", invitedPosition.getPath());
+        assertEquals("PUBLIC Department", invitedPosition.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), invitedPosition.getVisibility().value());
     }
 
     @Test
-    public void testViewLimitedDistinction() {
+    public void testViewLimitedInvitedPosition() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewDistinction(ORCID, 30L);
+        Response response = serviceDelegator.viewInvitedPosition(ORCID, 35L);
         assertNotNull(response);
-        Distinction distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        Utils.verifyLastModified(distinction.getLastModifiedDate());
-        assertEquals(Long.valueOf(30L), distinction.getPutCode());
-        assertEquals("/0000-0000-0000-0003/distinction/30", distinction.getPath());
-        assertEquals("SELF LIMITED Department", distinction.getDepartmentName());
-        assertEquals(Visibility.LIMITED.value(), distinction.getVisibility().value());
+        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
+        assertEquals(Long.valueOf(35L), invitedPosition.getPutCode());
+        assertEquals("/0000-0000-0000-0003/invited-position/35", invitedPosition.getPath());
+        assertEquals("SELF LIMITED Department", invitedPosition.getDepartmentName());
+        assertEquals(Visibility.LIMITED.value(), invitedPosition.getVisibility().value());
     }
 
     @Test
-    public void testViewPrivateDistinction() {
+    public void testViewPrivateInvitedPosition() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewDistinction(ORCID, 29L);
+        Response response = serviceDelegator.viewInvitedPosition(ORCID, 34L);
         assertNotNull(response);
-        Distinction distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        Utils.verifyLastModified(distinction.getLastModifiedDate());
-        assertEquals(Long.valueOf(29L), distinction.getPutCode());
-        assertEquals("/0000-0000-0000-0003/distinction/29", distinction.getPath());
-        assertEquals("PRIVATE Department", distinction.getDepartmentName());
-        assertEquals(Visibility.PRIVATE.value(), distinction.getVisibility().value());
+        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
+        assertEquals(Long.valueOf(34L), invitedPosition.getPutCode());
+        assertEquals("/0000-0000-0000-0003/invited-position/34", invitedPosition.getPath());
+        assertEquals("PRIVATE Department", invitedPosition.getDepartmentName());
+        assertEquals(Visibility.PRIVATE.value(), invitedPosition.getVisibility().value());
     }
 
     @Test(expected = OrcidVisibilityException.class)
-    public void testViewPrivateDistinctionWhereYouAreNotTheSource() {
+    public void testViewPrivateInvitedPositionWhereYouAreNotTheSource() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        serviceDelegator.viewDistinction(ORCID, 31L);
+        serviceDelegator.viewInvitedPosition(ORCID, 31L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
-    public void testViewDistinctionThatDontBelongToTheUser() {
+    public void testViewInvitedPositionThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        // Distinction 27 belongs to 0000-0000-0000-0003
-        serviceDelegator.viewDistinction("4444-4444-4444-4446", 27L);
+        // InvitedPosition 32 belongs to 0000-0000-0000-0003
+        serviceDelegator.viewInvitedPosition("4444-4444-4444-4446", 32L);
         fail();
     }
 
     @Test
-    public void testViewDistinctions() {
+    public void testViewInvitedPositions() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Response r = serviceDelegator.viewDistinctions(ORCID);
+        Response r = serviceDelegator.viewInvitedPositions(ORCID);
         assertNotNull(r);
-        Distinctions distinctions = (Distinctions) r.getEntity();
-        assertNotNull(distinctions);
-        assertEquals("/0000-0000-0000-0003/distinctions", distinctions.getPath());
-        Utils.verifyLastModified(distinctions.getLastModifiedDate());
-        assertNotNull(distinctions.getSummaries());
-        assertEquals(4, distinctions.getSummaries().size());
+        InvitedPositions invitedPositions = (InvitedPositions) r.getEntity();
+        assertNotNull(invitedPositions);
+        assertEquals("/0000-0000-0000-0003/invited-positions", invitedPositions.getPath());
+        Utils.verifyLastModified(invitedPositions.getLastModifiedDate());
+        assertNotNull(invitedPositions.getSummaries());
+        assertEquals(4, invitedPositions.getSummaries().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
-        for (DistinctionSummary summary : distinctions.getSummaries()) {
+        for (InvitedPositionSummary summary : invitedPositions.getSummaries()) {
             Utils.verifyLastModified(summary.getLastModifiedDate());
-            if (Long.valueOf(27).equals(summary.getPutCode())) {
+            if (Long.valueOf(32).equals(summary.getPutCode())) {
                 assertEquals("PUBLIC Department", summary.getDepartmentName());
                 found1 = true;
-            } else if (Long.valueOf(28).equals(summary.getPutCode())) {
+            } else if (Long.valueOf(33).equals(summary.getPutCode())) {
                 assertEquals("LIMITED Department", summary.getDepartmentName());
                 found2 = true;
-            } else if (Long.valueOf(29).equals(summary.getPutCode())) {
+            } else if (Long.valueOf(34).equals(summary.getPutCode())) {
                 assertEquals("PRIVATE Department", summary.getDepartmentName());
                 found3 = true;
-            } else if (Long.valueOf(30).equals(summary.getPutCode())) {
+            } else if (Long.valueOf(35).equals(summary.getPutCode())) {
                 assertEquals("SELF LIMITED Department", summary.getDepartmentName());
                 found4 = true;
             } else {
-                fail("Invalid distinction found: " + summary.getPutCode());
+                fail("Invalid invitedPosition found: " + summary.getPutCode());
             }
         }
         assertTrue(found1);
@@ -244,22 +244,28 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
     }
 
     @Test
-    public void testReadPublicScope_Distinctions() {
+    public void testReadPublicScope_InvitedPositions() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewDistinction(ORCID, 27L);
+        Response r = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(r);
-        assertEquals(Distinction.class.getName(), r.getEntity().getClass().getName());
+        assertEquals(InvitedPosition.class.getName(), r.getEntity().getClass().getName());
 
-        r = serviceDelegator.viewDistinctionSummary(ORCID, 27L);
+        r = serviceDelegator.viewInvitedPositionSummary(ORCID, 32L);
         assertNotNull(r);
-        assertEquals(DistinctionSummary.class.getName(), r.getEntity().getClass().getName());
+        assertEquals(InvitedPositionSummary.class.getName(), r.getEntity().getClass().getName());
 
         // Limited that am the source of should work
-        serviceDelegator.viewDistinction(ORCID, 28L);
-        serviceDelegator.viewDistinctionSummary(ORCID, 28L);
+        serviceDelegator.viewInvitedPosition(ORCID, 33L);
+        serviceDelegator.viewInvitedPositionSummary(ORCID, 33L);
+        
+        // Private that am the source of should work
+        serviceDelegator.viewInvitedPosition(ORCID, 34L);
+        serviceDelegator.viewInvitedPositionSummary(ORCID, 34L);
+        
+        
         // Limited that am not the source of should fail
         try {
-            serviceDelegator.viewDistinction(ORCID, 30L);
+            serviceDelegator.viewInvitedPosition(ORCID, 35L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -268,7 +274,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         }
 
         try {
-            serviceDelegator.viewDistinctionSummary(ORCID, 30L);
+            serviceDelegator.viewInvitedPositionSummary(ORCID, 35L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -276,12 +282,9 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
             fail();
         }
 
-        // Private that am the source of should work
-        serviceDelegator.viewDistinction(ORCID, 29L);
-        serviceDelegator.viewDistinctionSummary(ORCID, 29L);
         // Private that am not the source of should fails
         try {
-            serviceDelegator.viewDistinction(ORCID, 31L);
+            serviceDelegator.viewInvitedPosition(ORCID, 35L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -290,7 +293,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         }
 
         try {
-            serviceDelegator.viewDistinctionSummary(ORCID, 31L);
+            serviceDelegator.viewInvitedPositionSummary(ORCID, 35L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -300,21 +303,21 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
     }
 
     @Test
-    public void testAddDistinction() {
+    public void testAddInvitedPosition() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
         ActivitiesSummary originalSummary = (ActivitiesSummary) response.getEntity();
         assertNotNull(originalSummary);
         Utils.verifyLastModified(originalSummary.getLastModifiedDate());
-        assertNotNull(originalSummary.getDistinctions());
-        Utils.verifyLastModified(originalSummary.getDistinctions().getLastModifiedDate());
-        assertNotNull(originalSummary.getDistinctions().getSummaries());
-        assertNotNull(originalSummary.getDistinctions().getSummaries().get(0));
-        Utils.verifyLastModified(originalSummary.getDistinctions().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(5, originalSummary.getDistinctions().getSummaries().size());
+        assertNotNull(originalSummary.getInvitedPositions());
+        Utils.verifyLastModified(originalSummary.getInvitedPositions().getLastModifiedDate());
+        assertNotNull(originalSummary.getInvitedPositions().getSummaries());
+        assertNotNull(originalSummary.getInvitedPositions().getSummaries().get(0));
+        Utils.verifyLastModified(originalSummary.getInvitedPositions().getSummaries().get(0).getLastModifiedDate());
+        assertEquals(5, originalSummary.getInvitedPositions().getSummaries().size());
 
-        response = serviceDelegator.createDistinction(ORCID, (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION));
+        response = serviceDelegator.createInvitedPosition(ORCID, (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Map<?, ?> map = response.getMetadata();
@@ -328,21 +331,21 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         ActivitiesSummary summaryWithNewElement = (ActivitiesSummary) response.getEntity();
         assertNotNull(summaryWithNewElement);
         Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getDistinctions());
-        Utils.verifyLastModified(summaryWithNewElement.getDistinctions().getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getDistinctions().getSummaries());
-        assertEquals(6, summaryWithNewElement.getDistinctions().getSummaries().size());
+        assertNotNull(summaryWithNewElement.getInvitedPositions());
+        Utils.verifyLastModified(summaryWithNewElement.getInvitedPositions().getLastModifiedDate());
+        assertNotNull(summaryWithNewElement.getInvitedPositions().getSummaries());
+        assertEquals(6, summaryWithNewElement.getInvitedPositions().getSummaries().size());
         
         boolean haveNew = false;
 
-        for (DistinctionSummary distinctionSummary : summaryWithNewElement.getDistinctions().getSummaries()) {
-            assertNotNull(distinctionSummary.getPutCode());
-            Utils.verifyLastModified(distinctionSummary.getLastModifiedDate());
-            if (distinctionSummary.getPutCode() == putCode) {
-                assertEquals("My department name", distinctionSummary.getDepartmentName());
+        for (InvitedPositionSummary invitedPositionSummary : summaryWithNewElement.getInvitedPositions().getSummaries()) {
+            assertNotNull(invitedPositionSummary.getPutCode());
+            Utils.verifyLastModified(invitedPositionSummary.getLastModifiedDate());
+            if (invitedPositionSummary.getPutCode() == putCode) {
+                assertEquals("My department name", invitedPositionSummary.getDepartmentName());
                 haveNew = true;
             } else {
-                assertTrue(originalSummary.getDistinctions().getSummaries().contains(distinctionSummary));
+                assertTrue(originalSummary.getInvitedPositions().getSummaries().contains(invitedPositionSummary));
             }
         }
         
@@ -354,20 +357,20 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(response);
         ActivitiesSummary summaryAfterRemovingNewElement = (ActivitiesSummary) response.getEntity();
         assertNotNull(summaryAfterRemovingNewElement);
-        assertEquals(5, summaryAfterRemovingNewElement.getDistinctions().getSummaries().size());
+        assertEquals(5, summaryAfterRemovingNewElement.getInvitedPositions().getSummaries().size());
         
     }
     
     @Test(expected = OrcidValidationException.class)
-    public void testAddDistinctionNoStartDate() {
+    public void testAddInvitedPositionNoStartDate() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
-        distinction.setStartDate(null);
-        serviceDelegator.createDistinction("4444-4444-4444-4442", distinction);
+        InvitedPosition invitedPosition = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
+        invitedPosition.setStartDate(null);
+        serviceDelegator.createInvitedPosition("4444-4444-4444-4442", invitedPosition);
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)
-    public void testAddDistinctionsDuplicateExternalIDs() {
+    public void testAddInvitedPositionsDuplicateExternalIDs() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
@@ -386,10 +389,10 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         externalIDs.getExternalIdentifier().add(e1);
         externalIDs.getExternalIdentifier().add(e2);
 
-        Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
-        distinction.setExternalIDs(externalIDs);
+        InvitedPosition invitedPosition = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
+        invitedPosition.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createDistinction("4444-4444-4444-4447", distinction);
+        Response response = serviceDelegator.createInvitedPosition("4444-4444-4444-4447", invitedPosition);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
@@ -400,9 +403,9 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         try {
-            Distinction duplicate = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
+            InvitedPosition duplicate = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
             duplicate.setExternalIDs(externalIDs);
-            serviceDelegator.createDistinction("4444-4444-4444-4447", duplicate);
+            serviceDelegator.createInvitedPosition("4444-4444-4444-4447", duplicate);
         } finally {
             serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode);
         }
@@ -410,98 +413,98 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
 
 
     @Test
-    public void testUpdateDistinction() {
+    public void testUpdateInvitedPosition() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction("4444-4444-4444-4443", 3L);
+        Response response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4443", 3L);
         assertNotNull(response);
-        Distinction distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        assertEquals("Another Department", distinction.getDepartmentName());
-        assertEquals("Student", distinction.getRoleTitle());
-        Utils.verifyLastModified(distinction.getLastModifiedDate());
+        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        assertEquals("Another Department", invitedPosition.getDepartmentName());
+        assertEquals("Student", invitedPosition.getRoleTitle());
+        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
 
-        LastModifiedDate before = distinction.getLastModifiedDate();
+        LastModifiedDate before = invitedPosition.getLastModifiedDate();
 
-        distinction.setDepartmentName("Updated department name");
-        distinction.setRoleTitle("The updated role title");
+        invitedPosition.setDepartmentName("Updated department name");
+        invitedPosition.setRoleTitle("The updated role title");
         
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
         disambiguatedOrg.setDisambiguationSource("WDB");
-        distinction.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
+        invitedPosition.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        response = serviceDelegator.updateDistinction("4444-4444-4444-4443", 3L, distinction);
+        response = serviceDelegator.updateInvitedPosition("4444-4444-4444-4443", 3L, invitedPosition);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        response = serviceDelegator.viewDistinction("4444-4444-4444-4443", 3L);
+        response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4443", 3L);
         assertNotNull(response);
-        distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        Utils.verifyLastModified(distinction.getLastModifiedDate());
-        assertTrue(distinction.getLastModifiedDate().after(before));
-        assertEquals("Updated department name", distinction.getDepartmentName());
-        assertEquals("The updated role title", distinction.getRoleTitle());
+        invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
+        assertTrue(invitedPosition.getLastModifiedDate().after(before));
+        assertEquals("Updated department name", invitedPosition.getDepartmentName());
+        assertEquals("The updated role title", invitedPosition.getRoleTitle());
 
         // Rollback changes
-        distinction.setDepartmentName("Another Department");
-        distinction.setRoleTitle("Student");
+        invitedPosition.setDepartmentName("Another Department");
+        invitedPosition.setRoleTitle("Student");
 
-        response = serviceDelegator.updateDistinction("4444-4444-4444-4443", 3L, distinction);
+        response = serviceDelegator.updateInvitedPosition("4444-4444-4444-4443", 3L, invitedPosition);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test(expected = WrongSourceException.class)
-    public void testUpdateDistinctionYouAreNotTheSourceOf() {
+    public void testUpdateInvitedPositionYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction("4444-4444-4444-4442", 1L);
+        Response response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4442", 1L);
         assertNotNull(response);
-        Distinction distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        distinction.setDepartmentName("Updated department name");
-        distinction.setRoleTitle("The updated role title");
-        serviceDelegator.updateDistinction("4444-4444-4444-4442", 1L, distinction);
+        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        invitedPosition.setDepartmentName("Updated department name");
+        invitedPosition.setRoleTitle("The updated role title");
+        serviceDelegator.updateInvitedPosition("4444-4444-4444-4442", 1L, invitedPosition);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
-    public void testUpdateDistinctionChangingVisibilityTest() {
+    public void testUpdateInvitedPositionChangingVisibilityTest() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction("4444-4444-4444-4443", 3L);
+        Response response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4443", 3L);
         assertNotNull(response);
-        Distinction distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        assertEquals(Visibility.PUBLIC, distinction.getVisibility());
+        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
 
-        distinction.setVisibility(distinction.getVisibility().equals(Visibility.PRIVATE) ? Visibility.LIMITED : Visibility.PRIVATE);
+        invitedPosition.setVisibility(invitedPosition.getVisibility().equals(Visibility.PRIVATE) ? Visibility.LIMITED : Visibility.PRIVATE);
 
-        response = serviceDelegator.updateDistinction("4444-4444-4444-4443", 3L, distinction);
+        response = serviceDelegator.updateInvitedPosition("4444-4444-4444-4443", 3L, invitedPosition);
         fail();
     }
 
     @Test
-    public void testUpdateDistinctionLeavingVisibilityNullTest() {
+    public void testUpdateInvitedPositionLeavingVisibilityNullTest() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction(ORCID, 27L);
+        Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
-        Distinction distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        assertEquals(Visibility.PUBLIC, distinction.getVisibility());
+        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
         
-        distinction.setVisibility(null);
+        invitedPosition.setVisibility(null);
 
-        response = serviceDelegator.updateDistinction(ORCID, 27L, distinction);
+        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
-        assertEquals(Visibility.PUBLIC, distinction.getVisibility());
+        invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
+        assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)
-    public void testUpdateDistinctionDuplicateExternalIDs() {
+    public void testUpdateInvitedPositionDuplicateExternalIDs() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
@@ -520,10 +523,10 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         externalIDs.getExternalIdentifier().add(e1);
         externalIDs.getExternalIdentifier().add(e2);
 
-        Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
-        distinction.setExternalIDs(externalIDs);
+        InvitedPosition invitedPosition = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
+        invitedPosition.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createDistinction("4444-4444-4444-4447", distinction);
+        Response response = serviceDelegator.createInvitedPosition("4444-4444-4444-4447", invitedPosition);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
@@ -533,8 +536,8 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
-        Distinction another = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
-        response = serviceDelegator.createDistinction("4444-4444-4444-4447", another);
+        InvitedPosition another = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
+        response = serviceDelegator.createInvitedPosition("4444-4444-4444-4447", another);
         
         map = response.getMetadata();
         assertNotNull(map);
@@ -542,12 +545,12 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         resultWithPutCode = (List<?>) map.get("Location");
         Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
         
-        response = serviceDelegator.viewDistinction("4444-4444-4444-4447", putCode2);
-        another = (Distinction) response.getEntity();
+        response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4447", putCode2);
+        another = (InvitedPosition) response.getEntity();
         another.setExternalIDs(externalIDs);
         
         try {
-            serviceDelegator.updateDistinction("4444-4444-4444-4447", putCode2, another);
+            serviceDelegator.updateInvitedPosition("4444-4444-4444-4447", putCode2, another);
         } finally {
             serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode1);
             serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode2);
@@ -555,22 +558,22 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
     }
 
     @Test(expected = NoResultException.class)
-    public void testDeleteDistinction() {
+    public void testDeleteInvitedPosition() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction("4444-4444-4444-4447", 12L);
+        Response response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4447", 12L);
         assertNotNull(response);
-        Distinction distinction = (Distinction) response.getEntity();
-        assertNotNull(distinction);
+        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
+        assertNotNull(invitedPosition);
 
         response = serviceDelegator.deleteAffiliation("4444-4444-4444-4447", 12L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        serviceDelegator.viewDistinction("4444-4444-4444-4447", 12L);
+        serviceDelegator.viewInvitedPosition("4444-4444-4444-4447", 12L);
     }
 
     @Test(expected = WrongSourceException.class)
-    public void testDeleteDistinctionYouAreNotTheSourceOf() {
+    public void testDeleteInvitedPositionYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 9L);
         fail();
