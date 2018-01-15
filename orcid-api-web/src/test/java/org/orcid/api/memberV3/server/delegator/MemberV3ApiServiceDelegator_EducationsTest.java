@@ -561,7 +561,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         try {
         serviceDelegator.viewEducation("0000-0000-0000-0002", 1001L);
-        fail()
+        fail();
         }catch(NoResultException nre) {
             
         } catch(Exception e) {
