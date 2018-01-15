@@ -152,50 +152,50 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
     @Test
     public void testViewEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewEmployment(ORCID, 19L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
         Utils.verifyLastModified(employment.getLastModifiedDate());
-        assertEquals(Long.valueOf(5L), employment.getPutCode());
-        assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
-        assertEquals("Employment Dept # 1", employment.getDepartmentName());
+        assertEquals(Long.valueOf(19L), employment.getPutCode());
+        assertEquals("/0000-0000-0000-0003/employment/19", employment.getPath());
+        assertEquals("PRIVATE Department", employment.getDepartmentName());
         assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
     }
 
     @Test
     public void testViewLimitedEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 11L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewEmployment(ORCID, 18L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
         Utils.verifyLastModified(employment.getLastModifiedDate());
-        assertEquals(Long.valueOf(11L), employment.getPutCode());
-        assertEquals("/4444-4444-4444-4446/employment/11", employment.getPath());
-        assertEquals("Employment Dept # 4", employment.getDepartmentName());
+        assertEquals(Long.valueOf(18L), employment.getPutCode());
+        assertEquals("/0000-0000-0000-0003/employment/18", employment.getPath());
+        assertEquals("LIMITED Department", employment.getDepartmentName());
         assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
     }
 
     @Test
     public void testViewPrivateEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewEmployment(ORCID, 19L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
         Utils.verifyLastModified(employment.getLastModifiedDate());
-        assertEquals(Long.valueOf(5L), employment.getPutCode());
-        assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
-        assertEquals("Employment Dept # 1", employment.getDepartmentName());
+        assertEquals(Long.valueOf(19L), employment.getPutCode());
+        assertEquals("/0000-0000-0000-0003/employment/19", employment.getPath());
+        assertEquals("PRIVATE Department", employment.getDepartmentName());
         assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateEmploymentWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmployment("4444-4444-4444-4446", 10L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEmployment(ORCID, 24L);
         fail();
     }
 
@@ -300,17 +300,17 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
     @Test
     public void testAddEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewActivities("4444-4444-4444-4447");
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getSummaries());
         assertNotNull(summary.getEmployments().getSummaries().get(0));
-        assertEquals(Long.valueOf(13), summary.getEmployments().getSummaries().get(0).getPutCode());
+        assertEquals(4, summary.getEmployments().getSummaries().size());
 
-        response = serviceDelegator.createEmployment("4444-4444-4444-4447", (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
+        response = serviceDelegator.createEmployment(ORCID, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Map<?, ?> map = response.getMetadata();
@@ -319,46 +319,46 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
-        response = serviceDelegator.viewActivities("4444-4444-4444-4447");
+        response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
-        summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        assertNotNull(summary.getEmployments());
-        Utils.verifyLastModified(summary.getEmployments().getLastModifiedDate());
-        assertNotNull(summary.getEmployments().getSummaries());
-
-        boolean haveOld = false;
+        ActivitiesSummary summaryWithNewElement = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summaryWithNewElement);
+        Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
+        assertNotNull(summaryWithNewElement.getEmployments());
+        Utils.verifyLastModified(summaryWithNewElement.getEmployments().getLastModifiedDate());
+        assertNotNull(summaryWithNewElement.getEmployments().getSummaries());
+        assertEquals(5, summaryWithNewElement.getEmployments().getSummaries().size());
+        
         boolean haveNew = false;
 
-        for (EmploymentSummary eSummary : summary.getEmployments().getSummaries()) {
+        for (EmploymentSummary eSummary : summaryWithNewElement.getEmployments().getSummaries()) {
             assertNotNull(eSummary.getPutCode());
             Utils.verifyLastModified(eSummary.getLastModifiedDate());
-            if (eSummary.getPutCode() == 13L) {
-                assertEquals("Employment Dept # 1", eSummary.getDepartmentName());
-                haveOld = true;
-            } else {
-                assertEquals(putCode, eSummary.getPutCode());
+            if (eSummary.getPutCode().equals(putCode)) {
                 assertEquals("My department name", eSummary.getDepartmentName());
                 haveNew = true;
+            } else {
+                assertTrue(summary.getEmployments().getSummaries().contains(eSummary));
             }
         }
-
-        assertTrue(haveOld);
+        
         assertTrue(haveNew);
+        
+        //Delete new element
+        serviceDelegator.deleteAffiliation(ORCID, putCode);
     }
 
     @Test(expected = OrcidValidationException.class)
     public void testAddEmploymentNoStartDate() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setStartDate(null);
-        serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
+        serviceDelegator.createEmployment(ORCID, employment);
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddEmploymentsDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -379,7 +379,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
+        Response response = serviceDelegator.createEmployment(ORCID, employment);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
@@ -392,21 +392,21 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         try {
             Employment duplicate = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
             duplicate.setExternalIDs(externalIDs);
-            serviceDelegator.createEmployment("4444-4444-4444-4447", duplicate);
+            serviceDelegator.createEmployment(ORCID, duplicate);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode);
+            serviceDelegator.deleteAffiliation(ORCID, putCode);
         }
     }
 
     @Test
     public void testUpdateEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment(ORCID, 18L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
-        assertEquals("Employment Dept # 1", employment.getDepartmentName());
-        assertEquals("Researcher", employment.getRoleTitle());
+        assertEquals("LIMITED Department", employment.getDepartmentName());
+        assertEquals("LIMITED", employment.getRoleTitle());
         Utils.verifyLastModified(employment.getLastModifiedDate());
         LastModifiedDate before = employment.getLastModifiedDate();
 
@@ -419,11 +419,11 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         disambiguatedOrg.setDisambiguationSource("WDB");
         employment.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        response = serviceDelegator.updateEmployment(ORCID, 18L, employment);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        response = serviceDelegator.viewEmployment(ORCID, 18L);
         assertNotNull(response);
         employment = (Employment) response.getEntity();
         assertNotNull(employment);
@@ -433,17 +433,17 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         assertEquals("The updated role title", employment.getRoleTitle());
 
         // Rollback changes
-        employment.setDepartmentName("Employment Dept # 1");
-        employment.setRoleTitle("Researcher");
+        employment.setDepartmentName("LIMITED Department");
+        employment.setRoleTitle("LIMITED");
 
-        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        response = serviceDelegator.updateEmployment(ORCID, 18L, employment);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testUpdateEmploymentDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -464,7 +464,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
+        Response response = serviceDelegator.createEmployment(ORCID, employment);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
@@ -475,7 +475,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         Employment another = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
-        response = serviceDelegator.createEmployment("4444-4444-4444-4447", another);
+        response = serviceDelegator.createEmployment(ORCID, another);
         
         map = response.getMetadata();
         assertNotNull(map);
@@ -483,50 +483,50 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         resultWithPutCode = (List<?>) map.get("Location");
         Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
         
-        response = serviceDelegator.viewEmployment("4444-4444-4444-4447", putCode2);
+        response = serviceDelegator.viewEmployment(ORCID, putCode2);
         another = (Employment) response.getEntity();
         another.setExternalIDs(externalIDs);
         
         try {
-            serviceDelegator.updateEmployment("4444-4444-4444-4447", putCode2, another);
+            serviceDelegator.updateEmployment(ORCID, putCode2, another);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode1);
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode2);
+            serviceDelegator.deleteAffiliation(ORCID, putCode1);
+            serviceDelegator.deleteAffiliation(ORCID, putCode2);
         }
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateEmploymentYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 11L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment(ORCID, 23L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
         employment.setDepartmentName("Updated department name");
         employment.setRoleTitle("The updated role title");
-        serviceDelegator.updateEmployment("4444-4444-4444-4446", 11L, employment);
+        serviceDelegator.updateEmployment(ORCID, 23L, employment);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateEmploymentChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment(ORCID, 17L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
-        assertEquals(Visibility.PRIVATE, employment.getVisibility());
+        assertEquals(Visibility.PUBLIC, employment.getVisibility());
 
         employment.setVisibility(Visibility.LIMITED);
 
-        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        response = serviceDelegator.updateEmployment(ORCID, 17L, employment);
         fail();
     }
 
     @Test
     public void testUpdateEmploymentLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment(ORCID, 19L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
@@ -534,7 +534,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
         employment.setVisibility(null);
 
-        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        response = serviceDelegator.updateEmployment(ORCID, 19L, employment);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         employment = (Employment) response.getEntity();
@@ -559,8 +559,8 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteEmploymentYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 11L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deleteAffiliation(ORCID, 23L);
         fail();
     }
 }
