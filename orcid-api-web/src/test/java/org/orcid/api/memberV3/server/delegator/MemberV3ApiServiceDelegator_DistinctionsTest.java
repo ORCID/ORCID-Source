@@ -111,23 +111,23 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewDistinctionWrongToken() {
         SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewDistinction(ORCID, 20L);
+        serviceDelegator.viewDistinction(ORCID, 27L);
     }
 
     @Test
     public void testViewDistinctionReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewDistinction(ORCID, 20L);
+        Response r = serviceDelegator.viewDistinction(ORCID, 27L);
         Distinction element = (Distinction) r.getEntity();
         assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/distinction/20", element.getPath());
+        assertEquals("/0000-0000-0000-0003/distinction/27", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewDistinctionSummaryWrongToken() {
         SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewDistinctionSummary(ORCID, 20L);
+        serviceDelegator.viewDistinctionSummary(ORCID, 27L);
     }
 
     @Test
@@ -143,10 +143,10 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
     @Test
     public void testViewDistinctionSummaryReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewDistinctionSummary(ORCID, 20L);
+        Response r = serviceDelegator.viewDistinctionSummary(ORCID, 27L);
         DistinctionSummary element = (DistinctionSummary) r.getEntity();
         assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/distinction/20", element.getPath());
+        assertEquals("/0000-0000-0000-0003/distinction/27", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -455,14 +455,14 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateDistinctionYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction("4444-4444-4444-4442", 1L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction(ORCID, 30L);
         assertNotNull(response);
         Distinction distinction = (Distinction) response.getEntity();
         assertNotNull(distinction);
         distinction.setDepartmentName("Updated department name");
         distinction.setRoleTitle("The updated role title");
-        serviceDelegator.updateDistinction("4444-4444-4444-4442", 1L, distinction);
+        serviceDelegator.updateDistinction(ORCID, 30L, distinction);
         fail();
     }
 
@@ -556,17 +556,17 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
 
     @Test(expected = NoResultException.class)
     public void testDeleteDistinction() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction("4444-4444-4444-4447", 12L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction(ORCID, 1000L);
         assertNotNull(response);
         Distinction distinction = (Distinction) response.getEntity();
         assertNotNull(distinction);
 
-        response = serviceDelegator.deleteAffiliation("4444-4444-4444-4447", 12L);
+        response = serviceDelegator.deleteAffiliation(ORCID, 1000L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        serviceDelegator.viewDistinction("4444-4444-4444-4447", 12L);
+        serviceDelegator.viewDistinction(ORCID, 1000L);
     }
 
     @Test(expected = WrongSourceException.class)

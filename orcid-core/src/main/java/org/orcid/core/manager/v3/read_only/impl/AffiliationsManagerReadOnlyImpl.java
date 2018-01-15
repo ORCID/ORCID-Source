@@ -97,6 +97,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public Education getEducationAffiliation(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.EDUCATION);
         return jpaJaxbEducationAdapter.toEducation(entity);
     }
 
@@ -113,6 +114,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public EducationSummary getEducationSummary(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.EDUCATION);
         return jpaJaxbEducationAdapter.toEducationSummary(entity);
     }
 
@@ -128,6 +130,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public Employment getEmploymentAffiliation(String userOrcid, Long employmentId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, employmentId);
+        checkType(entity, AffiliationType.EMPLOYMENT);
         return jpaJaxbEmploymentAdapter.toEmployment(entity);
     }
 
@@ -143,6 +146,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
      * */
     public EmploymentSummary getEmploymentSummary(String userOrcid, Long employmentId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, employmentId);
+        checkType(entity, AffiliationType.EMPLOYMENT);
         return jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
     }
 
@@ -227,12 +231,14 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public Distinction getDistinctionAffiliation(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.DISTINCTION);
         return jpaJaxbDistinctionAdapter.toDistinction(entity);
     }
 
     @Override
     public DistinctionSummary getDistinctionSummary(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.DISTINCTION);
         return jpaJaxbDistinctionAdapter.toDistinctionSummary(entity);
     }
 
@@ -252,12 +258,14 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public InvitedPosition getInvitedPositionAffiliation(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.INVITED_POSITION);
         return jpaJaxbInvitedPositionAdapter.toInvitedPosition(entity);
     }
 
     @Override
     public InvitedPositionSummary getInvitedPositionSummary(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.INVITED_POSITION);
         return jpaJaxbInvitedPositionAdapter.toInvitedPositionSummary(entity);
     }
 
@@ -277,12 +285,14 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public Membership getMembershipAffiliation(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.MEMBERSHIP);
         return jpaJaxbMembershipAdapter.toMembership(entity);
     }
 
     @Override
     public MembershipSummary getMembershipSummary(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.MEMBERSHIP);
         return jpaJaxbMembershipAdapter.toMembershipSummary(entity);
     }
 
@@ -302,12 +312,14 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public Qualification getQualificationAffiliation(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.QUALIFICATION);
         return jpaJaxbQualificationAdapter.toQualification(entity);
     }
 
     @Override
     public QualificationSummary getQualificationSummary(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.QUALIFICATION);
         return jpaJaxbQualificationAdapter.toQualificationSummary(entity);
     }
 
@@ -327,12 +339,14 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     @Override
     public Service getServiceAffiliation(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.SERVICE);
         return jpaJaxbServiceAdapter.toService(entity);
     }
 
     @Override
     public ServiceSummary getServiceSummary(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        checkType(entity, AffiliationType.SERVICE);
         return jpaJaxbServiceAdapter.toServiceSummary(entity);
     }
 
@@ -347,5 +361,11 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
                 return sortString2.compareTo(sortString1);
         });
         return elements;
+    }
+    
+    private void checkType(OrgAffiliationRelationEntity entity, AffiliationType type) {
+        if(!entity.getAffiliationType().equals(type)) {
+            throw new IllegalArgumentException("Given affiliation " + entity.getId() + " doesn't match the desired type " + type.value());
+        }
     }
 }

@@ -544,17 +544,17 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
     @Test(expected = NoResultException.class)
     public void testDeleteEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4444", 14L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment(ORCID, 1002L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
 
-        response = serviceDelegator.deleteAffiliation("4444-4444-4444-4444", 14L);
+        response = serviceDelegator.deleteAffiliation(ORCID, 1002L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        serviceDelegator.viewEmployment("4444-4444-4444-4444", 14L);
+        serviceDelegator.viewEmployment(ORCID, 1002L);
     }
 
     @Test(expected = WrongSourceException.class)
