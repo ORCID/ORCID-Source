@@ -312,7 +312,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(originalSummary.getDistinctions().getSummaries());
         assertNotNull(originalSummary.getDistinctions().getSummaries().get(0));
         Utils.verifyLastModified(originalSummary.getDistinctions().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(5, originalSummary.getDistinctions().getSummaries().size());
+        assertEquals(4, originalSummary.getDistinctions().getSummaries().size());
 
         response = serviceDelegator.createDistinction(ORCID, (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION));
         assertNotNull(response);
@@ -331,14 +331,14 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getDistinctions());
         Utils.verifyLastModified(summaryWithNewElement.getDistinctions().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getDistinctions().getSummaries());
-        assertEquals(6, summaryWithNewElement.getDistinctions().getSummaries().size());
+        assertEquals(5, summaryWithNewElement.getDistinctions().getSummaries().size());
         
         boolean haveNew = false;
 
         for (DistinctionSummary distinctionSummary : summaryWithNewElement.getDistinctions().getSummaries()) {
             assertNotNull(distinctionSummary.getPutCode());
             Utils.verifyLastModified(distinctionSummary.getLastModifiedDate());
-            if (distinctionSummary.getPutCode() == putCode) {
+            if (distinctionSummary.getPutCode().equals(putCode)) {
                 assertEquals("My department name", distinctionSummary.getDepartmentName());
                 haveNew = true;
             } else {
@@ -350,25 +350,19 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         
         //Remove new element
         serviceDelegator.deleteAffiliation(ORCID, putCode);
-        response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary summaryAfterRemovingNewElement = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summaryAfterRemovingNewElement);
-        assertEquals(5, summaryAfterRemovingNewElement.getDistinctions().getSummaries().size());
-        
     }
     
     @Test(expected = OrcidValidationException.class)
     public void testAddDistinctionNoStartDate() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
         distinction.setStartDate(null);
-        serviceDelegator.createDistinction("4444-4444-4444-4442", distinction);
+        serviceDelegator.createDistinction(ORCID, distinction);
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddDistinctionsDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -389,7 +383,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
         distinction.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createDistinction("4444-4444-4444-4447", distinction);
+        Response response = serviceDelegator.createDistinction(ORCID, distinction);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
@@ -402,22 +396,22 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         try {
             Distinction duplicate = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
             duplicate.setExternalIDs(externalIDs);
-            serviceDelegator.createDistinction("4444-4444-4444-4447", duplicate);
+            serviceDelegator.createDistinction(ORCID, duplicate);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode);
+            serviceDelegator.deleteAffiliation(ORCID, putCode);
         }
     }
 
 
     @Test
     public void testUpdateDistinction() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction("4444-4444-4444-4443", 3L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction(ORCID, 27L);
         assertNotNull(response);
         Distinction distinction = (Distinction) response.getEntity();
         assertNotNull(distinction);
-        assertEquals("Another Department", distinction.getDepartmentName());
-        assertEquals("Student", distinction.getRoleTitle());
+        assertEquals("PUBLIC Department", distinction.getDepartmentName());
+        assertEquals("PUBLIC", distinction.getRoleTitle());
         Utils.verifyLastModified(distinction.getLastModifiedDate());
 
         LastModifiedDate before = distinction.getLastModifiedDate();
@@ -431,11 +425,11 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         disambiguatedOrg.setDisambiguationSource("WDB");
         distinction.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        response = serviceDelegator.updateDistinction("4444-4444-4444-4443", 3L, distinction);
+        response = serviceDelegator.updateDistinction(ORCID, 27L, distinction);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        response = serviceDelegator.viewDistinction("4444-4444-4444-4443", 3L);
+        response = serviceDelegator.viewDistinction(ORCID, 27L);
         assertNotNull(response);
         distinction = (Distinction) response.getEntity();
         assertNotNull(distinction);
@@ -445,10 +439,10 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertEquals("The updated role title", distinction.getRoleTitle());
 
         // Rollback changes
-        distinction.setDepartmentName("Another Department");
-        distinction.setRoleTitle("Student");
+        distinction.setDepartmentName("PUBLIC Department");
+        distinction.setRoleTitle("PUBLIC");
 
-        response = serviceDelegator.updateDistinction("4444-4444-4444-4443", 3L, distinction);
+        response = serviceDelegator.updateDistinction(ORCID, 27L, distinction);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
@@ -468,16 +462,16 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateDistinctionChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction("4444-4444-4444-4443", 3L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction(ORCID, 27L);
         assertNotNull(response);
         Distinction distinction = (Distinction) response.getEntity();
         assertNotNull(distinction);
         assertEquals(Visibility.PUBLIC, distinction.getVisibility());
 
-        distinction.setVisibility(distinction.getVisibility().equals(Visibility.PRIVATE) ? Visibility.LIMITED : Visibility.PRIVATE);
+        distinction.setVisibility(Visibility.PRIVATE);
 
-        response = serviceDelegator.updateDistinction("4444-4444-4444-4443", 3L, distinction);
+        response = serviceDelegator.updateDistinction(ORCID, 27L, distinction);
         fail();
     }
 
@@ -502,7 +496,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testUpdateDistinctionDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -523,7 +517,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
         distinction.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createDistinction("4444-4444-4444-4447", distinction);
+        Response response = serviceDelegator.createDistinction(ORCID, distinction);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
@@ -534,7 +528,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         Distinction another = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
-        response = serviceDelegator.createDistinction("4444-4444-4444-4447", another);
+        response = serviceDelegator.createDistinction(ORCID, another);
         
         map = response.getMetadata();
         assertNotNull(map);
@@ -542,15 +536,15 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         resultWithPutCode = (List<?>) map.get("Location");
         Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
         
-        response = serviceDelegator.viewDistinction("4444-4444-4444-4447", putCode2);
+        response = serviceDelegator.viewDistinction(ORCID, putCode2);
         another = (Distinction) response.getEntity();
         another.setExternalIDs(externalIDs);
         
         try {
-            serviceDelegator.updateDistinction("4444-4444-4444-4447", putCode2, another);
+            serviceDelegator.updateDistinction(ORCID, putCode2, another);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode1);
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode2);
+            serviceDelegator.deleteAffiliation(ORCID, putCode1);
+            serviceDelegator.deleteAffiliation(ORCID, putCode2);
         }
     }
 
@@ -571,8 +565,8 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteDistinctionYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 9L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deleteAffiliation(ORCID, 30L);
         fail();
     }
 
