@@ -548,19 +548,25 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         }
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void testDeleteEducation() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEducation(ORCID, 1001L);
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation("0000-0000-0000-0002", 1001L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
 
-        response = serviceDelegator.deleteAffiliation(ORCID, 1001L);
+        response = serviceDelegator.deleteAffiliation("0000-0000-0000-0002", 1001L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
-        serviceDelegator.viewEducation(ORCID, 1001L);
+        try {
+        serviceDelegator.viewEducation("0000-0000-0000-0002", 1001L);
+        fail()
+        }catch(NoResultException nre) {
+            
+        } catch(Exception e) {
+            fail();
+        }
     }
 
     @Test(expected = WrongSourceException.class)

@@ -315,7 +315,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertNotNull(originalSummary.getInvitedPositions().getSummaries());
         assertNotNull(originalSummary.getInvitedPositions().getSummaries().get(0));
         Utils.verifyLastModified(originalSummary.getInvitedPositions().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(5, originalSummary.getInvitedPositions().getSummaries().size());
+        assertEquals(4, originalSummary.getInvitedPositions().getSummaries().size());
 
         response = serviceDelegator.createInvitedPosition(ORCID, (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION));
         assertNotNull(response);
@@ -334,14 +334,14 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertNotNull(summaryWithNewElement.getInvitedPositions());
         Utils.verifyLastModified(summaryWithNewElement.getInvitedPositions().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getInvitedPositions().getSummaries());
-        assertEquals(6, summaryWithNewElement.getInvitedPositions().getSummaries().size());
+        assertEquals(5, summaryWithNewElement.getInvitedPositions().getSummaries().size());
         
         boolean haveNew = false;
 
         for (InvitedPositionSummary invitedPositionSummary : summaryWithNewElement.getInvitedPositions().getSummaries()) {
             assertNotNull(invitedPositionSummary.getPutCode());
             Utils.verifyLastModified(invitedPositionSummary.getLastModifiedDate());
-            if (invitedPositionSummary.getPutCode() == putCode) {
+            if (invitedPositionSummary.getPutCode().equals(putCode)) {
                 assertEquals("My department name", invitedPositionSummary.getDepartmentName());
                 haveNew = true;
             } else {
@@ -352,26 +352,20 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertTrue(haveNew);
         
         //Remove new element
-        serviceDelegator.deleteAffiliation(ORCID, putCode);
-        response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary summaryAfterRemovingNewElement = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summaryAfterRemovingNewElement);
-        assertEquals(5, summaryAfterRemovingNewElement.getInvitedPositions().getSummaries().size());
-        
+        serviceDelegator.deleteAffiliation(ORCID, putCode);        
     }
     
     @Test(expected = OrcidValidationException.class)
     public void testAddInvitedPositionNoStartDate() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         InvitedPosition invitedPosition = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
         invitedPosition.setStartDate(null);
-        serviceDelegator.createInvitedPosition("4444-4444-4444-4442", invitedPosition);
+        serviceDelegator.createInvitedPosition(ORCID, invitedPosition);
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddInvitedPositionsDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -392,7 +386,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         InvitedPosition invitedPosition = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
         invitedPosition.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createInvitedPosition("4444-4444-4444-4447", invitedPosition);
+        Response response = serviceDelegator.createInvitedPosition(ORCID, invitedPosition);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
@@ -405,22 +399,22 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         try {
             InvitedPosition duplicate = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
             duplicate.setExternalIDs(externalIDs);
-            serviceDelegator.createInvitedPosition("4444-4444-4444-4447", duplicate);
+            serviceDelegator.createInvitedPosition(ORCID, duplicate);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode);
+            serviceDelegator.deleteAffiliation(ORCID, putCode);
         }
     }
 
 
     @Test
     public void testUpdateInvitedPosition() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4443", 3L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
         InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
         assertNotNull(invitedPosition);
-        assertEquals("Another Department", invitedPosition.getDepartmentName());
-        assertEquals("Student", invitedPosition.getRoleTitle());
+        assertEquals("PUBLIC Department", invitedPosition.getDepartmentName());
+        assertEquals("PUBLIC", invitedPosition.getRoleTitle());
         Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
 
         LastModifiedDate before = invitedPosition.getLastModifiedDate();
@@ -434,11 +428,11 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         disambiguatedOrg.setDisambiguationSource("WDB");
         invitedPosition.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        response = serviceDelegator.updateInvitedPosition("4444-4444-4444-4443", 3L, invitedPosition);
+        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4443", 3L);
+        response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
         invitedPosition = (InvitedPosition) response.getEntity();
         assertNotNull(invitedPosition);
@@ -448,39 +442,39 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertEquals("The updated role title", invitedPosition.getRoleTitle());
 
         // Rollback changes
-        invitedPosition.setDepartmentName("Another Department");
-        invitedPosition.setRoleTitle("Student");
+        invitedPosition.setDepartmentName("PUBLIC Department");
+        invitedPosition.setRoleTitle("PUBLIC");
 
-        response = serviceDelegator.updateInvitedPosition("4444-4444-4444-4443", 3L, invitedPosition);
+        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateInvitedPositionYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4442", 1L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewInvitedPosition(ORCID, 35L);
         assertNotNull(response);
         InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
         assertNotNull(invitedPosition);
         invitedPosition.setDepartmentName("Updated department name");
         invitedPosition.setRoleTitle("The updated role title");
-        serviceDelegator.updateInvitedPosition("4444-4444-4444-4442", 1L, invitedPosition);
+        serviceDelegator.updateInvitedPosition(ORCID, 35L, invitedPosition);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateInvitedPositionChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4443", 3L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
         InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
         assertNotNull(invitedPosition);
         assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
 
-        invitedPosition.setVisibility(invitedPosition.getVisibility().equals(Visibility.PRIVATE) ? Visibility.LIMITED : Visibility.PRIVATE);
+        invitedPosition.setVisibility(Visibility.PRIVATE);
 
-        response = serviceDelegator.updateInvitedPosition("4444-4444-4444-4443", 3L, invitedPosition);
+        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
         fail();
     }
 
@@ -505,7 +499,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testUpdateInvitedPositionDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -526,7 +520,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         InvitedPosition invitedPosition = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
         invitedPosition.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createInvitedPosition("4444-4444-4444-4447", invitedPosition);
+        Response response = serviceDelegator.createInvitedPosition(ORCID, invitedPosition);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
@@ -537,7 +531,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         InvitedPosition another = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
-        response = serviceDelegator.createInvitedPosition("4444-4444-4444-4447", another);
+        response = serviceDelegator.createInvitedPosition(ORCID, another);
         
         map = response.getMetadata();
         assertNotNull(map);
@@ -545,21 +539,21 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         resultWithPutCode = (List<?>) map.get("Location");
         Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
         
-        response = serviceDelegator.viewInvitedPosition("4444-4444-4444-4447", putCode2);
+        response = serviceDelegator.viewInvitedPosition(ORCID, putCode2);
         another = (InvitedPosition) response.getEntity();
         another.setExternalIDs(externalIDs);
         
         try {
-            serviceDelegator.updateInvitedPosition("4444-4444-4444-4447", putCode2, another);
+            serviceDelegator.updateInvitedPosition(ORCID, putCode2, another);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode1);
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode2);
+            serviceDelegator.deleteAffiliation(ORCID, putCode1);
+            serviceDelegator.deleteAffiliation(ORCID, putCode2);
         }
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void testDeleteInvitedPosition() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 1003L);
         assertNotNull(response);
         InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
@@ -568,14 +562,21 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         response = serviceDelegator.deleteAffiliation(ORCID, 1003L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
-        serviceDelegator.viewInvitedPosition(ORCID, 1003L);
+        try {
+            serviceDelegator.viewInvitedPosition(ORCID, 1003L);
+            fail();
+        } catch(NoResultException nre) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteInvitedPositionYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 9L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deleteAffiliation(ORCID, 35L);
         fail();
     }
 

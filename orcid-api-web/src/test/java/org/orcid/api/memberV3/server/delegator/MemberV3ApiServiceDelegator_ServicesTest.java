@@ -557,19 +557,26 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         }
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void testDeleteService() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewService(ORCID, 1006L);
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewService("0000-0000-0000-0002", 1006L);
         assertNotNull(response);
         Service service = (Service) response.getEntity();
         assertNotNull(service);
 
-        response = serviceDelegator.deleteAffiliation(ORCID, 1006L);
+        response = serviceDelegator.deleteAffiliation("0000-0000-0000-0002", 1006L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
-        serviceDelegator.viewService(ORCID, 1006L);
+        
+        try {
+            serviceDelegator.viewService("0000-0000-0000-0002", 1006L);
+            fail(); 
+        } catch(NoResultException nre) {
+            
+        } catch(Exception e) {
+            fail();
+        }
     }
 
     @Test(expected = WrongSourceException.class)

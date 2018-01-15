@@ -548,19 +548,26 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         }
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void testDeleteDistinction() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewDistinction(ORCID, 1000L);
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction("0000-0000-0000-0002", 1000L);
         assertNotNull(response);
         Distinction distinction = (Distinction) response.getEntity();
         assertNotNull(distinction);
 
-        response = serviceDelegator.deleteAffiliation(ORCID, 1000L);
+        response = serviceDelegator.deleteAffiliation("0000-0000-0000-0002", 1000L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        serviceDelegator.viewDistinction(ORCID, 1000L);
+        try {
+        serviceDelegator.viewDistinction("0000-0000-0000-0002", 1000L);
+        fail();
+        }catch(NoResultException nre) {
+            
+        } catch(Exception e) {
+            fail();
+        }
     }
 
     @Test(expected = WrongSourceException.class)
