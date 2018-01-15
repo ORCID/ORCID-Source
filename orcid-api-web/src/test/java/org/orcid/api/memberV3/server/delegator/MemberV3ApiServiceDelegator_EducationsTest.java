@@ -338,7 +338,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         for (EducationSummary educationSummary : summary.getEducations().getSummaries()) {
             assertNotNull(educationSummary.getPutCode());
             Utils.verifyLastModified(educationSummary.getLastModifiedDate());
-            if (educationSummary.getPutCode() == putCode) {
+            if (educationSummary.getPutCode().equals(putCode)) {
                 assertEquals("My department name", educationSummary.getDepartmentName());
                 haveNew = true;
             } else {

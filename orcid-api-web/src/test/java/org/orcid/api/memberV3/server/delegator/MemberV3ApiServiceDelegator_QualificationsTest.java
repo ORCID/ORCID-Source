@@ -315,7 +315,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertNotNull(originalSummary.getQualifications().getSummaries());
         assertNotNull(originalSummary.getQualifications().getSummaries().get(0));
         Utils.verifyLastModified(originalSummary.getQualifications().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(6, originalSummary.getQualifications().getSummaries().size());
+        assertEquals(4, originalSummary.getQualifications().getSummaries().size());
 
         response = serviceDelegator.createQualification(ORCID, (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION));
         assertNotNull(response);
@@ -334,14 +334,14 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getQualifications());
         Utils.verifyLastModified(summaryWithNewElement.getQualifications().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getQualifications().getSummaries());
-        assertEquals(7, summaryWithNewElement.getQualifications().getSummaries().size());
+        assertEquals(5, summaryWithNewElement.getQualifications().getSummaries().size());
         
         boolean haveNew = false;
 
         for (QualificationSummary qualificationSummary : summaryWithNewElement.getQualifications().getSummaries()) {
             assertNotNull(qualificationSummary.getPutCode());
             Utils.verifyLastModified(qualificationSummary.getLastModifiedDate());
-            if (qualificationSummary.getPutCode() == putCode) {
+            if (qualificationSummary.getPutCode().equals(putCode)) {
                 assertEquals("My department name", qualificationSummary.getDepartmentName());
                 haveNew = true;
             } else {
@@ -353,24 +353,19 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         
         //Remove new element
         serviceDelegator.deleteAffiliation(ORCID, putCode);
-        response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary summaryAfterRemovingNewElement = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summaryAfterRemovingNewElement);
-        assertEquals(6, summaryAfterRemovingNewElement.getQualifications().getSummaries().size());        
     }
     
     @Test(expected = OrcidValidationException.class)
     public void testAddQualificationNoStartDate() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Qualification qualification = (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION);
         qualification.setStartDate(null);
-        serviceDelegator.createQualification("4444-4444-4444-4442", qualification);
+        serviceDelegator.createQualification(ORCID, qualification);
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddQualificationsDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -391,7 +386,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         Qualification qualification = (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION);
         qualification.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createQualification("4444-4444-4444-4447", qualification);
+        Response response = serviceDelegator.createQualification(ORCID, qualification);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
@@ -404,12 +399,11 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         try {
             Qualification duplicate = (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION);
             duplicate.setExternalIDs(externalIDs);
-            serviceDelegator.createQualification("4444-4444-4444-4447", duplicate);
+            serviceDelegator.createQualification(ORCID, duplicate);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode);
+            serviceDelegator.deleteAffiliation(ORCID, putCode);
         }
     }
-
 
     @Test
     public void testUpdateQualification() {
@@ -419,7 +413,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         Qualification qualification = (Qualification) response.getEntity();
         assertNotNull(qualification);
         assertEquals("LIMITED Department", qualification.getDepartmentName());
-        assertEquals("QUALIFICATION", qualification.getRoleTitle());
+        assertEquals("LIMITED", qualification.getRoleTitle());
         Utils.verifyLastModified(qualification.getLastModifiedDate());
 
         LastModifiedDate before = qualification.getLastModifiedDate();
@@ -504,7 +498,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testUpdateQualificationDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -525,7 +519,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         Qualification qualification = (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION);
         qualification.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createQualification("4444-4444-4444-4447", qualification);
+        Response response = serviceDelegator.createQualification(ORCID, qualification);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
@@ -536,7 +530,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         Qualification another = (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION);
-        response = serviceDelegator.createQualification("4444-4444-4444-4447", another);
+        response = serviceDelegator.createQualification(ORCID, another);
         
         map = response.getMetadata();
         assertNotNull(map);
@@ -544,15 +538,15 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         resultWithPutCode = (List<?>) map.get("Location");
         Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
         
-        response = serviceDelegator.viewQualification("4444-4444-4444-4447", putCode2);
+        response = serviceDelegator.viewQualification(ORCID, putCode2);
         another = (Qualification) response.getEntity();
         another.setExternalIDs(externalIDs);
         
         try {
-            serviceDelegator.updateQualification("4444-4444-4444-4447", putCode2, another);
+            serviceDelegator.updateQualification(ORCID, putCode2, another);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode1);
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode2);
+            serviceDelegator.deleteAffiliation(ORCID, putCode1);
+            serviceDelegator.deleteAffiliation(ORCID, putCode2);
         }
     }
 
@@ -573,8 +567,8 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteQualificationYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 9L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deleteAffiliation(ORCID, 45L);
         fail();
     }
 
