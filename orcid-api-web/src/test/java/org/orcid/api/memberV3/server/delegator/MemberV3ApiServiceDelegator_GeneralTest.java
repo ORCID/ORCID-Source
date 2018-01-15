@@ -53,6 +53,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
@@ -118,13 +119,13 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
-            serviceDelegator.createEducation(ORCID, Utils.getEducation());
+            serviceDelegator.createEducation(ORCID, (Education) Utils.getAffiliation(AffiliationType.EDUCATION));
             fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
-            serviceDelegator.createEmployment(ORCID, Utils.getEmployment());
+            serviceDelegator.createEmployment(ORCID, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
             fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
@@ -604,7 +605,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
         // Test education
-        Education education = Utils.getEducation();
+        Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         response = serviceDelegator.createEducation(orcid, education);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -622,7 +623,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
         // Test employment
-        response = serviceDelegator.createEmployment(orcid, Utils.getEmployment());
+        response = serviceDelegator.createEmployment(orcid, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         putCode = Utils.getPutCode(response);

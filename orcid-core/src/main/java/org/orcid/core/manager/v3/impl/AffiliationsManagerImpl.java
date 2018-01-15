@@ -320,11 +320,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orgAffiliationRelationDao.flush();
 
         Affiliation result = null;
-        if(type.equals(AffiliationType.EDUCATION)) {
-            
-        } else if (type.equals(AffiliationType.EMPLOYMENT)) {
-            
-        }
         switch(type) {
         case DISTINCTION:
             notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(entity));

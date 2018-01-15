@@ -195,10 +195,28 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                if(AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
+                switch(affiliation.getAffiliationType()) {
+                case DISTINCTION:
+                    result.add(jpaJaxbDistinctionAdapter.toDistinction(affiliation));
+                    break;
+                case EDUCATION:
                     result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
-                } else {
+                    break;
+                case EMPLOYMENT:
                     result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));
+                    break;
+                case INVITED_POSITION:
+                    result.add(jpaJaxbInvitedPositionAdapter.toInvitedPosition(affiliation));                    
+                    break;
+                case MEMBERSHIP:
+                    result.add(jpaJaxbMembershipAdapter.toMembership(affiliation));
+                    break;
+                case QUALIFICATION:
+                    result.add(jpaJaxbQualificationAdapter.toQualification(affiliation));
+                    break;
+                case SERVICE:
+                    result.add(jpaJaxbServiceAdapter.toService(affiliation));
+                    break;
                 }
             }
         }

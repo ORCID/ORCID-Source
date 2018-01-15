@@ -50,6 +50,7 @@ import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
@@ -309,7 +310,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         assertNotNull(summary.getEmployments().getSummaries().get(0));
         assertEquals(Long.valueOf(13), summary.getEmployments().getSummaries().get(0).getPutCode());
 
-        response = serviceDelegator.createEmployment("4444-4444-4444-4447", Utils.getEmployment());
+        response = serviceDelegator.createEmployment("4444-4444-4444-4447", (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Map<?, ?> map = response.getMetadata();
@@ -350,7 +351,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
     @Test(expected = OrcidValidationException.class)
     public void testAddEmploymentNoStartDate() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Employment employment = Utils.getEmployment();
+        Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setStartDate(null);
         serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
     }
@@ -375,7 +376,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         externalIDs.getExternalIdentifier().add(e1);
         externalIDs.getExternalIdentifier().add(e2);
 
-        Employment employment = Utils.getEmployment();
+        Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setExternalIDs(externalIDs);
 
         Response response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
@@ -389,7 +390,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         try {
-            Employment duplicate = Utils.getEmployment();
+            Employment duplicate = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
             duplicate.setExternalIDs(externalIDs);
             serviceDelegator.createEmployment("4444-4444-4444-4447", duplicate);
         } finally {
@@ -460,7 +461,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         externalIDs.getExternalIdentifier().add(e1);
         externalIDs.getExternalIdentifier().add(e2);
 
-        Employment employment = Utils.getEmployment();
+        Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setExternalIDs(externalIDs);
 
         Response response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
@@ -473,7 +474,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
-        Employment another = Utils.getEmployment();
+        Employment another = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         response = serviceDelegator.createEmployment("4444-4444-4444-4447", another);
         
         map = response.getMetadata();

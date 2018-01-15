@@ -26,6 +26,8 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.dev1.common.Country;
 import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.Filterable;
@@ -39,12 +41,13 @@ import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.common.VisibilityType;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.dev1.record.ActivitiesContainer;
 import org.orcid.jaxb.model.v3.dev1.record.Activity;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Addresses;
+import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
@@ -54,8 +57,10 @@ import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
 import org.orcid.jaxb.model.v3.dev1.record.FundingTitle;
 import org.orcid.jaxb.model.v3.dev1.record.FundingType;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
 import org.orcid.jaxb.model.v3.dev1.record.Keywords;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
@@ -64,10 +69,12 @@ import org.orcid.jaxb.model.v3.dev1.record.Person;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.dev1.record.Role;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
 import org.orcid.jaxb.model.v3.dev1.record.WorkType;
@@ -189,24 +196,38 @@ public class Utils {
         return address;
     }
 
-    public static Education getEducation() {
-        Education education = new Education();
-        education.setDepartmentName("My department name");
-        education.setRoleTitle("My Role");
-        education.setOrganization(getOrganization());
-        education.setStartDate(FuzzyDate.valueOf(2017, 1, 1));
-        return education;
+    public static Affiliation getAffiliation(AffiliationType type) {
+        Affiliation a = null;
+        switch(type) {
+        case DISTINCTION:
+            a = new Distinction();
+            break;
+        case EDUCATION:
+            a = new Education();
+            break;
+        case EMPLOYMENT:
+            a = new Employment();
+            break;
+        case INVITED_POSITION:
+            a = new InvitedPosition();
+            break;
+        case MEMBERSHIP:
+            a = new Membership();
+            break;
+        case QUALIFICATION:
+            a = new Qualification();
+            break;
+        case SERVICE:
+            a = new Service();
+            break;
+        }
+        a.setDepartmentName("My department name");
+        a.setRoleTitle("My Role");
+        a.setOrganization(getOrganization());
+        a.setStartDate(FuzzyDate.valueOf(2017, 1, 1));
+        return a;
     }
-
-    public static Employment getEmployment() {
-        Employment employment = new Employment();
-        employment.setDepartmentName("My department name");
-        employment.setRoleTitle("My Role");
-        employment.setOrganization(getOrganization());
-        employment.setStartDate(FuzzyDate.valueOf(2017, 1, 1));
-        return employment;
-    }
-
+    
     public static Work getWork(String title) {
         Work work = new Work();
         WorkTitle workTitle = new WorkTitle();
