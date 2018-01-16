@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -72,7 +71,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -145,6 +143,7 @@ public class RegistrationController extends BaseController {
 
         reg.getEmail().setRequired(true);
         reg.getEmailConfirm().setRequired(true);
+        reg.getEmailsAdditional().get(0).setRequired(false);
         reg.getFamilyNames().setRequired(false);
         reg.getGivenNames().setRequired(true);
         reg.getSendChangeNotifications().setValue(true);
@@ -419,20 +418,17 @@ public class RegistrationController extends BaseController {
         return reg;
     }
     
-    public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
+    public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {    
+        if (reg.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(reg.getEmailsAdditional().get(0)))  {
+            return reg;     
+        } else {
             List<Text> emailsAdditionalList = new ArrayList<Text>();
             for(Text emailAdditional : reg.getEmailsAdditional()) {
                 if(!PojoUtil.isEmpty(emailAdditional)){
-                    emailAdditional.setErrors(new ArrayList<String>());
-                    
-                    if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
-                        reg.getEmail().getErrors().add(getMessage("Email.registrationForm.email"));
-                        return reg;
-                    }
+                    emailAdditional.setErrors(new ArrayList<String>());                           
             
                     String emailAddressAdditional = emailAdditional.getValue();
             
-                    MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "EmailAdditional");
                     // Validate the email address is ok        
                     if(!validateEmailAddress(emailAddressAdditional)) {
                         emailAdditional.getErrors().add(getMessage("Email.personalInfoForm.email", emailAddressAdditional));
@@ -470,22 +466,21 @@ public class RegistrationController extends BaseController {
                                 emailAdditional.getErrors().add(message);
                             }
                         } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
-                                        //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
+                            //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
                             String resendUrl = createResendClaimUrl(emailAddressAdditional, request);
                             String message = getVerifyUnclaimedMessage(emailAddressAdditional, resendUrl);
                             emailAdditional.getErrors().add(message);                                    
                         } else {
                             LOGGER.info("Email " + emailAddressAdditional + " belongs to a unclaimed record and can be auto deprecated");
                         }
-                    }
-                    
+                    }               
                     emailsAdditionalList.add(emailAdditional);
-                }
-                
+                }           
             }
             reg.setEmailsAdditional(emailsAdditionalList);
             return reg;
         }
+    }
     
     public boolean duplicateAdditionalEmails(Registration reg, String emailAddressAdditional) {
         int count = 0;
