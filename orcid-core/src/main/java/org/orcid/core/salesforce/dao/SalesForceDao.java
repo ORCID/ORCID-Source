@@ -25,6 +25,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
+import org.orcid.core.salesforce.model.OrgId;
 
 /**
  * 
@@ -60,6 +61,8 @@ public interface SalesForceDao {
     String retrievePremiumConsortiumMemberTypeId();
 
     String retrieveConsortiumMemberRecordTypeId();
+    
+    List<OrgId> retrieveOrgIdsByAccountId(String accountId);
 
     /**
      * @return The sales force object id, if valid.

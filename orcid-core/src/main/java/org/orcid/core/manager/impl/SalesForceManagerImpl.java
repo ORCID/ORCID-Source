@@ -48,6 +48,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
+import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -213,6 +214,19 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
                 contact.setSelfServiceEnabled(false);
             }
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<OrgId> retrieveOrgIdsByAccountId(String accountId) {
+        //return (List<OrgId>) salesForceOrgIdsCache.get(accountId).getObjectValue();
+        return salesForceDao.retrieveOrgIdsByAccountId(accountId);
+    }
+    
+    @Override
+    public List<OrgId> retrieveFreshOrgIdsByAccountId(String accountId) {
+        //salesForceOrgIdsCache.remove(accountId);
+        return retrieveOrgIdsByAccountId(accountId);
     }
 
     @Override

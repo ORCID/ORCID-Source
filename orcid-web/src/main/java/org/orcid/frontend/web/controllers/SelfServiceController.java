@@ -34,6 +34,7 @@ import org.orcid.core.salesforce.model.ContactPermission;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -287,6 +288,12 @@ public class SelfServiceController extends BaseController {
             errors.add(getMessage("manage_consortium.contacts_must_not_have_more_than_one_voting_contact"));
         }
         return contactsForm;
+    }
+    
+    @RequestMapping(value = "/get-org-ids.json", method = RequestMethod.GET)
+    public @ResponseBody List<OrgId> getOrgIds(@RequestParam("accountId") String accountId) {
+        checkAccess(accountId);
+        return salesForceManager.retrieveOrgIdsByAccountId(accountId);
     }
 
     @RequestMapping(value = "/validate-sub-member-initial-contact-email.json", method = RequestMethod.POST)
