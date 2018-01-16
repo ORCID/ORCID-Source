@@ -554,16 +554,16 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
     @Test
     public void testDeleteInvitedPosition() {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewInvitedPosition(ORCID, 1003L);
+        Response response = serviceDelegator.viewInvitedPosition("0000-0000-0000-0002", 1003L);
         assertNotNull(response);
         InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
         assertNotNull(invitedPosition);
 
-        response = serviceDelegator.deleteAffiliation(ORCID, 1003L);
+        response = serviceDelegator.deleteAffiliation("0000-0000-0000-0002", 1003L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         try {
-            serviceDelegator.viewInvitedPosition(ORCID, 1003L);
+            serviceDelegator.viewInvitedPosition("0000-0000-0000-0002", 1003L);
             fail();
         } catch(NoResultException nre) {
             
