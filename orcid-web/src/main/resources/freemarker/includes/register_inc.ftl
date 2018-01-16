@@ -143,63 +143,144 @@
     <!--Confirm password-->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
-        <div class="bottomBuffer">
-            <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" ng-model="registrationForm.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
-            <span class="required" ng-class="isValidClass(registrationForm.passwordConfirm)">*</span>                 
-            <span class="orcid-error" ng-show="registrationForm.passwordConfirm.errors.length > 0">
-                <div ng-repeat='error in registrationForm.passwordConfirm.errors' ng-bind-html="error"></div>
-            </span>
-        </div>
-    </div>
-    <!--Visibility default-->
-    <div class="form-group clear-fix popover-registry">
-        <div class="oauth-privacy">                      
-            <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
-            <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
-            <@orcid.privacyToggle 
-                angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
-                questionClick="toggleClickPrivacyHelp('workPrivHelp')"
-                clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-                publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
-                limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
-                privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
-        </div>
-    </div>
-    <!--Email frequency-->
-    <div>
-        <div class="relative">              
-            <@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
-        </div>
-    </div>
-    <!--Recaptcha-->
-    <div>
-        <div class="bottomBuffer relative recaptcha"  id="recaptcha">
-            <div vc-recaptcha
-            theme="'light'"
-            key="model.key"
-            on-create="setRecaptchaWidgetId(widgetId)"
-            on-success="setRecatchaResponse(response)"></div>
-                <span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
-                    <div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
-                </span>
-        </div>
-    </div>
-    <!--Terms and conditions-->
-    <div class="bottomBuffer">
-        <label for="termsConditions">
-            <@orcid.msg 'register.labelTermsofUse'/>
-            <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span>
-        </label>
-        <p>
-            <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
-            <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
-        </p>
-        <span class="orcid-error" ng-show="registrationForm.termsOfUse.errors.length > 0">
-            <div ng-repeat='error in registrationForm.termsOfUse.errors' ng-bind-html="error"></div>
+        <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" ng-model="registrationForm.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
+        <span class="required" ng-class="isValidClass(registrationForm.passwordConfirm)">*</span>                 
+        <span class="orcid-error" ng-show="registrationForm.passwordConfirm.errors.length > 0">
+            <div ng-repeat='error in registrationForm.passwordConfirm.errors' ng-bind-html="error"></div>
         </span>
     </div>
+    <@orcid.checkFeatureStatus featureName='GDPR_UI'> 
+        <!--Visibility default-->
+        <div class="form-group clear-fix popover-registry">  
+            <h4>${springMacroRequestContext.getMessage("register.privacy_settings")}</h4>         
+            <p>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</p> 
+            <p><b>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</b></p>
+            <div class="visibilityDefault">
+                <div class="radio">
+                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="PUBLIC"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="LIMITED"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="PRIVATE"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
+                </div>
+            </div>
+            <div class="visibilityHelp">
+                <span class="required" ng-class="isValidClass(registrationForm.activitiesDefaultVisibility)">*</span>
+                <div class="popover-help-container">
+                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <div id="name-help" class="popover bottom">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+                            <ul class="privacyHelp">
+                                <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+                                <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+                                <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+                            </ul>
+                            <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span class="orcid-error" ng-show="registrationForm.activitiesVisibilityDefault.errors.length > 0">
+            <div ng-repeat='error in registrationForm.activitiesVisibilityDefault.errors' ng-bind-html="error"></div>
+        </span>
+        </div>
+        <!--Email frequency-->
+        <div class="form-group clear-fix">              
+            <div>   
+                <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
+                <p>
+                    ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+                </p>
+                <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+                    class="input-xlarge"
+                    ng-model="registrationForm.sendEmailFrequencyDays.value">
+                    <#list sendEmailFrequencies?keys as key>
+                        <option value="${key}" ng-selected="registrationForm.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+                    </#list>
+                </select>        
+            </div>
+        </div>
+        <!--Terms and conditions-->
+        <div class="bottomBuffer">
+            <h4><@orcid.msg 'register.labelTermsofUse'/>
+                <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}"></span></h4>  
+            <p>
+                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
+                <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
+            </p>
+            <span class="orcid-error" ng-show="registrationForm.termsOfUse.errors.length > 0">
+                <div ng-repeat='error in registrationForm.termsOfUse.errors' ng-bind-html="error"></div>
+            </span>
+        </div>
+        <!--Recaptcha-->
+        <div>
+            <div class="bottomBuffer relative recaptcha"  id="recaptcha">
+                <div vc-recaptcha
+                theme="'light'"
+                key="model.key"
+                on-create="setRecaptchaWidgetId(widgetId)"
+                on-success="setRecatchaResponse(response)"></div>
+                    <span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
+                        <div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
+                    </span>
+            </div>
+        </div>
+    </@orcid.checkFeatureStatus> 
+    <@orcid.checkFeatureStatus featureName='GDPR_UI' enabled=false> 
+        <!--Visibility default-->
+        <div class="form-group clear-fix popover-registry">
+            <div class="oauth-privacy">                   
+                <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
+                <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
+                <@orcid.privacyToggle 
+                    angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
+                    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+                    clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
+                    publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
+                    limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
+                    privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
+            </div>
+        </div>
+        <!--Email frequency-->
+        <div>
+            <div class="relative">              
+                <@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
+            </div>
+        </div>
+        <!--Recaptcha-->
+        <div>
+            <div class="bottomBuffer relative recaptcha"  id="recaptcha">
+                <div vc-recaptcha
+                theme="'light'"
+                key="model.key"
+                on-create="setRecaptchaWidgetId(widgetId)"
+                on-success="setRecatchaResponse(response)"></div>
+                    <span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
+                        <div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
+                    </span>
+            </div>
+        </div>
+        <!--Terms and conditions-->
+        <div class="bottomBuffer">
+            <label for="termsConditions">
+                <@orcid.msg 'register.labelTermsofUse'/>
+                <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span>
+            </label>
+            <p>
+                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
+                <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
+            </p>
+            <span class="orcid-error" ng-show="registrationForm.termsOfUse.errors.length > 0">
+                <div ng-repeat='error in registrationForm.termsOfUse.errors' ng-bind-html="error"></div>
+            </span>
+        </div>
+    </@orcid.checkFeatureStatus> 
     <!--Registration error-->
-    <div style="margin-bottom: 15px;" ng-show="generalRegistrationError != null">
+    <div style="margin-bottom: 15px;" ng-show="generalRegistrationError = null">
         <span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
     </div>	 
     <!-- Buttons  -->

@@ -302,6 +302,7 @@ public class RegistrationController extends BaseController {
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
+        registerActivitiesVisibilityDefault(reg);
         regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
@@ -343,6 +344,12 @@ public class RegistrationController extends BaseController {
         super.givenNameValidate(reg.getGivenNames());
         return reg;
     }
+    
+    @RequestMapping(value = "/registerActivitiesVisibilityDefault.json", method = RequestMethod.POST)
+    public @ResponseBody Registration registerActivitiesVisibilityDefault(@RequestBody Registration reg) {
+        activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
+        return reg;
+    } 
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
