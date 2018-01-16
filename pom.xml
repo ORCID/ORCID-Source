@@ -1035,7 +1035,7 @@ the software.
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
-                <version>3.0.1</version>
+                <version>3.8.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1053,7 +1053,7 @@ the software.
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>18.0</version>
+                <version>23.0</version>
             </dependency>
             <!-- http://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
             <dependency>
