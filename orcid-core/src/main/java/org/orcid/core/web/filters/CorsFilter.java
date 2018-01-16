@@ -44,7 +44,11 @@ public class CorsFilter extends OncePerRequestFilter {
 		if (request.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(request.getMethod())) {
 			// CORS "pre-flight" request
 			response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-			response.addHeader("Access-Control-Allow-Headers", "X-Requested-With,Origin,Content-Type, Accept");
+			if(crossDomainWebManger.allowed(request)) {
+	                    response.addHeader("Access-Control-Allow-Headers", "X-Requested-With,Origin,Content-Type,Accept,x-csrf-token");
+	                }else{
+	                    response.addHeader("Access-Control-Allow-Headers", "X-Requested-With,Origin,Content-Type, Accept");
+	                }
 		}
 		filterChain.doFilter(request, response);
 	}
