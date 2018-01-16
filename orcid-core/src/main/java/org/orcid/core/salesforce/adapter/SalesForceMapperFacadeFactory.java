@@ -29,6 +29,7 @@ import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
+import org.orcid.core.salesforce.model.OrgId;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomConverter;
@@ -77,6 +78,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         registerContactMap(mapperFactory);
         registerContactRoleMap(mapperFactory);
         registerOpportunityContactRoleMap(mapperFactory);
+        registerOrgIdMap(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
@@ -197,6 +199,18 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("opportunityId", "OpportunityId");
         classMap.field("contactId", "ContactId");
         classMap.field("roleType", "Role");
+        classMap.register();
+    }
+    
+    private void registerOrgIdMap(MapperFactory mapperFactory) {
+        ClassMapBuilder<OrgId, JSONObject> classMap = mapperFactory.classMap(OrgId.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Id");
+        classMap.field("orgIdValue", "Name");
+        classMap.field("orgIdType", "Identifier_Type__c");
+        classMap.field("inactive", "Inactive__c");
+        classMap.field("primaryIdForType", "Primary_ID_for_type__c");
+        classMap.field("accountId", "Organization__c");
+        classMap.field("notes", "Notes__c");
         classMap.register();
     }
 

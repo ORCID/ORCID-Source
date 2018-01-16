@@ -39,6 +39,7 @@ import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
+import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,6 +210,23 @@ public class SalesForceAdapter {
     public JSONObject createSaleForceRecordFromOpportunity(Opportunity opportunity) {
         JSONObject jsonObject = mapperFacade.map(opportunity, JSONObject.class);
         return jsonObject;
+    }
+    
+    public OrgId createOrgIdFromJson(JSONObject record) {
+        return mapperFacade.map(record, OrgId.class);
+    }
+
+    public List<OrgId> createOrgIdsFromJson(JSONObject object) {
+        try {
+            List<JSONObject> objectsList = extractObjectListFromRecords(object);
+            return objectsList.stream().map(e -> mapperFacade.map(e, OrgId.class)).collect(Collectors.toList());
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting org id list from SalesForce JSON", e);
+        }
+    }
+
+    public JSONObject createSaleForceRecordFromOrgId(OrgId orgId) {
+        return mapperFacade.map(orgId, JSONObject.class);
     }
 
     private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {
