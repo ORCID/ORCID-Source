@@ -72,8 +72,10 @@ import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
 import org.orcid.jaxb.model.v3.dev1.record.Keywords;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
@@ -81,9 +83,11 @@ import org.orcid.jaxb.model.v3.dev1.record.Person;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.Record;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
@@ -95,8 +99,16 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.jaxb.model.v3.dev1.search.Search;
@@ -109,7 +121,7 @@ import de.undercouch.citeproc.csl.CSLItemData;
 
 @Component
 public class PublicV3ApiServiceDelegatorImpl
-        implements PublicV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> {
+        implements PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> {
 
     // Activities managers
     @Resource(name = "workManagerReadOnlyV3")
@@ -681,74 +693,138 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewInvitedPosition(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        InvitedPosition e = affiliationsManagerReadOnly.getInvitedPositionAffiliation(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(e);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtilsReadOnly.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewInvitedPositions(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<InvitedPositionSummary> invitedPositions = affiliationsManagerReadOnly.getInvitedPositionSummaryList(orcid);
+        InvitedPositions publicInvitedPositions = new InvitedPositions();
+        for (InvitedPositionSummary summary : invitedPositions) {
+                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                        ActivityUtils.setPathToActivity(summary, orcid);
+                        sourceUtilsReadOnly.setSourceName(summary);
+                        publicInvitedPositions.getSummaries().add(summary);
+                }
+        }
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicInvitedPositions);
+        ActivityUtils.setPathToAffiliations(publicInvitedPositions, orcid);
+        return Response.ok(publicInvitedPositions).build();
     }
 
     @Override
     public Response viewInvitedPositionSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        InvitedPositionSummary s = affiliationsManagerReadOnly.getInvitedPositionSummary(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(s);
+        ActivityUtils.setPathToActivity(s, orcid);
+        sourceUtilsReadOnly.setSourceName(s);
+        return Response.ok(s).build();
     }
 
     @Override
     public Response viewMembership(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        Membership e = affiliationsManagerReadOnly.getMembershipAffiliation(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(e);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtilsReadOnly.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewMemberships(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<MembershipSummary> memberships = affiliationsManagerReadOnly.getMembershipSummaryList(orcid);
+        Memberships publicMemberships = new Memberships();
+        for (MembershipSummary summary : memberships) {
+                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                        ActivityUtils.setPathToActivity(summary, orcid);
+                        sourceUtilsReadOnly.setSourceName(summary);
+                        publicMemberships.getSummaries().add(summary);
+                }
+        }
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicMemberships);
+        ActivityUtils.setPathToAffiliations(publicMemberships, orcid);
+        return Response.ok(publicMemberships).build();
     }
 
     @Override
     public Response viewMembershipSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        MembershipSummary s = affiliationsManagerReadOnly.getMembershipSummary(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(s);
+        ActivityUtils.setPathToActivity(s, orcid);
+        sourceUtilsReadOnly.setSourceName(s);
+        return Response.ok(s).build();
     }
 
     @Override
     public Response viewQualification(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        Qualification e = affiliationsManagerReadOnly.getQualificationAffiliation(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(e);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtilsReadOnly.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewQualifications(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<QualificationSummary> qualifications = affiliationsManagerReadOnly.getQualificationSummaryList(orcid);
+        Qualifications publicQualifications = new Qualifications();
+        for (QualificationSummary summary : qualifications) {
+                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                        ActivityUtils.setPathToActivity(summary, orcid);
+                        sourceUtilsReadOnly.setSourceName(summary);
+                        publicQualifications.getSummaries().add(summary);
+                }
+        }
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicQualifications);
+        ActivityUtils.setPathToAffiliations(publicQualifications, orcid);
+        return Response.ok(publicQualifications).build();
     }
 
     @Override
     public Response viewQualificationSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        QualificationSummary s = affiliationsManagerReadOnly.getQualificationSummary(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(s);
+        ActivityUtils.setPathToActivity(s, orcid);
+        sourceUtilsReadOnly.setSourceName(s);
+        return Response.ok(s).build();
     }
 
     @Override
     public Response viewService(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        Service e = affiliationsManagerReadOnly.getServiceAffiliation(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(e);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtilsReadOnly.setSourceName(e);
+        return Response.ok(e).build();
     }
 
     @Override
     public Response viewServices(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        List<ServiceSummary> services = affiliationsManagerReadOnly.getServiceSummaryList(orcid);
+        Services publicServices = new Services();
+        for (ServiceSummary summary : services) {
+                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                        ActivityUtils.setPathToActivity(summary, orcid);
+                        sourceUtilsReadOnly.setSourceName(summary);
+                        publicServices.getSummaries().add(summary);
+                }
+        }
+        Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(publicServices);
+        ActivityUtils.setPathToAffiliations(publicServices, orcid);
+        return Response.ok(publicServices).build();
     }
 
     @Override
     public Response viewServiceSummary(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        ServiceSummary s = affiliationsManagerReadOnly.getServiceSummary(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(s);
+        ActivityUtils.setPathToActivity(s, orcid);
+        sourceUtilsReadOnly.setSourceName(s);
+        return Response.ok(s).build();
     }
 
 }
