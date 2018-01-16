@@ -35,6 +35,13 @@ export class AccountService {
         .map((res:Response) => res.json()).share();
     }
 
+    sendDeactivateEmail(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/send-deactivate-account.json'
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
     notifyOther(): void {
         this.notify.next();
         console.log('notify');

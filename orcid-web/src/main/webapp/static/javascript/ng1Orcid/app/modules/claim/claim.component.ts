@@ -24,8 +24,8 @@ import { CommonService }
     from '../../shared/common.service.ts'; 
 
 @Component({
-    selector: 'Claim-ng2',
-    template:  scriptTmpl("Claim-ng2-template")
+    selector: 'claim-ng2',
+    template:  scriptTmpl("claim-ng2-template")
 })
 export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();

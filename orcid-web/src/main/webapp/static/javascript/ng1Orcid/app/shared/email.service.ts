@@ -256,4 +256,86 @@ export class EmailService {
         )
         .share();
     }
+
+    deleteCustomEmail( obj ): Observable<any> {
+        let encoded_data = JSON.stringify( obj );
+        
+        return this.http.post( 
+            getBaseUri() + '/group/custom-emails/delete.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {                      
+            }
+        )
+        .share();
+    }
+
+    editCustomEmail( obj ): Observable<any> {
+        let encoded_data = JSON.stringify( obj );
+        
+        return this.http.post( 
+            getBaseUri() + '/group/custom-emails/update.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {                      
+            }
+        )
+        .share();
+    }
+
+    saveCustomEmail( obj ): Observable<any> {
+        let encoded_data = JSON.stringify( obj );
+        
+        return this.http.post( 
+            getBaseUri() + '/group/custom-emails/create.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {                      
+            }
+        )
+        .share();
+    }
+
+    displayCreateForm( clientId ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/group/custom-emails/get-empty.json?clientId=' + clientId
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {                                              
+            }
+        )
+        .share();
+    }
+
+    getCustomEmails( clientId ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/group/custom-emails/get.json?clientId=' + clientId
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {                                              
+            }
+        )
+        .share();
+    }
 }

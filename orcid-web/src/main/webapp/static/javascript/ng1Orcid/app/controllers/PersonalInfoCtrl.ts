@@ -1,3 +1,5 @@
+//Migrated
+
 declare var orcidVar: any;
 
 import * as angular from 'angular';
