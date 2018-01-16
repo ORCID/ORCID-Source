@@ -23,7 +23,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.cron.AuthorizationCodeCleanerCronJob;
-import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.slf4j.Logger;
@@ -38,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class AuthorizationCodeCleanerCronJobImpl implements AuthorizationCodeCleanerCronJob {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileManagerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthorizationCodeCleanerCronJobImpl.class);
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:1440}")

@@ -17,9 +17,7 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
-import java.util.Locale;
 
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification_v2.Notification;
 
 /**
@@ -29,9 +27,7 @@ import org.orcid.jaxb.model.notification_v2.Notification;
  */
 public interface EmailMessageSender {
 
-    EmailMessage createDigest(String orcid, Collection<Notification> notifications);
-    
-    EmailMessage createDigest(OrcidProfile orcidProfile, Collection<Notification> notifications, Locale locale);
+    EmailMessage createDigest(String orcid, Collection<Notification> notifications);        
 
     void sendEmailMessages();
 

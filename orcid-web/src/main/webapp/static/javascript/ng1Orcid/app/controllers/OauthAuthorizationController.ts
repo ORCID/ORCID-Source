@@ -4,6 +4,7 @@ declare var baseUrl: any;
 declare var addShibbolethGa: any;
 declare var colorbox: any;
 declare var getBaseUri: any;
+declare var getStaticCdnPath: any;
 declare var om: any;
 declare var orcidGA: any;
 declare var orcidVar: any;
@@ -63,7 +64,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             $scope.addScript = function(url, onLoadFunction){        
                 var head = document.getElementsByTagName('head')[0];
                 var script = document.createElement('script');
-                script.src = getBaseUri() + url + '?v=' + orcidVar.version;
+                script.src = getStaticCdnPath() + url;
                 script.onload =  onLoadFunction;
                 head.appendChild(script); // Inject the script
             }; 
@@ -318,8 +319,8 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 
                 if(!$scope.scriptsInjected){ // If shibboleth scripts haven't been
                                                 // loaded yet.
-                    $scope.addScript('/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', function(){
-                        $scope.addScript('/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', function(){
+                    $scope.addScript('/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', function(){
+                        $scope.addScript('/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', function(){
                             $scope.scriptsInjected = true;
                             $scope.$apply();
                             addShibbolethGa($scope.gaString);
@@ -394,6 +395,11 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     dataType: 'json',
                     success: function(data) {
                         $scope.registrationForm = data;
+                        console.log($scope.registrationForm);
+                        console.log(orcidVar.features);
+                        if (orcidVar.features['GDPR_UI'] == true){
+                            $scope.registrationForm.activitiesVisibilityDefault.visibility = null;
+                        }
                         if(givenName || familyName || email || linkFlag){
                             $scope.registrationForm.givenNames.value=givenName;
                             $scope.registrationForm.familyNames.value=familyName;

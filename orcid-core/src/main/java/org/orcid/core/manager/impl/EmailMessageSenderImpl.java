@@ -30,16 +30,16 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification_v2.Notification;
@@ -47,6 +47,7 @@ import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitu
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.DigestEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,9 +88,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private TemplateManager templateManager;
 
     @Resource
-    private OrcidProfileManager orcidProfileManager;
-
-    @Resource
     private LocaleManager localeManager;
 
     @Resource
@@ -101,15 +99,16 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Resource
     private EncryptionManager encryptionManager;
 
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
-        return createDigest(orcidProfile, notifications, locale);
-    }
-
-    @Override
-    public EmailMessage createDigest(OrcidProfile orcidProfile, Collection<Notification> notifications, Locale locale) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);                
+        Locale locale = getUserLocaleFromProfileEntity(record);
         int totalMessageCount = 0;
         int orcidMessageCount = 0;
         int addActivitiesMessageCount = 0;
@@ -139,16 +138,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 amendedMessageCount++;
             }
         }
-        String emailName = notificationManager.deriveEmailFriendlyName(orcidProfile);
+        String emailName = notificationManager.deriveEmailFriendlyName(record);
         String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
-        params.put("messageArgs", new Object[0]);
-        params.put("orcidProfile", orcidProfile);
+        params.put("messageArgs", new Object[0]);        
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);
-        params.put("frequency", orcidProfile.getOrcidInternal().getPreferences().getSendEmailFrequencyDays());
+        params.put("emailFrequencyString", String.valueOf(record.getSendEmailFrequencyDays()));
         params.put("totalMessageCount", String.valueOf(totalMessageCount));
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
@@ -166,9 +164,17 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         emailMessage.setBodyText(bodyText);
         emailMessage.setBodyHtml(bodyHtml);
         return emailMessage;
-
     }
 
+    private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
+        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        if (locale != null) {
+            return LocaleUtils.toLocale(locale.value());
+        }
+        
+        return LocaleUtils.toLocale("en");
+    }
+    
     private String encryptAndEncodePutCode(Long putCode) {
         String encryptedPutCode = encryptionManager.encryptForExternalUse(String.valueOf(putCode));
         try {

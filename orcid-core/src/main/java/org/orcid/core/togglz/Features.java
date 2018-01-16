@@ -31,6 +31,9 @@ public enum Features implements Feature {
     @Label("Badges on member details")
     BADGES,
     
+    @Label("UI changes for GDPR compliance")
+    GDPR_UI,
+    
     @Label("Https for links to iDs")
     HTTPS_IDS,
     

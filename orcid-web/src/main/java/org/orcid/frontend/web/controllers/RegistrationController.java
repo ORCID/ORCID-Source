@@ -72,7 +72,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -303,6 +302,7 @@ public class RegistrationController extends BaseController {
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
+        registerActivitiesVisibilityDefault(reg);
         regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
@@ -344,6 +344,12 @@ public class RegistrationController extends BaseController {
         super.givenNameValidate(reg.getGivenNames());
         return reg;
     }
+    
+    @RequestMapping(value = "/registerActivitiesVisibilityDefault.json", method = RequestMethod.POST)
+    public @ResponseBody Registration registerActivitiesVisibilityDefault(@RequestBody Registration reg) {
+        activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
+        return reg;
+    } 
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {

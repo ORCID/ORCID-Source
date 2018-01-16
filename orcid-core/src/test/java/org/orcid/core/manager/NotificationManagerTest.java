@@ -67,9 +67,9 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
@@ -172,6 +172,8 @@ public class NotificationManagerTest extends DBUnitTest {
     @Resource
     private JpaJaxbNotificationAdapter notificationAdapter;
     
+    @Resource
+    private ProfileEntityManager profileEntityManager;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -230,14 +232,15 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Test
     public void testResetEmail() throws Exception {
+        String userOrcid = "0000-0000-0000-0003";
+        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
         for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            orcidProfile.setPassword("r$nd0m");
+            profileEntityManager.updateLocale(userOrcid, locale);
             EncryptionManager mockEncypter = mock(EncryptionManager.class);
             getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
             when(mockEncypter.encryptForExternalUse(any(String.class)))
                     .thenReturn("Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
-            notificationManager.sendPasswordResetEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
+            notificationManager.sendPasswordResetEmail(primaryEmail, userOrcid);
         }
     }
 
@@ -249,10 +252,10 @@ public class NotificationManagerTest extends DBUnitTest {
         String testOrcid = "0000-0000-0000-0003";
 
         for (Locale locale : Locale.values()) {
+            profileEntityManager.updateLocale(testOrcid, locale);
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
             long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendAmendEmail(orcidProfile, AmendedSection.UNKNOWN);
+            notificationManager.sendAmendEmail(testOrcid, AmendedSection.UNKNOWN, null);
             // New notification entity should have been created
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
@@ -297,6 +300,9 @@ public class NotificationManagerTest extends DBUnitTest {
         Email email = new Email();
         email.setEmail("test@email.com");
         
+        Email delegateEmail = new Email();
+        delegateEmail.setEmail("delegate@email.com");
+        
         when(mockProfileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>(){
             @Override
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -316,6 +322,7 @@ public class NotificationManagerTest extends DBUnitTest {
         });
         
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
+        when(mockEmailManager.findPrimaryEmail(delegateOrcid)).thenReturn(delegateEmail);
         
         for(org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
             profile.setLocale(locale);
@@ -349,41 +356,30 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Test
     public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
+        String userOrcid = "0000-0000-0000-0003";
+        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
         for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
+            profileEntityManager.updateLocale(userOrcid, locale);
+            notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
         }
     }
-
-    @Test
-    public void testSendServiceAnnouncement_1_For_2015() throws JAXBException, IOException, URISyntaxException {
-        for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendServiceAnnouncement_1_For_2015(orcidProfile);
-        }
-    }
-
-    @Test
-    public void testSendVerifiedRequiredAnnouncement2017() throws JAXBException, IOException, URISyntaxException {
-        for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendVerifiedRequiredAnnouncement2017(orcidProfile);
-        }
-    }
-
+    
     @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
+        String userOrcid = "0000-0000-0000-0003";
+        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
         for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendVerificationReminderEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+            profileEntityManager.updateLocale(userOrcid, locale);
+            notificationManager.sendVerificationReminderEmail(userOrcid, primaryEmail);
         }
     }
 
     @Test
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
+        String userOrcid = "0000-0000-0000-0003";
         for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendClaimReminderEmail(orcidProfile, 2);
+            profileEntityManager.updateLocale(userOrcid, locale);
+            notificationManager.sendClaimReminderEmail(userOrcid, 2);
         }
     }
 
@@ -413,10 +409,12 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Test
     public void testSendReactivationEmail() throws Exception {
+        String userOrcid = "0000-0000-0000-0003";
+        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
         String email = "original@email.com";
         for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendReactivationEmail(email, orcidProfile);
+            profileEntityManager.updateLocale(userOrcid, locale);
+            notificationManager.sendReactivationEmail(email, userOrcid);
         }
     }
 
@@ -564,12 +562,4 @@ public class NotificationManagerTest extends DBUnitTest {
         notificationManager.removeNotification(result.getPutCode());
     }
     
-    private OrcidProfile getProfile(Locale locale) throws JAXBException {
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        orcidProfile.getOrcidPreferences().setLocale(locale);
-        orcidProfile.getOrcidIdentifier().setPath("0000-0000-0000-0003");
-        return orcidProfile;
-    }
-
 }

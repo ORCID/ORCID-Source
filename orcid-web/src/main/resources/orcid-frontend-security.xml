@@ -434,6 +434,8 @@
 	<bean id="corsFilterWeb" class="org.orcid.core.web.filters.CorsFilterWeb" />
 
     <bean id="jsonpCallbackFilterWeb" class="org.orcid.core.web.filters.JsonpCallbackFilterWeb" />
+    
+    <bean id="staticContentFilter" class="org.orcid.core.web.filters.StaticContentFilter" />
 		
 	<bean id="switchUserProcessingFilter" class="org.orcid.frontend.web.filter.OrcidSwitchUserFilter">
 		<property name="orcidUserDetailsService" ref="userDetailsService" />
