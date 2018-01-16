@@ -36,16 +36,21 @@ import org.orcid.integration.blackbox.api.BlackBoxBaseV3;
 import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -89,7 +94,17 @@ public class BlackBoxBaseV3_0_dev1 extends BlackBoxBaseV3 {
                 result = (OtherName) obj;
             } else if(PersonExternalIdentifier.class.equals(type)) {
                 result = (PersonExternalIdentifier) obj;
-            }
+            } else if(Distinction.class.equals(type)) {
+                result = (Distinction) obj;
+            } else if(InvitedPosition.class.equals(type)) {
+                result = (InvitedPosition) obj;
+            } else if(Membership.class.equals(type)) {
+                result = (Membership) obj;
+            } else if(Qualification.class.equals(type)) {
+                result = (Qualification) obj;
+            } else if(Service.class.equals(type)) {
+                result = (Service) obj;
+            } 
             return result;
         } catch (IOException e) {
             throw new RuntimeException("Error reading notification from classpath", e);
@@ -104,38 +119,5 @@ public class BlackBoxBaseV3_0_dev1 extends BlackBoxBaseV3 {
         } catch (JAXBException e) {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
         }
-    }           
-    
-    @SuppressWarnings({ "deprecation", "rawtypes" })
-    public Long createOtherName(String value, String userOrcid, String accessToken) {
-        OtherName otherName = new OtherName();
-        otherName.setContent(value);
-        ClientResponse response = memberV3Dev1ApiClientImpl.createOtherName(userOrcid, otherName, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
-        String location = resultWithPutCode.get(0).toString();
-        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));               
-        return putCode;
-    }   
-    
-    /**
-     * EXTERNAL IDENTIFIERS
-     * 
-     * External identifiers can't be added through the UI
-     * */
-    public Long createExternalIdentifier(String value, String userOrcid, String accessToken) {
-        PersonExternalIdentifier e = new PersonExternalIdentifier();
-        e.setValue(value);
-        e.setType("test");
-        e.setUrl(new Url("http://test.orcid.org"));
-        e.setRelationship(Relationship.SELF);
-        ClientResponse response = memberV3Dev1ApiClientImpl.createExternalIdentifier(userOrcid, e, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);                       
-    }   
+    }    
 }

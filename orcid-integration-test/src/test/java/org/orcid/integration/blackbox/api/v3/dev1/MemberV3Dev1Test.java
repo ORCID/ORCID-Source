@@ -34,6 +34,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.dev1.common.Day;
 import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.dev1.common.Month;
@@ -42,7 +45,18 @@ import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.common.Year;
 import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
+import org.orcid.jaxb.model.v3.dev1.record.Education;
+import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
+import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
@@ -52,15 +66,6 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -433,6 +438,10 @@ public class MemberV3Dev1Test extends BlackBoxBaseV3_0_dev1 {
         
         String accessTokenForClient1 = getAccessToken();
         String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        
+        //TODO: add new affiliations here
+        fail();
+        
         
         Education education = (Education) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/education-3.0_dev1.xml", Education.class);
         education.setPutCode(null);
@@ -884,5 +893,380 @@ public class MemberV3Dev1Test extends BlackBoxBaseV3_0_dev1 {
     
     private List<String> getScopes() {
         return getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED);
+    }
+    
+    @Test
+    public void createViewUpdateAndDeleteDistinction() throws JSONException, InterruptedException, URISyntaxException {
+        Distinction distinction = (Distinction) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/distinction-3.0_dev1.xml", Distinction.class);
+        distinction.setPutCode(null);
+        distinction.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createDistinctionXml(this.getUser1OrcidId(), distinction, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/distinction/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Distinction gotDistinction = getResponse.getEntity(Distinction.class);
+        assertEquals("distinction:department-name", gotDistinction.getDepartmentName());
+        assertEquals("distinction:role-title", gotDistinction.getRoleTitle());
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotDistinction.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotDistinction.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotDistinction);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotDistinction.setVisibility(originalVisibility);
+        
+        gotDistinction.setDepartmentName("updated dept. name");
+        gotDistinction.setRoleTitle("updated role title");
+        putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotDistinction);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Distinction gotAfterUpdateDistinction = getAfterUpdateResponse.getEntity(Distinction.class);
+        assertEquals("updated dept. name", gotAfterUpdateDistinction.getDepartmentName());
+        assertEquals("updated role title", gotAfterUpdateDistinction.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteDistinctionXml(this.getUser1OrcidId(), gotDistinction.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void testUpdateDistinctionWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        Distinction distinction = (Distinction) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/distinction-3.0_dev1.xml", Distinction.class);
+        distinction.setPutCode(null);
+        distinction.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createDistinctionXml(this.getUser1OrcidId(), distinction, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/distinction/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Distinction gotDistinction = getResponse.getEntity(Distinction.class);
+        assertEquals("distinction:department-name", gotDistinction.getDepartmentName());
+        assertEquals("distinction:role-title", gotDistinction.getRoleTitle());
+        gotDistinction.setDepartmentName("updated dept. name");
+        gotDistinction.setRoleTitle("updated role title");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotDistinction);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Distinction gotAfterUpdateDistinction = getAfterUpdateResponse.getEntity(Distinction.class);
+        assertEquals("distinction:department-name", gotAfterUpdateDistinction.getDepartmentName());
+        assertEquals("distinction:role-title", gotAfterUpdateDistinction.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteDistinctionXml(this.getUser1OrcidId(), gotDistinction.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void createViewUpdateAndDeleteInvitedPosition() throws JSONException, InterruptedException, URISyntaxException {
+        InvitedPosition invitedPosition = (InvitedPosition) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/invited-position-3.0_dev1.xml", InvitedPosition.class);
+        invitedPosition.setPutCode(null);
+        invitedPosition.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createInvitedPositionXml(this.getUser1OrcidId(), invitedPosition, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/invited-position/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        InvitedPosition gotInvitedPosition = getResponse.getEntity(InvitedPosition.class);
+        assertEquals("invitedPosition:department-name", gotInvitedPosition.getDepartmentName());
+        assertEquals("invitedPosition:role-title", gotInvitedPosition.getRoleTitle());
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotInvitedPosition.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotInvitedPosition.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotInvitedPosition);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotInvitedPosition.setVisibility(originalVisibility);
+        
+        gotInvitedPosition.setDepartmentName("updated dept. name");
+        gotInvitedPosition.setRoleTitle("updated role title");
+        putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotInvitedPosition);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        InvitedPosition gotAfterUpdateInvitedPosition = getAfterUpdateResponse.getEntity(InvitedPosition.class);
+        assertEquals("updated dept. name", gotAfterUpdateInvitedPosition.getDepartmentName());
+        assertEquals("updated role title", gotAfterUpdateInvitedPosition.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteInvitedPositionXml(this.getUser1OrcidId(), gotInvitedPosition.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void testUpdateInvitedPositionWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        InvitedPosition invitedPosition = (InvitedPosition) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/invited-position-3.0_dev1.xml", InvitedPosition.class);
+        invitedPosition.setPutCode(null);
+        invitedPosition.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createInvitedPositionXml(this.getUser1OrcidId(), invitedPosition, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/invited-position/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        InvitedPosition gotInvitedPosition = getResponse.getEntity(InvitedPosition.class);
+        assertEquals("invitedPosition:department-name", gotInvitedPosition.getDepartmentName());
+        assertEquals("invitedPosition:role-title", gotInvitedPosition.getRoleTitle());
+        gotInvitedPosition.setDepartmentName("updated dept. name");
+        gotInvitedPosition.setRoleTitle("updated role title");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotInvitedPosition);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        InvitedPosition gotAfterUpdateInvitedPosition = getAfterUpdateResponse.getEntity(InvitedPosition.class);
+        assertEquals("invitedPosition:department-name", gotAfterUpdateInvitedPosition.getDepartmentName());
+        assertEquals("invitedPosition:role-title", gotAfterUpdateInvitedPosition.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteInvitedPositionXml(this.getUser1OrcidId(), gotInvitedPosition.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void createViewUpdateAndDeleteMembership() throws JSONException, InterruptedException, URISyntaxException {
+        Membership membership = (Membership) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/membership-3.0_dev1.xml", Membership.class);
+        membership.setPutCode(null);
+        membership.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createMembershipXml(this.getUser1OrcidId(), membership, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/membership/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Membership gotMembership = getResponse.getEntity(Membership.class);
+        assertEquals("membership:department-name", gotMembership.getDepartmentName());
+        assertEquals("membership:role-title", gotMembership.getRoleTitle());
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotMembership.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotMembership.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotMembership);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotMembership.setVisibility(originalVisibility);
+        
+        gotMembership.setDepartmentName("updated dept. name");
+        gotMembership.setRoleTitle("updated role title");
+        putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotMembership);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Membership gotAfterUpdateMembership = getAfterUpdateResponse.getEntity(Membership.class);
+        assertEquals("updated dept. name", gotAfterUpdateMembership.getDepartmentName());
+        assertEquals("updated role title", gotAfterUpdateMembership.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteMembershipXml(this.getUser1OrcidId(), gotMembership.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void testUpdateMembershipWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        Membership membership = (Membership) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/membership-3.0_dev1.xml", Membership.class);
+        membership.setPutCode(null);
+        membership.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createMembershipXml(this.getUser1OrcidId(), membership, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/membership/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Membership gotMembership = getResponse.getEntity(Membership.class);
+        assertEquals("membership:department-name", gotMembership.getDepartmentName());
+        assertEquals("membership:role-title", gotMembership.getRoleTitle());
+        gotMembership.setDepartmentName("updated dept. name");
+        gotMembership.setRoleTitle("updated role title");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotMembership);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Membership gotAfterUpdateMembership = getAfterUpdateResponse.getEntity(Membership.class);
+        assertEquals("membership:department-name", gotAfterUpdateMembership.getDepartmentName());
+        assertEquals("membership:role-title", gotAfterUpdateMembership.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteMembershipXml(this.getUser1OrcidId(), gotMembership.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void createViewUpdateAndDeleteQualification() throws JSONException, InterruptedException, URISyntaxException {
+        Qualification qualification = (Qualification) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/qualification-3.0_dev1.xml", Qualification.class);
+        qualification.setPutCode(null);
+        qualification.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createQualificationXml(this.getUser1OrcidId(), qualification, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/qualification/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Qualification gotQualification = getResponse.getEntity(Qualification.class);
+        assertEquals("qualification:department-name", gotQualification.getDepartmentName());
+        assertEquals("qualification:role-title", gotQualification.getRoleTitle());
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotQualification.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotQualification.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotQualification);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotQualification.setVisibility(originalVisibility);
+        
+        gotQualification.setDepartmentName("updated dept. name");
+        gotQualification.setRoleTitle("updated role title");
+        putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotQualification);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Qualification gotAfterUpdateQualification = getAfterUpdateResponse.getEntity(Qualification.class);
+        assertEquals("updated dept. name", gotAfterUpdateQualification.getDepartmentName());
+        assertEquals("updated role title", gotAfterUpdateQualification.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteQualificationXml(this.getUser1OrcidId(), gotQualification.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void testUpdateQualificationWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        Qualification qualification = (Qualification) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/qualification-3.0_dev1.xml", Qualification.class);
+        qualification.setPutCode(null);
+        qualification.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createQualificationXml(this.getUser1OrcidId(), qualification, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/qualification/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Qualification gotQualification = getResponse.getEntity(Qualification.class);
+        assertEquals("qualification:department-name", gotQualification.getDepartmentName());
+        assertEquals("qualification:role-title", gotQualification.getRoleTitle());
+        gotQualification.setDepartmentName("updated dept. name");
+        gotQualification.setRoleTitle("updated role title");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotQualification);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Qualification gotAfterUpdateQualification = getAfterUpdateResponse.getEntity(Qualification.class);
+        assertEquals("qualification:department-name", gotAfterUpdateQualification.getDepartmentName());
+        assertEquals("qualification:role-title", gotAfterUpdateQualification.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteQualificationXml(this.getUser1OrcidId(), gotQualification.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void createViewUpdateAndDeleteService() throws JSONException, InterruptedException, URISyntaxException {
+        Service service = (Service) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/service-3.0_dev1.xml", Service.class);
+        service.setPutCode(null);
+        service.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createServiceXml(this.getUser1OrcidId(), service, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/service/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Service gotService = getResponse.getEntity(Service.class);
+        assertEquals("service:department-name", gotService.getDepartmentName());
+        assertEquals("service:role-title", gotService.getRoleTitle());
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotService.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotService.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotService);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotService.setVisibility(originalVisibility);
+        
+        gotService.setDepartmentName("updated dept. name");
+        gotService.setRoleTitle("updated role title");
+        putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), accessToken, gotService);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Service gotAfterUpdateService = getAfterUpdateResponse.getEntity(Service.class);
+        assertEquals("updated dept. name", gotAfterUpdateService.getDepartmentName());
+        assertEquals("updated role title", gotAfterUpdateService.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteServiceXml(this.getUser1OrcidId(), gotService.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void testUpdateServiceWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        Service service = (Service) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/service-3.0_dev1.xml", Service.class);
+        service.setPutCode(null);
+        service.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV3Dev1ApiClientImpl.createServiceXml(this.getUser1OrcidId(), service, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v3.0_dev1/" + this.getUser1OrcidId() + "/service/\\d+"));
+        ClientResponse getResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Service gotService = getResponse.getEntity(Service.class);
+        assertEquals("service:department-name", gotService.getDepartmentName());
+        assertEquals("service:role-title", gotService.getRoleTitle());
+        gotService.setDepartmentName("updated dept. name");
+        gotService.setRoleTitle("updated role title");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV3Dev1ApiClientImpl.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotService);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV3Dev1ApiClientImpl.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Service gotAfterUpdateService = getAfterUpdateResponse.getEntity(Service.class);
+        assertEquals("service:department-name", gotAfterUpdateService.getDepartmentName());
+        assertEquals("service:role-title", gotAfterUpdateService.getRoleTitle());
+        ClientResponse deleteResponse = memberV3Dev1ApiClientImpl.deleteServiceXml(this.getUser1OrcidId(), gotService.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 }
