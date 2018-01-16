@@ -315,9 +315,9 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         assertNotNull(originalSummary.getServices().getSummaries());
         assertNotNull(originalSummary.getServices().getSummaries().get(0));
         Utils.verifyLastModified(originalSummary.getServices().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(5, originalSummary.getServices().getSummaries().size());
+        assertEquals(4, originalSummary.getServices().getSummaries().size());
 
-        response = serviceDelegator.createService(ORCID, (Service) Utils.getAffiliation(AffiliationType.MEMBERSHIP));
+        response = serviceDelegator.createService(ORCID, (Service) Utils.getAffiliation(AffiliationType.SERVICE));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Map<?, ?> map = response.getMetadata();
@@ -334,14 +334,14 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getServices());
         Utils.verifyLastModified(summaryWithNewElement.getServices().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getServices().getSummaries());
-        assertEquals(6, summaryWithNewElement.getServices().getSummaries().size());
+        assertEquals(5, summaryWithNewElement.getServices().getSummaries().size());
         
         boolean haveNew = false;
 
         for (ServiceSummary serviceSummary : summaryWithNewElement.getServices().getSummaries()) {
             assertNotNull(serviceSummary.getPutCode());
             Utils.verifyLastModified(serviceSummary.getLastModifiedDate());
-            if (serviceSummary.getPutCode() == putCode) {
+            if (serviceSummary.getPutCode().equals(putCode)) {
                 assertEquals("My department name", serviceSummary.getDepartmentName());
                 haveNew = true;
             } else {
@@ -353,18 +353,12 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         
         //Remove new element
         serviceDelegator.deleteAffiliation(ORCID, putCode);
-        response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary summaryAfterRemovingNewElement = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summaryAfterRemovingNewElement);
-        assertEquals(5, summaryAfterRemovingNewElement.getServices().getSummaries().size());
-        
     }
     
     @Test(expected = OrcidValidationException.class)
     public void testAddServiceNoStartDate() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Service service = (Service) Utils.getAffiliation(AffiliationType.MEMBERSHIP);
+        Service service = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
         service.setStartDate(null);
         serviceDelegator.createService(ORCID, service);
     }
@@ -389,7 +383,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         externalIDs.getExternalIdentifier().add(e1);
         externalIDs.getExternalIdentifier().add(e2);
 
-        Service service = (Service) Utils.getAffiliation(AffiliationType.MEMBERSHIP);
+        Service service = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
         service.setExternalIDs(externalIDs);
 
         Response response = serviceDelegator.createService(ORCID, service);
@@ -403,7 +397,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         try {
-            Service duplicate = (Service) Utils.getAffiliation(AffiliationType.MEMBERSHIP);
+            Service duplicate = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
             duplicate.setExternalIDs(externalIDs);
             serviceDelegator.createService(ORCID, duplicate);
         } finally {
@@ -415,12 +409,12 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
     @Test
     public void testUpdateService() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewService(ORCID, 3L);
+        Response response = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(response);
         Service service = (Service) response.getEntity();
         assertNotNull(service);
-        assertEquals("Another Department", service.getDepartmentName());
-        assertEquals("Student", service.getRoleTitle());
+        assertEquals("PUBLIC Department", service.getDepartmentName());
+        assertEquals("PUBLIC", service.getRoleTitle());
         Utils.verifyLastModified(service.getLastModifiedDate());
 
         LastModifiedDate before = service.getLastModifiedDate();
@@ -434,11 +428,11 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         disambiguatedOrg.setDisambiguationSource("WDB");
         service.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        response = serviceDelegator.updateService(ORCID, 3L, service);
+        response = serviceDelegator.updateService(ORCID, 47L, service);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        response = serviceDelegator.viewService(ORCID, 3L);
+        response = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(response);
         service = (Service) response.getEntity();
         assertNotNull(service);
@@ -448,10 +442,10 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         assertEquals("The updated role title", service.getRoleTitle());
 
         // Rollback changes
-        service.setDepartmentName("Another Department");
-        service.setRoleTitle("Student");
+        service.setDepartmentName("PUBLIC Department");
+        service.setRoleTitle("PUBLIC");
 
-        response = serviceDelegator.updateService(ORCID, 3L, service);
+        response = serviceDelegator.updateService(ORCID, 47L, service);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
@@ -459,28 +453,28 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
     @Test(expected = WrongSourceException.class)
     public void testUpdateServiceYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewService(ORCID, 1L);
+        Response response = serviceDelegator.viewService(ORCID, 50L);
         assertNotNull(response);
         Service service = (Service) response.getEntity();
         assertNotNull(service);
         service.setDepartmentName("Updated department name");
         service.setRoleTitle("The updated role title");
-        serviceDelegator.updateService(ORCID, 1L, service);
+        serviceDelegator.updateService(ORCID, 50L, service);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateServiceChangingVisibilityTest() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewService(ORCID, 3L);
+        Response response = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(response);
         Service service = (Service) response.getEntity();
         assertNotNull(service);
         assertEquals(Visibility.PUBLIC, service.getVisibility());
 
-        service.setVisibility(service.getVisibility().equals(Visibility.PRIVATE) ? Visibility.LIMITED : Visibility.PRIVATE);
+        service.setVisibility(Visibility.PRIVATE);
 
-        response = serviceDelegator.updateService(ORCID, 3L, service);
+        response = serviceDelegator.updateService(ORCID, 47L, service);
         fail();
     }
 
@@ -523,7 +517,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         externalIDs.getExternalIdentifier().add(e1);
         externalIDs.getExternalIdentifier().add(e2);
 
-        Service service = (Service) Utils.getAffiliation(AffiliationType.MEMBERSHIP);
+        Service service = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
         service.setExternalIDs(externalIDs);
 
         Response response = serviceDelegator.createService(ORCID, service);
@@ -536,7 +530,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
-        Service another = (Service) Utils.getAffiliation(AffiliationType.MEMBERSHIP);
+        Service another = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
         response = serviceDelegator.createService(ORCID, another);
         
         map = response.getMetadata();
@@ -582,7 +576,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
     @Test(expected = WrongSourceException.class)
     public void testDeleteServiceYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteAffiliation(ORCID, 9L);
+        serviceDelegator.deleteAffiliation(ORCID, 50L);
         fail();
     }
 
