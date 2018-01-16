@@ -30,6 +30,8 @@ import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
+import org.orcid.jaxb.model.v3.dev1.record.Education;
+import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -80,9 +82,12 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
         List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcid);        
         for(Affiliation affiliation : affiliations) {
-            if(Visibility.PUBLIC.equals(affiliation.getVisibility())) {
-                affiliationMap.put(affiliation.getPutCode(), affiliation);
-            }
+            // For now, ignore DISTINCTION, INVITED_POSITION, MEMBERSHIP, QUALIFICATION and SERVICE affiliations
+            if(Education.class.isAssignableFrom(affiliation.getClass()) || Employment.class.isAssignableFrom(affiliation.getClass())) {
+                if(Visibility.PUBLIC.equals(affiliation.getVisibility())) {
+                    affiliationMap.put(affiliation.getPutCode(), affiliation);
+                }
+            }            
         }
         return affiliationMap;
     }
