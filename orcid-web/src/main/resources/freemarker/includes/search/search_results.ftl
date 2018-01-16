@@ -31,25 +31,15 @@
 		</tr>
 		</thead>
 		<tbody>
-            <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-    			<tr ng-repeat='result in results' class="new-search-result">
-    				<td class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}">{{result['orcid-identifier'].uri}}</td>
-    				<td ng-bind="getNames(result)">{{result['given-names']}}</td>
-    				<td>{{result['family-name']}}</td>
-    				<td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
-                    <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'>
-                        <td ng-bind="getAffiliations(result)">{{result['affiliations']}}</td>
-                    </@orcid.checkFeatureStatus>
-    			</tr>
-            </@orcid.checkFeatureStatus>
-            <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-                <tr ng-repeat='result in results' class="new-search-result">
-                    <td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}">{{result['orcid-profile']['orcid-identifier'].path}}</td>
-                    <td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
-                    <td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
-                    <td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['personal-details']['other-names']['other-name'], 'value')}}</td>
-                </tr>
-            </@orcid.checkFeatureStatus>
+			<tr ng-repeat='result in results' class="new-search-result">
+				<td class='search-result-orcid-id'><a href="{{result['orcid-identifier'].uri}}">{{result['orcid-identifier'].uri}}</td>
+				<td ng-bind="getNames(result)">{{result['given-names']}}</td>
+				<td>{{result['family-name']}}</td>
+				<td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
+                <@orcid.checkFeatureStatus featureName='SEARCH_RESULTS_AFFILIATIONS'>
+                    <td ng-bind="getAffiliations(result)">{{result['affiliations']}}</td>
+                </@orcid.checkFeatureStatus>
+			</tr>
 		</tbody>
 	</table>
 	<div id="show-more-button-container">

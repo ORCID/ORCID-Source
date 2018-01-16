@@ -57,6 +57,9 @@ import { ModalModule }
 import { NameModule } 
     from './name/name.ts';
 
+import { SearchModule } 
+    from './search/search.ts';
+
 import { SelfServiceModule } 
     from './selfService/selfService.ts';
 
@@ -115,6 +118,7 @@ export const orcidApp = angular.module(
         KeywordsModule.name,
         ModalModule.name,
         NameModule.name,
+        SearchModule.name,
         SelfServiceModule.name,
         SelfServiceAddContactModule.name,
         SelfServiceExistingSubMemberModule.name,

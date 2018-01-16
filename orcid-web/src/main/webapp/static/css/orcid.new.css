@@ -1111,6 +1111,31 @@ ul.privacyHelp li {
     display: list-item
 }
 
+.visibilityDefault{
+    width: 65%;
+    float: left;
+}
+
+.visibilityDefault span.public,
+.visibilityDefault span.limited,
+.visibilityDefault span.private {
+    display: inline-block;
+    margin: 0 6px 0 0;
+    height: 22px;
+    width: 22px;
+    background: url(../img/privacy_icons_100.png) no-repeat;
+}
+
+.visibilityDefault .defaultVisLabel{
+    line-height: 22px;
+    vertical-align: text-bottom;
+}
+
+.visibilityHelp{
+    float: left;
+    margin: 30px 10px 0 0;
+}
+
 @media only screen and (-webkit-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2) {
     ul.privacyHelp li {
         background: url(../img/privacy_icons_200.png) no-repeat;
@@ -1118,15 +1143,18 @@ ul.privacyHelp li {
     }
 }
 
-ul.privacyHelp li.public {
+ul.privacyHelp li.public,
+.visibilityDefault span.public, {
     background-position: 0 -2px
 }
 
-ul.privacyHelp li.limited {
+ul.privacyHelp li.limited,
+.visibilityDefault span.limited {
     background-position: 0 -22px
 }
 
-ul.privacyHelp li.private {
+ul.privacyHelp li.private,
+.visibilityDefault span.private {
     background-position: 0 -45px
 }
 
@@ -2656,7 +2684,11 @@ input.error {
 }
 
 .relative {
-    position: relative
+    position: relative;
+}
+
+.recaptcha {
+    display: inline-block;
 }
 
 .public-profile .workspace-inner {
@@ -6209,6 +6241,10 @@ a:hover .mozilla-badge {
 
 #register .dark-label,#register p,.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span,.self-service .pending-addition a:hover,.self-service .pending-removal a:hover {
     color: #494a4c
+}
+
+#register p{
+    font-size: 12px;
 }
 
 .peer-review-delete {

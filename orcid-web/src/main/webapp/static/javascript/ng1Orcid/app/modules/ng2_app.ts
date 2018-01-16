@@ -71,6 +71,9 @@ import { ModalNg2Module }
 import { NameNg2Module } 
     from './name/name.ts';
 
+import { SearchNg2Module } 
+    from './search/search.ts';
+
 import { SelfServiceNg2Module } 
     from './selfService/selfService.ts';
 
@@ -103,6 +106,12 @@ import { WidgetNg2Module }
 
 import { WorksNg2Module } 
     from './works/works.ts';
+
+import { SearchService } 
+    from '../shared/search.service.ts'; 
+
+import { WorkspaceService } 
+    from '../shared/workspace.service.ts'; 
 
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
@@ -160,6 +169,7 @@ export class RootCmp {
         KeywordsNg2Module,
         ModalNg2Module,
         NameNg2Module,
+        SearchNg2Module,
         SelfServiceNg2Module,
         SelfServiceAddContactNg2Module,
         SelfServiceExistingSubMemberNg2Module,
@@ -178,7 +188,6 @@ export class RootCmp {
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
         }
-
     ]
 
 })

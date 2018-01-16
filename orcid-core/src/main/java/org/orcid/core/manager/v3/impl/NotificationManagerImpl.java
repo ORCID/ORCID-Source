@@ -88,6 +88,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -575,6 +576,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String grantingOrcidEmail = primaryEmail.getEmail();
         String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
         String email = emailManager.findPrimaryEmail(userReceivingPermission).getEmail();
+        String assetsUrl = getAssetsUrl();
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("grantingOrcidValue", userGrantingPermission);
@@ -583,7 +585,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
         templateParams.put("subject", subject);
-
+        templateParams.put("assetsUrl", assetsUrl);
+        
         addMessageParams(templateParams, userLocale);
 
         // Generate body from template
@@ -1111,13 +1114,13 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         String subject = getSubject("email.subject.auto_deprecate", userLocale);
-        String baseUri = orcidUrlManager.getBaseUrl();
+        String assetsUrl = getAssetsUrl();
         Date deprecatedAccountCreationDate = deprecatedProfileEntity.getDateCreated();
 
         // Create map of template params
         templateParams.put("primaryId", primaryOrcid);
         templateParams.put("name", deriveEmailFriendlyName(primaryProfileEntity));
-        templateParams.put("baseUri", baseUri);
+        templateParams.put("assetsUrl", assetsUrl);
         templateParams.put("subject", subject);
         templateParams.put("clientName", clientDetails.getClientName());
         templateParams.put("deprecatedAccountCreationDate", deprecatedAccountCreationDate);
@@ -1211,5 +1214,14 @@ public class NotificationManagerImpl implements NotificationManager {
                 emailEventDao.flush();
             }
         });
+    }
+    
+    private String getAssetsUrl() {
+        String baseUrl = orcidUrlManager.getBaseUrl();
+        if(!baseUrl.endsWith("/")) {
+            baseUrl += '/';
+        }
+        
+        return baseUrl + "static/" + ReleaseNameUtils.getReleaseName();
     }
 }
