@@ -35,6 +35,7 @@ import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SERVICE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
@@ -459,25 +460,25 @@ public class MemberV3Dev1ApiClientImpl {
     }
     
     public ClientResponse viewQualificationXml(String orcid, Long putCode, String accessToken) {
-        URI uri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, putCode);
+        URI uri = UriBuilder.fromPath(QUALIFICATION + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
 
     public ClientResponse createQualificationXml(String orcid, Qualification qualification, String accessToken) {
-        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(EDUCATION).build(orcid), VND_ORCID_XML, qualification, accessToken);
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(QUALIFICATION).build(orcid), VND_ORCID_XML, qualification, accessToken);
     }
 
     public ClientResponse createQualificationJson(String orcid, Qualification qualification, String accessToken) {
-        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(EDUCATION).build(orcid), VND_ORCID_JSON, qualification, accessToken);
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(QUALIFICATION).build(orcid), VND_ORCID_JSON, qualification, accessToken);
     }
         
     public ClientResponse updateQualification(String orcid, Qualification qualification, String accessToken) {
-        URI uri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, qualification.getPutCode());
+        URI uri = UriBuilder.fromPath(QUALIFICATION + PUTCODE).build(orcid, qualification.getPutCode());
         return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, qualification, accessToken);
     }
     
     public ClientResponse deleteQualificationXml(String orcid, Long putCode, String accessToken) {
-        URI uri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, putCode);
+        URI uri = UriBuilder.fromPath(QUALIFICATION + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
     
