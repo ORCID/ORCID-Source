@@ -13,8 +13,8 @@
 		</common:source-orcid>
 		<common:source-name />
 	</common:source>
-	<common:department-name>qualification:department-name</common:department-name>
-	<common:role-title>qualification:role-title</common:role-title>
+	<common:department-name>department-name</common:department-name>
+	<common:role-title>role-title</common:role-title>
 	<common:start-date>
 		<common:year>1848</common:year>
 		<common:month>02</common:month>

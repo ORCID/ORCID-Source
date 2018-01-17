@@ -13,8 +13,8 @@
 		</common:source-orcid>
 		<common:source-name />
 	</common:source>
-	<common:department-name>education:department-name</common:department-name>
-	<common:role-title>education:role-title</common:role-title>
+	<common:department-name>department-name</common:department-name>
+	<common:role-title>role-title</common:role-title>
 	<common:start-date>
 		<common:year>1848</common:year>
 		<common:month>02</common:month>
@@ -37,5 +37,19 @@
             <common:disambiguation-source>FUNDREF</common:disambiguation-source>
         </common:disambiguated-organization>
 	</common:organization>		
-	<common:url>http://tempuri.org</common:url>  	
+	<common:url>http://tempuri.org</common:url>  
+	<common:external-ids>
+        <common:external-id>
+            <common:external-id-type>grant_number</common:external-id-type>
+            <common:external-id-value>external-identifier-value</common:external-id-value>          
+            <common:external-id-url>http://tempuri.org</common:external-id-url>
+            <common:external-id-relationship>self</common:external-id-relationship>
+        </common:external-id>
+        <common:external-id>
+            <common:external-id-type>grant_number</common:external-id-type>
+            <common:external-id-value>external-identifier-value2</common:external-id-value>         
+            <common:external-id-url>http://tempuri.org/2</common:external-id-url>
+            <common:external-id-relationship>self</common:external-id-relationship>
+        </common:external-id>
+    </common:external-ids>	
 </education:education>

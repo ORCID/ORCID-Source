@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Locale;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Addresses;
+import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
 import org.orcid.jaxb.model.v3.dev1.record.CreditName;
 import org.orcid.jaxb.model.v3.dev1.record.Deprecated;
@@ -1400,8 +1401,18 @@ public class ValidateV3_dev1SamplesTest {
     }
 
     @Test
+    public void testUnmarshallEducation() throws SAXException, URISyntaxException {
+        Education object = (Education) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/education-3.0_dev1.xml", Education.class);
+        validateAffiliation(object, false);
+        object = (Education) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/education-3.0_dev1.xml", Education.class);
+        validateAffiliation(object, true);
+    }
+    
+    @Test
     public void testMarshallEducation() throws JAXBException, SAXException, URISyntaxException {
         Education object = (Education) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/education-3.0_dev1.xml", Education.class);
+        marshall(object, "/record_3.0_dev1/education-3.0_dev1.xsd");    
+        object = (Education) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/education-3.0_dev1.xml", Education.class);
         marshall(object, "/record_3.0_dev1/education-3.0_dev1.xsd");
     }
 
@@ -1412,8 +1423,18 @@ public class ValidateV3_dev1SamplesTest {
     }
 
     @Test
+    public void testUnmarshallEmployment() throws SAXException, URISyntaxException {
+        Employment object = (Employment) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/employment-3.0_dev1.xml", Employment.class);
+        validateAffiliation(object, false);
+        object = (Employment) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/employment-3.0_dev1.xml", Employment.class);
+        validateAffiliation(object, true);
+    }
+    
+    @Test
     public void testMarshallEmployment() throws JAXBException, SAXException, URISyntaxException {
         Employment object = (Employment) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/employment-3.0_dev1.xml", Employment.class);
+        marshall(object, "/record_3.0_dev1/employment-3.0_dev1.xsd");        
+        object = (Employment) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/employment-3.0_dev1.xml", Employment.class);
         marshall(object, "/record_3.0_dev1/employment-3.0_dev1.xsd");
     }
 
@@ -1424,8 +1445,18 @@ public class ValidateV3_dev1SamplesTest {
     }
 
     @Test
+    public void testUnmarshallDistinction() throws SAXException, URISyntaxException {
+        Distinction object = (Distinction) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/distinction-3.0_dev1.xml", Distinction.class);
+        validateAffiliation(object, false);
+        object = (Distinction) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/distinction-3.0_dev1.xml", Distinction.class);
+        validateAffiliation(object, true);
+    }
+    
+    @Test
     public void testMarshallDistinction() throws JAXBException, SAXException, URISyntaxException {
         Distinction object = (Distinction) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/distinction-3.0_dev1.xml", Distinction.class);
+        marshall(object, "/record_3.0_dev1/distinction-3.0_dev1.xsd");        
+        object = (Distinction) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/distinction-3.0_dev1.xml", Distinction.class);
         marshall(object, "/record_3.0_dev1/distinction-3.0_dev1.xsd");
     }
 
@@ -1436,8 +1467,18 @@ public class ValidateV3_dev1SamplesTest {
     }
 
     @Test
+    public void testUnmarshallInvitedPosition() throws SAXException, URISyntaxException {
+        InvitedPosition object = (InvitedPosition) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/invited-position-3.0_dev1.xml", InvitedPosition.class);
+        validateAffiliation(object, false);
+        object = (InvitedPosition) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/invited-position-3.0_dev1.xml", InvitedPosition.class);
+        validateAffiliation(object, true);
+    }
+    
+    @Test
     public void testMarshallInvitedPosition() throws JAXBException, SAXException, URISyntaxException {
         InvitedPosition object = (InvitedPosition) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/invited-position-3.0_dev1.xml", InvitedPosition.class);
+        marshall(object, "/record_3.0_dev1/invited-position-3.0_dev1.xsd");   
+        object = (InvitedPosition) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/invited-position-3.0_dev1.xml", InvitedPosition.class);
         marshall(object, "/record_3.0_dev1/invited-position-3.0_dev1.xsd");
     }
 
@@ -1448,8 +1489,18 @@ public class ValidateV3_dev1SamplesTest {
     }
 
     @Test
+    public void testUnmarshallMembership() throws SAXException, URISyntaxException {
+        Membership object = (Membership) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/membership-3.0_dev1.xml", Membership.class);
+        validateAffiliation(object, false);
+        object = (Membership) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/membership-3.0_dev1.xml", Membership.class);
+        validateAffiliation(object, true);
+    }
+    
+    @Test
     public void testMarshallMembership() throws JAXBException, SAXException, URISyntaxException {
         Membership object = (Membership) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/membership-3.0_dev1.xml", Membership.class);
+        marshall(object, "/record_3.0_dev1/membership-3.0_dev1.xsd");
+        object = (Membership) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/membership-3.0_dev1.xml", Membership.class);
         marshall(object, "/record_3.0_dev1/membership-3.0_dev1.xsd");
     }
 
@@ -1460,8 +1511,18 @@ public class ValidateV3_dev1SamplesTest {
     }
 
     @Test
+    public void testUnmarshallQualification() throws SAXException, URISyntaxException {
+        Qualification object = (Qualification) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/qualification-3.0_dev1.xml", Qualification.class);
+        validateAffiliation(object, false);
+        object = (Qualification) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/qualification-3.0_dev1.xml", Qualification.class);
+        validateAffiliation(object, true);
+    }
+    
+    @Test
     public void testMarshallQualification() throws JAXBException, SAXException, URISyntaxException {
         Qualification object = (Qualification) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/qualification-3.0_dev1.xml", Qualification.class);
+        marshall(object, "/record_3.0_dev1/qualification-3.0_dev1.xsd");
+        object = (Qualification) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/qualification-3.0_dev1.xml", Qualification.class);
         marshall(object, "/record_3.0_dev1/qualification-3.0_dev1.xsd");
     }
 
@@ -1472,17 +1533,63 @@ public class ValidateV3_dev1SamplesTest {
     }
 
     @Test
+    public void testUnmarshallService() throws SAXException, URISyntaxException {
+        Service object = (Service) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/service-3.0_dev1.xml", Service.class);
+        validateAffiliation(object, false);
+        object = (Service) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/service-3.0_dev1.xml", Service.class);
+        validateAffiliation(object, true);
+    }
+    
+    @Test
     public void testMarshallService() throws JAXBException, SAXException, URISyntaxException {
         Service object = (Service) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/service-3.0_dev1.xml", Service.class);
+        marshall(object, "/record_3.0_dev1/service-3.0_dev1.xsd");
+        object = (Service) unmarshallFromPath("/record_3.0_dev1/samples/write_samples/service-3.0_dev1.xml", Service.class);
         marshall(object, "/record_3.0_dev1/service-3.0_dev1.xsd");
     }
 
     @Test
     public void testMarshallServices() throws JAXBException, SAXException, URISyntaxException {
         Services object = (Services) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/services-3.0_dev1.xml", Services.class);
-        marshall(object, "/record_3.0_dev1/activities-3.0_dev1.xsd");
+        marshall(object, "/record_3.0_dev1/activities-3.0_dev1.xsd");   
     }
 
+    private void validateAffiliation(Affiliation object, boolean writeSample) {
+        assertNotNull(object);
+        if(!writeSample) {
+            assertNotNull(object.getCreatedDate());
+            assertNotNull(object.getLastModifiedDate());
+            assertEquals(Long.valueOf(0), object.getPutCode());
+            assertEquals(Visibility.PRIVATE, object.getVisibility());
+            assertEquals("8888-8888-8888-8880", object.getSource().retrieveSourcePath());
+            assertEquals("https://orcid.org/8888-8888-8888-8880", object.getSource().retriveSourceUri());            
+        }
+        assertEquals("department-name", object.getDepartmentName());
+        assertEquals("role-title", object.getRoleTitle());
+        assertEquals("1848", object.getStartDate().getYear().getValue());
+        assertEquals("02", object.getStartDate().getMonth().getValue());
+        assertEquals("02", object.getStartDate().getDay().getValue());
+        assertEquals("1848", object.getEndDate().getYear().getValue());
+        assertEquals("02", object.getEndDate().getMonth().getValue());
+        assertEquals("02", object.getEndDate().getDay().getValue());
+        assertEquals("common:name", object.getOrganization().getName());
+        assertEquals("common:city", object.getOrganization().getAddress().getCity());
+        assertEquals("common:region", object.getOrganization().getAddress().getRegion());
+        assertEquals(Iso3166Country.AF, object.getOrganization().getAddress().getCountry());
+        assertEquals("http://dx.doi.org/10.13039/100000001", object.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals("FUNDREF", object.getOrganization().getDisambiguatedOrganization().getDisambiguationSource());
+        assertEquals("http://tempuri.org", object.getUrl().getValue());
+        assertEquals(2, object.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(Relationship.SELF, object.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("grant_number", object.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://tempuri.org", object.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("external-identifier-value", object.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(Relationship.SELF, object.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals("grant_number", object.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("http://tempuri.org/2", object.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("external-identifier-value2", object.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+    }
+    
     private Object unmarshallFromPath(String path, Class<?> type) throws SAXException, URISyntaxException {
         return unmarshallFromPath(path, type, null);
     }
