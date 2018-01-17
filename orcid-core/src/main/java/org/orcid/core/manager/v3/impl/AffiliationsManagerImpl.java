@@ -563,6 +563,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         List<Affiliation> affiliations = getAffiliations(orcid);
         if (affiliations != null) {
             for (Affiliation affiliation : affiliations) {
+                //If it is the same element, ignore it, to prevent false duplicate exceptions
+                if(incoming.getPutCode() != null && incoming.getPutCode().equals(affiliation.getPutCode())) {
+                    continue;
+                }
+                
                 if (incoming.getClass().isAssignableFrom(affiliation.getClass())) {
                     activityValidator.checkExternalIdentifiersForDuplicates(incoming.getExternalIDs(), affiliation.getExternalIDs(), affiliation.getSource(),
                             sourceEntity);

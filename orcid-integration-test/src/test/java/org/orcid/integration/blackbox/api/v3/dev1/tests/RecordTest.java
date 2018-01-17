@@ -77,7 +77,9 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
     private MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;
     @Resource(name = "publicV3_0_dev1ApiClient")
     private PublicV3ApiClientImpl publicV3Dev1ApiClient;
-        
+
+    //TODO
+    
     @Test
     public void testViewRecordFromMemberAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
@@ -91,6 +93,9 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
         assertEquals(getUser1OrcidId(), record.getOrcidIdentifier().getPath());               
         //Check the visibility of every activity that exists
         if(record.getActivitiesSummary() != null) {
+            //Distinctions
+            fail();
+            
             //Educations
             if(record.getActivitiesSummary().getEducations() != null) {
                 Educations e = record.getActivitiesSummary().getEducations();
@@ -121,6 +126,16 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
                     }
                 }
             }
+            
+            //InvitedPositions
+            fail();
+            //Memberships
+            fail();
+            //Qualifications
+            fail();
+            //Services
+            fail();
+            
             //Fundings
             if(record.getActivitiesSummary().getFundings() != null) {
                 Fundings f = record.getActivitiesSummary().getFundings();
@@ -301,6 +316,8 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
         //Check the visibility of every activity that exists
         if(record.getActivitiesSummary() != null) {
             if(record.getActivitiesSummary() != null) {
+                //Distinctions
+                fail();
                 //Educations
                 if(record.getActivitiesSummary().getEducations() != null) {
                     Educations e = record.getActivitiesSummary().getEducations();
@@ -321,6 +338,16 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
                         }
                     }
                 }
+                
+                //InvitedPositions
+                fail();
+                //Memberships
+                fail();
+                //Qualifications
+                fail();
+                //Services
+                fail();
+                
                 //Fundings
                 if(record.getActivitiesSummary().getFundings() != null) {
                     Fundings f = record.getActivitiesSummary().getFundings();
