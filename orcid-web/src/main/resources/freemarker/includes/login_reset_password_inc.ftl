@@ -40,6 +40,10 @@
 				<div class="controls"> 
 					<input id="email" type="text" class="form-control" ng-model="requestResetPassword.email" />
 				</div>
+                <!--General error-->
+                <div style="margin-bottom: 15px;" ng-show="showSendResetLinkError">
+                    <span class="orcid-error">${springMacroRequestContext.getMessage("Email.resetPasswordForm.error")} <a href="mailto:${springMacroRequestContext.getMessage("workspace.link.email.support")}">${springMacroRequestContext.getMessage("workspace.link.email.support")}</a></span>
+                </div>  
 				<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.sendResetLink")}</button>
 			</div>
 		</form>
