@@ -28,8 +28,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
@@ -75,6 +77,7 @@ import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.version.impl.Api3_0_Dev1LastModifiedDatesHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.client.ClientSummary;
+import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
@@ -224,13 +227,14 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Resource
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
-    
+
     @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
-    
+
     @Resource
     private MessageSource messageSource;
 
+    private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
 
     @Override
     public Response viewStatusText() {
@@ -271,7 +275,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         contributorUtils.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
-        sourceUtils.setSourceName(w);        
+        sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
 
@@ -336,6 +340,26 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Override
     public Response createWorks(String orcid, WorkBulk works) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
+        if (works != null) {
+            for (int i = 0; i < works.getBulk().size(); i++) {
+                if (Work.class.isAssignableFrom(works.getBulk().get(i).getClass())) {
+                    Work work = (Work) works.getBulk().get(i);
+
+                    try {
+                        schemaValidator.validate(work);
+                        clearSource(work);
+                    } catch (WebApplicationException e) {
+                        OrcidError error = new OrcidError();
+                        error.setUserMessage(messageSource.getMessage("apiError.9001.userMessage", null, localeManager.getLocale()));
+                        error.setMoreInfo(messageSource.getMessage("apiError.9001.moreInfo", null, localeManager.getLocale()));
+                        error.setErrorCode(9001);
+                        error.setResponseCode(400);
+                        works.getBulk().remove(i);
+                        works.getBulk().add(i, error);
+                    }
+                }
+            }
+        }
         works = workManager.createWorks(orcid, works);
         sourceUtils.setSourceName(works);
         return Response.ok(works).build();
@@ -1078,10 +1102,10 @@ public class MemberV3ApiServiceDelegatorImpl implements
         if (profileEntity == null) {
             throw new OrcidNoResultException("No such profile: " + orcid);
         }
-        
+
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        contributorUtils.filterContributorPrivateData(workBulk);        
+        contributorUtils.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();
@@ -1112,7 +1136,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         ClientSummary client = clientManagerReadOnly.getSummary(clientId);
         return Response.ok(client).build();
     }
-    
+
     private void clearSource(SourceAware element) {
         element.setSource(null);
     }
