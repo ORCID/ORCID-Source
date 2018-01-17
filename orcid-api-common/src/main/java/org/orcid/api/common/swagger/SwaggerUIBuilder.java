@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.utils.ReleaseNameUtils;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -42,7 +43,7 @@ public class SwaggerUIBuilder {
     private static final String SWAGGER_UI_FTL = "swagger-ui.ftl";
     private static final String SWAGGER_O2C_FTL = "swagger-o2c.ftl";
     private static final String SWAGGER_FTL_PATH = "/org/orcid/api/common/swagger";
-    private static final String SWAGGER_STATIC_HTML_PATH = "/static/swagger/";
+    private static final String SWAGGER_STATIC_HTML_PATH = "/static/" + ReleaseNameUtils.getReleaseName() + "/swagger/";
 
     public SwaggerUIBuilder() {
         if (freeMarkerConfiguration == null) {
