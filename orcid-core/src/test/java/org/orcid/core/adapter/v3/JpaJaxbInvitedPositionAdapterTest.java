@@ -64,8 +64,8 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         //General info
         assertEquals(Long.valueOf(0), oar.getId());
         assertEquals(Visibility.PRIVATE.value(), oar.getVisibility().value());        
-        assertEquals("invited-position:department-name", oar.getDepartment());
-        assertEquals("invited-position:role-title", oar.getTitle());
+        assertEquals("department-name", oar.getDepartment());
+        assertEquals("role-title", oar.getTitle());
         
         //Dates
         assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        

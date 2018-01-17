@@ -64,8 +64,8 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
         //General info
         assertEquals(Long.valueOf(0), oar.getId());
         assertEquals(Visibility.PRIVATE.value(), oar.getVisibility().value());        
-        assertEquals("service:department-name", oar.getDepartment());
-        assertEquals("service:role-title", oar.getTitle());
+        assertEquals("department-name", oar.getDepartment());
+        assertEquals("role-title", oar.getTitle());
         
         //Dates
         assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        

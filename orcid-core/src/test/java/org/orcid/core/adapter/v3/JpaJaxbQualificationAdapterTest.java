@@ -64,8 +64,8 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
         //General info
         assertEquals(Long.valueOf(0), oar.getId());
         assertEquals(Visibility.PRIVATE.value(), oar.getVisibility().value());        
-        assertEquals("qualification:department-name", oar.getDepartment());
-        assertEquals("qualification:role-title", oar.getTitle());
+        assertEquals("department-name", oar.getDepartment());
+        assertEquals("role-title", oar.getTitle());
         
         //Dates
         assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
