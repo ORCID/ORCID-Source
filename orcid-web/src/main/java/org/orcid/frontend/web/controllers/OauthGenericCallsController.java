@@ -109,6 +109,12 @@ public class OauthGenericCallsController extends OauthControllerBase {
     /*****************************
      * Validators
      ****************************/
+    @RequestMapping(value = "/oauth/custom/register/validateActivitiesVisibilityDefault.json", method = RequestMethod.POST)
+    public @ResponseBody OauthRegistrationForm validateActivitiesVisibilityDefaul(@RequestBody OauthRegistrationForm reg) {
+        registrationController.registerActivitiesVisibilityDefaultValidate(reg);
+        return reg;
+    }
+    
     @RequestMapping(value = "/oauth/custom/register/validatePasswordConfirm.json", method = RequestMethod.POST)
     public @ResponseBody OauthRegistrationForm validatePasswordConfirm(@RequestBody OauthRegistrationForm reg) {
         registrationController.registerPasswordConfirmValidate(reg);

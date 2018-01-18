@@ -301,10 +301,11 @@ public class RegistrationController extends BaseController {
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
-        registerActivitiesVisibilityDefault(reg);
+        registerActivitiesVisibilityDefaultValidate(reg);
         regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
+        copyErrors(reg.getActivitiesVisibilityDefault(), reg);
         copyErrors(reg.getEmailConfirm(), reg);
         copyErrors(reg.getEmail(), reg);
         copyErrors(reg.getGivenNames(), reg);
@@ -345,7 +346,7 @@ public class RegistrationController extends BaseController {
     }
     
     @RequestMapping(value = "/registerActivitiesVisibilityDefault.json", method = RequestMethod.POST)
-    public @ResponseBody Registration registerActivitiesVisibilityDefault(@RequestBody Registration reg) {
+    public @ResponseBody Registration registerActivitiesVisibilityDefaultValidate(@RequestBody Registration reg) {
         activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
         return reg;
     } 
