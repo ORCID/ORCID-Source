@@ -33,9 +33,9 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -254,7 +254,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity) {
         Item item = new Item();
         item.setItemName(orgAffiliationEntity.getOrg().getName());
-        item.setItemType(AffiliationType.EDUCATION.equals(orgAffiliationEntity.getAffiliationType()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
+        item.setItemType(AffiliationType.EDUCATION.value().equals(orgAffiliationEntity.getAffiliationType().value()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
         return Arrays.asList(item);
     }        

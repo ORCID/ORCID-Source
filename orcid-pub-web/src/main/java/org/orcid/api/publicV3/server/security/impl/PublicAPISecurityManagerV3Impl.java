@@ -84,13 +84,27 @@ public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV
         if (activitiesSummary == null) {
             return;
         }
+        if (activitiesSummary.getDistinctions() != null) {
+            filter(activitiesSummary.getDistinctions());
+        }
         if (activitiesSummary.getEmployments() != null) {
             filter(activitiesSummary.getEmployments());
         }
         if (activitiesSummary.getEducations() != null) {
             filter(activitiesSummary.getEducations());
         }
-
+        if (activitiesSummary.getInvitedPositions() != null) {
+            filter(activitiesSummary.getInvitedPositions());
+        }
+        if (activitiesSummary.getMemberships() != null) {
+            filter(activitiesSummary.getMemberships());
+        }
+        if (activitiesSummary.getQualifications() != null) {
+            filter(activitiesSummary.getQualifications());
+        }
+        if (activitiesSummary.getServices() != null) {
+            filter(activitiesSummary.getServices());
+        }
         if (activitiesSummary.getFundings() != null) {
             filter(activitiesSummary.getFundings());
         }

@@ -52,26 +52,77 @@ import org.orcid.jaxb.model.v3.dev1.record.Activity;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "educations", "employments", "fundings", "peerReviews", "works" })
+@XmlType(propOrder = { "lastModifiedDate", "distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews", "qualifications", "services", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
+    @XmlElement(name = "distinctions", namespace = "http://www.orcid.org/ns/activities")
+    protected Distinctions distinctions;
     @XmlElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
     protected Educations educations;
     @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
     protected Employments employments;
     @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
     protected Fundings fundings;
+    @XmlElement(name = "invited-positions", namespace = "http://www.orcid.org/ns/activities")
+    protected InvitedPositions invitedPositions;
+    @XmlElement(name = "memberships", namespace = "http://www.orcid.org/ns/activities")
+    protected Memberships memberships;
     @XmlElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/activities")
     protected PeerReviews peerReviews;
+    @XmlElement(name = "qualifications", namespace = "http://www.orcid.org/ns/activities")
+    protected Qualifications qualifications;
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
     protected Works works;
+    @XmlElement(name = "services", namespace = "http://www.orcid.org/ns/activities")
+    protected Services services;
+
     @XmlAttribute
     protected String path;
-    
+
+    public Distinctions getDistinctions() {
+        return distinctions;
+    }
+
+    public void setDistinctions(Distinctions distinctions) {
+        this.distinctions = distinctions;
+    }
+
+    public InvitedPositions getInvitedPositions() {
+        return invitedPositions;
+    }
+
+    public void setInvitedPositions(InvitedPositions invitedPositions) {
+        this.invitedPositions = invitedPositions;
+    }
+
+    public Memberships getMemberships() {
+        return memberships;
+    }
+
+    public void setMemberships(Memberships memberships) {
+        this.memberships = memberships;
+    }
+
+    public Qualifications getQualifications() {
+        return qualifications;
+    }
+
+    public void setQualifications(Qualifications qualifications) {
+        this.qualifications = qualifications;
+    }
+
+    public Services getServices() {
+        return services;
+    }
+
+    public void setServices(Services services) {
+        this.services = services;
+    }
+
     public Educations getEducations() {
         return educations;
     }
@@ -122,10 +173,15 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((distinctions == null) ? 0 : distinctions.hashCode());
         result = prime * result + ((educations == null) ? 0 : educations.hashCode());
         result = prime * result + ((employments == null) ? 0 : employments.hashCode());
+        result = prime * result + ((invitedPositions == null) ? 0 : invitedPositions.hashCode());
         result = prime * result + ((fundings == null) ? 0 : fundings.hashCode());
+        result = prime * result + ((memberships == null) ? 0 : memberships.hashCode());
         result = prime * result + ((peerReviews == null) ? 0 : peerReviews.hashCode());
+        result = prime * result + ((qualifications == null) ? 0 : qualifications.hashCode());
+        result = prime * result + ((services == null) ? 0 : services.hashCode());
         result = prime * result + ((works == null) ? 0 : works.hashCode());
         return result;
     }
@@ -139,6 +195,11 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
         if (getClass() != obj.getClass())
             return false;
         ActivitiesSummary other = (ActivitiesSummary) obj;
+        if (distinctions == null) {
+            if (other.distinctions != null)
+                return false;
+        } else if (!distinctions.equals(other.distinctions))
+            return false;
         if (educations == null) {
             if (other.educations != null)
                 return false;
@@ -149,15 +210,35 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                 return false;
         } else if (!employments.equals(other.employments))
             return false;
+        if (invitedPositions == null) {
+            if (other.invitedPositions != null)
+                return false;
+        } else if (!invitedPositions.equals(other.invitedPositions))
+            return false;
         if (fundings == null) {
             if (other.fundings != null)
                 return false;
         } else if (!fundings.equals(other.fundings))
             return false;
+        if (memberships == null) {
+            if (other.memberships != null)
+                return false;
+        } else if (!memberships.equals(other.memberships))
+            return false;
         if (peerReviews == null) {
             if (other.peerReviews != null)
                 return false;
         } else if (!peerReviews.equals(other.peerReviews))
+            return false;
+        if (qualifications == null) {
+            if (other.qualifications != null)
+                return false;
+        } else if (!qualifications.equals(other.qualifications))
+            return false;
+        if (services == null) {
+            if (other.services != null)
+                return false;
+        } else if (!services.equals(other.services))
             return false;
         if (works == null) {
             if (other.works != null)
@@ -225,12 +306,44 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                 activities.put(employment.getPutCode(), employment);
             }
         }
+
+        // Set distinctions
+        if (distinctions != null) {
+            for (DistinctionSummary distinction : distinctions.getSummaries()) {
+                activities.put(distinction.getPutCode(), distinction);
+            }
+        }
+
+        // Set invited positions
+        if (invitedPositions != null) {
+            for (InvitedPositionSummary invitedPosition : invitedPositions.getSummaries()) {
+                activities.put(invitedPosition.getPutCode(), invitedPosition);
+            }
+        }
+        // Set memberships
+        if (memberships != null) {
+            for (MembershipSummary membership : memberships.getSummaries()) {
+                activities.put(membership.getPutCode(), membership);
+            }
+        }
+        // Set qualifications
+        if (qualifications != null) {
+            for (QualificationSummary qualification : qualifications.getSummaries()) {
+                activities.put(qualification.getPutCode(), qualification);
+            }
+        }
+        // Set services
+        if (services != null) {
+            for (ServiceSummary service : services.getSummaries()) {
+                activities.put(service.getPutCode(), service);
+            }
+        }
+
         return activities;
     }
 
     @Override
     public List<? extends Activity> retrieveActivities() {
-
         return new ArrayList<>(retrieveActivitiesAsMap().values());
     }
 
@@ -241,7 +354,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
-    
+
     public String getPath() {
         return path;
     }

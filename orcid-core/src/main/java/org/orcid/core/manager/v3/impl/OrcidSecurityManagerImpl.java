@@ -304,6 +304,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         // Check the token
         isMyToken(orcid);
 
+        // Distinctions
+        if (activities.getDistinctions() != null) {
+            checkAndFilter(orcid, activities.getDistinctions().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
         // Educations
         if (activities.getEducations() != null) {
             checkAndFilter(orcid, activities.getEducations().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
@@ -312,6 +317,26 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         // Employments
         if (activities.getEmployments() != null) {
             checkAndFilter(orcid, activities.getEmployments().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
+        // Invited positions
+        if (activities.getInvitedPositions() != null) {
+            checkAndFilter(orcid, activities.getInvitedPositions().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
+        // Memberships
+        if (activities.getMemberships() != null) {
+            checkAndFilter(orcid, activities.getMemberships().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
+        // Qualifications
+        if (activities.getQualifications() != null) {
+            checkAndFilter(orcid, activities.getQualifications().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
+        // Services
+        if (activities.getServices() != null) {
+            checkAndFilter(orcid, activities.getServices().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
 
         // Funding

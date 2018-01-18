@@ -19,20 +19,25 @@ package org.orcid.integration.blackbox.api.v3.dev1;
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
+import static org.orcid.core.api.OrcidApiConstants.DISTINCTION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
 import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
+import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
+import static org.orcid.core.api.OrcidApiConstants.SERVICE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
@@ -46,14 +51,19 @@ import javax.ws.rs.core.UriBuilder;
 import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 
@@ -379,4 +389,120 @@ public class MemberV3Dev1ApiClientImpl {
         URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH).build(orcid);
         return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
     }
+    
+    public ClientResponse viewDistinctionXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(DISTINCTION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+
+    public ClientResponse createDistinctionXml(String orcid, Distinction distinction, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(DISTINCTION).build(orcid), VND_ORCID_XML, distinction, accessToken);
+    }
+
+    public ClientResponse createDistinctionJson(String orcid, Distinction distinction, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(DISTINCTION).build(orcid), VND_ORCID_JSON, distinction, accessToken);
+    }
+        
+    public ClientResponse updateDistinction(String orcid, Distinction distinction, String accessToken) {
+        URI uri = UriBuilder.fromPath(DISTINCTION + PUTCODE).build(orcid, distinction.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, distinction, accessToken);
+    }
+    
+    public ClientResponse deleteDistinctionXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(DISTINCTION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+    
+    public ClientResponse viewInvitedPositionXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(INVITED_POSITION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+
+    public ClientResponse createInvitedPositionXml(String orcid, InvitedPosition invitedPosition, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(INVITED_POSITION).build(orcid), VND_ORCID_XML, invitedPosition, accessToken);
+    }
+
+    public ClientResponse createInvitedPositionJson(String orcid, InvitedPosition invitedPosition, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(INVITED_POSITION).build(orcid), VND_ORCID_JSON, invitedPosition, accessToken);
+    }
+        
+    public ClientResponse updateInvitedPosition(String orcid, InvitedPosition invitedPosition, String accessToken) {
+        URI uri = UriBuilder.fromPath(INVITED_POSITION + PUTCODE).build(orcid, invitedPosition.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, invitedPosition, accessToken);
+    }
+    
+    public ClientResponse deleteInvitedPositionXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(INVITED_POSITION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+    
+    public ClientResponse viewMembershipXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(MEMBERSHIP + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+
+    public ClientResponse createMembershipXml(String orcid, Membership membership, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(MEMBERSHIP).build(orcid), VND_ORCID_XML, membership, accessToken);
+    }
+
+    public ClientResponse createMembershipJson(String orcid, Membership membership, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(MEMBERSHIP).build(orcid), VND_ORCID_JSON, membership, accessToken);
+    }
+        
+    public ClientResponse updateMembership(String orcid, Membership membership, String accessToken) {
+        URI uri = UriBuilder.fromPath(MEMBERSHIP + PUTCODE).build(orcid, membership.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, membership, accessToken);
+    }
+    
+    public ClientResponse deleteMembershipXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(MEMBERSHIP + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+    
+    public ClientResponse viewQualificationXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(QUALIFICATION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+
+    public ClientResponse createQualificationXml(String orcid, Qualification qualification, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(QUALIFICATION).build(orcid), VND_ORCID_XML, qualification, accessToken);
+    }
+
+    public ClientResponse createQualificationJson(String orcid, Qualification qualification, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(QUALIFICATION).build(orcid), VND_ORCID_JSON, qualification, accessToken);
+    }
+        
+    public ClientResponse updateQualification(String orcid, Qualification qualification, String accessToken) {
+        URI uri = UriBuilder.fromPath(QUALIFICATION + PUTCODE).build(orcid, qualification.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, qualification, accessToken);
+    }
+    
+    public ClientResponse deleteQualificationXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(QUALIFICATION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+    
+    public ClientResponse viewServiceXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(SERVICE + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+
+    public ClientResponse createServiceXml(String orcid, Service service, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(SERVICE).build(orcid), VND_ORCID_XML, service, accessToken);
+    }
+
+    public ClientResponse createServiceJson(String orcid, Service service, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(SERVICE).build(orcid), VND_ORCID_JSON, service, accessToken);
+    }
+        
+    public ClientResponse updateService(String orcid, Service service, String accessToken) {
+        URI uri = UriBuilder.fromPath(SERVICE + PUTCODE).build(orcid, service.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, service, accessToken);
+    }
+    
+    public ClientResponse deleteServiceXml(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(SERVICE + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+           
 }

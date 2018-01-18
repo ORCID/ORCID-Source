@@ -36,7 +36,7 @@
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="../common_3.0_dev1/common-3.0_dev1.xsd" />
 
-	<xs:element name="employment">
+	<xs:element name="employment" type="common:affiliation">
 		<xs:annotation>
 			<xs:documentation>An employment associated with the researcher or
 				contributor.
@@ -52,54 +52,8 @@
 				indicate the specific record to be updated.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="common:element-summary">
-					<xs:sequence>
-						<xs:element name="department-name" type="common:long-text"
-							minOccurs="0" maxOccurs="1" />
-						<xs:element name="role-title" type="common:long-text"
-							minOccurs="0" maxOccurs="1" />
-						<xs:element ref="common:start-date" minOccurs="1"
-							maxOccurs="1" />
-						<xs:element ref="common:end-date" minOccurs="0"
-							maxOccurs="1" />
-						<xs:element name="organization" type="common:organization"
-							minOccurs="1" maxOccurs="1" />
-						<xs:element name="url" type="common:url" minOccurs="0" />
-						<xs:element ref="common:external-ids"
-                            minOccurs="0">
-                            <xs:annotation>
-                                <xs:documentation>Element containing the type and content of the
-                                    citation for this work
-                                </xs:documentation>
-                            </xs:annotation>
-                        </xs:element>
-					</xs:sequence>
-				</xs:extension>
-			</xs:complexContent>
-		</xs:complexType>
 	</xs:element>
 
-	<xs:element name="employment-summary">
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="common:element-summary">
-					<xs:sequence>
-						<xs:element name="department-name" type="common:long-text"
-							minOccurs="0" maxOccurs="1" />
-						<xs:element name="role-title" type="common:long-text"
-							minOccurs="0" maxOccurs="1" />
-						<xs:element ref="common:start-date" minOccurs="1"
-							maxOccurs="1" />
-						<xs:element ref="common:end-date" minOccurs="0"
-							maxOccurs="1" />
-						<xs:element name="organization" type="common:organization"
-							minOccurs="1" maxOccurs="1" />
-					</xs:sequence>
-				</xs:extension>
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
+	<xs:element name="employment-summary" type="common:affiliation-summary" />
 
 </xs:schema>
