@@ -29,8 +29,8 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
@@ -65,7 +65,6 @@ public class ShibbolethTest {
     private WebDriver createFireFoxDriverWithModifyHeaders(List<Pair<String, String>> headers) throws IOException {
         FirefoxProfile fireFoxProfile = new FirefoxProfile();
         File modifyHeaders = new File(System.getProperty("user.dir") + "/src/test/resources/modify-headers-0.7.1.1.xpi");
-        fireFoxProfile.setEnableNativeEvents(false);
         fireFoxProfile.addExtension(modifyHeaders);
         fireFoxProfile.setPreference("modifyheaders.headers.count", headers.size());
         for (int i = 0; i < headers.size(); i++) {
@@ -77,13 +76,11 @@ public class ShibbolethTest {
         fireFoxProfile.setPreference("modifyheaders.config.active", true);
         fireFoxProfile.setPreference("modifyheaders.config.alwaysOn", true);
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setBrowserName("firefox");
-        capabilities.setPlatform(org.openqa.selenium.Platform.ANY);
-        capabilities.setCapability(FirefoxDriver.PROFILE, fireFoxProfile);
+        FirefoxOptions options = new FirefoxOptions();
+        options.setCapability(FirefoxDriver.PROFILE, fireFoxProfile);
         // Marionette does not allow untrusted certs yet
-        capabilities.setCapability(FirefoxDriver.MARIONETTE, false);
-        WebDriver webDriver = new FirefoxDriver(capabilities);
+        options.setCapability(FirefoxDriver.MARIONETTE, false);
+        WebDriver webDriver = new FirefoxDriver(options);
         return webDriver;
     }
 
