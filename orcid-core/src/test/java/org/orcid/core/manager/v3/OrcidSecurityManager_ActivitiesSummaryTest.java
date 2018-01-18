@@ -25,13 +25,18 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 
 /**
@@ -53,6 +58,11 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
     @Test
     public void testActivitiesSummary_When_AllPublic_ReadPublicToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+        
+        DistinctionSummary d1 = createDistinctionSummary(Visibility.PUBLIC, CLIENT_2);
+        DistinctionSummary d2 = createDistinctionSummary(Visibility.PUBLIC, CLIENT_2);
+        DistinctionSummary d3 = createDistinctionSummary(Visibility.PUBLIC, CLIENT_2);
+        
         EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
         EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
         EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
@@ -61,6 +71,22 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
         EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
 
+        InvitedPositionSummary i1 = createInvitedPositionSummary(Visibility.PUBLIC, CLIENT_2);
+        InvitedPositionSummary i2 = createInvitedPositionSummary(Visibility.PUBLIC, CLIENT_2);
+        InvitedPositionSummary i3 = createInvitedPositionSummary(Visibility.PUBLIC, CLIENT_2);
+        
+        MembershipSummary m1 = createMembershipSummary(Visibility.PUBLIC, CLIENT_2);
+        MembershipSummary m2 = createMembershipSummary(Visibility.PUBLIC, CLIENT_2);
+        MembershipSummary m3 = createMembershipSummary(Visibility.PUBLIC, CLIENT_2);
+        
+        QualificationSummary q1 = createQualificationSummary(Visibility.PUBLIC, CLIENT_2);
+        QualificationSummary q2 = createQualificationSummary(Visibility.PUBLIC, CLIENT_2);
+        QualificationSummary q3 = createQualificationSummary(Visibility.PUBLIC, CLIENT_2);
+        
+        ServiceSummary s1 = createServiceSummary(Visibility.PUBLIC, CLIENT_2);
+        ServiceSummary s2 = createServiceSummary(Visibility.PUBLIC, CLIENT_2);
+        ServiceSummary s3 = createServiceSummary(Visibility.PUBLIC, CLIENT_2);
+        
         FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
         FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
         FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
@@ -74,14 +100,24 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
 
         ActivitiesSummary as = new ActivitiesSummary();
+        as.setDistinctions(createDistinctions(d1, d2, d3));
         as.setEducations(createEducations(e1, e2, e3));
         as.setEmployments(createEmployments(em1, em2, em3));
+        as.setInvitedPositions(createInvitedPositions(i1, i2, i3));
+        as.setMemberships(createMemberships(m1, m2, m3));
+        as.setQualifications(createQualifications(q1, q2, q3));
+        as.setServices(createServices(s1, s2, s3));
         as.setFundings(createFundings(f1, f2, f3));
         as.setPeerReviews(createPeerReviews(p1, p2, p3));
         as.setWorks(createWorks(w1, w2, w3));
 
         orcidSecurityManager.checkAndFilter(ORCID_1, as);
         assertNotNull(as);
+        // Check distinctions
+        assertEquals(3, as.getDistinctions().getSummaries().size());
+        assertTrue(as.getDistinctions().getSummaries().contains(d1));
+        assertTrue(as.getDistinctions().getSummaries().contains(d2));
+        assertTrue(as.getDistinctions().getSummaries().contains(d3));
         // Check educations
         assertEquals(3, as.getEducations().getSummaries().size());
         assertTrue(as.getEducations().getSummaries().contains(e1));
@@ -92,6 +128,26 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         assertTrue(as.getEmployments().getSummaries().contains(em1));
         assertTrue(as.getEmployments().getSummaries().contains(em2));
         assertTrue(as.getEmployments().getSummaries().contains(em3));
+        // Check invited positions
+        assertEquals(3, as.getInvitedPositions().getSummaries().size());
+        assertTrue(as.getInvitedPositions().getSummaries().contains(i1));
+        assertTrue(as.getInvitedPositions().getSummaries().contains(i2));
+        assertTrue(as.getInvitedPositions().getSummaries().contains(i3));
+        // Check memberships
+        assertEquals(3, as.getMemberships().getSummaries().size());
+        assertTrue(as.getMemberships().getSummaries().contains(m1));
+        assertTrue(as.getMemberships().getSummaries().contains(m2));
+        assertTrue(as.getMemberships().getSummaries().contains(m3));
+        // Check qualifications
+        assertEquals(3, as.getQualifications().getSummaries().size());
+        assertTrue(as.getQualifications().getSummaries().contains(q1));
+        assertTrue(as.getQualifications().getSummaries().contains(q2));
+        assertTrue(as.getQualifications().getSummaries().contains(q3));
+        // Check services
+        assertEquals(3, as.getServices().getSummaries().size());
+        assertTrue(as.getServices().getSummaries().contains(s1));
+        assertTrue(as.getServices().getSummaries().contains(s2));
+        assertTrue(as.getServices().getSummaries().contains(s3));
         // Check fundings
         assertEquals(1, as.getFundings().getFundingGroup().size());
         assertEquals(3, as.getFundings().getFundingGroup().get(0).getActivities().size());
@@ -127,6 +183,26 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
     @Test
     public void testActivitiesSummary_When_SomeLimited_ReadPublicToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+        DistinctionSummary d1 = createDistinctionSummary(Visibility.LIMITED, CLIENT_2);
+        DistinctionSummary d2 = createDistinctionSummary(Visibility.PUBLIC, CLIENT_2);
+        DistinctionSummary d3 = createDistinctionSummary(Visibility.LIMITED, CLIENT_2);
+
+        InvitedPositionSummary i1 = createInvitedPositionSummary(Visibility.LIMITED, CLIENT_2);
+        InvitedPositionSummary i2 = createInvitedPositionSummary(Visibility.PUBLIC, CLIENT_2);
+        InvitedPositionSummary i3 = createInvitedPositionSummary(Visibility.LIMITED, CLIENT_2);
+
+        MembershipSummary m1 = createMembershipSummary(Visibility.LIMITED, CLIENT_2);
+        MembershipSummary m2 = createMembershipSummary(Visibility.PUBLIC, CLIENT_2);
+        MembershipSummary m3 = createMembershipSummary(Visibility.LIMITED, CLIENT_2);
+
+        QualificationSummary q1 = createQualificationSummary(Visibility.LIMITED, CLIENT_2);
+        QualificationSummary q2 = createQualificationSummary(Visibility.PUBLIC, CLIENT_2);
+        QualificationSummary q3 = createQualificationSummary(Visibility.LIMITED, CLIENT_2);
+
+        ServiceSummary s1 = createServiceSummary(Visibility.LIMITED, CLIENT_2);
+        ServiceSummary s2 = createServiceSummary(Visibility.PUBLIC, CLIENT_2);
+        ServiceSummary s3 = createServiceSummary(Visibility.LIMITED, CLIENT_2);        
+        
         EducationSummary e1 = createEducationSummary(Visibility.LIMITED, CLIENT_2);
         EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
         EducationSummary e3 = createEducationSummary(Visibility.LIMITED, CLIENT_2);
@@ -148,6 +224,11 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         WorkSummary w3 = createWorkSummary(Visibility.LIMITED, CLIENT_2, EXTID_3);
 
         ActivitiesSummary as = new ActivitiesSummary();
+        as.setDistinctions(createDistinctions(d1, d2, d3));
+        as.setInvitedPositions(createInvitedPositions(i1, i2, i3));
+        as.setMemberships(createMemberships(m1, m2, m3));
+        as.setQualifications(createQualifications(q1, q2, q3));
+        as.setServices(createServices(s1, s2, s3));
         as.setEducations(createEducations(e1, e2, e3));
         as.setEmployments(createEmployments(em1, em2, em3));
         as.setFundings(createFundings(f1, f2, f3));
@@ -156,6 +237,31 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
 
         orcidSecurityManager.checkAndFilter(ORCID_1, as);
         assertNotNull(as);
+        // Check distinctions
+        assertEquals(1, as.getDistinctions().getSummaries().size());
+        assertFalse(as.getDistinctions().getSummaries().contains(e1));
+        assertTrue(as.getDistinctions().getSummaries().contains(e2));
+        assertFalse(as.getDistinctions().getSummaries().contains(e3));
+        // Check invited positions
+        assertEquals(1, as.getInvitedPositions().getSummaries().size());
+        assertFalse(as.getInvitedPositions().getSummaries().contains(e1));
+        assertTrue(as.getInvitedPositions().getSummaries().contains(e2));
+        assertFalse(as.getInvitedPositions().getSummaries().contains(e3));
+        // Check memberships
+        assertEquals(1, as.getMemberships().getSummaries().size());
+        assertFalse(as.getMemberships().getSummaries().contains(e1));
+        assertTrue(as.getMemberships().getSummaries().contains(e2));
+        assertFalse(as.getMemberships().getSummaries().contains(e3));
+        // Check qualifications
+        assertEquals(1, as.getQualifications().getSummaries().size());
+        assertFalse(as.getQualifications().getSummaries().contains(e1));
+        assertTrue(as.getQualifications().getSummaries().contains(e2));
+        assertFalse(as.getQualifications().getSummaries().contains(e3));
+        // Check services
+        assertEquals(1, as.getServices().getSummaries().size());
+        assertFalse(as.getServices().getSummaries().contains(e1));
+        assertTrue(as.getServices().getSummaries().contains(e2));
+        assertFalse(as.getServices().getSummaries().contains(e3));
         // Check educations
         assertEquals(1, as.getEducations().getSummaries().size());
         assertFalse(as.getEducations().getSummaries().contains(e1));
@@ -201,6 +307,26 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
     @Test
     public void testActivitiesSummary_When_SomePrivate_ReadPublicToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+        DistinctionSummary d1 = createDistinctionSummary(Visibility.PRIVATE, CLIENT_2);
+        DistinctionSummary d2 = createDistinctionSummary(Visibility.PRIVATE, CLIENT_2);
+        DistinctionSummary d3 = createDistinctionSummary(Visibility.PUBLIC, CLIENT_2);
+
+        InvitedPositionSummary i1 = createInvitedPositionSummary(Visibility.PRIVATE, CLIENT_2);
+        InvitedPositionSummary i2 = createInvitedPositionSummary(Visibility.PRIVATE, CLIENT_2);
+        InvitedPositionSummary i3 = createInvitedPositionSummary(Visibility.PUBLIC, CLIENT_2);
+
+        MembershipSummary m1 = createMembershipSummary(Visibility.PRIVATE, CLIENT_2);
+        MembershipSummary m2 = createMembershipSummary(Visibility.PRIVATE, CLIENT_2);
+        MembershipSummary m3 = createMembershipSummary(Visibility.PUBLIC, CLIENT_2);
+
+        QualificationSummary q1 = createQualificationSummary(Visibility.PRIVATE, CLIENT_2);
+        QualificationSummary q2 = createQualificationSummary(Visibility.PRIVATE, CLIENT_2);
+        QualificationSummary q3 = createQualificationSummary(Visibility.PUBLIC, CLIENT_2);
+
+        ServiceSummary s1 = createServiceSummary(Visibility.PRIVATE, CLIENT_2);
+        ServiceSummary s2 = createServiceSummary(Visibility.PRIVATE, CLIENT_2);
+        ServiceSummary s3 = createServiceSummary(Visibility.PUBLIC, CLIENT_2);
+        
         EducationSummary e1 = createEducationSummary(Visibility.PRIVATE, CLIENT_2);
         EducationSummary e2 = createEducationSummary(Visibility.PRIVATE, CLIENT_2);
         EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
@@ -222,6 +348,11 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
 
         ActivitiesSummary as = new ActivitiesSummary();
+        as.setDistinctions(createDistinctions(d1, d2, d3));
+        as.setInvitedPositions(createInvitedPositions(i1, i2, i3));
+        as.setMemberships(createMemberships(m1, m2, m3));
+        as.setQualifications(createQualifications(q1, q2, q3));
+        as.setServices(createServices(s1, s2, s3));
         as.setEducations(createEducations(e1, e2, e3));
         as.setEmployments(createEmployments(em1, em2, em3));
         as.setFundings(createFundings(f1, f2, f3));
@@ -230,6 +361,31 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
 
         orcidSecurityManager.checkAndFilter(ORCID_1, as);
         assertNotNull(as);
+        // Check distinctions
+        assertEquals(1, as.getDistinctions().getSummaries().size());
+        assertFalse(as.getDistinctions().getSummaries().contains(e1));
+        assertTrue(as.getDistinctions().getSummaries().contains(e2));
+        assertFalse(as.getDistinctions().getSummaries().contains(e3));
+        // Check invited positions
+        assertEquals(1, as.getInvitedPositions().getSummaries().size());
+        assertFalse(as.getInvitedPositions().getSummaries().contains(e1));
+        assertTrue(as.getInvitedPositions().getSummaries().contains(e2));
+        assertFalse(as.getInvitedPositions().getSummaries().contains(e3));
+        // Check memberships
+        assertEquals(1, as.getMemberships().getSummaries().size());
+        assertFalse(as.getMemberships().getSummaries().contains(e1));
+        assertTrue(as.getMemberships().getSummaries().contains(e2));
+        assertFalse(as.getMemberships().getSummaries().contains(e3));
+        // Check qualifications
+        assertEquals(1, as.getQualifications().getSummaries().size());
+        assertFalse(as.getQualifications().getSummaries().contains(e1));
+        assertTrue(as.getQualifications().getSummaries().contains(e2));
+        assertFalse(as.getQualifications().getSummaries().contains(e3));
+        // Check services
+        assertEquals(1, as.getServices().getSummaries().size());
+        assertFalse(as.getServices().getSummaries().contains(e1));
+        assertTrue(as.getServices().getSummaries().contains(e2));
+        assertFalse(as.getServices().getSummaries().contains(e3));
         // Check educations
         assertEquals(1, as.getEducations().getSummaries().size());
         assertFalse(as.getEducations().getSummaries().contains(e1));
@@ -275,6 +431,26 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
     @Test
     public void testActivitiesSummary_When_AllPrivate_NoSource_ReadPublicToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+        DistinctionSummary d1 = createDistinctionSummary(Visibility.PRIVATE, CLIENT_2);
+        DistinctionSummary d2 = createDistinctionSummary(Visibility.PRIVATE, CLIENT_2);
+        DistinctionSummary d3 = createDistinctionSummary(Visibility.PRIVATE, CLIENT_2);
+
+        InvitedPositionSummary i1 = createInvitedPositionSummary(Visibility.PRIVATE, CLIENT_2);
+        InvitedPositionSummary i2 = createInvitedPositionSummary(Visibility.PRIVATE, CLIENT_2);
+        InvitedPositionSummary i3 = createInvitedPositionSummary(Visibility.PRIVATE, CLIENT_2);
+
+        MembershipSummary m1 = createMembershipSummary(Visibility.PRIVATE, CLIENT_2);
+        MembershipSummary m2 = createMembershipSummary(Visibility.PRIVATE, CLIENT_2);
+        MembershipSummary m3 = createMembershipSummary(Visibility.PRIVATE, CLIENT_2);
+
+        QualificationSummary q1 = createQualificationSummary(Visibility.PRIVATE, CLIENT_2);
+        QualificationSummary q2 = createQualificationSummary(Visibility.PRIVATE, CLIENT_2);
+        QualificationSummary q3 = createQualificationSummary(Visibility.PRIVATE, CLIENT_2);
+
+        ServiceSummary s1 = createServiceSummary(Visibility.PRIVATE, CLIENT_2);
+        ServiceSummary s2 = createServiceSummary(Visibility.PRIVATE, CLIENT_2);
+        ServiceSummary s3 = createServiceSummary(Visibility.PRIVATE, CLIENT_2);
+        
         EducationSummary e1 = createEducationSummary(Visibility.PRIVATE, CLIENT_2);
         EducationSummary e2 = createEducationSummary(Visibility.PRIVATE, CLIENT_2);
         EducationSummary e3 = createEducationSummary(Visibility.PRIVATE, CLIENT_2);
@@ -296,6 +472,11 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         WorkSummary w3 = createWorkSummary(Visibility.PRIVATE, CLIENT_2, EXTID_3);
 
         ActivitiesSummary as = new ActivitiesSummary();
+        as.setDistinctions(createDistinctions(d1, d2, d3));
+        as.setInvitedPositions(createInvitedPositions(i1, i2, i3));
+        as.setMemberships(createMemberships(m1, m2, m3));
+        as.setQualifications(createQualifications(q1, q2, q3));
+        as.setServices(createServices(s1, s2, s3));
         as.setEducations(createEducations(e1, e2, e3));
         as.setEmployments(createEmployments(em1, em2, em3));
         as.setFundings(createFundings(f1, f2, f3));
@@ -304,6 +485,16 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
 
         orcidSecurityManager.checkAndFilter(ORCID_1, as);
         assertNotNull(as);
+        // Check distinctions
+        assertEquals(0, as.getDistinctions().getSummaries().size());
+        // Check invited positions
+        assertEquals(0, as.getInvitedPositions().getSummaries().size());
+        // Check memberships
+        assertEquals(0, as.getMemberships().getSummaries().size());
+        // Check qualifications
+        assertEquals(0, as.getQualifications().getSummaries().size());
+        // Check services
+        assertEquals(0, as.getServices().getSummaries().size());        
         // Check educations
         assertEquals(0, as.getEducations().getSummaries().size());
         // Check employments
@@ -316,6 +507,8 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         assertEquals(0, as.getWorks().getWorkGroup().size());
     }
 
+    //TODO: All below
+    
     @Test
     public void testActivitiesSummary_When_AllPrivate_Source_ReadPublicToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
