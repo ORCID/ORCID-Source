@@ -239,29 +239,29 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         assertNotNull(as);
         // Check distinctions
         assertEquals(1, as.getDistinctions().getSummaries().size());
-        assertFalse(as.getDistinctions().getSummaries().contains(e1));
-        assertTrue(as.getDistinctions().getSummaries().contains(e2));
-        assertFalse(as.getDistinctions().getSummaries().contains(e3));
+        assertFalse(as.getDistinctions().getSummaries().contains(d1));
+        assertTrue(as.getDistinctions().getSummaries().contains(d2));
+        assertFalse(as.getDistinctions().getSummaries().contains(d3));
         // Check invited positions
         assertEquals(1, as.getInvitedPositions().getSummaries().size());
-        assertFalse(as.getInvitedPositions().getSummaries().contains(e1));
-        assertTrue(as.getInvitedPositions().getSummaries().contains(e2));
-        assertFalse(as.getInvitedPositions().getSummaries().contains(e3));
+        assertFalse(as.getInvitedPositions().getSummaries().contains(i1));
+        assertTrue(as.getInvitedPositions().getSummaries().contains(i2));
+        assertFalse(as.getInvitedPositions().getSummaries().contains(i3));
         // Check memberships
         assertEquals(1, as.getMemberships().getSummaries().size());
-        assertFalse(as.getMemberships().getSummaries().contains(e1));
-        assertTrue(as.getMemberships().getSummaries().contains(e2));
-        assertFalse(as.getMemberships().getSummaries().contains(e3));
+        assertFalse(as.getMemberships().getSummaries().contains(m1));
+        assertTrue(as.getMemberships().getSummaries().contains(m2));
+        assertFalse(as.getMemberships().getSummaries().contains(m3));
         // Check qualifications
         assertEquals(1, as.getQualifications().getSummaries().size());
-        assertFalse(as.getQualifications().getSummaries().contains(e1));
-        assertTrue(as.getQualifications().getSummaries().contains(e2));
-        assertFalse(as.getQualifications().getSummaries().contains(e3));
+        assertFalse(as.getQualifications().getSummaries().contains(q1));
+        assertTrue(as.getQualifications().getSummaries().contains(q2));
+        assertFalse(as.getQualifications().getSummaries().contains(q3));
         // Check services
         assertEquals(1, as.getServices().getSummaries().size());
-        assertFalse(as.getServices().getSummaries().contains(e1));
-        assertTrue(as.getServices().getSummaries().contains(e2));
-        assertFalse(as.getServices().getSummaries().contains(e3));
+        assertFalse(as.getServices().getSummaries().contains(s1));
+        assertTrue(as.getServices().getSummaries().contains(s2));
+        assertFalse(as.getServices().getSummaries().contains(s3));
         // Check educations
         assertEquals(1, as.getEducations().getSummaries().size());
         assertFalse(as.getEducations().getSummaries().contains(e1));
@@ -363,29 +363,29 @@ public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityMan
         assertNotNull(as);
         // Check distinctions
         assertEquals(1, as.getDistinctions().getSummaries().size());
-        assertFalse(as.getDistinctions().getSummaries().contains(e1));
-        assertTrue(as.getDistinctions().getSummaries().contains(e2));
-        assertFalse(as.getDistinctions().getSummaries().contains(e3));
+        assertFalse(as.getDistinctions().getSummaries().contains(d1));
+        assertTrue(as.getDistinctions().getSummaries().contains(d2));
+        assertFalse(as.getDistinctions().getSummaries().contains(d3));
         // Check invited positions
         assertEquals(1, as.getInvitedPositions().getSummaries().size());
-        assertFalse(as.getInvitedPositions().getSummaries().contains(e1));
-        assertTrue(as.getInvitedPositions().getSummaries().contains(e2));
-        assertFalse(as.getInvitedPositions().getSummaries().contains(e3));
+        assertFalse(as.getInvitedPositions().getSummaries().contains(i1));
+        assertTrue(as.getInvitedPositions().getSummaries().contains(i2));
+        assertFalse(as.getInvitedPositions().getSummaries().contains(i3));
         // Check memberships
         assertEquals(1, as.getMemberships().getSummaries().size());
-        assertFalse(as.getMemberships().getSummaries().contains(e1));
-        assertTrue(as.getMemberships().getSummaries().contains(e2));
-        assertFalse(as.getMemberships().getSummaries().contains(e3));
+        assertFalse(as.getMemberships().getSummaries().contains(m1));
+        assertTrue(as.getMemberships().getSummaries().contains(m2));
+        assertFalse(as.getMemberships().getSummaries().contains(m3));
         // Check qualifications
         assertEquals(1, as.getQualifications().getSummaries().size());
-        assertFalse(as.getQualifications().getSummaries().contains(e1));
-        assertTrue(as.getQualifications().getSummaries().contains(e2));
-        assertFalse(as.getQualifications().getSummaries().contains(e3));
+        assertFalse(as.getQualifications().getSummaries().contains(q1));
+        assertTrue(as.getQualifications().getSummaries().contains(q2));
+        assertFalse(as.getQualifications().getSummaries().contains(q3));
         // Check services
         assertEquals(1, as.getServices().getSummaries().size());
-        assertFalse(as.getServices().getSummaries().contains(e1));
-        assertTrue(as.getServices().getSummaries().contains(e2));
-        assertFalse(as.getServices().getSummaries().contains(e3));
+        assertFalse(as.getServices().getSummaries().contains(s1));
+        assertTrue(as.getServices().getSummaries().contains(s2));
+        assertFalse(as.getServices().getSummaries().contains(s3));
         // Check educations
         assertEquals(1, as.getEducations().getSummaries().size());
         assertFalse(as.getEducations().getSummaries().contains(e1));
