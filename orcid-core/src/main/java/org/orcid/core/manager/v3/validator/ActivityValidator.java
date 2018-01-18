@@ -448,7 +448,7 @@ public class ActivityValidator {
                     //normalize the ids before checking equality
                     newId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
                     if (existingId.getNormalized() == null)
-                        existingId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
+                        existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
