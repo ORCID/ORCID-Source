@@ -29,6 +29,7 @@ export class SelfServiceComponent {
     
     @Input() memberDetails : any;
     @Input() contacts : any;
+    @Input() orgIds : any;
     
     addContactDisabled : boolean = false;
     addSubMemberDisabled : boolean = false;
@@ -46,6 +47,7 @@ export class SelfServiceComponent {
     updateMemberDetailsDisabled : boolean = false;
     updateMemberDetailsShowLoader : boolean = false;
     successEditMemberMessage : string;
+    orgIdsFeatureEnabled: boolean = orcidVar.features['SELF_SERVICE_ORG_IDS'];
     
     constructor(
         private commonSrvc: CommonService,
@@ -82,6 +84,18 @@ export class SelfServiceComponent {
         );
     }
     
+    getOrgIds() {
+        this.consortiaService.getOrgIds(this.consortiaService.getAccountIdFromPath())
+            .subscribe(
+                data => {
+                this.orgIds = data;
+            },
+            error => {
+                console.log('getOrgIds error', error);
+            }
+        );
+    }
+
     search(){
         $('#invalid-email-alert').hide();
         if(this.commonSrvc.isEmail(this.input.text)){
@@ -350,6 +364,10 @@ export class SelfServiceComponent {
     ngOnInit() {
         this.getMemberDetails();
         this.getContacts();
+        if(this.orgIdsFeatureEnabled) {
+            orcidGA.gaPush(['send', 'event', 'feature', 'SELF_SERVICE_ORG_IDS', 'enabled']);
+            this.getOrgIds();
+        }
         this.subscription = this.consortiaService.notifyObservable$.subscribe(
             (res) => {
                 if(res !== "undefined" && res.action === "add" && res.moduleId === "selfServiceExistingSubMember"){

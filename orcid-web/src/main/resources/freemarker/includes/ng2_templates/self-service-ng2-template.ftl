@@ -98,6 +98,15 @@
                     </div>
                 </div>
             </div>
+            <!-- Org IDS -->
+            <div *ngIf="orgIdsFeatureEnabled">
+                <h3>Org IDs</h3>
+                <div>
+                    <ul>
+                        <li *ngFor="let orgId of orgIds">{{orgId.orgIdType}}: {{orgId.orgIdValue}}</li>
+                    </ul>
+                </div>
+            </div>
             <!-- Contacts -->
             <div>
                 <h3 *ngIf="memberDetails.consortiumLead"><@spring.message "manage_consortium.contacts_heading"/></h3>

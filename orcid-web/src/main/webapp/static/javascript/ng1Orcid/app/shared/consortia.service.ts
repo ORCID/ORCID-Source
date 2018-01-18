@@ -27,6 +27,7 @@ export class ConsortiaService {
     private addContactUrl: string;
     private removeContactUrl: string;
     private searchByEmailUrl: string;
+    private orgIdsUrl: string;
     private validateSubMemberUrl: string;
     private validateSubMemberFieldUrl: string;
     private checkExistingSubMemberUrl: string;
@@ -50,6 +51,7 @@ export class ConsortiaService {
         this.addContactUrl = getBaseUri() + '/self-service/add-contact-by-email.json';
         this.removeContactUrl = getBaseUri() + '/self-service/remove-contact.json';
         this.searchByEmailUrl = getBaseUri() + '/manage/search-for-delegate-by-email/';
+        this.orgIdsUrl = getBaseUri() + '/self-service/get-org-ids.json?accountId=';
         this.validateSubMemberUrl = getBaseUri() + '/self-service/validate-sub-member.json';
         this.validateSubMemberFieldUrl =  getBaseUri() + '/self-service/validate-sub-member-';
         this.checkExistingSubMemberUrl = getBaseUri() + '/self-service/check-existing-sub-member.json';
@@ -161,6 +163,12 @@ export class ConsortiaService {
             .map((res:Response) => res.json()).share();
     }
     
+    getOrgIds(id: string): Observable<any> {
+        const url = `${this.orgIdsUrl}${id}`;
+        return this.http.get(url)
+            .map((res:Response) => res.json()).share();
+    }
+
     validateSubMember(subMember: object) : Observable<any>{
         let encoded_data = JSON.stringify(subMember);
         return this.http.post( 
