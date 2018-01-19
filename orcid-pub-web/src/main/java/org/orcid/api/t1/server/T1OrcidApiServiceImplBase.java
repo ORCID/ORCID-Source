@@ -60,11 +60,22 @@ import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl;
+import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
+import org.orcid.core.togglz.Features;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -74,6 +85,8 @@ import org.springframework.http.HttpStatus;
  */
 abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response>, InitializingBean {
 
+    protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
+    
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
 
@@ -88,6 +101,11 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
      */
     private String externalVersion;
 
+    public void setServiceDelegator(
+            PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
+        this.serviceDelegator = serviceDelegator;
+    }
+    
     /**
      * Only used if service delegator is not set and this bean needs to
      * configure one for itself.
@@ -530,8 +548,13 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryJSON(String query) {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
-        Response jsonQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
-        registerSearchMetrics(jsonQueryResults);
+        Response jsonQueryResults = null;
+        if(Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
+            jsonQueryResults = serviceDelegator.searchByQuery(queryParams);
+        } else {
+            jsonQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
+            registerSearchMetrics(jsonQueryResults);
+        }
         return jsonQueryResults;
     }
 
@@ -548,8 +571,13 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryXML(String query) {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
-        Response xmlQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
-        registerSearchMetrics(xmlQueryResults);
+        Response xmlQueryResults = null;
+        if(Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
+            xmlQueryResults = serviceDelegator.searchByQuery(queryParams);
+        } else {
+            xmlQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
+            registerSearchMetrics(xmlQueryResults);
+        }
         return xmlQueryResults;
     }
 
