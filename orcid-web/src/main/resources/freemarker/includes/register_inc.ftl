@@ -157,13 +157,13 @@
             <p><b>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</b></p>
             <div class="visibilityDefault">
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="PUBLIC"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
+                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="PUBLIC" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
                 </div>
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="LIMITED"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
+                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="LIMITED" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
                 </div>
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="PRIVATE"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
+                  <label><input type="radio" name="defaultVisibility" ng-model="registrationForm.activitiesVisibilityDefault.visibility" value="PRIVATE" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
                 </div>
             </div>
             <div class="visibilityHelp">
