@@ -52,19 +52,13 @@ public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
             }
 
             if (PojoUtil.isEmpty(version)) {
-                String baseUrl = orcidUrlManager.getPubBaseUrl();                
-                String redirectUri = null;
                 if (Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
-                    redirectUri = baseUrl + "/v2.0" + path;
+                    String baseUrl = orcidUrlManager.getPubBaseUrl();                
+                    String redirectUri = baseUrl + "/v2.0" + path;
+                    response.sendRedirect(redirectUri);
                 } else {
-                    if(OrcidUrlManager.isSecure(request)) {
-                        redirectUri = baseUrl + "/v1.2" + path;
-                    } else {
-                        redirectUri = orcidUrlManager.getPubBaseUriHttp() + "/v1.2" + path;
-                    }                    
-                }
-                
-                response.sendRedirect(redirectUri);
+                    filterChain.doFilter(request, response);
+                }                                
             } else {
                 filterChain.doFilter(request, response);
             }
