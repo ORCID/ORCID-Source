@@ -64,7 +64,7 @@ public class ShibbolethTest {
 
     private WebDriver createFireFoxDriverWithModifyHeaders(List<Pair<String, String>> headers) throws IOException {
         FirefoxProfile fireFoxProfile = new FirefoxProfile();
-        File modifyHeaders = new File(System.getProperty("user.dir") + "/src/test/resources/modify-headers-0.7.1.1.xpi");
+        File modifyHeaders = new File(System.getProperty("user.dir") + "/src/test/resources/modify_headers-0.7.1.1-fx.xpi");
         fireFoxProfile.addExtension(modifyHeaders);
         fireFoxProfile.setPreference("modifyheaders.headers.count", headers.size());
         for (int i = 0; i < headers.size(); i++) {
