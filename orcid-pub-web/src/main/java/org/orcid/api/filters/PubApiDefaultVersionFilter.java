@@ -20,11 +20,13 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -33,11 +35,13 @@ public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
 
+    @Resource
+    protected OrcidUrlManager orcidUrlManager;
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getServletPath();
-        String contextPath = httpRequest.getContextPath();
         if (path.startsWith("/search/")) {
             filterChain.doFilter(request, response);
         } else {
@@ -48,10 +52,18 @@ public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
             }
 
             if (PojoUtil.isEmpty(version)) {
-                String redirectUri = contextPath + "/v1.2" + path;
+                String baseUrl = orcidUrlManager.getPubBaseUrl();                
+                String redirectUri = null;
                 if (Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
-                    redirectUri = contextPath + "/v2.0" + path;
+                    redirectUri = baseUrl + "/v2.0" + path;
+                } else {
+                    if(OrcidUrlManager.isSecure(request)) {
+                        redirectUri = baseUrl + "/v1.2" + path;
+                    } else {
+                        redirectUri = orcidUrlManager.getPubBaseUriHttp() + "/v1.2" + path;
+                    }                    
                 }
+                
                 response.sendRedirect(redirectUri);
             } else {
                 filterChain.doFilter(request, response);
