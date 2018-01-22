@@ -73,7 +73,7 @@ public class T1OrcidApiServiceImplRoot extends T1OrcidApiServiceImplBase {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
         Response jsonQueryResults = null;
         if(Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
-            jsonQueryResults = serviceDelegator.searchByQuery(queryParams);
+            jsonQueryResults = api20ServiceDelegator.searchByQuery(queryParams);
         } else {
             jsonQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
             registerSearchMetrics(jsonQueryResults);
@@ -96,7 +96,7 @@ public class T1OrcidApiServiceImplRoot extends T1OrcidApiServiceImplBase {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
         Response xmlQueryResults = null;
         if(Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
-            xmlQueryResults = serviceDelegator.searchByQuery(queryParams);
+            xmlQueryResults = api20ServiceDelegator.searchByQuery(queryParams);
         } else {
             xmlQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
             registerSearchMetrics(xmlQueryResults);
