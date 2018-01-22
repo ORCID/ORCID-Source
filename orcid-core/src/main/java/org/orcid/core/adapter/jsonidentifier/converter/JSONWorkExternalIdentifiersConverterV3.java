@@ -17,13 +17,14 @@
 package org.orcid.core.adapter.jsonidentifier.converter;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
-
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.identifiers.NormalizationService;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.v3.dev1.common.TransientError;
 import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
@@ -84,6 +85,9 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                 id.setValue(workExternalIdentifier.getWorkExternalIdentifierId().content);
                 //note, uses API type name.
                 id.setNormalized(new TransientNonEmptyString(norm.normalise(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
+                if (StringUtils.isEmpty(id.getNormalized().getValue())){
+                    id.setNormalizedError(new TransientError("E1","error message!"));
+                }
             }
             if (workExternalIdentifier.getUrl() != null) {
                 id.setUrl(new Url(workExternalIdentifier.getUrl().getValue()));
