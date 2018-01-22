@@ -7,7 +7,8 @@ declare var getBaseUri: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
 import { Observable } 
@@ -25,12 +26,17 @@ import { EmailService }
 import { CommonService } 
     from '../../shared/common.service.ts'; 
 
+/*
+<custom-email-ng2 elementId="${client_id}"></custom-email-ng2>
+*/
 @Component({
     selector: 'custom-email-ng2',
     template:  scriptTmpl("custom-email-ng2-template")
 })
 export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+
+    @Input() elementId: string;
     
     clientId: any;
     customEmail: any;
@@ -209,6 +215,6 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-
+        this.init(this.elementId);
     }; 
 }

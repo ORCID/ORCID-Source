@@ -35,6 +35,13 @@ export class AccountService {
         .map((res:Response) => res.json()).share();
     }
 
+    getSecurityQuestion(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/security-question.json'
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
     sendDeactivateEmail(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/send-deactivate-account.json'
@@ -54,6 +61,24 @@ export class AccountService {
             getBaseUri() + '/account/change-password.json', 
             encoded_data, 
             { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    submitModal( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/account/security-question.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    delayVerifyEmail(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/delayVerifyEmail.json'
         )
         .map((res:Response) => res.json()).share();
     }
