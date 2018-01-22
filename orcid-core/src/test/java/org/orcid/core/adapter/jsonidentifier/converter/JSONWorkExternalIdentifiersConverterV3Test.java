@@ -22,25 +22,45 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import java.util.Date;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.jaxb.model.v3.dev1.common.TransientError;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
+import org.springframework.test.context.ContextConfiguration;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JSONWorkExternalIdentifiersConverterV3Test {
 
-    NormalizationService norm = new NormalizationService();//dummy;
-    
-    private JSONWorkExternalIdentifiersConverterV3 converter = new JSONWorkExternalIdentifiersConverterV3(norm);
+    @Resource
+    NormalizationService norm;
+    @Resource
+    LocaleManager localeManager;
+    private JSONWorkExternalIdentifiersConverterV3 converter;
 
+    @Before
+    public void initMocks(){
+        converter = new JSONWorkExternalIdentifiersConverterV3(norm,localeManager);
+    }
+    
     @Test
     public void testConvertTo() throws JAXBException {
         Work work = getWork();
@@ -58,7 +78,36 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
         assertEquals("123", externalID.getValue());
         assertNotNull(externalID.getType());
+        assertEquals("123",externalID.getNormalized().getValue());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), externalID.getType());
+    }
+
+    @Test
+    public void testConvertFromNormalize() {
+        WorkEntity workEntity = getWorkEntity();
+        workEntity.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
+        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
+        assertEquals(1, entityIDs.getExternalIdentifier().size());
+        ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
+        assertEquals("doi:10.1/123", externalID.getValue());
+        assertEquals("10.1/123",externalID.getNormalized().getValue());
+        assertNotNull(externalID.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI.value(), externalID.getType());
+    }
+    
+    @Test
+    public void testConvertFromNormalizeError() {
+        WorkEntity workEntity = getWorkEntity();
+        workEntity.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
+        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
+        assertEquals(1, entityIDs.getExternalIdentifier().size());
+        ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
+        assertEquals("123", externalID.getValue());
+        assertEquals("",externalID.getNormalized().getValue());
+        assertEquals("8001",externalID.getNormalizedError().getErrorCode());
+        assertEquals("Cannot normalize identifier value doi:123",externalID.getNormalizedError().getErrorMessage());
+        assertNotNull(externalID.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI.value(), externalID.getType());
     }
 
     private Work getWork() throws JAXBException {
