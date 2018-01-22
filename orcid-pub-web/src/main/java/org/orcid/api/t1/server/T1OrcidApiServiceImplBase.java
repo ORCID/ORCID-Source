@@ -85,26 +85,19 @@ import org.springframework.http.HttpStatus;
  */
 abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response>, InitializingBean {
 
-    protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
-    
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
 
     @Context
-    private UriInfo uriInfo;
+    protected UriInfo uriInfo;
 
-    private OrcidApiServiceDelegator orcidApiServiceDelegator;
+    protected OrcidApiServiceDelegator orcidApiServiceDelegator;
 
     /**
      * Only used if service delegator is not set and this bean needs to
      * configure one for itself.
      */
     private String externalVersion;
-
-    public void setServiceDelegator(
-            PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
-        this.serviceDelegator = serviceDelegator;
-    }
     
     /**
      * Only used if service delegator is not set and this bean needs to
@@ -548,13 +541,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryJSON(String query) {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
-        Response jsonQueryResults = null;
-        if(Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
-            jsonQueryResults = serviceDelegator.searchByQuery(queryParams);
-        } else {
-            jsonQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
-            registerSearchMetrics(jsonQueryResults);
-        }
+        Response jsonQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
+        registerSearchMetrics(jsonQueryResults);
         return jsonQueryResults;
     }
 
@@ -571,17 +559,12 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryXML(String query) {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
-        Response xmlQueryResults = null;
-        if(Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
-            xmlQueryResults = serviceDelegator.searchByQuery(queryParams);
-        } else {
-            xmlQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
-            registerSearchMetrics(xmlQueryResults);
-        }
+        Response xmlQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
+        registerSearchMetrics(xmlQueryResults);
         return xmlQueryResults;
     }
 
-    private void registerSearchMetrics(Response results) {
+    protected void registerSearchMetrics(Response results) {
         OrcidMessage orcidMessage = (OrcidMessage) results.getEntity();
         if (orcidMessage != null && orcidMessage.getOrcidSearchResults() != null && !orcidMessage.getOrcidSearchResults().getOrcidSearchResult().isEmpty()) {
             return;

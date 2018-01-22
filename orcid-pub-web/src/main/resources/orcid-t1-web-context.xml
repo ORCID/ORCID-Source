@@ -63,6 +63,7 @@
     
     <bean id="t1OrcidApiServiceImplRoot" class="org.orcid.api.t1.server.T1OrcidApiServiceImplRoot">
         <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorRoot"/>
+        <property name="api20ServiceDelegator" ref="publicV2ApiServiceDelegator"/>
     </bean>
     
     <bean id="t1OrcidApiServiceDelegatorPrototype" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl" scope="prototype"/>
