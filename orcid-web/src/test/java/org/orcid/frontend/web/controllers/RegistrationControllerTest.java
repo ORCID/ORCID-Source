@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -38,6 +39,7 @@ import javax.servlet.http.HttpSession;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -50,6 +52,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -72,6 +75,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.togglz.junit.TogglzRule;
 
 import com.google.common.collect.Lists;
 
@@ -104,6 +108,9 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Mock
     private OrcidProfileManager orcidProfileManager;
     
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -121,6 +128,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManager", emailManager); 
         TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);
         TargetProxyHelper.injectIntoProxy(registrationController, "orcidProfileManager", orcidProfileManager);
+        
+        // Disable all features by default
+        togglzRule.disableAll();
     }
     
     @Test
@@ -162,6 +172,19 @@ public class RegistrationControllerTest extends DBUnitTest {
         Registration form = argument1.getValue();
         assertEquals("Given Names", form.getGivenNames().getValue());
         assertEquals("Family Name", form.getFamilyNames().getValue());        
+    }
+    @Test
+    public void regActivitiesVisibilityDefaultIsNotNull() {
+        //TODO: Update this test after GDPR privacy selector is live
+        togglzRule.enable(Features.GDPR_UI);
+        Registration reg = new Registration();
+        reg.getActivitiesVisibilityDefault().setVisibility(null);
+        assertNull(reg.getActivitiesVisibilityDefault().getVisibility());
+        reg = registrationController.registerActivitiesVisibilityDefaultValidate(reg);
+        assertNotNull(reg);
+        assertNotNull(reg.getActivitiesVisibilityDefault().getErrors());
+        assertEquals(1, reg.getActivitiesVisibilityDefault().getErrors().size());
+        assertEquals("Please choose a default visibility setting.", reg.getActivitiesVisibilityDefault().getErrors().get(0));
     }
     @Test
     public void regEmailsAdditonalValidateNotSameAsOtherAdditional() {

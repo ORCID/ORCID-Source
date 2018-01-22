@@ -86,8 +86,6 @@ public class WorkManagerTest extends BaseTest {
     @Resource
     private WorkDao workDao;
     
-    private RequestAttributes previousAttrs;
-    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -96,15 +94,6 @@ public class WorkManagerTest extends BaseTest {
     @Before
     public void before() {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
-        previousAttrs = RequestContextHolder.getRequestAttributes();
-        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
-        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_dev1",  RequestAttributes.SCOPE_REQUEST);
-        RequestContextHolder.setRequestAttributes(attrs);
-    }
-    
-    @After
-    public void after() {
-        RequestContextHolder.setRequestAttributes(previousAttrs);
     }
     
     @AfterClass

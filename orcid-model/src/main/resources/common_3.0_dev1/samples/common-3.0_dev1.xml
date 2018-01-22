@@ -4,5 +4,5 @@
     xsi:schemaLocation="http://www.orcid.org/ns/common ../common-3.0_dev1.xsd ">
     <common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
     <common:path>8888-8888-8888-8880</common:path>
-    <common:host>orcid.org</common:host>
+    <common:host>orcid.org</common:host> 
 </common:application-group-orcid>

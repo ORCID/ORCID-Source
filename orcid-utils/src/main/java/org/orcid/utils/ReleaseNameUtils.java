@@ -30,12 +30,24 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ReleaseNameUtils {
 
+    private static final String RELEASE_NAME_PROPERTY = "releaseName";
+    
     private static String releaseName;
 
     static {
-        releaseName = readReleaseNameFromFile();
-        if (StringUtils.isBlank(releaseName)) {
-            releaseName = DateUtils.convertToXMLGregorianCalendar(new Date()).toXMLFormat();
+        // Read release name from property, because it may already have been set
+        // by another web app
+        String releaseNameFromSystemProperty = System.getProperty(RELEASE_NAME_PROPERTY);
+        if (StringUtils.isBlank(releaseNameFromSystemProperty)) {
+            releaseName = readReleaseNameFromFile();
+            if (StringUtils.isBlank(releaseName)) {
+                releaseName = DateUtils.convertToXMLGregorianCalendar(new Date()).toXMLFormat();
+            }
+            // Set the system property, so that other web apps can use the same
+            // value
+            System.setProperty(RELEASE_NAME_PROPERTY, releaseName);
+        } else {
+            releaseName = releaseNameFromSystemProperty;
         }
     }
 

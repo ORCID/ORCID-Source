@@ -6,7 +6,7 @@ Blackbox tests are in [ORICD-Source/orcid-integration-test/src/test/java/org/orc
 
 ###Prerequisites
 1. Complete the ORCID [Development Environment Setup](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
-2. Install [Firefox 45 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/), we suggest putting this into your `~/bin` as to not overwrite the default firefox. 
+2. Install [Firefox 52 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/), we suggest putting this into your `~/bin` as to not overwrite the default firefox. 
 3. Verify Firefox installation and locate installation directory
 
         find / -name firefox 2>/dev/null

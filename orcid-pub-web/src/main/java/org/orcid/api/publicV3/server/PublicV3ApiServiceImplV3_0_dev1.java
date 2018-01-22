@@ -21,6 +21,9 @@ import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
+import static org.orcid.core.api.OrcidApiConstants.DISTINCTION;
+import static org.orcid.core.api.OrcidApiConstants.DISTINCTIONS;
+import static org.orcid.core.api.OrcidApiConstants.DISTINCTION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
@@ -32,7 +35,13 @@ import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDINGS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION;
+import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITIONS;
+import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP;
+import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIPS;
+import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
@@ -42,9 +51,14 @@ import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
-import static org.orcid.core.api.OrcidApiConstants.RECORD;
+import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
+import static org.orcid.core.api.OrcidApiConstants.QUALIFICATIONS;
+import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
+import static org.orcid.core.api.OrcidApiConstants.SERVICE;
+import static org.orcid.core.api.OrcidApiConstants.SERVICES;
+import static org.orcid.core.api.OrcidApiConstants.SERVICE_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
@@ -72,25 +86,40 @@ import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopeConstants;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
+import org.orcid.jaxb.model.v3.dev1.record.Education;
+import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.OtherName;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
+import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
+import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.swagger.annotations.Api;
@@ -110,7 +139,7 @@ import io.swagger.annotations.ExternalDocs;
 @Path("/v3.0_dev1")
 public class PublicV3ApiServiceImplV3_0_dev1 {
 
-    protected PublicV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
+    protected PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator;
 
     @Value("${org.orcid.core.baseUri}")
     protected String baseUri;
@@ -119,7 +148,7 @@ public class PublicV3ApiServiceImplV3_0_dev1 {
     protected String pubBaseUri;
 
     public void setServiceDelegator(
-            PublicV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
+            PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
@@ -436,5 +465,155 @@ public class PublicV3ApiServiceImplV3_0_dev1 {
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/client-2.0.xsd")
     public Response viewClient(@PathParam("client_id") String clientId) {
         return serviceDelegator.viewClient(clientId);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTION + PUTCODE)
+    @ApiOperation(nickname = "viewDistinctionV3dev", value = "Fetch an Distinction", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Distinction.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewDistinction(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewDistinction(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTIONS)
+    @ApiOperation(nickname = "viewDistinctionsV3dev", value = "Fetch all distinctions", response = Distinctions.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewDistinctions(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewDistinctions(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTION_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewDistinctionSummaryV3dev", value = "Fetch an Distinction summary", response = DistinctionSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewDistinctionSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewDistinctionSummary(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITION + PUTCODE)
+    @ApiOperation(nickname = "viewInvitedPositionV3dev", value = "Fetch an InvitedPosition", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = InvitedPosition.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewInvitedPosition(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewInvitedPosition(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITIONS)
+    @ApiOperation(nickname = "viewInvitedPositionsV3dev", value = "Fetch all invitedPositions", response = InvitedPositions.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewInvitedPositions(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewInvitedPositions(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITION_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewInvitedPositionSummaryV3dev", value = "Fetch an InvitedPosition summary", response = InvitedPositionSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewInvitedPositionSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewInvitedPositionSummary(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIP + PUTCODE)
+    @ApiOperation(nickname = "viewMembershipV3dev", value = "Fetch an Membership", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Membership.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewMembership(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewMembership(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIPS)
+    @ApiOperation(nickname = "viewMembershipsV3dev", value = "Fetch all memberships", response = Memberships.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewMemberships(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewMemberships(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIP_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewMembershipSummaryV3dev", value = "Fetch an Membership summary", response = MembershipSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewMembershipSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewMembershipSummary(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATION + PUTCODE)
+    @ApiOperation(nickname = "viewQualificationV3dev", value = "Fetch an Qualification", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Qualification.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewQualification(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewQualification(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATIONS)
+    @ApiOperation(nickname = "viewQualificationsV3dev", value = "Fetch all qualifications", response = Qualifications.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewQualifications(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewQualifications(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATION_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewQualificationSummaryV3dev", value = "Fetch an Qualification summary", response = QualificationSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewQualificationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewQualificationSummary(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICE + PUTCODE)
+    @ApiOperation(nickname = "viewServiceV3dev", value = "Fetch an Service", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Service.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewService(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewService(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICES)
+    @ApiOperation(nickname = "viewServicesV3dev", value = "Fetch all services", response = Services.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewServices(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewServices(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICE_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewServiceSummaryV3dev", value = "Fetch an Service summary", response = ServiceSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewServiceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewServiceSummary(orcid, Long.valueOf(putCode));
     }
 }

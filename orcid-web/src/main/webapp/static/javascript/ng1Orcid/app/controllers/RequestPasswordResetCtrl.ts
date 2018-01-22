@@ -19,6 +19,7 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
             $timeout, 
             utilsService
         ) {
+            $scope.showSendResetLinkError = false;
 
             $scope.getRequestResetPassword = function() {
                 $.ajax({
@@ -45,6 +46,8 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
                         $scope.$apply();
                     }
                 }).fail(function(){
+                    $scope.requestResetPassword.errors = null;
+                    $scope.showSendResetLinkError = true;
                     console.log("error posting to /reset-password.json");
                 });  
             };
@@ -75,6 +78,7 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
             };
 
             // init reset password toggle text
+            $scope.showSendResetLinkError = false;
             $scope.showResetPassword = (window.location.hash === "#resetPassword");
             $scope.resetPasswordToggleText = om.get("login.forgotten_password");
         }

@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response;
  * @author Will Simpson
  * 
  */
-public interface PublicV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, FUNDING, GROUP_ID_RECORD, OTHER_NAME, PEER_REVIEW, RESEARCHER_URL, WORK> {
+public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, INVITED_POSITION, FUNDING, GROUP_ID_RECORD, MEMBERSHIP, OTHER_NAME, PEER_REVIEW, QUALIFICATION, RESEARCHER_URL, SERVICE, WORK> {
 
     static final String LATEST_V3_VERSION = "3.0_dev1";
 
@@ -105,5 +105,35 @@ public interface PublicV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response viewClient(String clientId);
     
     Response viewBulkWorks(String orcid, String putCodes);
+    
+    Response viewDistinction(String orcid, Long putCode);
+
+    Response viewDistinctions(String orcid);
+
+    Response viewDistinctionSummary(String orcid, Long putCode);
+
+    Response viewInvitedPosition(String orcid, Long putCode);
+
+    Response viewInvitedPositions(String orcid);
+
+    Response viewInvitedPositionSummary(String orcid, Long putCode);
+
+    Response viewMembership(String orcid, Long putCode);
+
+    Response viewMemberships(String orcid);
+
+    Response viewMembershipSummary(String orcid, Long putCode);
+
+    Response viewQualification(String orcid, Long putCode);
+
+    Response viewQualifications(String orcid);
+
+    Response viewQualificationSummary(String orcid, Long putCode);
+
+    Response viewService(String orcid, Long putCode);
+
+    Response viewServices(String orcid);
+
+    Response viewServiceSummary(String orcid, Long putCode);
 
 }

@@ -403,6 +403,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
+        if (!org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.equals(orgAffiliationRelationEntity.getAffiliationType())
+                && !org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EMPLOYMENT.equals(orgAffiliationRelationEntity.getAffiliationType())) {
+            throw new IllegalArgumentException(
+                    "Invalid affiliation type for API 1.2: " + orgAffiliationRelationEntity.getAffiliationType() + " with id: " + orgAffiliationRelationEntity.getId());
+        }
+        
         Affiliation affiliation = new Affiliation();
         affiliation.setPutCode(Long.toString(orgAffiliationRelationEntity.getId()));
         if(orgAffiliationRelationEntity.getAffiliationType() != null) {
@@ -561,7 +567,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             Affiliations affiliations = new Affiliations();
             List<Affiliation> affiliationList = affiliations.getAffiliation();
             for (OrgAffiliationRelationEntity orgRelationEntity : orgRelationEntities) {
-                affiliationList.add(getAffiliation(orgRelationEntity));
+                if (org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.equals(orgRelationEntity.getAffiliationType())
+                        || org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EMPLOYMENT.equals(orgRelationEntity.getAffiliationType()))
+                    affiliationList.add(getAffiliation(orgRelationEntity));
             }
             return affiliations;
         }

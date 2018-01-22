@@ -27,10 +27,15 @@ import javax.xml.bind.annotation.XmlEnumValue;
 @XmlEnum
 public enum ItemType {
     //@formatter:off
+    @XmlEnumValue("distinction") DISTINCTION,
     @XmlEnumValue("education") EDUCATION,
     @XmlEnumValue("employment") EMPLOYMENT,
+    @XmlEnumValue("invited-position") INVITED_POSITION,
     @XmlEnumValue("funding") FUNDING,
+    @XmlEnumValue("membership") MEMBERSHIP,
     @XmlEnumValue("peer-review") PEER_REVIEW,
+    @XmlEnumValue("qualification") QUALIFICATION,
+    @XmlEnumValue("service") SERVICE,
     @XmlEnumValue("work") WORK;
     //@formatter:on
 }

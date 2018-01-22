@@ -16,7 +16,10 @@
  */
 package org.orcid.integration.blackbox.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
 import java.util.regex.Matcher;
@@ -31,14 +34,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
-import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
@@ -187,7 +187,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         webDriver.get(this.getWebBaseUrl() + "/my-orcid");
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
+        signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
         //Then ask for the same permission
         String url =String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
                 ScopePathType.AFFILIATIONS_UPDATE.getContent(), this.getClient1RedirectUri());
@@ -223,7 +223,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         webDriver.get(this.getWebBaseUrl() + "/my-orcid");
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
+        signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
         //Then ask for the same permission
         String url =String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
                 ScopePathType.ORCID_BIO_UPDATE.getContent(), this.getClient1RedirectUri());

@@ -39,7 +39,7 @@ public class JSONExternalIdentifiersConverterV3Test {
         Education education = getEducation();
         assertEquals(
                 "{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}",
-                converter.convertTo(education.getEducationExternalIdentifiers(), null));
+                converter.convertTo(education.getExternalIdentifiers(), null));
     }
 
     @Test

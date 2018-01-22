@@ -50,9 +50,8 @@ import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.common.Year;
 import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.CitationType;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
@@ -339,8 +338,8 @@ public class ActivityValidator {
         }
     }
 
-    public void validateEmployment(Employment employment, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
-        if (employment.getPutCode() != null && createFlag) {
+    public void validateAffiliation(Affiliation affiliation, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+        if (affiliation.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
                 params.put("clientName", sourceEntity.getSourceName());
@@ -350,40 +349,16 @@ public class ActivityValidator {
 
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
-            Visibility updatedVisibility = employment.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }
-
-        if (employment.getStartDate() == null) {
-            throw new OrcidValidationException("Employment start date is required");
-        }
-        
-        if (isApiRequest) {
-            validateDisambiguatedOrg(employment);
-        }
-    }
-
-    public void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
-        if (education.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
-            }
-            throw new InvalidPutCodeException(params);
-        }
-
-        // Check that we are not changing the visibility
-        if (isApiRequest && !createFlag) {
-            Visibility updatedVisibility = education.getVisibility();
+            Visibility updatedVisibility = affiliation.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
         
-        if (education.getStartDate() == null) {
+        if (affiliation.getStartDate() == null) {
             throw new OrcidValidationException("Education start date is required");
         }
         
         if (isApiRequest) {
-            validateDisambiguatedOrg(education);
+            validateDisambiguatedOrg(affiliation);
         }
     }
 
@@ -448,7 +423,7 @@ public class ActivityValidator {
                     //normalize the ids before checking equality
                     newId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
                     if (existingId.getNormalized() == null)
-                        existingId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
+                        existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
