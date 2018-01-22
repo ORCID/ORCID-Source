@@ -32,13 +32,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
-    
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getServletPath();
         String contextPath = httpRequest.getContextPath();
-        if(!path.startsWith("/search/")) {
+        if (path.startsWith("/search/")) {
             filterChain.doFilter(request, response);
         } else {
             Matcher matcher = VERSION_PATTERN.matcher(path);
@@ -46,8 +46,8 @@ public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
             if (matcher.lookingAt()) {
                 version = matcher.group(1);
             }
-            
-            if(PojoUtil.isEmpty(version)) {
+
+            if (PojoUtil.isEmpty(version)) {
                 String redirectUri = contextPath + "/v1.2" + path;
                 if (Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
                     redirectUri = contextPath + "/v2.0" + path;
@@ -56,6 +56,6 @@ public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
             } else {
                 filterChain.doFilter(request, response);
             }
-        } 
+        }
     }
 }

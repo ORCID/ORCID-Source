@@ -50,14 +50,14 @@ import org.orcid.jaxb.model.record_v2.Work;
  */
 @Path("/")
 public class T1OrcidApiServiceImplRoot extends T1OrcidApiServiceImplBase {
-    
+
     protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> api20ServiceDelegator;
-    
+
     public void setApi20ServiceDelegator(
             PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
         this.api20ServiceDelegator = serviceDelegator;
     }
-    
+
     /**
      * Gets the JSON representation any Orcid Profiles (BIO) only relevant to
      * the given query
@@ -72,7 +72,7 @@ public class T1OrcidApiServiceImplRoot extends T1OrcidApiServiceImplBase {
     public Response searchByQueryJSON(String query) {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
         Response jsonQueryResults = null;
-        if(Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
+        if (Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
             jsonQueryResults = api20ServiceDelegator.searchByQuery(queryParams);
         } else {
             jsonQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
@@ -95,7 +95,7 @@ public class T1OrcidApiServiceImplRoot extends T1OrcidApiServiceImplBase {
     public Response searchByQueryXML(String query) {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
         Response xmlQueryResults = null;
-        if(Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
+        if (Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
             xmlQueryResults = api20ServiceDelegator.searchByQuery(queryParams);
         } else {
             xmlQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
