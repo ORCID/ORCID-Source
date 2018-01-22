@@ -113,6 +113,16 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
         public static final Property inbox = m_model.createProperty( NS + "inbox" );
     }
+    public static class AS {
+
+        /** The RDF model that holds the vocabulary terms */
+        private static Model m_model = ModelFactory.createDefaultModel();
+
+        /** The namespace of the vocabulary as a string */
+        public static final String NS = "https://www.w3.org/ns/activitystreams#";
+
+        public static final Property outbox = m_model.createProperty( NS + "outbox" );
+    }
     public static class PIM {
 
         /** The RDF model that holds the vocabulary terms */
@@ -131,6 +141,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final String URL_NAME_FOAF = "foaf";
     private static final String URL_NAME_WEBID = "webid";
     private static final String URL_NAME_INBOX = "inbox";
+    private static final String URL_NAME_OUTBOX = "outbox";
     private static final String URL_NAME_STORAGE = "storage";
 
 	private static OntModel countries;
@@ -422,6 +433,8 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
                 person.addSameAs(page);
             } else if (isInbox(urlName)) {
                 person.addProperty(LDP.inbox, page);
+            } else if (isOutbox(urlName)) {
+                person.addProperty(AS.outbox, page);
             } else if (isStorage(urlName)) {
                 person.addProperty(PIM.storage, page);
             } else {
@@ -458,6 +471,13 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             return false;
         }
         return urlName.equals(URL_NAME_INBOX);
+    }
+
+    private boolean isOutbox(String urlName) {
+        if (urlName == null) {
+            return false;
+        }
+        return urlName.equals(URL_NAME_OUTBOX);
     }
 
     private boolean isStorage(String urlName) {
