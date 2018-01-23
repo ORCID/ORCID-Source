@@ -266,6 +266,24 @@
            </xs:extension>
        </xs:simpleContent>
    </xs:complexType>
+   
+   	<xs:complexType name="transient-error">
+		<xs:annotation>
+			<xs:documentation>An error that populated by ORCID when record is read
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="error-code" type="common:non-empty-string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="error-message" type="common:non-empty-string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="transient" use="required">
+		   <xs:simpleType>
+		   <xs:restriction base="xs:boolean">
+		          <xs:pattern value="true" />
+		   </xs:restriction>
+		   </xs:simpleType>
+		 </xs:attribute>
+   </xs:complexType>
 		
 	<xs:complexType name="amount">
 		<xs:annotation>
@@ -1673,7 +1691,8 @@
 				<xs:sequence>
 					<xs:element name="external-id-type" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />
 					<xs:element name="external-id-value" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />	
-					<xs:element name="external-id-normalized" type="common:transient-non-empty-string" minOccurs="0" maxOccurs="1" />		
+					<xs:element name="external-id-normalized" type="common:transient-non-empty-string" minOccurs="0" maxOccurs="1" />
+					<xs:element name="external-id-normalized-error" type="common:transient-error" minOccurs="0" maxOccurs="1" />		
 					<xs:element name="external-id-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
 					<xs:element name="external-id-relationship" minOccurs="0" maxOccurs="1" type="common:relationship-type" />
 				</xs:sequence>
