@@ -89,6 +89,10 @@ public class OrcidUrlManager {
         return this.baseUrl.replace("https", "http").replace(":8443", ":8080");
     }
 
+    public String getPubBaseUriHttp() {
+        return this.pubBaseUrl.replace("https", "http").replace(":8443", ":8080");
+    }
+    
     @ModelAttribute("basePath")
     public String getBasePath() {
         Matcher fileNameMatcher = fileNamePattern.matcher(getBaseUrl());
