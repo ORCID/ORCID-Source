@@ -16,6 +16,7 @@
  */
 package org.orcid.listener.orcid;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -66,10 +67,10 @@ public class Orcid12APIClient {
      * @return
      * @throws LockedRecordException
      */
-    public OrcidMessage fetchPublicProfile(String orcid) throws LockedRecordException, DeprecatedRecordException {
+    public InputStream fetchPublicProfile(String orcid, String mediaType) throws LockedRecordException, DeprecatedRecordException {
         WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/orcid-profile");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+        Builder builder = webResource.accept(mediaType).header("Authorization", "Bearer " + accessToken);
         ClientResponse response = builder.get(ClientResponse.class);
 
         if (response.getStatus() != 200) {
@@ -85,7 +86,7 @@ public class Orcid12APIClient {
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
         }
-
-        return response.getEntity(OrcidMessage.class);
+        response.bufferEntity();
+        return response.getEntityInputStream();
     }
 }

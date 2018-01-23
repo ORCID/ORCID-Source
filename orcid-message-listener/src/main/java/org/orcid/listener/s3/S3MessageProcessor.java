@@ -16,12 +16,14 @@
  */
 package org.orcid.listener.s3;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.function.Consumer;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
@@ -96,12 +98,11 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     private void update_1_2_API(String orcid) {
         if (is12IndexingEnabled) {
             try {
-                OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(orcid);
-                // Update API 1.2
-                if (profile != null) {
-                    s3Updater.updateS3(orcid, profile);
-                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-                }
+                boolean xmlUpdated = update_1_2_API_XML(orcid);
+                boolean jsonUpdated = update_1_2_API_JSON(orcid);
+                if(xmlUpdated && jsonUpdated) {
+                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);                
+                }                
             } catch (LockedRecordException | DeprecatedRecordException e) {
                 try {
                     if (e instanceof LockedRecordException) {
@@ -128,7 +129,25 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             }
         }
     }
+    
+    private boolean update_1_2_API_XML(String orcid) throws LockedRecordException, DeprecatedRecordException, IOException {
+        InputStream is = orcid12ApiClient.fetchPublicProfile(orcid, MediaType.APPLICATION_XML);
+        if(is != null) {
+            s3Updater.updateS3(orcid, is, MediaType.APPLICATION_XML);
+            return true;
+        }
+        return false;
+    }
 
+    private boolean update_1_2_API_JSON(String orcid) throws LockedRecordException, DeprecatedRecordException, IOException {
+        InputStream is = orcid12ApiClient.fetchPublicProfile(orcid, MediaType.APPLICATION_JSON);
+        if(is != null) {
+            s3Updater.updateS3(orcid, is, MediaType.APPLICATION_JSON);    
+            return true;
+        }
+        return false;
+    }
+    
     private void update_2_0_API(BaseMessage message) {
         String orcid = message.getOrcid();
         if (is20IndexingEnabled) {

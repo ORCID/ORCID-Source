@@ -18,6 +18,7 @@ package org.orcid.listener.s3;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -82,6 +83,18 @@ public class S3Updater {
         this.jaxbContext_1_2_api = JAXBContext.newInstance(OrcidMessage.class, OrcidDeprecated.class);
         this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
     }
+    
+    public void updateS3(String orcid, InputStream element, String mediaType) throws IOException {
+        String bucket = null;
+        if(MediaType.APPLICATION_XML.equals(mediaType)) {
+            bucket = getBucketName("api-1-2", "xml", orcid);
+        } else {
+            bucket = getBucketName("api-1-2", "json", orcid);
+        }
+        byte[] bytes = new byte[element.available()];
+        element.read(bytes);
+        s3MessagingService.send(bucket, orcid + ".json", bytes, mediaType);
+    }
 
     public void updateS3(String orcid, Object object) throws IOException, JAXBException {
         // API 1.2
@@ -130,11 +143,13 @@ public class S3Updater {
         putXmlElement(orcid, error, true);        
     }    
 
+    @Deprecated
     private void putJsonElement(String orcid, OrcidMessage profile) throws AmazonClientException, JsonProcessingException {
         String bucket = getBucketName("api-1-2", "json", orcid);
         s3MessagingService.send(bucket, orcid + ".json", toJson(profile), MediaType.APPLICATION_JSON);        
     }
 
+    @Deprecated
     private void putXmlElement(String orcid, OrcidMessage profile) throws AmazonClientException, IOException, JAXBException {
         String bucket = getBucketName("api-1-2", "xml", orcid);
         s3MessagingService.send(bucket, orcid + ".xml", toXML(profile), MediaType.APPLICATION_XML);
