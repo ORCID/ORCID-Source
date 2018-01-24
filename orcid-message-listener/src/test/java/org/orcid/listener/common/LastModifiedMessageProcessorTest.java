@@ -171,7 +171,7 @@ public class LastModifiedMessageProcessorTest {
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
@@ -186,7 +186,7 @@ public class LastModifiedMessageProcessorTest {
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
@@ -216,7 +216,7 @@ public class LastModifiedMessageProcessorTest {
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
@@ -246,7 +246,7 @@ public class LastModifiedMessageProcessorTest {
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
