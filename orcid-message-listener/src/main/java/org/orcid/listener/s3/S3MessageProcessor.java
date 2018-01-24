@@ -17,7 +17,6 @@
 package org.orcid.listener.s3;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.function.Consumer;
 
 import javax.annotation.Resource;
@@ -99,7 +98,9 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         if (is12IndexingEnabled) {
             try {
                 boolean xmlUpdated = update_1_2_API_XML(orcid);
+                System.out.println("XML: " + orcid);
                 boolean jsonUpdated = update_1_2_API_JSON(orcid);
+                System.out.println("JSON: " + orcid);
                 if(xmlUpdated && jsonUpdated) {
                     recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);                
                 }                
@@ -131,18 +132,18 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     }
     
     private boolean update_1_2_API_XML(String orcid) throws LockedRecordException, DeprecatedRecordException, IOException {
-        InputStream is = orcid12ApiClient.fetchPublicProfile(orcid, MediaType.APPLICATION_XML);
-        if(is != null) {
-            s3Updater.updateS3(orcid, is, MediaType.APPLICATION_XML);
+        byte [] data = orcid12ApiClient.fetchPublicProfile(orcid, MediaType.APPLICATION_XML);
+        if(data != null) {
+            s3Updater.updateS3(orcid, data, MediaType.APPLICATION_XML);
             return true;
         }
         return false;
     }
 
     private boolean update_1_2_API_JSON(String orcid) throws LockedRecordException, DeprecatedRecordException, IOException {
-        InputStream is = orcid12ApiClient.fetchPublicProfile(orcid, MediaType.APPLICATION_JSON);
-        if(is != null) {
-            s3Updater.updateS3(orcid, is, MediaType.APPLICATION_JSON);    
+        byte [] data = orcid12ApiClient.fetchPublicProfile(orcid, MediaType.APPLICATION_JSON);
+        if(data != null) {
+            s3Updater.updateS3(orcid, data, MediaType.APPLICATION_JSON);    
             return true;
         }
         return false;

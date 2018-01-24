@@ -18,7 +18,6 @@ package org.orcid.listener.s3;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -84,16 +83,12 @@ public class S3Updater {
         this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
     }
     
-    public void updateS3(String orcid, InputStream element, String mediaType) throws IOException {
-        String bucket = null;
+    public void updateS3(String orcid, byte [] element, String mediaType) throws IOException {
         if(MediaType.APPLICATION_XML.equals(mediaType)) {
-            bucket = getBucketName("api-1-2", "xml", orcid);
+            s3MessagingService.send(getBucketName("api-1-2", "xml", orcid), orcid + ".xml", element, mediaType);
         } else {
-            bucket = getBucketName("api-1-2", "json", orcid);
-        }
-        byte[] bytes = new byte[element.available()];
-        element.read(bytes);
-        s3MessagingService.send(bucket, orcid + ".json", bytes, mediaType);
+            s3MessagingService.send(getBucketName("api-1-2", "json", orcid), orcid + ".json", element, mediaType);
+        }        
     }
 
     public void updateS3(String orcid, Object object) throws IOException, JAXBException {
