@@ -97,13 +97,18 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     private void update_1_2_API(String orcid) {
         if (is12IndexingEnabled) {
             try {
+                LOG.info("Processing XML for record " + orcid);
                 boolean xmlUpdated = update_1_2_API_XML(orcid);
-                System.out.println("XML: " + orcid);
+                LOG.info("XML for record " + orcid + " has been processed");
+                
+                LOG.info("Processing JSON for record " + orcid);
                 boolean jsonUpdated = update_1_2_API_JSON(orcid);
-                System.out.println("JSON: " + orcid);
+                LOG.info("JSON for record " + orcid + " has been processed");
                 if(xmlUpdated && jsonUpdated) {
                     recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);                
-                }                
+                } else {
+                    recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+                }            
             } catch (LockedRecordException | DeprecatedRecordException e) {
                 try {
                     if (e instanceof LockedRecordException) {
