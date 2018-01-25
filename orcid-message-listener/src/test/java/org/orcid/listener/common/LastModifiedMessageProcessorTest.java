@@ -19,7 +19,10 @@ package org.orcid.listener.common;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +30,10 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -54,6 +57,7 @@ import org.orcid.utils.listener.MessageConstants;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.util.IOUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
@@ -89,50 +93,51 @@ public class LastModifiedMessageProcessorTest {
     
     @Test
     public void recordLockedExceptionTest() throws LockedRecordException, AmazonClientException, JAXBException, DeprecatedRecordException, IOException {
-        when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenThrow(new LockedRecordException(new OrcidMessage()));
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenReturn(null);
+        when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenThrow(new LockedRecordException(new OrcidMessage()));
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(null);
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
-        verify(mock_exceptionHandler, times(1)).handle12LockedRecordException(Matchers.any(), Matchers.any());
+        verify(mock_exceptionHandler, times(1)).handle12LockedRecordException(any(), any());
     }
     
     @Test
     public void deprecatedRecordExceptionTest() throws LockedRecordException, AmazonClientException, JAXBException, DeprecatedRecordException, IOException {
-        when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenReturn(null);
+        when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenReturn(null);
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
-        verify(mock_exceptionHandler, times(1)).handle12DeprecatedRecordException(Matchers.any(), Matchers.any());
+        verify(mock_exceptionHandler, times(1)).handle12DeprecatedRecordException(any(), any());
     }
     
     @Test
     public void recordLocked20DeprecatedExceptionTest() throws LockedRecordException, AmazonClientException, JAXBException, DeprecatedRecordException, IOException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));        
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));        
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
-        verify(mock_exceptionHandler, times(1)).handle20Exception(Matchers.any(), Matchers.any());
-        verify(mock_exceptionHandler, times(1)).handle20ActivitiesException(Matchers.any(), Matchers.any());
+        verify(mock_exceptionHandler, times(1)).handle20Exception(any(), any());
+        verify(mock_exceptionHandler, times(1)).handle20ActivitiesException(any(), any());
     }
     
     @Test
     public void recordLocked20LockedExceptionTest() throws LockedRecordException, AmazonClientException, JAXBException, DeprecatedRecordException, IOException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenThrow(new LockedRecordException(new OrcidError()));
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenThrow(new LockedRecordException(new OrcidError()));
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenThrow(new LockedRecordException(new OrcidError()));
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenThrow(new LockedRecordException(new OrcidError()));
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
-        verify(mock_exceptionHandler, times(1)).handle20Exception(Matchers.any(), Matchers.any());
-        verify(mock_exceptionHandler, times(1)).handle20ActivitiesException(Matchers.any(), Matchers.any());
+        verify(mock_exceptionHandler, times(1)).handle20Exception(any(), any());
+        verify(mock_exceptionHandler, times(1)).handle20ActivitiesException(any(), any());
     }
     
     @Test
-    public void recordStatusMarkAsSentFor12Test() throws LockedRecordException, DeprecatedRecordException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenReturn(new OrcidMessage());
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenReturn(null);        
+    public void recordStatusMarkAsSentFor12Test() throws LockedRecordException, DeprecatedRecordException, IOException {
+        byte [] bytes = IOUtils.toByteArray(new ByteArrayInputStream(SerializationUtils.serialize(new OrcidMessage())));
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenReturn(bytes);
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenReturn(null);        
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
@@ -144,10 +149,10 @@ public class LastModifiedMessageProcessorTest {
     }
     
     @Test
-    public void recordStatusMarkAsFailedFor12Test() throws LockedRecordException, DeprecatedRecordException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenThrow(new RuntimeException());
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenReturn(null);
+    public void recordStatusMarkAsFailedFor12Test() throws LockedRecordException, DeprecatedRecordException, IOException {
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenThrow(new RuntimeException());
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenReturn(null);
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
@@ -159,14 +164,14 @@ public class LastModifiedMessageProcessorTest {
     }
     
     @Test
-    public void recordStatusMarkAsSentFor20Test() throws LockedRecordException, DeprecatedRecordException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenReturn(new Record());
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenReturn(new ActivitiesSummary());
+    public void recordStatusMarkAsSentFor20Test() throws LockedRecordException, DeprecatedRecordException, IOException {
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(new Record());
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenReturn(new ActivitiesSummary());
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
@@ -174,14 +179,14 @@ public class LastModifiedMessageProcessorTest {
     }
     
     @Test
-    public void recordStatusMarkAsFailedFor20Test() throws LockedRecordException, DeprecatedRecordException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenThrow(new RuntimeException());
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenThrow(new RuntimeException());
+    public void recordStatusMarkAsFailedFor20Test() throws LockedRecordException, DeprecatedRecordException, IOException {
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenThrow(new RuntimeException());
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenThrow(new RuntimeException());
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
@@ -189,10 +194,10 @@ public class LastModifiedMessageProcessorTest {
     }
     
     @Test
-    public void recrodStatusMarkAsSentForLockedRecordException12Test() throws LockedRecordException, DeprecatedRecordException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenThrow(new LockedRecordException(new OrcidMessage()));
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenReturn(null);
+    public void recrodStatusMarkAsSentForLockedRecordException12Test() throws LockedRecordException, DeprecatedRecordException, IOException {
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenThrow(new LockedRecordException(new OrcidMessage()));
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenReturn(null);
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
@@ -204,14 +209,14 @@ public class LastModifiedMessageProcessorTest {
     }
     
     @Test
-    public void recrodStatusMarkAsSentForLockedRecordException20Test() throws LockedRecordException, DeprecatedRecordException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenThrow(new LockedRecordException(new OrcidMessage()));
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenThrow(new LockedRecordException(new OrcidMessage()));
+    public void recrodStatusMarkAsSentForLockedRecordException20Test() throws LockedRecordException, DeprecatedRecordException, IOException {
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenThrow(new LockedRecordException(new OrcidMessage()));
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenThrow(new LockedRecordException(new OrcidMessage()));
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
@@ -219,10 +224,10 @@ public class LastModifiedMessageProcessorTest {
     }
     
     @Test
-    public void recrodStatusMarkAsSentForDeprecatedRecordException12Test() throws LockedRecordException, DeprecatedRecordException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenReturn(null);
+    public void recrodStatusMarkAsSentForDeprecatedRecordException12Test() throws LockedRecordException, DeprecatedRecordException, IOException {
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenReturn(null);
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
@@ -234,14 +239,14 @@ public class LastModifiedMessageProcessorTest {
     }
     
     @Test
-    public void recrodStatusMarkAsSentForDeprecatedRecordException20Test() throws LockedRecordException, DeprecatedRecordException {
-    	when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenReturn(null);
-        when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.anyObject())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
-        when(mock_orcid20ApiClient.fetchPublicActivities(Matchers.anyObject())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
+    public void recrodStatusMarkAsSentForDeprecatedRecordException20Test() throws LockedRecordException, DeprecatedRecordException, IOException {
+    	when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenReturn(null);
+        when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
+        when(mock_orcid20ApiClient.fetchPublicActivities(any())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
         String orcid = "0000-0000-0000-0000";
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
