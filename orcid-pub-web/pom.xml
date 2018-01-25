@@ -102,6 +102,13 @@
         </dependency>
 
         <!-- Test dependencies -->
+        <!-- Togglz testing support -->
+		<dependency>
+		  <groupId>org.togglz</groupId>
+		  <artifactId>togglz-junit</artifactId>
+		  <version>2.4.1.Final</version>
+		  <scope>test</scope>
+		</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-test</artifactId>
