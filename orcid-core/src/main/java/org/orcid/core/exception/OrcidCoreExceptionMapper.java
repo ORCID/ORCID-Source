@@ -239,7 +239,7 @@ public class OrcidCoreExceptionMapper {
         return orcidError;
     }
     
-    private org.orcid.jaxb.model.v3.dev1.error.OrcidError getOrcidErrorV3Dev1(int errorCode, int status, Throwable t) {
+    public org.orcid.jaxb.model.v3.dev1.error.OrcidError getOrcidErrorV3Dev1(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
         org.orcid.jaxb.model.v3.dev1.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.dev1.error.OrcidError();
         orcidError.setResponseCode(status);
@@ -283,6 +283,18 @@ public class OrcidCoreExceptionMapper {
             String causeMessage = cause.getLocalizedMessage();
             if (causeMessage != null) {
                 devMessage += " (" + causeMessage + ")";
+            } else {
+                Throwable secondCause = cause.getCause();
+                String secondCauseMessage = secondCause.getLocalizedMessage();
+                if (secondCauseMessage != null) {
+                    devMessage += " (" + secondCauseMessage + ")";
+                } else {
+                    Throwable thirdCause = secondCause.getCause();
+                    String thirdCauseMessage = thirdCause.getLocalizedMessage();
+                    if (thirdCauseMessage != null) {
+                        devMessage += " (" + thirdCauseMessage + ")";
+                    }
+                }
             }
         }
         
