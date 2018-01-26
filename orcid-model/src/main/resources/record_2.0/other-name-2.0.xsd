@@ -40,7 +40,7 @@
 				<xs:documentation>(Optional) Container that includes other name(s)
 					that the researcher or contributor may be known by. (see element
 					for more details.) The visibility attribute (private, limited or
-					public) can be set at record creation, and indicates who can see
+					public) is set by the researcher, and indicates who can see
 					this section of information.
 				</xs:documentation>
 			</xs:annotation>
