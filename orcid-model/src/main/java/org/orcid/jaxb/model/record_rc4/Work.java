@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Title;
 import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.util.RecordUtil;
 
 import io.swagger.annotations.ApiModelProperty;

@@ -101,6 +101,10 @@ public class MemberV3Dev1ApiClientImpl {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(WORK).build(orcid), VND_ORCID_XML, work, accessToken);
     }
 
+    public ClientResponse createWorksXml(String orcid, WorkBulk bulk, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(WORKS).build(orcid), VND_ORCID_XML, bulk, accessToken);
+    }
+
     public ClientResponse createWorkJson(String orcid, Work work, String accessToken) {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(WORK).build(orcid), VND_ORCID_JSON, work, accessToken);
     }

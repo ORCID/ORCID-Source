@@ -17,9 +17,9 @@
 package org.orcid.api.common.util.v3;
 
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.common.Contributor;
 import org.orcid.jaxb.model.v3.dev1.record.Activity;
-import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;

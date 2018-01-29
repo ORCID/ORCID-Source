@@ -14,8 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_rc4;
+package org.orcid.jaxb.model.record.bulk;
 
-public interface BulkElement {
+import java.util.List;
 
+public interface BulkElementContainer {
+
+    List<BulkElement> getBulk();
+    
 }

@@ -32,7 +32,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,14 +39,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
-import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
-import org.orcid.core.web.filters.ApiVersionFilter;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
@@ -63,10 +60,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
