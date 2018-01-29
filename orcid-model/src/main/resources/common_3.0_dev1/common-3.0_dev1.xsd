@@ -1084,7 +1084,7 @@
 
 	<xs:simpleType name="iso-3166-country">
 		<xs:annotation>
-			<xs:documentation>ISO 3166 country codes. NOTE: the values displayed
+			<xs:documentation>ISO 3166-1 alpha-2 country codes. NOTE: the values displayed
 				to the website user are localized (translated) in the ORCID Registry
 				web interface. For reference:
 				https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n
