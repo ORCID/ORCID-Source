@@ -41,9 +41,7 @@
 			<xs:annotation>
 				<xs:documentation>A simple history of the researcher or
 					contributor's
-					ORCID Record. The visibility attribute (private, limited or public)
-					can be set at record creation, and indicates who can see this
-					section of information.
+					ORCID Record.
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
@@ -51,16 +49,6 @@
 					minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>The method used to create the ORCID Record
-							* API
-							method - Institution created the record on behalf of the
-							individual
-							* Direct method - Individual registered directly at
-							orcid.org
-							* Member-referrred method - Individual registered as
-							part
-							of a workflow such as submitting a manuscript or applying
-							for a
-							grant
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
@@ -184,7 +172,7 @@
 			</xs:enumeration>
 			<xs:enumeration value="Member-referred">
 				<xs:annotation>
-					<xs:documentation>The registered on the /oauth/signin.
+					<xs:documentation>The user registered via OAuth.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>

@@ -38,6 +38,7 @@ import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.locale.LocaleManager;
@@ -186,6 +187,9 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManager orcidSearchManager;
+    
+    @Resource
+    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
 
     // Managers that goes to the replication database
     // Activities managers
@@ -364,11 +368,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
                         schemaValidator.validate(work);
                         clearSource(work);
                     } catch (WebApplicationException e) {
-                        OrcidError error = new OrcidError();
-                        error.setUserMessage(messageSource.getMessage("apiError.9001.userMessage", null, localeManager.getLocale()));
-                        error.setMoreInfo(messageSource.getMessage("apiError.9001.moreInfo", null, localeManager.getLocale()));
-                        error.setErrorCode(9001);
-                        error.setResponseCode(400);
+                        OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV3Dev1(9001, 400, e);
                         works.getBulk().remove(i);
                         works.getBulk().add(i, error);
                     }

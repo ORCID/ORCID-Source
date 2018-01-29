@@ -16,12 +16,13 @@
  */
 package org.orcid.listener.s3;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
@@ -49,6 +50,9 @@ import com.amazonaws.AmazonClientException;
 @Component
 public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 
+    public static final String VND_ORCID_XML = "application/vnd.orcid+xml";
+    public static final String VND_ORCID_JSON = "application/vnd.orcid+json";
+    
     Logger LOG = LoggerFactory.getLogger(S3MessageProcessor.class);
 
     @Value("${org.orcid.message-listener.api12Enabled:true}")
@@ -96,12 +100,18 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     private void update_1_2_API(String orcid) {
         if (is12IndexingEnabled) {
             try {
-                OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(orcid);
-                // Update API 1.2
-                if (profile != null) {
-                    s3Updater.updateS3(orcid, profile);
-                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-                }
+                LOG.info("Processing XML for record " + orcid);
+                boolean xmlUpdated = update_1_2_API_XML(orcid);
+                LOG.info("XML for record " + orcid + " has been processed");
+                
+                LOG.info("Processing JSON for record " + orcid);
+                boolean jsonUpdated = update_1_2_API_JSON(orcid);
+                LOG.info("JSON for record " + orcid + " has been processed");
+                if(xmlUpdated && jsonUpdated) {
+                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);                
+                } else {
+                    recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+                }            
             } catch (LockedRecordException | DeprecatedRecordException e) {
                 try {
                     if (e instanceof LockedRecordException) {
@@ -128,7 +138,25 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             }
         }
     }
+    
+    private boolean update_1_2_API_XML(String orcid) throws LockedRecordException, DeprecatedRecordException, IOException {
+        byte [] data = orcid12ApiClient.fetchPublicProfile(orcid, VND_ORCID_XML);
+        if(data != null) {
+            s3Updater.updateS3(orcid, data, VND_ORCID_XML);
+            return true;
+        }
+        return false;
+    }
 
+    private boolean update_1_2_API_JSON(String orcid) throws LockedRecordException, DeprecatedRecordException, IOException {
+        byte [] data = orcid12ApiClient.fetchPublicProfile(orcid, VND_ORCID_JSON);
+        if(data != null) {
+            s3Updater.updateS3(orcid, data, VND_ORCID_JSON);    
+            return true;
+        }
+        return false;
+    }
+    
     private void update_2_0_API(BaseMessage message) {
         String orcid = message.getOrcid();
         if (is20IndexingEnabled) {

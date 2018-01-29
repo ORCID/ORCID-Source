@@ -38,18 +38,14 @@
 
 	<xs:element name="employment">
 		<xs:annotation>
-			<xs:documentation>An employment associated with the researcher or
+			<xs:documentation>An employment item associated with the researcher or
 				contributor.
 				* The visibility attribute (private, limited or public)
-				can be set at
-				record creation, and indicates who can see this section
-				of
-				information.
-				* The put-code attribute is used only when reading
-				this element. When
-				updating the item, the put-code attribute must be
-				included to
-				indicate the specific record to be updated.
+				is set by the researcher and indicates who can see this section
+				of information.
+				* The put-code attribute is used when reading
+				this element. When updating the item, the put-code attribute must be
+				included to indicate the specific record to be updated.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
