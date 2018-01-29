@@ -1,7 +1,7 @@
+//Migrated
 declare var getBaseUri: any;
 
 import * as angular from 'angular';
-//Migrated
 
 import {NgModule} from '@angular/core';
 

@@ -87,5 +87,6 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        this.init();
     }; 
 }

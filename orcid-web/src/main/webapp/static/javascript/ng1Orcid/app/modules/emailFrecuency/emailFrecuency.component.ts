@@ -34,6 +34,27 @@ export class EmailFrecuencyComponent implements AfterViewInit, OnDestroy, OnInit
         private prefsSrvc: PreferencesService
     ) {
     }
+    
+    /*
+    getformData(): void {
+        this.emailService.getData()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.formData = data;
+
+                if( this.formData.otherNames == null ) {
+                    this.formData.otherNames = { value: null };
+                }
+
+                //console.log('this.getForm', this.formData);
+            },
+            error => {
+                console.log('getAlsoKnownAsFormError', error);
+            } 
+        );
+    };
+    */
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

@@ -5,7 +5,7 @@ declare var orcidGA: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
 import { Observable } 
@@ -28,14 +28,16 @@ import { OauthService }
 export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    entityId: string;
+    @Input() entityId: any;
+
+    //entityId: string;
     gaString: string;
     requestInfoForm: any;
    
     constructor(
         private oauthService: OauthService
     ) {
-        this.entityId = "";
+        //this.entityId = "";
         this.gaString = "";
         this.requestInfoForm = {};
     }
@@ -88,5 +90,6 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.loadRequestInfoForm();
+        this.setEntityId(this.entityId);
     }; 
 }

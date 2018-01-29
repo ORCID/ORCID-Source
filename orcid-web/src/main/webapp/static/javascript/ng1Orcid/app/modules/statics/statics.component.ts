@@ -1,3 +1,5 @@
+//not used
+
 declare var $window: any;
 
 //Import all the angular components

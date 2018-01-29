@@ -1,3 +1,5 @@
+//Migrated
+
 declare var $: any;
 declare var colorbox: any;
 declare var formColorBoxResize: any;

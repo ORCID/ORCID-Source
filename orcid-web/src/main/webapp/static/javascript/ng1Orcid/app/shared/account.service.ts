@@ -82,4 +82,65 @@ export class AccountService {
         )
         .map((res:Response) => res.json()).share();
     }
+
+    addDelegate( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/account/addDelegate.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    addDelegateByEmail( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            $('body').data('baseurl') + 'account/addDelegateByEmail.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    revoke( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/account/revokeDelegate.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    getDelegates(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/delegates.json'
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    getDisplayName( orcid ): Observable<any> {
+        return this.http.get(
+            orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person'
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    getResults( input ): Observable<any> {
+        return this.http.get(
+            orcidSearchUrlJs.buildUrl(input)+'&callback=?'
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    searchByEmail( input ): Observable<any> {
+        return this.http.get(
+            $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent() + '/',
+        )
+        .map((res:Response) => res.json()).share();
+    }
 }

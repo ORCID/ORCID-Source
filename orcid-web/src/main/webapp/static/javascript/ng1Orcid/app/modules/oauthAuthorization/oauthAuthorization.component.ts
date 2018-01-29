@@ -570,5 +570,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         $('#enterRecoveryCode').click(function() {
             $('#recoveryCodeSignin').show(); 
         });
+
+        this.oauth2ScreensLoadRegistrationForm('', '', '', '');
     };
 }

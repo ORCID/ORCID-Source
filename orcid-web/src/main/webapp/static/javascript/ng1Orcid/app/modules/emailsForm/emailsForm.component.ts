@@ -1,7 +1,7 @@
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
 import { Observable } 
@@ -30,8 +30,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
+    /* On the template:
+    <td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];">
+    */
+    @Input() emailStatusOptionsObj: any;
+
     defaultVisibility: any;
     emails: any;
+    emailStatusOptions: any;
     formData: any;
     formDataBeforeChange: any;
     newElementDefaultVisibility: any;
@@ -48,6 +54,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.defaultVisibility = null;
         this.emails = {};
+        this.emailStatusOptions = null;
         this.formData = {
         };
         this.formDataBeforeChange = {};
@@ -186,6 +193,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getformData();
+        this.emailStatusOptions = this.emailStatusOptionsObj;
     };
 
 }
