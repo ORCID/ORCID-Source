@@ -84,7 +84,7 @@ public class S3Updater {
     }
     
     public void updateS3(String orcid, byte [] element, String mediaType) throws IOException {
-        if(MediaType.APPLICATION_XML.equals(mediaType)) {
+        if(S3MessageProcessor.VND_ORCID_XML.equals(mediaType)) {
             s3MessagingService.send(getBucketName("api-1-2", "xml", orcid), orcid + ".xml", element, mediaType);
         } else {
             s3MessagingService.send(getBucketName("api-1-2", "json", orcid), orcid + ".json", element, mediaType);
