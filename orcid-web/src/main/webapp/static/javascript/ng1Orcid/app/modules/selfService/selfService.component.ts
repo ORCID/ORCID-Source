@@ -16,8 +16,11 @@ import { CommonService }
 import { ConsortiaService }
     from '../../shared/consortia.service.ts'
 
+import { FeaturesService }
+    from '../../shared/features.service.ts'
+
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service.ts';
 
 @Component({
     selector: 'self-service-ng2',
@@ -47,11 +50,12 @@ export class SelfServiceComponent {
     updateMemberDetailsDisabled : boolean = false;
     updateMemberDetailsShowLoader : boolean = false;
     successEditMemberMessage : string;
-    orgIdsFeatureEnabled: boolean = orcidVar.features['SELF_SERVICE_ORG_IDS'];
+    orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
     
     constructor(
         private commonSrvc: CommonService,
         private consortiaService: ConsortiaService,
+        private featuresService: FeaturesService,
         private modalService: ModalService
     ) {}
   
@@ -365,7 +369,6 @@ export class SelfServiceComponent {
         this.getMemberDetails();
         this.getContacts();
         if(this.orgIdsFeatureEnabled) {
-            orcidGA.gaPush(['send', 'event', 'feature', 'SELF_SERVICE_ORG_IDS', 'enabled']);
             this.getOrgIds();
         }
         this.subscription = this.consortiaService.notifyObservable$.subscribe(

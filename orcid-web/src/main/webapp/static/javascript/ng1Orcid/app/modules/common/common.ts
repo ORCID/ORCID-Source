@@ -59,6 +59,9 @@ import { CountryService }
 import { EmailService } 
     from '../../shared/email.service.ts';
 
+import { FeaturesService }
+    from '../../shared/features.service.ts';
+
 import { FundingService } 
     from '../../shared/funding.service.ts';
 
@@ -125,6 +128,7 @@ import { WorksService }
             ConsortiaService,
             CountryService,
             EmailService,
+            FeaturesService,
             FundingService,
             //GroupedActivitiesUtilService,
             KeywordsService,
