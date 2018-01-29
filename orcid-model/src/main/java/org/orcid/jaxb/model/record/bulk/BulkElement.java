@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_rc3;
+package org.orcid.jaxb.model.record.bulk;
 
 public interface BulkElement {
 

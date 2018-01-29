@@ -194,7 +194,7 @@ public class OrcidCoreExceptionMapper {
         return orcidError;
     }
     
-    private org.orcid.jaxb.model.error_rc3.OrcidError getOrcidErrorV2Rc3(int errorCode, int status, Throwable t) {
+    public org.orcid.jaxb.model.error_rc3.OrcidError getOrcidErrorV2Rc3(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
         org.orcid.jaxb.model.error_rc3.OrcidError orcidError = new org.orcid.jaxb.model.error_rc3.OrcidError();
         orcidError.setResponseCode(status);
@@ -209,7 +209,7 @@ public class OrcidCoreExceptionMapper {
         return orcidError;
     }
 
-    private org.orcid.jaxb.model.error_rc4.OrcidError getOrcidErrorV2Rc4(int errorCode, int status, Throwable t) {
+    public org.orcid.jaxb.model.error_rc4.OrcidError getOrcidErrorV2Rc4(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
         org.orcid.jaxb.model.error_rc4.OrcidError orcidError = new org.orcid.jaxb.model.error_rc4.OrcidError();
         orcidError.setResponseCode(status);
@@ -224,7 +224,7 @@ public class OrcidCoreExceptionMapper {
         return orcidError;
     }
     
-    private org.orcid.jaxb.model.error_v2.OrcidError getOrcidErrorV2(int errorCode, int status, Throwable t) {
+    public org.orcid.jaxb.model.error_v2.OrcidError getOrcidErrorV2(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
         org.orcid.jaxb.model.error_v2.OrcidError orcidError = new org.orcid.jaxb.model.error_v2.OrcidError();
         orcidError.setResponseCode(status);

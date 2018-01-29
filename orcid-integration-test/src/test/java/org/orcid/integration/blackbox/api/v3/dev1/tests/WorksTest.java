@@ -17,7 +17,12 @@
 package org.orcid.integration.blackbox.api.v3.dev1.tests;
 
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
 
@@ -29,17 +34,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.api.v3.dev1.BlackBoxBaseV3_0_dev1;
 import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
 import org.orcid.jaxb.model.v3.dev1.common.TranslatedTitle;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.record.CitationType;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
@@ -48,6 +50,9 @@ import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
 import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
