@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.security.web.csrf.MissingCsrfTokenException;
 
@@ -38,15 +39,20 @@ public class OrcidAccessDeniedHandler extends AccessDeniedHandlerImpl {
             ServletException {
         
         if(accessDeniedException != null) {
-            if(InvalidCsrfTokenException.class.isAssignableFrom(accessDeniedException.getClass())) {
+            if(CsrfException.class.isAssignableFrom(accessDeniedException.getClass())) {
                 String sessionId = request.getRequestedSessionId();
                 String path = request.getRequestURL().toString();
-                LOGGER.error("InvalidCsrfTokenException for session {} and path {}", new Object[]{sessionId, path});                
-            } else if(MissingCsrfTokenException.class.isAssignableFrom(accessDeniedException.getClass())) {
-                String sessionId = request.getRequestedSessionId();
-                String path = request.getRequestURL().toString();
-                LOGGER.error("MissingCsrfTokenException for session {} and path {}", new Object[]{sessionId, path});
-            }
+                if(InvalidCsrfTokenException.class.isAssignableFrom(accessDeniedException.getClass())) {
+                    LOGGER.error("InvalidCsrfTokenException for session {} and path {}", new Object[]{sessionId, path});     
+                } else if(MissingCsrfTokenException.class.isAssignableFrom(accessDeniedException.getClass())) {
+                    LOGGER.error("MissingCsrfTokenException for session {} and path {}", new Object[]{sessionId, path});
+                }
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().println("<html><head><title>Oops an error happened!</title></head>");
+                response.getWriter().println("<body>403</body>");
+                response.getWriter().println("</html>");
+                return;            
+            }            
         }
         
         super.handle(request, response, accessDeniedException);
