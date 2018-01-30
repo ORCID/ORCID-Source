@@ -42,11 +42,13 @@ public class OrcidAccessDeniedHandler extends AccessDeniedHandlerImpl {
             if(CsrfException.class.isAssignableFrom(accessDeniedException.getClass())) {
                 String sessionId = request.getRequestedSessionId();
                 String path = request.getRequestURL().toString();
+                String message = null;
                 if(InvalidCsrfTokenException.class.isAssignableFrom(accessDeniedException.getClass())) {
-                    LOGGER.error("InvalidCsrfTokenException for session {} and path {}", new Object[]{sessionId, path});     
+                    message = "InvalidCsrfTokenException for session " + sessionId + " and path " + path;
                 } else if(MissingCsrfTokenException.class.isAssignableFrom(accessDeniedException.getClass())) {
-                    LOGGER.error("MissingCsrfTokenException for session {} and path {}", new Object[]{sessionId, path});
+                    message = "MissingCsrfTokenException for session " + sessionId + " and path " + path;
                 }
+                LOGGER.error(message);
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().println("<html><head><title>Oops an error happened!</title></head>");
                 response.getWriter().println("<body>403</body>");
