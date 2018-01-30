@@ -1684,7 +1684,9 @@
 	 
 	<xs:complexType name="external-id">
 		<xs:annotation>
-			<xs:documentation>A reference to an external identifier, suitable for works, people and funding</xs:documentation>
+			<xs:documentation>A reference to an external identifier, suitable for works, people and funding. 
+				Supported external-id-type values can be found at https://pub.orcid.org/v2.0/identifiers
+			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="common:element-summary">
