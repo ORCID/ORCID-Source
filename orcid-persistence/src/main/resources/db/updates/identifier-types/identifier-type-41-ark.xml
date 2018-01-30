@@ -32,8 +32,14 @@
             <column name="id_deprecated" value="false"/>
             <column name="date_created" valueComputed="now()"/>
             <column name="last_modified" valueComputed="now()"/>
-            <column name="case_sensitive" value="true"/>
         </insert>
     </changeSet>
+    
+    <changeSet id="ARK-CASE-SENSITIVE" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">select count(*) from identifier_type WHERE id_name = 'ARK'</sqlCheck>            
+		</preConditions>
+		<sql>UPDATE identifier_type SET "case_sensitive" = true WHERE id_name = 'ARK';</sql>
+	</changeSet>
     
 </databaseChangeLog>
