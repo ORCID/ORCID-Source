@@ -13,7 +13,7 @@ import { Subject }
 import 'rxjs/Rx';
 
 @Injectable()
-export class AccountService {
+export class DelegatorsService {
     private headers: Headers;
     private url: string;
     private notify = new Subject<any>();
@@ -35,7 +35,7 @@ export class AccountService {
     }
 
 
-    getDelegators( input ): Observable<any> {
+    getDelegators(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/delegators/delegators-and-me.json'
         )

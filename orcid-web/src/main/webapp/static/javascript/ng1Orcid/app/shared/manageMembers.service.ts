@@ -14,7 +14,8 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ManageMembersService {
-    private headers: Headers;          
+    private headers: Headers;
+    private notify = new Subject<any>();       
 
 
     notifyObservable$ = this.notify.asObservable();

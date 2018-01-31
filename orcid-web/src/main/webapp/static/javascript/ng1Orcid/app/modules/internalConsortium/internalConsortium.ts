@@ -9,7 +9,7 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { InternalConsotiumComponent } 
-    from './internalConsotium.component.ts';
+    from './internalConsortium.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';

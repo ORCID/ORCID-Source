@@ -9,7 +9,7 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { LookUpIdOrEmailComponent } 
-    from './lookUpIdOrEmail.component.ts';
+    from './lookupIdOrEmail.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';

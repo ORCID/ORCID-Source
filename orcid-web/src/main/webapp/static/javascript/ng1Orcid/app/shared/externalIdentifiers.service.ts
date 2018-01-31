@@ -14,7 +14,8 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ExternalIdentifiersService {
-
+    private headers: Headers;
+    private notify = new Subject<any>();
 
     notifyObservable$ = this.notify.asObservable();
 
@@ -72,8 +73,8 @@ export class ExternalIdentifiersService {
         let encoded_data = JSON.stringify( data );
         
         return this.http.delete( 
-            getBaseUri() + '/my-orcid/externalIdentifiers.json', 
-            encoded_data, 
+            getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encoded_data, 
+            //encoded_data, 
             { headers: this.headers }
         )
         .map(

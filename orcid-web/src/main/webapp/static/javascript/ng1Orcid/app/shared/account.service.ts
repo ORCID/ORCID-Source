@@ -1,3 +1,5 @@
+declare var orcidSearchUrlJs: any;
+
 import { Injectable } 
     from '@angular/core';
 
@@ -139,7 +141,7 @@ export class AccountService {
 
     searchByEmail( input ): Observable<any> {
         return this.http.get(
-            $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent() + '/',
+            $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent(input) + '/',
         )
         .map((res:Response) => res.json()).share();
     }

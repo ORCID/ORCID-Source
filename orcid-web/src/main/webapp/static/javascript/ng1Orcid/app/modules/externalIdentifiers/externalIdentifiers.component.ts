@@ -141,7 +141,7 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
     };
 
     removeExternalIdentifier(): void {
-        var externalIdentifier = this.externalIdentifiersForm.externalIdentifiers[$scope.removeExternalIdentifierIndex];
+        var externalIdentifier = this.externalIdentifiersForm.externalIdentifiers[this.removeExternalIdentifierIndex];
 
         this.externalIdentifiersService.removeExternalIdentifier( externalIdentifier )
         .takeUntil(this.ngUnsubscribe)
@@ -170,7 +170,7 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
 
     setBulkGroupPrivacy(priv): void {
         var idx = null;
-        for (idx in $scope.externalIdentifiersForm.externalIdentifiers){
+        for (idx in this.externalIdentifiersForm.externalIdentifiers){
             this.externalIdentifiersForm.externalIdentifiers[idx].visibility.visibility = priv;    
         }
     };

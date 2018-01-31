@@ -15,7 +15,7 @@ import 'rxjs/Rx';
 @Injectable()
 export class ShibbolethService {
     private headers: Headers;          
-
+    private notify = new Subject<any>();
 
     notifyObservable$ = this.notify.asObservable();
 
@@ -32,7 +32,7 @@ export class ShibbolethService {
         let encoded_data = JSON.stringify( obj );
         
         return this.http.post( 
-            this.url, 
+            getBaseUri() + '/shibboleth/2FA/submitCode.json', 
             encoded_data, 
             { headers: this.headers }
         )

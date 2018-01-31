@@ -106,7 +106,7 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showConfirmationBox = true;            
             }
         }else{
-            this.submitModal();
+            //this.submitModal();
         }
     };
 
@@ -132,7 +132,7 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     confirmDeleteEmail(email): void {
-        this.emailSrvc.delEmail = email;
+        //this.emailSrvc.delEmail = email;
         /*
         $.colorbox({
             html : $compile($('#delete-email-modal').html())($scope)
@@ -144,7 +144,7 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
     confirmDeleteEmailInline(email, $event): void {
         $event.preventDefault();
         this.showDeleteBox = true;
-        this.emailSrvc.delEmail = email;
+        //this.emailSrvc.delEmail = email;
         
         /*
         $scope.$watch(
@@ -159,23 +159,19 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     deleteEmail(): void {
-        this.emailSrvc.deleteEmail(function() {
-            this.closeModal();
-        });
+        this.emailSrvc.deleteEmail();
+        this.closeModal();
     };
 
     deleteEmailInline(): void {
-        this.emailSrvc.deleteEmail(function(){
-            this.showDeleteBox = false;            
-        });
+        this.emailSrvc.deleteEmail();
+        this.showDeleteBox = false;            
     };
 
 
 
     getEmails(): void {
-        this.emailSrvc.getEmails(function() {
-            
-        });
+        this.emailSrvc.getEmails();
     };
 
     hideTooltip(el): void {
@@ -183,10 +179,12 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setBulkGroupPrivacy(priv): void {
+        /*
         for (var idx in this.emailSrvc.emails.emails) {
             this.emailSrvc.emails.emails[idx].visibility = priv;
         }         
         this.emailSrvc.saveEmail();
+        */
     };
 
     setPrivacy(email, priv, $event): void {
@@ -209,11 +207,13 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     submitModal(obj, $event): void {
-        this.emailSrvc.inputEmail.password = $scope.password;
+        /*
+        this.emailSrvc.inputEmail.password = this.password;
         this.emailSrvc.addEmail();
         if(!this.emailSrvc.popUp){
             $.colorbox.close();    
         }
+        */
     };
 
     toggleClickPrivacyHelp(key): void {
@@ -226,6 +226,7 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
         
         this.verifyEmailObject = email;
         
+                /*
         if( popup ){
             this.emailSrvc.verifyEmail(email,function(data) {
                 this.showEmailVerifBox = true;
@@ -233,15 +234,14 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
            });    
         }else{
             this.emailSrvc.verifyEmail(email,function(data) {
-                /*
                 $.colorbox({
                     html : $compile($('#settings-verify-email-modal').html())($scope) 
                     //Name was changed to avoid conflicts with workspace verify email modal
                 });
                 $.colorbox.resize();
-                */
            });    
         }
+                */
         
     };
 

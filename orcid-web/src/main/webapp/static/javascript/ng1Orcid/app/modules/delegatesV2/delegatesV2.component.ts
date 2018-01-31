@@ -42,6 +42,18 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
     showLoader: any;
     sort: any;
     isPasswordConfirmationRequired: any;
+    areMoreResults: any;
+    start: any;
+    emailSearchResult: any;
+    errors: any;
+    delegateIdx: any;
+    delegateToAdd: any;
+    delegateNameToAdd: any;
+    rows: any;
+    password: any;
+    delegateToRevoke: any;
+    delegatesByOrcid: any;
+    delegation: any;
 
     constructor(
         private accountService: AccountService
@@ -60,7 +72,18 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
             descending: false
         };
         this.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
-
+        this.areMoreResults = false;
+        this.start = null;
+        this.emailSearchResult = null;
+        this.errors = {};
+        this.delegateIdx = "";
+        this.delegateToAdd = "";
+        this.delegateNameToAdd = "";
+        this.rows = null;
+        this.password = "";
+        this.delegateToRevoke = null;
+        this.delegatesByOrcid = null;
+        this.delegation = null;
     }
 
     addDelegate(): void {
@@ -152,7 +175,7 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
         revokeDelegate.delegateToManage = this.delegateToRevoke;
         revokeDelegate.password = this.password;
 
-        this.accountService.revoke(  )
+        this.accountService.revoke( revokeDelegate )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -183,11 +206,6 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
-
-    /*
-
-    */
-
 
     getResults(): void {
         this.accountService.getResults( this.input )

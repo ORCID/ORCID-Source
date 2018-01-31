@@ -120,6 +120,5 @@ export class InternalConsotiumComponent implements AfterViewInit, OnDestroy, OnI
     };
 
     ngOnInit() {
-        this.init();
     }; 
 }
