@@ -51,6 +51,7 @@ public class DOINormalizerTest {
             "http://scitation.aip.org/content/aip/journal/jcp/115/11/10.1063/1.1395625",
             "https://doi.org/10.1049/el:20000645",
             "https://doi.org/10.1016/S0920-5632(02)80001-9",
+            "10.1016/j.ijom.2013.05.017.",
             //these do not match
             "ijiv11i2a8",
             "doi:10.1038",
@@ -82,6 +83,7 @@ public class DOINormalizerTest {
             "10.1063/1.1395625",
             "10.1049/el:20000645",
             "10.1016/S0920-5632(02)80001-9",
+            "10.1016/j.ijom.2013.05.017",
             //these do not match
             "","","",""/*
             "ijiv11i2a8",
