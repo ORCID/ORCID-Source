@@ -74,7 +74,10 @@ public enum Features implements Feature {
     ANGULAR1_LEGACY,  
     
     @Label("Set the 2.0 API as the default one in the public API")
-    PUB_API_2_0_BY_DEFAULT;  
+    PUB_API_2_0_BY_DEFAULT,
+    
+    @Label("Show reCAPTCHA")
+    SHOW_RECAPTCHA;  
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
