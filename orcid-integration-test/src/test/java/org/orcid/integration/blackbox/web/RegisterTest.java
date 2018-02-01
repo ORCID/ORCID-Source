@@ -26,6 +26,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.orcid.core.togglz.Features;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -79,9 +80,9 @@ public class RegisterTest extends BlackBoxBase {
     }
 
     @Test
-    public void testSubmitRegistrationFormWithNullDefaultVisibility() {
+    public void testSubmitRegistrationFormWithNullDefaultVisibilityFromRegisterPage() {
         // turn recaptcha off
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.SHOW_RECAPTCHA, false);
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.DISABLE_RECAPTCHA, true);
         
         boolean previousState = getTogglzFeatureState(getAdminUserName(), getAdminPassword(), Features.GDPR_UI);
         toggleFeature(getAdminUserName(), getAdminPassword(), Features.GDPR_UI, true); // TODO remove after GDPR UI is live
@@ -119,19 +120,21 @@ public class RegisterTest extends BlackBoxBase {
         findElement(By.id("register-form-term-box")).click();
         findElement(By.id("register-authorize-button")).click();
         
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        
         // still on same page
         assertEquals(baseUri + "/register", webDriver.getCurrentUrl());
         
         assertEquals("Please choose a default visibility setting.", ((JavascriptExecutor) webDriver).executeScript("return angular.element('[ng-controller=OauthAuthorizationController]').scope().registrationForm.errors[0]").toString());
 
         toggleFeature(getAdminUserName(), getAdminPassword(), Features.GDPR_UI, previousState); // TODO remove after GDPR UI is live
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.SHOW_RECAPTCHA, true);
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.DISABLE_RECAPTCHA, false);
     }
     
     @Test
     public void testSubmitRegistrationFormWithNullDefaultVisibilityFromSigninPage() {
         // turn recaptcha off
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.SHOW_RECAPTCHA, false);
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.DISABLE_RECAPTCHA, true);
         
         boolean previousState = getTogglzFeatureState(getAdminUserName(), getAdminPassword(), Features.GDPR_UI);
         toggleFeature(getAdminUserName(), getAdminPassword(), Features.GDPR_UI, true); // TODO remove after GDPR UI is live
@@ -151,6 +154,8 @@ public class RegisterTest extends BlackBoxBase {
         
         findElement(By.id("register-form-term-box")).click();
         findElement(By.id("register-authorize-button")).click();
+        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         
         assertEquals(baseUri + "/signin", webDriver.getCurrentUrl());
         assertEquals("Please choose a default visibility setting.", ((JavascriptExecutor) webDriver).executeScript("return angular.element('[ng-controller=OauthAuthorizationController]').scope().registrationForm.errors[0]").toString());
@@ -179,7 +184,7 @@ public class RegisterTest extends BlackBoxBase {
         assertEquals("Please choose a default visibility setting.", ((JavascriptExecutor) webDriver).executeScript("return angular.element('[ng-controller=OauthAuthorizationController]').scope().registrationForm.errors[0]").toString());
 
         toggleFeature(getAdminUserName(), getAdminPassword(), Features.GDPR_UI, previousState); // TODO remove after GDPR UI is live
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.SHOW_RECAPTCHA, true);
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.DISABLE_RECAPTCHA, false);
     }
 
 }

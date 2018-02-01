@@ -217,7 +217,7 @@
             </span>
         </div>
         <!--Recaptcha-->
-        <@orcid.checkFeatureStatus featureName='SHOW_RECAPTCHA'>
+        <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
             <div>
                 <div class="bottomBuffer relative recaptcha"  id="recaptcha">
                     <div vc-recaptcha
@@ -255,7 +255,7 @@
         </div>
         
         <!--Recaptcha-->
-        <@orcid.checkFeatureStatus featureName='SHOW_RECAPTCHA'>
+        <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
             <div>
                 <div class="bottomBuffer relative recaptcha"  id="recaptcha">
                     <div vc-recaptcha
