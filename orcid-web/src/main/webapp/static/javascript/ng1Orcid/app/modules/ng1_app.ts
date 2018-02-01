@@ -51,6 +51,12 @@ import { KeywordsFormModule }
 import { KeywordsModule } 
     from './keywords/keywords.ts';
 
+import { HeaderModule } 
+    from './header/header.ts';
+
+import { LanguageModule } 
+    from './language/language.ts';
+
 import { ModalModule } 
     from './modalNg2/modal-ng.ts';
 
@@ -80,6 +86,9 @@ import { ThanksForRegisteringModule }
 
 import { ThanksForVerifyingModule } 
     from './thanksForVerifying/thanksForVerifying.ts';
+
+import { TwoFASetupModule } 
+    from './2FASetup/twoFASetup.ts';
 
 import { WebsitesModule } 
     from './websites/websites.ts';
@@ -116,6 +125,8 @@ export const orcidApp = angular.module(
         //FundingModule.name,
         KeywordsFormModule.name,
         KeywordsModule.name,
+        HeaderModule.name,
+        LanguageModule.name,
         ModalModule.name,
         NameModule.name,
         SearchModule.name,
@@ -126,6 +137,7 @@ export const orcidApp = angular.module(
         SelfServiceRemoveSubMemberModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
+        TwoFASetupModule.name,
         WebsitesFormModule.name,
         WebsitesModule.name,
         WidgetModule.name,

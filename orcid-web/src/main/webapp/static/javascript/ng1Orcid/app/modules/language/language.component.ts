@@ -156,6 +156,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
 
         this.language = this.languages[0]; //Default
 
+        
         /*
         typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
         

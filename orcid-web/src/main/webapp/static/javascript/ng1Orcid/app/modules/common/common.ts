@@ -68,11 +68,17 @@ import { FundingService }
 import { KeywordsService } 
     from '../../shared/keywords.service.ts';
 
+import { LanguageService }
+    from '../../shared/language.service.ts';
+
 import { ModalService } 
     from '../../shared/modal.service.ts';
 
 import { NameService } 
-    from '../../shared/name.service.ts'; 
+    from '../../shared/name.service.ts';
+
+import { TwoFAStateService } 
+    from '../../shared/twoFAState.service.ts';
 
 import { WebsitesService } 
     from '../../shared/websites.service.ts';
@@ -128,8 +134,10 @@ import { WorksService }
             FundingService,
             //GroupedActivitiesUtilService,
             KeywordsService,
+            LanguageService,
             ModalService,
             NameService,
+            TwoFAStateService,
             WebsitesService,
             WorksService,
             WorkspaceService

@@ -17,7 +17,7 @@
 
 -->
 
-<script type="text/ng-template" id="admin-delegates-ng2-template">                              
+<script type="text/ng-template" id="language-ng2-template">                              
     <p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
     <div class="row">
         <!-- ***
