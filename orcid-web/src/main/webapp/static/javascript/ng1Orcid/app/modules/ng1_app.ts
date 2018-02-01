@@ -45,6 +45,9 @@ import { EmailVerificationSentMesssageModule }
 import { FundingModule } 
     from './funding/funding.ts';
 
+import { HomeModule } 
+    from './home/home.ts';
+
 import { KeywordsFormModule } 
     from './keywordsForm/keywordsForm.ts';
 
@@ -114,6 +117,7 @@ export const orcidApp = angular.module(
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
         //FundingModule.name,
+        HomeModule.name,
         KeywordsFormModule.name,
         KeywordsModule.name,
         ModalModule.name,

@@ -123,11 +123,8 @@
     </bean>
     
     <bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
-
-	<sec:http pattern="/" security="none" />
 	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
 	<sec:http pattern="/tomcatUp.json" security="none" create-session="stateless" />
-	<sec:http pattern="/home" security="none" />
 	<sec:http pattern="/error" security="none" />
 	<sec:http pattern="/not-found" security="none" />
 	<sec:http pattern="/favicon.ico" security="none" create-session="stateless" />
@@ -272,6 +269,12 @@
 			<sec:frame-options policy="SAMEORIGIN" />
 		</sec:headers>
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
+		<sec:intercept-url pattern="/"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/home(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/new-home(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics(/)?$"

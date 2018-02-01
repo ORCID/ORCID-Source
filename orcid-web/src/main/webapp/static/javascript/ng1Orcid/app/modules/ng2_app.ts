@@ -59,6 +59,9 @@ import { EmailVerificationSentMesssageNg2Module }
 import { FundingNg2Module } 
     from './funding/funding.ts';
 
+import { HomeNg2Module } 
+    from './home/home.ts';
+
 import { KeywordsNg2Module } 
     from './keywords/keywords.ts';
 
@@ -165,6 +168,7 @@ export class RootCmp {
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
         //FundingNg2Module,
+        HomeNg2Module,
         KeywordsFormNg2Module,
         KeywordsNg2Module,
         ModalNg2Module,
