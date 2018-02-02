@@ -216,16 +216,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(client.getWebsite())) {
             client.getWebsite().setErrors(Arrays.asList(getMessage("manage.developer_tools.website_not_empty")));
         } else {
-            String[] schemes = { "http", "https", "ftp" };
-            UrlValidator urlValidator = new UrlValidator(schemes);
-            String websiteString = client.getWebsite().getValue();
-            if (!urlValidator.isValid(websiteString))
-                websiteString = "http://" + websiteString;
-
-            // test validity again
-            if (!urlValidator.isValid(websiteString)) {
-                client.getWebsite().getErrors().add(getMessage("manage.developer_tools.invalid_website"));
-            }          
+            validateUrl(client.getWebsite(), "manage.developer_tools.invalid_website");
         }
         copyErrors(client.getWebsite(), client);
         
