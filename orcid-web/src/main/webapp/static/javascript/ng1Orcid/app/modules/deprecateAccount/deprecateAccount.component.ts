@@ -15,9 +15,11 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { AccountService } 
-    from '../../shared/account.service.ts'; 
+import { DeprecateProfileService } 
+    from '../../shared/deprecateProfile.service.ts'; 
 
+import { ModalService } 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'deprecate-account-ng2',
@@ -26,65 +28,65 @@ import { AccountService }
 export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-   
-    constructor(
-        private accountService: AccountService
-    ) {
+    deprecateProfilePojo: any;
 
+    constructor(
+        private deprecateProfileService: DeprecateProfileService,
+        private modalService: ModalService
+    ) {
+        this.deprecateProfilePojo = {};
     }
 
-    /*
-    checkClaimedStatus( whichField ): void {
-        let orcidOrEmail = '';
-        if(whichField == 'trusted') {
-            this.trusted_verified = false;
-            orcidOrEmail = this.request.trusted.value;
-        } else {
-            this.managed_verified = false;
-            orcidOrEmail = this.request.managed.value;
-        }
+    closeEditModal(): void{
+        this.modalService.notifyOther({action:'close', moduleId: 'modalDeprecateAccountForm'});
+    };
 
-        this.adminDelegatesService.getFormData( orcidOrEmail )
+    getDeprecateProfile(): void {
+
+        this.deprecateProfileService.getFormData()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 if(data) {
-                    if(whichField == 'trusted') {
-                        this.trusted_verified = true;
-                    } else {
-                        this.managed_verified = true;
-                    }
+                    this.deprecateProfilePojo = data;
                 }
             },
             error => {
                 console.log('getformDataError', error);
             } 
         );
- 
     };
 
-    confirmDelegatesProcess(): void {
-        this.success = false;
-        this.adminDelegatesService.setFormData( this.request )
+    submitModal(): void {
+        this.deprecateProfileService.setFormData( this.deprecateProfilePojo )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.request = data;
-                if(data.successMessage) {
-                    this.success = true;
+                if(data) {
+                    /*
+                        emailSrvc.getEmails(function(emailData) {
+                        $rootScope.$broadcast('rebuildEmails', emailData);
+                    });
+                    $.colorbox({
+                        html : $compile($('#deprecate-account-confirmation-modal').html())($scope),
+                        escKey:false,
+                        overlayClose:true,
+                        close: '',
+                        onClosed: function(){ $scope.deprecateProfilePojo = null; $scope.$apply(); },
+                        });
+                    $scope.$apply();
+                    $.colorbox.resize();
+                    */
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                console.log('getformDataError', error);
             } 
         );
     };
 
-    toggleSection(): void{
-        this.showSection = !this.showSection;
-        $('#delegates_section').toggle();
-    };
-    */
+
+   
    
 
     //Default init functions provided by Angular Core
@@ -98,114 +100,6 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
     };
 
     ngOnInit() {
+        this.getDeprecateProfile();
     }; 
 }
-
-/*
-//migrated
-
-declare var $: any;
-declare var colorbox: any;
-declare var getBaseUri: any;
-
-import * as angular from 'angular';
-import {NgModule} from '@angular/core';
-
-// This is the Angular 1 part of the module
-
-export const DeprecateAccountCtrl = angular.module('orcidApp').controller(
-    'DeprecateAccountCtrl', 
-    [
-        '$compile', 
-        '$rootScope', 
-        '$scope', 
-        'emailSrvc', 
-        function (
-            $compile, 
-            $rootScope, 
-            $scope, 
-            emailSrvc
-        ) {
-            $scope.emailSrvc = emailSrvc;
-
-            $scope.closeModal = function() {
-                $.colorbox.close();
-            };
-
-            $scope.deprecateORCID = function() {
-                $.ajax({
-                    url: getBaseUri() + '/account/validate-deprecate-profile.json',
-                    dataType: 'json',
-                    data: angular.toJson($scope.deprecateProfilePojo),
-                    type: 'POST',
-                    contentType: 'application/json;charset=UTF-8',
-                    success: function(data) {
-                        $scope.deprecateProfilePojo = data;
-                        if (data.errors.length > 0) {
-                            $scope.$apply();
-                        } else {
-                            $.colorbox({
-                                html : $compile($('#confirm-deprecate-account-modal').html())($scope),
-                                escKey:false,
-                                overlayClose:true,
-                                close: '',
-                                });
-                        }
-                        $scope.$apply();
-                        $.colorbox.resize();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with change DeactivateAccount");
-                });
-            };
-
-            $scope.getDeprecateProfile = function() {
-                $.ajax({
-                    url: getBaseUri() + '/account/deprecate-profile.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        $scope.deprecateProfilePojo = data;
-                        $scope.$apply();
-                    }
-                }).fail(function() {
-                    console.log("An error occurred preparing deprecate profile");
-                });
-            };
-
-            $scope.submitModal = function() {
-                $.ajax({
-                    url: getBaseUri() + '/account/confirm-deprecate-profile.json',
-                    type: 'POST',
-                    data: angular.toJson($scope.deprecateProfilePojo),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {                
-                        emailSrvc.getEmails(function(emailData) {
-                            $rootScope.$broadcast('rebuildEmails', emailData);
-                        });
-                        $.colorbox({
-                            html : $compile($('#deprecate-account-confirmation-modal').html())($scope),
-                            escKey:false,
-                            overlayClose:true,
-                            close: '',
-                            onClosed: function(){ $scope.deprecateProfilePojo = null; $scope.$apply(); },
-                            });
-                        $scope.$apply();
-                        $.colorbox.resize();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error confirming account deprecation");
-                });
-            };
-            
-            $scope.getDeprecateProfile();
-        }
-    ]
-);
-
-// This is the Angular 2 part of the module
-@NgModule({})
-export class DeprecateAccountCtrlNg2Module {}
-*/

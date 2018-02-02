@@ -78,12 +78,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public boolean verifyEmail(String email) {
-        String orcid = findOrcidIdByEmail(email);
-        boolean result = emailDao.verifyEmail(email);
-        if(result) {
-            profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
-        }
-        return result;
+        return emailDao.verifyEmail(email);        
     }
 
     @Override
@@ -184,11 +179,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 
         // send verifcation email for new address
         notificationManager.sendVerificationEmail(orcid, email.getEmail());
-    }
-
-    @Override
-    public void update(EmailEntity emailEntity) {
-        emailDao.merge(emailEntity);
     }
 
     @Override

@@ -210,6 +210,19 @@ public class BlackBoxBase {
         webDriver.findElement(By.id("enabled")).click();
         webDriver.findElement(By.id("enabled")).submit();
     }
+    
+    /** 
+     * Returns current state of toggle feature
+     * @param adminUserName
+     * @param adminPassword
+     * @param feature
+     * @param value
+     */
+    public boolean getTogglzFeatureState(String adminUserName, String adminPassword, Features feature) {
+        adminSignIn(adminUserName, adminPassword);
+        webDriver.get(this.getWebBaseUrl() + "/togglz/edit?f=" + feature.name());
+        return webDriver.findElement(By.id("enabled")).isSelected();
+    }
 
     public void adminUnlockAccount(String adminUserName, String adminPassword, String orcidToUnlock) {
         // Login Admin

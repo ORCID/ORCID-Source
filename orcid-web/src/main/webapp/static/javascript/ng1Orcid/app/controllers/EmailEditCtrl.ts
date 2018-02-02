@@ -1,3 +1,5 @@
+//migrated
+
 declare var $: any;
 declare var colorbox: any;
 declare var fixZindexIE7: any;
