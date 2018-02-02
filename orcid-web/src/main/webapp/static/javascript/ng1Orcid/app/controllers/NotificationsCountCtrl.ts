@@ -1,3 +1,5 @@
+//Migrated
+
 declare var orcidVar: any;
 
 // Controller for notifications

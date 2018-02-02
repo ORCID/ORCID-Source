@@ -1,3 +1,5 @@
+//Migrated
+
 declare var printWindow: any;
 
 import * as angular from 'angular';

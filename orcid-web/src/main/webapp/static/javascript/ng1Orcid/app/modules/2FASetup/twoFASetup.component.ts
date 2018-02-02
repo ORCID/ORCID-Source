@@ -197,6 +197,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        this.startSetup();
     };
 
 }
