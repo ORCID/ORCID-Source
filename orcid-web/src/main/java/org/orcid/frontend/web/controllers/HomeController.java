@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -54,18 +55,14 @@ public class HomeController extends BaseController {
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
-
-// @formatter:off
-//    @RequestMapping(value = "/")
-//    public ModelAndView homeHandler(HttpServletRequest request) {
-//        StringBuilder newUri = new StringBuilder(request.getRequestURL());
-//        newUri.insert(newUri.indexOf("://") + 3, "about.");
-//        newUri.insert(0, "redirect:");
-//        return new ModelAndView(newUri.toString());
-//    }
-// @formatter:on
-
-    // freindly link to allow language switching
+    
+    @RequestMapping(value = "/")
+    public ModelAndView homeHandler(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("home");
+        mav.addObject("showSecondaryMenu", true);
+        return mav; 
+    }
+    
     @RequestMapping(value = "/home")
     public ModelAndView homeRedirect(HttpServletRequest request) {
         return new ModelAndView("redirect:/");
