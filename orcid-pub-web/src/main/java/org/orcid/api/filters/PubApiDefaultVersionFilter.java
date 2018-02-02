@@ -42,7 +42,7 @@ public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getServletPath();
-        if (path.startsWith("/search/") || path.startsWith("/oauth/token")) {
+        if (path.startsWith("/resources/") || path.startsWith("/search/") || path.startsWith("/oauth/token") || path.startsWith("/experimental_rdf_v1/") || path.startsWith("/static/")) {
             filterChain.doFilter(request, response);
         } else {
             Matcher matcher = VERSION_PATTERN.matcher(path);
