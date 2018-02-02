@@ -30,10 +30,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
-import org.orcid.core.manager.v3.ClientDetailsManager;
-import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
+import org.orcid.core.manager.v3.ClientDetailsManager;
+import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -193,11 +193,7 @@ public class ClientsController extends BaseWorkspaceController {
     public Client validateRedirectUris(Client client, boolean checkProtocol) {
         if (client.getRedirectUris() != null && client.getRedirectUris().size() > 0) {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
-                redirectUri.setErrors(new ArrayList<String>());
-                if (!validateUrl(redirectUri.getValue().getValue(), checkProtocol)) {
-                    setError(redirectUri, "common.invalid_url");
-                }
-
+                validateRedirectUri(redirectUri);
                 if (RedirectUriType.DEFAULT.value().equals(redirectUri.getType().getValue())) {
                     // Clean all scopes from default redirect uri type
                     if (redirectUri.getScopes() != null && !redirectUri.getScopes().isEmpty()) {

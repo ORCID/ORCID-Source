@@ -399,7 +399,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(client_0002);
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
-        rUri.setValue(Text.valueOf("1.com"));
+        rUri.setValue(Text.valueOf("http://érm.com"));
         
         client_0002.getRedirectUris().add(rUri);
         
@@ -407,7 +407,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         
         assertNotNull(client_0002);
         assertEquals(1, client_0002.getErrors().size());
-        assertEquals(manageMembers.getMessage("common.invalid_url"), client_0002.getErrors().get(0));                
+        assertEquals(manageMembers.getMessage("manage.developer_tools.invalid_redirect_uri"), client_0002.getErrors().get(0));                
     }
     
     @Test
