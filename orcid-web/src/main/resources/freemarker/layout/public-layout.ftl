@@ -54,6 +54,9 @@
 <!--hide header if oauth login-->
 <#if !(RequestParameters['oauth'])??>
 <div class="container">
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+        <header-ng2></header-ng2>
+        </@orcid.checkFeatureStatus>
         <div class="header center" ng-controller="headerCtrl">
             <div class="row">
                 <div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"

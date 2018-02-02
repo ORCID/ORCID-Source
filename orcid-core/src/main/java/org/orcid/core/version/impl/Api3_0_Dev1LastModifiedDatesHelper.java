@@ -50,24 +50,34 @@ import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
 
 public class Api3_0_Dev1LastModifiedDatesHelper {
 
-	public static void calculateLastModified(ActivitiesSummary activitiesSummary) {
-		if(activitiesSummary != null) {
-			calculateLastModified(activitiesSummary.getEducations());
-			calculateLastModified(activitiesSummary.getEmployments());
-			calculateLastModified(activitiesSummary.getFundings());
-			calculateLastModified(activitiesSummary.getPeerReviews());
-			calculateLastModified(activitiesSummary.getWorks());
-			
-			LastModifiedDate l1 = activitiesSummary.getEducations() == null ? null : activitiesSummary.getEducations().getLastModifiedDate();
-			LastModifiedDate l2= activitiesSummary.getEmployments() == null ? null : activitiesSummary.getEmployments().getLastModifiedDate();
-			LastModifiedDate l3 = activitiesSummary.getFundings() == null ? null : activitiesSummary.getFundings().getLastModifiedDate();
-			LastModifiedDate l4 = activitiesSummary.getPeerReviews() == null ? null : activitiesSummary.getPeerReviews().getLastModifiedDate();
-			LastModifiedDate l5 = activitiesSummary.getWorks() == null ? null : activitiesSummary.getWorks().getLastModifiedDate();
-			
-			LastModifiedDate globalLatest = calculateLatest(l1, l2, l3, l4, l5);
-			activitiesSummary.setLastModifiedDate(globalLatest);
-		}		
-	}
+    public static void calculateLastModified(ActivitiesSummary activitiesSummary) {
+        if (activitiesSummary != null) {
+            calculateLastModified(activitiesSummary.getDistinctions());
+            calculateLastModified(activitiesSummary.getEducations());
+            calculateLastModified(activitiesSummary.getEmployments());
+            calculateLastModified(activitiesSummary.getInvitedPositions());
+            calculateLastModified(activitiesSummary.getMemberships());
+            calculateLastModified(activitiesSummary.getQualifications());
+            calculateLastModified(activitiesSummary.getServices());
+            calculateLastModified(activitiesSummary.getFundings());
+            calculateLastModified(activitiesSummary.getPeerReviews());
+            calculateLastModified(activitiesSummary.getWorks());
+
+            LastModifiedDate l0 = activitiesSummary.getDistinctions() == null ? null : activitiesSummary.getDistinctions().getLastModifiedDate();
+            LastModifiedDate l1 = activitiesSummary.getEducations() == null ? null : activitiesSummary.getEducations().getLastModifiedDate();
+            LastModifiedDate l2 = activitiesSummary.getEmployments() == null ? null : activitiesSummary.getEmployments().getLastModifiedDate();
+            LastModifiedDate l3 = activitiesSummary.getMemberships() == null ? null : activitiesSummary.getMemberships().getLastModifiedDate();
+            LastModifiedDate l4 = activitiesSummary.getInvitedPositions() == null ? null : activitiesSummary.getInvitedPositions().getLastModifiedDate();
+            LastModifiedDate l5 = activitiesSummary.getQualifications() == null ? null : activitiesSummary.getQualifications().getLastModifiedDate();
+            LastModifiedDate l6 = activitiesSummary.getServices() == null ? null : activitiesSummary.getServices().getLastModifiedDate();
+            LastModifiedDate l7 = activitiesSummary.getFundings() == null ? null : activitiesSummary.getFundings().getLastModifiedDate();
+            LastModifiedDate l8 = activitiesSummary.getPeerReviews() == null ? null : activitiesSummary.getPeerReviews().getLastModifiedDate();
+            LastModifiedDate l9 = activitiesSummary.getWorks() == null ? null : activitiesSummary.getWorks().getLastModifiedDate();
+
+            LastModifiedDate globalLatest = calculateLatest(l0, l1, l2, l3, l4, l5, l6, l7, l8, l9);
+            activitiesSummary.setLastModifiedDate(globalLatest);
+        }
+    }
 	
 	public static void calculateLastModified(ActivitiesContainer actContainer) {
 		if(actContainer != null) {

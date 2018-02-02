@@ -77,6 +77,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
+import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.dao.WorkDao;
@@ -244,8 +245,97 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         // Amend notification
         ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class,
                 NotificationAmendedEntity.class);
+        
         registerSourceConverters(mapperFactory, amendNotificationClassMap);
-        mapCommonFields(amendNotificationClassMap).register();
+        
+        mapCommonFields(amendNotificationClassMap.exclude("amendedSection").customize(new CustomMapper<NotificationAmended, NotificationAmendedEntity>() {
+            @Override
+            public void mapAtoB(NotificationAmended a, NotificationAmendedEntity b, MappingContext context) {
+                if (a.getAmendedSection() != null) {
+                    switch (a.getAmendedSection()) {
+                    case AFFILIATION:
+                        b.setAmendedSection(AmendedSection.AFFILIATION);
+                        break;
+                    case BIO:
+                        b.setAmendedSection(AmendedSection.BIO);
+                        break;
+                    case EDUCATION:
+                        b.setAmendedSection(AmendedSection.EDUCATION);
+                        break;
+                    case EMPLOYMENT:
+                        b.setAmendedSection(AmendedSection.EMPLOYMENT);
+                        break;
+                    case EXTERNAL_IDENTIFIERS:
+                        b.setAmendedSection(AmendedSection.EXTERNAL_IDENTIFIERS);
+                        break;
+                    case FUNDING:
+                        b.setAmendedSection(AmendedSection.FUNDING);
+                        break;
+                    case PEER_REVIEW:
+                        b.setAmendedSection(AmendedSection.PEER_REVIEW);
+                        break;
+                    case PREFERENCES:
+                        b.setAmendedSection(AmendedSection.PREFERENCES);
+                        break;
+                    case UNKNOWN:
+                        b.setAmendedSection(AmendedSection.UNKNOWN);
+                        break;
+                    case WORK:
+                        b.setAmendedSection(AmendedSection.WORK);
+                        break;
+                    default:
+                        b.setAmendedSection(AmendedSection.UNKNOWN);
+                        break;
+                    }
+                }
+            }
+            
+            /**
+             * From database to model object, map amended sections for new affiliation types as AFFILIATION
+             */
+            @Override
+            public void mapBtoA(NotificationAmendedEntity b, NotificationAmended a, MappingContext context) {
+                if (b.getAmendedSection() != null) {
+                    switch (b.getAmendedSection()) {
+                    case AFFILIATION:
+                    case DISTINCTION:
+                    case INVITED_POSITION:
+                    case MEMBERSHIP:
+                    case QUALIFICATION:
+                    case SERVICE:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.AFFILIATION);
+                        break;
+                    case BIO:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.BIO);
+                        break;
+                    case EDUCATION:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.EDUCATION);
+                        break;
+                    case EMPLOYMENT:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.EMPLOYMENT);
+                        break;
+                    case EXTERNAL_IDENTIFIERS:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.EXTERNAL_IDENTIFIERS);
+                        break;
+                    case FUNDING:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.FUNDING);
+                        break;
+                    case PEER_REVIEW:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.PEER_REVIEW);
+                        break;
+                    case PREFERENCES:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.PREFERENCES);
+                        break;
+                    case UNKNOWN:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.UNKNOWN);
+                        break;
+                    case WORK:
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.WORK);
+                        break;
+                    }
+                }
+            }
+        })).register();
         mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.type").converter("externalIdentifierIdConverter")
                 .add().field("externalIdValue", "externalIdentifier.value").byDefault().register();
 

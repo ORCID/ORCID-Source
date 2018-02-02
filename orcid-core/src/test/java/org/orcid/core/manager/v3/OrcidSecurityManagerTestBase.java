@@ -38,6 +38,7 @@ import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.common.Country;
 import org.orcid.jaxb.model.v3.dev1.common.CreditName;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
@@ -45,17 +46,6 @@ import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
@@ -70,6 +60,26 @@ import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.SourceAware;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -305,6 +315,21 @@ public class OrcidSecurityManagerTestBase {
         return peerReviewManagerReadOnly.groupPeerReviews(new ArrayList<PeerReviewSummary>(Arrays.asList(elements)), false);
     }
     
+    protected DistinctionSummary createDistinctionSummary(Visibility v, String sourceId) {
+        DistinctionSummary e = new DistinctionSummary();
+        e.setVisibility(v);
+        setSource(e, sourceId);
+        return e;
+    }
+    
+    protected Distinctions createDistinctions(DistinctionSummary... elements) {
+        Distinctions e = new Distinctions();
+        for (DistinctionSummary s : elements) {
+            e.getSummaries().add(s);
+        }
+        return e;
+    }
+    
     protected EducationSummary createEducationSummary(Visibility v, String sourceId) {
         EducationSummary e = new EducationSummary();
         e.setVisibility(v);
@@ -335,6 +360,66 @@ public class OrcidSecurityManagerTestBase {
         return e;
     }
 
+    protected InvitedPositionSummary createInvitedPositionSummary(Visibility v, String sourceId) {
+        InvitedPositionSummary e = new InvitedPositionSummary();
+        e.setVisibility(v);
+        setSource(e, sourceId);
+        return e;
+    }
+    
+    protected InvitedPositions createInvitedPositions(InvitedPositionSummary... elements) {
+        InvitedPositions e = new InvitedPositions();
+        for (InvitedPositionSummary s : elements) {
+            e.getSummaries().add(s);
+        }
+        return e;
+    }
+    
+    protected MembershipSummary createMembershipSummary(Visibility v, String sourceId) {
+        MembershipSummary e = new MembershipSummary();
+        e.setVisibility(v);
+        setSource(e, sourceId);
+        return e;
+    }
+    
+    protected Memberships createMemberships(MembershipSummary... elements) {
+        Memberships e = new Memberships();
+        for (MembershipSummary s : elements) {
+            e.getSummaries().add(s);
+        }
+        return e;
+    }
+    
+    protected QualificationSummary createQualificationSummary(Visibility v, String sourceId) {
+        QualificationSummary e = new QualificationSummary();
+        e.setVisibility(v);
+        setSource(e, sourceId);
+        return e;
+    }
+    
+    protected Qualifications createQualifications(QualificationSummary... elements) {
+        Qualifications e = new Qualifications();
+        for (QualificationSummary s : elements) {
+            e.getSummaries().add(s);
+        }
+        return e;
+    }
+    
+    protected ServiceSummary createServiceSummary(Visibility v, String sourceId) {
+        ServiceSummary e = new ServiceSummary();
+        e.setVisibility(v);
+        setSource(e, sourceId);
+        return e;
+    }
+    
+    protected Services createServices(ServiceSummary... elements) {
+        Services e = new Services();
+        for (ServiceSummary s : elements) {
+            e.getSummaries().add(s);
+        }
+        return e;
+    }
+    
     protected void addSharedExtId(ExternalIDs extIds) {
         ExternalID extId = new ExternalID();
         extId.setValue(EXTID_SHARED);

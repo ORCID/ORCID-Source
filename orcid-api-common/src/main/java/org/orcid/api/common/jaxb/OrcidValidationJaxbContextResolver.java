@@ -236,6 +236,18 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.WorkBulk.class, "record_3.0_dev1/bulk-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.summary.Educations.class, "record_3.0_dev1/activities-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.summary.Employments.class, "record_3.0_dev1/activities-");
+        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.Distinction.class, "record_3.0_dev1/distinction-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.InvitedPosition.class, "record_3.0_dev1/invited-position-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.Membership.class, "record_3.0_dev1/membership-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.Qualification.class, "record_3.0_dev1/qualification-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.Service.class, "record_3.0_dev1/service-");
+        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions.class, "record_3.0_dev1/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions.class, "record_3.0_dev1/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.summary.Memberships.class, "record_3.0_dev1/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications.class, "record_3.0_dev1/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_DEV1.put(org.orcid.jaxb.model.v3.dev1.record.summary.Services.class, "record_3.0_dev1/activities-");
     }
     
     private JAXBContext jaxbContext_2_0_rc1;

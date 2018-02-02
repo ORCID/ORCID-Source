@@ -17,8 +17,26 @@
 package org.orcid.api.common.util.v3;
 
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.common.Contributor;
+import org.orcid.jaxb.model.v3.dev1.record.Activity;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
+import org.orcid.jaxb.model.v3.dev1.record.Education;
+import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
+import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Affiliations;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
@@ -26,21 +44,20 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
-import org.orcid.jaxb.model.v3.dev1.record.Activity;
-import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityUtils {
@@ -67,7 +84,18 @@ public class ActivityUtils {
             activityType = OrcidApiConstants.ACTIVITY_FUNDING;
         } else if (PeerReview.class.isInstance(activity) || PeerReviewSummary.class.isInstance(activity)) {
             activityType = OrcidApiConstants.ACTIVITY_PEER_REVIEW;
+        } else if (Distinction.class.isInstance(activity) || DistinctionSummary.class.isInstance(activity)) {
+            activityType = OrcidApiConstants.ACTIVITY_DISTINCTION;
+        } else if (InvitedPosition.class.isInstance(activity) || InvitedPositionSummary.class.isInstance(activity)) {
+            activityType = OrcidApiConstants.ACTIVITY_INVITED_POSITION;
+        } else if (Membership.class.isInstance(activity) || MembershipSummary.class.isInstance(activity)) {
+            activityType = OrcidApiConstants.ACTIVITY_MEMBERSHIP;
+        } else if (Qualification.class.isInstance(activity) || QualificationSummary.class.isInstance(activity)) {
+            activityType = OrcidApiConstants.ACTIVITY_QUALIFICATION;
+        }  else if (Service.class.isInstance(activity) || ServiceSummary.class.isInstance(activity)) {
+            activityType = OrcidApiConstants.ACTIVITY_SERVICE;
         }
+        
         // Build the path string
         String path = '/' + orcid + '/' + activityType + '/' + putCode;
 
@@ -75,34 +103,33 @@ public class ActivityUtils {
     }
 
     /**
-     * Set the path attribute to every education inside the Educations element.
+     * Set the path attribute to every affiliation inside the affiliations element.
      * 
-     * @param educations
-     *            The educations container
+     * @param affiliations
+     *            The affiliations container
      * @param orcid
      *            The activity owner
      * */
-    public static void setPathToEducations(Educations educations, String orcid) {
-        if(educations != null) { 
-            educations.setPath(OrcidApiConstants.EDUCATIONS.replace("{orcid}", orcid));
-            for(EducationSummary summary : educations.getSummaries()) {
-                setPathToActivity(summary, orcid);
-            }            
-        }
-    }
-    
-    /**
-     * Set the path attribute to every employment inside the Employments element.
-     * 
-     * @param employments
-     *            The employments container
-     * @param orcid
-     *            The activity owner
-     * */
-    public static void setPathToEmployments(Employments employments, String orcid) {
-        if(employments != null) {  
-            employments.setPath(OrcidApiConstants.EMPLOYMENTS.replace("{orcid}", orcid));
-            for(EmploymentSummary summary : employments.getSummaries()) {
+    public static void setPathToAffiliations(Affiliations<? extends AffiliationSummary> affiliations, String orcid) {
+        if(affiliations != null) { 
+            
+            if(Distinctions.class.isInstance(affiliations)) {
+                affiliations.setPath(OrcidApiConstants.DISTINCTIONS.replace("{orcid}", orcid));                
+            } else if(Educations.class.isInstance(affiliations)) {
+                affiliations.setPath(OrcidApiConstants.EDUCATIONS.replace("{orcid}", orcid));
+            } else if(Employments.class.isInstance(affiliations)) {
+                affiliations.setPath(OrcidApiConstants.EMPLOYMENTS.replace("{orcid}", orcid));
+            } else if(InvitedPositions.class.isInstance(affiliations)) {
+                affiliations.setPath(OrcidApiConstants.INVITED_POSITIONS.replace("{orcid}", orcid));
+            } else if(Memberships.class.isInstance(affiliations)) {
+                affiliations.setPath(OrcidApiConstants.MEMBERSHIPS.replace("{orcid}", orcid));
+            } else if(Qualifications.class.isInstance(affiliations)) {
+                affiliations.setPath(OrcidApiConstants.QUALIFICATIONS.replace("{orcid}", orcid));
+            } else if(Services.class.isInstance(affiliations)) {
+                affiliations.setPath(OrcidApiConstants.SERVICES.replace("{orcid}", orcid));
+            }
+            
+            for(AffiliationSummary summary : affiliations.getSummaries()) {
                 setPathToActivity(summary, orcid);
             }            
         }
@@ -175,8 +202,13 @@ public class ActivityUtils {
     public static void setPathToActivity(ActivitiesSummary activitiesSummary, String orcid) {
         if (activitiesSummary != null) {
             activitiesSummary.setPath(OrcidApiConstants.ACTIVITIES.replace("{orcid}", orcid));
-            ActivityUtils.setPathToEducations(activitiesSummary.getEducations(), orcid);
-            ActivityUtils.setPathToEmployments(activitiesSummary.getEmployments(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getDistinctions(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getEducations(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getEmployments(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getInvitedPositions(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getMemberships(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getQualifications(), orcid);
+            ActivityUtils.setPathToAffiliations(activitiesSummary.getServices(), orcid);
             ActivityUtils.setPathToFundings(activitiesSummary.getFundings(), orcid);
             ActivityUtils.setPathToWorks(activitiesSummary.getWorks(), orcid);
             ActivityUtils.setPathToPeerReviews(activitiesSummary.getPeerReviews(), orcid);

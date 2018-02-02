@@ -62,7 +62,5 @@ public interface EmailManager extends EmailManagerReadOnly {
      */
     boolean isAutoDeprecateEnableForEmail(String email);
 
-    void update(EmailEntity emailEntity);
-    
     boolean hideAllEmails(String orcid);
 }

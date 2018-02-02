@@ -263,7 +263,7 @@
 	
 	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
 		request-matcher="regex">
-		<sec:access-denied-handler error-page="/signin"/>
+		<sec:access-denied-handler ref="orcidAccessDeniedHandler"/>
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:headers>
 			<sec:frame-options policy="SAMEORIGIN" />
@@ -423,6 +423,11 @@
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 
+	<bean id="orcidAccessDeniedHandler"
+		class="org.orcid.frontend.spring.OrcidAccessDeniedHandler">
+		<property name="errorPage" value="/signin" />
+	</bean>
+	
 	<oauth2:web-expression-handler id="oauthWebExpressionHandler" />
 
 	<bean id="oauthAuthenticationEntryPoint"

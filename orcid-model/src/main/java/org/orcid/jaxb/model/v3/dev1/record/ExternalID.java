@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.v3.dev1.common.TransientError;
 import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 
@@ -33,10 +34,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * New external identifier class
  * 
  * @author tom
- *
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "value", "normalized", "url", "relationship" })
+@XmlType(propOrder = { "type", "value", "normalized", "normalizedError", "url", "relationship" })
 public class ExternalID implements GroupAble, Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -46,6 +47,8 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
     protected String value;
     @XmlElement(name = "external-id-normalized", namespace = "http://www.orcid.org/ns/common")
     protected TransientNonEmptyString normalized;
+    @XmlElement(name = "external-id-normalized-error", namespace = "http://www.orcid.org/ns/common")
+    protected TransientError normalizedError;    
     @XmlElement(name = "external-id-url", namespace = "http://www.orcid.org/ns/common")
     protected Url url;
     @XmlElement(name = "external-id-relationship", namespace = "http://www.orcid.org/ns/common")
@@ -73,6 +76,14 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
 
     public void setNormalized(TransientNonEmptyString normalized) {
         this.normalized = normalized;
+    }
+
+    public TransientError getNormalizedError() {
+        return normalizedError;
+    }
+    
+    public void setNormalizedError(TransientError normalizeError) {
+        this.normalizedError = normalizeError;
     }
 
     public Relationship getRelationship() {
@@ -138,6 +149,7 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
         } else {
             result = prime * result + ((value == null) ? 0 : value.hashCode());
         }
+        //ignore normalizedError for equality checking/hash
         return result;
     }
 
@@ -167,6 +179,7 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
             } else if (!value.equals(other.value))
                 return false;
         }
+        //ignore normalizedError for equality checking/hash
         return true;
     }
 
@@ -176,6 +189,8 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
         id.value = this.getValue();
         if (this.getNormalized() != null)
             id.setNormalized(this.getNormalized());
+        if (this.getNormalizedError() != null)
+            id.setNormalizedError(this.getNormalizedError());
         if (this.getUrl() != null)
             id.url = new Url(this.getUrl().getValue());
         if (this.getRelationship() != null)

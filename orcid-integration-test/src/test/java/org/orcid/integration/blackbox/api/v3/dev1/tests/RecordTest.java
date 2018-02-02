@@ -47,6 +47,8 @@ import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.dev1.record.Record;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
@@ -54,9 +56,17 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
@@ -77,7 +87,7 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
     private MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;
     @Resource(name = "publicV3_0_dev1ApiClient")
     private PublicV3ApiClientImpl publicV3Dev1ApiClient;
-        
+    
     @Test
     public void testViewRecordFromMemberAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
@@ -91,31 +101,114 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
         assertEquals(getUser1OrcidId(), record.getOrcidIdentifier().getPath());               
         //Check the visibility of every activity that exists
         if(record.getActivitiesSummary() != null) {
-            //Educations
-            if(record.getActivitiesSummary().getEducations() != null) {
-                Educations e = record.getActivitiesSummary().getEducations();
-                if(e.getSummaries() != null) {
-                    for(EducationSummary s : e.getSummaries()) {
+            // Distinctions
+            if (record.getActivitiesSummary().getDistinctions() != null) {
+                Distinctions e = record.getActivitiesSummary().getDistinctions();
+                if (e.getSummaries() != null) {
+                    for (DistinctionSummary s : e.getSummaries()) {
                         assertNotNull(s.getSource());
                         assertNotNull(s.getVisibility());
                         Visibility v = s.getVisibility();
-                        //If the visibility is PRIVATE the client should be the owner
-                        if(Visibility.PRIVATE.equals(v)) {                            
+                        // If the visibility is PRIVATE the client should be the
+                        // owner
+                        if (Visibility.PRIVATE.equals(v)) {
                             assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
                         }
                     }
                 }
             }
-            //Employments
-            if(record.getActivitiesSummary().getEmployments() != null) {
-                Employments e = record.getActivitiesSummary().getEmployments();
-                if(e.getSummaries() != null) {
-                    for(EmploymentSummary s : e.getSummaries()) {
+
+            // Educations
+            if (record.getActivitiesSummary().getEducations() != null) {
+                Educations e = record.getActivitiesSummary().getEducations();
+                if (e.getSummaries() != null) {
+                    for (EducationSummary s : e.getSummaries()) {
                         assertNotNull(s.getSource());
                         assertNotNull(s.getVisibility());
                         Visibility v = s.getVisibility();
-                        //If the visibility is PRIVATE the client should be the owner
-                        if(Visibility.PRIVATE.equals(v)) {                            
+                        // If the visibility is PRIVATE the client should be the
+                        // owner
+                        if (Visibility.PRIVATE.equals(v)) {
+                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                        }
+                    }
+                }
+            }
+            // Employments
+            if (record.getActivitiesSummary().getEmployments() != null) {
+                Employments e = record.getActivitiesSummary().getEmployments();
+                if (e.getSummaries() != null) {
+                    for (EmploymentSummary s : e.getSummaries()) {
+                        assertNotNull(s.getSource());
+                        assertNotNull(s.getVisibility());
+                        Visibility v = s.getVisibility();
+                        // If the visibility is PRIVATE the client should be the
+                        // owner
+                        if (Visibility.PRIVATE.equals(v)) {
+                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                        }
+                    }
+                }
+            }
+            // InvitedPositions
+            if (record.getActivitiesSummary().getInvitedPositions() != null) {
+                InvitedPositions e = record.getActivitiesSummary().getInvitedPositions();
+                if (e.getSummaries() != null) {
+                    for (InvitedPositionSummary s : e.getSummaries()) {
+                        assertNotNull(s.getSource());
+                        assertNotNull(s.getVisibility());
+                        Visibility v = s.getVisibility();
+                        // If the visibility is PRIVATE the client should be the
+                        // owner
+                        if (Visibility.PRIVATE.equals(v)) {
+                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                        }
+                    }
+                }
+            }
+            // Memberships
+            if (record.getActivitiesSummary().getMemberships() != null) {
+                Memberships e = record.getActivitiesSummary().getMemberships();
+                if (e.getSummaries() != null) {
+                    for (MembershipSummary s : e.getSummaries()) {
+                        assertNotNull(s.getSource());
+                        assertNotNull(s.getVisibility());
+                        Visibility v = s.getVisibility();
+                        // If the visibility is PRIVATE the client should be the
+                        // owner
+                        if (Visibility.PRIVATE.equals(v)) {
+                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                        }
+                    }
+                }
+            }
+            // Qualifications
+            if (record.getActivitiesSummary().getQualifications() != null) {
+                Qualifications e = record.getActivitiesSummary().getQualifications();
+                if (e.getSummaries() != null) {
+                    for (QualificationSummary s : e.getSummaries()) {
+                        assertNotNull(s.getSource());
+                        assertNotNull(s.getVisibility());
+                        Visibility v = s.getVisibility();
+                        // If the visibility is PRIVATE the client should be the
+                        // owner
+                        if (Visibility.PRIVATE.equals(v)) {
+                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                        }
+                    }
+                }
+            }
+            // Services
+            if (record.getActivitiesSummary().getServices() != null) {
+                Services e = record.getActivitiesSummary().getServices();
+                if (e.getSummaries() != null) {
+                    for (ServiceSummary s : e.getSummaries()) {
+                        assertNotNull(s.getSource());
+                        assertNotNull(s.getVisibility());
+                        Visibility v = s.getVisibility();
+                        // If the visibility is PRIVATE the client should be the
+                        // owner
+                        if (Visibility.PRIVATE.equals(v)) {
                             assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
                         }
                     }
@@ -301,6 +394,8 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
         //Check the visibility of every activity that exists
         if(record.getActivitiesSummary() != null) {
             if(record.getActivitiesSummary() != null) {
+                //Distinctions
+                fail();
                 //Educations
                 if(record.getActivitiesSummary().getEducations() != null) {
                     Educations e = record.getActivitiesSummary().getEducations();
@@ -321,6 +416,16 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
                         }
                     }
                 }
+                
+                //InvitedPositions
+                fail();
+                //Memberships
+                fail();
+                //Qualifications
+                fail();
+                //Services
+                fail();
+                
                 //Fundings
                 if(record.getActivitiesSummary().getFundings() != null) {
                     Fundings f = record.getActivitiesSummary().getFundings();

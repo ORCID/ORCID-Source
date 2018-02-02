@@ -28,10 +28,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
@@ -76,7 +74,6 @@ import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
-import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -243,8 +240,6 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Resource
     private MessageSource messageSource;
 
-    private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
-
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -353,19 +348,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             for (int i = 0; i < works.getBulk().size(); i++) {
                 if (Work.class.isAssignableFrom(works.getBulk().get(i).getClass())) {
                     Work work = (Work) works.getBulk().get(i);
-
-                    try {
-                        schemaValidator.validate(work);
-                        clearSource(work);
-                    } catch (WebApplicationException e) {
-                        OrcidError error = new OrcidError();
-                        error.setUserMessage(messageSource.getMessage("apiError.9001.userMessage", null, localeManager.getLocale()));
-                        error.setMoreInfo(messageSource.getMessage("apiError.9001.moreInfo", null, localeManager.getLocale()));
-                        error.setErrorCode(9001);
-                        error.setResponseCode(400);
-                        works.getBulk().remove(i);
-                        works.getBulk().add(i, error);
-                    }
+                    clearSource(work);
                 }
             }
         }

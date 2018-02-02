@@ -1,3 +1,5 @@
+//Migrated
+
 declare var getBaseUri: any;
 
 import * as angular from 'angular';

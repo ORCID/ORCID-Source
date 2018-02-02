@@ -266,6 +266,24 @@
            </xs:extension>
        </xs:simpleContent>
    </xs:complexType>
+   
+   	<xs:complexType name="transient-error">
+		<xs:annotation>
+			<xs:documentation>An error that populated by ORCID when record is read
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="error-code" type="common:non-empty-string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="error-message" type="common:non-empty-string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="transient" use="required">
+		   <xs:simpleType>
+		   <xs:restriction base="xs:boolean">
+		          <xs:pattern value="true" />
+		   </xs:restriction>
+		   </xs:simpleType>
+		 </xs:attribute>
+   </xs:complexType>
 		
 	<xs:complexType name="amount">
 		<xs:annotation>
@@ -1066,7 +1084,7 @@
 
 	<xs:simpleType name="iso-3166-country">
 		<xs:annotation>
-			<xs:documentation>ISO 3166 country codes. NOTE: the values displayed
+			<xs:documentation>ISO 3166-1 alpha-2 country codes. NOTE: the values displayed
 				to the website user are localized (translated) in the ORCID Registry
 				web interface. For reference:
 				https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n
@@ -1613,6 +1631,46 @@
 		<xs:attribute name="path" type="common:element-path" use="optional" />
 	</xs:complexType>
 	
+	<xs:complexType name="affiliation-summary">
+		<xs:complexContent>
+			<xs:extension base="common:element-summary">
+				<xs:sequence>
+					<xs:element name="department-name" type="common:long-text"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="role-title" type="common:long-text"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element ref="common:start-date" minOccurs="1"
+						maxOccurs="1" />
+					<xs:element ref="common:end-date" minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="organization" type="common:organization"
+						minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	 
+	<xs:complexType name="affiliation">
+		<xs:complexContent>
+			<xs:extension base="common:element-summary">
+				<xs:sequence>
+					<xs:element name="department-name" type="common:long-text"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element name="role-title" type="common:long-text"
+						minOccurs="0" maxOccurs="1" />
+					<xs:element ref="common:start-date" minOccurs="1"
+						maxOccurs="1" />
+					<xs:element ref="common:end-date" minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="organization" type="common:organization"
+						minOccurs="1" maxOccurs="1" />
+					<xs:element name="url" type="common:url" minOccurs="0" />
+					<xs:element ref="common:external-ids" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
 	<xs:simpleType name="relationship-type">
 		<xs:annotation>
 			<xs:documentation>Indicates the relationship type.
@@ -1626,14 +1684,17 @@
 	 
 	<xs:complexType name="external-id">
 		<xs:annotation>
-			<xs:documentation>A reference to an external identifier, suitable for works, people and funding</xs:documentation>
+			<xs:documentation>A reference to an external identifier, suitable for works, people and funding. 
+				Supported external-id-type values can be found at https://pub.orcid.org/v2.0/identifiers
+			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="common:element-summary">
 				<xs:sequence>
 					<xs:element name="external-id-type" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />
 					<xs:element name="external-id-value" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />	
-					<xs:element name="external-id-normalized" type="common:transient-non-empty-string" minOccurs="0" maxOccurs="1" />		
+					<xs:element name="external-id-normalized" type="common:transient-non-empty-string" minOccurs="0" maxOccurs="1" />
+					<xs:element name="external-id-normalized-error" type="common:transient-error" minOccurs="0" maxOccurs="1" />		
 					<xs:element name="external-id-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
 					<xs:element name="external-id-relationship" minOccurs="0" maxOccurs="1" type="common:relationship-type" />
 				</xs:sequence>

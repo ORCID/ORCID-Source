@@ -1,3 +1,5 @@
+//Migrated
+
 declare var orcidGA: any;
 
 import * as angular from 'angular';

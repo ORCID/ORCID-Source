@@ -16,20 +16,25 @@
  */
 package org.orcid.api.memberV2.server.delegator.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.record.bulk.BulkElementContainer;
 
 public class MemberV2ApiServiceVersionedDelegatorImpl implements
         MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
@@ -55,6 +60,9 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     
     @Resource
     private OrcidSearchManager orcidSearchManager;
+    
+    @Resource
+    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
     
     @Override
     public Response viewStatusText() {
@@ -102,6 +110,37 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createWorks(String orcid, Object works) {
         checkProfileStatus(orcid, false);
+        
+        // validate works object before changing version
+        Map<Integer, BulkElement> errors = new HashMap<>();
+        
+        if (works != null) {
+            BulkElementContainer workBulk = (BulkElementContainer) works;
+            for (int i = workBulk.getBulk().size() -1; i >= 0; i--) {
+                BulkElement bulkElement = workBulk.getBulk().get(i);
+                try {
+                    schemaValidator.validate(bulkElement);
+                } catch (WebApplicationException e) {
+                    if (org.orcid.jaxb.model.record_rc3.Work.class.isAssignableFrom(bulkElement.getClass())) {
+                        org.orcid.jaxb.model.error_rc3.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2Rc3(9001, 400, e);
+                        workBulk.getBulk().remove(i);
+                        errors.put(i, error);
+                        workBulk.getBulk().add(i, error);
+                    } else if (org.orcid.jaxb.model.record_rc4.Work.class.isAssignableFrom(bulkElement.getClass())) {
+                        org.orcid.jaxb.model.error_rc4.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2Rc4(9001, 400, e);
+                        workBulk.getBulk().remove(i);
+                        errors.put(i, error);
+                        workBulk.getBulk().add(i, error);
+                    } else {
+                        org.orcid.jaxb.model.error_v2.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2(9001, 400, e);
+                        workBulk.getBulk().remove(i);
+                        errors.put(i, error);
+                        workBulk.getBulk().add(i, error);
+                    }
+                }
+            }
+        }
+        
         works = processObject(works);
         return memberV2ApiServiceDelegator.createWorks(orcid, works);
     }

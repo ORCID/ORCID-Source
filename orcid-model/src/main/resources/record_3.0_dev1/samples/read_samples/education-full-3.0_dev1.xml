@@ -13,8 +13,8 @@
 		</common:source-orcid>
 		<common:source-name />
 	</common:source>
-	<education:department-name>education:department-name</education:department-name>
-	<education:role-title>education:role-title</education:role-title>
+	<common:department-name>education:department-name</common:department-name>
+	<common:role-title>education:role-title</common:role-title>
 	<common:start-date>
 		<common:year>1848</common:year>
 		<common:month>02</common:month>
@@ -25,7 +25,7 @@
 		<common:month>02</common:month>
 		<common:day>02</common:day>
 	</common:end-date>
-	<education:organization>
+	<common:organization>
 		<common:name>common:name</common:name>
 		<common:address>
 			<common:city>common:city</common:city>
@@ -36,8 +36,8 @@
 			<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 			<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 		</common:disambiguated-organization>
-	</education:organization>	
-	<education:url>http://tempuri.org</education:url>  
+	</common:organization>	
+	<common:url>http://tempuri.org</common:url>  
     <common:external-ids>
         <common:external-id>
             <common:external-id-type>grant_number</common:external-id-type>

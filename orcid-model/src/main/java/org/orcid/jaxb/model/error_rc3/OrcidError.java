@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.record_rc3.BulkElement;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 
 
 /**

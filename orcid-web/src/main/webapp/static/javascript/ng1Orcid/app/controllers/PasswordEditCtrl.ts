@@ -1,3 +1,5 @@
+//Migrated
+
 declare var getBaseUri: any;
 declare var fixZindexIE7: any;
 

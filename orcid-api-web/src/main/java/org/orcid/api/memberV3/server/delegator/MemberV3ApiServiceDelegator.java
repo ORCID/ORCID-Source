@@ -21,22 +21,22 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, FUNDING, GROUP_ID_RECORD, OTHER_NAME, PEER_REVIEW, RESEARCHER_URL, WORK, WORK_BULK, ADDRESS, KEYWORD> {
+public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, INVITED_POSITION, FUNDING, GROUP_ID_RECORD, MEMBERSHIP, OTHER_NAME, PEER_REVIEW, QUALIFICATION, RESEARCHER_URL, SERVICE, WORK, WORK_BULK, ADDRESS, KEYWORD> {
 
     static final String LATEST_V3_VERSION = "3.0_dev1";
 
     Response viewStatusText();
 
     Response viewRecord(String orcid);
-    
+
     Response viewActivities(String orcid);
 
     Response viewWork(String orcid, Long putCode);
-    
+
     Response viewWorks(String orcid);
 
     Response viewWorkSummary(String orcid, Long putCode);
-    
+
     Response createWorks(String orcid, WORK_BULK bulk);
 
     Response createWork(String orcid, WORK work);
@@ -45,8 +45,8 @@ public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
 
     Response deleteWork(String orcid, Long putCode);
 
-    Response viewFunding(String orcid, Long putCode); 
-    
+    Response viewFunding(String orcid, Long putCode);
+
     Response viewFundings(String orcid);
 
     Response viewFundingSummary(String orcid, Long putCode);
@@ -58,7 +58,7 @@ public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response deleteFunding(String orcid, Long putCode);
 
     Response viewEducation(String orcid, Long putCode);
-    
+
     Response viewEducations(String orcid);
 
     Response viewEducationSummary(String orcid, Long putCode);
@@ -68,7 +68,7 @@ public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response updateEducation(String orcid, Long putCode, EDUCATION education);
 
     Response viewEmployment(String orcid, Long putCode);
-    
+
     Response viewEmployments(String orcid);
 
     Response viewEmploymentSummary(String orcid, Long putCode);
@@ -80,7 +80,7 @@ public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response deleteAffiliation(String orcid, Long putCode);
 
     Response viewPeerReview(String orcid, Long putCode);
-    
+
     Response viewPeerReviews(String orcid);
 
     Response viewPeerReviewSummary(String orcid, Long putCode);
@@ -134,9 +134,9 @@ public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response createExternalIdentifier(String orcid, EXTERNAL_IDENTIFIER externalIdentifier);
 
     Response deleteExternalIdentifier(String orcid, Long putCode);
-    
+
     Response viewBiography(String orcid);
-    
+
     Response viewKeywords(String orcid);
 
     Response viewKeyword(String orcid, Long putCode);
@@ -146,7 +146,7 @@ public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response updateKeyword(String orcid, Long putCode, KEYWORD keyword);
 
     Response deleteKeyword(String orcid, Long putCode);
-            
+
     Response viewAddresses(String orcid);
 
     Response viewAddress(String orcid, Long putCode);
@@ -156,7 +156,7 @@ public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response updateAddress(String orcid, Long putCode, ADDRESS address);
 
     Response deleteAddress(String orcid, Long putCode);
-    
+
     Response viewPerson(String orcid);
 
     Response searchByQuery(Map<String, List<String>> solrParams);
@@ -166,4 +166,54 @@ public interface MemberV3ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response findGroupIdRecordByName(String name);
 
     Response viewBulkWorks(String orcid, String putCodes);
+
+    Response viewDistinction(String orcid, Long putCode);
+
+    Response viewDistinctions(String orcid);
+
+    Response viewDistinctionSummary(String orcid, Long putCode);
+
+    Response createDistinction(String orcid, DISTINCTION distinction);
+
+    Response updateDistinction(String orcid, Long putCode, DISTINCTION distinction);
+
+    Response viewInvitedPosition(String orcid, Long putCode);
+
+    Response viewInvitedPositions(String orcid);
+
+    Response viewInvitedPositionSummary(String orcid, Long putCode);
+
+    Response createInvitedPosition(String orcid, INVITED_POSITION invitedPosition);
+
+    Response updateInvitedPosition(String orcid, Long putCode, INVITED_POSITION invitedPosition);
+
+    Response viewMembership(String orcid, Long putCode);
+
+    Response viewMemberships(String orcid);
+
+    Response viewMembershipSummary(String orcid, Long putCode);
+
+    Response createMembership(String orcid, MEMBERSHIP membership);
+
+    Response updateMembership(String orcid, Long putCode, MEMBERSHIP membership);
+
+    Response viewQualification(String orcid, Long putCode);
+
+    Response viewQualifications(String orcid);
+
+    Response viewQualificationSummary(String orcid, Long putCode);
+
+    Response createQualification(String orcid, QUALIFICATION qualification);
+
+    Response updateQualification(String orcid, Long putCode, QUALIFICATION qualification);
+
+    Response viewService(String orcid, Long putCode);
+
+    Response viewServices(String orcid);
+
+    Response viewServiceSummary(String orcid, Long putCode);
+
+    Response createService(String orcid, SERVICE service);
+
+    Response updateService(String orcid, Long putCode, SERVICE service);
 }

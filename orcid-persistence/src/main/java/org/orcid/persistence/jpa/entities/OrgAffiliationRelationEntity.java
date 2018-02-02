@@ -31,8 +31,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.utils.NullUtils;
 
 /**

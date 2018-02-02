@@ -21,6 +21,9 @@ import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
+import static org.orcid.core.api.OrcidApiConstants.DISTINCTION;
+import static org.orcid.core.api.OrcidApiConstants.DISTINCTIONS;
+import static org.orcid.core.api.OrcidApiConstants.DISTINCTION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
@@ -34,7 +37,13 @@ import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDINGS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
+import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION;
+import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITIONS;
+import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP;
+import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIPS;
+import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
@@ -46,8 +55,14 @@ import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_VIEW_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
+import static org.orcid.core.api.OrcidApiConstants.QUALIFICATIONS;
+import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
+import static org.orcid.core.api.OrcidApiConstants.SERVICE;
+import static org.orcid.core.api.OrcidApiConstants.SERVICES;
+import static org.orcid.core.api.OrcidApiConstants.SERVICE_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
@@ -86,25 +101,40 @@ import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.v3.dev1.notification.Notification;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
 import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.springframework.beans.factory.annotation.Value;
@@ -131,12 +161,12 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
     
-    protected MemberV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
+    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
     private NotificationsApiServiceDelegator<NotificationPermission> notificationsServiceDelegator;
 
     public void setServiceDelegator(
-            MemberV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator) {
+            MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
@@ -234,7 +264,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     @ApiOperation( nickname="createWorkV3dev", value = "Create a Work", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Work created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 201, message = "Work created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Work resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Work representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Work representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createWork(@PathParam("orcid") String orcid, Work work) {
@@ -248,7 +278,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     @ApiOperation( nickname="createWorksV3dev", value = "Create a listo of Work", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "At least one of the works was created", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 201, message = "At least one of the works was created", responseHeaders = @ResponseHeader(name = "Location", description = "The created Work resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Work representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Work representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createWorks(@PathParam("orcid") String orcid, WorkBulk works) {
@@ -311,7 +341,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     @ApiOperation( nickname="createFundingV3dev", value = "Create a Funding", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Funding created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 201, message = "Funding created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Funding resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Funding representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Funding representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createFunding(@PathParam("orcid") String orcid, Funding funding) {
@@ -439,7 +469,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     @ApiOperation( nickname="createEmploymentV3dev", value = "Create an Employment", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Employment created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 201, message = "Employment created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Employment resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Employment representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Employment representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createEmployment(@PathParam("orcid") String orcid, Employment employment) {
@@ -501,7 +531,7 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     @ApiOperation( nickname="createPeerReviewV3dev", value = "Create a Peer Review", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Peer Review created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
+            @ApiResponse(code = 201, message = "Peer Review created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Peer Review resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Peer Review representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Peer Review representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createPeerReview(@PathParam("orcid") String orcid, PeerReview peerReview) {
@@ -956,10 +986,335 @@ public class MemberV3ApiServiceImplV3_0_dev1 extends MemberApiServiceImplHelper 
     @GET
     @Path(CLIENT_PATH)
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @ApiOperation( nickname="viewClientV3dev", value = "Fetch client details", authorizations = {
+    @ApiOperation(nickname = "viewClientV3dev", value = "Fetch client details", authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewClient(@PathParam("client_id") String clientId) {
         return serviceDelegator.viewClient(clientId);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTION + PUTCODE)
+    @ApiOperation(nickname = "viewDistinctionV3dev", value = "Fetch an Distinction", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Distinction.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewDistinction(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewDistinction(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTIONS)
+    @ApiOperation(nickname = "viewDistinctionsV3dev", value = "Fetch all distinctions", response = Distinctions.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewDistinctions(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewDistinctions(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTION_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewDistinctionSummaryV3dev", value = "Fetch an Distinction summary", response = DistinctionSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewDistinctionSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewDistinctionSummary(orcid, getPutCode(putCode));
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTION)
+    @ApiOperation(nickname = "createDistinctionV3dev", value = "Create an Distinction", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Distinction created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Distinction resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Distinction representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Distinction representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createDistinction(@PathParam("orcid") String orcid, Distinction distinction) {
+        return serviceDelegator.createDistinction(orcid, distinction);
+    }
+
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTION + PUTCODE)
+    @ApiOperation(nickname = "updateDistinctionV3dev", value = "Update an Distinction", response = Distinction.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Distinction updated") })
+    public Response updateDistinction(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Distinction distinction) {
+        return serviceDelegator.updateDistinction(orcid, getPutCode(putCode), distinction);
+    }
+
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(DISTINCTION + PUTCODE)
+    @ApiOperation(nickname = "deleteDistinctionV3dev", value = "Delete an Distinction", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "Distinction deleted") })
+    public Response deleteDistinction(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteAffiliation(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITION + PUTCODE)
+    @ApiOperation(nickname = "viewInvitedPositionV3dev", value = "Fetch an InvitedPosition", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = InvitedPosition.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewInvitedPosition(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewInvitedPosition(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITIONS)
+    @ApiOperation(nickname = "viewInvitedPositionsV3dev", value = "Fetch all invitedPositions", response = InvitedPositions.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewInvitedPositions(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewInvitedPositions(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITION_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewInvitedPositionSummaryV3dev", value = "Fetch an InvitedPosition summary", response = InvitedPositionSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewInvitedPositionSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewInvitedPositionSummary(orcid, getPutCode(putCode));
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITION)
+    @ApiOperation(nickname = "createInvitedPositionV3dev", value = "Create an InvitedPosition", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "InvitedPosition created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created InvitedPosition resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid InvitedPosition representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid InvitedPosition representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createInvitedPosition(@PathParam("orcid") String orcid, InvitedPosition invitedPosition) {
+        return serviceDelegator.createInvitedPosition(orcid, invitedPosition);
+    }
+
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITION + PUTCODE)
+    @ApiOperation(nickname = "updateInvitedPositionV3dev", value = "Update an InvitedPosition", response = InvitedPosition.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "InvitedPosition updated") })
+    public Response updateInvitedPosition(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, InvitedPosition invitedPosition) {
+        return serviceDelegator.updateInvitedPosition(orcid, getPutCode(putCode), invitedPosition);
+    }
+
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(INVITED_POSITION + PUTCODE)
+    @ApiOperation(nickname = "deleteInvitedPositionV3dev", value = "Delete an InvitedPosition", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "InvitedPosition deleted") })
+    public Response deleteInvitedPosition(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteAffiliation(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIP + PUTCODE)
+    @ApiOperation(nickname = "viewMembershipV3dev", value = "Fetch an Membership", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Membership.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewMembership(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewMembership(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIPS)
+    @ApiOperation(nickname = "viewMembershipsV3dev", value = "Fetch all memberships", response = Memberships.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewMemberships(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewMemberships(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIP_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewMembershipSummaryV3dev", value = "Fetch an Membership summary", response = MembershipSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewMembershipSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewMembershipSummary(orcid, getPutCode(putCode));
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIP)
+    @ApiOperation(nickname = "createMembershipV3dev", value = "Create an Membership", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Membership created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Membership resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Membership representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Membership representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createMembership(@PathParam("orcid") String orcid, Membership membership) {
+        return serviceDelegator.createMembership(orcid, membership);
+    }
+
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIP + PUTCODE)
+    @ApiOperation(nickname = "updateMembershipV3dev", value = "Update an Membership", response = Membership.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Membership updated") })
+    public Response updateMembership(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Membership membership) {
+        return serviceDelegator.updateMembership(orcid, getPutCode(putCode), membership);
+    }
+
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(MEMBERSHIP + PUTCODE)
+    @ApiOperation(nickname = "deleteMembershipV3dev", value = "Delete an Membership", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "Membership deleted") })
+    public Response deleteMembership(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteAffiliation(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATION + PUTCODE)
+    @ApiOperation(nickname = "viewQualificationV3dev", value = "Fetch an Qualification", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Qualification.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewQualification(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewQualification(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATIONS)
+    @ApiOperation(nickname = "viewQualificationsV3dev", value = "Fetch all qualifications", response = Qualifications.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewQualifications(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewQualifications(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATION_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewQualificationSummaryV3dev", value = "Fetch an Qualification summary", response = QualificationSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewQualificationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewQualificationSummary(orcid, getPutCode(putCode));
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATION)
+    @ApiOperation(nickname = "createQualificationV3dev", value = "Create an Qualification", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Qualification created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Qualification resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Qualification representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Qualification representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createQualification(@PathParam("orcid") String orcid, Qualification qualification) {
+        return serviceDelegator.createQualification(orcid, qualification);
+    }
+
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATION + PUTCODE)
+    @ApiOperation(nickname = "updateQualificationV3dev", value = "Update an Qualification", response = Qualification.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Qualification updated") })
+    public Response updateQualification(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Qualification qualification) {
+        return serviceDelegator.updateQualification(orcid, getPutCode(putCode), qualification);
+    }
+
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(QUALIFICATION + PUTCODE)
+    @ApiOperation(nickname = "deleteQualificationV3dev", value = "Delete an Qualification", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "Qualification deleted") })
+    public Response deleteQualification(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteAffiliation(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICE + PUTCODE)
+    @ApiOperation(nickname = "viewServiceV3dev", value = "Fetch an Service", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Service.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewService(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewService(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICES)
+    @ApiOperation(nickname = "viewServicesV3dev", value = "Fetch all services", response = Services.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewServices(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewServices(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICE_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewServiceSummaryV3dev", value = "Fetch an Service summary", response = ServiceSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewServiceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewServiceSummary(orcid, getPutCode(putCode));
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICE)
+    @ApiOperation(nickname = "createServiceV3dev", value = "Create an Service", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Service created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Service resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Service representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid Service representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createService(@PathParam("orcid") String orcid, Service service) {
+        return serviceDelegator.createService(orcid, service);
+    }
+
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICE + PUTCODE)
+    @ApiOperation(nickname = "updateServiceV3dev", value = "Update an Service", response = Service.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service updated") })
+    public Response updateService(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Service service) {
+        return serviceDelegator.updateService(orcid, getPutCode(putCode), service);
+    }
+
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SERVICE + PUTCODE)
+    @ApiOperation(nickname = "deleteServiceV3dev", value = "Delete an Service", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "Service deleted") })
+    public Response deleteService(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteAffiliation(orcid, getPutCode(putCode));
     }
 }
