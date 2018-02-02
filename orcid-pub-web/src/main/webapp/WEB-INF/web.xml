@@ -80,12 +80,12 @@
 	</filter-mapping>
 
 	<filter>
-        <filter-name>pubApiDefaultVersionFilter</filter-name>
+        <filter-name>pubDefaultApiVersionFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
     <filter-mapping>
-        <filter-name>pubApiDefaultVersionFilter</filter-name>
+        <filter-name>pubDefaultApiVersionFilter</filter-name>
         <url-pattern>*</url-pattern>
     </filter-mapping>
 
