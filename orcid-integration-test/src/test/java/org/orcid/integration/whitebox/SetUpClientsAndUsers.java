@@ -21,8 +21,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -249,6 +251,10 @@ public class SetUpClientsAndUsers {
     @Value("${org.orcid.web.testClient2.website}")
     protected String client2Website;    
 
+    // read-public access token
+    @Value("${org.orcid.message-listener.api.read_public_access_token}")
+    protected String readPublicAccessToken;
+    
     @Resource
     protected OrcidProfileManager orcidProfileManager;
     @Resource
@@ -383,8 +389,46 @@ public class SetUpClientsAndUsers {
             clientDetailsManager.addScopesToClient(getScopes(client2Params, clientType), client2);
         }
         
-        //Ensure persistent tokens is disabled for client # 2
+        // Ensure persistent tokens is disabled for client # 2
         clientDetailsDao.changePersistenceTokensProperty(client2ClientId, false);  
+        
+        // Create read-public access token for client # 1
+        OrcidOauth2TokenDetail token = null;
+        try {
+            token = orcidOauth2TokenDetailDao.findByTokenValue(readPublicAccessToken);
+        } catch(Exception e) {
+            
+        }
+        if(token != null) {
+            if(token.getTokenDisabled()) {
+                token.setTokenDisabled(false);
+            }
+            token.setClientDetailsId(client1ClientId);
+            token.setRevocationDate(null);
+            token.setRevokeReason(null);
+            token.setScope("/read-public");
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.YEAR, 20);
+            token.setTokenExpiration(c.getTime());
+            orcidOauth2TokenDetailDao.merge(token);
+        } else {
+            token = new OrcidOauth2TokenDetail();
+            token.setTokenValue(readPublicAccessToken);
+            token.setApproved(true);
+            token.setClientDetailsId(client1ClientId);
+            token.setDateCreated(new Date());
+            token.setLastModified(new Date());            
+            token.setPersistent(true);
+            token.setRedirectUri(client1RedirectUri);
+            token.setResourceId("orcid");
+            token.setScope("/read-public");
+            token.setTokenType("bearer");
+            token.setTokenDisabled(false);
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.YEAR, 20);
+            token.setTokenExpiration(c.getTime());
+            orcidOauth2TokenDetailDao.persist(token);
+        }
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }

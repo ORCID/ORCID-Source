@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -39,6 +38,7 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
@@ -72,7 +72,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -135,6 +134,9 @@ public class RegistrationController extends BaseController {
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;   
     
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
         // Remove the session hash if needed
@@ -145,6 +147,7 @@ public class RegistrationController extends BaseController {
 
         reg.getEmail().setRequired(true);
         reg.getEmailConfirm().setRequired(true);
+        reg.getEmailsAdditional().get(0).setRequired(false);
         reg.getFamilyNames().setRequired(false);
         reg.getGivenNames().setRequired(true);
         reg.getSendChangeNotifications().setValue(true);
@@ -302,10 +305,11 @@ public class RegistrationController extends BaseController {
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
-        registerActivitiesVisibilityDefault(reg);
+        registerActivitiesVisibilityDefaultValidate(reg);
         regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
+        copyErrors(reg.getActivitiesVisibilityDefault(), reg);
         copyErrors(reg.getEmailConfirm(), reg);
         copyErrors(reg.getEmail(), reg);
         copyErrors(reg.getGivenNames(), reg);
@@ -346,7 +350,7 @@ public class RegistrationController extends BaseController {
     }
     
     @RequestMapping(value = "/registerActivitiesVisibilityDefault.json", method = RequestMethod.POST)
-    public @ResponseBody Registration registerActivitiesVisibilityDefault(@RequestBody Registration reg) {
+    public @ResponseBody Registration registerActivitiesVisibilityDefaultValidate(@RequestBody Registration reg) {
         activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
         return reg;
     } 
@@ -419,20 +423,17 @@ public class RegistrationController extends BaseController {
         return reg;
     }
     
-    public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
+    public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {    
+        if (reg.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(reg.getEmailsAdditional().get(0)))  {
+            return reg;     
+        } else {
             List<Text> emailsAdditionalList = new ArrayList<Text>();
             for(Text emailAdditional : reg.getEmailsAdditional()) {
                 if(!PojoUtil.isEmpty(emailAdditional)){
-                    emailAdditional.setErrors(new ArrayList<String>());
-                    
-                    if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
-                        reg.getEmail().getErrors().add(getMessage("Email.registrationForm.email"));
-                        return reg;
-                    }
+                    emailAdditional.setErrors(new ArrayList<String>());                           
             
                     String emailAddressAdditional = emailAdditional.getValue();
             
-                    MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "EmailAdditional");
                     // Validate the email address is ok        
                     if(!validateEmailAddress(emailAddressAdditional)) {
                         emailAdditional.getErrors().add(getMessage("Email.personalInfoForm.email", emailAddressAdditional));
@@ -470,22 +471,21 @@ public class RegistrationController extends BaseController {
                                 emailAdditional.getErrors().add(message);
                             }
                         } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
-                                        //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
+                            //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
                             String resendUrl = createResendClaimUrl(emailAddressAdditional, request);
                             String message = getVerifyUnclaimedMessage(emailAddressAdditional, resendUrl);
                             emailAdditional.getErrors().add(message);                                    
                         } else {
                             LOGGER.info("Email " + emailAddressAdditional + " belongs to a unclaimed record and can be auto deprecated");
                         }
-                    }
-                    
+                    }               
                     emailsAdditionalList.add(emailAdditional);
-                }
-                
+                }           
             }
             reg.setEmailsAdditional(emailsAdditionalList);
             return reg;
         }
+    }
     
     public boolean duplicateAdditionalEmails(Registration reg, String emailAddressAdditional) {
         int count = 0;
@@ -560,25 +560,27 @@ public class RegistrationController extends BaseController {
     public ModelAndView verifyEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
             throws UnsupportedEncodingException {
         try {
-            String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-            EmailEntity emailEntity = emailManager.find(decryptedEmail);
-            String emailOrcid = emailEntity.getProfile().getId();
-            if (!getCurrentUserOrcid().equals(emailOrcid)) {
-                return new ModelAndView("wrong_user");
-            }
-            emailEntity.setVerified(true);
-            emailEntity.setCurrent(true);
-            emailManager.update(emailEntity);
-            
-            profileEntityManager.updateLocale(emailOrcid, org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
-            redirectAttributes.addFlashAttribute("emailVerified", true);
-            
-            if (!emailEntity.getPrimary()) {
-                boolean isPrimaryEmailVerified = emailManager.isPrimaryEmailVerified(emailOrcid);
-                if (!isPrimaryEmailVerified) {
-                    redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
+            String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));            
+            if(emailManagerReadOnly.emailExists(decryptedEmail)) {
+                String orcid = emailManagerReadOnly.findOrcidIdByEmail(decryptedEmail);
+                if(!getCurrentUserOrcid().equals(orcid)) {
+                    return new ModelAndView("wrong_user");
                 }
-            }
+                
+                boolean verified = emailManager.verifyEmail(decryptedEmail);
+                if(verified) {
+                    profileEntityManager.updateLastModifed(orcid);
+                    profileEntityManager.updateLocale(decryptedEmail, org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+                    redirectAttributes.addFlashAttribute("emailVerified", true);
+                    if(!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
+                        if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
+                            redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
+                        }
+                    }
+                } else {
+                    redirectAttributes.addFlashAttribute("emailVerified", false);                    
+                }
+            }            
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);

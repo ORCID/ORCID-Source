@@ -53,6 +53,21 @@ public class OrcidApiConstants {
     public static final String EMPLOYMENT = "/{orcid}/employment";
     public static final String EMPLOYMENTS = "/{orcid}/employments";
     public static final String EMPLOYMENT_SUMMARY = "/{orcid}/employment/summary";
+    public static final String DISTINCTION = "/{orcid}/distinction";
+    public static final String DISTINCTIONS = "/{orcid}/distinctions";
+    public static final String DISTINCTION_SUMMARY = "/{orcid}/distinction/summary";
+    public static final String INVITED_POSITION = "/{orcid}/invited-position";
+    public static final String INVITED_POSITIONS = "/{orcid}/invited-positions";
+    public static final String INVITED_POSITION_SUMMARY = "/{orcid}/invited-position/summary";
+    public static final String MEMBERSHIP = "/{orcid}/membership";
+    public static final String MEMBERSHIPS = "/{orcid}/memberships";
+    public static final String MEMBERSHIP_SUMMARY = "/{orcid}/membership/summary";
+    public static final String QUALIFICATION = "/{orcid}/qualification";
+    public static final String QUALIFICATIONS = "/{orcid}/qualifications";
+    public static final String QUALIFICATION_SUMMARY = "/{orcid}/qualification/summary";
+    public static final String SERVICE = "/{orcid}/service";
+    public static final String SERVICES = "/{orcid}/services";
+    public static final String SERVICE_SUMMARY = "/{orcid}/service/summary";
     public static final String PUTCODE = "/{putCode}"; // concated on the end of
                                                        // other paths like
                                                        // FUNDINGS
@@ -79,10 +94,15 @@ public class OrcidApiConstants {
 
     public static final String TEXT_CSV = "text/csv";
     public static final String STATUS_OK_MESSAGE = "OK I am here";
+    public static final String ACTIVITY_DISTINCTION = "distinction";
     public static final String ACTIVITY_EDUCATION = "education";
     public static final String ACTIVITY_EMPLOYMENT = "employment";
     public static final String ACTIVITY_FUNDING = "funding";
+    public static final String ACTIVITY_INVITED_POSITION = "invited-position";
+    public static final String ACTIVITY_MEMBERSHIP = "membership";
     public static final String ACTIVITY_PEER_REVIEW = "peer-review";
+    public static final String ACTIVITY_QUALIFICATION = "qualification";
+    public static final String ACTIVITY_SERVICE = "service";
     public static final String ACTIVITY_WORK = "work";
     public static final String SWAGGER_PATH = "/resources";
     public static final String SWAGGER_FILE = "/swagger.json";

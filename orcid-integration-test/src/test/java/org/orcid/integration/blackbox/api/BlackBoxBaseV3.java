@@ -56,7 +56,6 @@ import org.orcid.core.togglz.Features;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
-import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
@@ -190,8 +189,8 @@ public class BlackBoxBaseV3 {
     public void adminSignIn(String adminUserName, String adminPassword) {
         webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         webDriver.get(this.getWebBaseUrl() + "/admin-actions");
-        SigninTest.signIn(webDriver, adminUserName, adminPassword);
-        SigninTest.dismissVerifyEmailModal(webDriver);
+        signIn(webDriver, adminUserName, adminPassword);
+        dismissVerifyEmailModal();
     }
     
     /** Used to change a togglz feature flag.
@@ -281,7 +280,7 @@ public class BlackBoxBaseV3 {
         if(logUserOut) {
             BBBUtil.logUserOut(baseUri, webDriver);
             webDriver.get(baseUri + "/account");        
-            SigninTest.signIn(webDriver, userOrcid, userPassword);
+            signIn(webDriver, userOrcid, userPassword);
             BBBUtil.noSpinners(webDriver);
             BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
         } else {
@@ -385,7 +384,7 @@ public class BlackBoxBaseV3 {
         String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");        
         webDriver.get(baseUrl + "/signin");
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        SigninTest.signIn(webDriver, userName, password);
+        signIn(webDriver, userName, password);
     }
 
     public static void signout() {
@@ -1173,6 +1172,18 @@ public class BlackBoxBaseV3 {
         emailInputElement.sendKeys(emailValue);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(saveButtonXpath)), webDriver);
         updateEmailVisibility(emailValue, visibility);
+    }
+    
+    public static void signIn(WebDriver webDriver, String username, String password) {
+        BBBUtil.signIn(webDriver, username, password);
+    }
+    
+    public static void dismissVerifyEmailModal() {
+        BBBUtil.dismissVerifyEmailModal();
+    }
+    
+    public static void colorBoxIsClosed(WebDriverWait wait) {
+        BBBUtil.colorBoxIsClosed(wait);
     }
     
     public void removeEmail(String emailValue) {

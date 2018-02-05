@@ -17,6 +17,7 @@
 package org.orcid.integration.blackbox.client;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -25,8 +26,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.common_v2.Visibility;
-
-import com.google.common.base.Predicate;
 
 /**
  * 
@@ -58,9 +57,9 @@ public class AccountSettingsPage {
     }
 
     public DelegatesSection getDelegatesSection() {
-        utils.getWait().until(new Predicate<WebDriver>() {
+        utils.getWait().until(new Function<WebDriver, Boolean>() {
             @Override
-            public boolean apply(WebDriver driver) {
+            public Boolean apply(WebDriver driver) {
                 return !xpath.isVisible("id('delegates-spinner')");
             }
         });
@@ -88,9 +87,9 @@ public class AccountSettingsPage {
             WebElement emailInputElement = xpath.waitToBeClickable("//input[@type='email']");
             emailInputElement.sendKeys(emailValue);
             xpath.click("//input[@type='email']/following-sibling::span[1]");
-            utils.getWait().until(new Predicate<WebDriver>() {
+            utils.getWait().until(new Function<WebDriver, Boolean>() {
                 @Override
-                public boolean apply(WebDriver driver) {
+                public Boolean apply(WebDriver driver) {
                     return getEmails().size() > numberOfEmailsBefore;
                 }
             });
@@ -157,9 +156,9 @@ public class AccountSettingsPage {
             final int numberOfEmailsBefore = emailsSection.getEmails().size();
             localXPath.click("td[5]/a");
             xpath.click("//button[@ng-click='deleteEmail(emailSrvc.delEmail)']");
-            utils.getWait().until(new Predicate<WebDriver>() {
+            utils.getWait().until(new Function<WebDriver, Boolean>() {
                 @Override
-                public boolean apply(WebDriver driver) {
+                public Boolean apply(WebDriver driver) {
                     return emailsSection.getEmails().size() < numberOfEmailsBefore;
                 }
             });
@@ -227,9 +226,9 @@ public class AccountSettingsPage {
             localXPath.click("td[3]/span/span");
             xpath.click("//form[@ng-submit='addDelegate()']/button");
             utils.colorBoxIsClosed();
-            utils.getWait().until(new Predicate<WebDriver>() {
+            utils.getWait().until(new Function<WebDriver, Boolean>() {
                 @Override
-                public boolean apply(WebDriver driver) {
+                public Boolean apply(WebDriver driver) {
                     return getDelegatesSection().getDelegates().size() > numberOfDelegatesBefore;
                 }
             });

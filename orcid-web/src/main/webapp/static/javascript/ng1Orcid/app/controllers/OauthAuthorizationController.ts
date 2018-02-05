@@ -1,3 +1,5 @@
+//Migrated
+
 declare var $: any;
 declare var basePath: any;
 declare var baseUrl: any;
@@ -395,7 +397,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     dataType: 'json',
                     success: function(data) {
                         $scope.registrationForm = data;
-                        console.log($scope.registrationForm);
                         console.log(orcidVar.features);
                         if (orcidVar.features['GDPR_UI'] == true){
                             $scope.registrationForm.activitiesVisibilityDefault.visibility = null;
@@ -404,8 +405,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             $scope.registrationForm.givenNames.value=givenName;
                             $scope.registrationForm.familyNames.value=familyName;
                             $scope.registrationForm.email.value=email; 
-                        }
-                        $scope.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
+                        }                         
                         $scope.registrationForm.linkType=linkFlag;
                         $scope.$apply();
                                         
@@ -457,7 +457,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                             || $scope.registrationForm.errors.length == 0) {                            
                             $scope.showProcessingColorBox();                            
                             $scope.getDuplicates();
-                        } else {
+                        } else {   
                             if($scope.registrationForm.email.errors.length > 0) {
                                 for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
                                     $scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);

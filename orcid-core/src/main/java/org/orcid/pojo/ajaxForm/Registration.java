@@ -74,6 +74,7 @@ public class Registration implements ErrorsInterface, Serializable {
         passwordConfirm = new Text();
         email = new Text();
         emailsAdditional = new ArrayList<Text>();
+        emailsAdditional.add(new Text());
         emailConfirm = new Text();
         givenNames = new Text();
         familyNames = new Text();

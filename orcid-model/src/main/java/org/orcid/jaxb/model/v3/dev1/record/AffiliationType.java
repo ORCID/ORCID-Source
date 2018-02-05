@@ -28,11 +28,26 @@ import java.io.Serializable;
 @XmlEnum
 public enum AffiliationType implements Serializable {
 
+    @XmlEnumValue("distinction")
+    DISTINCTION("distiction"),
+    
     @XmlEnumValue("education")
     EDUCATION("education"),
 
     @XmlEnumValue("employment")
-    EMPLOYMENT("employment");
+    EMPLOYMENT("employment"),
+    
+    @XmlEnumValue("invited-postition")
+    INVITED_POSITION("invited-position"),
+    
+    @XmlEnumValue("membership")
+    MEMBERSHIP("membership"),
+    
+    @XmlEnumValue("qualification")
+    QUALIFICATION("qualification"),
+    
+    @XmlEnumValue("service")
+    SERVICE("service");
     
     private final String value;
 

@@ -57,7 +57,13 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier.class, "/record_3.0_dev1/person-external-identifier-3.0_dev1.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Keyword.class, "/record_3.0_dev1/keyword-3.0_dev1.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Address.class, "/record_3.0_dev1/address-3.0_dev1.xsd");
-
+        
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Distinction.class, "/record_3.0_dev1/distinction-3.0_dev1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.InvitedPosition.class, "/record_3.0_dev1/invited-position-3.0_dev1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Membership.class, "/record_3.0_dev1/membership-3.0_dev1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Qualification.class, "/record_3.0_dev1/qualification-3.0_dev1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Service.class, "/record_3.0_dev1/service-3.0_dev1.xsd");
+        
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Work.class, "/record_2.0/work-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Funding.class, "/record_2.0/funding-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Education.class, "/record_2.0/education-2.0.xsd");

@@ -57,7 +57,7 @@ public class OrgAffiliationRelationDaoTest extends DBUnitTest {
         long initialNumber = dao.countAll();
         long elementThatBelogsToUser = dao.getByUser(USER_ORCID).size();
         long otherUserElements = dao.getByUser(OTHER_USER_ORCID).size();
-        assertEquals(10, elementThatBelogsToUser);
+        assertEquals(35, elementThatBelogsToUser);
         assertTrue(elementThatBelogsToUser < initialNumber);
         assertEquals(3, otherUserElements);
         //Remove all elements that belongs to USER_ORCID

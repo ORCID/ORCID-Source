@@ -1,6 +1,12 @@
 [main]
 host = https://www.transifex.com
 
+[registry.about]
+file_filter = orcid-core/src/main/resources/i18n/about_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/about_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
 [registry.email]
 file_filter = orcid-core/src/main/resources/i18n/email_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_en.properties
@@ -12,7 +18,6 @@ file_filter = orcid-core/src/main/resources/i18n/identifiers_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/identifiers_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
-
 
 [registry.javascript]
 file_filter = orcid-core/src/main/resources/i18n/javascript_<lang>.properties

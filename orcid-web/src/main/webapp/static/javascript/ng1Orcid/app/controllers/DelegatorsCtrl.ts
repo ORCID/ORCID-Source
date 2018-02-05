@@ -1,3 +1,5 @@
+//Migrated
+
 declare var $: any;
 declare var getBaseUri: any;
 declare var logAjaxError: any;

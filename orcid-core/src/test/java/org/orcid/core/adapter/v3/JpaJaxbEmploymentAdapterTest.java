@@ -21,21 +21,21 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.io.StringWriter;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.adapter.v3.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -136,12 +136,20 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
     private Employment getEmployment(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/read_samples/employment-2.0.xml";
+        Marshaller m = context.createMarshaller();
+        String name = "/record_3.0_dev1/samples/read_samples/employment-3.0_dev1.xml";
         if(full) {
-            name = "/record_2.0/samples/read_samples/employment-full-2.0.xml";
+            name = "/record_3.0_dev1/samples/read_samples/employment-full-3.0_dev1.xml";
         }            
         InputStream inputStream = getClass().getResourceAsStream(name);
-        return (Employment) unmarshaller.unmarshal(inputStream);
+        Employment e = (Employment) unmarshaller.unmarshal(inputStream);
+        
+        StringWriter stringWriter = new StringWriter();
+        m.marshal(e, stringWriter);
+        System.out.println(stringWriter.toString());
+        
+        
+        return e;
     }
     
     private OrgAffiliationRelationEntity getEmploymentEntity() {
@@ -154,7 +162,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         orgEntity.setSource(new SourceEntity("APP-000000001"));
         
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
-        result.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EMPLOYMENT);
+        result.setAffiliationType(AffiliationType.EMPLOYMENT);
         result.setDepartment("employment:department");
         result.setEndDate(new EndDateEntity(2020, 2, 2));
         result.setId(123456L);

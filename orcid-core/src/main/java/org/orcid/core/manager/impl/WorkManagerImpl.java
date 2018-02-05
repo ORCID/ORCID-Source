@@ -26,10 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.ws.rs.WebApplicationException;
 
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
-import org.orcid.core.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -45,7 +43,7 @@ import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
-import org.orcid.jaxb.model.record_v2.BulkElement;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
@@ -86,8 +84,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Resource
     private LocaleManager localeManager;
-    
-    private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
     
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
@@ -213,10 +209,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
                     Work work = (Work) bulk.get(i);
                     try {
-                        work.setSource(null);
                         activityValidator.validateWork(work, sourceEntity, true, true, null);
-                        schemaValidator.validateV2(work);
-                       
+
                         //Validate it is not duplicated
                         if(work.getExternalIdentifiers() != null) {
                             for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
@@ -255,14 +249,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Add the work extIds to the list of existing external identifiers
                         addExternalIdsToExistingSet(updatedWork, existingExternalIdentifiers);
-                    } catch (WebApplicationException e) {
-                        OrcidError error = new OrcidError();
-                        error.setUserMessage(messageSource.getMessage("apiError.9001.userMessage", null, localeManager.getLocale()));
-                        error.setMoreInfo(messageSource.getMessage("apiError.9001.moreInfo", null, localeManager.getLocale()));
-                        error.setErrorCode(9001);
-                        error.setResponseCode(400);
-                        bulk.remove(i);
-                        bulk.add(i, error);
                     } catch(Exception e) {
                         //Get the exception 
                         OrcidError orcidError = orcidCoreExceptionMapper.getOrcidError(e);

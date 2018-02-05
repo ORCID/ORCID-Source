@@ -33,6 +33,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.record.util.RecordUtil;
 import org.orcid.jaxb.model.v3.dev1.common.Country;
 import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Filterable;
@@ -42,7 +44,6 @@ import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.record.util.RecordUtil;
 
 /**
  * <p>

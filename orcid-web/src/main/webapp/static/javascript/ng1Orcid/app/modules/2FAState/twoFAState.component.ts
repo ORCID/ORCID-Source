@@ -84,6 +84,7 @@ export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        this.check2FAState();
     };
 
 }

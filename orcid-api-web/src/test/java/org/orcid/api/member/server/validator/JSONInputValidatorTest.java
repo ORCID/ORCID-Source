@@ -28,10 +28,12 @@ import org.orcid.jaxb.model.v3.dev1.common.Day;
 import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.dev1.common.Month;
 import org.orcid.jaxb.model.v3.dev1.common.Year;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.test.helper.v3.Utils;
 import org.xml.sax.SAXException;
 
 public class JSONInputValidatorTest {
@@ -40,13 +42,13 @@ public class JSONInputValidatorTest {
 
     @Test
     public void testValidateJSONInputForValidV3Education() throws JAXBException, SAXException, IOException {
-        Education education = org.orcid.test.helper.v3.Utils.getEducation();
+        Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         validator.validateJSONInput(education);
     }
 
     @Test(expected = ApplicationException.class)
     public void testValidateJSONValidInputForInvalidV3Education() throws JAXBException, SAXException, IOException {
-        Education education = org.orcid.test.helper.v3.Utils.getEducation();
+        Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         education.setStartDate(null);
         validator.validateJSONInput(education);
     }
@@ -66,13 +68,13 @@ public class JSONInputValidatorTest {
 
     @Test
     public void testValidateJSONInputForValidV3Employment() throws JAXBException, SAXException, IOException {
-        Employment employment = org.orcid.test.helper.v3.Utils.getEmployment();
+        Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         validator.validateJSONInput(employment);
     }
 
     @Test(expected = InvalidJSONException.class)
     public void testValidateJSONValidInputForInvalidV3Employment() throws JAXBException, SAXException, IOException {
-        Employment employment = org.orcid.test.helper.v3.Utils.getEmployment();
+        Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setStartDate(null);
         validator.validateJSONInput(employment);
     }

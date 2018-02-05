@@ -1047,7 +1047,7 @@
 
 	<xs:simpleType name="iso-3166-country">
 		<xs:annotation>
-			<xs:documentation>ISO 3166 country codes. NOTE: the values displayed
+			<xs:documentation>ISO 3166-1 alpha-2 country codes. NOTE: the values displayed
 				to the website user are localized (translated) in the ORCID Registry
 				web interface. For reference:
 				https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n
@@ -1607,7 +1607,9 @@
 	 
 	<xs:complexType name="external-id">
 		<xs:annotation>
-			<xs:documentation>A reference to an external identifier, suitable for works, people and funding</xs:documentation>
+			<xs:documentation>A reference to an external identifier, suitable for works, people and funding. 
+				Supported external-id-type values can be found at https://pub.orcid.org/v2.0/identifiers
+			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="common:element-summary">

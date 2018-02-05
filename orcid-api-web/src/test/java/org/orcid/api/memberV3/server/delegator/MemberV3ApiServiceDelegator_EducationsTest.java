@@ -43,29 +43,35 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Keyword;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
 import org.orcid.jaxb.model.v3.dev1.record.OtherName;
 import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
@@ -83,7 +89,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
     protected final String ORCID = "0000-0000-0000-0003";
 
     @Resource(name = "memberV3ApiServiceDelegatorV3_0_dev1")
-    protected MemberV3ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
+    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -146,58 +152,58 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
 
     @Test
     public void testViewPublicEducation() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4446", 7L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
         Utils.verifyLastModified(education.getLastModifiedDate());
-        assertEquals(Long.valueOf(7L), education.getPutCode());
-        assertEquals("/4444-4444-4444-4446/education/7", education.getPath());
-        assertEquals("Education Dept # 2", education.getDepartmentName());
+        assertEquals(Long.valueOf(20L), education.getPutCode());
+        assertEquals("/0000-0000-0000-0003/education/20", education.getPath());
+        assertEquals("PUBLIC Department", education.getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
     }
 
     @Test
     public void testViewLimitedEducation() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4446", 9L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewEducation(ORCID, 21L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
         Utils.verifyLastModified(education.getLastModifiedDate());
-        assertEquals(Long.valueOf(9L), education.getPutCode());
-        assertEquals("/4444-4444-4444-4446/education/9", education.getPath());
-        assertEquals("Education Dept # 3", education.getDepartmentName());
+        assertEquals(Long.valueOf(21L), education.getPutCode());
+        assertEquals("/0000-0000-0000-0003/education/21", education.getPath());
+        assertEquals("LIMITED Department", education.getDepartmentName());
         assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
     }
 
     @Test
     public void testViewPrivateEducation() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4446", 6L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewEducation(ORCID, 22L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
         Utils.verifyLastModified(education.getLastModifiedDate());
-        assertEquals(Long.valueOf(6L), education.getPutCode());
-        assertEquals("/4444-4444-4444-4446/education/6", education.getPath());
-        assertEquals("Education Dept # 1", education.getDepartmentName());
+        assertEquals(Long.valueOf(22L), education.getPutCode());
+        assertEquals("/0000-0000-0000-0003/education/22", education.getPath());
+        assertEquals("PRIVATE Department", education.getDepartmentName());
         assertEquals(Visibility.PRIVATE.value(), education.getVisibility().value());
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateEducationWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEducation("4444-4444-4444-4446", 10L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEducation(ORCID, 26L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewEducationThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        // Education 1 belongs to 4444-4444-4444-4442
-        serviceDelegator.viewEducation("4444-4444-4444-4446", 1L);
+        // Education 20 belongs to 0000-0000-0000-0003
+        serviceDelegator.viewEducation("4444-4444-4444-4446", 20L);
         fail();
     }
 
@@ -253,7 +259,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         serviceDelegator.viewEducationSummary(ORCID, 21L);
         // Limited that am not the source of should fail
         try {
-            serviceDelegator.viewEducation(ORCID, 23L);
+            serviceDelegator.viewEducation(ORCID, 25L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -262,7 +268,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         }
 
         try {
-            serviceDelegator.viewEducationSummary(ORCID, 23L);
+            serviceDelegator.viewEducationSummary(ORCID, 25L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -275,7 +281,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         serviceDelegator.viewEducationSummary(ORCID, 22L);
         // Private that am not the source of should fails
         try {
-            serviceDelegator.viewEducation(ORCID, 24L);
+            serviceDelegator.viewEducation(ORCID, 26L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -284,7 +290,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         }
 
         try {
-            serviceDelegator.viewEducationSummary(ORCID, 24L);
+            serviceDelegator.viewEducationSummary(ORCID, 26L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -295,8 +301,8 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
 
     @Test
     public void testAddEducation() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewActivities("4444-4444-4444-4442");
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
@@ -306,9 +312,9 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(summary.getEducations().getSummaries());
         assertNotNull(summary.getEducations().getSummaries().get(0));
         Utils.verifyLastModified(summary.getEducations().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(Long.valueOf(1), summary.getEducations().getSummaries().get(0).getPutCode());
+        assertEquals(4, summary.getEducations().getSummaries().size());
 
-        response = serviceDelegator.createEducation("4444-4444-4444-4442", Utils.getEducation());
+        response = serviceDelegator.createEducation(ORCID, (Education) Utils.getAffiliation(AffiliationType.EDUCATION));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Map<?, ?> map = response.getMetadata();
@@ -317,46 +323,46 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
-        response = serviceDelegator.viewActivities("4444-4444-4444-4442");
+        response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
-        summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        assertNotNull(summary.getEducations());
-        Utils.verifyLastModified(summary.getEducations().getLastModifiedDate());
-        assertNotNull(summary.getEducations().getSummaries());
+        ActivitiesSummary summaryWithNewElement = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summaryWithNewElement);
+        Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
+        assertNotNull(summaryWithNewElement.getEducations());
+        Utils.verifyLastModified(summaryWithNewElement.getEducations().getLastModifiedDate());
+        assertNotNull(summaryWithNewElement.getEducations().getSummaries());
+        assertEquals(5, summaryWithNewElement.getEducations().getSummaries().size());
 
-        boolean haveOld = false;
-        boolean haveNew = false;
-
+        boolean haveNew = true;
+        
         for (EducationSummary educationSummary : summary.getEducations().getSummaries()) {
             assertNotNull(educationSummary.getPutCode());
             Utils.verifyLastModified(educationSummary.getLastModifiedDate());
-            if (educationSummary.getPutCode() == 1L) {
-                assertEquals("A Department", educationSummary.getDepartmentName());
-                haveOld = true;
-            } else {
-                assertEquals(putCode, educationSummary.getPutCode());
+            if (educationSummary.getPutCode().equals(putCode)) {
                 assertEquals("My department name", educationSummary.getDepartmentName());
                 haveNew = true;
+            } else {
+                assertTrue(summary.getEducations().getSummaries().contains(educationSummary));
             }
         }
 
-        assertTrue(haveOld);
         assertTrue(haveNew);
+        
+        //Delete the just created element
+        serviceDelegator.deleteAffiliation(ORCID, putCode);
     }
     
     @Test(expected = OrcidValidationException.class)
     public void testAddEducationNoStartDate() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Education education = Utils.getEducation();
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         education.setStartDate(null);
-        serviceDelegator.createEducation("4444-4444-4444-4442", education);
+        serviceDelegator.createEducation("0000-0000-0000-0002", education);
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddEducationsDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -374,10 +380,10 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         externalIDs.getExternalIdentifier().add(e1);
         externalIDs.getExternalIdentifier().add(e2);
 
-        Education education = Utils.getEducation();
+        Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         education.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createEducation("4444-4444-4444-4447", education);
+        Response response = serviceDelegator.createEducation(ORCID, education);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
@@ -388,24 +394,24 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         try {
-            Education duplicate = Utils.getEducation();
+            Education duplicate = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
             duplicate.setExternalIDs(externalIDs);
-            serviceDelegator.createEducation("4444-4444-4444-4447", duplicate);
+            serviceDelegator.createEducation(ORCID, duplicate);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode);
+            serviceDelegator.deleteAffiliation(ORCID, putCode);
         }
     }
 
 
     @Test
     public void testUpdateEducation() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
-        assertEquals("Another Department", education.getDepartmentName());
-        assertEquals("Student", education.getRoleTitle());
+        assertEquals("PUBLIC Department", education.getDepartmentName());
+        assertEquals("PUBLIC", education.getRoleTitle());
         Utils.verifyLastModified(education.getLastModifiedDate());
 
         LastModifiedDate before = education.getLastModifiedDate();
@@ -419,11 +425,11 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         disambiguatedOrg.setDisambiguationSource("WDB");
         education.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
+        response = serviceDelegator.updateEducation(ORCID, 20L, education);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        response = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(response);
         education = (Education) response.getEntity();
         assertNotNull(education);
@@ -433,46 +439,46 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertEquals("The updated role title", education.getRoleTitle());
 
         // Rollback changes
-        education.setDepartmentName("Another Department");
-        education.setRoleTitle("Student");
+        education.setDepartmentName("PUBLIC Department");
+        education.setRoleTitle("PUBLIC");
 
-        response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
+        response = serviceDelegator.updateEducation(ORCID, 20L, education);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateEducationYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4442", 1L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation(ORCID, 25L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
         education.setDepartmentName("Updated department name");
         education.setRoleTitle("The updated role title");
-        serviceDelegator.updateEducation("4444-4444-4444-4442", 1L, education);
+        serviceDelegator.updateEducation(ORCID, 25L, education);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateEducationChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
         assertEquals(Visibility.PUBLIC, education.getVisibility());
 
-        education.setVisibility(education.getVisibility().equals(Visibility.PRIVATE) ? Visibility.LIMITED : Visibility.PRIVATE);
+        education.setVisibility(Visibility.PRIVATE);
 
-        response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
+        response = serviceDelegator.updateEducation(ORCID, 20L, education);
         fail();
     }
 
     @Test
     public void testUpdateEducationLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
@@ -480,7 +486,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         
         education.setVisibility(null);
 
-        response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
+        response = serviceDelegator.updateEducation(ORCID, 20L, education);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         education = (Education) response.getEntity();
@@ -490,7 +496,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testUpdateEducationDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -508,10 +514,10 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         externalIDs.getExternalIdentifier().add(e1);
         externalIDs.getExternalIdentifier().add(e2);
 
-        Education education = Utils.getEducation();
+        Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         education.setExternalIDs(externalIDs);
 
-        Response response = serviceDelegator.createEducation("4444-4444-4444-4447", education);
+        Response response = serviceDelegator.createEducation(ORCID, education);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
@@ -521,8 +527,8 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
-        Education another = Utils.getEducation();
-        response = serviceDelegator.createEducation("4444-4444-4444-4447", another);
+        Education another = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
+        response = serviceDelegator.createEducation(ORCID, another);
         
         map = response.getMetadata();
         assertNotNull(map);
@@ -530,37 +536,43 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         resultWithPutCode = (List<?>) map.get("Location");
         Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
         
-        response = serviceDelegator.viewEducation("4444-4444-4444-4447", putCode2);
+        response = serviceDelegator.viewEducation(ORCID, putCode2);
         another = (Education) response.getEntity();
         another.setExternalIDs(externalIDs);
         
         try {
-            serviceDelegator.updateEducation("4444-4444-4444-4447", putCode2, another);
+            serviceDelegator.updateEducation(ORCID, putCode2, another);
         } finally {
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode1);
-            serviceDelegator.deleteAffiliation("4444-4444-4444-4447", putCode2);
+            serviceDelegator.deleteAffiliation(ORCID, putCode1);
+            serviceDelegator.deleteAffiliation(ORCID, putCode2);
         }
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void testDeleteEducation() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4447", 12L);
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation("0000-0000-0000-0002", 1001L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
 
-        response = serviceDelegator.deleteAffiliation("4444-4444-4444-4447", 12L);
+        response = serviceDelegator.deleteAffiliation("0000-0000-0000-0002", 1001L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
-        serviceDelegator.viewEducation("4444-4444-4444-4447", 12L);
+        try {
+        serviceDelegator.viewEducation("0000-0000-0000-0002", 1001L);
+        fail();
+        }catch(NoResultException nre) {
+            
+        } catch(Exception e) {
+            fail();
+        }
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteEducationYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 9L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deleteAffiliation(ORCID, 23L);
         fail();
     }
 

@@ -27,12 +27,14 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.record.bulk.BulkElementContainer;
 import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "bulk" })
 @XmlRootElement(name = "bulk", namespace=  "http://www.orcid.org/ns/bulk")
-public class WorkBulk implements Serializable {    
+public class WorkBulk implements Serializable, BulkElementContainer {    
     private static final long serialVersionUID = 1338769097760031210L;
     
     @XmlElements({

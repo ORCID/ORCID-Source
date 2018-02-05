@@ -60,11 +60,22 @@ import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl;
+import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
+import org.orcid.core.togglz.Features;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -78,16 +89,16 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     private String pubBaseUri;
 
     @Context
-    private UriInfo uriInfo;
+    protected UriInfo uriInfo;
 
-    private OrcidApiServiceDelegator orcidApiServiceDelegator;
+    protected OrcidApiServiceDelegator orcidApiServiceDelegator;
 
     /**
      * Only used if service delegator is not set and this bean needs to
      * configure one for itself.
      */
     private String externalVersion;
-
+    
     /**
      * Only used if service delegator is not set and this bean needs to
      * configure one for itself.
@@ -553,7 +564,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         return xmlQueryResults;
     }
 
-    private void registerSearchMetrics(Response results) {
+    protected void registerSearchMetrics(Response results) {
         OrcidMessage orcidMessage = (OrcidMessage) results.getEntity();
         if (orcidMessage != null && orcidMessage.getOrcidSearchResults() != null && !orcidMessage.getOrcidSearchResults().getOrcidSearchResult().isEmpty()) {
             return;

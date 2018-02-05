@@ -27,15 +27,14 @@ import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.common.Filterable;
 import org.orcid.jaxb.model.v3.dev1.common.VisibilityType;
 import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.dev1.record.ActivitiesContainer;
 import org.orcid.jaxb.model.v3.dev1.record.Activity;
 import org.orcid.jaxb.model.v3.dev1.record.Addresses;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
 import org.orcid.jaxb.model.v3.dev1.record.Group;
 import org.orcid.jaxb.model.v3.dev1.record.GroupableActivity;
@@ -50,6 +49,7 @@ import org.orcid.jaxb.model.v3.dev1.record.Record;
 import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV3 {
@@ -84,13 +84,27 @@ public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV
         if (activitiesSummary == null) {
             return;
         }
+        if (activitiesSummary.getDistinctions() != null) {
+            filter(activitiesSummary.getDistinctions());
+        }
         if (activitiesSummary.getEmployments() != null) {
             filter(activitiesSummary.getEmployments());
         }
         if (activitiesSummary.getEducations() != null) {
             filter(activitiesSummary.getEducations());
         }
-
+        if (activitiesSummary.getInvitedPositions() != null) {
+            filter(activitiesSummary.getInvitedPositions());
+        }
+        if (activitiesSummary.getMemberships() != null) {
+            filter(activitiesSummary.getMemberships());
+        }
+        if (activitiesSummary.getQualifications() != null) {
+            filter(activitiesSummary.getQualifications());
+        }
+        if (activitiesSummary.getServices() != null) {
+            filter(activitiesSummary.getServices());
+        }
         if (activitiesSummary.getFundings() != null) {
             filter(activitiesSummary.getFundings());
         }

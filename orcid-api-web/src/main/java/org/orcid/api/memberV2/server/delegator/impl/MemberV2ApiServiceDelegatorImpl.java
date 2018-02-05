@@ -344,6 +344,14 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createWorks(String orcid, WorkBulk works) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
+        if (works != null) {
+            for (int i = 0; i < works.getBulk().size(); i++) {
+                if (Work.class.isAssignableFrom(works.getBulk().get(i).getClass())) {
+                    Work work = (Work) works.getBulk().get(i);
+                    clearSource(work);
+                }
+            }
+        }
         works = workManager.createWorks(orcid, works);
         sourceUtils.setSourceName(works);
         return Response.ok(works).build();

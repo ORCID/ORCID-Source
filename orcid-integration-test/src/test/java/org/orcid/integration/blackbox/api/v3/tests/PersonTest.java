@@ -36,6 +36,9 @@ import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v3.dev1.BlackBoxBaseV3_0_dev1;
 import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.dev1.common.Url;
+import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -330,4 +333,22 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
     public String getAccessToken() throws InterruptedException, JSONException {
         return getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED));
     }
+    
+    /**
+     * EXTERNAL IDENTIFIERS
+     * 
+     * External identifiers can't be added through the UI
+     * */
+    public Long createExternalIdentifier(String value, String userOrcid, String accessToken) {
+        PersonExternalIdentifier e = new PersonExternalIdentifier();
+        e.setValue(value);
+        e.setType("test");
+        e.setUrl(new Url("http://test.orcid.org"));
+        e.setRelationship(Relationship.SELF);
+        ClientResponse response = memberV3Dev1ApiClientImpl.createExternalIdentifier(userOrcid, e, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        return getPutCodeFromResponse(response);                       
+    }   
+
 }

@@ -39,24 +39,20 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.common.Filterable;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.common.VisibilityType;
 import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
@@ -67,6 +63,10 @@ import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.dev1.record.Record;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -304,6 +304,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         // Check the token
         isMyToken(orcid);
 
+        // Distinctions
+        if (activities.getDistinctions() != null) {
+            checkAndFilter(orcid, activities.getDistinctions().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
         // Educations
         if (activities.getEducations() != null) {
             checkAndFilter(orcid, activities.getEducations().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
@@ -312,6 +317,26 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         // Employments
         if (activities.getEmployments() != null) {
             checkAndFilter(orcid, activities.getEmployments().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
+        // Invited positions
+        if (activities.getInvitedPositions() != null) {
+            checkAndFilter(orcid, activities.getInvitedPositions().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
+        // Memberships
+        if (activities.getMemberships() != null) {
+            checkAndFilter(orcid, activities.getMemberships().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
+        // Qualifications
+        if (activities.getQualifications() != null) {
+            checkAndFilter(orcid, activities.getQualifications().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+        }
+        
+        // Services
+        if (activities.getServices() != null) {
+            checkAndFilter(orcid, activities.getServices().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
 
         // Funding
