@@ -95,7 +95,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.empty")));
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.website.empty")));
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.short_description.empty")));
-        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
+        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.empty_redirect_uri")));
     }
 
     @Test
@@ -156,7 +156,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         List<String> errors = client.getErrors();
         assertEquals(2, errors.size());
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.150")));
-        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
+        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.empty_redirect_uri")));
         
         // Test invalid redirect uris
         client = controller.getEmptyClient();
@@ -173,7 +173,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         client = controller.createClient(client);
         errors = client.getErrors();
         assertEquals(1, errors.size());
-        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
+        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.empty_redirect_uri")));
 
         RedirectUri two = new RedirectUri();
         two.setType(Text.valueOf("grant-read-wizard"));
@@ -185,7 +185,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         client = controller.createClient(client);
         errors = client.getErrors();
         assertEquals(2, errors.size());
-        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
+        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.empty_redirect_uri")));
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.empty_scopes")));
     }
 
@@ -208,7 +208,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         List<String> errors = client.getErrors();
         assertEquals(2, errors.size());
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.150")));
-        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
+        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.empty_redirect_uri")));
         
         // Test invalid redirect uris
         client = controller.getEmptyClient();
@@ -225,7 +225,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         client = controller.editClient(client);
         errors = client.getErrors();
         assertEquals(1, errors.size());
-        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
+        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.empty_redirect_uri")));
 
         RedirectUri two = new RedirectUri();
         two.setType(Text.valueOf("grant-read-wizard"));
@@ -237,7 +237,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         client = controller.editClient(client);
         errors = client.getErrors();
         assertEquals(2, errors.size());
-        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
+        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.empty_redirect_uri")));
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.empty_scopes")));
     }
 

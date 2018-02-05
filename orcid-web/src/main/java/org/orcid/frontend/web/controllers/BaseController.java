@@ -60,7 +60,9 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
+import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
@@ -69,6 +71,7 @@ import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
@@ -100,6 +103,9 @@ public class BaseController {
                                                          // "http", "https",
                                                          // "ftp"
     UrlValidator urlValidator = new OrcidUrlValidator(urlValschemes);
+    
+    String[] redirectUriSchemes = { "http", "https" };
+    UrlValidator redirectUriValidator = new RedirectUriValidator(redirectUriSchemes);
 
     private String devSandboxUrl;
 
@@ -734,6 +740,36 @@ public class BaseController {
                     setError(url, errorCode);
             }
         }
+    }
+    
+    /**
+     * Checks if a redirect uri contains a valid URI associated to it
+     * 
+     * @param redirectUri
+     * @return null if there are no errors, an List of strings containing error
+     *         messages if any error happens
+     * */
+    protected RedirectUri validateRedirectUri(RedirectUri redirectUri) {
+        redirectUri.setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(redirectUri.getValue())) {
+            try {
+                String redirectUriString = redirectUri.getValue().getValue();
+                if (!redirectUriValidator.isValid(redirectUriString)) {
+                    redirectUriString = "http://" + redirectUriString;
+                    if (redirectUriValidator.isValid(redirectUriString)) {
+                        redirectUri.getValue().setValue(redirectUriString);
+                    } else {
+                        redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                    }
+                }
+            } catch (NullPointerException npe) {
+                redirectUri.getErrors().add(getMessage("manage.developer_tools.empty_redirect_uri"));
+            }
+        } else {
+            redirectUri.getErrors().add(getMessage("manage.developer_tools.empty_redirect_uri"));
+        }
+
+        return redirectUri;
     }
 
     protected void validateNoLongerThan(int maxLength, Text text) {

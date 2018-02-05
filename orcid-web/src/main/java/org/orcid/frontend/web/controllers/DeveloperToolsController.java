@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -216,16 +215,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(client.getWebsite())) {
             client.getWebsite().setErrors(Arrays.asList(getMessage("manage.developer_tools.website_not_empty")));
         } else {
-            String[] schemes = { "http", "https", "ftp" };
-            UrlValidator urlValidator = new UrlValidator(schemes);
-            String websiteString = client.getWebsite().getValue();
-            if (!urlValidator.isValid(websiteString))
-                websiteString = "http://" + websiteString;
-
-            // test validity again
-            if (!urlValidator.isValid(websiteString)) {
-                client.getWebsite().getErrors().add(getMessage("manage.developer_tools.invalid_website"));
-            }          
+            validateUrl(client.getWebsite(), "manage.developer_tools.invalid_website");
         }
         copyErrors(client.getWebsite(), client);
         
@@ -238,40 +228,12 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         } else {
             for (RedirectUri rUri : client.getRedirectUris()) {
                 validateRedirectUri(rUri);
+                if (!RedirectUriType.SSO_AUTHENTICATION.value().equals(rUri.getType().getValue()))  {
+                    rUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                }
                 copyErrors(rUri, client);
             }
         }                
-    }
-
-    /**
-     * Checks if a redirect uri contains a valid URI associated to it
-     * 
-     * @param redirectUri
-     * @return null if there are no errors, an List of strings containing error
-     *         messages if any error happens
-     * */
-    private RedirectUri validateRedirectUri(RedirectUri redirectUri) {
-        String[] schemes = { "http", "https" };
-        UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.ALLOW_LOCAL_URLS);
-        redirectUri.setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(redirectUri.getValue())) {
-            try {
-                String redirectUriString = redirectUri.getValue().getValue();
-                if (!urlValidator.isValid(redirectUriString)) {
-                    redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
-                }
-                
-                if (!RedirectUriType.SSO_AUTHENTICATION.value().equals(redirectUri.getType().getValue()))  {
-                    redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
-                }
-            } catch (NullPointerException npe) {
-                redirectUri.getErrors().add(getMessage("manage.developer_tools.empty_redirect_uri"));
-            }
-        } else {
-            redirectUri.getErrors().add(getMessage("manage.developer_tools.empty_redirect_uri"));
-        }
-
-        return redirectUri;
     }
 
     /**
