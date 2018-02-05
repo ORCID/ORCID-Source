@@ -502,13 +502,22 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public boolean deprecateProfile(String toDeprecate, String primaryOrcid) {
-        Query query = entityManager.createQuery(
-                "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, activitiesVisibilityDefault = :defaultVisibility where orcid = :orcid");
+    public boolean deprecateProfile(String toDeprecate, String primaryOrcid, String deprecatedMethod, String adminUser) {
+        StringBuilder queryString = new StringBuilder( "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, activitiesVisibilityDefault = :defaultVisibility, deprecatedMethod = :deprecatedMethod");
+        if (ProfileEntity.ADMIN_DEPRECATION.equals(deprecatedMethod) && adminUser != null) {
+            queryString.append(", deprecatingAdmin = :deprecatingAdmin");
+        }
+        queryString.append(" where orcid = :orcid");
+        
+        Query query = entityManager.createQuery(queryString.toString());
         query.setParameter("orcid", toDeprecate);
         query.setParameter("indexing_status", IndexingStatus.PENDING);
         query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
         query.setParameter("defaultVisibility", Visibility.PRIVATE);
+        query.setParameter("deprecatedMethod", deprecatedMethod);
+        if (ProfileEntity.ADMIN_DEPRECATION.equals(deprecatedMethod) && adminUser != null) {
+            query.setParameter("deprecatingAdmin", adminUser);
+        }
 
         return query.executeUpdate() > 0 ? true : false;
     }

@@ -431,11 +431,33 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testDeprecateProfile() {
         ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         assertNull(profileToDeprecate.getPrimaryRecord());
-        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
+        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442", ProfileEntity.ADMIN_DEPRECATION, "4444-4444-4444-4440");
         assertTrue(result);
         profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         profileDao.refresh(profileToDeprecate);
         assertNotNull(profileToDeprecate.getPrimaryRecord());
+        assertNotNull(profileToDeprecate.getDeprecatedMethod());
+        assertEquals(ProfileEntity.ADMIN_DEPRECATION, profileToDeprecate.getDeprecatedMethod());
+        assertNotNull(profileToDeprecate.getDeprecatingAdmin());
+        assertEquals("4444-4444-4444-4440", profileToDeprecate.getDeprecatingAdmin());
+        ProfileEntity primaryRecord = profileToDeprecate.getPrimaryRecord();
+        assertEquals("4444-4444-4444-4442", primaryRecord.getId());
+    }
+    
+    @Test
+    @Rollback(true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testAutoDeprecateProfile() {
+        ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
+        assertNull(profileToDeprecate.getPrimaryRecord());
+        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442", ProfileEntity.AUTO_DEPRECATION, null);
+        assertTrue(result);
+        profileToDeprecate = profileDao.find("4444-4444-4444-4441");
+        profileDao.refresh(profileToDeprecate);
+        assertNotNull(profileToDeprecate.getPrimaryRecord());
+        assertNotNull(profileToDeprecate.getDeprecatedMethod());
+        assertEquals(ProfileEntity.AUTO_DEPRECATION, profileToDeprecate.getDeprecatedMethod());
+        assertNull(profileToDeprecate.getDeprecatingAdmin());
         ProfileEntity primaryRecord = profileToDeprecate.getPrimaryRecord();
         assertEquals("4444-4444-4444-4442", primaryRecord.getId());
     }
