@@ -36,6 +36,9 @@ import { WorkExternalIdentifierHtmlPipe }
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
+import { LanguageNg2Module }
+    from './../language/language.ts';
+
 //User generated services
 
 import { AffiliationService } 
@@ -97,6 +100,7 @@ import { WorksService }
             CommonModule,
             FormsModule,
             //User Modules
+            //LanguageNg2Module,
             PrivacytoggleNg2Module
         ],
         declarations: [ 
@@ -121,6 +125,7 @@ import { WorksService }
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
+            //LanguageNg2Module,
             PrivacytoggleNg2Module
         ],
         providers: [

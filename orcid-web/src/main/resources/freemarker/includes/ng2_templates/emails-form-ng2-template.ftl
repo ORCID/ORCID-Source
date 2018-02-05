@@ -39,7 +39,7 @@
                                     <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
                                 </div>
                                 <!-- Unverified set primary -->
-                                <div *ngIf="emailSrvc.popUp && showUnverifiedEmailSetPrimaryBox" class="grey-box">
+                                <div class="grey-box"><!-- *ngIf="emailSrvc.popUp && showUnverifiedEmailSetPrimaryBox" -->
                                     <h4><@orcid.msg 'workspace.your_primary_email_new' /></h4>
                                     <p><@orcid.msg 'workspace.youve_changed' /></p>
                                     <p><@orcid.msg 'workspace.you_need_to_verify' /></p>
@@ -60,9 +60,9 @@
                                             </td>
                                             <!-- Set Primary options -->
                                             <td>                           
-                                                <span *ngIf="!email.primary"> <a href=""
+                                                <span > <a href=""
                                                     (click)="emailSrvc.setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
-                                                </span> <span *ngIf="email.primary" class="muted" style="color: #bd362f;">
+                                                </span> <span  class="muted" style="color: #bd362f;">
                                                     ${springMacroRequestContext.getMessage("manage.email.primary_email")}
                                                 </span>
                                             </td>

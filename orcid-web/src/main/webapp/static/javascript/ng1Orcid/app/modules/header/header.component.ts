@@ -17,7 +17,6 @@ import { Subject }
 import { Subscription }    from 'rxjs/Subscription';
 
 
-
 @Component({
     selector: 'header-ng2',
     template:  scriptTmpl("header-ng2-template")
@@ -73,6 +72,20 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    onResize(event?): void {
+        console.log("resize", event);
+        let windowWidth = getWindowWidth();
+        if(windowWidth > 767){ /* Desktop view */
+            this.menuVisible = true;
+            this.searchVisible = true;
+            this.settingsVisible = true;
+        }else{
+            this.menuVisible = false;
+            this.searchVisible = false;
+            this.settingsVisible = false;
+        }
+    };
+
     searchBlur(): void {     
         this.hideSearchFilter();
         this.conditionsActive = false;        
@@ -120,6 +133,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-
+        this.onResize();
     }; 
 }

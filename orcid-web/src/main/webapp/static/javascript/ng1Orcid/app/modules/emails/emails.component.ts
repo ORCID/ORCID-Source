@@ -76,11 +76,13 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
+                this.modalService.notifyOther({action:'open', moduleId: 'modalEmails'});
+                /*
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalAlsoKnownAsForm'});
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
+                */
             },
             error => {
                 console.log('getEmails', error);
