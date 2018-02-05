@@ -110,7 +110,7 @@ public class AdminController extends BaseController {
             result.getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
         } else {
             try {
-                boolean wasDeprecated = adminManager.deprecateProfile(result, deprecatedOrcid, primaryOrcid);
+                boolean wasDeprecated = adminManager.deprecateProfile(result, deprecatedOrcid, primaryOrcid, getCurrentUserOrcid());
                 if (wasDeprecated) {
                     ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
                     ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);
