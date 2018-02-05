@@ -793,8 +793,8 @@
     <country-form-ng2></country-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="280" elementId="modalEmails" elementWidth="500">
-    <emails-ng2></emails-ng2>
+<modalngcomponent elementHeight="600" elementId="modalEmails" elementWidth="700">
+    <emails-form-ng2></emails-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">

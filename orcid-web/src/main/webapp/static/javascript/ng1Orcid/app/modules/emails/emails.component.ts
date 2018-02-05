@@ -36,7 +36,7 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService
     ) {
         this.formData = {
-            otherNames: null
+            emails: null
         };
         this.emails = {};
     }
@@ -57,10 +57,6 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.formData = data;
-
-                if( this.formData.otherNames == null ) {
-                    this.formData.otherNames = { value: null };
-                }
 
                 //console.log('this.getForm', this.formData);
             },
