@@ -160,6 +160,12 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     public String createOrgId(OrgId orgId) {
         return retry(accessToken -> createOrgIdInSalesForce(accessToken, orgId));
     }
+    
+    @Override
+    public void removeOrgId(String salesForceObjectId) {
+        retryConsumer(accessToken -> removeOrgIdInSalesForce(accessToken, salesForceObjectId));
+    }
+
 
     @Override
     public String createContact(Contact contact) {
@@ -253,6 +259,15 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating org id in SalesForce");
         return result.optString("id");
+    }
+    
+    private void removeOrgIdInSalesForce(String accessToken, String salesForceObjectId) {
+        LOGGER.info("About to remove org id in SalesForce");
+        validateSalesForceId(salesForceObjectId);
+        WebResource resource = createObjectsResource("/Organization_Identifier__c/", salesForceObjectId);
+        ClientResponse response = doDeleteRequest(resource, accessToken);
+        checkAuthorization(response);
+        checkResponse(response, 204, "Error removing org id in SalesForce");
     }
 
     private String createContactInSalesForce(String accessToken, Contact contact) {

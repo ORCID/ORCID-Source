@@ -302,6 +302,12 @@ public class SelfServiceController extends BaseController {
         salesForceManager.createOrgId(orgId);
         return orgId;
     }
+    
+    @RequestMapping(value = "/remove-org-id.json", method = RequestMethod.POST)
+    public @ResponseBody void removeOrgId(@RequestBody OrgId orgId) {
+        checkFullAccess(orgId.getAccountId());
+        salesForceManager.removeOrgId(orgId);
+    }
 
     @RequestMapping(value = "/validate-sub-member-initial-contact-email.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberInitialContactEmail(@RequestBody SubMemberForm subMember) {
@@ -432,8 +438,8 @@ public class SelfServiceController extends BaseController {
         salesForceManager.removeOpportunity(subMember.getOpportunity());
     }
     
-    @RequestMapping(value = "/disambiguated/search/{query}", method = RequestMethod.GET)
-    public @ResponseBody List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+    @RequestMapping(value = "/disambiguated/search", method = RequestMethod.GET)
+    public @ResponseBody List<Map<String, String>> searchDisambiguated(@RequestParam("q") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
         for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit, false)) {
             datums.add(orgDisambiguated.toMap());

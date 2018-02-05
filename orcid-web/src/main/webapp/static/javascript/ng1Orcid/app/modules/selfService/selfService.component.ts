@@ -139,7 +139,7 @@ export class SelfServiceComponent {
      addOrgId(org: any) {
         let orgId: any = {};
         orgId.accountId = this.consortiaService.getAccountIdFromPath();
-        orgId.orgIdValue = org.disambiguatedAffiliationIdentifier;
+        orgId.orgIdValue = org.sourceId;
         orgId.orgIdType = org.sourceType;
         this.consortiaService.addOrgId(orgId)
             .subscribe(
@@ -148,6 +148,19 @@ export class SelfServiceComponent {
                 },
                 error => {
                     console.log('addOrgId error', error);
+                } 
+        );
+    }
+    
+    removeOrgId(orgId: any) {
+        orgId.accountId = this.consortiaService.getAccountIdFromPath();
+        this.consortiaService.removeOrgId(orgId)
+            .subscribe(
+                data => {
+                    this.getOrgIds();
+                },
+                error => {
+                    console.log('removeOrgId error', error);
                 } 
         );
     }

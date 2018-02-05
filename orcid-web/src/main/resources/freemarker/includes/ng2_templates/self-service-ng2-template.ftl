@@ -100,24 +100,47 @@
             </div>
             <!-- Org IDS -->
             <div *ngIf="orgIdsFeatureEnabled">
-                <h3>Org IDs</h3>
+                <h3><@spring.message "manage_consortium.org_ids_heading"/></h3>
                 <div>
-                    <ul>
-                        <li *ngFor="let orgId of orgIds">{{orgId.orgIdType}}: {{orgId.orgIdValue}}</li>
-                    </ul>
-                </div>
-                <form (submit)="searchOrgIds()">
-                     <input type="text" name="search" placeholder="Org ID / Org name" class="inline-input input-xlarge" [(ngModel)]="orgIdInput.text"/>
-                     <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
-                </form>
-                <div *ngIf="orgIdSearchResults.length > 0">
                     <table>
-                        <tr><th>Name</th><th>ID</th><th>ID Type</th></tr>
-                        <tr *ngFor="let org of orgIdSearchResults">
-                            <td>{{org.value}}</td><td>{{org.sourceId}}</td><td>{{org.sourceType}}</td><td (click)="addOrgId(org)">Add</td>
+                        <tr>
+                            <th><@spring.message "manage_consortium.org_id_value"/></th>
+                            <th><@spring.message "manage_consortium.org_id_type"/></th>
+                        </tr>
+                        <tr *ngFor="let orgId of orgIds">
+                            <td>{{orgId.orgIdValue}}</td>
+                            <td>{{orgId.orgIdType}}</td>
+                            <td class="tooltip-container">
+                                <a
+                                    *ngIf="memberDetails.allowedFullAccess"
+	                                (click)="removeOrgId(orgId)" 
+	                                class="glyphicon glyphicon-trash grey">
+	                                <div class="popover popover-tooltip top">
+	                                    <div class="arrow"></div>
+	                                    <div class="popover-content">
+	                                        <span><@spring.message "manage_consortium.remove_org_id"/></span>
+	                                    </div>
+	                                </div>
+	                            </a>
+	                        </td>
                         </tr>
                     </table>
                 </div>
+                <div *ngIf="memberDetails.allowedFullAccess">
+	                <h3><@spring.message "manage_consortium.add_org_ids_heading"/></h3>
+	                <form (submit)="searchOrgIds()">
+	                     <input type="text" name="search" placeholder="Org ID / Org name" class="inline-input input-xlarge" [(ngModel)]="orgIdInput.text"/>
+	                     <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
+	                </form>
+	                <div *ngIf="orgIdSearchResults.length > 0">
+	                    <table>
+	                        <tr><th><@spring.message "manage_consortium.org_name"/></th><th><@spring.message "manage_consortium.org_id_value"/></th><th><@spring.message "manage_consortium.org_id_type"/></th></tr>
+	                        <tr *ngFor="let org of orgIdSearchResults">
+	                            <td>{{org.value}}</td><td>{{org.sourceId}}</td><td>{{org.sourceType}}</td><td (click)="addOrgId(org)"><button class="btn btn-primary" value="Add"><@spring.message "manage_consortium.add_org_ids_add"/></button></td>
+	                        </tr>
+	                    </table>
+	                </div>
+	            </div>
             </div>
             <!-- Contacts -->
             <div>
@@ -187,7 +210,7 @@
                             </td>
                             <td class="tooltip-container">
                                 <a 
-                                    id="removeContactBtn" 
+                                    id="removeContactBtn"
                                     name="{{contact.email}}" 
                                     (click)="confirmRemoveContact(contact)" 
                                     *ngIf="memberDetails.allowedFullAccess 

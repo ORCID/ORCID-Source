@@ -93,6 +93,8 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     boolean checkExistingSubMember(Member member, String parentAccountId);
     
     void createOrgId(OrgId orgId);
+    
+    void removeOrgId(OrgId orgId);
 
     /**
      * 

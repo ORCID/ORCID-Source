@@ -428,6 +428,12 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         }
         salesForceContactsCache.remove(accountId);
     }
+    
+    @Override
+    public void removeOrgId(OrgId orgId) {
+        salesForceDao.removeOrgId(orgId.getId());
+        removeMemberDetailsFromCache(orgId.getAccountId());
+    }
 
     @Override
     public String createOpportunity(Opportunity opportunity) {

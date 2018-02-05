@@ -65,6 +65,8 @@ public interface SalesForceDao {
     List<OrgId> retrieveOrgIdsByAccountId(String accountId);
     
     String createOrgId(OrgId orgId);
+    
+    void removeOrgId(String salesForceObjectId);
 
     /**
      * @return The sales force object id, if valid.
