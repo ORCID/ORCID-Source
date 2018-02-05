@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.filters;
+package org.orcid.api.common.filter;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -31,18 +31,24 @@ import org.orcid.core.togglz.Features;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
+public class DefaultApiVersionFilter extends OncePerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
 
     @Resource
     protected OrcidUrlManager orcidUrlManager;
     
+    protected Features feature;
+    
+    public void setFeature(Features f) {
+        this.feature = f;
+    }
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getServletPath();
-        if (path.startsWith("/search/") || path.startsWith("/oauth/token")) {
+        if (path.startsWith("/resources/") || path.startsWith("/search/") || path.startsWith("/oauth/token") || path.startsWith("/experimental_rdf_v1/") || path.startsWith("/static/")) {
             filterChain.doFilter(request, response);
         } else {
             Matcher matcher = VERSION_PATTERN.matcher(path);
@@ -52,8 +58,8 @@ public class PubApiDefaultVersionFilter extends OncePerRequestFilter {
             }
 
             if (PojoUtil.isEmpty(version)) {
-                if (Features.PUB_API_2_0_BY_DEFAULT.isActive()) {
-                    String baseUrl = orcidUrlManager.getPubBaseUrl();                
+                if (feature.isActive()) {
+                    String baseUrl = Features.PUB_API_2_0_BY_DEFAULT.equals(feature) ? orcidUrlManager.getPubBaseUrl() : orcidUrlManager.getApiBaseUrl();                
                     String redirectUri = baseUrl + "/v2.0" + path;
                     response.sendRedirect(redirectUri);
                 } else {

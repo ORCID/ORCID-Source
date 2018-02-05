@@ -217,18 +217,20 @@
             </span>
         </div>
         <!--Recaptcha-->
-        <div>
-            <div class="bottomBuffer relative recaptcha"  id="recaptcha">
-                <div vc-recaptcha
-                theme="'light'"
-                key="model.key"
-                on-create="setRecaptchaWidgetId(widgetId)"
-                on-success="setRecatchaResponse(response)"></div>
-                    <span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
-                        <div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
-                    </span>
+        <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
+            <div>
+                <div class="bottomBuffer relative recaptcha"  id="recaptcha">
+                    <div vc-recaptcha
+                    theme="'light'"
+                    key="model.key"
+                    on-create="setRecaptchaWidgetId(widgetId)"
+                    on-success="setRecatchaResponse(response)"></div>
+                        <span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
+                            <div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
+                        </span>
+                </div>
             </div>
-        </div>
+        </@orcid.checkFeatureStatus> 
     </@orcid.checkFeatureStatus> 
     <@orcid.checkFeatureStatus featureName='GDPR_UI' enabled=false> 
         <!--Visibility default-->
@@ -251,19 +253,22 @@
                 <@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
             </div>
         </div>
+        
         <!--Recaptcha-->
-        <div>
-            <div class="bottomBuffer relative recaptcha"  id="recaptcha">
-                <div vc-recaptcha
-                theme="'light'"
-                key="model.key"
-                on-create="setRecaptchaWidgetId(widgetId)"
-                on-success="setRecatchaResponse(response)"></div>
-                    <span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
-                        <div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
-                    </span>
+        <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
+            <div>
+                <div class="bottomBuffer relative recaptcha"  id="recaptcha">
+                    <div vc-recaptcha
+                    theme="'light'"
+                    key="model.key"
+                    on-create="setRecaptchaWidgetId(widgetId)"
+                    on-success="setRecatchaResponse(response)"></div>
+                        <span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
+                            <div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
+                        </span>
+                </div>
             </div>
-        </div>
+        </@orcid.checkFeatureStatus>
         <!--Terms and conditions-->
         <div class="bottomBuffer">
             <label for="termsConditions">
