@@ -296,6 +296,13 @@ public class SelfServiceController extends BaseController {
         return salesForceManager.retrieveOrgIdsByAccountId(accountId);
     }
 
+    @RequestMapping(value = "/add-org-id.json", method = RequestMethod.POST)
+    public @ResponseBody OrgId addOrgId(@RequestBody OrgId orgId) {
+        checkFullAccess(orgId.getAccountId());
+        salesForceManager.createOrgId(orgId);
+        return orgId;
+    }
+
     @RequestMapping(value = "/validate-sub-member-initial-contact-email.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberInitialContactEmail(@RequestBody SubMemberForm subMember) {
         // validate initial contact email is correct format

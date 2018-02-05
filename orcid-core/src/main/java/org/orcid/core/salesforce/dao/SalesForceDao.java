@@ -63,6 +63,8 @@ public interface SalesForceDao {
     String retrieveConsortiumMemberRecordTypeId();
     
     List<OrgId> retrieveOrgIdsByAccountId(String accountId);
+    
+    String createOrgId(OrgId orgId);
 
     /**
      * @return The sales force object id, if valid.

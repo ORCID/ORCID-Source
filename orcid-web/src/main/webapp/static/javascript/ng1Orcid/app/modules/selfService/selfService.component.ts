@@ -41,6 +41,7 @@ export class SelfServiceComponent {
     errorAddingSubMember : boolean = false;
     errorSubMemberExists : boolean = false;
     input: any = {};
+    orgIdInput: any = {};
     newSubMember: any = {website: {errors: [], getRequiredMessage: null, required: false, value: ''}, name: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactFirstName: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactLastName: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactEmail: {errors: [], getRequiredMessage: null, required: false, value: ''}};
     newSubMemberExistingOrg : any;
     realUserOrcid = orcidVar.realOrcidId;
@@ -51,6 +52,7 @@ export class SelfServiceComponent {
     updateMemberDetailsShowLoader : boolean = false;
     successEditMemberMessage : string;
     orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
+    orgIdSearchResults: Array<object> = [];
     
     constructor(
         private commonSrvc: CommonService,
@@ -119,6 +121,34 @@ export class SelfServiceComponent {
             error => {
                 console.log('searchByEmail error', error);
             } 
+        );
+    }
+    
+    searchOrgIds() {
+        this.consortiaService.searchOrgIds(this.orgIdInput.text)
+            .subscribe(
+                data => {
+                    this.orgIdSearchResults = data;
+            },
+            error => {
+                console.log('searchOrgIds error', error);
+            } 
+        );
+    }
+    
+     addOrgId(org: any) {
+        let orgId: any = {};
+        orgId.accountId = this.consortiaService.getAccountIdFromPath();
+        orgId.orgIdValue = org.disambiguatedAffiliationIdentifier;
+        orgId.orgIdType = org.sourceType;
+        this.consortiaService.addOrgId(orgId)
+            .subscribe(
+                data => {
+                    this.getOrgIds();
+                },
+                error => {
+                    console.log('addOrgId error', error);
+                } 
         );
     }
     

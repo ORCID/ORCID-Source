@@ -155,6 +155,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     public List<OrgId> retrieveOrgIdsByAccountId(String accountId) {
         return retry(accessToken -> retrieveOrgIdsFromSalesForceByAccountId(accessToken, accountId));
     }
+    
+    @Override
+    public String createOrgId(OrgId orgId) {
+        return retry(accessToken -> createOrgIdInSalesForce(accessToken, orgId));
+    }
 
     @Override
     public String createContact(Contact contact) {
@@ -238,6 +243,16 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             return null;
         }
         return input.replace("'", "\\'");
+    }
+
+    private String createOrgIdInSalesForce(String accessToken, OrgId orgId) {
+        LOGGER.info("About to create org id in SalesForce");
+        WebResource resource = createObjectsResource("/Organization_Identifier__c/");
+        JSONObject opportunityJson = salesForceAdapter.createSaleForceRecordFromOrgId(orgId);
+        ClientResponse response = doPostRequest(resource, opportunityJson, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 201, "Error creating org id in SalesForce");
+        return result.optString("id");
     }
 
     private String createContactInSalesForce(String accessToken, Contact contact) {

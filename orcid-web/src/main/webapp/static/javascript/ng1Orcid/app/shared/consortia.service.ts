@@ -34,6 +34,8 @@ export class ConsortiaService {
     private addSubMemberUrl: string;
     private cancelSubMemberAdditionUrl: string;
     private removeSubMemberUrl: string;
+    private orgIdSearchUrl: string;
+    private addOrgIdUrl: string;
 
     constructor( private http: Http ){
         this.headers = new Headers(
@@ -58,6 +60,8 @@ export class ConsortiaService {
         this.addSubMemberUrl = getBaseUri() + '/self-service/add-sub-member.json';
         this.removeSubMemberUrl = getBaseUri() + '/self-service/remove-sub-member.json';
         this.cancelSubMemberAdditionUrl = getBaseUri() + '/self-service/cancel-sub-member-addition.json';
+        this.orgIdSearchUrl = getBaseUri() + '/self-service/disambiguated/search';
+        this.addOrgIdUrl = getBaseUri() + '/self-service/add-org-id.json';
     }
     
     notifyOther(data: any): void {
@@ -167,6 +171,22 @@ export class ConsortiaService {
         const url = `${this.orgIdsUrl}${id}`;
         return this.http.get(url)
             .map((res:Response) => res.json()).share();
+    }
+    
+    searchOrgIds(input: string): Observable<any> {
+        const url = `${this.orgIdSearchUrl}/${encodeURIComponent(input)}?limit=10`;
+        return this.http.get(url)
+            .map((res:Response) => res.json()).share();
+    }
+    
+    addOrgId(orgId: object) : Observable<any>{
+        let encoded_data = JSON.stringify(orgId);
+        return this.http.post( 
+            this.addOrgIdUrl,
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
     }
 
     validateSubMember(subMember: object) : Observable<any>{

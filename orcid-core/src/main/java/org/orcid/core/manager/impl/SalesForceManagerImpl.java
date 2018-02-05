@@ -215,17 +215,18 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             }
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public List<OrgId> retrieveOrgIdsByAccountId(String accountId) {
-        //return (List<OrgId>) salesForceOrgIdsCache.get(accountId).getObjectValue();
+        // return (List<OrgId>)
+        // salesForceOrgIdsCache.get(accountId).getObjectValue();
         return salesForceDao.retrieveOrgIdsByAccountId(accountId);
     }
-    
+
     @Override
     public List<OrgId> retrieveFreshOrgIdsByAccountId(String accountId) {
-        //salesForceOrgIdsCache.remove(accountId);
+        // salesForceOrgIdsCache.remove(accountId);
         return retrieveOrgIdsByAccountId(accountId);
     }
 
@@ -410,6 +411,22 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             removeMemberDetailsFromCache(consortiumLeadId);
             salesForceConsortiumCache.remove(consortiumLeadId);
         }
+    }
+
+    @Override
+    public void createOrgId(OrgId orgId) {
+        String accountId = orgId.getAccountId();
+        List<OrgId> existingOrgIds = salesForceDao.retrieveOrgIdsByAccountId(accountId);
+        Optional<OrgId> existingOrgId = existingOrgIds.stream().filter(o -> {
+            if (orgId.getOrgIdType().equals(o.getOrgIdType()) && orgId.getOrgIdValue().equals(o.getOrgIdValue())) {
+                return true;
+            }
+            return false;
+        }).findFirst();
+        if (!existingOrgId.isPresent()) {
+            salesForceDao.createOrgId(orgId);
+        }
+        salesForceContactsCache.remove(accountId);
     }
 
     @Override

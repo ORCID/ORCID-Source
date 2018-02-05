@@ -106,6 +106,18 @@
                         <li *ngFor="let orgId of orgIds">{{orgId.orgIdType}}: {{orgId.orgIdValue}}</li>
                     </ul>
                 </div>
+                <form (submit)="searchOrgIds()">
+                     <input type="text" name="search" placeholder="Org ID / Org name" class="inline-input input-xlarge" [(ngModel)]="orgIdInput.text"/>
+                     <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
+                </form>
+                <div *ngIf="orgIdSearchResults.length > 0">
+                    <table>
+                        <tr><th>Name</th><th>ID</th><th>ID Type</th></tr>
+                        <tr *ngFor="let org of orgIdSearchResults">
+                            <td>{{org.value}}</td><td>{{org.sourceId}}</td><td>{{org.sourceType}}</td><td (click)="addOrgId(org)">Add</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
             <!-- Contacts -->
             <div>
