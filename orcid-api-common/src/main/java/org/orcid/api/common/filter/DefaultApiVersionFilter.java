@@ -17,6 +17,8 @@
 package org.orcid.api.common.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,12 +31,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class DefaultApiVersionFilter extends OncePerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
 
+    private static final List<String> IGNORE_LIST = Arrays.asList("/resources/","/search/","/oauth/token","/experimental_rdf_v1/","/static/");
+    
+    private static final String WEBHOOK_PATH_REGEX = "^/" + OrcidStringUtils.ORCID_STRING + "/webhook/.+";
+    
+    public static final Pattern webhookPattern = Pattern
+            .compile(WEBHOOK_PATH_REGEX);
+    
     @Resource
     protected OrcidUrlManager orcidUrlManager;
     
@@ -48,7 +58,9 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getServletPath();
-        if (path.startsWith("/resources/") || path.startsWith("/search/") || path.startsWith("/oauth/token") || path.startsWith("/experimental_rdf_v1/") || path.startsWith("/static/")) {
+        if (IGNORE_LIST.stream().anyMatch(path::startsWith)) {
+            filterChain.doFilter(request, response);
+        } else if(webhookPattern.matcher(path).matches()) {
             filterChain.doFilter(request, response);
         } else {
             Matcher matcher = VERSION_PATTERN.matcher(path);
