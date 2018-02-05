@@ -648,6 +648,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         if(orcid.equals(owner)) {
             if(email.getVisibility() != null) {
                 emailManager.updateVisibility(orcid, email.getValue(), email.getVisibility());
+            
+              //TODO: Notify
             }            
         }
         return email;
@@ -659,7 +661,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
         if(orcid.equals(owner)) {
             if(email.getVisibility() != null) {
-                emailManager.updateVisibility(orcid, email.getValue(), email.getVisibility());
+                emailManager.setPrimary(orcid, email.getValue());
+                
+                //TODO: Notify
             }            
         }
         return email;
