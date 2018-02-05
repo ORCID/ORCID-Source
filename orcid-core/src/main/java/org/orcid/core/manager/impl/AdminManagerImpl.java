@@ -71,7 +71,17 @@ public class AdminManagerImpl implements AdminManager {
     
     @Override    
     @Transactional
-    public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) {        
+    public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid, String adminUser) {        
+        return deprecateProfile(result, deprecatedOrcid, primaryOrcid, ProfileEntity.ADMIN_DEPRECATION, adminUser);
+    }
+    
+    @Override    
+    @Transactional
+    public boolean autoDeprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) {        
+        return deprecateProfile(result, deprecatedOrcid, primaryOrcid, ProfileEntity.AUTO_DEPRECATION, null);
+    }
+    
+    private boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid, String deprecationMethod, String adminUser) {
         // Get deprecated profile
         ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
         ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);        
@@ -89,7 +99,7 @@ public class AdminManagerImpl implements AdminManager {
                 if (primary.getDeactivationDate() != null) {
                     result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", primaryOrcid));
                 } else {                    
-                    return profileEntityManager.deprecateProfile(deprecatedOrcid, primaryOrcid);
+                    return profileEntityManager.deprecateProfile(deprecatedOrcid, primaryOrcid, deprecationMethod, adminUser);
                 }
             }
         }

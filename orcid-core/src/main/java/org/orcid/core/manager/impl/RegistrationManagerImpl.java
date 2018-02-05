@@ -161,7 +161,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                         emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
-                        adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
+                        adminManager.autoDeprecateProfile(result, unclaimedOrcid, newUserOrcid);
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid);
                         profileEntityCacheManager.remove(unclaimedOrcid);
                         return newUserOrcid;
@@ -172,7 +172,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                         emailManager.removeEmail(unclaimedOrcid, duplicateAdditionalAddress, true);
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
-                        adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
+                        adminManager.autoDeprecateProfile(result, unclaimedOrcid, newUserOrcid);
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid);
                         profileEntityCacheManager.remove(unclaimedOrcid);
                         return newUserOrcid;
@@ -186,11 +186,11 @@ public class RegistrationManagerImpl implements RegistrationManager {
                         emailManager.removeEmail(unclaimedOrcid02, emailAddress, true);
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result01 = new ProfileDeprecationRequest();
-                        adminManager.deprecateProfile(result01, unclaimedOrcid01, newUserOrcid);
+                        adminManager.autoDeprecateProfile(result01, unclaimedOrcid01, newUserOrcid);
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid01);
                         profileEntityCacheManager.remove(unclaimedOrcid01);
                         ProfileDeprecationRequest result02 = new ProfileDeprecationRequest();
-                        adminManager.deprecateProfile(result02, unclaimedOrcid02, newUserOrcid);
+                        adminManager.autoDeprecateProfile(result02, unclaimedOrcid02, newUserOrcid);
                         notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid02);
                         profileEntityCacheManager.remove(unclaimedOrcid02);
                         return newUserOrcid;

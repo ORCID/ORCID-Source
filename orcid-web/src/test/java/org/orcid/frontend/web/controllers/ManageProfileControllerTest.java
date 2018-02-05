@@ -154,8 +154,9 @@ public class ManageProfileControllerTest {
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.eq("invalid password"), Mockito.anyString())).thenReturn(false);
-        when(mockProfileEntityManager.deprecateProfile(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
-        when(mockProfileEntityManager.deprecateProfile(Mockito.eq(DEPRECATED_USER_ORCID), Mockito.eq(USER_ORCID))).thenReturn(true);
+        when(mockProfileEntityManager.deprecateProfile(Mockito.eq(DEPRECATED_USER_ORCID), Mockito.eq(USER_ORCID), Mockito.eq(ProfileEntity.USER_DRIVEN_DEPRECATION), Mockito.isNull())).thenReturn(true);
+        when(mockProfileEntityManager.deprecateProfile(Mockito.eq(DEPRECATED_USER_ORCID), Mockito.eq(USER_ORCID), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        when(mockProfileEntityManager.deprecateProfile(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(false);
         when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
         when(mockOrcidIdentifierUtils.buildOrcidIdentifier(Mockito.anyString())).thenAnswer(new Answer<OrcidIdentifier>() {
 
