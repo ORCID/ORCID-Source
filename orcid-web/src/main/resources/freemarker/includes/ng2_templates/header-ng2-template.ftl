@@ -17,8 +17,7 @@
 
 -->
 <#macro nav></#macro>
-<#macro public nav="" >
-
+<#macro headerng2 nav="" >
 <script type="text/ng-template" id="header-ng2-template">
     <div class="header center">
         <div class="row">
@@ -103,7 +102,7 @@
                     
                     
                     <!-- Desktop / Tablet View -->
-                    <ul class="menu public" *ngIf="menuVisible == true" resize>
+                    <ul class="menu public" *ngIf="menuVisible == true" (window:resize)="onResize($event)">
                         <li class="active-trail"><a href="<@orcid.rootPath "/my-orcid" />"><@orcid.msg
                             'public-layout.edit_your_record'/></a></li>
                         <li><a href="<@orcid.rootPath "/about" />"><@orcid.msg
@@ -152,7 +151,9 @@
                                     </a></li>
                                     <@security.authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">
                                     
+                                    <!--
                                     <notifications-count-ng2></notifications-count-ng2>
+                                    -->
                                     <!--
                                     <li ng-controller="NotificationsCountCtrl">
                                         <a ${(nav=="notifications")?then('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span  ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
@@ -473,25 +474,25 @@
                     <#--<#if isProxy><#include "/common/change_proxy.ftl" /></#if>-->
                 </div>
             </#if><!--drupal menu-->
-        </div><!-- .row -->
-        <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
-            <h1>
-                <a href="${aboutUri}"><img
-                    src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>
-            </h1>
-            <p><@orcid.msg 'public-layout.logo.tagline'/></p>
-        </div>
-        <p class="see-more">${liveIds} <@orcid.msg
-             'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
-             title=""><@orcid.msg 'public-layout.see_more'/></a>
-        </p>
-        <@orcid.checkFeatureStatus featureName='SURVEY'>
-            <p class="see-more">
-              <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="_blank" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
-              <@orcid.msg 'public-layout.survey_to_tell_us'/>
+            <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
+                <h1>
+                    <a href="${aboutUri}"><img
+                        src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>
+                </h1>
+                <p><@orcid.msg 'public-layout.logo.tagline'/></p>
+            </div>
+            <p class="see-more">${liveIds} <@orcid.msg
+                 'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
+                 title=""><@orcid.msg 'public-layout.see_more'/></a>
             </p>
-        </@orcid.checkFeatureStatus>
+            <@orcid.checkFeatureStatus featureName='SURVEY'>
+                <p class="see-more">
+                  <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="_blank" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
+                  <@orcid.msg 'public-layout.survey_to_tell_us'/>
+                </p>
+            </@orcid.checkFeatureStatus>
+        </div><!-- .row -->
     </div><!-- .header -->
 </script>
-
 </#macro>
+<@headerng2></@headerng2>

@@ -793,6 +793,18 @@
     <country-form-ng2></country-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<modalngcomponent elementHeight="600" elementId="modalEmails" elementWidth="700">
+    <emails-form-ng2></emails-form-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
+    <email-unverified-warning-ng2></email-unverified-warning-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
+    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
 <modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
     <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
@@ -802,13 +814,7 @@
 </modalngcomponent><!-- Ng2 component -->  
 </@orcid.checkFeatureStatus> 
 
-<modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
-    <email-unverified-warning-ng2></email-unverified-warning-ng2>
-</modalngcomponent><!-- Ng2 component --> 
 
-<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
-    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
-</modalngcomponent><!-- Ng2 component --> 
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
