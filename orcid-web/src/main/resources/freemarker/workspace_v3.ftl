@@ -207,8 +207,8 @@
             </@orcid.checkFeatureStatus>
 
       <!-- Emails  -->
-        <emails-ng2></emails-ng2>
         <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+        <emails-ng2></emails-ng2>
         </@orcid.checkFeatureStatus>
 
       <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>      

@@ -19,7 +19,7 @@
 
 <script type="text/ng-template" id="privacy-toggle-ng2-template">
     <div class="relative" class="privacy-bar-impr">
-        <ul class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
+        <ul *ngIf="privacyNodeName" class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
             <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj[privacyNodeName]?.visibility != 'PUBLIC'}">
                 <a (click)="setPrivacy('PUBLIC')"></a>
             </li>
@@ -27,6 +27,17 @@
                 <a (click)="setPrivacy('LIMITED')"></a>
             </li>
             <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj[privacyNodeName]?.visibility != 'PRIVATE'}">
+                <a (click)="setPrivacy('PRIVATE')"></a>
+            </li>
+        </ul>
+        <ul *ngIf="!privacyNodeName" class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
+            <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj.visibility != 'PUBLIC'}">
+                <a (click)="setPrivacy('PUBLIC')"></a>
+            </li>
+            <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: dataPrivacyObj.visibility != 'LIMITED'}">
+                <a (click)="setPrivacy('LIMITED')"></a>
+            </li>
+            <li class="privateActive privateInActive" [ngClass]="{privateInActive: dataPrivacyObj.visibility != 'PRIVATE'}">
                 <a (click)="setPrivacy('PRIVATE')"></a>
             </li>
         </ul>

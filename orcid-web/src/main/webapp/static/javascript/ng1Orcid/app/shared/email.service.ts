@@ -14,10 +14,10 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class EmailService {
-    private delEmail: any;
+    public delEmail: any;
     private emails: any;
     private headers: Headers;          
-    private inputEmail: any;
+    public inputEmail: any;
     private notify = new Subject<any>();
     private primaryEmail: any;
     private unverifiedSetPrimary: boolean;
@@ -216,7 +216,49 @@ export class EmailService {
         .share();
     }
 
-    setPrimary(email, callback): void {
+    setEmailPrivacy(email): Observable<any> {
+        let encoded_data = JSON.stringify( email );
+        
+        return this.http.post( 
+            getBaseUri() + '/account/email/visibility', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {                       
+            }
+        )
+        .share();
+    }
+
+    setPrimary(email, callback?): Observable<any> {
+        let encoded_data = JSON.stringify( email );
+        
+        return this.http.post( 
+            getBaseUri() + '/account/email/setPrimary', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map(
+            (res:Response) => res.json()
+        )
+        .do(
+            (data) => {
+                this.inputEmail = data;
+                if (this.inputEmail.errors.length == 0) {
+                    this.initInputEmail();
+                    this.getEmails();
+                }                         
+            }
+        )
+        .share();
+
+        /*
+        Old code, behaviour changed with new email functionality
+
         for (let i in this.emails.emails) {
             if (this.emails.emails[i] == email) {
                 this.emails.emails[i].primary = true;
@@ -232,10 +274,18 @@ export class EmailService {
             }
         }
         this.saveEmail();
+        */
     }
 
-    verifyEmail(): Observable<any>  {
-        let _email = this.getEmailPrimary().value;
+    verifyEmail(email?): Observable<any>  {
+
+        let _email = null; 
+        if(email){
+            _email = email;
+        } else {
+            this.getEmailPrimary().value;
+        }
+        
         let myParams = new URLSearchParams();
         myParams.append('email', _email);
         let options = new RequestOptions(

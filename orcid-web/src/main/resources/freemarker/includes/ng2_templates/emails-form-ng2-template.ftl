@@ -21,7 +21,7 @@
     <div class="edit-record edit-record-emails" style="position: static">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <h1 class="lightbox-title pull-left">om.get("manage.edit.emails")</h1>
+                <h1 class="lightbox-title pull-left">{{emailsEditText}}</h1>
             </div>
         </div>
         <div class="row">
@@ -29,23 +29,19 @@
                 <table class="settings-table" style="position: static">
                     <tr>
                         <td colspan="2"  [ngClass]="{'email-pop-up' : popUp}" >
-                            <div class="editTablePadCell35" style="position: static"><!-- *ngIf="showEditEmail || emailSrvc.popUp" -->
-                                <!-- we should never see errors here, but just to be safe 
-                                <div class="orcid-error" *ngIf="emailSrvc.emails.errors.length > 0">
-                                    <span *ngFor='let error of emailSrvc.emails.errors' >{{error}}</span>
-                                </div>
-                                -->
+                            <div *ngIf="showEditEmail || popUp" class="editTablePadCell35" style="position: static"><!--  -->
+
                                 <!-- Start -->
                                 <div class="row">
                                     <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
                                 </div>
                                 <!-- Unverified set primary -->
-                                <div class="grey-box"><!-- *ngIf="emailSrvc.popUp && showUnverifiedEmailSetPrimaryBox" -->
+                                <div class="grey-box" *ngIf="popUp && showUnverifiedEmailSetPrimaryBox">
                                     <h4><@orcid.msg 'workspace.your_primary_email_new' /></h4>
                                     <p><@orcid.msg 'workspace.youve_changed' /></p>
                                     <p><@orcid.msg 'workspace.you_need_to_verify' /></p>
                                     <p><@orcid.msg 'workspace.ensure_future_access2' /><br />
-                                    <p><strong><!--{{getEmailPrimary().value}}--></strong></p>
+                                    <p><strong>{{primaryEmail}}</strong></p>
                                     <p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="articles.149457" href="${knowledgeBaseUri}/articles/149457"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="workspace.link.email.support" href="mailto:<@orcid.msg 'workspace.link.email.support' />"><@orcid.msg 'workspace.link.email.support' /></a>.</p>
                                     <div class="topBuffer">
                                         <a (click)="closeUnverifiedEmailSetPrimaryBox()"><@orcid.msg 'freemarker.btnclose' /></a>
@@ -54,16 +50,20 @@
                                 <!-- Email table -->
                                 <div class="table-responsive bottomBuffer" style="position: static">
                                     <table class="table" style="position: static">
-                                        <tr *ngFor="let email of formData.emails" class="data-row-group" name="email"><!-- | orderBy:['value']-->
+                                        <tr *ngFor="let email of formData.emails" class="data-row-group" name="email"><!-- | orderBy:['value'] -->
                                             <!-- Primary Email -->
                                             <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" >                                                     
                                                 <span>{{email.value}}</span>
                                             </td>
                                             <!-- Set Primary options -->
-                                            <td>                           
-                                                <span ><!--*ngIf="!email.primary" --> <a href=""
+                                            <!--
+                                            {{email | json}}
+                                            -->
+                                            <td>                     
+                                                <span *ngIf="!email.primary"> <a href=""
                                                     (click)="setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
-                                                </span><!--*ngIf="!email.primary" --> <span  class="muted" style="color: #bd362f;">
+                                                </span>
+                                                <span *ngIf="email.primary" class="muted" style="color: #bd362f;">
                                                     ${springMacroRequestContext.getMessage("manage.email.primary_email")}
                                                 </span>
                                             </td>
@@ -74,11 +74,17 @@
                                                 <!-- <select [(ngModel)]="email.current" 
                                                     ng-options ="emailStatusOption.val as emailStatusOption.label for emailStatusOption in emailStatusOptions"
                                                     (ngModelChange)="emailSrvc.saveEmail()">-->                
-                                                <select [(ngModel)]="email.current" 
-                                                
-                                                    ><!-- (ngModelChange)="saveEmail()" 
-                                                    <option *ngFor="let emailStatusOption.val as emailStatusOption.label for emailStatusOption of emailStatusOptions"></option>             
-                                                    -->
+                                                <select 
+                                                    [(ngModel)]="email.current" 
+                                                    (ngModelChange)="saveEmail(false)"
+                                                >
+                                                    <option 
+                                                        *ngFor="let emailStatusOption of emailStatusOptions"
+                                                        [value]="emailStatusOption.val"
+                                                    >
+                                                        {{emailStatusOption.label}}   
+                                                    </option>             
+                                                    
                                                 </select>
                                             </td>
                                             <td class="email-verified">
@@ -113,27 +119,21 @@
                                             </td>
                                             <td width="100" style="padding-top: 0; position: static">
                                                 <div class="emailVisibility" style="float: right; position: static">
-                                                    <!--
-                                                    <@orcid.privacyToggle3
-                                                        angularModel="email.visibility"
-                                                        questionClick="toggleClickPrivacyHelp(email.value)"
-                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
-                                                        publicClick="setPrivacy(email, 'PUBLIC', $event)" 
-                                                        limitedClick="setPrivacy(email, 'LIMITED', $event)" 
-                                                        privateClick="setPrivacy(email, 'PRIVATE', $event)" 
-                                                        elementId="email.value" /> 
-
-                                                        -->
+                                                    <privacy-toggle-ng2 
+                                                    [dataPrivacyObj]="email" 
+                                                    (privacyUpdate)="privacyChange($event, email)"
+                                                    elementId="email-privacy-toggle" 
+                                                    >    
+                                                    </privacy-toggle-ng2>
+                         
                                                 </div>
                                             </td>
                                         </tr>
                                     </table>            
                                     <!-- Delete Email Box -->
-                                    <div  class="delete-email-box grey-box"><!-- *ngIf="emailSrvc.popUp && showDeleteBox" -->                
+                                    <div  class="delete-email-box grey-box" *ngIf="popUp && showDeleteBox">               
                                         <div style="margin-bottom: 10px;">
-                                            <!--
-                                            <@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{delEmail.value}}
-                                            -->
+                                            <@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailService.delEmail.value}}
                                         </div>
                                         <div>
                                             <ul class="pull-right inline-list">
@@ -160,19 +160,19 @@
                                 </div>          
                                 <div class="row bottom-row" *ngIf="!isPassConfReq" >
                                     <div class="col-md-12 add-email">
-                                        <!--
+                                        
                                         <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-                                        (keyup.enter)="checkCredentials(emailSrvc.popUp)" class="input-xlarge inline-input" [(ngModel)]="emailSrvc.inputEmail.value"
+                                        (keyup.enter)="checkCredentials(popUp)" class="input-xlarge inline-input" [(ngModel)]="inputEmail.value"
                                         required />
-                                        -->
+                                        
                                         <span (click)="checkCredentials(popUp)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-                                        <!--              
+                                                    
                                         <span class="orcid-error"
-                                            *ngIf="emailSrvc.inputEmail.errors.length > 0"> <span
-                                            *ngFor='let error of emailSrvc.inputEmail.errors'
+                                            *ngIf="inputEmail.errors.length > 0"> <span
+                                            *ngFor='let error of inputEmail.errors'
                                             [innerHTML]="error"></span>
                                         </span>
-                                        -->
+                                        
                                     </div>              
                                     <div class="col-md-12">
                                         <p style="line-height: 12px;">
@@ -183,7 +183,7 @@
                                     </div>              
                                 </div>
                                 <div class="row">
-                                    <div  class="confirm-password-box grey-box"><!-- *ngIf="emailSrvc.popUp && showConfirmationBox" -->
+                                    <div  class="confirm-password-box grey-box" *ngIf="popUp && showConfirmationBox">
                                         <div style="margin-bottom: 10px;">
                                             <@orcid.msg 'check_password_modal.confirm_password' />  
                                         </div>
@@ -212,7 +212,7 @@
         </div>
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <a (click)="close()" class="cancel-option pull-right">om.get("manage.email.close")</a>
+                <a (click)="closeEditModal()" class="cancel-option pull-right"><@orcid.msg 'freemarker.btncancel' /></a>
             </div>
         </div>
     </div>
