@@ -1,3 +1,5 @@
+declare var orcidVar: any;
+
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
@@ -43,12 +45,10 @@ export class HomeComponent implements OnInit {
             }
         });
         return res;
-      }
-
+    }
 
     ngOnInit() {
-        console.log('home init test result');
-        this.blogSrvc.getBlogFeed("https://localhost/blog/feed").subscribe(
+        this.blogSrvc.getBlogFeed(orcidVar.baseUri + "/blog/feed").subscribe(
             result => {
                 this.blogFeed=this.convertToJson(result);
                 this.cdr.detectChanges(); 
