@@ -48,6 +48,8 @@ angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($
 
         getCurrentMemberDetailsBySlug: function(memberSlug) {
             var url = "";
+            serv.showGetMemberDetailsError = false;
+            serv.showMemberDetailsLoader = true;
             if(serv.currentMemberDetails == null){
                 url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
                 $.ajax({
@@ -65,6 +67,7 @@ angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($
                     serv.feed = [];
                     serv.currentMemberDetails = null;
                     serv.showMemberDetailsLoader = false;
+                    serv.showGetMemberDetailsError = true;
                     $rootScope.$apply();
                 });
             }
