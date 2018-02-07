@@ -32,6 +32,9 @@ export const EmailFrecuencyModule = angular.module(
         entryComponents: [ 
             EmailFrecuencyComponent 
         ],
+        exports: [ 
+            EmailFrecuencyComponent 
+        ],
         providers: [
             
         ]

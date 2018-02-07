@@ -201,9 +201,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--
+                                
                                 <email-frecuency-ng2></email-frecuency-ng2>
-                                -->
+                                
                             </div>
                         </td>
                     </tr>

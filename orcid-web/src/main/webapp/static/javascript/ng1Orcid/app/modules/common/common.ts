@@ -36,6 +36,9 @@ import { WorkExternalIdentifierHtmlPipe }
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
+import { EmailFrecuencyNg2Module }
+    from './../emailFrecuency/emailFrecuency.ts';
+
 import { LanguageNg2Module }
     from './../language/language.ts';
 
@@ -101,11 +104,13 @@ import { WorksService }
             FormsModule,
             //User Modules
             //LanguageNg2Module,
+            EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module
         ],
         declarations: [ 
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            EmailFrecuencyNg2Module,
             FilterImportWizardsPipe,
             LatexPipe,
             OrderByPipe,
@@ -126,6 +131,7 @@ import { WorksService }
             WorkExternalIdentifierHtmlPipe,
             //User Modules
             //LanguageNg2Module,
+            EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module
         ],
         providers: [
