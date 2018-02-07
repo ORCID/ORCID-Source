@@ -300,14 +300,5 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("email", email);
         query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0;
-    }
-
-    @Override
-    @Transactional
-    public boolean setPrimary(String orcid, String email) {
-        Query query = entityManager.createQuery("update EmailEntity set is_primary = true, lastModified=now() where email = :email and orcid = :orcid");
-        query.setParameter("orcid", orcid);
-        query.setParameter("email", email);        
-        return query.executeUpdate() > 0;
-    }
+    }    
 }

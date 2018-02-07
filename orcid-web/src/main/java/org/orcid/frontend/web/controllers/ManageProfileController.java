@@ -647,24 +647,22 @@ public class ManageProfileController extends BaseWorkspaceController {
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
         if(orcid.equals(owner)) {
             if(email.getVisibility() != null) {
+                // Updates the visibility on the given email
                 emailManager.updateVisibility(orcid, email.getValue(), email.getVisibility());
-            
-              //TODO: Notify
             }            
         }
         return email;
     }
     
     @RequestMapping(value = "/email/setPrimary", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Email setPrimary(@RequestBody org.orcid.pojo.ajaxForm.Email email) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email setPrimary(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
         String orcid = getCurrentUserOrcid();
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
-        if(orcid.equals(owner)) {
-            if(email.getVisibility() != null) {
-                emailManager.setPrimary(orcid, email.getValue());
-                
-                //TODO: Notify
-            }            
+        if(orcid.equals(owner)) {            
+            // Sets the given user as primary
+            emailManager.setPrimary(orcid, email.getValue(), request);   
+            // Updates the last modified of the record
+            profileEntityManager.updateLastModifed(orcid);
         }
         return email;
     }

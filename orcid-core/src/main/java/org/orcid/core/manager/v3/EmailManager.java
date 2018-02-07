@@ -66,5 +66,5 @@ public interface EmailManager extends EmailManagerReadOnly {
 
     boolean updateVisibility(String orcid, String email, Visibility visibility);
     
-    boolean setPrimary(String orcid, String email);
+    void setPrimary(String orcid, String email, HttpServletRequest request);
 }
