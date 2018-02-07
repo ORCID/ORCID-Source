@@ -149,4 +149,8 @@
         <property name="allowUrlEncodedSlash" value="true" />
     </bean>
         
+	<bean id="memberDefaultApiVersionFilter" class="org.orcid.api.common.filter.DefaultApiVersionFilter">
+    	<property name="feature" value="MEMBER_API_2_0_BY_DEFAULT" />
+    </bean>        
+        
 </beans>

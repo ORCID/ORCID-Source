@@ -262,4 +262,6 @@
 	<include file="/db/updates/add_revoke_reason_to_token.xml" />	
 	<include file="/db/updates/add_unique_index_on_token_value.xml" />
 	<include file="/db/updates/varchar_to_text_v2.xml" />
+	<include file="/db/updates/identifier-types/identifier-type-41-ark.xml" />
+	<include file="/db/updates/add_deprecation_method_fields.xml" />
 </databaseChangeLog>

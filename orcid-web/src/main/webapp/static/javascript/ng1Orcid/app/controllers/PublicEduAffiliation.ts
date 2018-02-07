@@ -1,3 +1,5 @@
+//migrated
+
 declare var ActSortState: any;
 declare var GroupedActivities: any;
 declare var orcidVar: any;

@@ -35,6 +35,9 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.postPasswordResetRequest = function() {
+                $scope.requestResetPassword.successMessage = null;
+                $scope.requestResetPassword.errors = null;
+                $scope.showSendResetLinkError = false;
                 $.ajax({
                     url: getBaseUri() + '/reset-password.json',
                     dataType: 'json',
@@ -64,7 +67,7 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
                         email:  $scope.userId
                     } 
                 } else if (typeof $scope.authorizationForm != "undefined" 
-                    && $scope.authorizationForm.userName.value 
+                    && $scope.authorizationForm.userName
                     && utilsService.isEmail($scope.authorizationForm.userName.value)
                 ) {
                     $scope.requestResetPassword = {

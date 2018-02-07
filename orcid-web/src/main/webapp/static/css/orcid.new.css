@@ -417,6 +417,115 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     min-height: 100%
 }
 
+.container .content-wrapper {
+        margin-top: 40px
+}
+
+#home h2 {
+    margin-top: 20px;
+}  
+
+#home .headline h1 {
+    color: #939598;
+    font-size: 38px
+}
+
+#home .headline .highlight {
+    color: #A6CE39;
+    font-size: 38px
+}
+
+#home p.description {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+#home .step{
+    margin-top: 15px;
+}
+
+#home .step span {
+    float: left;
+    display: inline-block;
+    text-align: left;
+    margin: 0;
+    padding: 0
+}
+
+#home .step span.step-headline {
+    background: #a6ce39;
+    text-align: center;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    width: 65px;
+    height: 65px;
+    color: #fff;
+    font-size: 60px;
+    padding: 12px 0 0 2px;
+    line-height: 40px
+}
+
+#home .step span.step-subheadline {
+    font-size: 24px;
+    padding-top: 10px;
+    padding-left: 15px;
+    line-height: 32px;
+    height: 75px;
+    color: #494A4C;
+}
+
+#home .step span.step-detail {
+    padding: 15px 0 0 15px;
+    font-size: 14px;
+    line-height: 22px;
+    float: left;
+    text-align: left;
+    max-width: 350px;
+    width: auto;
+    color: #494A4C;
+}
+
+#home-blog-list {
+    width: 150px;
+    float: right;
+    background: url(../img/home-sidebar-background.png) top left no-repeat #e1e2e3;
+}
+
+#home-blog-list .inner-box {
+    margin-top: 270px
+}
+
+#home-blog-list h3 {
+    color: #494A4C;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 18px
+}
+
+#home-blog-list .item-list ul {
+    list-style: none;
+    margin: 0 0 .75em;
+    padding: 0;
+}
+
+#home-blog-list .item-list ul li {
+    line-height: 16px;
+    list-style: none;
+    margin-left: 0!important;
+    text-align: left;
+    margin-bottom: 20px
+}
+
+#home-blog-list .item-list ul li a {
+    color: #297D9E!important
+}
+
+#home-blog-list .item-list ul li a:hover {
+    color: #a6ce39!important;
+    text-decoration: inherit
+}
+
 .control-group {
     margin-bottom: 10px;
     padding-left: 0

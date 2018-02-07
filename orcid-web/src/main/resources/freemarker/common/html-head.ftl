@@ -152,7 +152,10 @@
     </@orcid.checkFeatureStatus> 
 
     <!-- NG2: QA -->
-    <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <#include "/includes/ng2_templates/header-ng2-template.ftl">
+    <#include "/includes/ng2_templates/language-ng2-template.ftl">
+
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
         <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
         <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
