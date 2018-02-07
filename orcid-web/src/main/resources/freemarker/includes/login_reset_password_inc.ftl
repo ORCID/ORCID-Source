@@ -42,7 +42,7 @@
 				</div>
                 <!--General error-->
                 <div style="margin-bottom: 15px;" ng-show="showSendResetLinkError">
-                    <span class="orcid-error">${springMacroRequestContext.getMessage("Email.resetPasswordForm.error")} <a href="mailto:${springMacroRequestContext.getMessage("workspace.link.email.support")}">${springMacroRequestContext.getMessage("workspace.link.email.support")}</a></span>
+                    <span class="orcid-error">${springMacroRequestContext.getMessage("Email.resetPasswordForm.error")}</span>
                 </div>  
 				<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.sendResetLink")}</button>
 			</div>
