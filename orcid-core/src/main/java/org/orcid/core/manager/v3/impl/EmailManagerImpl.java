@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -192,7 +193,17 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
     
     @Override
-    public boolean setPrimary(String orcid, String email) {
-        return emailDao.setPrimary(orcid, email);
+    public void setPrimary(String orcid, String email, HttpServletRequest request) {
+        Email currentPrimaryEmail = this.findPrimaryEmail(orcid);
+        EmailEntity newPrimary = emailDao.find(email); 
+        if(newPrimary != null && !currentPrimaryEmail.getEmail().equals(email)) {
+            emailDao.updatePrimary(orcid, email);                 
+            notificationManager.sendEmailAddressChangedNotification(orcid, email, currentPrimaryEmail.getEmail());
+            
+            if (!newPrimary.getVerified()) {
+                notificationManager.sendVerificationEmail(orcid, email);
+                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+            }
+        }        
     }
 }
