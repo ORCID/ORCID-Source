@@ -921,4 +921,36 @@ public class ManageProfileController extends BaseWorkspaceController {
             emailManager.verifyPrimaryEmail(orcid);
         }
     }
+    
+    @Deprecated
+    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
+        org.orcid.pojo.ajaxForm.Email newPrime = null;
+        List<String> allErrors = new ArrayList<String>();
+
+        for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
+            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+            validateEmailAddress(email.getValue(), request, mbr);
+            List<String> emailErrors = new ArrayList<String>();
+            for (ObjectError oe : mbr.getAllErrors()) {
+                String msg = getMessage(oe.getCode(), email.getValue());
+                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
+                allErrors.add(msg);
+            }
+            email.setErrors(emailErrors);
+            if (email.isPrimary())
+                newPrime = email;
+        }
+
+        if (newPrime == null) {
+            allErrors.add("A Primary Email Must be selected");
+        }
+
+        emails.setErrors(allErrors);
+        if (allErrors.size() == 0) {
+            emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
+            
+        }
+        return emails;
+    }
 }

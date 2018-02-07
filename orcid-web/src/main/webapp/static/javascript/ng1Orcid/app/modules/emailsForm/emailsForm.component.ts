@@ -33,7 +33,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     /* On the template:
     <td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];">
     */
-    ///account/email/visibility y /account/email/setPrimary
+    ///account/email/visibility and /account/email/setPrimary
     @Input() emailStatusOptionsObj: any;
 
     defaultVisibility: any;
