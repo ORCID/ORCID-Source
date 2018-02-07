@@ -293,6 +293,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional
     public boolean updateVisibility(String orcid, String email, Visibility visibility) {
         Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, lastModified=now() where email = :email and orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -302,6 +303,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional
     public boolean setPrimary(String orcid, String email) {
         Query query = entityManager.createQuery("update EmailEntity set is_primary = true, lastModified=now() where email = :email and orcid = :orcid");
         query.setParameter("orcid", orcid);
