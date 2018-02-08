@@ -40,8 +40,8 @@ export class PreferencesService {
         .map((res:Response) => res.json()).share();
     }
 
-    updateEmailFrequency( obj ): Observable<any> {
-    	let encoded_data = obj; 
+    updateEmailFrequency( prefs ): Observable<any> {
+    	let encoded_data = encodeURIComponent(prefs.email_frequency); 
         return this.http.post( 
             getBaseUri() + '/account/email_preferences.json', 
             encoded_data, 
