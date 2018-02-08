@@ -27,36 +27,31 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.csrf.CsrfException;
-import org.springframework.security.web.csrf.InvalidCsrfTokenException;
-import org.springframework.security.web.csrf.MissingCsrfTokenException;
+import org.springframework.web.context.request.RequestContextHolder;
 
 public class OrcidAccessDeniedHandler extends AccessDeniedHandlerImpl {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAccessDeniedHandler.class);
-    
-    public void handle(HttpServletRequest request, HttpServletResponse response,
-            AccessDeniedException accessDeniedException) throws IOException,
-            ServletException {
-        
-        if(accessDeniedException != null) {
-            if(CsrfException.class.isAssignableFrom(accessDeniedException.getClass())) {
-                String sessionId = request.getRequestedSessionId();
+
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+        if (accessDeniedException != null) {
+            if (CsrfException.class.isAssignableFrom(accessDeniedException.getClass())) {
+                String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
                 String path = request.getRequestURL().toString();
-                String message = null;
-                if(InvalidCsrfTokenException.class.isAssignableFrom(accessDeniedException.getClass())) {
-                    message = "InvalidCsrfTokenException for session " + sessionId + " and path " + path;
-                } else if(MissingCsrfTokenException.class.isAssignableFrom(accessDeniedException.getClass())) {
-                    message = "MissingCsrfTokenException for session " + sessionId + " and path " + path;
+                LOGGER.error("Path: {} Session: {} Message: {}", new Object[] { path, sessionId, accessDeniedException.getMessage() });
+                if (path.endsWith("/userStatus.json")) {
+                    response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+                    response.getWriter().println("{\"loggedIn\":false}");
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.getWriter().println("<html><head><title>Oops an error happened!</title></head>");
+                    response.getWriter().println("<body>403</body>");
+                    response.getWriter().println("</html>");
                 }
-                LOGGER.error(message);
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().println("<html><head><title>Oops an error happened!</title></head>");
-                response.getWriter().println("<body>403</body>");
-                response.getWriter().println("</html>");
-                return;            
-            }            
+                return;
+            }
         }
-        
+
         super.handle(request, response, accessDeniedException);
     }
 }
