@@ -283,11 +283,11 @@ export class EmailService {
         if(email){
             _email = email;
         } else {
-            this.getEmailPrimary().value;
+            _email = this.getEmailPrimary();
         }
         
         let myParams = new URLSearchParams();
-        myParams.append('email', _email);
+        myParams.append('email', _email.value);
         let options = new RequestOptions(
             { headers: this.headers , search: myParams }
         );
