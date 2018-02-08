@@ -41,10 +41,7 @@ export class PreferencesService {
     }
 
     updateEmailFrequency( obj ): Observable<any> {
-        let encoded_data = JSON.stringify( obj ); //this.prefs['email_frequency']
-        
-        console.log('updateEmailFrequency', encoded_data);
-
+    	let encoded_data = obj; 
         return this.http.post( 
             getBaseUri() + '/account/email_preferences.json', 
             encoded_data, 

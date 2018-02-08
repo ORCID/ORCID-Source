@@ -213,7 +213,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     updateEmailFrequency(): void {
-        console.log('updateEmailFrequency',this.prefs.email_frequency );
         this.prefsSrvc.updateEmailFrequency( this.prefs.email_frequency )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
