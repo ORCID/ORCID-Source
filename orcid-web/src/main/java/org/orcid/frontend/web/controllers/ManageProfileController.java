@@ -631,15 +631,15 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
         
-        if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
-            errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
-        }
-
         String owner = emailManagerReadOnly.findOrcidIdByEmail(email);
         if(!currentUserOrcid.equals(owner)) {
             throw new IllegalArgumentException(email);
         }
         
+        if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
+            errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
+        }
+
         if (errors.getErrors().size() == 0) {            
             emailManager.removeEmail(currentUserOrcid, email);
         }
