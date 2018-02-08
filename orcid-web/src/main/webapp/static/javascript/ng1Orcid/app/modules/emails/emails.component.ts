@@ -66,7 +66,8 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    openEditModal(): void{      
+    openEditModal(): void{
+        console.log('openEditModal emails'); 
         this.emailService.getEmails()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(

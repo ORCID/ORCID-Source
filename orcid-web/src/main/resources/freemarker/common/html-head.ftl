@@ -173,8 +173,8 @@
 
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/my-orcid")>
         <#include "/includes/ng2_templates/email-frequency-ng2-template.ftl">
-        <#include "/includes/ng2_templates/emails-ng2-template.ftl">
         <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/emails-ng2-template.ftl">
     </#if>
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >        

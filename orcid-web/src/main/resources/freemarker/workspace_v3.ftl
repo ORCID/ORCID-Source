@@ -146,35 +146,7 @@
             </div>
             </@orcid.checkFeatureStatus>
 
-            <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
             <keywords-ng2></keywords-ng2>
-            </@orcid.checkFeatureStatus>
-
-            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-              <!-- Keywords -->         
-              <div ng-controller="KeywordsCtrl" class="workspace-section keywords">
-                <div class="workspace-section-header">
-                  <div class="workspace-section-title">
-                    <div id="open-edit-keywords" class="edit-keywords edit-option" ng-click="openEditModal()">
-                      <div class="glyphicon glyphicon-pencil">
-                        <div class="popover popover-tooltip top">
-                          <div class="arrow"></div>
-                          <div class="popover-content">
-                            <span><@orcid.msg 'manage_bio_settings.editKeywords' /></span>
-                          </div>                
-                        </div>
-                      </div>
-                    </div>
-                    <div class="workspace-section-label"><@orcid.msg 'public_profile.labelKeywords'/></div>
-                  </div>
-                  <div class="workspace-section-content">
-                    <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-                      {{ $last?keyword.content:keyword.content+ ", "}}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </@orcid.checkFeatureStatus>
 
             <!-- Websites  -->
             <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
@@ -210,31 +182,6 @@
         
         <emails-ng2></emails-ng2>
 
-
-      <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>      
-      <div ng-controller="EmailsCtrl" class="workspace-section">
-        <div class="workspace-section-header">
-          <div class="workspace-section-title">                  
-            <div class="edit-websites edit-option" ng-click="openEditModal()">
-              <div class="glyphicon glyphicon-pencil">
-                <div class="popover popover-tooltip top">
-                  <div class="arrow"></div>
-                  <div class="popover-content">
-                    <span><@orcid.msg 'manage_bio_settings.editEmails' /></span>
-                  </div>                
-                </div>
-              </div>                  
-            </div>
-            <div class="workspace-section-label"><@orcid.msg 'manage.emails'/></div>
-          </div>
-        </div> 
-        <div class="workspace-section-content">
-          <div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
-            <span ng-bind="email.value"></span>
-          </div>
-        </div>
-      </div>
-      </@orcid.checkFeatureStatus>
 
       <!--  External Identifiers -->          
       <div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
@@ -793,9 +740,18 @@
     <country-form-ng2></country-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
+    <websites-form-ng2></websites-form-ng2>
+</modalngcomponent><!-- Ng2 component -->  
+</@orcid.checkFeatureStatus> 
+
+<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
+    <keywords-form-ng2></keywords-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <modalngcomponent elementHeight="600" elementId="modalEmails" elementWidth="700">
     <emails-form-ng2 popUp="true"></emails-form-ng2>
-</modalngcomponent><!-- Ng2 component --> 
+</modalngcomponent><!-- Ng2 component -->
 
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
@@ -804,17 +760,6 @@
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
-
-<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
-    <keywords-form-ng2></keywords-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
-
-<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
-    <websites-form-ng2></websites-form-ng2>
-</modalngcomponent><!-- Ng2 component -->  
-</@orcid.checkFeatureStatus> 
-
-
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
