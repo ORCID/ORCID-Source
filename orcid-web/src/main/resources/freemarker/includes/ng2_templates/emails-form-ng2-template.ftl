@@ -18,8 +18,8 @@
 -->
 
 <script type="text/ng-template" id="emails-form-ng2-template">
-    <div class="edit-record edit-record-emails" style="position: static">
-        <div class="row">
+    <div [ngClass]="{'edit-record edit-record-emails' : popUp}" style="position: static">
+        <div class="row" *ngIf="popUp">
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <h1 class="lightbox-title pull-left">{{emailsEditText}}</h1>
             </div>
@@ -28,8 +28,8 @@
             <div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
                 <table class="settings-table" style="position: static">
                     <tr>
-                        <td colspan="2"  [ngClass]="{'email-pop-up' : popUp}" >
-                            <div *ngIf="showEditEmail || popUp" class="editTablePadCell35" style="position: static"><!--  -->
+                        <td colspan="2" [ngClass]="{'email-pop-up' : popUp}" style="border-top:0">
+                            <div class="editTablePadCell35" style="position: static">
 
                                 <!-- Start -->
                                 <div class="row">
@@ -189,9 +189,9 @@
                                         </div>
                                         <div>
                                             <label for=""><@orcid.msg 'check_password_modal.password' /></label>:   
-                                            <!--                    
-                                            <input id="check_password_modal.password" type="password" name="check_password_modal.password" [(ngModel)]="password" (keyup.enter)="submitModal(emailSrvc.popUp)"/>
-                                            -->
+                                                           
+                                            <input id="check_password_modal.password" type="password" name="check_password_modal.password" [(ngModel)]="password" (keyup.enter)="submitModal(popUp)"/>
+                                            
                                         </div>                  
                                         <div>
                                             <ul class="pull-right inline-list">
@@ -202,7 +202,52 @@
                                     </div>
                                 </div>
                                 
-                                <email-frecuency-ng2></email-frecuency-ng2>
+                                <div>
+                                    <div class="row bottomBuffer">
+                                        <strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
+                                    </div>              
+                                    <div class="control-group">
+                                        <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="manage.send_email_to_primary_2">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
+                                        <form class="form-inline">
+                                            <div class="form-group">                            
+                                                <div class="input-group">
+                                                    <!--                           
+                                                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" [(ngModel)]="prefsSrvc.prefs['email_frequency']" (ngModelChange)="prefsSrvc.clearMessage()">
+                                                        <#list sendEmailFrequencies?keys as key>
+                                                            <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                        </#list>
+                                                    </select>
+                                                    -->
+                                                    <select 
+                                                    [(ngModel)]="prefs.email_frequency" 
+                                                    (ngModelChange)="clearMessage(false)"
+                                                    name="email-frequency"
+                                                    >   
+                                                        <#list sendEmailFrequencies?keys as key>
+                                                            <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                        </#list>
+                                                        <!--
+                                                        <option 
+                                                            *ngFor="let emailStatusOption of emailStatusOptions"
+                                                            [value]="emailStatusOption.val"
+                                                        >
+                                                            {{emailStatusOption.label}}   
+                                                        </option>             
+                                                        -->
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <button (click)="updateEmailFrequency()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.send_email_frequency_save")}</button>
+                                            <small class="green" *ngIf="prefsSrvc.saved">${springMacroRequestContext.getMessage("manage.send_email_frequency_saved")}</small>    
+                                        </form>
+                                    </div>
+                                    <div class="control-group">
+                                        <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
+                                        <p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
+                                        <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
+                                        </p>
+                                    </div>
+                                </div>
                                 
                             </div>
                         </td>
@@ -210,7 +255,7 @@
                 </table>
             </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="popUp">
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <a (click)="closeEditModal()" class="cancel-option pull-right"><@orcid.msg 'freemarker.btncancel' /></a>
             </div>

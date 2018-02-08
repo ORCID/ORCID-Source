@@ -16,8 +16,8 @@ import 'rxjs/Rx';
 export class PreferencesService {
     private headers: Headers;
     private notify = new Subject<any>();
-    private prefs: any;
-    private saved: boolean;
+    public prefs: any;
+    public saved: boolean;
     private url: string;
     
     notifyObservable$ = this.notify.asObservable();
@@ -40,8 +40,8 @@ export class PreferencesService {
         .map((res:Response) => res.json()).share();
     }
 
-    updateEmailFrequency(): Observable<any> {
-        let encoded_data = JSON.stringify( this.prefs['email_frequency'] );
+    updateEmailFrequency( obj ): Observable<any> {
+        let encoded_data = JSON.stringify( obj ); //this.prefs['email_frequency']
         
         return this.http.post( 
             getBaseUri() + '/account/email_preferences.json', 

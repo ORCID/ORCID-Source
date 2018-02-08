@@ -207,9 +207,9 @@
             </@orcid.checkFeatureStatus>
 
       <!-- Emails  -->
-        <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+        
         <emails-ng2></emails-ng2>
-        </@orcid.checkFeatureStatus>
+
 
       <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>      
       <div ng-controller="EmailsCtrl" class="workspace-section">
@@ -794,7 +794,7 @@
 </modalngcomponent><!-- Ng2 component -->
 
 <modalngcomponent elementHeight="600" elementId="modalEmails" elementWidth="700">
-    <emails-form-ng2></emails-form-ng2>
+    <emails-form-ng2 popUp="true"></emails-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">

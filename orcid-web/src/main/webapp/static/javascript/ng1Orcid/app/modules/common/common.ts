@@ -83,6 +83,9 @@ import { ModalService }
 import { NameService } 
     from '../../shared/name.service.ts';
 
+import { PreferencesService }
+    from '../../shared/preferences.service.ts';
+
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
 
@@ -110,7 +113,6 @@ import { WorksService }
         declarations: [ 
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
-            EmailFrecuencyNg2Module,
             FilterImportWizardsPipe,
             LatexPipe,
             OrderByPipe,
@@ -148,6 +150,7 @@ import { WorksService }
             LanguageService,
             ModalService,
             NameService,
+            PreferencesService,
             TwoFAStateService,
             WebsitesService,
             WorksService,

@@ -1,7 +1,7 @@
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
 import { Observable } 
@@ -15,6 +15,9 @@ import { Subscription }
 
 import { EmailService } 
     from '../../shared/email.service.ts';
+
+import { PreferencesService }
+    from '../../shared/preferences.service.ts'
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -34,7 +37,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     <td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];">
     */
     ///account/email/visibility and /account/email/setPrimary
-    @Input() emailStatusOptionsObj: any;
+    @Input() popUp: any;
 
     defaultVisibility: any;
     emails: any;
@@ -49,7 +52,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     showEditEmail: boolean;
     emailsEditText: string;
-    popUp: boolean;
+    //popUp: boolean;
     showUnverifiedEmailSetPrimaryBox: boolean;
     primaryEmail: string;
     verifyEmailObject: any;
@@ -65,11 +68,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     position: any;
     inputEmail: any;
+    prefs: any;
 
     constructor( 
+        private elementRef: ElementRef, 
         private emailService: EmailService,
         private commonSrvc: CommonService,
-        private modalService: ModalService
+        private modalService: ModalService,
+        private prefsSrvc: PreferencesService
     ) {
         this.verifyEmailObject = {};
         this.showEmailVerifBox = false;
@@ -106,7 +112,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement = {};
         this.showEditEmail = (window.location.hash === "#editEmail")
         this.emailsEditText = om.get("manage.edit.emails");
-        this.popUp = true;
+        //this.popUp = true;
         this.showUnverifiedEmailSetPrimaryBox = false;
         this.primaryEmail = '';
         this.emailStatusOptions = [
@@ -127,6 +133,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             "verified":false,
             "visibility":"PRIVATE"
         };
+        this.prefs = {};
+        this.popUp = elementRef.nativeElement.getAttribute('popUp');
 
     }
 
@@ -184,9 +192,38 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         
     };
 
-    closeEditModal(): void{
+    getPrivacyPreferences(): void {
+        this.prefsSrvc.getPrivacyPreferences()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.prefs = data;
+            },
+            error => {
+                console.log('getEmailsFormError', error);
+            } 
+        );
+    }
+
+    updateEmailFrequency(): void {
+        this.prefsSrvc.updateEmailFrequency( this.prefs.email_frequency )
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+            },
+            error => {
+                console.log('getEmailsFormError', error);
+            } 
+        );
+    };
+
+    clearMessage(): void {
+        this.prefsSrvc.clearMessage();
+    }
+
+    closeEditModal(): void {
         this.formData = this.formDataBeforeChange;
-        this.modalService.notifyOther({action:'close', moduleId: 'modalEmailsForm'});
+        this.modalService.notifyOther({action:'close', moduleId: 'modalEmails'});
     };
 
     closeUnverifiedEmailSetPrimaryBox(): void{
@@ -247,7 +284,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setPrimary( email ): void {
-        console.log('email');
         this.emailService.setPrimary( email )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -284,8 +320,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
                 this.formData = data;
-                //this.newElementDefaultVisibility = this.formData.visibility.visibility;
-                console.log('this.getForm emails', this.formData);
+
                 if ( this.formData.emails.length == 0 ) {
                     this.addNew();
                 }else {
@@ -309,8 +344,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     privacyChange( $event, obj ): any {
-        console.log('obj', obj);
-        //console.log('this.formData.visibility.visibility', this.formData.visibility.visibility);  
+
         this.emailService.setEmailPrivacy( obj )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -381,6 +415,11 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
+        if(this.popUp == "true" ){
+            this.popUp = true;
+        } else {
+            this.popUp = false;
+        }
     };
 
     ngOnDestroy() {
@@ -389,7 +428,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getformData();
+        this.getPrivacyPreferences();
+        this.getformData();  
     };
 
 }
