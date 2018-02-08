@@ -550,9 +550,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {   
+    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email emailElement) {   
         String currentUserOrcid = getCurrentUserOrcid();
         String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
+        String email = emailElement.getValue();
         if (primaryEmail.equals(email))
             request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
 
