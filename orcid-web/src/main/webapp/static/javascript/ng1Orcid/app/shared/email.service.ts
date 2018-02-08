@@ -39,11 +39,19 @@ export class EmailService {
         this.url = getBaseUri() + '/account/emails.json';
     }
 
-    addEmail(): Observable<any> {
-        let encoded_data = JSON.stringify( this.inputEmail );
+    addEmail( email? ): Observable<any> {
+        let encoded_data;
+        if( email ){
+            console.log('if', email);
+            encoded_data = JSON.stringify( email );
+        }else{
+            console.log('else', this.inputEmail);
+            encoded_data = JSON.stringify( this.inputEmail );
+            
+        }
         
         return this.http.post( 
-            this.url, 
+            getBaseUri() + '/account/addEmail.json', 
             encoded_data, 
             { headers: this.headers }
         )

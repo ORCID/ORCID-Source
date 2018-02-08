@@ -161,34 +161,41 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     checkCredentials(popup): void {
         this.password = null;
         if(orcidVar.isPasswordConfirmationRequired){
+            /*
             if (!popup){
-                /*
                 $.colorbox({
                     html: $compile($('#check-password-modal').html())($scope)
                 });
                 $.colorbox.resize();
-                */
             }else{
-                this.showConfirmationBox = true;            
             }
+            */
+            this.showConfirmationBox = true;            
         }else{
-            this.submitModal();
+            this.submitModal(this.inputEmail);
         }
     };
 
     submitModal(obj?): void {
         
-        this.emailService.inputEmail.password = this.password;
+        console.log('email to add', obj);
 
-        this.emailService.addEmail()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-            },
-            error => {
-                console.log('getEmailsFormError', error);
-            } 
-        );
+        if( orcidVar.isPasswordConfirmationRequired == true ){
+            this.inputEmail.password = this.password;
+        }
+        if( obj.value ) {
+            this.emailService.addEmail( obj )
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    this.getformData();
+                },
+                error => {
+                    console.log('getEmailsFormError', error);
+                } 
+            );
+            
+        }
         
     };
 
@@ -206,6 +213,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     updateEmailFrequency(): void {
+        console.log('updateEmailFrequency',this.prefs.email_frequency );
         this.prefsSrvc.updateEmailFrequency( this.prefs.email_frequency )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -385,20 +393,21 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     verifyEmail(email, popup): void {
+
         this.verifyEmailObject = email;
-        if( popup ){
-            this.emailService.verifyEmail( email )
-            .takeUntil(this.ngUnsubscribe)
-            .subscribe(
-                data => {
-                },
-                error => {
-                    console.log('setEmailsKnownAs', error);
-                } 
-            );
-            this.showEmailVerifBox = true;
-    
-        }else{
+        
+        this.emailService.verifyEmail( email )
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+            },
+            error => {
+                console.log('setEmailsKnownAs', error);
+            } 
+        );
+        this.showEmailVerifBox = true;
+
+        if( !popup ){
             this.modalService.notifyOther({action:'open', moduleId: 'emailSentConfirmation'});   
         }
         
