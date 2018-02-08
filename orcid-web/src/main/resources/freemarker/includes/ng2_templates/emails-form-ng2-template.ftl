@@ -190,7 +190,7 @@
                                         <div>
                                             <label for=""><@orcid.msg 'check_password_modal.password' /></label>:   
                                                            
-                                            <input id="check_password_modal.password" type="password" name="check_password_modal.password" [(ngModel)]="password" (keyup.enter)="submitModal(popUp)"/>
+                                            <input id="check_password_modal.password" type="password" name="check_password_modal.password" [(ngModel)]="password" (keyup.enter)="submitModal()"/>
                                             
                                         </div>                  
                                         <div>

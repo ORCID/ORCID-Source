@@ -46,6 +46,7 @@ import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
@@ -118,6 +119,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
     @Resource
     private UserConnectionManager userConnectionManager;
 
@@ -618,27 +622,28 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Email deleteEmailJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
-        List<String> emailErrors = new ArrayList<String>();
+    public @ResponseBody Errors deleteEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
+        Errors errors = new Errors();
         String currentUserOrcid = getCurrentUserOrcid();
-        // clear erros
-        email.setErrors(new ArrayList<String>());
-
+        
         // if blank
-        if (email.getValue() == null || email.getValue().trim().equals("")) {
-            emailErrors.add(getMessage("Email.personalInfoForm.email"));
+        if (PojoUtil.isEmpty(email)) {
+            errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
         
-        if (emailManager.isPrimaryEmail(currentUserOrcid, email.getValue())) {
-            emailErrors.add(getMessage("manage.email.primaryEmailDeletion"));
+        String owner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        if(!currentUserOrcid.equals(owner)) {
+            throw new IllegalArgumentException(email);
+        }
+        
+        if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
+            errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
         }
 
-        email.setErrors(emailErrors);
-
-        if (emailErrors.size() == 0) {            
-            emailManager.removeEmail(currentUserOrcid, email.getValue());
+        if (errors.getErrors().size() == 0) {            
+            emailManager.removeEmail(currentUserOrcid, email);
         }
-        return email;
+        return errors;
     }
     
     @RequestMapping(value = "/email/visibility", method = RequestMethod.POST)

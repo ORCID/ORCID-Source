@@ -39,11 +39,19 @@ export class EmailService {
         this.url = getBaseUri() + '/account/emails.json';
     }
 
-    addEmail(): Observable<any> {
-        let encoded_data = JSON.stringify( this.inputEmail );
+    addEmail( email? ): Observable<any> {
+        let encoded_data;
+        if( email ){
+            console.log('if', email);
+            encoded_data = JSON.stringify( email );
+        }else{
+            console.log('else', this.inputEmail);
+            encoded_data = JSON.stringify( this.inputEmail );
+            
+        }
         
         return this.http.post( 
-            this.url, 
+            getBaseUri() + '/account/addEmail.json', 
             encoded_data, 
             { headers: this.headers }
         )
@@ -63,12 +71,15 @@ export class EmailService {
     }
 
     deleteEmail() {
-        let encoded_data = JSON.stringify( this.delEmail );
+        let myParams = new URLSearchParams();
+        myParams.append('email', this.delEmail.value);
+        let options = new RequestOptions(
+            { headers: this.headers , search: myParams }
+        );
         
         return this.http.delete( 
-            getBaseUri() + '/account/deleteEmail.json?' + encoded_data, 
-            //encoded_data, 
-            { headers: this.headers }
+            getBaseUri() + '/account/deleteEmail.json',             
+            options
         )
         .map(
             (res:Response) => res.json()
@@ -283,11 +294,11 @@ export class EmailService {
         if(email){
             _email = email;
         } else {
-            this.getEmailPrimary().value;
+            _email = this.getEmailPrimary();
         }
         
         let myParams = new URLSearchParams();
-        myParams.append('email', _email);
+        myParams.append('email', _email.value);
         let options = new RequestOptions(
             { headers: this.headers , search: myParams }
         );
