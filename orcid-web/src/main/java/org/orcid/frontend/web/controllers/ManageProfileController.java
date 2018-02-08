@@ -59,7 +59,6 @@ import org.orcid.jaxb.model.v3.dev1.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
@@ -77,7 +76,6 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
@@ -643,37 +641,32 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
     }
     
-    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
-        org.orcid.pojo.ajaxForm.Email newPrime = null;
-        List<String> allErrors = new ArrayList<String>();
-
-        for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
-            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-            validateEmailAddress(email.getValue(), request, mbr);
-            List<String> emailErrors = new ArrayList<String>();
-            for (ObjectError oe : mbr.getAllErrors()) {
-                String msg = getMessage(oe.getCode(), email.getValue());
-                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
-                allErrors.add(msg);
-            }
-            email.setErrors(emailErrors);
-            if (email.isPrimary())
-                newPrime = email;
+    @RequestMapping(value = "/email/visibility", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email updateEmailVisibility(@RequestBody org.orcid.pojo.ajaxForm.Email email) {
+        String orcid = getCurrentUserOrcid();
+        String owner = emailManager.findOrcidIdByEmail(email.getValue());
+        if(orcid.equals(owner)) {
+            if(email.getVisibility() != null) {
+                // Updates the visibility on the given email
+                emailManager.updateVisibility(orcid, email.getValue(), email.getVisibility());
+            }            
         }
-
-        if (newPrime == null) {
-            allErrors.add("A Primary Email Must be selected");
-        }
-
-        emails.setErrors(allErrors);
-        if (allErrors.size() == 0) {
-            emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
-            
-        }
-        return emails;
+        return email;
     }
-
+    
+    @RequestMapping(value = "/email/setPrimary", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email setPrimary(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
+        String orcid = getCurrentUserOrcid();
+        String owner = emailManager.findOrcidIdByEmail(email.getValue());
+        if(orcid.equals(owner)) {            
+            // Sets the given user as primary
+            emailManager.setPrimary(orcid, email.getValue(), request);   
+            // Updates the last modified of the record
+            profileEntityManager.updateLastModifed(orcid);
+        }
+        return email;
+    }
+    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
@@ -925,5 +918,37 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
+    }
+    
+    @Deprecated
+    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
+        org.orcid.pojo.ajaxForm.Email newPrime = null;
+        List<String> allErrors = new ArrayList<String>();
+
+        for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
+            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+            validateEmailAddress(email.getValue(), request, mbr);
+            List<String> emailErrors = new ArrayList<String>();
+            for (ObjectError oe : mbr.getAllErrors()) {
+                String msg = getMessage(oe.getCode(), email.getValue());
+                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
+                allErrors.add(msg);
+            }
+            email.setErrors(emailErrors);
+            if (email.isPrimary())
+                newPrime = email;
+        }
+
+        if (newPrime == null) {
+            allErrors.add("A Primary Email Must be selected");
+        }
+
+        emails.setErrors(allErrors);
+        if (allErrors.size() == 0) {
+            emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
+            
+        }
+        return emails;
     }
 }

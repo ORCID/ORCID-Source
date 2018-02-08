@@ -30,6 +30,9 @@ export const LanguageModule = angular.module(
         entryComponents: [ 
             LanguageComponent 
         ],
+        exports: [
+            LanguageComponent
+        ],
         imports: [
             CommonNg2Module
         ],

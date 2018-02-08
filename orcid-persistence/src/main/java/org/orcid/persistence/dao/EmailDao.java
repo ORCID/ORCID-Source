@@ -87,4 +87,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     boolean hideAllEmails(String orcid);
 
     List<EmailEntity> findPublicEmails(String orcid, long lastModified);
+    
+    boolean updateVisibility(String orcid, String email, Visibility visibility);        
 }

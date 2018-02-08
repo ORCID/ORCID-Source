@@ -36,6 +36,12 @@ import { WorkExternalIdentifierHtmlPipe }
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
+import { EmailFrecuencyNg2Module }
+    from './../emailFrecuency/emailFrecuency.ts';
+
+import { LanguageNg2Module }
+    from './../language/language.ts';
+
 //User generated services
 
 import { AffiliationService } 
@@ -77,6 +83,9 @@ import { ModalService }
 import { NameService } 
     from '../../shared/name.service.ts';
 
+import { PreferencesService }
+    from '../../shared/preferences.service.ts';
+
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
 
@@ -97,6 +106,8 @@ import { WorksService }
             CommonModule,
             FormsModule,
             //User Modules
+            //LanguageNg2Module,
+            EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module
         ],
         declarations: [ 
@@ -121,6 +132,8 @@ import { WorksService }
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
+            //LanguageNg2Module,
+            EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module
         ],
         providers: [
@@ -137,6 +150,7 @@ import { WorksService }
             LanguageService,
             ModalService,
             NameService,
+            PreferencesService,
             TwoFAStateService,
             WebsitesService,
             WorksService,

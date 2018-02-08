@@ -3,7 +3,7 @@
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import {  AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
 import { Observable } 

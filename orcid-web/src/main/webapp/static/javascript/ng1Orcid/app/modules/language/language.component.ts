@@ -222,6 +222,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        /*
         if (location == parent.location 
             && window.location.hostname.toLowerCase() != "orcid.org"){
             //add AR if LANG_AR togglz feature enabled
@@ -247,6 +248,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         this.getCurrentLanguage();
+        */
         
     }; 
 }

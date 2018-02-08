@@ -36,7 +36,7 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService
     ) {
         this.formData = {
-            otherNames: null
+            emails: null
         };
         this.emails = {};
     }
@@ -58,10 +58,6 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.formData = data;
 
-                if( this.formData.otherNames == null ) {
-                    this.formData.otherNames = { value: null };
-                }
-
                 //console.log('this.getForm', this.formData);
             },
             error => {
@@ -70,17 +66,20 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    openEditModal(): void{      
+    openEditModal(): void{
+        console.log('openEditModal emails'); 
         this.emailService.getEmails()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.emails = data;
+                this.modalService.notifyOther({action:'open', moduleId: 'modalEmails'});
+                /*
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalAlsoKnownAsForm'});
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
+                */
             },
             error => {
                 console.log('getEmails', error);

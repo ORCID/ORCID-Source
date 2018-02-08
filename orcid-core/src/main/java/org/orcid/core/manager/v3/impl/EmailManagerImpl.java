@@ -27,6 +27,7 @@ import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
 import org.orcid.persistence.dao.ProfileDao;
@@ -184,5 +185,25 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     public boolean hideAllEmails(String orcid) {
         return emailDao.hideAllEmails(orcid);
+    }
+
+    @Override
+    public boolean updateVisibility(String orcid, String email, Visibility visibility) {
+        return emailDao.updateVisibility(orcid, email, org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.value()));
+    }
+    
+    @Override
+    public void setPrimary(String orcid, String email, HttpServletRequest request) {
+        Email currentPrimaryEmail = this.findPrimaryEmail(orcid);
+        EmailEntity newPrimary = emailDao.find(email); 
+        if(newPrimary != null && !currentPrimaryEmail.getEmail().equals(email)) {
+            emailDao.updatePrimary(orcid, email);                 
+            notificationManager.sendEmailAddressChangedNotification(orcid, email, currentPrimaryEmail.getEmail());
+            
+            if (!newPrimary.getVerified()) {
+                notificationManager.sendVerificationEmail(orcid, email);
+                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+            }
+        }        
     }
 }

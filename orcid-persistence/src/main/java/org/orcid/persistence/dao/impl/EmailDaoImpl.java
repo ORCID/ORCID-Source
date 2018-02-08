@@ -291,4 +291,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("visibility", Visibility.PRIVATE);
         return query.executeUpdate() > 0;
     }
+
+    @Override
+    @Transactional
+    public boolean updateVisibility(String orcid, String email, Visibility visibility) {
+        Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, lastModified=now() where email = :email and orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("email", email);
+        query.setParameter("visibility", visibility);
+        return query.executeUpdate() > 0;
+    }    
 }

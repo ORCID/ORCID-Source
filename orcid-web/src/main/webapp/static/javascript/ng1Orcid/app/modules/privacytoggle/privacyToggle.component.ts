@@ -33,10 +33,14 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
         this.showElement[elementId] = false;
     };
     
-    setPrivacy(priv): void {
+    setPrivacy(priv?): void {
         let _priv = priv;
         //console.log('dataPrivacyObj', this.privacyNodeName, this.dataPrivacyObj, this.dataPrivacyObj[this.privacyNodeName]);
-        this.dataPrivacyObj[this.privacyNodeName].visibility = _priv;
+        if( this.privacyNodeName ){
+            this.dataPrivacyObj[this.privacyNodeName].visibility = _priv;
+        } else {
+            this.dataPrivacyObj.visibility = _priv;
+        }
         this.privacyUpdate.emit(_priv);
     };
     

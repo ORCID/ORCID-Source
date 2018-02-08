@@ -1,6 +1,9 @@
 import * as angular 
     from 'angular';
 
+import { CommonModule } 
+    from '@angular/common'; 
+
 import { Directive, NgModule } 
     from '@angular/core';
 
@@ -10,9 +13,10 @@ import { downgradeComponent, UpgradeModule }
 //User generated
 import { EmailFrecuencyComponent } 
     from './emailFrecuency.component.ts';
-
+/*
 import { CommonNg2Module }
     from './../common/common.ts';
+*/
 
 // This is the Angular 1 part of the module
 export const EmailFrecuencyModule = angular.module(
@@ -24,12 +28,16 @@ export const EmailFrecuencyModule = angular.module(
 @NgModule(
     {
         imports: [
-            CommonNg2Module
+            //CommonNg2Module
+            CommonModule
         ],
         declarations: [ 
             EmailFrecuencyComponent
         ],
         entryComponents: [ 
+            EmailFrecuencyComponent 
+        ],
+        exports: [ 
             EmailFrecuencyComponent 
         ],
         providers: [
