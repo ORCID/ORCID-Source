@@ -349,7 +349,7 @@ function checkOrcidLoggedIn() {
                     if (data.loggedIn == false
                             && (basePath.startsWith(baseUrl
                                     + 'my-orcid') || basePath
-                                    .startsWith(baseUrl + 'account'))) {
+                                    .startsWith(baseUrl + 'account') || basePath.startsWith(baseUrl + 'inbox'))) {
                         console.log("loggedOutRedir " + data);
                         window.location.href = baseUrl + "signin";
                     }
