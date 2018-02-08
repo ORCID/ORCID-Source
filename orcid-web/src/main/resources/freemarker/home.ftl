@@ -60,7 +60,7 @@
 		<div class="inner-box">
 			<h3><@orcid.msg 'home.latest_news'/></h3>
 			<div class="item-list">
-				<ul>
+				<ul *ngIf="blogFeed['rss']" >
 					<li *ngFor="let item of blogFeed['rss']['channel']['item'] | slice:0:5; let i=index">
 					<strong>{{item['pubDate'] | slice:0:16}}</strong><br>
 					<a href="{{item['link']}}">{{item['title']}}</a>
