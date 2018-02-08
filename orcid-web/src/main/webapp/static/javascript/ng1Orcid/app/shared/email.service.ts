@@ -63,12 +63,15 @@ export class EmailService {
     }
 
     deleteEmail() {
-        let encoded_data = JSON.stringify( this.delEmail );
+        let myParams = new URLSearchParams();
+        myParams.append('email', this.delEmail.value);
+        let options = new RequestOptions(
+            { headers: this.headers , search: myParams }
+        );
         
         return this.http.delete( 
-            getBaseUri() + '/account/deleteEmail.json?' + encoded_data, 
-            //encoded_data, 
-            { headers: this.headers }
+            getBaseUri() + '/account/deleteEmail.json',             
+            options
         )
         .map(
             (res:Response) => res.json()
