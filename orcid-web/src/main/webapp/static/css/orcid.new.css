@@ -6248,8 +6248,8 @@ a:hover .mozilla-badge {
     margin: 0 0 16px
 }
 
-.member-list a {
-    padding: 2px 4px
+.member-list ul a {
+    padding: 2px 4px;
 }
 
 .member-list table a {

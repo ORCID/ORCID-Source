@@ -20,18 +20,20 @@
     <div class="row member-list" ng-controller="MemberPageController">
     	
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
-        	<p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> All members</a></p>
+        	<p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> <@orcid.msg 'member_details.all_members'/></a></p>
         	<div class="text-center" ng-cloak>
-                <i ng-show="showMemberDetailsLoader" class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+                <i ng-show="membersListSrvc.showMemberDetailsLoader" class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                 <!--[if lt IE 8]>
                     <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                 <![endif]-->
-                <p ng-show="!membersListSrvc.currentMemberDetails" ng-cloak>Could not get details for this member</p>
+                <p ng-show="membersListSrvc.showGetMemberDetailsError" ng-cloak><@orcid.msg 'member_details.could_not_get_details'/></p>
 	    	</div>
         	<div class="row" ng-show="membersListSrvc.currentMemberDetails">
         		<div class="col-md-12 col-sm-12 col-xs-12">
-		            <h1 ng-cloak><a href="{{membersListSrvc.currentMemberDetails.member.websiteUrl}}" target="membersListSrvc.currentMemberDetails.member.publicDisplayName">{{membersListSrvc.currentMemberDetails.member.publicDisplayName}}</a></h1>
+		            <h1 ng-cloak>{{membersListSrvc.currentMemberDetails.member.publicDisplayName}}</h1>
                     <p ng-cloak><span ng-if="membersListSrvc.communityTypes[membersListSrvc.currentMemberDetails.member.researchCommunity]">{{membersListSrvc.communityTypes[membersListSrvc.currentMemberDetails.member.researchCommunity]}}</span><span ng-if="membersListSrvc.communityTypes[membersListSrvc.currentMemberDetails.member.researchCommunity]&&membersListSrvc.currentMemberDetails.member.country"> | </span>{{membersListSrvc.currentMemberDetails.member.country}}</p>
+                    <p ng-if="membersListSrvc.currentMemberDetails.member.websiteUrl" ng-cloak class="clearfix"><a href="{{membersListSrvc.currentMemberDetails.member.websiteUrl}}" target="membersListSrvc.currentMemberDetails.member.publicDisplayName">{{membersListSrvc.currentMemberDetails.member.websiteUrl}}</a>
+                    </p>
 		        </div>
 		        <div class="col-md-10 col-sm-10 col-xs-12">		       
 		       		<p>
@@ -41,25 +43,24 @@
 		        </div>
 		        <hr />
 		        <div class="col-md-12 col-sm-12 col-xs-12" ng-if="membersListSrvc.currentMemberDetails.parentOrgName">		        	
-                    <h3>Consortium/Parent Organization: </h3>
+                    <h3><@orcid.msg 'member_details.consortium_parent'/></h3>
                     <p> 
 	                    <span ng-show="membersListSrvc.currentMemberDetails.parentOrgName" ng-cloak><a ng-href="{{membersListSrvc.getMemberPageUrl(membersListSrvc.currentMemberDetails.parentOrgSlug)}}">{{membersListSrvc.currentMemberDetails.parentOrgName}}</a></span>
-	                    <span ng-hide="membersListSrvc.currentMemberDetails.parentOrgName" ng-cloak>None</span>
+	                    <span ng-hide="membersListSrvc.currentMemberDetails.parentOrgName" ng-cloak><@orcid.msg 'member_details.none'/></span>
 	                </p>
 	            <hr />
 	            </div>
 	            <div class="col-md-12 col-sm-12 col-xs-12">   
-	                <h3>Contact Information</h3>
+	                <h3><@orcid.msg 'member_details.contact_information'/></h3>
 	                <p ng-if="membersListSrvc.currentMemberDetails.member.publicDisplayEmail" ng-cloak>
 		                <a href="mailto:{{membersListSrvc.currentMemberDetails.member.publicDisplayEmail}}">{{membersListSrvc.currentMemberDetails.member.publicDisplayEmail}}</a>
 	                </p>
-	                <p ng-if="!membersListSrvc.currentMemberDetails.member.publicDisplayEmail" ng-cloak> 
-	                    This member has not provided contact details.
+	                <p ng-if="!membersListSrvc.currentMemberDetails.member.publicDisplayEmail" ng-cloak><@orcid.msg 'member_details.this_member_has_not_provided'/> 
 	                </p>	                
 	            </div> 
 	            <hr />
 	            <div class="col-md-12 col-sm-12 col-xs-12">   
-	                <h3>Integrations</h3>
+	                <h3><@orcid.msg 'member_details.integrations'/></h3>
 	                <div ng-if="membersListSrvc.currentMemberDetails.integrations" ng-repeat="integration in membersListSrvc.currentMemberDetails.integrations" ng-cloak>
                         <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
                         <@orcid.checkFeatureStatus 'BADGES'>
@@ -115,27 +116,27 @@
 	                        <li ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
 	                        </li>
 	                        <li ng-if="integration.resourceUrl" >
-	                            <a href="{{integration.resourceUrl}}" target="Learn more about this integration">Learn more about this integration</a>
+	                            <a href="{{integration.resourceUrl}}" target="Learn more about this integration"><@orcid.msg 'member_details.learn_more_about'/></a>
 	                        </li>
 	                    </ul>
 	                </div>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
-	                    <p>This member has not completed any integrations.</p>
+	                    <p><@orcid.msg 'member_details.this_member_has_not_completed'/></p>
 	                </div>
 	                <hr />
 				</div>
 	            <div class="col-md-12 col-sm-12 col-xs-12" ng-if="membersListSrvc.currentMemberDetails.subMembers.length">
-	                <h3>Consortium Members</h3>
+	                <h3><@orcid.msg 'member_details.consortium_members'/></h3>
 	                <table ng-show="membersListSrvc.currentMemberDetails.subMembers">
 	                	<tr>
-	                		<th>Member Name</th>
+	                		<th><@orcid.msg 'member_details.member_name'/></th>
 	                	</tr>
 	                	<tr ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'opportunity.accountName'">
 							<td><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></td>
 	                	</tr>
 	                </table>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.subMembers.length"> 
-						<p>This consortium does not have any members yet.</p>
+						<p><@orcid.msg 'member_details.this_consortium_does_not'/></p>
 						<hr />
 	                </div>
 	                
