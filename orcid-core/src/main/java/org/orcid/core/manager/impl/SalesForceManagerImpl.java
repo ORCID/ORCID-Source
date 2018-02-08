@@ -48,6 +48,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
+import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -213,6 +214,20 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
                 contact.setSelfServiceEnabled(false);
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<OrgId> retrieveOrgIdsByAccountId(String accountId) {
+        // return (List<OrgId>)
+        // salesForceOrgIdsCache.get(accountId).getObjectValue();
+        return salesForceDao.retrieveOrgIdsByAccountId(accountId);
+    }
+
+    @Override
+    public List<OrgId> retrieveFreshOrgIdsByAccountId(String accountId) {
+        // salesForceOrgIdsCache.remove(accountId);
+        return retrieveOrgIdsByAccountId(accountId);
     }
 
     @Override
@@ -396,6 +411,28 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             removeMemberDetailsFromCache(consortiumLeadId);
             salesForceConsortiumCache.remove(consortiumLeadId);
         }
+    }
+
+    @Override
+    public void createOrgId(OrgId orgId) {
+        String accountId = orgId.getAccountId();
+        List<OrgId> existingOrgIds = salesForceDao.retrieveOrgIdsByAccountId(accountId);
+        Optional<OrgId> existingOrgId = existingOrgIds.stream().filter(o -> {
+            if (orgId.getOrgIdType().equals(o.getOrgIdType()) && orgId.getOrgIdValue().equals(o.getOrgIdValue())) {
+                return true;
+            }
+            return false;
+        }).findFirst();
+        if (!existingOrgId.isPresent()) {
+            salesForceDao.createOrgId(orgId);
+        }
+        salesForceContactsCache.remove(accountId);
+    }
+    
+    @Override
+    public void removeOrgId(OrgId orgId) {
+        salesForceDao.removeOrgId(orgId.getId());
+        removeMemberDetailsFromCache(orgId.getAccountId());
     }
 
     @Override

@@ -16,8 +16,11 @@ import { CommonService }
 import { ConsortiaService }
     from '../../shared/consortia.service.ts'
 
+import { FeaturesService }
+    from '../../shared/features.service.ts'
+
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service.ts';
 
 @Component({
     selector: 'self-service-ng2',
@@ -29,6 +32,7 @@ export class SelfServiceComponent {
     
     @Input() memberDetails : any;
     @Input() contacts : any;
+    @Input() orgIds : any;
     
     addContactDisabled : boolean = false;
     addSubMemberDisabled : boolean = false;
@@ -37,6 +41,7 @@ export class SelfServiceComponent {
     errorAddingSubMember : boolean = false;
     errorSubMemberExists : boolean = false;
     input: any = {};
+    orgIdInput: any = {};
     newSubMember: any = {website: {errors: [], getRequiredMessage: null, required: false, value: ''}, name: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactFirstName: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactLastName: {errors: [], getRequiredMessage: null, required: false, value: ''}, initialContactEmail: {errors: [], getRequiredMessage: null, required: false, value: ''}};
     newSubMemberExistingOrg : any;
     realUserOrcid = orcidVar.realOrcidId;
@@ -46,10 +51,13 @@ export class SelfServiceComponent {
     updateMemberDetailsDisabled : boolean = false;
     updateMemberDetailsShowLoader : boolean = false;
     successEditMemberMessage : string;
+    orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
+    orgIdSearchResults: Array<object> = [];
     
     constructor(
         private commonSrvc: CommonService,
         private consortiaService: ConsortiaService,
+        private featuresService: FeaturesService,
         private modalService: ModalService
     ) {}
   
@@ -82,6 +90,18 @@ export class SelfServiceComponent {
         );
     }
     
+    getOrgIds() {
+        this.consortiaService.getOrgIds(this.consortiaService.getAccountIdFromPath())
+            .subscribe(
+                data => {
+                this.orgIds = data;
+            },
+            error => {
+                console.log('getOrgIds error', error);
+            }
+        );
+    }
+
     search(){
         $('#invalid-email-alert').hide();
         if(this.commonSrvc.isEmail(this.input.text)){
@@ -101,6 +121,47 @@ export class SelfServiceComponent {
             error => {
                 console.log('searchByEmail error', error);
             } 
+        );
+    }
+    
+    searchOrgIds() {
+        this.consortiaService.searchOrgIds(this.orgIdInput.text)
+            .subscribe(
+                data => {
+                    this.orgIdSearchResults = data;
+            },
+            error => {
+                console.log('searchOrgIds error', error);
+            } 
+        );
+    }
+    
+     addOrgId(org: any) {
+        let orgId: any = {};
+        orgId.accountId = this.consortiaService.getAccountIdFromPath();
+        orgId.orgIdValue = org.sourceId;
+        orgId.orgIdType = org.sourceType;
+        this.consortiaService.addOrgId(orgId)
+            .subscribe(
+                data => {
+                    this.getOrgIds();
+                },
+                error => {
+                    console.log('addOrgId error', error);
+                } 
+        );
+    }
+    
+    removeOrgId(orgId: any) {
+        orgId.accountId = this.consortiaService.getAccountIdFromPath();
+        this.consortiaService.removeOrgId(orgId)
+            .subscribe(
+                data => {
+                    this.getOrgIds();
+                },
+                error => {
+                    console.log('removeOrgId error', error);
+                } 
         );
     }
     
@@ -350,6 +411,9 @@ export class SelfServiceComponent {
     ngOnInit() {
         this.getMemberDetails();
         this.getContacts();
+        if(this.orgIdsFeatureEnabled) {
+            this.getOrgIds();
+        }
         this.subscription = this.consortiaService.notifyObservable$.subscribe(
             (res) => {
                 if(res !== "undefined" && res.action === "add" && res.moduleId === "selfServiceExistingSubMember"){

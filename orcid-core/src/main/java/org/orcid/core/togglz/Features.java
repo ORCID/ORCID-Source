@@ -63,7 +63,10 @@ public enum Features implements Feature {
     
     @Label("API analytics debug logging")
     API_ANALYTICS_DEBUG,
-    
+
+    @Label("Self service org ids")
+    SELF_SERVICE_ORG_IDS,
+
     @Label("Turn on angular2 features that are on development")
     ANGULAR2_DEV,
 

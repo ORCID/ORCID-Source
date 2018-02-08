@@ -17,6 +17,7 @@
 package org.orcid.core.salesforce.adapter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -35,6 +36,7 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OrgId;
 
 /**
  * 
@@ -195,6 +197,38 @@ public class SalesForceAdapterTest {
         contact.setAccountId("1234");
         JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContact(contact);
         assertEquals("{\"AccountId\":\"1234\"}", contactJson.toString());
+    }
+    
+    @Test
+    public void testCreateOrgIdFromJson() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_org_ids_list.json"));
+        JSONObject inputObject = new JSONObject(inputString);
+        JSONArray records = inputObject.getJSONArray("records");
+        JSONObject record = records.getJSONObject(0);
+        OrgId orgId = salesForceAdapter.createOrgIdFromJson(record);
+        assertEquals("abcd", orgId.getOrgIdValue());
+        assertEquals("FundRef ID", orgId.getOrgIdType());
+        assertFalse(orgId.getInactive());
+    }
+
+    @Test
+    public void testCreateOrgIdsFromJson() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_org_ids_list.json"));
+        JSONObject inputObject = new JSONObject(inputString);
+        List<OrgId> orgIdsList = salesForceAdapter.createOrgIdsFromJson(inputObject);
+        assertEquals(2, orgIdsList.size());
+        OrgId orgId = orgIdsList.get(0);
+        assertEquals("abcd", orgId.getOrgIdValue());
+        assertEquals("FundRef ID", orgId.getOrgIdType());
+        assertFalse(orgId.getInactive());
+    }
+
+    @Test
+    public void testCreateSalesForceRecordFromOrgId() {
+        OrgId contact = new OrgId();
+        contact.setAccountId("1234");
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromOrgId(contact);
+        assertEquals("{\"Organization__c\":\"1234\"}", contactJson.toString());
     }
 
 }

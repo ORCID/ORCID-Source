@@ -38,6 +38,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
+import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
@@ -149,6 +150,22 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     public String retrieveConsortiumMemberRecordTypeId() {
         return retry(accessToken -> retrieveConsortiumMemberRecordTypeIdFromSalesForce(accessToken));
     }
+    
+    @Override
+    public List<OrgId> retrieveOrgIdsByAccountId(String accountId) {
+        return retry(accessToken -> retrieveOrgIdsFromSalesForceByAccountId(accessToken, accountId));
+    }
+    
+    @Override
+    public String createOrgId(OrgId orgId) {
+        return retry(accessToken -> createOrgIdInSalesForce(accessToken, orgId));
+    }
+    
+    @Override
+    public void removeOrgId(String salesForceObjectId) {
+        retryConsumer(accessToken -> removeOrgIdInSalesForce(accessToken, salesForceObjectId));
+    }
+
 
     @Override
     public String createContact(Contact contact) {
@@ -232,6 +249,25 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             return null;
         }
         return input.replace("'", "\\'");
+    }
+
+    private String createOrgIdInSalesForce(String accessToken, OrgId orgId) {
+        LOGGER.info("About to create org id in SalesForce");
+        WebResource resource = createObjectsResource("/Organization_Identifier__c/");
+        JSONObject opportunityJson = salesForceAdapter.createSaleForceRecordFromOrgId(orgId);
+        ClientResponse response = doPostRequest(resource, opportunityJson, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 201, "Error creating org id in SalesForce");
+        return result.optString("id");
+    }
+    
+    private void removeOrgIdInSalesForce(String accessToken, String salesForceObjectId) {
+        LOGGER.info("About to remove org id in SalesForce");
+        validateSalesForceId(salesForceObjectId);
+        WebResource resource = createObjectsResource("/Organization_Identifier__c/", salesForceObjectId);
+        ClientResponse response = doDeleteRequest(resource, accessToken);
+        checkAuthorization(response);
+        checkResponse(response, 204, "Error removing org id in SalesForce");
     }
 
     private String createContactInSalesForce(String accessToken, Contact contact) {
@@ -656,6 +692,24 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting opportunity from SalesForce");
         return salesForceAdapter.createOpportunityFromSalesForceRecord(result);
+    }
+    
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<OrgId> retrieveOrgIdsFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of org ids from SalesForce");
+        validateSalesForceId(accountId);
+        WebResource resource1 = createQueryResource("Select Id, Name, Identifier_Type__c, Inactive__c, Primary_ID_for_type__c, Organization__c, Date_Granted__c, Notes__c From Organization_Identifier__c Where Organization__c = '%s'", accountId);
+        WebResource resource = resource1;
+        ClientResponse response = doGetRequest(resource, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 200, "Error getting org ids from SalesForce");
+        return salesForceAdapter.createOrgIdsFromJson(result);
     }
     
     private <T> T retry(Function<String, T> function) {

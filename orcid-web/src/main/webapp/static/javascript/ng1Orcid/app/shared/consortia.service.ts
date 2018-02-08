@@ -27,12 +27,16 @@ export class ConsortiaService {
     private addContactUrl: string;
     private removeContactUrl: string;
     private searchByEmailUrl: string;
+    private orgIdsUrl: string;
     private validateSubMemberUrl: string;
     private validateSubMemberFieldUrl: string;
     private checkExistingSubMemberUrl: string;
     private addSubMemberUrl: string;
     private cancelSubMemberAdditionUrl: string;
     private removeSubMemberUrl: string;
+    private orgIdSearchUrl: string;
+    private addOrgIdUrl: string;
+    private removeOrgIdUrl: string;
 
     constructor( private http: Http ){
         this.headers = new Headers(
@@ -50,12 +54,16 @@ export class ConsortiaService {
         this.addContactUrl = getBaseUri() + '/self-service/add-contact-by-email.json';
         this.removeContactUrl = getBaseUri() + '/self-service/remove-contact.json';
         this.searchByEmailUrl = getBaseUri() + '/manage/search-for-delegate-by-email/';
+        this.orgIdsUrl = getBaseUri() + '/self-service/get-org-ids.json?accountId=';
         this.validateSubMemberUrl = getBaseUri() + '/self-service/validate-sub-member.json';
         this.validateSubMemberFieldUrl =  getBaseUri() + '/self-service/validate-sub-member-';
         this.checkExistingSubMemberUrl = getBaseUri() + '/self-service/check-existing-sub-member.json';
         this.addSubMemberUrl = getBaseUri() + '/self-service/add-sub-member.json';
         this.removeSubMemberUrl = getBaseUri() + '/self-service/remove-sub-member.json';
         this.cancelSubMemberAdditionUrl = getBaseUri() + '/self-service/cancel-sub-member-addition.json';
+        this.orgIdSearchUrl = getBaseUri() + '/self-service/disambiguated/search?q=';
+        this.addOrgIdUrl = getBaseUri() + '/self-service/add-org-id.json';
+        this.removeOrgIdUrl = getBaseUri() + '/self-service/remove-org-id.json';
     }
     
     notifyOther(data: any): void {
@@ -161,6 +169,37 @@ export class ConsortiaService {
             .map((res:Response) => res.json()).share();
     }
     
+    getOrgIds(id: string): Observable<any> {
+        const url = `${this.orgIdsUrl}${id}`;
+        return this.http.get(url)
+            .map((res:Response) => res.json()).share();
+    }
+    
+    searchOrgIds(input: string): Observable<any> {
+        const url = `${this.orgIdSearchUrl}${encodeURIComponent(input)}&limit=10`;
+        return this.http.get(url)
+            .map((res:Response) => res.json()).share();
+    }
+    
+    addOrgId(orgId: object) : Observable<any>{
+        let encoded_data = JSON.stringify(orgId);
+        return this.http.post( 
+            this.addOrgIdUrl,
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+    
+    removeOrgId(orgId: object) : Observable<any>{
+        let encoded_data = JSON.stringify(orgId);
+        return this.http.post( 
+            this.removeOrgIdUrl,
+            encoded_data, 
+            { headers: this.headers }
+        );
+    }
+
     validateSubMember(subMember: object) : Observable<any>{
         let encoded_data = JSON.stringify(subMember);
         return this.http.post( 
