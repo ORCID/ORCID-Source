@@ -28,10 +28,15 @@ import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 
 public class AffiliationForm extends VisibilityForm implements ErrorsInterface, Serializable {
@@ -99,11 +104,21 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
 
-        if (affiliation instanceof Education) {
+        if(affiliation instanceof Distinction) {
+            form.setAffiliationType(Text.valueOf(AffiliationType.DISTINCTION.value()));
+        } else if (affiliation instanceof Education) {
             form.setAffiliationType(Text.valueOf(AffiliationType.EDUCATION.value()));
-        } else {
+        } else if(affiliation instanceof Employment) {
             form.setAffiliationType(Text.valueOf(AffiliationType.EMPLOYMENT.value()));
-        }
+        } else if(affiliation instanceof InvitedPosition) {
+            form.setAffiliationType(Text.valueOf(AffiliationType.INVITED_POSITION.value()));
+        } else if(affiliation instanceof Membership) {
+            form.setAffiliationType(Text.valueOf(AffiliationType.MEMBERSHIP.value()));
+        } else if(affiliation instanceof Qualification) {
+            form.setAffiliationType(Text.valueOf(AffiliationType.QUALIFICATION.value()));
+        } else if(affiliation instanceof Service) {
+            form.setAffiliationType(Text.valueOf(AffiliationType.SERVICE.value()));
+        } 
 
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
@@ -180,10 +195,20 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
     public Affiliation toAffiliation() {
         Affiliation affiliation = null;
 
-        if (AffiliationType.EDUCATION.value().equals(affiliationType.getValue())) {
+        if (AffiliationType.DISTINCTION.value().equals(affiliationType.getValue())) {
+            affiliation = new Distinction();
+        } else if(AffiliationType.EDUCATION.value().equals(affiliationType.getValue())) {
             affiliation = new Education();
-        } else {
+        }else if(AffiliationType.EMPLOYMENT.value().equals(affiliationType.getValue())) {
             affiliation = new Employment();
+        }else if(AffiliationType.INVITED_POSITION.value().equals(affiliationType.getValue())) {
+            affiliation = new InvitedPosition();
+        }else if(AffiliationType.MEMBERSHIP.value().equals(affiliationType.getValue())) {
+            affiliation = new Membership();
+        }else if(AffiliationType.QUALIFICATION.value().equals(affiliationType.getValue())) {
+            affiliation = new Qualification();
+        }else if(AffiliationType.SERVICE.value().equals(affiliationType.getValue())) {
+            affiliation = new Service();
         }
 
         if (!PojoUtil.isEmpty(putCode)) {
