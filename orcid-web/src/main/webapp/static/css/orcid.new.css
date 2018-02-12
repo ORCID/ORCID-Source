@@ -307,10 +307,10 @@ privacy-toggle-ng2 .privacy-bar-impr {
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container{
     bottom: 40px;
     display: block;
-    left: initial;
+    left: initial!important;
     margin: initial !important;
     right: calc(50% - 121px);
-    top: initial;
+    top: initial!important;
     width: 270px;
 }
 

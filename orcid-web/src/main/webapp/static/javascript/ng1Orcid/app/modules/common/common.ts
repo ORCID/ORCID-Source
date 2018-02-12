@@ -26,6 +26,9 @@ import { LatexPipe }
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
 
+import { OrderObjectByPipe }
+    from '../../pipes/orderObjectByNg2.ts'
+
 import { UrlProtocolPipe }
     from '../../pipes/urlProtocolNg2.ts';
 
@@ -119,6 +122,7 @@ import { WorksService }
             FilterImportWizardsPipe,
             LatexPipe,
             OrderByPipe,
+            OrderObjectByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe
         ],
@@ -132,6 +136,7 @@ import { WorksService }
             FilterImportWizardsPipe,
             LatexPipe,
             OrderByPipe,
+            OrderObjectByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules

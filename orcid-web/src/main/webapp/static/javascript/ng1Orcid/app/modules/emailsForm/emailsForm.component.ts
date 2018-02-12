@@ -69,6 +69,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     position: any;
     inputEmail: any;
     prefs: any;
+    email_frequency: any;
 
     constructor( 
         private elementRef: ElementRef, 
@@ -135,6 +136,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.prefs = {};
         this.popUp = elementRef.nativeElement.getAttribute('popUp');
+        //this.email_frequency = null;
 
     }
 
@@ -160,6 +162,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     checkCredentials(popup): void {
         this.password = null;
+        console.log('checkCredentials');
         if(orcidVar.isPasswordConfirmationRequired){
             /*
             if (!popup){
@@ -189,12 +192,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             .subscribe(
                 data => {
                     this.getformData();
+                    this.inputEmail.value = "";
+                    this.emailService.notifyOther();
                 },
                 error => {
                     console.log('getEmailsFormError', error);
                 } 
             );
-            
+            this.inputEmail.value = "";
         }
         
     };
@@ -249,6 +254,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
+                this.getformData();
+                this.emailService.notifyOther();
             },
             error => {
                 console.log('getEmailsFormError', error);
@@ -265,6 +272,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
+                this.getformData();
+                //this.inputEmail.value = "";
+                this.emailService.notifyOther();
             },
             error => {
                 console.log('getEmailsFormError', error);
@@ -295,10 +305,10 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
+                let tempData = null;
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
-                this.formData = data;
                 //this.newElementDefaultVisibility = this.formData.visibility.visibility;
-                console.log('this.getForm emails', this.formData);
+             
                 if ( this.formData.emails.length == 0 ) {
                     this.addNew();
                 }
@@ -311,8 +321,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             this.showUnverifiedEmailSetPrimaryBox = false;
                         }
                     }
-
                 }
+                this.getformData();
             },
             error => {
                 console.log('getEmailsFormError', error);
