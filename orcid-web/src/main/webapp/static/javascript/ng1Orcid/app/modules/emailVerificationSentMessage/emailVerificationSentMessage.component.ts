@@ -48,7 +48,7 @@ export class EmailVerificationSentMesssageComponent implements AfterViewInit, On
                 this.emailPrimary = this.emailService.getEmailPrimary().value;
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     }

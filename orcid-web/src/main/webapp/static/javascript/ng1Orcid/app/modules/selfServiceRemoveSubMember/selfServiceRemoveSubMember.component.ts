@@ -41,7 +41,7 @@ export class SelfServiceRemoveSubMemberComponent {
                     this.closeModal();
                 },
                 error => {
-                    console.log('removeSubMember error', error);
+                    //console.log('removeSubMember error', error);
                 } 
         );
     }

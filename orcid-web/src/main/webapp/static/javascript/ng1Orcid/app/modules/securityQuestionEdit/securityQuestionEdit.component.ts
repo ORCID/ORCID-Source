@@ -70,7 +70,7 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
                 this.securityQuestionPojo = data;
             },
             error => {
-                console.log('error with security question.json', error);
+                //console.log('error with security question.json', error);
             } 
         );
     };
@@ -88,7 +88,7 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
                 this.getSecurityQuestion();
             },
             error => {
-                console.log('error with security question', error);
+                //console.log('error with security question', error);
             } 
         );
         this.password=null;

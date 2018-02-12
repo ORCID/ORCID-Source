@@ -52,7 +52,7 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.codes = data;
             },
             error => {
-                console.log('getWebsitesFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };
@@ -71,7 +71,7 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getWebsitesFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };

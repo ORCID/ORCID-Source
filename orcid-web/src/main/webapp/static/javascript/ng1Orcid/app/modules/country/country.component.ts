@@ -56,10 +56,10 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.formData = data;
                 this.formDataAddresses = this.formData.addresses;
-                //console.log('this.formData', this.formData);
+                ////console.log('this.formData', this.formData);
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
     };
@@ -77,7 +77,7 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };
@@ -89,7 +89,7 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
         this.subscription = this.countryService.notifyObservable$.subscribe(
             (res) => {
                 this.getformData();
-                console.log('notified', res);
+                //console.log('notified', res);
             }
         );
     };

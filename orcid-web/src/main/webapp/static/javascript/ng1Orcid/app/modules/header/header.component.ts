@@ -73,7 +73,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     onResize(event?): void {
-        console.log("resize", event);
+        //console.log("resize", event);
         let windowWidth = getWindowWidth();
         if(windowWidth > 767){ /* Desktop view */
             this.menuVisible = true;

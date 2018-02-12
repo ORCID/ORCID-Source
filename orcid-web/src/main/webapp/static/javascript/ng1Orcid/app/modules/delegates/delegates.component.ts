@@ -112,7 +112,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -141,7 +141,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -164,7 +164,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showInitLoader = false;
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -190,7 +190,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -211,7 +211,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showLoader = false;
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -275,7 +275,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };

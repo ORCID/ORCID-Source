@@ -46,7 +46,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
                 this.resetPasswordForm = data;
             },
             error => {
-                console.log('error fetching password-reset.json', error);
+                //console.log('error fetching password-reset.json', error);
             } 
         );
  
@@ -69,7 +69,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
 
             },
             error => {
-                console.log('error posting to reset-password-email.json', error);
+                //console.log('error posting to reset-password-email.json', error);
             } 
         );
     }
@@ -83,7 +83,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
                 this.commonSrvc.copyErrorsLeft(this.resetPasswordForm, data);
             },
             error => {
-                console.log('error posting to reset-password-email.json', error);
+                //console.log('error posting to reset-password-email.json', error);
             } 
         );
     }

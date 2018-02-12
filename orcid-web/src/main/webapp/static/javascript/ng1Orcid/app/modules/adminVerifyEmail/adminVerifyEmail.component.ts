@@ -47,7 +47,7 @@ export class AdminVerifyEmailComponent implements AfterViewInit, OnDestroy, OnIn
                 this.result = data;
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };

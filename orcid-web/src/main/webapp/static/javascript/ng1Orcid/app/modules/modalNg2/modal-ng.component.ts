@@ -51,13 +51,13 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     formColorBoxWidth(): string {
-        console.log("isMobile()? '100%': '800px'", isMobile()? '100%': '800px');
+        //console.log("isMobile()? '100%': '800px'", isMobile()? '100%': '800px');
         return isMobile()? '100%': '800px';
     };
 
     formColorBoxResize(): void {
         if ( isMobile() ) {
-            //console.log('isMobile');
+            ////console.log('isMobile');
             $.colorbox.resize(
                 {
                     height: '100%',
@@ -66,7 +66,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
             );
         }
         else {
-            //console.log('notmobile');
+            ////console.log('notmobile');
             $.colorbox.resize(
                 {
                     width:'800px'
@@ -86,7 +86,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
-                //console.log('res.value',res, this.elementId);
+                ////console.log('res.value',res, this.elementId);
                 if ( res.moduleId == this.elementId ) {
                     if ( res.action === "close") {
                         this.closeModal();
