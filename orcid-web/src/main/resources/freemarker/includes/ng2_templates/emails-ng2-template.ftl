@@ -35,7 +35,7 @@
             </div>
         </div> 
         <div class="workspace-section-content">
-            <div *ngFor="let email of formData.emails" class="mobile-box emails-box">
+            <div *ngFor="let email of formData.emails | orderBy:'value'" class="mobile-box emails-box">
                 <span >{{email.value}}</span>
             </div>
         </div>

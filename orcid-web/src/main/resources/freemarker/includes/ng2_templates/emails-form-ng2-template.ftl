@@ -50,7 +50,7 @@
                                 <!-- Email table -->
                                 <div class="table-responsive bottomBuffer" style="position: static">
                                     <table class="table" style="position: static">
-                                        <tr *ngFor="let email of formData.emails" class="data-row-group" name="email"><!-- | orderBy:['value'] -->
+                                        <tr *ngFor="let email of formData.emails | orderBy:'value'" class="data-row-group" name="email">
                                             <!-- Primary Email -->
                                             <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" >                                                     
                                                 <span>{{email.value}}</span>
