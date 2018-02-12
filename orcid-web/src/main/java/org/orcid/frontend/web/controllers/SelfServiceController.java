@@ -441,7 +441,7 @@ public class SelfServiceController extends BaseController {
     @RequestMapping(value = "/disambiguated/search", method = RequestMethod.GET)
     public @ResponseBody List<Map<String, String>> searchDisambiguated(@RequestParam("q") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
-        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit, false)) {
+        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolrForSelfService(query, 0, limit)) {
             datums.add(orgDisambiguated.toMap());
         }
         return datums;
