@@ -8,7 +8,6 @@ import { Injectable, Pipe, PipeTransform }
 //@Injectable()
 export class OrderByPipe implements PipeTransform {
     transform(array: Array<string>, args: string): Array<string> {
-        console.log('OrderByPipe', array, args);
         if (array==null) {
             return null;
         }

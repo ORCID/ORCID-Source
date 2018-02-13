@@ -98,6 +98,9 @@ import { TwoFAStateService }
 import { WebsitesService } 
     from '../../shared/websites.service.ts';
 
+import { WidgetService }
+    from '../../shared/widget.service.ts'
+
 import { WorkspaceService } 
     from '../../shared/workspace.service.ts'; 
 
@@ -112,8 +115,8 @@ import { WorksService }
             CommonModule,
             FormsModule,
             //User Modules
-            //LanguageNg2Module,
             EmailFrecuencyNg2Module,
+            LanguageNg2Module,
             PrivacytoggleNg2Module
         ],
         declarations: [ 
@@ -140,7 +143,7 @@ import { WorksService }
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
-            //LanguageNg2Module,
+            LanguageNg2Module,
             EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module
         ],
@@ -162,6 +165,7 @@ import { WorksService }
             PreferencesService,
             TwoFAStateService,
             WebsitesService,
+            WidgetService,
             WorksService,
             WorkspaceService
         ]

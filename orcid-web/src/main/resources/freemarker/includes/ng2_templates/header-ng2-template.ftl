@@ -65,9 +65,9 @@
                 </form>
                 <div class="language-selector" *ngIf="settingsVisible == true">
                     <!-- Shared component -->
-                    <!--
+                
                     <language-ng2></language-ng2>
-                    -->
+                    
                     <div class="account-settings-mobile-menu">
                         <span class="account-settings-mobile"> 
                             <a ${(nav=="settings")?then('class="active"', '')} href="<@orcid.rootPath '/account'/>">
