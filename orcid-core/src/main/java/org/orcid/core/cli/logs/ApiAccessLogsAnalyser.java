@@ -114,13 +114,12 @@ public class ApiAccessLogsAnalyser {
     }
 
     private String getClientDetailsId(String token) {
-        // if (!tokenToClientDetails.containsKey(token)) {
-        // OrcidOauth2TokenDetail tokenDetail =
-        // tokenDao.findByTokenValue(token);
-        // tokenToClientDetails.put(token, tokenDetail.getClientDetailsId());
-        // }
-        // return tokenToClientDetails.get(token);
-        return token;
+         if (!tokenToClientDetails.containsKey(token)) {
+         OrcidOauth2TokenDetail tokenDetail =
+         tokenDao.findByTokenValue(token);
+         tokenToClientDetails.put(token, tokenDetail.getClientDetailsId());
+         }
+         return tokenToClientDetails.get(token);
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
