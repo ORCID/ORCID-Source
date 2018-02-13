@@ -77,7 +77,14 @@
                     <th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
                     <td><a href="" id="" ng-click="toggleLanguageEdit()" ng-bind="languageToggleText"></a></td>
                 </tr>
-                
+                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+                <tr ng-show="showEditLanguage" ng-cloak>
+                    <td>
+                        
+                        <language-ng2></language-ng2>
+                    </td>
+                </tr>
+                </@orcid.checkFeatureStatus>
                 <tr ng-controller="languageCtrl" ng-show="showEditLanguage" ng-cloak>                                
                     <td colspan="2">
                         <p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
@@ -96,6 +103,15 @@
                     <td><a href="" ng-click="toggleEmailPreferencesEdit()"
                         ng-bind="emailPreferencesToggleText"></a></td>
                 </tr>
+
+                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+                <tr ng-show="showEditEmailPreferences">
+                    <td colspan="2">
+                        <notification-preference-ng2></notification-preference-ng2>
+                    </td>
+                </tr>
+                </@orcid.checkFeatureStatus>
+
                 <tr ng-controller="NotificationPreferencesCtrl"
                     ng-show="showEditEmailPreferences" ng-cloak>
                     <td colspan="2">

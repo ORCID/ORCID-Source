@@ -111,7 +111,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.editFunding = data;
-                console.log('this.editFunding response', this.editFunding);
+                //console.log('this.editFunding response', this.editFunding);
                 this.addingFunding = false;
                 this.close();
 
@@ -120,7 +120,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setBiographyFormError', error);
+                //console.log('setBiographyFormError', error);
             } 
         );
         */
@@ -156,14 +156,14 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
 
-                console.log('this.getFundingsById', data);
+                //console.log('this.getFundingsById', data);
                 for (let i in data) {
                     this.fundings.push(data[i]);
                 };
 
             },
             error => {
-                console.log('getBiographyFormError', error);
+                //console.log('getBiographyFormError', error);
             } 
         );
     }
@@ -173,7 +173,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('getFundingsIds', data);
+                //console.log('getFundingsIds', data);
                 let funding = null;
                 for (let i in data) {
                     funding = data[i];
@@ -195,7 +195,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.getFundingsById( ids );
             },
             error => {
-                console.log('getBiographyFormError', error);
+                //console.log('getBiographyFormError', error);
             } 
         );
     };
@@ -319,7 +319,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };
@@ -338,7 +338,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        console.log('initi funding component');
+        //console.log('initi funding component');
         this.getFundingsIds();
     }; 
 }
@@ -458,7 +458,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                                 });
                             }
                         }).fail(function() {
-                            console.log("Error fetching funding: " + value);
+                            //console.log("Error fetching funding: " + value);
                         });
                     } else {
                         $scope.editFunding = data;
@@ -609,7 +609,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                         });   
                     }
                 }).fail(function(){
-                    console.log("error getDisambiguatedFunding(id)");
+                    //console.log("error getDisambiguatedFunding(id)");
                 });
             };
 
@@ -729,7 +729,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                 }).fail(function(){
                     // something bad is happening!
                     $scope.addingFunding = false;
-                    console.log("error adding fundings");
+                    //console.log("error adding fundings");
                 });
             };
 
@@ -798,7 +798,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("FundingCtrl.serverValidate() error");
+                    //console.log("FundingCtrl.serverValidate() error");
                 });
             };
 
@@ -817,7 +817,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
 
             $scope.setSubTypeAsNotIndexed = function() {
                 if($scope.lastIndexedTerm != $.trim($('#organizationDefinedType').val())) {
-                    console.log("value changed: " + $scope.lastIndexedTerm + " <-> " + $('#organizationDefinedType').val());
+                    //console.log("value changed: " + $scope.lastIndexedTerm + " <-> " + $('#organizationDefinedType').val());
                     $scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = false;
                 }
             };

@@ -749,7 +749,7 @@
     <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="600" elementId="modalEmails" elementWidth="700">
+<modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
     <emails-form-ng2 popUp="true"></emails-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 

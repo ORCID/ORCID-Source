@@ -74,7 +74,7 @@ export class AdminDelegatesComponent implements AfterViewInit, OnDestroy, OnInit
                 }
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
  
@@ -92,7 +92,7 @@ export class AdminDelegatesComponent implements AfterViewInit, OnDestroy, OnInit
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };

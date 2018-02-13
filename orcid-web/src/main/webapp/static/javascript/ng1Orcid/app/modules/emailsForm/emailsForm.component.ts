@@ -162,7 +162,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     checkCredentials(popup): void {
         this.password = null;
-        console.log('checkCredentials');
         if(orcidVar.isPasswordConfirmationRequired){
             /*
             if (!popup){
@@ -181,8 +180,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     submitModal(obj?): void {
         
-        console.log('email to add', obj);
-
         if( orcidVar.isPasswordConfirmationRequired == true ){
             this.inputEmail.password = this.password;
         }
@@ -196,7 +193,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.emailService.notifyOther();
                 },
                 error => {
-                    console.log('getEmailsFormError', error);
+                    ////console.log('getEmailsFormError', error);
                 } 
             );
             this.inputEmail.value = "";
@@ -212,7 +209,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.prefs = data;
             },
             error => {
-                console.log('getEmailsFormError', error);
+                ////console.log('getEmailsFormError', error);
             } 
         );
     }
@@ -224,7 +221,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
             },
             error => {
-                console.log('getEmailsFormError', error);
+                ////console.log('getEmailsFormError', error);
             } 
         );
     };
@@ -258,7 +255,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.emailService.notifyOther();
             },
             error => {
-                console.log('getEmailsFormError', error);
+                ////console.log('getEmailsFormError', error);
             } 
         );
     };
@@ -277,7 +274,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.emailService.notifyOther();
             },
             error => {
-                console.log('getEmailsFormError', error);
+                ////console.log('getEmailsFormError', error);
             } 
         );
         this.showDeleteBox = false;            
@@ -325,7 +322,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.getformData();
             },
             error => {
-                console.log('getEmailsFormError', error);
+                ////console.log('getEmailsFormError', error);
             } 
         );
     };
@@ -355,7 +352,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmailsFormError', error);
+                ////console.log('getEmailsFormError', error);
             } 
         );
     };
@@ -368,7 +365,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
             },
             error => {
-                console.log('setEmailsKnownAs', error);
+                ////console.log('setEmailsKnownAs', error);
             } 
         ); 
     };
@@ -386,12 +383,12 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.closeEditModal();
                     }
                 }else{
-                    console.log(this.formData.errors);
+                    ////console.log(this.formData.errors);
                 }
 
             },
             error => {
-                console.log('setEmailsKnownAs', error);
+                ////console.log('setEmailsKnownAs', error);
             } 
         );
         this.formData.visibility = null;
@@ -411,7 +408,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
             },
             error => {
-                console.log('setEmailsKnownAs', error);
+                ////console.log('setEmailsKnownAs', error);
             } 
         );
         this.showEmailVerifBox = true;

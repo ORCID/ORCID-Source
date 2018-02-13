@@ -55,7 +55,7 @@ export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnI
                 */
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -115,7 +115,7 @@ export const DeactivateAccountCtrl = angular.module('orcidApp').controller(
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with change DeactivateAccount");
+                    //console.log("error with change DeactivateAccount");
                 });
             };
         }

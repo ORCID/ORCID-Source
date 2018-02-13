@@ -58,16 +58,16 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.formData = data;
 
-                //console.log('this.getForm', this.formData);
+                ////console.log('this.getForm', this.formData);
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
 
     openEditModal(): void{
-        console.log('openEditModal emails'); 
+        //console.log('openEditModal emails'); 
         this.emailService.getEmails()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -82,7 +82,7 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
                 */
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };

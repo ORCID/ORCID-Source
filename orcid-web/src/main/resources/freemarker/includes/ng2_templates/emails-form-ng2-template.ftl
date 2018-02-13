@@ -95,19 +95,9 @@
                                                     ${springMacroRequestContext.getMessage("manage.email.verified")}
                                                 </span>
                                             </td>
-                                            <td width="26" class="tooltip-container">
-                                                <a name="delete-email" class="glyphicon glyphicon-trash grey"
-                                                    *ngIf="email.primary == false && !popUp"
-                                                    (click)="confirmDeleteEmail(email)" >
-                                                        <div class="popover small-popover popover-tooltip top">
-                                                            <div class="arrow"></div>
-                                                            <div class="popover-content">
-                                                                <span><@spring.message "common.modals.delete"/></span>
-                                                            </div>
-                                                        </div>
-                                                    </a>
+                                            <td width="26" class="tooltip-container">                                      
                                                 <a name="delete-email-inline" class="glyphicon glyphicon-trash grey"
-                                                    *ngIf="email.primary == false && popUp"
+                                                    *ngIf="email.primary == false"
                                                     (click)="confirmDeleteEmailInline(email, $event)" >
                                                     <div class="popover small-popover popover-tooltip top">
                                                         <div class="arrow"></div>
@@ -131,7 +121,7 @@
                                         </tr>
                                     </table>            
                                     <!-- Delete Email Box -->
-                                    <div  class="delete-email-box grey-box" *ngIf="popUp && showDeleteBox">               
+                                    <div  class="delete-email-box grey-box" *ngIf="showDeleteBox">               
                                         <div style="margin-bottom: 10px;">
                                             <@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailService.delEmail.value}}
                                         </div>
@@ -211,13 +201,6 @@
                                         <form class="form-inline">
                                             <div class="form-group">                            
                                                 <div class="input-group">
-                                                    <!--                           
-                                                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" [(ngModel)]="prefsSrvc.prefs['email_frequency']" (ngModelChange)="prefsSrvc.clearMessage()">
-                                                        <#list sendEmailFrequencies?keys as key>
-                                                            <option value="${key}">${sendEmailFrequencies[key]}</option>
-                                                        </#list>
-                                                    </select>
-                                                    -->
                                                     <select 
                                                     [(ngModel)]="prefs.email_frequency" 
                                                     (ngModelChange)="clearMessage(false)"
@@ -226,14 +209,7 @@
                                                         <#list sendEmailFrequencies?keys as key>
                                                             <option value="${key}">${sendEmailFrequencies[key]}</option>
                                                         </#list>
-                                                        <!--
-                                                        <option 
-                                                            *ngFor="let emailStatusOption of emailStatusOptions"
-                                                            [value]="emailStatusOption.val"
-                                                        >
-                                                            {{emailStatusOption.label}}   
-                                                        </option>             
-                                                        -->
+    
                                                     </select>
                                                 </div>
                                             </div>
@@ -257,7 +233,7 @@
         </div>
         <div class="row" *ngIf="popUp">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <a (click)="closeEditModal()" class="cancel-option pull-right"><@orcid.msg 'freemarker.btncancel' /></a>
+                <a (click)="closeEditModal()" class="cancel-option pull-right"><@orcid.msg 'manage.email.close' /></a>
             </div>
         </div>
     </div>

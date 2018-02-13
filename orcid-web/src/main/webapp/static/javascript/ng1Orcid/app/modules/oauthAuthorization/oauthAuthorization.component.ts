@@ -217,7 +217,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                //console.log('setBiographyFormError', error);
+                ////console.log('setBiographyFormError', error);
             } 
         );
     };
@@ -250,7 +250,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
                 },
                 error => {
-                    console.log('getformDataError', error);
+                    //console.log('getformDataError', error);
                 } 
             );
         }
@@ -266,7 +266,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
 
@@ -301,7 +301,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
 
@@ -340,7 +340,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
 
@@ -369,7 +369,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
                 this.oauth2ScreensPostRegisterConfirm();
             } 
         );
@@ -385,7 +385,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             data => {
             },
             error => {
-                //console.log('setBiographyFormError', error);
+                ////console.log('setBiographyFormError', error);
             } 
         );
     };
@@ -400,7 +400,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             data => {
             },
             error => {
-                //console.log('setBiographyFormError', error);
+                ////console.log('setBiographyFormError', error);
             } 
         );
     };
@@ -433,7 +433,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }   
             },
             error => {
-                //console.log('setBiographyFormError', error);
+                ////console.log('setBiographyFormError', error);
             } 
         );
     };
@@ -477,7 +477,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }
             },
             error => {
-                //console.log('setBiographyFormError', error);
+                ////console.log('setBiographyFormError', error);
             } 
         );
     };
@@ -499,7 +499,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }
             },
             error => {
-                //console.log('setBiographyFormError', error);
+                ////console.log('setBiographyFormError', error);
             } 
         );
     };

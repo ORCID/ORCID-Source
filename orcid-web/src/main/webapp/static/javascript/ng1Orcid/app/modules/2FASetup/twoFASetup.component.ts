@@ -75,7 +75,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
             
             var copied = document.execCommand('copy', false, null);
             if (!copied) {
-                console.log("An error occurred copying recovery codes");
+                //console.log("An error occurred copying recovery codes");
             }
             
             temp.remove();
@@ -113,7 +113,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
                     $scope.$apply();
                 }
             }).fail(function(err) {
-                console.log("An error occurred getting 2FA secret");
+                //console.log("An error occurred getting 2FA secret");
             });
         });
         */
@@ -133,11 +133,11 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('this.getForm', data);
+                //console.log('this.getForm', data);
                 this.twoFactorAuthRegistration = data;
             },
             error => {
-                console.log('An error occurred disabling user 2FA', error);
+                //console.log('An error occurred disabling user 2FA', error);
             } 
         );
     }
@@ -149,7 +149,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('this.getForm', data);
+                //console.log('this.getForm', data);
                 if (data.valid) {
                     this.showSetup2FA = false;
                     this.show2FARecoveryCodes = true;
@@ -161,7 +161,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('An error occurred disabling user 2FA', error);
+                //console.log('An error occurred disabling user 2FA', error);
             } 
         );
     };
@@ -171,7 +171,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('this.getForm', data);
+                //console.log('this.getForm', data);
                 $("#2FA-QR-code").attr("src", data.url);
                 this.showSetup2FA = true;
                 this.showQRCode = true;
@@ -181,7 +181,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.register();
             },
             error => {
-                console.log('getTwoFASetupFormError', error);
+                //console.log('getTwoFASetupFormError', error);
             } 
         );
 

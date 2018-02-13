@@ -47,7 +47,7 @@ export class StaticsComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.liveIds = data;
             },
             error => {
-                console.log('getWebsitesFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };

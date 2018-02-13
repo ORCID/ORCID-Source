@@ -68,7 +68,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             "source":this.orcidId,
             "sourceName":""
         };
-        console.log('add new keyword', tmpObj);  
+        //console.log('add new keyword', tmpObj);  
         this.formData.keywords.push(tmpObj);
         this.updateDisplayIndex();
         this.newInput = true;
@@ -96,7 +96,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
                 this.formData = data;
-                //console.log('keywords data', this.formData);
+                ////console.log('keywords data', this.formData);
                 this.newElementDefaultVisibility = this.formData.visibility.visibility;
                 if ( this.formData.keywords.length == 0){
                     this.addNew();
@@ -107,7 +107,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getKeywordsFormError', error);
+                //console.log('getKeywordsFormError', error);
             } 
         );
     };
@@ -130,12 +130,12 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.closeEditModal();
                     }
                 }else{
-                    //console.log(this.keywordsForm.errors);
+                    ////console.log(this.keywordsForm.errors);
                 }
 
             },
             error => {
-                //console.log('setBiographyFormError', error);
+                ////console.log('setBiographyFormError', error);
             } 
         );
         this.formData.visibility = null;

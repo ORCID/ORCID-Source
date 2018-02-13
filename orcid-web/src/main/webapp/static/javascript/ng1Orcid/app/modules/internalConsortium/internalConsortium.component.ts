@@ -82,7 +82,7 @@ export class InternalConsotiumComponent implements AfterViewInit, OnDestroy, OnI
             },
             error => {
                 this.findConsortiumError = true;
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
@@ -104,7 +104,7 @@ export class InternalConsotiumComponent implements AfterViewInit, OnDestroy, OnI
             },
             error => {
                 this.findConsortiumError = true;
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };

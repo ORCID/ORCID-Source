@@ -4,12 +4,15 @@ import * as angular
 import { Directive, NgModule } 
     from '@angular/core';
 
+import { FormsModule }
+    from '@angular/forms'; // <-- NgModel lives here
+
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
 //User generated components
-import { CommonNg2Module }
-    from './../common/common.ts';
+import { CommonModule } 
+    from '@angular/common'; 
 
 import { LanguageComponent } 
     from './language.component.ts';
@@ -34,7 +37,8 @@ export const LanguageModule = angular.module(
             LanguageComponent
         ],
         imports: [
-            CommonNg2Module
+            CommonModule,
+            FormsModule
         ],
         providers: [
         ]

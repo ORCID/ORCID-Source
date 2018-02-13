@@ -49,7 +49,7 @@ export class SocialNetworksComponent implements AfterViewInit, OnDestroy, OnInit
                 }
             },
             error => {
-                console.log('getWebsitesFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };
@@ -63,7 +63,7 @@ export class SocialNetworksComponent implements AfterViewInit, OnDestroy, OnInit
                     window.location.href = data;
                 },
                 error => {
-                    console.log('getWebsitesFormError', error);
+                    //console.log('getWebsitesFormError', error);
                 } 
             );
 
@@ -79,7 +79,7 @@ export class SocialNetworksComponent implements AfterViewInit, OnDestroy, OnInit
                     }
                 },
                 error => {
-                    console.log('getWebsitesFormError', error);
+                    //console.log('getWebsitesFormError', error);
                 } 
             );
         }

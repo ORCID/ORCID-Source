@@ -54,7 +54,7 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
                 this.codes = data;
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
@@ -75,7 +75,7 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
                 }
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };

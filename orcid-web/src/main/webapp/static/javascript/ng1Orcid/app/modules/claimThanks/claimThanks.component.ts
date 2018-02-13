@@ -49,7 +49,7 @@ export class ClaimThanksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }).fail(function(){
             // something bad is happening!
-            console.log("error fetching external identifiers");
+            //console.log("error fetching external identifiers");
         });
         */
     };

@@ -46,7 +46,7 @@ export class DeactivateProfileComponent implements AfterViewInit, OnDestroy, OnI
                 this.result = data;
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };

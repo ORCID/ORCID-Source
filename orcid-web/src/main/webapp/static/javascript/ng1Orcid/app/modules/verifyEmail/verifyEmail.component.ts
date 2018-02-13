@@ -56,7 +56,7 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
  
             },
             error => {
-                console.log('getWebsitesFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
         //$.colorbox.close();
@@ -100,7 +100,7 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.loading = false;
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
         /*
@@ -148,7 +148,7 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with multi email");
+                    //console.log("error with multi email");
                 });
             };
 
@@ -163,7 +163,7 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                 
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
         this.modalService.notifyOther({action:'close', moduleId: 'modalemailunverified'});

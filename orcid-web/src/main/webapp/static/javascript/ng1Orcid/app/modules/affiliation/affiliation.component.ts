@@ -108,7 +108,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.editAffiliation = data;
-                console.log('this.editAffiliation response', this.editAffiliation);
+                //console.log('this.editAffiliation response', this.editAffiliation);
                 this.addingAffiliation = false;
                 this.close();
                 //affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
@@ -122,7 +122,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setBiographyFormError', error);
+                //console.log('setBiographyFormError', error);
             } 
         );
     };
@@ -146,7 +146,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                         });
                     }
                 }).fail(function(e) {
-                    console.log("Error fetching affiliation: ", $scope.editAffiliation.affiliationType.value,  e);
+                    //console.log("Error fetching affiliation: ", $scope.editAffiliation.affiliationType.value,  e);
                 });
             } else {
                 $scope.editAffiliation = affiliation;
@@ -243,7 +243,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             .subscribe(
                 data => {
 
-                    console.log('this.getAffiliationsById', data);
+                    //console.log('this.getAffiliationsById', data);
                     for (let i in data) {
                         if (data[i].affiliationType != null 
                             && data[i].affiliationType.value != null
@@ -271,8 +271,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                         }
 
                     };
-                    console.log('educations', this.educations);
-                    console.log('employments', this.employments);
+                    //console.log('educations', this.educations);
+                    //console.log('employments', this.employments);
                     /*
                     if (this.affiliationService.affiliationsToAddIds.length == 0) {
                         this.affiliationService.loading = false;
@@ -290,7 +290,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
                 },
                 error => {
-                    console.log('getBiographyFormError', error);
+                    //console.log('getBiographyFormError', error);
                 } 
                 /*
 
@@ -327,7 +327,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                         }
                     }
                 }).fail(function(e) {
-                    console.log("Error adding affiliations to scope")
+                    //console.log("Error adding affiliations to scope")
                     logAjaxError(e);
                 });
             } else {
@@ -343,7 +343,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('getAffiliationsIds', data);
+                //console.log('getAffiliationsIds', data);
 
                 if( data.length != 0 ) {
                     let affiliationIds = data.splice(0,20).join();
@@ -352,7 +352,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getBiographyFormError', error);
+                //console.log('getBiographyFormError', error);
             } 
         );
     };
@@ -362,7 +362,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                //console.log('this.getDisambiguatedAffiliation', data);
+                ////console.log('this.getDisambiguatedAffiliation', data);
 
                 if (data != null) {
                     this.disambiguatedAffiliation = data;
@@ -372,7 +372,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log("error getDisambiguatedAffiliation(id)", id, error);
+                //console.log("error getDisambiguatedAffiliation(id)", id, error);
             } 
         );
     };
@@ -560,7 +560,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };
@@ -588,7 +588,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        console.log('initi affiliation component');
+        //console.log('initi affiliation component');
         this.getAffiliationsId();
     }; 
 }
@@ -649,7 +649,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("serverValidate() error");
+                    //console.log("serverValidate() error");
                 });
             };
 

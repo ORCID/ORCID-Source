@@ -114,7 +114,7 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
                 this.displayIndexInit();
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
@@ -148,14 +148,14 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
         .subscribe(
             data => {
                 if(data.errors.length != 0){
-                    console.log("Unable to delete external identifier.");
+                    //console.log("Unable to delete external identifier.");
                 } else {
                     this.externalIdentifiersForm.externalIdentifiers.splice(this.removeExternalIdentifierIndex, 1);
                     this.removeExternalIdentifierIndex = null;
                 }
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
@@ -187,11 +187,11 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
                     this.getExternalIdentifiersForm();                
                     this.closeEditModal();
                 }else{
-                    console.log(this.externalIdentifiersForm.errors);
+                    //console.log(this.externalIdentifiersForm.errors);
                 }
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
