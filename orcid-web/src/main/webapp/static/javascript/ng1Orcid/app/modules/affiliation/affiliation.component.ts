@@ -64,6 +64,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     sortHideOption: boolean;
     sortState: any;
+    educationsAndQualifications: any;
 
     constructor(
         private affiliationService: AffiliationService,
@@ -93,6 +94,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement = {};
         this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.AFFILIATION);
+    
+    	this.educationsAndQualifications = [];
     }
 
     addAffiliation(): void {
@@ -223,19 +226,14 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         if(this.fixedTitle.length > maxSize){
             this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
         }
-
-        /*
-        $.colorbox({
-            html : $compile($('#delete-affiliation-modal').html())($scope),
-            onComplete: function() {
-                $.colorbox.resize();
-            }
-        });
-        */
     };
 
     displayEducation(): boolean {
         return this.workspaceSrvc.displayEducation;
+    };
+    
+    displayEducationAndQualification(): boolean {
+    	return this.workspaceSrvc.displayEducationAndQualification;
     };
 
     getAffiliationsById( affiliationIds ): void {
@@ -250,6 +248,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                         ){
                             if(data[i].affiliationType.value == 'education'){
                                 this.educations.push(data[i]);
+                                this.educationsAndQualifications.push( data[i] );
                                 /*
                                 groupedActivitiesUtil.group(
                                     data[i],
@@ -267,6 +266,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                                     this.affiliationService.employments
                                 );
                                 */
+                            } else if (data[i].affiliationType.value == 'qualification') {
+                            	this.educationsAndQualifications.push(data[i]);                            	
                             }
                         }
 
@@ -304,14 +305,17 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     method: 'GET',
                     success: function(data) {
                         for (i in data) {
-                            if (data[i].affiliationType != null && data[i].affiliationType.value != null
-                                    && data[i].affiliationType.value == 'education'){
-                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
-                            }
-                            else if (data[i].affiliationType != null && data[i].affiliationType.value != null
-                                    && data[i].affiliationType.value == 'employment'){
-                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
-                            }
+                        	if(data[i].affiliationType != null && data[i].affiliationType.value != null) {
+                        		if (data[i].affiliationType.value == 'education'){
+                                	groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
+	                            	groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educationsAndQualifications);
+	                            }
+	                            else if (data[i].affiliationType.value == 'employment'){
+									groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
+	                            } else if(data[i].affiliationType.value == 'qualification') {
+	                            	groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educationsAndQualifications);
+	                            }
+                        	}                            
                         };
                         if (serv.affiliationsToAddIds.length == 0) {
                             serv.loading = false;
@@ -567,6 +571,10 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleEducation(): void {
         this.workspaceSrvc.toggleEducation();
+    };
+
+	toggleEducationAndQualification(): void {
+        this.workspaceSrvc.toggleEducationAndQualification();
     };
 
     trackByFn(index, item): any {

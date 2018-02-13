@@ -22,106 +22,225 @@
         <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
-                    <div class="col-md-3 col-sm-3 col-xs-12">
-                        <a name='workspace-educations'></a>
-                        <a href="" (click)="toggleEducation()" class="toggle-text">
-                            <i
-                                class="glyphicon-chevron-down glyphicon x075"
-                                [ngClass]="{ 'glyphicon-chevron-right': displayEducation()==false }"
-                            ></i>
-                                
-                            <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span>{{educations.length}}</span>)
-                        </a>
-                        
-                        <#if !(isPublicProfile??)> 
-                        <div class="popover-help-container">
-                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                            <div id="education-help" class="popover bottom">
-                                <div class="arrow"></div>
-                                <div class="popover-content">
-                                    <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></a></p>
-                                </div>
-                            </div>
-                        </div>  
-                        </#if>
-
-                    </div>
-                    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="displayEducation()">
-                        
-                        <#escape x as x?html>
-                        
-                        <div class="menu-container">   
-                            <ul class="toggle-menu">
-                                <li>
-                                    <span class="glyphicon glyphicon-sort"></span>                          
-                                    <@orcid.msg 'manual_orcid_record_contents.sort'/>
-                                    <ul class="menu-options sort">
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!sortHideOption">                                         
-                                            <a (click)="sort('date');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-                                                <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
-                                                <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
-                                            </a>                       
-                                        </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="!sortHideOption == null">
-                                            <a (click)="sort('groupName');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
-                                                <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
-                                            </a>                                            
-                                        </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
-                                            <a (click)="sort('title');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
-                                                <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
-                                            </a>
-                                        </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!sortHideOption && sortState.type != 'affiliation'">
-                                            <a (click)="sort('type');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-                                                <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
-                                                <span *ngIf="sortState.reverseKey['type'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>                                   
+                    
+                    <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'>
+                        <div class="col-md-5 col-sm-5 col-xs-12">
+                            <a name='workspace-educations-qualifications'></a>
+                            <a href="" (click)="toggleEducationAndQualification()" class="toggle-text">
+                                <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducationAndQualification()==false }"></i>                               
+                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education_qualification'/> (<span>{{educationsAndQualifications.length}}</span>)
+                            </a>    
+                            <#if !(isPublicProfile??)> 
+                                <div class="popover-help-container">
+                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <div id="education-qualification-help" class="popover bottom">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </#if>
                         </div>
-                        </#escape>               
-                        
-                        <#if !(isPublicProfile??)>
-                        <ul class="workspace-bar-menu">      
-                            <li class="hidden-xs">                  
-                                <div class="menu-container" id="add-education-container">
+                        <div class="col-md-7 col-sm-7 col-xs-12 action-button-bar" *ngIf="displayEducationAndQualification()">
+                            <#escape x as x?html>
+                                <div class="menu-container">   
                                     <ul class="toggle-menu">
-                                        <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
-                                            <ul class="menu-options education">
-                                                <li>          
-                                                    <a id="add-education" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                        <li>
+                                            <span class="glyphicon glyphicon-sort"></span>                          
+                                            <@orcid.msg 'manual_orcid_record_contents.sort'/>
+                                            <ul class="menu-options sort">
+                                                <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!sortHideOption">                                         
+                                                    <a (click)="sort('date');" class="action-option manage-button">
+                                                        <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+                                                        <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
+                                                        <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
+                                                    </a>                       
+                                                </li>
+                                                <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="!sortHideOption == null">
+                                                    <a (click)="sort('groupName');" class="action-option manage-button">
+                                                        <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+                                                        <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
+                                                        <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
+                                                    </a>                                            
+                                                </li>
+                                                <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
+                                                    <a (click)="sort('title');" class="action-option manage-button">
+                                                        <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+                                                        <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
+                                                        <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
                                                     </a>
-                                               </li>
+                                                </li>
+                                                <li [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!sortHideOption && sortState.type != 'affiliation'">
+                                                    <a (click)="sort('type');" class="action-option manage-button">
+                                                        <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
+                                                        <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
+                                                        <span *ngIf="sortState.reverseKey['type'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
+                                                    </a>
+                                                </li>
                                             </ul>
-                                         </li>
-                                    </ul>
-                                </div>         
-                            </li>
-                                               
-                            <li class="hidden-md hidden-sm visible-xs-inline">          
-                                <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                    <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                </a>
-                            </li>                                        
-                        </ul>
-                        </#if>
-                    </div>
+                                        </li>
+                                    </ul>                                   
+                                </div>
+                            </#escape>               
+                            <#if !(isPublicProfile??)>
+                                <ul class="workspace-bar-menu">      
+                                    <li class="hidden-xs">                  
+                                        <div class="menu-container" id="add-education-container">
+                                            <ul class="toggle-menu">
+                                                <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
+                                                    <ul class="menu-options education">
+                                                        <li>          
+                                                            <a id="add-education" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>         
+                                    </li>
+                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <ul class="workspace-bar-menu">      
+                                    <li class="hidden-xs">                  
+                                        <div class="menu-container" id="add-qualification-container">
+                                            <ul class="toggle-menu">
+                                                <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification'/>    
+                                                    <ul class="menu-options qualification">
+                                                        <li>          
+                                                            <a id="add-qualification" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>         
+                                    </li>
+                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </#if>
+                        </div>
+                    </@orcid.checkFeatureStatus>
+                
+                    
+                    
+                    
+                    
+                    
+                    
+                    <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES' false>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <a name='workspace-educations'></a>
+                            <a href="" (click)="toggleEducation()" class="toggle-text">
+                                <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducation()==false }"></i>                               
+                                <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span>{{educations.length}}</span>)
+                            </a>    
+                            <#if !(isPublicProfile??)> 
+                                <div class="popover-help-container">
+                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <div id="education-help" class="popover bottom">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></a></p>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </#if>
+                        </div>
+                        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="displayEducation()">
+                            <#escape x as x?html>
+                            <div class="menu-container">   
+                                <ul class="toggle-menu">
+                                    <li>
+                                        <span class="glyphicon glyphicon-sort"></span>                          
+                                        <@orcid.msg 'manual_orcid_record_contents.sort'/>
+                                        <ul class="menu-options sort">
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!sortHideOption">                                         
+                                                <a (click)="sort('date');" class="action-option manage-button">
+                                                    <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+                                                    <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
+                                                </a>                       
+                                            </li>
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="!sortHideOption == null">
+                                                <a (click)="sort('groupName');" class="action-option manage-button">
+                                                    <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+                                                    <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
+                                                </a>                                            
+                                            </li>
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
+                                                <a (click)="sort('title');" class="action-option manage-button">
+                                                    <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+                                                    <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
+                                                    <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
+                                                </a>
+                                            </li>
+                                            <li [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!sortHideOption && sortState.type != 'affiliation'">
+                                                <a (click)="sort('type');" class="action-option manage-button">
+                                                    <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
+                                                    <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
+                                                    <span *ngIf="sortState.reverseKey['type'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>                                   
+                            </div>
+                            </#escape>               
+                            <#if !(isPublicProfile??)>
+                                <ul class="workspace-bar-menu">      
+                                    <li class="hidden-xs">                  
+                                        <div class="menu-container" id="add-education-container">
+                                            <ul class="toggle-menu">
+                                                <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
+                                                    <ul class="menu-options education">
+                                                        <li>          
+                                                            <a id="add-education" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>         
+                                    </li>
+                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                        </a>
+                                    </li>                                        
+                                </ul>
+                            </#if>
+                        </div>
+                    </@orcid.checkFeatureStatus>
                 </div>
-            </div>
+            </div>            
+                    
+                    
+                    
             <div *ngIf="workspaceSrvc.displayEducation" class="workspace-accordion-content">
                 <ul id="educations-list" *ngIf="educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of educations | orderBy: sortState.predicate:sortState.reverse" [attr.education-put-code]="group.putCode.value">

@@ -13,7 +13,8 @@ export class WorkspaceService {
     public displayFunding: boolean;
     public displayPersonalInfo: boolean;
     public displayWorks: boolean;
-    public displayPeerReview: boolean;
+    public displayPeerReview: boolean;    
+    public displayEducationAndQualification: boolean;
 
     constructor(){
         this.displayEducation = true;
@@ -22,6 +23,8 @@ export class WorkspaceService {
         this.displayPersonalInfo = true;
         this.displayWorks = true;
         this.displayPeerReview = true;
+        
+        this.displayEducationAndQualification = true;
     }
 
     openEducation(): void {
@@ -31,6 +34,10 @@ export class WorkspaceService {
     openEmployment(): void {
         this.displayEmployment = true;
     };
+
+	openEducationAndQualification(): void {
+		this.displayEducationAndQualification = true;
+	};
 
     openFunding(): void {
         this.displayFunding = true;
@@ -54,6 +61,10 @@ export class WorkspaceService {
 
     toggleEmployment(): void {
         this.displayEmployment = !this.displayEmployment;
+    };
+    
+    toggleEducationAndQualification(): void {
+    	this.displayEducationAndQualification = !this.displayEducationAndQualification;
     };
 
     toggleFunding(): void {

@@ -24,14 +24,19 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -249,10 +254,22 @@ public class AffiliationsController extends BaseWorkspaceController {
      */
     private void addAffiliation(AffiliationForm affiliationForm) {
         Affiliation affiliation = affiliationForm.toAffiliation();
-        if (AffiliationType.EDUCATION.value().equals(affiliationForm.getAffiliationType().getValue())) {
+        if (affiliation instanceof Distinction) {
+            affiliation = affiliationsManager.createDistinctionAffiliation(getCurrentUserOrcid(), (Distinction) affiliation, false);
+        } else if (affiliation instanceof Education) {
             affiliation = affiliationsManager.createEducationAffiliation(getCurrentUserOrcid(), (Education) affiliation, false);
-        } else {
+        } else if (affiliation instanceof Employment) {
             affiliation = affiliationsManager.createEmploymentAffiliation(getCurrentUserOrcid(), (Employment) affiliation, false);
+        } else if (affiliation instanceof InvitedPosition) {
+            affiliation = affiliationsManager.createInvitedPositionAffiliation(getCurrentUserOrcid(), (InvitedPosition) affiliation, false);
+        } else if (affiliation instanceof Membership) {
+            affiliation = affiliationsManager.createMembershipAffiliation(getCurrentUserOrcid(), (Membership) affiliation, false);
+        } else if (affiliation instanceof Qualification) {
+            affiliation = affiliationsManager.createQualificationAffiliation(getCurrentUserOrcid(), (Qualification) affiliation, false);
+        } else if (affiliation instanceof Service) {
+            affiliation = affiliationsManager.createServiceAffiliation(getCurrentUserOrcid(), (Service) affiliation, false);
+        } else {
+            throw new IllegalArgumentException("Invalid affiliation type: " + affiliation.getClass().getName());
         }
         affiliationForm.setPutCode(Text.valueOf(affiliation.getPutCode()));
     }
@@ -268,10 +285,22 @@ public class AffiliationsController extends BaseWorkspaceController {
             throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
 
         Affiliation affiliation = affiliationForm.toAffiliation();
-        if (AffiliationType.EDUCATION.value().equals(affiliationForm.getAffiliationType().getValue())) {
+        if (affiliation instanceof Distinction) {
+            affiliation = affiliationsManager.updateDistinctionAffiliation(getCurrentUserOrcid(), (Distinction) affiliation, false);
+        } else if (affiliation instanceof Education) {
             affiliation = affiliationsManager.updateEducationAffiliation(getCurrentUserOrcid(), (Education) affiliation, false);
-        } else {
+        } else if (affiliation instanceof Employment) {
             affiliation = affiliationsManager.updateEmploymentAffiliation(getCurrentUserOrcid(), (Employment) affiliation, false);
+        } else if (affiliation instanceof InvitedPosition) {
+            affiliation = affiliationsManager.updateInvitedPositionAffiliation(getCurrentUserOrcid(), (InvitedPosition) affiliation, false);
+        } else if (affiliation instanceof Membership) {
+            affiliation = affiliationsManager.updateMembershipAffiliation(getCurrentUserOrcid(), (Membership) affiliation, false);
+        } else if (affiliation instanceof Qualification) {
+            affiliation = affiliationsManager.updateQualificationAffiliation(getCurrentUserOrcid(), (Qualification) affiliation, false);
+        } else if (affiliation instanceof Service) {
+            affiliation = affiliationsManager.updateServiceAffiliation(getCurrentUserOrcid(), (Service) affiliation, false);
+        } else {
+            throw new IllegalArgumentException("Invalid affiliation type: " + affiliation.getClass().getName());
         }
     }
 
