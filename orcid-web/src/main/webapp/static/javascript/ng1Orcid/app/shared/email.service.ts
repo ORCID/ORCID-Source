@@ -158,8 +158,8 @@ export class EmailService {
         console.log('notify');
     }
 
-    saveEmail(): Observable<any> {
-        let encoded_data = JSON.stringify( this.emails );
+    saveEmail( obj ): Observable<any> {
+        let encoded_data = JSON.stringify( obj );
         
         return this.http.post( 
             this.url, 
