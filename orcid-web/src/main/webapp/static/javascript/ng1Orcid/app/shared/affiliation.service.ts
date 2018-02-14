@@ -43,7 +43,7 @@ export class AffiliationService {
         this.urlAffiliations = getBaseUri() + '/affiliations/affiliations.json';
     }
 
-    deleteData( data ) {
+    deleteAffiliation( data ) {
         let encoded_data = JSON.stringify( data );
         let arr = null;
         let idx;
@@ -51,7 +51,6 @@ export class AffiliationService {
         let tmpArr = null;
         let tmpIdx = null;
         
-        //TODO: refactor when new affiliation types get live
         if(data.affiliationType != null && data.affiliationType.value != null) {
         	if (data.affiliationType.value == 'education'){
             	arr = this.educations;
@@ -79,6 +78,7 @@ export class AffiliationService {
         
         arr.splice(idx, 1);
         
+        //TODO: remove when new affiliation types get live
         if(tmpArr != null){
 	        for (tmpIdx in tmpArr) {
 	            if (tmpArr[tmpIdx].activePutCode == data.putCode.value) {
@@ -91,8 +91,8 @@ export class AffiliationService {
         
         
         return this.http.delete( 
-            this.urlAffiliations + encoded_data, 
-            //encoded_data, 
+            this.urlAffiliations, 
+            encoded_data, 
             { headers: this.headers }
         )
         .map(

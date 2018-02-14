@@ -391,7 +391,7 @@
                                                     </div>  
                                                 </li>   
                                                 <li>
-                                                    <a id="delete-affiliation_{{group.putCode.value}}" href="" (click)="deleteAffiliation(group.getActive())" (mouseenter)="showTooltip(group.putCode.value+'-delete')" (mouseleave)="hideTooltip(group.putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
+                                                    <a id="delete-affiliation_{{group.putCode.value}}" href="" (click)="deleteAffiliation(group)" (mouseenter)="showTooltip(group.putCode.value+'-delete')" (mouseleave)="hideTooltip(group.putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
                                                     <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.putCode.value+'-delete']"> 
                                                         <div class="arrow"></div>
                                                         <div class="popover-content">

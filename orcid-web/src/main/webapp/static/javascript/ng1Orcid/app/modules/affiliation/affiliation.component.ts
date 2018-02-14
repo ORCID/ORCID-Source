@@ -219,26 +219,10 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo[key]=false;
     };
 
-    deleteAff(delAff): void {
-        this.affiliationService.deleteData(delAff);
-        this.closeModal();
-    };
-
-    deleteAffiliation(aff): void {
-        var maxSize = 100;
-        
-        this.deleAff = aff;
-
-        if (aff.affiliationName && aff.affiliationName.value){
-            this.fixedTitle = aff.affiliationName.value;
-        }
-        else {
-            this.fixedTitle = '';
-        }
-
-        if(this.fixedTitle.length > maxSize){
-            this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
-        }
+    deleteAffiliation(affiliation): void {
+        this.affiliationService.deleteAffiliation(affiliation)
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(data => {});
     };
 
     displayEducation(): boolean {
@@ -276,52 +260,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 error => {
                     //console.log('getBiographyFormError', error);
                 } 
-                /*
 
-        addAffiliationToScope: function(path) {
-            if( serv.affiliationsToAddIds.length != 0 ) {
-                var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
-                var url = getBaseUri() + '/' + path + '?affiliationIds=' + affiliationIds;                
-                $.ajax({
-                    url: url,                        
-                    headers : {'Content-Type': 'application/json'},
-                    method: 'GET',
-                    success: function(data) {
-                        for (i in data) {
-                        	if(data[i].affiliationType != null && data[i].affiliationType.value != null) {
-                        		if (data[i].affiliationType.value == 'education'){
-                                	groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
-	                            	groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educationsAndQualifications);
-	                            }
-	                            else if (data[i].affiliationType.value == 'employment'){
-									groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
-	                            } else if(data[i].affiliationType.value == 'qualification') {
-	                            	groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educationsAndQualifications);
-	                            }
-                        	}                            
-                        };
-                        if (serv.affiliationsToAddIds.length == 0) {
-                            serv.loading = false;
-                            $rootScope.$apply();
-                        } else {
-                            $rootScope.$apply();
-                            setTimeout(
-                                function () {
-                                    serv.addAffiliationToScope(path);
-                                },
-                                50
-                            );
-                        }
-                    }
-                }).fail(function(e) {
-                    //console.log("Error adding affiliations to scope")
-                    logAjaxError(e);
-                });
-            } else {
-                serv.loading = false;
-            };
-        }
-        */
         );
     };
 

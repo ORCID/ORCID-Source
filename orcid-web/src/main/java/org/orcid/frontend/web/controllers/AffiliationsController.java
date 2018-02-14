@@ -29,7 +29,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
@@ -42,6 +41,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
+import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
@@ -74,10 +74,21 @@ public class AffiliationsController extends BaseWorkspaceController {
     /**
      * Removes a affiliation from a profile
      */
+    @Deprecated
     @RequestMapping(value = "/affiliations.json", method = RequestMethod.DELETE)
     public @ResponseBody AffiliationForm removeAffiliationJson(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
         affiliationsManager.removeAffiliation(getCurrentUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()));
         return affiliation;
+    }
+    
+    @RequestMapping(value = "/affiliation.json", method = RequestMethod.DELETE)
+    public @ResponseBody Errors removeAffiliationJson(@RequestParam(value = "id") String affiliationId) {
+    	Errors errors = new Errors();
+    	boolean deleted = affiliationsManager.removeAffiliation(getCurrentUserOrcid(), Long.valueOf(affiliationId));        
+        if(!deleted) {
+        	//TODO: Log error in case the affiliation wasn't deleted
+        }
+    	return errors;
     }
 
     /**
