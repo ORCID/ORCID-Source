@@ -43,8 +43,7 @@ export class AffiliationService {
         this.urlAffiliations = getBaseUri() + '/affiliations/affiliations.json';
     }
 
-    deleteAffiliation( data ) {
-        let encoded_data = JSON.stringify( data );
+    deleteAffiliation( data ) {        
         let arr = null;
         let idx;
         
@@ -91,8 +90,7 @@ export class AffiliationService {
         
         
         return this.http.delete( 
-            this.urlAffiliations, 
-            encoded_data, 
+            this.urlAffiliation + '?id=' + data.putCode.value,             
             { headers: this.headers }
         )
         .map(

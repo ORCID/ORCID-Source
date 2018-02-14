@@ -231,9 +231,6 @@
                     </div>
                 </div>
             </div>            
-                    
-                    
-                    
             <div *ngIf="workspaceSrvc.displayEducation" class="workspace-accordion-content">
                 <ul id="educations-list" *ngIf="educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of sectionOneElements | orderBy: sortState.predicate:sortState.reverse" [attr.education-put-code]="group.putCode.value">
@@ -374,8 +371,7 @@
                                         
                                         <div class="col-md-3 col-sm-3 col-xs-6">
                                             <@orcid.msg 'groups.common.created'/>: <span>{{group.createdDate | ajaxFormDateToISO8601}}</span>
-                                        </div>
-                                                    
+                                        </div>                                                   
                                         <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
                                             <ul class="sources-options">
                                                 <#if !(isPublicProfile??)>
@@ -410,17 +406,6 @@
                 </ul>
             </div>
         </div>
-        
-        
-        
-        
-        
-        <!-- ========================================================================================================= -->
-        
-        
-        
-        
-        
         <!-- EMPLOYMENT -->
         <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active">
             <div class="workspace-accordion-header clearfix">
@@ -524,9 +509,7 @@
             <div *ngIf="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
                 <ul id="employments-list" ng-hide="!employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments | orderBy: sortState.predicate:sortState.reverse" [attr.employment-put-code]="group.putCode.value">
-                        <div class="row"> 
-                     
-                
+                        <div class="row">                
                             <div class="col-md-9 col-sm-9 col-xs-7">
                                 <h3 class="workspace-title">            
                                     <span>{{group.affiliationName.value}}</span>:
@@ -647,10 +630,6 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="sources-container-header">          
                         <div class="row">
-                            
-                        
-                            
-                                        
                             <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
                                 <ul class="sources-options">
                                     <#if !(isPublicProfile??)>
@@ -661,8 +640,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
