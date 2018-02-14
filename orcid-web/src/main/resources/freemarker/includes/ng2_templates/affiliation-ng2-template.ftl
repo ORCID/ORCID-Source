@@ -622,25 +622,49 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row source-line">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="sources-container-header">          
+                                    <div class="row">
+                                        <div class="col-md-7 col-sm-7 col-xs-12">
+                                            <@orcid.msg 'groups.common.source'/>: {{(group.sourceName == null || group.sourceName == '') ? group.source : group.sourceName}}    
+                                        </div>                            
+                                        <div class="col-md-3 col-sm-3 col-xs-6">
+                                            <@orcid.msg 'groups.common.created'/>: <span>{{group.createdDate | ajaxFormDateToISO8601}}</span>
+                                        </div>                                                   
+                                        <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
+                                            <ul class="sources-options">
+                                                <#if !(isPublicProfile??)>
+                                                <li *ngIf="group.source == '${effectiveUserOrcid}'">
+                                                    <a (click)="openEditAffiliation(group.getActive())" (mouseenter)="showTooltip(group.putCode.value+'-edit')" (mouseleave)="hideTooltip(group.putCode.value+'-edit')">
+                                                        <span class="glyphicon glyphicon-pencil"></span>
+                                                    </a>
+                                                    <div class="popover popover-tooltip top edit-source-popover" *ngIf="showElement[group.putCode.value+'-edit']"> 
+                                                        <div class="arrow"></div>
+                                                        <div class="popover-content">
+                                                            <span ><@orcid.msg 'groups.common.edit_my'/></span>
+                                                        </div>                
+                                                    </div>  
+                                                </li>   
+                                                <li>
+                                                    <a id="delete-affiliation_{{group.putCode.value}}" href="" (click)="deleteAffiliation(group)" (mouseenter)="showTooltip(group.putCode.value+'-delete')" (mouseleave)="hideTooltip(group.putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
+                                                    <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.putCode.value+'-delete']"> 
+                                                        <div class="arrow"></div>
+                                                        <div class="popover-content">
+                                                             <@orcid.msg 'groups.common.delete_this_source' />
+                                                        </div>                
+                                                    </div>
+                                                </li>
+                                                </#if>  
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                                                
                     </li>
                 </ul>
-            </div>
-
-            <div class="row source-line">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                    <div class="sources-container-header">          
-                        <div class="row">
-                            <div class="col-md-2 col-sm-2 col-xs-6 pull-right">
-                                <ul class="sources-options">
-                                    <#if !(isPublicProfile??)>
-       
-                                    </#if>  
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </div>                       
         </div>
     </div>
 </script>
