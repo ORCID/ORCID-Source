@@ -107,11 +107,11 @@ export class AffiliationService {
     }
 
     updateVisibility( affiliation ): Observable<any> {
-        let encoded_data = JSON.stringify( affiliation ); 
-        console.log("Am in the service")
+        let encoded_data = JSON.stringify( affiliation );         
         return this.http.put(
                 this.urlAffiliation,
-                encoded_data
+                encoded_data,
+                { headers: this.headers }
             )
             .map((res:Response) => res.json()).share();
     }

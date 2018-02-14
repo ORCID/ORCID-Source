@@ -468,7 +468,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     setPrivacy(aff, priv, $event): void {
         $event.preventDefault();
         aff.visibility.visibility = priv;                
-        this.affiliationService.updateVisibility(aff).subscribe(data => {console.log("After sending")});
+        this.affiliationService.updateVisibility(aff)
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(data => {});
     };
 
     showAddModal(): void{
