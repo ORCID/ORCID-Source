@@ -23,6 +23,9 @@ import { FilterImportWizardsPipe }
 import { LatexPipe }
     from '../../pipes/latexNg2.ts';
 
+    import { OrgIdentifierHtmlPipe }
+    from '../../pipes/orgIdentifierHtmlNg2.ts';    
+    
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
 
@@ -124,6 +127,7 @@ import { WorksService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrgIdentifierHtmlPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
@@ -138,6 +142,7 @@ import { WorksService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrgIdentifierHtmlPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,

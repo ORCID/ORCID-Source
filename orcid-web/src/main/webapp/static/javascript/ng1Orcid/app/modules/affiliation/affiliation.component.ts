@@ -36,9 +36,16 @@ import { ModalService }
 import { WorkspaceService } 
     from '../../shared/workspace.service.ts'; 
 
+import { FeaturesService }
+    from '../../shared/features.service.ts' 
+    
+import { CommonService } 
+    from '../../shared/common.service.ts';
+    
 @Component({
     selector: 'affiliation-ng2',
-    template:  scriptTmpl("affiliation-ng2-template")
+    template:  scriptTmpl("affiliation-ng2-template"),
+    providers: [CommonService]
 })
 export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -65,13 +72,19 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     sortHideOption: boolean;
     sortState: any;
     educationsAndQualifications: any;
-
+    orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
+    displayNewAffiliationTypesFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
+    //TODO: remove when new aff types is live and leave only educationsAndQualifications
+    sectionOneElements: any;
+    
     constructor(
         private affiliationService: AffiliationService,
         private emailService: EmailService,
         //private groupedActivitiesUtilService: GroupedActivitiesUtilService,
         private modalService: ModalService,
-        private workspaceSrvc: WorkspaceService
+        private workspaceSrvc: WorkspaceService,
+        private featuresService: FeaturesService,
+        private commonSrvc: CommonService,
     ) {
         /*
         this.emailSrvc = emailSrvc;
@@ -93,9 +106,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.sortHideOption = false;
-        this.sortState = new ActSortState(GroupedActivities.AFFILIATION);
-    
-    	this.educationsAndQualifications = [];
+        this.sortState = new ActSortState(GroupedActivities.AFFILIATION);   
+        this.educationsAndQualifications = [];
+        this.sectionOneElements = [];
     }
 
     addAffiliation(): void {
@@ -240,9 +253,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.affiliationService.getAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
             .subscribe(
                 data => {
-
-                    //console.log('this.getAffiliationsById', data);
                     for (let i in data) {
+                        console.log(data[i]);
                         if (data[i].affiliationType != null 
                             && data[i].affiliationType.value != null
                         ){
@@ -272,6 +284,13 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                         }
 
                     };
+                    
+                    if(this.displayNewAffiliationTypesFeatureEnabled) {
+                        this.sectionOneElements = this.educationsAndQualifications;
+                    } else {
+                        this.sectionOneElements = this.educations;
+                    }
+                    
                     //console.log('educations', this.educations);
                     //console.log('employments', this.employments);
                     /*
@@ -347,8 +366,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                //console.log('getAffiliationsIds', data);
-
                 if( data.length != 0 ) {
                     let affiliationIds = data.splice(0,20).join();
                     this.getAffiliationsById( affiliationIds );
@@ -356,7 +373,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                //console.log('getBiographyFormError', error);
+                console.log('getAffiliationsId', error);
             } 
         );
     };
@@ -366,8 +383,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                ////console.log('this.getDisambiguatedAffiliation', data);
-
                 if (data != null) {
                     this.disambiguatedAffiliation = data;
                     this.editAffiliation.orgDisambiguatedId.value = id;
@@ -376,7 +391,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                //console.log("error getDisambiguatedAffiliation(id)", id, error);
+                console.log("getAffiliationsId", id, error);
             } 
         );
     };
@@ -449,7 +464,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             delete this.editAffiliation.disambiguatedAffiliationSourceId;
         }
         
-        if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {delete this.editAffiliation.orgDisambiguatedId;
+        if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {
+        	delete this.editAffiliation.orgDisambiguatedId;
         }
     };
 
@@ -596,7 +612,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //console.log('initi affiliation component');
         this.getAffiliationsId();
     }; 
 }
