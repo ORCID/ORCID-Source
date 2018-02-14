@@ -285,9 +285,9 @@
                                                 elementId="group.putCode.value"
                                                 questionClick="toggleClickPrivacyHelp(group.putCode.value)" 
                                                 clickedClassCheck="{'popover-help-container-show':privacyHelp[group.putCode.value]==true}" 
-                                                publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
-                                                limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
-                                                privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
+                                                publicClick="setPrivacy(group, 'PUBLIC', $event)" 
+                                                limitedClick="setPrivacy(group, 'LIMITED', $event)" 
+                                                privateClick="setPrivacy(group, 'PRIVATE', $event)" />
                                         </li>
                                         </#if>
                                     </ul>

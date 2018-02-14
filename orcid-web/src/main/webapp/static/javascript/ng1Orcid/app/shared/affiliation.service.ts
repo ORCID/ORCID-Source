@@ -106,6 +106,16 @@ export class AffiliationService {
         .share();
     }
 
+    updateVisibility( affiliation ): Observable<any> {
+        let encoded_data = JSON.stringify( affiliation ); 
+        console.log("Am in the service")
+        return this.http.put(
+                this.urlAffiliation,
+                encoded_data
+            )
+            .map((res:Response) => res.json()).share();
+    }
+    
     getAffiliationsId() {
         this.loading = true;
         this.affiliationsToAddIds = null;

@@ -254,60 +254,24 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             .subscribe(
                 data => {
                     for (let i in data) {
-                        console.log(data[i]);
                         if (data[i].affiliationType != null 
-                            && data[i].affiliationType.value != null
-                        ){
+                            && data[i].affiliationType.value != null){
                             if(data[i].affiliationType.value == 'education'){
                                 this.educations.push(data[i]);
                                 this.educationsAndQualifications.push( data[i] );
-                                /*
-                                groupedActivitiesUtil.group(
-                                    data[i],
-                                    GroupedActivities.AFFILIATION, 
-                                    this.affiliationService.educations
-                                );
-                                */
-                                
                             } else if ( data[i].affiliationType.value == 'employment' ) {
                                 this.employments.push( data[i] );
-                                 /*
-                                groupedActivitiesUtil.group(
-                                    data[i],
-                                    GroupedActivities.AFFILIATION,
-                                    this.affiliationService.employments
-                                );
-                                */
                             } else if (data[i].affiliationType.value == 'qualification') {
                             	this.educationsAndQualifications.push(data[i]);                            	
                             }
                         }
-
                     };
                     
                     if(this.displayNewAffiliationTypesFeatureEnabled) {
                         this.sectionOneElements = this.educationsAndQualifications;
                     } else {
                         this.sectionOneElements = this.educations;
-                    }
-                    
-                    //console.log('educations', this.educations);
-                    //console.log('employments', this.employments);
-                    /*
-                    if (this.affiliationService.affiliationsToAddIds.length == 0) {
-                        this.affiliationService.loading = false;
-                        //$rootScope.$apply();
-                    } else {
-                        //$rootScope.$apply();
-                        setTimeout(
-                            function () {
-                                //this.affiliationService.getAffiliationsById(path);
-                            },
-                            50
-                        );
-                    }
-                    */
-
+                    }                                        
                 },
                 error => {
                     //console.log('getBiographyFormError', error);
@@ -503,8 +467,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setPrivacy(aff, priv, $event): void {
         $event.preventDefault();
-        aff.visibility.visibility = priv;
-        //this.affiliationService.updateProfileAffiliation(aff);
+        aff.visibility.visibility = priv;                
+        this.affiliationService.updateVisibility(aff).subscribe(data => {console.log("After sending")});
     };
 
     showAddModal(): void{
