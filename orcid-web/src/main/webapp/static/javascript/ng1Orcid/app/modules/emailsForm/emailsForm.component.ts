@@ -90,7 +90,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showDeleteBox = false;
         this.showElement = {};
         this.showEmailVerifBox = false;
-        this.showUnverifiedEmailSetPrimaryBox = false;
         this.verifyEmailObject = {};
         this.position = 0;
 
@@ -178,6 +177,17 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    initInputEmail(): void {
+        this.inputEmail = {
+            "current":true,
+            "errors":[],
+            "primary":false,
+            "value":"",
+            "verified":false,
+            "visibility":"PRIVATE"
+        };
+    }
+
     submitModal(obj?): void {
         
         if( orcidVar.isPasswordConfirmationRequired == true ){
@@ -189,8 +199,12 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             .subscribe(
                 data => {
                     this.getformData();
-                    this.inputEmail.value = "";
+                    this.inputEmail = data;
                     this.emailService.notifyOther();
+
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                    }
                 },
                 error => {
                     ////console.log('getEmailsFormError', error);
@@ -304,22 +318,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 let tempData = null;
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
-                //this.newElementDefaultVisibility = this.formData.visibility.visibility;
-             
-                if ( this.formData.emails.length == 0 ) {
-                    this.addNew();
-                }
-                for( let i; i < data.length; i++ ){
-                    if( data.primary == true ) {
-                        this.primaryEmail = data.value;
-                        if( data.primary == false ) {
-                            this.showUnverifiedEmailSetPrimaryBox = true;
-                        } else {
-                            this.showUnverifiedEmailSetPrimaryBox = false;
-                        }
-                    }
-                }
+                
                 this.getformData();
+
+                if ( data.verified == false ) {
+                    this.showUnverifiedEmailSetPrimaryBox = true;
+                } else {
+                    this.showUnverifiedEmailSetPrimaryBox = false;
+                }
             },
             error => {
                 ////console.log('getEmailsFormError', error);
@@ -337,19 +343,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
                 if ( this.formData.emails.length == 0 ) {
                     this.addNew();
-                }else {
-                    for( let i; i < data.length; i++ ){
-                        if( data.primary == true ) {
-                            this.primaryEmail = data.value;
-                            if( data.primary == false ) {
-                                this.showUnverifiedEmailSetPrimaryBox = true;
-                            } else {
-                                this.showUnverifiedEmailSetPrimaryBox = false;
-                            }
+                } else {
+                    for( let i = 0; i < data.emails.length; i++ ){
+                        if( data.emails[i].primary == true ) {
+                            this.primaryEmail = data.emails[i].value;
                         }
 
                     }
                 }
+
             },
             error => {
                 ////console.log('getEmailsFormError', error);
@@ -371,7 +373,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     saveEmail( closeAfterAction ): void {
-        this.emailService.setData( this.formData )
+        this.emailService.saveEmail( this.formData )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -421,11 +423,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     updateDisplayIndex(): void{
         let idx: any;
-        /*
-        for (idx in this.formData.otherNames) {         
-            this.formData.otherNames[idx]['displayIndex'] = this.formData.otherNames.length - idx;
-        }
-        */
     };
 
     //Default init functions provided by Angular Core

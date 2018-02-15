@@ -36,7 +36,7 @@
                                     <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
                                 </div>
                                 <!-- Unverified set primary -->
-                                <div class="grey-box" *ngIf="popUp && showUnverifiedEmailSetPrimaryBox">
+                                <div class="grey-box" *ngIf="showUnverifiedEmailSetPrimaryBox">
                                     <h4><@orcid.msg 'workspace.your_primary_email_new' /></h4>
                                     <p><@orcid.msg 'workspace.youve_changed' /></p>
                                     <p><@orcid.msg 'workspace.you_need_to_verify' /></p>
