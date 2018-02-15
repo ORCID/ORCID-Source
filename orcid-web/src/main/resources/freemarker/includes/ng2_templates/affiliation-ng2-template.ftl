@@ -19,8 +19,6 @@
 
 <script type="text/ng-template" id="affiliation-ng2-template">
     <div>
-    
-    
         <!-- DISTINCTION AND INVITED POSITION -->
         <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
             <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active">
@@ -144,7 +142,22 @@
                     </div>
                 </div>                        
                 <div *ngIf="workspaceSrvc.displayDistinctionAndInvitedPosition" class="workspace-accordion-content">
-                    <ul id="distinction-invited-position-list" ng-hide="!employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                    <ul id="distinction-invited-position-empty" *ngIf="!distinctionsAndInvitedPositions.length">
+                        <li>
+                            <#if (publicProfile)?? && publicProfile == true>
+                                <strong><@orcid.msg 'workspace_affiliations_body_list.Nodistinctionorinvitedpositionaddedyet' /></strong>
+                            <#else>
+                                <strong>                                
+                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanydistinctionnorinvitedposition' />
+                                <a href="" (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
+                                <@orcid.msg 'common.or' />
+                                <a href="" (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
+                                <@orcid.msg 'common.now' />                                
+                                </strong>
+                            </#if>
+                        </li>
+                    </ul>
+                    <ul id="distinction-invited-position-list" *ngIf="distinctionsAndInvitedPositions.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                         <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of distinctionsAndInvitedPositions | orderBy: sortState.predicate:sortState.reverse" [attr.distinction-invited-position-put-code]="group.putCode.value">
                             <div class="row">                
                                 <div class="col-md-9 col-sm-9 col-xs-7">
@@ -515,7 +528,22 @@
                     </div>
                 </div>
             </div>            
-            <div *ngIf="workspaceSrvc.displayEducation" class="workspace-accordion-content">
+            <div *ngIf="workspaceSrvc.displayEducation || workspaceSrvc.displayEducationAndQualification" class="workspace-accordion-content"> 
+                <ul id="educations-distinctions-empty" *ngIf="!sectionOneElements.length && workspaceSrvc.displayEducationAndQualification">
+                    <li>
+                        <#if (publicProfile)?? && publicProfile == true>
+                            <strong><@orcid.msg 'workspace_affiliations_body_list.Noeducationnorqualificationaddedyet' /></strong>
+                        <#else>
+                            <strong>                                
+                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanydistinctionnorinvitedposition' />
+                            <a href="" (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducationnow' /></a>
+                            <@orcid.msg 'common.or' />
+                            <a href="" (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualificationnow' /></a>
+                            <@orcid.msg 'common.now' />                                
+                            </strong>
+                        </#if>
+                    </li>
+                </ul>
                 <ul id="educations-distinctions-list" *ngIf="sectionOneElements.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of sectionOneElements | orderBy: sortState.predicate:sortState.reverse" [attr.education-distinction-put-code]="group.putCode.value">
                         <div class="row">                                 
@@ -782,6 +810,19 @@
                 </div>
             </div>                        
             <div *ngIf="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
+                <ul id="employments-empty" *ngIf="!employments.length">
+                    <li>
+                        <#if (publicProfile)?? && publicProfile == true>
+                            <strong><@orcid.msg 'workspace_affiliations_body_list.Noemploymentddedyet' /></strong>
+                        <#else>
+                            <strong>                                
+                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanyemployment' />
+                            <a href="" (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemploymentnow' /></a>
+                            <@orcid.msg 'common.now' />                                
+                            </strong>
+                        </#if>
+                    </li>
+                </ul>
                 <ul id="employments-list" ng-hide="!employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments | orderBy: sortState.predicate:sortState.reverse" [attr.employment-put-code]="group.putCode.value">
                         <div class="row">                

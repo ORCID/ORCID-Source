@@ -18,21 +18,11 @@ export class AffiliationService {
     private urlAffiliationDisambiguated: string;
     private urlAffiliations: string;
 
-	public educations: any;
-    public employments: any;
-    public loading: boolean;
+	public loading: boolean;
     public affiliationsToAddIds: any;
-	public educationsAndQualifications: any;
-    public distinctionsAndInvitedPositions: any;
-    public membershipsAndServices: any;
-
+	
     constructor( private http: Http ){
         this.affiliationsToAddIds = null,
-        this.educations = new Array(),
-        this.employments = new Array(),
-        this.educationsAndQualifications = new Array(),
-        this.distinctionsAndInvitedPositions = new Array(),
-        this.membershipsAndServices = new Array(),
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 
@@ -47,51 +37,6 @@ export class AffiliationService {
     }
 
     deleteAffiliation( data ) {        
-        let arr = null;
-        let idx;
-        
-        let tmpArr = null;
-        let tmpIdx = null;
-        
-        if(data.affiliationType != null && data.affiliationType.value != null) {
-            if(data.affiliationType.value == 'distinction') {
-                arr = this.distinctionsAndInvitedPositions;
-            } else if (data.affiliationType.value == 'education'){
-            	arr = this.educations;
-	        	tmpArr = this.educationsAndQualifications;
-	        } else if (data.affiliationType.value == 'employment'){
-	            arr = this.employments;
-	        } else if(data.affiliationType.value == 'invited-position') {
-	            arr = this.distinctionsAndInvitedPositions;
-	        } else if(data.affiliationType.value == 'membership') {
-	            arr = this.membershipsAndServices;
-	        } else if(data.affiliationType.value == 'qualification') {
-	        	tmpArr = this.educationsAndQualifications;
-	        } else if(data.affiliationType.value == 'service') {
-	            arr = this.membershipsAndServices;
-	        }
-        }
-        
-        for (idx in arr) {
-            if (arr[idx].activePutCode == data.putCode.value) {
-                break;
-            }
-        }
-        
-        arr.splice(idx, 1);
-        
-        //TODO: remove when new affiliation types get live
-        if(tmpArr != null){
-	        for (tmpIdx in tmpArr) {
-	            if (tmpArr[tmpIdx].activePutCode == data.putCode.value) {
-	                break;
-	            }
-	        }
-	        
-	        tmpArr.splice(tmpIdx, 1);        
-        }
-        
-        
         return this.http.delete( 
             this.urlAffiliation + '?id=' + data.putCode.value,             
             { headers: this.headers }
@@ -120,9 +65,6 @@ export class AffiliationService {
     getAffiliationsId() {
         this.loading = true;
         this.affiliationsToAddIds = null;
-        this.educations.length = 0;
-        this.employments.length = 0;
-        this.educationsAndQualifications.lenght = 0;
         return this.http.get(
             this.urlAffiliationId
         )
