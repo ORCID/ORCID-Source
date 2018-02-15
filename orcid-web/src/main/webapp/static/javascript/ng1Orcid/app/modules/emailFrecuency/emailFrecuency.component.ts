@@ -1,3 +1,4 @@
+//Unused
 //Import all the angular components
 
 import { NgFor, NgIf } 
@@ -47,10 +48,10 @@ export class EmailFrecuencyComponent implements AfterViewInit, OnDestroy, OnInit
                     this.formData.otherNames = { value: null };
                 }
 
-                //console.log('this.getForm', this.formData);
+                ////console.log('this.getForm', this.formData);
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };

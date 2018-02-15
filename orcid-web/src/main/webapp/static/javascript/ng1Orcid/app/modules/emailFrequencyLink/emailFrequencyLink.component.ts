@@ -45,7 +45,7 @@ export class EmailFrecuencyLinkComponent implements AfterViewInit, OnDestroy, On
                 }
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
  
@@ -61,7 +61,7 @@ export class EmailFrecuencyLinkComponent implements AfterViewInit, OnDestroy, On
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };

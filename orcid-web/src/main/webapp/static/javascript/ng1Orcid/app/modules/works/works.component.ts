@@ -88,7 +88,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private workspaceSrvc: WorkspaceService,
         private worksService: WorksService
     ) {
-        console.log('works component init');
+        //console.log('works component init');
 
         this.addingWork = false;
         this.bibtexExportError = false;
@@ -289,7 +289,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }).fail(function() {
             this.bibtexExportError = true;
-            console.log("bibtex export error");
+            //console.log("bibtex export error");
         });  
         */      
     };
@@ -304,7 +304,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.formData = data;
 
-                console.log('this.getForm works', this.formData);
+                //console.log('this.getForm works', this.formData);
 
                 let itemVisibility = null;
                 let len = null;
@@ -316,7 +316,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             },
             error => {
                 this.worksService.loading = false;
-                console.log('getWorksFormError', error);
+                //console.log('getWorksFormError', error);
             } 
         );
     };
@@ -368,7 +368,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('this.getForm works loadWorkImportWizardList', data);
+                //console.log('this.getForm works loadWorkImportWizardList', data);
 
                 if(data == null || data.length == 0) {
                     this.noLinkFlag = false;
@@ -392,7 +392,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('WorkImportWizardError', error);
+                //console.log('WorkImportWizardError', error);
             } 
         );
     };
@@ -415,7 +415,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };
@@ -494,7 +494,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 */
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };
@@ -558,7 +558,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     showDetailsMouseClick = function(group, $event) {
-        console.log('showDetailsMouseClick envent', $event);
+        //console.log('showDetailsMouseClick envent', $event);
         $event.stopPropagation();
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
         for (var idx in group.works){
@@ -667,7 +667,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };

@@ -47,7 +47,7 @@ export class SelfServiceAddContactComponent {
                     this.closeModal();
                 },
                 error => {
-                    console.log('addContact error', error);
+                    //console.log('addContact error', error);
                 } 
         );
     }

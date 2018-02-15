@@ -17,6 +17,8 @@
 
 -->
 
+<!-- Unused - merged with emails-form-ng2-template.ftl -->
+
 <script type="text/ng-template" id="email-frecuency-ng2-template">
     <div>
         <div class="row bottomBuffer">
@@ -36,7 +38,7 @@
                         -->
                     </div>
                 </div>
-                <button (click)="prefsSrvc.updateEmailFrequency()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.send_email_frequency_save")}</button>
+                <button (click)="updateEmailFrequency()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.send_email_frequency_save")}</button>
                 <small class="green" *ngIf="prefsSrvc.saved">${springMacroRequestContext.getMessage("manage.send_email_frequency_saved")}</small>    
             </form>
         </div>

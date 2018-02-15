@@ -102,13 +102,13 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
                 this.formData = data;
                 this.newElementDefaultVisibility = this.formData.visibility.visibility;
-                //console.log('this.getForm', this.formData);
+                ////console.log('this.getForm', this.formData);
                 if ( this.formData.otherNames.length == 0 ) {
                     this.addNew();
                 }
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
@@ -131,12 +131,12 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
                         this.closeEditModal();
                     }
                 }else{
-                    console.log(this.formData.errors);
+                    //console.log(this.formData.errors);
                 }
 
             },
             error => {
-                console.log('setAlsoKnownAs', error);
+                //console.log('setAlsoKnownAs', error);
             } 
         );
         this.formData.visibility = null;

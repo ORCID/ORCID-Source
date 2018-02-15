@@ -75,7 +75,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
             "source":this.orcidId,
             "sourceName":""
         };
-        console.log('country add tmp', tmpObj);
+        //console.log('country add tmp', tmpObj);
         this.formData.addresses.push(tmpObj);
         this.updateDisplayIndex();
         this.newInput = true; 
@@ -102,7 +102,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.formData = data;
-                //console.log('country data', this.formData);
+                ////console.log('country data', this.formData);
                 this.formDataAddresses = this.formData.addresses;
                 this.newElementDefaultVisibility = this.formData.visibility.visibility;
 
@@ -148,7 +148,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
     };
@@ -173,12 +173,12 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.closeEditModal();
                     }
                 }else{
-                    //console.log(this.formData.errors);
+                    ////console.log(this.formData.errors);
                 }
 
             },
             error => {
-                //console.log('setBiographyFormError', error);
+                ////console.log('setBiographyFormError', error);
             } 
         );
         this.formData.visibility = null;

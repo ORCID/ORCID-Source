@@ -52,7 +52,7 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
                 }
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
     };
@@ -80,7 +80,7 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
                 }
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
     };

@@ -23,8 +23,14 @@ import { FilterImportWizardsPipe }
 import { LatexPipe }
     from '../../pipes/latexNg2.ts';
 
+    import { OrgIdentifierHtmlPipe }
+    from '../../pipes/orgIdentifierHtmlNg2.ts';    
+    
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
+
+import { OrderObjectByPipe }
+    from '../../pipes/orderObjectByNg2.ts'
 
 import { UrlProtocolPipe }
     from '../../pipes/urlProtocolNg2.ts';
@@ -95,6 +101,9 @@ import { TwoFAStateService }
 import { WebsitesService } 
     from '../../shared/websites.service.ts';
 
+import { WidgetService }
+    from '../../shared/widget.service.ts'
+
 import { WorkspaceService } 
     from '../../shared/workspace.service.ts'; 
 
@@ -109,8 +118,8 @@ import { WorksService }
             CommonModule,
             FormsModule,
             //User Modules
-            //LanguageNg2Module,
             EmailFrecuencyNg2Module,
+            LanguageNg2Module,
             PrivacytoggleNg2Module
         ],
         declarations: [ 
@@ -118,7 +127,9 @@ import { WorksService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrgIdentifierHtmlPipe,
             OrderByPipe,
+            OrderObjectByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe
         ],
@@ -131,11 +142,13 @@ import { WorksService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrgIdentifierHtmlPipe,
             OrderByPipe,
+            OrderObjectByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
-            //LanguageNg2Module,
+            LanguageNg2Module,
             EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module
         ],
@@ -157,6 +170,7 @@ import { WorksService }
             PreferencesService,
             TwoFAStateService,
             WebsitesService,
+            WidgetService,
             WorksService,
             WorkspaceService
         ]

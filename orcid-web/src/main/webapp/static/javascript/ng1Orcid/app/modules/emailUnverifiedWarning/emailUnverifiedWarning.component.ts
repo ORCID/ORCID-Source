@@ -48,7 +48,7 @@ export class EmailUnverifiedWarningComponent implements AfterViewInit, OnDestroy
                 this.emailPrimary = this.emailService.getEmailPrimary().value;
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     }
@@ -58,10 +58,10 @@ export class EmailUnverifiedWarningComponent implements AfterViewInit, OnDestroy
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                //console.log('verifyEmail', data);
+                ////console.log('verifyEmail', data);
             },
             error => {
-                console.log('verifyEmail', error);
+                //console.log('verifyEmail', error);
             } 
         );
         this.modalService.notifyOther({action:'close', moduleId: 'modalemailunverified'});

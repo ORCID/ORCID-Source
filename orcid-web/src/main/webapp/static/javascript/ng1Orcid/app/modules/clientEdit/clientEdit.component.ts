@@ -123,7 +123,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -254,7 +254,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
 
@@ -292,7 +292,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.hideSwaggerMemberUri = false;
             },
             error => {
-                console.log('getregisterDataError', error);
+                //console.log('getregisterDataError', error);
             } 
         );
     };
@@ -344,7 +344,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.availableRedirectScopes = data;
             },
             error => {
-                console.log('getregisterDataError', error);
+                //console.log('getregisterDataError', error);
             } 
         );
     };
@@ -379,11 +379,11 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.closeModal();
                     this.getClients();
                 } else {
-                    console.log('Unable to reset client secret');
+                    //console.log('Unable to reset client secret');
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -418,7 +418,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.hideSwaggerMemberUri = false;
             },
             error => {
-                console.log('getregisterDataError', error);
+                //console.log('getregisterDataError', error);
             } 
         );
     };
@@ -478,7 +478,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };

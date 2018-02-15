@@ -512,7 +512,7 @@
         <!-- New -->
         <h4><@orcid.msg 'workspace.your_primary_email_new'/></h4>
         <p><@orcid.msg 'workspace.ensure_future_access1'/></p>
-        <p><@orcid.msg 'workspace.ensure_future_access2'/> <strong>{{emailsPojo.emails[0].value}}</strong></p>
+        <p><@orcid.msg 'workspace.ensure_future_access2'/> <strong>{{primaryEmail}}</strong></p>
         <p><@orcid.msg 'workspace.ensure_future_access3'/> <a target="workspace.ensure_future_access4" href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/> <a target="workspace.link.email.support" href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
         <div class="topBuffer">
           <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_new'/></button>        
@@ -749,7 +749,7 @@
     <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="600" elementId="modalEmails" elementWidth="700">
+<modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
     <emails-form-ng2 popUp="true"></emails-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
@@ -760,6 +760,10 @@
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="645" elementId="affiliationForm" elementWidth="700">
+    <affiliation-form-ng2></affiliation-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>

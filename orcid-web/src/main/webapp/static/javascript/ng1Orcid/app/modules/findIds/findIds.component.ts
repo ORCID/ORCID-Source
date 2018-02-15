@@ -61,10 +61,10 @@ export class FindIdsComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.emails='';
                 this.showEmailIdsModal();
 
-                //console.log('this.getForm', this.formData);
+                ////console.log('this.getForm', this.formData);
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };

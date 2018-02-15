@@ -41,7 +41,7 @@ export class SelfServiceRemoveContactComponent {
                     this.closeModal();
                 },
                 error => {
-                    console.log('removeContact error', error);
+                    //console.log('removeContact error', error);
                 } 
         );
     }

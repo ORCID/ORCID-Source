@@ -73,7 +73,7 @@ export class SelfServiceComponent {
                 this.memberDetails = data;
             },
             error => {
-                console.log('getMemberDetails error', error);
+                //console.log('getMemberDetails error', error);
             } 
         );
     }
@@ -85,7 +85,7 @@ export class SelfServiceComponent {
                 this.contacts = data;
             },
             error => {
-                console.log('getContacts error', error);
+                //console.log('getContacts error', error);
             } 
         );
     }
@@ -97,7 +97,7 @@ export class SelfServiceComponent {
                 this.orgIds = data;
             },
             error => {
-                console.log('getOrgIds error', error);
+                //console.log('getOrgIds error', error);
             }
         );
     }
@@ -119,7 +119,7 @@ export class SelfServiceComponent {
                     this.confirmAddContactByEmail(data);
             },
             error => {
-                console.log('searchByEmail error', error);
+                //console.log('searchByEmail error', error);
             } 
         );
     }
@@ -131,7 +131,7 @@ export class SelfServiceComponent {
                     this.orgIdSearchResults = data;
             },
             error => {
-                console.log('searchOrgIds error', error);
+                //console.log('searchOrgIds error', error);
             } 
         );
     }
@@ -147,7 +147,7 @@ export class SelfServiceComponent {
                     this.getOrgIds();
                 },
                 error => {
-                    console.log('addOrgId error', error);
+                    //console.log('addOrgId error', error);
                 } 
         );
     }
@@ -160,7 +160,7 @@ export class SelfServiceComponent {
                     this.getOrgIds();
                 },
                 error => {
-                    console.log('removeOrgId error', error);
+                    //console.log('removeOrgId error', error);
                 } 
         );
     }
@@ -180,7 +180,7 @@ export class SelfServiceComponent {
                   this.contacts.errors = data.errors;
             },
             error => {
-                console.log('validateContacts error', error);
+                //console.log('validateContacts error', error);
             } 
         );
     }
@@ -195,7 +195,7 @@ export class SelfServiceComponent {
                   }
             },
             error => {
-                console.log('validateMemberDetails error', error);
+                //console.log('validateMemberDetails error', error);
             } 
         );
     }
@@ -207,7 +207,7 @@ export class SelfServiceComponent {
                   this.memberDetails = data;
             },
             error => {
-                console.log('validateMemberDetailsField error', error);
+                //console.log('validateMemberDetailsField error', error);
             } 
         );
     }
@@ -228,7 +228,7 @@ export class SelfServiceComponent {
                   }
             },
             error => {
-                console.log('updateMemberDetails error', error);
+                //console.log('updateMemberDetails error', error);
             } 
         );
     }
@@ -248,7 +248,7 @@ export class SelfServiceComponent {
                    }
             },
             error => {
-                console.log('updateContacts error', error);
+                //console.log('updateContacts error', error);
             }
         );
     }
@@ -281,7 +281,7 @@ export class SelfServiceComponent {
     };
     
     validateSubMember() {
-        console.log("validate sub member called");
+        //console.log("validate sub member called");
         this.addSubMemberShowLoader = true;
         this.newSubMember.parentAccountId = this.consortiaService.getAccountIdFromPath();
         this.consortiaService.validateSubMember(this.newSubMember)
@@ -298,7 +298,7 @@ export class SelfServiceComponent {
                   }
             },
             error => {
-                console.log('validateMemberDetails error', error);
+                //console.log('validateMemberDetails error', error);
                 this.errorAddingSubMember = true;
                 this.addSubMemberShowLoader = false;
             } 
@@ -319,7 +319,7 @@ export class SelfServiceComponent {
                     }    
             },
             error => {
-                console.log('checkExistingSubMember error', error);
+                //console.log('checkExistingSubMember error', error);
                 this.errorAddingSubMember = true;
                 this.addSubMemberShowLoader = false;
             }
@@ -333,7 +333,7 @@ export class SelfServiceComponent {
                   this.newSubMember = data;
             },
             error => {
-                console.log('validateSubMemberField error', error);
+                //console.log('validateSubMemberField error', error);
             } 
         );
     }
@@ -367,7 +367,7 @@ export class SelfServiceComponent {
                     }
                 },
                 error => {
-                    console.log('addSubMember error', error);
+                    //console.log('addSubMember error', error);
                     this.errorAddingSubMember = true;
                     this.addSubMemberShowLoader = false;
                 } 
@@ -403,7 +403,7 @@ export class SelfServiceComponent {
                     this.getMemberDetails();
                 },
                 error => {
-                    console.log('cancelSubMemberAddition error', error);
+                    //console.log('cancelSubMemberAddition error', error);
                 } 
         );
     }

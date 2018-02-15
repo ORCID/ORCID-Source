@@ -92,11 +92,11 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.getCustomEmails();
                     this.closeModal();
                 } else {
-                    console.log("Error deleting custom email");
+                    //console.log("Error deleting custom email");
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -115,7 +115,7 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
       
@@ -135,7 +135,7 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -162,7 +162,7 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
       
@@ -187,7 +187,7 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };

@@ -56,10 +56,10 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.formData.otherNames = { value: null };
                 }
 
-                //console.log('this.getForm', this.formData);
+                ////console.log('this.getForm', this.formData);
             },
             error => {
-                console.log('getAlsoKnownAsFormError', error);
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
@@ -77,7 +77,7 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };

@@ -78,7 +78,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.formData = data;
-                //console.log('this.formData', this.formData);
+                ////console.log('this.formData', this.formData);
 
                 if( this.formData.biography == null  ) {
                     this.formData.biography = {
@@ -90,7 +90,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getformDataError', error);
+                //console.log('getformDataError', error);
             } 
         );
     };
@@ -109,11 +109,11 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.formData = data;
-                //console.log('this.formData response', this.formData);
+                ////console.log('this.formData response', this.formData);
                 this.close();
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -132,7 +132,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };

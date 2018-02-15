@@ -6,7 +6,7 @@ declare var orcidVar: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
 import { Observable } 
@@ -41,7 +41,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         private languageService: LanguageService,
         private widgetSrvc: WidgetService
     ) {
-        this.language = null;
+        this.language = {};
         this.productionLangList =
             [
                 {
@@ -148,7 +148,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
                     "label": '繁體中文'
                 }
             ];
-        this.languages = null;
+        this.languages = {};
     }
 
     getCurrentLanguage(): void{
@@ -204,7 +204,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
                 });
             },
             error => {
-                console.log('getWebsitesFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };
@@ -222,7 +222,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        /*
+        
         if (location == parent.location 
             && window.location.hostname.toLowerCase() != "orcid.org"){
             //add AR if LANG_AR togglz feature enabled
@@ -248,7 +248,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         this.getCurrentLanguage();
-        */
+        
         
     }; 
 }

@@ -1,3 +1,5 @@
+//unused, merged with emailsForm.component
+
 declare var $: any;
 declare var colorbox: any;
 declare var fixZindexIE7: any;
@@ -191,7 +193,7 @@ export class EmailEditComponent implements AfterViewInit, OnDestroy, OnInit {
         $event.preventDefault();
         email.visibility = priv;
         this.curPrivToggle = null;
-        this.emailSrvc.saveEmail();
+        //this.emailSrvc.saveEmail();
     };
 
     showTooltip(el, event): void {       

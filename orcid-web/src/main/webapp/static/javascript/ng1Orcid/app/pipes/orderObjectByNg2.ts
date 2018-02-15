@@ -8,6 +8,7 @@ import { Injectable, Pipe, PipeTransform }
 @Injectable()
 export class OrderObjectByPipe implements PipeTransform {
     transform(items: any, field: any, reverse: any): any {
+        console.log('OrderObjectByPipe', items, field, reverse);
         var filtered = [];
         items.forEach(
             function(item) {

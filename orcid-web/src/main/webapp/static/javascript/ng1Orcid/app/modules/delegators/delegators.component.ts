@@ -62,7 +62,7 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.delegators = data.delegators;
             },
             error => {
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
                 logAjaxError(error);
             } 
         );

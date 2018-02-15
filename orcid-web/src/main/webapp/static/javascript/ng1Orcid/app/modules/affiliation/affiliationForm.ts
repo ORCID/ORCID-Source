@@ -4,56 +4,48 @@ import * as angular
 import { Directive, NgModule } 
     from '@angular/core';
 
-import { FormsModule }
-    from '@angular/forms'; // <-- NgModel lives here
-
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
 //User generated components
-import { CommonModule } 
-    from '@angular/common'; 
+import { AffiliationFormComponent } 
+    from './affiliationForm.component.ts';
 
-import { LanguageComponent } 
-    from './language.component.ts';
+import { CommonNg2Module }
+    from './../common/common.ts';
 
 // This is the Angular 1 part of the module
-export const LanguageModule = angular.module(
-    'LanguageModule', 
+export const AffiliationFormModule = angular.module(
+    'AffiliationFormModule', 
     []
 );
 
 // This is the Angular 2 part of the module
-
 @NgModule(
     {
-        declarations: [
-            LanguageComponent
+        declarations: [ 
+            AffiliationFormComponent
         ],
         entryComponents: [ 
-            LanguageComponent 
-        ],
-        exports: [
-            LanguageComponent
+            AffiliationFormComponent 
         ],
         imports: [
-            CommonModule,
-            FormsModule
+            CommonNg2Module
         ],
         providers: [
+            
         ]
     }
 )
-export class LanguageNg2Module {}
+export class AffiliationFormNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-
-LanguageModule.directive(
-    'languageNg2', 
+AffiliationFormModule.directive(
+    'affiliationFormNg2', 
     <any>downgradeComponent(
         {
-            component: LanguageComponent
+            component: AffiliationFormComponent,
         }
     )
 );

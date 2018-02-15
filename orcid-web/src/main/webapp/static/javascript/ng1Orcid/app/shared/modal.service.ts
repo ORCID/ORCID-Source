@@ -22,7 +22,6 @@ export class ModalService {
 
     notifyOther(data: any): void {
         if (data) {
-            //console.log('notifyOther', data);
             this.notify.next(data);
         }
     }

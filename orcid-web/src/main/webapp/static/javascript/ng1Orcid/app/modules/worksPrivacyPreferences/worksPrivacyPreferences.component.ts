@@ -46,7 +46,7 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
                 this.saved = true;
             },
             (err) => {
-                console.log(err);
+                //console.log(err);
             },
             () => {}
         );       
@@ -65,6 +65,6 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
 
     ngOnInit() {
         this.getPreferences();
-        //console.log("prefs service init");
+        ////console.log("prefs service init");
     }
 }
