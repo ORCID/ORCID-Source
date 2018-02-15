@@ -51,13 +51,13 @@ export class AffiliationService {
         let tmpIdx = null;
         
         if(data.affiliationType != null && data.affiliationType.value != null) {
-        	if (data.affiliationType.value == 'education'){
+            if(data.affiliationType.value == 'distinction') {
+                //TODO
+            } else if (data.affiliationType.value == 'education'){
             	arr = this.educations;
 	        	tmpArr = this.educationsAndQualifications;
 	        } else if (data.affiliationType.value == 'employment'){
 	            arr = this.employments;
-	        } else if(data.affiliationType.value == 'distinction') {
-	        	//TODO
 	        } else if(data.affiliationType.value == 'invited-position') {
 	        	//TODO
 	        } else if(data.affiliationType.value == 'membership') {

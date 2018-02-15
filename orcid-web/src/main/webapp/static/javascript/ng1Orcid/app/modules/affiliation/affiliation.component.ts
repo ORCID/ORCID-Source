@@ -72,6 +72,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     sortHideOption: boolean;
     sortState: any;
     educationsAndQualifications: any;
+    distinctionsAndInvitedPositions: any;
+    membershipsAndServices: any;
     orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
     displayNewAffiliationTypesFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
     //TODO: remove when new aff types is live and leave only educationsAndQualifications
@@ -108,6 +110,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.AFFILIATION);   
         this.educationsAndQualifications = [];
+        this.distinctionsAndInvitedPositions = [];
+        this.membershipsAndServices = [];
         this.sectionOneElements = [];
     }
 
@@ -240,13 +244,22 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     for (let i in data) {
                         if (data[i].affiliationType != null 
                             && data[i].affiliationType.value != null){
-                            if(data[i].affiliationType.value == 'education'){
+                            console.log(data[i].affiliationType.value)
+                            if(data[i].affiliationType.value == 'distinction') {
+                                this.distinctionsAndInvitedPositions.push( data[i] );
+                            } else if(data[i].affiliationType.value == 'education'){
                                 this.educations.push(data[i]);
                                 this.educationsAndQualifications.push( data[i] );
                             } else if ( data[i].affiliationType.value == 'employment' ) {
                                 this.employments.push( data[i] );
+                            } else if(data[i].affiliationType.value == 'invited-position') {
+                                this.distinctionsAndInvitedPositions.push( data[i] );
+                            } else if(data[i].affiliationType.value == 'membership') {
+                                this.membershipsAndServices.push( data[i] );
                             } else if (data[i].affiliationType.value == 'qualification') {
-                            	this.educationsAndQualifications.push(data[i]);                            	
+                                this.educationsAndQualifications.push(data[i]);                             
+                            } else if(data[i].affiliationType.value == 'service') {
+                                this.membershipsAndServices.push( data[i] );
                             }
                         }
                     };
