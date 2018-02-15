@@ -271,7 +271,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     }                                        
                 },
                 error => {
-                    //console.log('getBiographyFormError', error);
+                    console.log('getAffiliationsById error', error);
                 } 
 
         );

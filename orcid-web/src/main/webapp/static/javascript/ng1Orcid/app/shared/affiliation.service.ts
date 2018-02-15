@@ -22,14 +22,17 @@ export class AffiliationService {
     public employments: any;
     public loading: boolean;
     public affiliationsToAddIds: any;
-
 	public educationsAndQualifications: any;
+    public distinctionsAndInvitedPositions: any;
+    public membershipsAndServices: any;
 
     constructor( private http: Http ){
         this.affiliationsToAddIds = null,
         this.educations = new Array(),
         this.employments = new Array(),
         this.educationsAndQualifications = new Array(),
+        this.distinctionsAndInvitedPositions = new Array(),
+        this.membershipsAndServices = new Array(),
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 
@@ -52,20 +55,20 @@ export class AffiliationService {
         
         if(data.affiliationType != null && data.affiliationType.value != null) {
             if(data.affiliationType.value == 'distinction') {
-                //TODO
+                arr = this.distinctionsAndInvitedPositions;
             } else if (data.affiliationType.value == 'education'){
             	arr = this.educations;
 	        	tmpArr = this.educationsAndQualifications;
 	        } else if (data.affiliationType.value == 'employment'){
 	            arr = this.employments;
 	        } else if(data.affiliationType.value == 'invited-position') {
-	        	//TODO
+	            arr = this.distinctionsAndInvitedPositions;
 	        } else if(data.affiliationType.value == 'membership') {
-	        	//TODO
+	            arr = this.membershipsAndServices;
 	        } else if(data.affiliationType.value == 'qualification') {
 	        	tmpArr = this.educationsAndQualifications;
 	        } else if(data.affiliationType.value == 'service') {
-	        	//TODO
+	            arr = this.membershipsAndServices;
 	        }
         }
         
