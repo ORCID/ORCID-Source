@@ -761,6 +761,10 @@
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
+<modalngcomponent elementHeight="645" elementId="affiliationForm" elementWidth="700">
+    <affiliation-form-ng2></affiliation-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
 
