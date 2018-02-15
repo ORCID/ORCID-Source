@@ -320,6 +320,12 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
                 
                 this.getformData();
+
+                if ( data.verified == false ) {
+                    this.showUnverifiedEmailSetPrimaryBox = true;
+                } else {
+                    this.showUnverifiedEmailSetPrimaryBox = false;
+                }
             },
             error => {
                 ////console.log('getEmailsFormError', error);
@@ -339,13 +345,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.addNew();
                 } else {
                     for( let i = 0; i < data.emails.length; i++ ){
-                        if( this.formData.emails[i].primary == true ) {
-                            this.primaryEmail = this.formData.emails[i].value;
-                            if( this.formData.emails[i].verified == false ) {
-                                this.showUnverifiedEmailSetPrimaryBox = true;
-                            } else {
-                                this.showUnverifiedEmailSetPrimaryBox = false;
-                            }
+                        if( data.emails[i].primary == true ) {
+                            this.primaryEmail = data.emails[i].value;
                         }
 
                     }

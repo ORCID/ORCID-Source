@@ -204,7 +204,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     deleteAff(delAff): void {
-        this.affiliationService.deleteData(delAff);
+        //this.affiliationService.deleteData(delAff);
         this.closeModal();
     };
 
