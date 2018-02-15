@@ -66,6 +66,9 @@ import { ModalModule }
 import { NameModule } 
     from './name/name.ts';
 
+import { OauthAuthorizationModule } 
+    from './oauthAuthorization/oauthAuthorization.ts';
+
 import { SearchModule } 
     from './search/search.ts';
 
@@ -133,6 +136,7 @@ export const orcidApp = angular.module(
         LanguageModule.name,
         ModalModule.name,
         NameModule.name,
+        OauthAuthorizationModule.name,
         SearchModule.name,
         SelfServiceModule.name,
         SelfServiceAddContactModule.name,

@@ -80,6 +80,9 @@ import { ModalNg2Module }
 import { NameNg2Module } 
     from './name/name.ts';
 
+import { OauthAuthorizationNg2Module } 
+    from './oauthAuthorization/oauthAuthorization.ts';
+
 import { SearchNg2Module } 
     from './search/search.ts';
 
@@ -184,6 +187,7 @@ export class RootCmp {
         LanguageNg2Module,
         ModalNg2Module, //Approved
         NameNg2Module, //Approved
+        OauthAuthorizationNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
         SelfServiceAddContactNg2Module, //Approved

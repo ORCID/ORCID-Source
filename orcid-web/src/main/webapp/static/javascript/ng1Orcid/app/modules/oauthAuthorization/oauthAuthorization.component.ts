@@ -27,7 +27,9 @@ import { OauthService }
 
 @Component({
     selector: 'oauth-authorization-ng2',
-    template:  scriptTmpl("oauth-authorization-ng2-template")
+    template:  scriptTmpl("oauth-authorization-ng2-template"),
+    providers: [OauthService]
+
 })
 export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -61,6 +63,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     showReactivationSent: any;
     showRegisterForm: any;
     showUpdateIcon: any;
+    socialSignInForm: any;
     loadTime: any;
     generalRegistrationError: any;
 
@@ -98,6 +101,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showReactivationSent = false;
         this.showRegisterForm = false;
         this.showUpdateIcon = false;
+        this.socialSignInForm = {};
         this.loadTime = 0;
         this.generalRegistrationError = null;
     }
@@ -121,14 +125,29 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.authorizeRequest();
     };
 
-    loginSocial(idp): any {
+    isValidClass(cur): any {
+        var valid;
+        if (cur === undefined) {
+            return '';
+        } 
+        valid = true;
+        if (cur.required && (cur.value == null || cur.value.trim() == '')) {
+            valid = false;
+        }
+        if (cur.errors !== undefined && cur.errors.length > 0) {
+            valid = false;
+        }
+        return valid ? '' : 'text-error';
+    };
+
+    loginSocial(idp): void {
+        console.log("login social");
         if(this.gaString){
             orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + this.gaString]);
         } else {
             orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'Website']);
         }
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
-        return false;
     };
 
     setRecaptchaWidgetId(widgetId): void {
@@ -319,6 +338,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.registrationForm.familyNames.value=familyName;
                     this.registrationForm.email.value=email; 
                 }
+
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
                 this.registrationForm.linkType=linkFlag;
                 
