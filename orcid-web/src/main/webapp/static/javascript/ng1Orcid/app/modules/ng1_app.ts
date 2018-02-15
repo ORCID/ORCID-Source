@@ -15,9 +15,6 @@ import 'angular-route'
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
 
-import { AffiliationFormModule } 
-    from './affiliation/affiliationForm.ts';
-
 import { AlsoKnownAsModule } 
     from './alsoKnownAs/alsoKnownAs.ts';
 
@@ -119,7 +116,6 @@ export const orcidApp = angular.module(
         vcRecaptcha,
         uibootstraptypeahead,
         AffiliationModule.name,
-        AffiliationFormModule.name,
         AlsoKnownAsModule.name,
         AlsoKnownAsFormModule.name,
         BiographyModule.name,
