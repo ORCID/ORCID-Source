@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -631,9 +632,18 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
         
-        String owner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        
+        
+        String owner = null;
+        
+        try {
+        	owner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        } catch(NoResultException nre) {
+        	
+        }
+        
         if(!currentUserOrcid.equals(owner)) {
-            throw new IllegalArgumentException(email);
+        	errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
         
         if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
