@@ -51,13 +51,13 @@ v3.0_dev1 is the current development release of the ORCID API and is only for in
 - [work-3.0_dev1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/work-3.0_dev1.xsd)
 **unstable**
 
-## Changes from Release candidate 2.1:
+## Changes from Version 2.1:
 
 ### Affiliations
 - Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections.
 - Summary information now available for each section including affiliation source, role-title, department-name, dates, and organization
 - *common:start-date* is required when writing items
-- Addition of optional element *common:url*
+- Addition of optional element *common:url* for recording links about the affiliation
 - Addition of optional element *common:external-ids* for recording identifiers for the affiliation
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
 - Use of common namespace for *common:department-name*, *common:role-title* and *common:organization* 
