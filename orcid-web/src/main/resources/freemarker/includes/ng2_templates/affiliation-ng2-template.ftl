@@ -36,7 +36,7 @@
                                 <div id="employment-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition'/> <a href="${knowledgeBaseUri}/articles/1807525" target="manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <p><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition'/> <a href="${knowledgeBaseUri}/articles/115486" target="manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div>
@@ -707,7 +707,7 @@
                             <div id="employment-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="${knowledgeBaseUri}/articles/1807525" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div>
@@ -969,7 +969,7 @@
                                 <div id="employment-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService'/> <a href="${knowledgeBaseUri}/articles/1807525" target="manage_affiliations_settings.helpPopoverMembershipAndService"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <p><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService'/> <a href="${knowledgeBaseUri}/articles/116752" target="manage_affiliations_settings.helpPopoverMembershipAndService"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div>
