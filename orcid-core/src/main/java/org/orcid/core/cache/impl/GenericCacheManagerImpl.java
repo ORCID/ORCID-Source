@@ -37,35 +37,38 @@ public class GenericCacheManagerImpl<K extends OrcidAware, V> implements Generic
     public V retrieve(K key) {
         Date dbDate = profileEntityManager.getLastModifiedDate(key.getOrcid());
         GenericCacheKey<K> genericKey = new GenericCacheKey<K>(key, dbDate.getTime());
-        V value = null;
+        Element element = null;
         try {
             cache.acquireReadLockOnKey(genericKey);
-            value = retrieveFromCache(genericKey);
+            element = cache.get(genericKey);
         } finally {
             cache.releaseReadLockOnKey(genericKey);
         }
-        if (value == null) {
+        if (element != null) {
+            return extractObjectValue(element);
+        } else {
             try {
                 cache.acquireWriteLockOnKey(genericKey);
-                value = retrieveFromCache(genericKey);
-                if (value == null) {
+                element = cache.get(genericKey);
+                if (element != null) {
+                    return extractObjectValue(element);
+                } else {
                     // Note that we retrieve from the retriever using key (which
                     // does not contain profile last modified or release name)
                     // not genericKey.
-                    value = retriever.retrieve(key);
+                    V value = retriever.retrieve(key);
                     cache.put(new Element(genericKey, value));
+                    return value;
                 }
             } finally {
                 cache.releaseWriteLockOnKey(genericKey);
             }
         }
-        return value;
     }
 
     @SuppressWarnings("unchecked")
-    private V retrieveFromCache(GenericCacheKey<K> genericKey) {
-        Element element = cache.get(genericKey);
-        return element != null ? (V) element.getObjectValue() : null;
+    private V extractObjectValue(Element element) {
+        return (V) element.getObjectValue();
     }
 
 }
