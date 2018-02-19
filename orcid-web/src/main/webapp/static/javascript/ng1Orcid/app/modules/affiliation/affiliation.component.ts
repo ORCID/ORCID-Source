@@ -74,8 +74,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     educationsAndQualifications: any;
     distinctionsAndInvitedPositions: any;
     membershipsAndServices: any;
-    orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
-    displayNewAffiliationTypesFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
+    orgIdsFeatureEnabled: boolean;
+    displayNewAffiliationTypesFeatureEnabled: boolean;
     //TODO: remove when new aff types is live and leave only educationsAndQualifications
     sectionOneElements: any;
     
@@ -113,6 +113,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.distinctionsAndInvitedPositions = [];
         this.membershipsAndServices = [];
         this.sectionOneElements = [];
+        this.displayNewAffiliationTypesFeatureEnabled = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
+        this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
     }
 
     addAffiliation(): void {
@@ -479,8 +481,25 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
 
-    sort(key): void {       
+    sort(key, desc?): void {
+
         this.sortState.sortBy(key);
+        
+        if( key == "startDate" ){
+            this.sortState.predicate = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
+        }
+        if( key == "endDate" ) {
+            this.sortState.predicate = ['endDate.year', 'endDate.month', 'endDate.day', 'affiliationName.value'];
+        }
+        if( key == "title" ) {
+            this.sortState.predicate = ['affiliationName.value'];
+        }
+        
+        if( desc ){
+            this.sortState.reverse = desc;
+        } else {
+            this.sortState.reverse = false;
+        }
     };
 
     showURLPopOver(id): void {

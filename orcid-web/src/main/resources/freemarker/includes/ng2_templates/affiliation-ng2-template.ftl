@@ -449,21 +449,21 @@
                                         <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                         <ul class="menu-options sort">
                                             <li [ngClass]="{'checked':sortState.predicateKey=='startDate'}">                                         
-                                                <a (click)="sort('startDate');" class="action-option manage-button">
+                                                <a (click)="sort('startDate', true);" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
                                                     <span *ngIf="sortState.reverseKey['startDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='startDate'}"></span>
                                                     <span *ngIf="sortState.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
                                                 </a>                                                                                    
                                             </li>
                                             <li [ngClass]="{'checked':sortState.predicateKey=='endDate'}">
-                                                <a (click)="sort('endDate');" class="action-option manage-button">
+                                                <a (click)="sort('endDate', false);" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
                                                     <span *ngIf="sortState.reverseKey['endDate']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='endDate'}" ></span>
                                                     <span *ngIf="sortState.reverseKey['endDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='endDate'}" ></span>
                                                 </a>                                            
                                             </li>
                                             <li [ngClass]="{'checked':sortState.predicateKey=='title'}">                                            
-                                                <a (click)="sort('title');" class="action-option manage-button">
+                                                <a (click)="sort('title', true);" class="action-option manage-button">
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
                                                     <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
                                                     <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
