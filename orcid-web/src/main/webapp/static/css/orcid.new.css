@@ -7121,6 +7121,7 @@ ul.comma li:last-child:after {
     }
 
     #colorbox {
+        left: 0!important;
         overflow: hidden
     }
 
