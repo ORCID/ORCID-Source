@@ -133,7 +133,7 @@
                                         </div>
                                     </div>
                                     <!-- Email confirmation -->
-                                    <div *ngIf="popUp && showEmailVerifBox" class="verify-email-box grey-box">                  
+                                    <div *ngIf="showEmailVerifBox" class="verify-email-box grey-box">                  
                                         <div style="margin-bottom: 10px;">
                                             <h4><@orcid.msg 'manage.email.verificationEmail'/> {{verifyEmailObject.value}}</h4>
                                             <p><@orcid.msg 'workspace.check_your_email'/></p>
