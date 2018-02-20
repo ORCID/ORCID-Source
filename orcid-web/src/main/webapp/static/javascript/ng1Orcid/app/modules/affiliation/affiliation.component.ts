@@ -72,8 +72,10 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     sortHideOption: boolean;
     sortState: any;
     educationsAndQualifications: any;
-    orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
-    displayNewAffiliationTypesFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
+    distinctionsAndInvitedPositions: any;
+    membershipsAndServices: any;
+    orgIdsFeatureEnabled: boolean;
+    displayNewAffiliationTypesFeatureEnabled: boolean;
     //TODO: remove when new aff types is live and leave only educationsAndQualifications
     sectionOneElements: any;
     
@@ -108,7 +110,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.AFFILIATION);   
         this.educationsAndQualifications = [];
+        this.distinctionsAndInvitedPositions = [];
+        this.membershipsAndServices = [];
         this.sectionOneElements = [];
+        this.displayNewAffiliationTypesFeatureEnabled = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
+        this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
     }
 
     addAffiliation(): void {
@@ -222,7 +228,35 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     deleteAffiliation(affiliation): void {
         this.affiliationService.deleteAffiliation(affiliation)
             .takeUntil(this.ngUnsubscribe)
-            .subscribe(data => {});
+            .subscribe(data => {         
+                if(data.errors.length == 0) {
+                    if(affiliation.affiliationType != null && affiliation.affiliationType.value != null) {
+                        if(affiliation.affiliationType.value == 'distinction' || affiliation.affiliationType.value == 'invited-position') {
+                            this.removeFromArray(this.distinctionsAndInvitedPositions, affiliation.putCode.value);
+                        } else if (affiliation.affiliationType.value == 'education' || affiliation.affiliationType.value == 'qualification'){
+                            this.removeFromArray(this.educationsAndQualifications, affiliation.putCode.value);
+                            if(affiliation.affiliationType.value == 'education') {
+                                this.removeFromArray(this.educations, affiliation.putCode.value);
+                            }                            
+                        } else if (affiliation.affiliationType.value == 'employment'){
+                            this.removeFromArray(this.employments, affiliation.putCode.value);                            
+                        } else if(affiliation.affiliationType.value == 'membership' || affiliation.affiliationType.value == 'service') {
+                            this.removeFromArray(this.membershipsAndServices, affiliation.putCode.value);                            
+                        } 
+                    }                    
+                }                                
+            });         
+    };
+    
+    removeFromArray(affArray, putCode): void {
+        console.log("putCode: " + putCode);
+        console.log(affArray);
+        for(let idx in affArray) {
+            if(affArray[idx].putCode.value == putCode) {
+                affArray.splice(idx, 1);
+                break;
+            }
+        }
     };
 
     displayEducation(): boolean {
@@ -239,14 +273,22 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 data => {
                     for (let i in data) {
                         if (data[i].affiliationType != null 
-                            && data[i].affiliationType.value != null){
-                            if(data[i].affiliationType.value == 'education'){
+                            && data[i].affiliationType.value != null) {                            
+                            if(data[i].affiliationType.value == 'distinction') {
+                                this.distinctionsAndInvitedPositions.push( data[i] );
+                            } else if(data[i].affiliationType.value == 'education'){
                                 this.educations.push(data[i]);
                                 this.educationsAndQualifications.push( data[i] );
                             } else if ( data[i].affiliationType.value == 'employment' ) {
                                 this.employments.push( data[i] );
+                            } else if(data[i].affiliationType.value == 'invited-position') {
+                                this.distinctionsAndInvitedPositions.push( data[i] );
+                            } else if(data[i].affiliationType.value == 'membership') {
+                                this.membershipsAndServices.push( data[i] );
                             } else if (data[i].affiliationType.value == 'qualification') {
-                            	this.educationsAndQualifications.push(data[i]);                            	
+                                this.educationsAndQualifications.push(data[i]);                             
+                            } else if(data[i].affiliationType.value == 'service') {
+                                this.membershipsAndServices.push( data[i] );
                             }
                         }
                     };
@@ -258,7 +300,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     }                                        
                 },
                 error => {
-                    //console.log('getBiographyFormError', error);
+                    console.log('getAffiliationsById error', error);
                 } 
 
         );
@@ -439,8 +481,28 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
 
-    sort(key): void {       
+    sort(key, desc?): void {
+
         this.sortState.sortBy(key);
+
+        if( desc ){
+            this.sortState.reverse = desc;
+        } else {
+            this.sortState.reverse = false;
+        }
+        
+        if( key == "startDate" ){
+            this.sortState.predicate = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
+        }
+        if( key == "endDate" ) {
+            this.sortState.predicate = ['endDate.year', 'endDate.month', 'endDate.day', 'affiliationName.value'];
+            this.sortState.reverse = false;
+        }
+        if( key == "title" ) {
+            this.sortState.predicate = ['affiliationName.value'];
+        }
+        
+        
     };
 
     showURLPopOver(id): void {

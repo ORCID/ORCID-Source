@@ -16,7 +16,8 @@
  */
 package org.orcid.core.cli.logs;
 
-import java.io.PrintStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class AnalysisResults {
         return hitsAnalysed;
     }
     
-    public void outputClientStats(PrintStream printStream) {
+    public void outputClientStats(OutputStream outputStream) throws IOException {
         for (String clientId : statsByClient.keySet()) {
             ClientStats clientStats = statsByClient.get(clientId);
             StringBuilder builder = new StringBuilder(clientId);
@@ -50,8 +51,10 @@ public class AnalysisResults {
             for (String version : clientStats.getVersionsHit()) {
                 builder.append(version).append("; ");
             }
-            printStream.println(builder.toString());
+            outputStream.write(builder.toString().getBytes());
+            outputStream.write("\n".getBytes());
         }
+        outputStream.close();
     }
     
 }

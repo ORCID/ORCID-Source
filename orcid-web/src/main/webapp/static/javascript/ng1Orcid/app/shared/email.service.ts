@@ -72,7 +72,7 @@ export class EmailService {
 
     deleteEmail() {
         let myParams = new URLSearchParams();
-        myParams.append('email', this.delEmail.value);
+        myParams.append('email', encodeURIComponent(this.delEmail.value));
         let options = new RequestOptions(
             { headers: this.headers , search: myParams }
         );
@@ -298,7 +298,7 @@ export class EmailService {
         }
         
         let myParams = new URLSearchParams();
-        myParams.append('email', _email.value);
+        myParams.append('email', encodeURIComponent(_email.value));
         let options = new RequestOptions(
             { headers: this.headers , search: myParams }
         );
