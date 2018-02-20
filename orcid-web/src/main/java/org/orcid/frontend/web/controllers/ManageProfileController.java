@@ -17,6 +17,8 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -555,7 +557,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {   
+    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) throws UnsupportedEncodingException {  
+    	email = URLDecoder.decode(email, StandardCharsets.UTF_8.name());
         String currentUserOrcid = getCurrentUserOrcid();
         String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
         if (primaryEmail.equals(email))
