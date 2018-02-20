@@ -108,7 +108,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.sortHideOption = false;
-        this.sortState = new ActSortState(GroupedActivities.AFFILIATION);   
+        this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);   
         this.educationsAndQualifications = [];
         this.distinctionsAndInvitedPositions = [];
         this.membershipsAndServices = [];
@@ -297,7 +297,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.sectionOneElements = this.educationsAndQualifications;
                     } else {
                         this.sectionOneElements = this.educations;
-                    }                                        
+                    } 
+                    
+                    this.sort('endDate', true);
                 },
                 error => {
                     console.log('getAffiliationsById error', error);
@@ -481,28 +483,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
 
-    sort(key, desc?): void {
-
+    sort(key, reverse?): void {
+        if( reverse ) {
+            this.sortState.reverse = reverse;
+        }
         this.sortState.sortBy(key);
-
-        if( desc ){
-            this.sortState.reverse = desc;
-        } else {
-            this.sortState.reverse = false;
-        }
-        
-        if( key == "startDate" ){
-            this.sortState.predicate = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
-        }
-        if( key == "endDate" ) {
-            this.sortState.predicate = ['endDate.year', 'endDate.month', 'endDate.day', 'affiliationName.value'];
-            this.sortState.reverse = false;
-        }
-        if( key == "title" ) {
-            this.sortState.predicate = ['affiliationName.value'];
-        }
-        
-        
     };
 
     showURLPopOver(id): void {
