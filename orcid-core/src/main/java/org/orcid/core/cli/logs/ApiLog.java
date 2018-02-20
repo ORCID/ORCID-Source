@@ -126,14 +126,14 @@ public class ApiLog {
     }
 
     private static String getBearerToken(String line) {
-        int index = line.indexOf("Bearer");
+        int index = line.toLowerCase().indexOf("bearer");
         if (index < 0) {
             return null;
         }
+        index += "bearer".length();
         
-        index = line.indexOf(" ", index);
         int nextIndex = line.indexOf("\"", index);
-        return line.substring(index + 1, nextIndex);
+        return line.substring(index, nextIndex).trim();
     }
 
     private static HttpStatus getStatus(String line) {
