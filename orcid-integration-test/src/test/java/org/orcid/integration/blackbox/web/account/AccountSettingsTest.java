@@ -52,7 +52,7 @@ public class AccountSettingsTest extends BlackBoxBase {
         openEditEmailsSectionOnAccountSettingsPage();
         //Add an email
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
-        addEmail(emailValue, org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        addEmail(emailValue, org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         //Reload the account settings to confirm it was actually added
         showAccountSettingsPage();
         try {

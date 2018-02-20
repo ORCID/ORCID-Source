@@ -71,7 +71,7 @@ public class WorksTest extends BlackBoxBaseV2_1Release {
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         showMyOrcidPage();
-    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.1/samples/read_samples/work-2.1.xml", Work.class);
         workToCreate.setPutCode(null);
