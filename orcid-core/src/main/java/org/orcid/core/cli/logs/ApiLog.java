@@ -100,6 +100,17 @@ public class ApiLog {
         return log;
     }
     
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(dateTime);
+        builder.append(" ").append(method);
+        builder.append(" ").append(endpoint);
+        builder.append(" ").append(status);
+        builder.append(" ").append(bearerToken);
+        builder.append(" ").append(version);
+        return builder.toString();
+    }
+    
     private static String getVersion(String endpoint) {
         int index = endpoint.indexOf("/", 1);
         int nextIndex = endpoint.indexOf("/", index + 1);
@@ -154,6 +165,6 @@ public class ApiLog {
         return LocalDateTime.parse(dateString, DATE_FORMAT);
     }
     
-   
+    
     
 }
