@@ -36,6 +36,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ApiAccessLogsAnalyser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiAccessLogsAnalyser.class);
+    
+    private static final int BEARER_TOKEN_LENGTH = 36;
 
     @Option(name = "-f", usage = "Path to directory containing logs and / or directories of logs")
     private File logsDir;
@@ -123,7 +125,7 @@ public class ApiAccessLogsAnalyser {
             LOGGER.info("Found log data {}", log.toString());
         }
 
-        if (log.getBearerToken() != null) {
+        if (log.getBearerToken() != null && log.getBearerToken().length() == BEARER_TOKEN_LENGTH) {
             String client = getClientDetailsId(log.getBearerToken());
             if (debug) {
                 LOGGER.info("Found client {}", client);
