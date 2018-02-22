@@ -555,12 +555,17 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {   
-        String currentUserOrcid = getCurrentUserOrcid();
+    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {  
+    	String currentUserOrcid = getCurrentUserOrcid();
         String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
         if (primaryEmail.equals(email))
             request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
 
+        String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        if(!currentUserOrcid.equals(emailOwner)) {
+        	throw new IllegalArgumentException("Invalid email address provided");
+        }
+        
         notificationManager.sendVerificationEmail(currentUserOrcid, email);
         return new Errors();
     }
