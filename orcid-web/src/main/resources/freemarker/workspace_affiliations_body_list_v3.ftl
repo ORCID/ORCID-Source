@@ -21,8 +21,9 @@
 <#include "includes/affiliate/add_affiliate_inc.ftl"/>
 
 <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
-<affiliation-ng2></affiliation-ng2>
 </@orcid.checkFeatureStatus>
+<affiliation-ng2></affiliation-ng2>
+
 
 <div ng-controller="AffiliationCtrl">
 	<!-- Education -->
@@ -40,4 +41,5 @@
 		</div>
 	</div>
 </div>
-    
+<@orcid.checkFeatureStatus 'ANGULAR2_DEV' false> 
+</@orcid.checkFeatureStatus>

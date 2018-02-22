@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -554,12 +555,17 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {   
-        String currentUserOrcid = getCurrentUserOrcid();
+    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {  
+    	String currentUserOrcid = getCurrentUserOrcid();
         String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
         if (primaryEmail.equals(email))
             request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
 
+        String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        if(!currentUserOrcid.equals(emailOwner)) {
+        	throw new IllegalArgumentException("Invalid email address provided");
+        }
+        
         notificationManager.sendVerificationEmail(currentUserOrcid, email);
         return new Errors();
     }
@@ -631,9 +637,18 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
         
-        String owner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        
+        
+        String owner = null;
+        
+        try {
+        	owner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        } catch(NoResultException nre) {
+        	
+        }
+        
         if(!currentUserOrcid.equals(owner)) {
-            throw new IllegalArgumentException(email);
+        	errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
         
         if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {

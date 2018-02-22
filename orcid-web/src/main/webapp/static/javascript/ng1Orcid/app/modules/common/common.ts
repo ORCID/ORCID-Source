@@ -23,6 +23,9 @@ import { FilterImportWizardsPipe }
 import { LatexPipe }
     from '../../pipes/latexNg2.ts';
 
+    import { OrgIdentifierHtmlPipe }
+    from '../../pipes/orgIdentifierHtmlNg2.ts';    
+    
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
 
@@ -36,14 +39,55 @@ import { WorkExternalIdentifierHtmlPipe }
     from '../../pipes/workExternalIdentifierHtmlNg2.ts';
 
 //User generated modules
-import { PrivacytoggleNg2Module }
-    from './../privacytoggle/privacyToggle.ts';
+/*
+import { DeactivateAccountNg2Module }
+    from './../deactivateAccount/deactivateAccount.ts';
+import { DelegatesNg2Module }
+    from './../delegates/delegates.ts';
+
+import { DeprecateAccountNg2Module }
+    from './../deprecateAccount/deprecateAccount.ts';
+
+import { EditTableNg2Module }
+    from './../editTable/editTable.ts';
+*/
 
 import { EmailFrecuencyNg2Module }
     from './../emailFrecuency/emailFrecuency.ts';
 
+import { HeaderNg2Module }
+    from './../header/header.ts';
+
 import { LanguageNg2Module }
     from './../language/language.ts';
+
+import { NotificationsCountNg2Module }
+    from './../notificationsCount/notificationsCount.ts';
+
+import { NotificationPreferenceNg2Module }
+    from './../notificationPreferences/notificationPreference.ts';
+
+import { PasswordEditNg2Module }
+    from './../passwordEdit/passwordEdit.ts';
+
+import { PrivacytoggleNg2Module }
+    from './../privacytoggle/privacyToggle.ts';
+
+/*
+import { RevokeApplicationFormNg2Module }
+    from './../revokeApplicationForm/revokeApplicationForm.ts';
+import { ShowEditLanguageNg2Module }
+    from './../showEditLanguage/showEditLanguage.ts';
+*/
+
+import { SecurityQuestionEditNg2Module }
+    from './../securityQuestionEdit/securityQuestionEdit.ts';
+/*
+import { SocialNg2Module }
+    from './../social/social.ts';
+import { SwitchUserNg2Module }
+    from './../switchUser/switchUser.ts';
+*/
 
 //User generated services
 
@@ -115,6 +159,10 @@ import { WorksService }
             CommonModule,
             FormsModule,
             //User Modules
+            //DeactivateAccountNg2Module,
+            //DelegatesNg2Module,
+            //DeprecateAccountNg2Module,
+            //EditTableNg2Module,
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
             PrivacytoggleNg2Module
@@ -124,6 +172,7 @@ import { WorksService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrgIdentifierHtmlPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
@@ -138,11 +187,16 @@ import { WorksService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrgIdentifierHtmlPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
+            //DeactivateAccountNg2Module,
+            //DelegatesNg2Module,
+            //DeprecateAccountNg2Module,
+            //EditTableNg2Module,
             LanguageNg2Module,
             EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module

@@ -71,14 +71,12 @@ export class EmailService {
     }
 
     deleteEmail() {
-        let myParams = new URLSearchParams();
-        myParams.append('email', this.delEmail.value);
         let options = new RequestOptions(
-            { headers: this.headers , search: myParams }
+            { headers: this.headers }
         );
         
         return this.http.delete( 
-            getBaseUri() + '/account/deleteEmail.json',             
+            getBaseUri() + '/account/deleteEmail.json?email=' + encodeURIComponent(this.delEmail.value),             
             options
         )
         .map(
@@ -297,14 +295,12 @@ export class EmailService {
             _email = this.getEmailPrimary();
         }
         
-        let myParams = new URLSearchParams();
-        myParams.append('email', _email.value);
         let options = new RequestOptions(
-            { headers: this.headers , search: myParams }
+            { headers: this.headers }
         );
 
         return this.http.get(
-            getBaseUri() + '/account/verifyEmail.json',
+            getBaseUri() + '/account/verifyEmail.json?email=' + encodeURIComponent(_email.value),
             options
         )
         .map(
