@@ -490,6 +490,7 @@ public class LoadRinggoldData {
             LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
             String city = altName.get("city").asText();
             Iso3166Country country = Iso3166Country.fromValue(altName.get("country").asText());
+            //Not happy with line below.  Can steal from other ORG ID types.
             OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, null, country);
             if (existingOrg != null) {
                 if (existingOrg.getOrgDisambiguated() == null) {
@@ -514,6 +515,7 @@ public class LoadRinggoldData {
 
     private void generateOrganizationFromInstitutionNode(OrgDisambiguatedEntity disambiguatedEntity, String name, Iso3166Country country, String city, String region) {
         Date now = new Date();
+        //Not happy with line below.  Can steal from other ORG ID types.
         OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, region, country);
         if (existingOrg != null) {
             if (existingOrg.getOrgDisambiguated() == null) {
