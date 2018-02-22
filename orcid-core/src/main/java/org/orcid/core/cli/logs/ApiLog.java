@@ -100,6 +100,17 @@ public class ApiLog {
         return log;
     }
     
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(dateTime);
+        builder.append(" ").append(method);
+        builder.append(" ").append(endpoint);
+        builder.append(" ").append(status);
+        builder.append(" ").append(bearerToken);
+        builder.append(" ").append(version);
+        return builder.toString();
+    }
+    
     private static String getVersion(String endpoint) {
         int index = endpoint.indexOf("/", 1);
         int nextIndex = endpoint.indexOf("/", index + 1);
@@ -115,14 +126,14 @@ public class ApiLog {
     }
 
     private static String getBearerToken(String line) {
-        int index = line.indexOf("Bearer");
+        int index = line.toLowerCase().indexOf("bearer");
         if (index < 0) {
             return null;
         }
+        index += "bearer".length();
         
-        index = line.indexOf(" ", index);
         int nextIndex = line.indexOf("\"", index);
-        return line.substring(index + 1, nextIndex);
+        return line.substring(index, nextIndex).trim();
     }
 
     private static HttpStatus getStatus(String line) {
@@ -154,6 +165,6 @@ public class ApiLog {
         return LocalDateTime.parse(dateString, DATE_FORMAT);
     }
     
-   
+    
     
 }

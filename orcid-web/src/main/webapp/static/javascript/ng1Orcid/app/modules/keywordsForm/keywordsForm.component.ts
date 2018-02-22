@@ -79,7 +79,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.modalService.notifyOther({action:'close', moduleId: 'modalKeywordsForm'});
     };
 
-    deleteEntry( entry ): void{
+    deleteKeyword( entry ): void{
         let keywords = this.formData.keywords;
         let len = keywords.length;
         while (len--) {
@@ -88,6 +88,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }
     };
+
 
     getData(): void{
         this.keywordsService.getData()

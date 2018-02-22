@@ -484,22 +484,25 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     sort(key, desc?): void {
 
         this.sortState.sortBy(key);
+
+        if( desc ){
+            this.sortState.reverse = desc;
+        } else {
+            this.sortState.reverse = false;
+        }
         
         if( key == "startDate" ){
             this.sortState.predicate = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
         }
         if( key == "endDate" ) {
             this.sortState.predicate = ['endDate.year', 'endDate.month', 'endDate.day', 'affiliationName.value'];
+            this.sortState.reverse = false;
         }
         if( key == "title" ) {
             this.sortState.predicate = ['affiliationName.value'];
         }
         
-        if( desc ){
-            this.sortState.reverse = desc;
-        } else {
-            this.sortState.reverse = false;
-        }
+        
     };
 
     showURLPopOver(id): void {

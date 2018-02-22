@@ -8,10 +8,6 @@ import { Injectable, Pipe, PipeTransform }
 //@Injectable()
 export class OrderByPipe implements PipeTransform {
 
-    cmp(x, y): any {
-        return x > y ? 1 : x < y ? -1 : 0; 
-    };
-
     transform(array: Array<string>, args: any, ascending: boolean): Array<string> {
         //console.log('pipe order', array, args, ascending, typeof(args));
 
@@ -33,10 +29,15 @@ export class OrderByPipe implements PipeTransform {
                 argsStringArray += '["' + temp[j] + '"]';
                 if( j == temp.length - 1 ){ //all sublevels added, lets concat with A and B
                     
-                    if( i == 0) { //yes, i, not j, because the first condition is different than the rest
+                    /*if( i == 0) { //yes, i, not j, because the first condition is different than the rest
                         logicalOperation += 'b' + argsStringArray + ' - a' + argsStringArray;
                     } else {
                         logicalOperation += 'String(a' + argsStringArray + ').localeCompare(String(b' + argsStringArray + '))';
+                    }*/
+                    if( ascending ) {
+                        logicalOperation += 'String(a' + argsStringArray + ').localeCompare(String(b' + argsStringArray + '))';
+                    } else {
+                        logicalOperation += 'String(b' + argsStringArray + ').localeCompare(String(a' + argsStringArray + '))';
                     }
                 
                 }
