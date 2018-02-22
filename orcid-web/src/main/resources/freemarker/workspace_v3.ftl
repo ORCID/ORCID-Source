@@ -770,16 +770,9 @@
 </modalngcomponent><!-- Ng2 component -->
 
 
-
-
-
-
-
-
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
 
 <#include "/includes/record/record_modals.ftl">
-<#include "/includes/record/email_settings.ftl">
 
 </@protected>  

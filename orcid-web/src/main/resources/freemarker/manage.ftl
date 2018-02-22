@@ -982,7 +982,6 @@
     </div>
 </script>
 
-<#include "/includes/record/email_settings.ftl">
 <#include "/includes/language_selector.ftl">
 
 </@protected>

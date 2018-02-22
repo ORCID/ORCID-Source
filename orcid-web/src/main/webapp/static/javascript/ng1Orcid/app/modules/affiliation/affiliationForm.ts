@@ -45,7 +45,7 @@ AffiliationFormModule.directive(
     'affiliationFormNg2', 
     <any>downgradeComponent(
         {
-            component: AffiliationFormComponent,
+            component: AffiliationFormComponent
         }
     )
 );

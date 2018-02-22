@@ -1,11 +1,14 @@
 import { Injectable } 
     from '@angular/core';
 
-import { Headers, Http, RequestOptions, Response } 
+import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
 import { Observable } 
     from 'rxjs/Observable';
+
+import { Subject }
+    from 'rxjs/Subject';
 
 import 'rxjs/Rx';
 
@@ -23,6 +26,10 @@ export class AffiliationService {
 
     public affiliation: any;
     public type: string;
+
+    private notify = new Subject<any>();
+    
+    notifyObservable$ = this.notify.asObservable();
 	
     constructor( private http: Http ){
         this.affiliationsToAddIds = null,
@@ -41,9 +48,13 @@ export class AffiliationService {
         this.type = '';
     }
 
-    deleteAffiliation( data ) {        
+    deleteAffiliation( data ) {     
+        let options = new RequestOptions(
+            { headers: this.headers }
+        );
+
         return this.http.delete( 
-            this.urlAffiliation + '?id=' + data.putCode.value,             
+            this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
         )
         .map(
@@ -106,6 +117,12 @@ export class AffiliationService {
             { headers: this.headers }
         )
         .map((res:Response) => res.json()).share();
+    }
+
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
     }
 }
 
