@@ -16,10 +16,9 @@
  */
 package org.orcid.core.cli.logs;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class ApiAccessLogsAnalyser {
 
     private static final int BEARER_TOKEN_LENGTH = 36;
 
-    private static final String UNKNOWN_CLIENT = "Unknown";
+    static final String UNKNOWN_CLIENT = "Unknown";
 
     @Option(name = "-f", usage = "Path to directory containing logs and / or directories of logs")
     private File logsDir;
@@ -58,7 +57,9 @@ public class ApiAccessLogsAnalyser {
 
     private Map<String, String> tokenToClientDetails = new HashMap<>();
 
-    private AnalysisResults results = new AnalysisResults();
+    private AnalysisResults results;
+    
+    private LogReader logReader;
 
     public static void main(String[] args) {
         ApiAccessLogsAnalyser analyser = new ApiAccessLogsAnalyser();
@@ -80,6 +81,14 @@ public class ApiAccessLogsAnalyser {
         LOGGER.info("Initialising Api access logs analysis...");
         applicationContext = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
         tokenDao = (OrcidOauth2TokenDetailDao) applicationContext.getBean("orcidOauth2TokenDetailDao");
+        logReader = new LogReader();
+        logReader.init(logsDir);
+        results = new AnalysisResults();
+        try {
+            results.setOutputStream(new FileOutputStream(outputFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error creating output stream to file " + outputFile.getAbsolutePath(), e);
+        }
     }
 
     private void shutdown() {
@@ -88,37 +97,17 @@ public class ApiAccessLogsAnalyser {
 
     void analyse() {
         LOGGER.info("Analysing log files, base directory: " + logsDir.getAbsolutePath());
-        analyseDir(logsDir);
+        String line = logReader.getNextLine();
+        while (line != null) {
+            analyseLog(line);
+            line = logReader.getNextLine();
+        }
         LOGGER.info("Analysis complete");
         try {
-            results.outputClientStats(new FileOutputStream(outputFile));
+            results.outputClientStats();
         } catch (IOException e) {
             LOGGER.error("Error outputting results");
             System.exit(1);
-        }
-    }
-
-    private void analyseDir(File dir) {
-        LOGGER.info("Examining directory {}", dir.getAbsolutePath());
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                analyseDir(file);
-            } else {
-                analyseLogFile(file);
-            }
-        }
-    }
-
-    private void analyseLogFile(File file) {
-        LOGGER.info("Examining log file {}", file.getAbsolutePath());
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line = reader.readLine();
-            while (line != null) {
-                analyseLog(line);
-                line = reader.readLine();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
