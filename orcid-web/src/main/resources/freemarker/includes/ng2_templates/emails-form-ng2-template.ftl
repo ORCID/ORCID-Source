@@ -55,10 +55,6 @@
                                             <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" >                                                     
                                                 <span>{{email.value}}</span>
                                             </td>
-                                            <!-- Set Primary options -->
-                                            <!--
-                                            {{email | json}}
-                                            -->
                                             <td>                     
                                                 <span *ngIf="!email.primary"> <a href=""
                                                     (click)="setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
@@ -70,10 +66,7 @@
                                             <!-- 
                                             <td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];"> 
                                             -->
-                                            <td>            
-                                                <!-- <select [(ngModel)]="email.current" 
-                                                    ng-options ="emailStatusOption.val as emailStatusOption.label for emailStatusOption in emailStatusOptions"
-                                                    (ngModelChange)="emailSrvc.saveEmail()">-->                
+                                            <td>                            
                                                 <select 
                                                     [(ngModel)]="email.current" 
                                                     (ngModelChange)="saveEmail(false)"
