@@ -9,7 +9,8 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 2. Create new account:
     * First name: ma_test
     * Last name: [DD][month][YYYY]
-    * Email: ma_test_[DD][month][YYYY]@mailinator.com (ex: ma_test_24feb2016@mailinator.com)
+    * Primary email: ma_test_[DD][month][YYYY]@mailinator.com (ex: ma_test_24feb2016@mailinator.com)
+    * Secondary email: 00_ma_test_[DD][month][YYYY]@mailinator.com
     * Password: test1234
     * Default privacy for new activities: Public
     * Email frequency: Weekly summary
@@ -74,6 +75,7 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 49. Check that the registration screen displays and first and last names and the email address are prepopulated
 
 50. Complete the registration form
+    * Secondary email: Leave Blank
     * Password: [DD][month][YYYY]
     * Default privacy for new activities: Private
     * Email frequency: Never
