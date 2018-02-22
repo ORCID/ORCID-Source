@@ -16,14 +16,23 @@
  */
 package org.orcid.core.cli.logs;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientStats {
+public class ClientStats implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+
+    private String clientDetailsId;
     
     private long totalHits = 0;
     
     private List<String> versionsHit = new ArrayList<>();
+    
+    public void setClientDetailsId(String clientDetailsId) {
+        this.clientDetailsId = clientDetailsId;
+    }
     
     public void recordVersionHit(String version) {
         for (String v : versionsHit) {
@@ -44,6 +53,10 @@ public class ClientStats {
     
     public long getTotalHits() {
         return totalHits;
+    }
+    
+    public String getClientDetailsId() {
+        return clientDetailsId;
     }
     
 }
