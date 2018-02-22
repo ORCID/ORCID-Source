@@ -73,11 +73,6 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
 
     }
 
-
-    close(): void {
-        //$.colorbox.close();
-    };
-
     closeModal(): void {
         this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationDelete'});
     };
@@ -90,49 +85,26 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
         this.affiliationService.deleteAffiliation(this.deleteAffiliationObj)
             .takeUntil(this.ngUnsubscribe)
             .subscribe(data => {       
-                /*  
+                
                 if(data.errors.length == 0) {
-                    if(this.deleteAffiliationObj.affiliationType != null && this.deleteAffiliationObj.affiliationType.value != null) {
-                        if(this.deleteAffiliationObj.affiliationType.value == 'distinction' || this.deleteAffiliationObj.affiliationType.value == 'invited-position') {
-                            this.removeFromArray(this.distinctionsAndInvitedPositions, affiliation.putCode.value);
-                        } else if (affiliation.affiliationType.value == 'education' || affiliation.affiliationType.value == 'qualification'){
-                            this.removeFromArray(this.educationsAndQualifications, affiliation.putCode.value);
-                            if(affiliation.affiliationType.value == 'education') {
-                                this.removeFromArray(this.educations, affiliation.putCode.value);
-                            }                            
-                        } else if (affiliation.affiliationType.value == 'employment'){
-                            this.removeFromArray(this.employments, affiliation.putCode.value);                            
-                        } else if(affiliation.affiliationType.value == 'membership' || affiliation.affiliationType.value == 'service') {
-                            this.removeFromArray(this.membershipsAndServices, affiliation.putCode.value);                            
-                        } 
-                    }                    
+                    this.affiliationService.notifyOther({action: 'delete', deleteAffiliationObj: this.deleteAffiliationObj});                  
                 }
-                */                            
+
+                this.closeModal();
+                                            
             });         
         
     };
-    
-    removeFromArray(affArray, putCode): void {
-        console.log("putCode: " + putCode);
-        console.log(affArray);
-        for(let idx in affArray) {
-            if(affArray[idx].putCode.value == putCode) {
-                affArray.splice(idx, 1);
-                break;
-            }
-        }
-    };
-
  
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-        this.subscription = this.affiliationService.notifyObservable$.subscribe(
-            (res) => {
-                this.deleteAffiliationObj = res.affiliation;
-                console.log('res.affiliation',res);
-            }
-        );
+            this.subscription = this.affiliationService.notifyObservable$.subscribe(
+                (res) => {
+                    this.deleteAffiliationObj = res.affiliation;
+                    console.log('res.affiliation',res);
+                }
+            );
     };
 
     ngOnDestroy() {

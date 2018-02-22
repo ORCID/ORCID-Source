@@ -49,6 +49,7 @@ import { CommonService }
 })
 export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
 
     /*
     emailSrvc: any;
@@ -593,6 +594,28 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+
+        this.subscription = this.affiliationService.notifyObservable$.subscribe(
+            (res) => {
+                console.log('res', res);
+                if(res.action == 'delete') {
+                    if(res.deleteAffiliationObj.affiliationType != null && res.deleteAffiliationObj.affiliationType.value != null) {
+                        if(res.deleteAffiliationObj.affiliationType.value == 'distinction' || res.deleteAffiliationObj.affiliationType.value == 'invited-position') {
+                            this.removeFromArray(this.distinctionsAndInvitedPositions, res.deleteAffiliationObj.putCode.value);
+                        } else if (res.deleteAffiliationObj.affiliationType.value == 'education' || res.deleteAffiliationObj.affiliationType.value == 'qualification'){
+                            this.removeFromArray(this.educationsAndQualifications, res.deleteAffiliationObj.putCode.value);
+                            if(res.deleteAffiliationObj.affiliationType.value == 'education') {
+                                this.removeFromArray(this.educations, res.deleteAffiliationObj.putCode.value);
+                            }                            
+                        } else if (res.deleteAffiliationObj.affiliationType.value == 'employment'){
+                            this.removeFromArray(this.employments, res.deleteAffiliationObj.putCode.value);                            
+                        } else if(res.deleteAffiliationObj.affiliationType.value == 'membership' || res.deleteAffiliationObj.affiliationType.value == 'service') {
+                            this.removeFromArray(this.membershipsAndServices, res.deleteAffiliationObj.putCode.value);                            
+                        } 
+                    }  
+                }
+            }
+        );
     };
 
     ngOnDestroy() {
