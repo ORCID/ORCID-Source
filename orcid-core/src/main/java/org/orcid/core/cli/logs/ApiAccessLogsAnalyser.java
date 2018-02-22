@@ -17,6 +17,7 @@
 package org.orcid.core.cli.logs;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class ApiAccessLogsAnalyser {
 
     private static final int BEARER_TOKEN_LENGTH = 36;
 
-    private static final String UNKNOWN_CLIENT = "Unknown";
+    static final String UNKNOWN_CLIENT = "Unknown";
 
     @Option(name = "-f", usage = "Path to directory containing logs and / or directories of logs")
     private File logsDir;
@@ -56,7 +57,7 @@ public class ApiAccessLogsAnalyser {
 
     private Map<String, String> tokenToClientDetails = new HashMap<>();
 
-    private AnalysisResults results = new AnalysisResults();
+    private AnalysisResults results;
     
     private LogReader logReader;
 
@@ -82,6 +83,12 @@ public class ApiAccessLogsAnalyser {
         tokenDao = (OrcidOauth2TokenDetailDao) applicationContext.getBean("orcidOauth2TokenDetailDao");
         logReader = new LogReader();
         logReader.init(logsDir);
+        results = new AnalysisResults();
+        try {
+            results.setOutputStream(new FileOutputStream(outputFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error creating output stream to file " + outputFile.getAbsolutePath(), e);
+        }
     }
 
     private void shutdown() {
@@ -97,7 +104,7 @@ public class ApiAccessLogsAnalyser {
         }
         LOGGER.info("Analysis complete");
         try {
-            results.outputClientStats(new FileOutputStream(outputFile));
+            results.outputClientStats();
         } catch (IOException e) {
             LOGGER.error("Error outputting results");
             System.exit(1);
