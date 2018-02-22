@@ -86,7 +86,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
         private featuresService: FeaturesService,
-        private commonSrvc: CommonService,
+        private commonSrvc: CommonService
     ) {
         /*
         this.emailSrvc = emailSrvc;
@@ -108,7 +108,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.sortHideOption = false;
-        this.sortState = new ActSortState(GroupedActivities.AFFILIATION);   
+        this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);   
         this.educationsAndQualifications = [];
         this.distinctionsAndInvitedPositions = [];
         this.membershipsAndServices = [];
@@ -150,18 +150,36 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     addAffiliationModal(type, affiliation): void {
+        this.emailService.getEmails()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    console.log('ng2 affi', affiliation);
+                    this.affiliationService.type = type;
+                    this.affiliationService.affiliation = affiliation;
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm'});
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
         /*
-        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-            $scope.addAffType = type;
+        if(this.emailVerified === true || this.configuration.showModalManualEditVerificationEnabled == false){
+            this.addAffType = type;
             if(affiliation === undefined) {
-                $scope.removeDisambiguatedAffiliation();
+                this.removeDisambiguatedAffiliation();
                 $.ajax({
                     url: getBaseUri() + '/affiliations/affiliation.json',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.editAffiliation = data;
+                        this.editAffiliation = data;
                         if (type != null){
-                            $scope.editAffiliation.affiliationType.value = type;
+                            this.editAffiliation.affiliationType.value = type;
                         }
                         $scope.$apply(function() {
                             $scope.showAddModal();
@@ -171,16 +189,17 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     //console.log("Error fetching affiliation: ", $scope.editAffiliation.affiliationType.value,  e);
                 });
             } else {
-                $scope.editAffiliation = affiliation;
-                if($scope.editAffiliation.orgDisambiguatedId != null){
-                    $scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
+                this.editAffiliation = affiliation;
+                if(this.editAffiliation.orgDisambiguatedId != null){
+                    this.getDisambiguatedAffiliation(this.editAffiliation.orgDisambiguatedId.value);
                 }
-                $scope.showAddModal();
+                this.showAddModal();
             }
         }else{
-            showEmailVerificationModal();
+            this.showEmailVerificationModal();
         }
         */
+        
     };
 
     bindTypeahead(): void {
@@ -226,6 +245,23 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     deleteAffiliation(affiliation): void {
+        this.emailService.getEmails()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.affiliationService.notifyOther({affiliation:affiliation});
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationDelete'});
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
+        /*
         this.affiliationService.deleteAffiliation(affiliation)
             .takeUntil(this.ngUnsubscribe)
             .subscribe(data => {         
@@ -246,6 +282,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                     }                    
                 }                                
             });         
+        */
     };
     
     removeFromArray(affArray, putCode): void {
@@ -297,7 +334,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.sectionOneElements = this.educationsAndQualifications;
                     } else {
                         this.sectionOneElements = this.educations;
-                    }                                        
+                    } 
+                    
+                    this.sort('endDate', true);
                 },
                 error => {
                     console.log('getAffiliationsById error', error);
@@ -481,28 +520,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
 
-    sort(key, desc?): void {
-
+    sort(key, reverse?): void {
+        if( reverse ) {
+            this.sortState.reverse = reverse;
+        }
         this.sortState.sortBy(key);
-
-        if( desc ){
-            this.sortState.reverse = desc;
-        } else {
-            this.sortState.reverse = false;
-        }
-        
-        if( key == "startDate" ){
-            this.sortState.predicate = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
-        }
-        if( key == "endDate" ) {
-            this.sortState.predicate = ['endDate.year', 'endDate.month', 'endDate.day', 'affiliationName.value'];
-            this.sortState.reverse = false;
-        }
-        if( key == "title" ) {
-            this.sortState.predicate = ['affiliationName.value'];
-        }
-        
-        
     };
 
     showURLPopOver(id): void {

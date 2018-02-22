@@ -8,15 +8,15 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated components
-import { AffiliationFormComponent } 
-    from './affiliationForm.component.ts';
+import { AffiliationDeleteComponent } 
+    from './affiliationDelete.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';
 
 // This is the Angular 1 part of the module
-export const AffiliationFormModule = angular.module(
-    'AffiliationFormModule', 
+export const AffiliationDeleteModule = angular.module(
+    'AffiliationDeleteModule', 
     []
 );
 
@@ -24,10 +24,10 @@ export const AffiliationFormModule = angular.module(
 @NgModule(
     {
         declarations: [ 
-            AffiliationFormComponent
+            AffiliationDeleteComponent
         ],
         entryComponents: [ 
-            AffiliationFormComponent 
+            AffiliationDeleteComponent 
         ],
         imports: [
             CommonNg2Module
@@ -37,15 +37,15 @@ export const AffiliationFormModule = angular.module(
         ]
     }
 )
-export class AffiliationFormNg2Module {}
+export class AffiliationDeleteNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-AffiliationFormModule.directive(
-    'affiliationFormNg2', 
+AffiliationDeleteModule.directive(
+    'affiliationDeleteNg2', 
     <any>downgradeComponent(
         {
-            component: AffiliationFormComponent
+            component: AffiliationDeleteComponent,
         }
     )
 );

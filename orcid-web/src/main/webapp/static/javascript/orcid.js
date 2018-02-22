@@ -101,6 +101,7 @@ GroupedActivities.prototype.FUNDING = 'funding';
 GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.PEER_REVIEW = 'peerReview';
 GroupedActivities.AFFILIATION = 'affiliation';
+GroupedActivities.NG2_AFFILIATION = 'ng2_affiliation';
 
 GroupedActivities.prototype.add = function(activity) {      
     // assumes works are added in the order of the display index desc
@@ -329,7 +330,10 @@ var ActSortState = function(groupType) {
         _self.predicateKey = 'endDate';
         _self.reverseKey['date']  = false;
         _self.reverseKey['endDate']  = true;        
-    }    
+    }  else if (_self.type == 'ng2_affiliation') {
+        _self.predicateKey = 'endDate';
+        _self.reverseKey['endDate']  = false;
+    }  
     
     _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
 };
@@ -352,6 +356,11 @@ sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortS
 
 sortPredicateMap[GroupedActivities.PEER_REVIEW] = {};
 sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
+
+sortPredicateMap[GroupedActivities.NG2_AFFILIATION] = {};
+sortPredicateMap[GroupedActivities.NG2_AFFILIATION]['endDate'] = ['dateSortString', 'affiliationName.value'];
+sortPredicateMap[GroupedActivities.NG2_AFFILIATION]['startDate'] = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
+sortPredicateMap[GroupedActivities.NG2_AFFILIATION]['title'] = ['affiliationName.value', 'dateSortString'];
 
 ActSortState.prototype.predicateMap = sortPredicateMap;
 

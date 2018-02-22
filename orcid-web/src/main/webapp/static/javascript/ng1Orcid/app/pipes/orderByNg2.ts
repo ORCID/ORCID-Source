@@ -9,7 +9,6 @@ import { Injectable, Pipe, PipeTransform }
 export class OrderByPipe implements PipeTransform {
 
     transform(array: Array<string>, args: any, ascending: boolean): Array<string> {
-        //console.log('pipe order', array, args, ascending, typeof(args));
 
         let logicalOperation: any = '';
 
@@ -69,9 +68,7 @@ export class OrderByPipe implements PipeTransform {
                     }
                 }                
             } else if ( typeof(args) == 'object' ) {
-                //console.log('logicalOperation', logicalOperation);
                 let result = eval(logicalOperation);
-                //console.log('result', result);
                 return result;
             }
         });
