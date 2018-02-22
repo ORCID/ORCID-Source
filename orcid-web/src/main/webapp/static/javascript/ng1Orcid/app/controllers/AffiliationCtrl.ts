@@ -119,6 +119,7 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.addAffiliationModal = function(type, affiliation){
+                console.log('type', type, 'affi', affiliation);
                 if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
                     $scope.addAffType = type;
                     if(affiliation === undefined) {
@@ -303,6 +304,7 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.openEditAffiliation = function(affiliation) {
+                console.log('openedit', affiliation);
                 $scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
             };
 

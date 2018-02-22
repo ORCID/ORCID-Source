@@ -55,12 +55,8 @@
                                             <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" >                                                     
                                                 <span>{{email.value}}</span>
                                             </td>
-                                            <!-- Set Primary options -->
-                                            <!--
-                                            {{email | json}}
-                                            -->
                                             <td>                     
-                                                <span *ngIf="!email.primary"> <a href=""
+                                                <span *ngIf="!email.primary"> <a 
                                                     (click)="setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
                                                 </span>
                                                 <span *ngIf="email.primary" class="muted" style="color: #bd362f;">
@@ -70,10 +66,7 @@
                                             <!-- 
                                             <td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];"> 
                                             -->
-                                            <td>            
-                                                <!-- <select [(ngModel)]="email.current" 
-                                                    ng-options ="emailStatusOption.val as emailStatusOption.label for emailStatusOption in emailStatusOptions"
-                                                    (ngModelChange)="emailSrvc.saveEmail()">-->                
+                                            <td>                            
                                                 <select 
                                                     [(ngModel)]="email.current" 
                                                     (ngModelChange)="saveEmail(false)"
@@ -127,7 +120,7 @@
                                         </div>
                                         <div>
                                             <ul class="pull-right inline-list">
-                                                <li><a href="" (click)="closeDeleteBox()"><@orcid.msg 'freemarker.btncancel' /></a></li>
+                                                <li><a (click)="closeDeleteBox()"><@orcid.msg 'freemarker.btncancel' /></a></li>
                                                 <li><button class="btn btn-danger" (click)="deleteEmailInline(delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button></li>                     
                                             </ul>
                                         </div>
@@ -140,7 +133,7 @@
                                         </div>
                                         <div class="clearfix">
                                             <ul class="pull-right inline-list">
-                                                <li><a href="" (click)="closeVerificationBox()"><@orcid.msg 'freemarker.btnclose'/></a></li>
+                                                <li><a (click)="closeVerificationBox()"><@orcid.msg 'freemarker.btnclose'/></a></li>
                                             </ul>
                                         </div>
                                     </div>              
@@ -185,7 +178,7 @@
                                         </div>                  
                                         <div>
                                             <ul class="pull-right inline-list">
-                                                <li><a href="" (click)="closeModal()"><@orcid.msg 'check_password_modal.close'/></a></li>
+                                                <li><a (click)="closeModal()"><@orcid.msg 'check_password_modal.close'/></a></li>
                                                 <li><button id="bottom-submit" class="btn btn-primary" (click)="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button></li>
                                             </ul>   
                                         </div>
