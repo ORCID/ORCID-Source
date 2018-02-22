@@ -75,7 +75,7 @@ export class ExternalIdentifiersService {
         );
         
         return this.http.delete( 
-            getBaseUri() + '/account/deleteEmail.json?' + encodeURIComponent(data),             
+            getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encodeURIComponent(data),             
             options
         )
         .map(

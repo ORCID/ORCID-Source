@@ -251,6 +251,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
+                    this.affiliationService.notifyOther({affiliation:affiliation});
                     this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationDelete'});
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
