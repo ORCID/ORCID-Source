@@ -21,25 +21,24 @@
 <#include "includes/affiliate/add_affiliate_inc.ftl"/>
 
 <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
+    <affiliation-ng2></affiliation-ng2>
 </@orcid.checkFeatureStatus>
-<affiliation-ng2></affiliation-ng2>
 
-
-<div ng-controller="AffiliationCtrl">
-	<!-- Education -->
-	<div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
-        <#include "includes/affiliate/edu_section_header_inc.ftl" />
-		<div ng-if="workspaceSrvc.displayEducation" class="workspace-accordion-content">
-			<#include "includes/affiliate/edu_body_inc.ftl" />
-		</div>
-	</div>
-	<!-- Employment -->
-	<div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" >
-        <#include "includes/affiliate/emp_section_header_inc.ftl" />
-		<div ng-if="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
-			<#include "includes/affiliate/emp_body_inc.ftl" />
-		</div>
-	</div>
-</div>
 <@orcid.checkFeatureStatus 'ANGULAR2_DEV' false> 
+    <div ng-controller="AffiliationCtrl">
+        <!-- Education -->
+        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
+            <#include "includes/affiliate/edu_section_header_inc.ftl" />
+            <div ng-if="workspaceSrvc.displayEducation" class="workspace-accordion-content">
+                <#include "includes/affiliate/edu_body_inc.ftl" />
+            </div>
+        </div>
+        <!-- Employment -->
+        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" >
+            <#include "includes/affiliate/emp_section_header_inc.ftl" />
+            <div ng-if="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
+                <#include "includes/affiliate/emp_body_inc.ftl" />
+            </div>
+        </div>
+    </div>
 </@orcid.checkFeatureStatus>
