@@ -20,6 +20,9 @@ export class AffiliationService {
 
 	public loading: boolean;
     public affiliationsToAddIds: any;
+
+    public affiliation: any;
+    public type: string;
 	
     constructor( private http: Http ){
         this.affiliationsToAddIds = null,
@@ -34,6 +37,8 @@ export class AffiliationService {
         this.urlAffiliationById = getBaseUri() + '/affiliations/affiliations.json?affiliationIds=';
         this.urlAffiliationDisambiguated = getBaseUri() + '/affiliations/disambiguated/id/';
         this.urlAffiliations = getBaseUri() + '/affiliations/affiliations.json';
+        this.affiliation = null;
+        this.type = '';
     }
 
     deleteAffiliation( data ) {        

@@ -44,10 +44,10 @@ import { CommonService }
     from '../../shared/common.service.ts';
 
 @Component({
-    selector: 'affiliation-form-ng2',
-    template:  scriptTmpl("affiliation-form-ng2-template")
+    selector: 'affiliation-delete-ng2',
+    template:  scriptTmpl("affiliation-delete-ng2-template")
 })
-export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnInit {
+export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     /*
@@ -313,7 +313,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     closeModal(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationForm'});
+        this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationDelete'});
     };
 
     closeMoreInfo(key): void {
