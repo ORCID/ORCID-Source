@@ -108,6 +108,17 @@ export class AffiliationService {
         .map((res:Response) => res.json()).share();
     }
 
+    serverValidate( obj, relativePath ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/' + relativePath, 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
     setData( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         

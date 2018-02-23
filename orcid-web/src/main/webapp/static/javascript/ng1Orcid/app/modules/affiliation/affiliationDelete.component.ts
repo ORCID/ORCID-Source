@@ -94,8 +94,10 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.affiliationService.notifyObservable$.subscribe(
             (res) => {
-                this.deleteAffiliationObj = res.affiliation;
-                console.log('res.affiliation',this.deleteAffiliationObj);
+                if( res.affiliation != undefined ) {
+                    this.deleteAffiliationObj = res.affiliation;
+                    console.log('res.affiliation',this.deleteAffiliationObj);
+                }
             }
         );
     };
