@@ -59,11 +59,8 @@
             </div>
 
             <div class="row">
-                
-
                 <!-- Left Column -->
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                    
                     <div class="form-group" *ngIf="editAffiliation?.disambiguatedAffiliationSourceId">
                         <span *ngIf="addAffType == 'education'">
                            <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
@@ -86,10 +83,8 @@
                     </div>
                     
                     <!-- Institution -->
-
-                    
                     <div class="form-group">
-                        <span *ngIf="addAffType == 'education'">
+                        <span *ngIf="addAffType == 'distinction' || addAffType == 'education' || addAffType == 'invited-position' || addAffType == 'membership' || addAffType == 'service' || addAffType == 'qualification'">
                            <label *ngIf="!disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
                            <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayinstitution'/></label>
                             <span class="required" [ngClass]="isValidClass(editAffiliation.affiliationName)">*</span>
@@ -108,12 +103,10 @@
                             [(ngModel)]="editAffiliation.affiliationName.value" 
                             placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" 
                             (ngModelChange)="serverValidate('affiliations/affiliation/affiliationNameValidate.json')" 
-                            />
-                            
+                            />                            
                             <span class="orcid-error" *ngIf="editAffiliation?.affiliationName?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.affiliationName.errors' [innerHtml]="error"></div>
-                            </span>
-                            
+                            </span>                            
                         </div>
                     </div>
                     

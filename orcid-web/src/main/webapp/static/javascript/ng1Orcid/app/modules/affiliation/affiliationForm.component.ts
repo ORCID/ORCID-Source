@@ -102,49 +102,47 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.displayURLPopOver = {};
         this.editAffiliation = {
             affiliationType: {
-                errors: {},
+                errors: [],
                 value: ""
             },
             affiliationName: {
-                errors: {},
+                errors: [],
                 value: ""
             },
             city: {
-                errors: {},
+                errors: [],
                 value: ""
             },
             country: {
-                errors: {},
+                errors: [],
                 value: ""
             },
             departmentName: {
-                errors: {},
+                errors: [],
                 value: ""
             },
             endDate: {
-                errors: {},
+                errors: [],
                 value: ""
             },
-            errors: {
-
-            },
+            errors: [],
             putCode: {
                 value: null
             },
             region: {
-                errors: {},
+                errors: [],
                 value: ""
             },
             roleTitle: {
-                errors: {},
+                errors: [],
                 value: ""
             },
             startDate: {
-                errors: {},
+                errors: [],
                 value: ""
             },
             url: {
-                errors: {},
+                errors: [],
                 value: ""
             },
         };
@@ -571,16 +569,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     showAddModal(): void{
         let numOfResults = 25;
-        /*
-        $.colorbox({
-            html: $compile($('#add-affiliation-modal').html())($scope),            
-            onComplete: function() {
-                // resize to insure content fits
-                formColorBoxResize();
-                $scope.bindTypeahead();
-            }
-        });
-        */
+        console.log("ShowAddModal");
+        this.bindTypeahead();
     };
 
     showAffiliationExtIdPopOver(id): void{

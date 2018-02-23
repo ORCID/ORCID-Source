@@ -110,7 +110,6 @@ export class AffiliationService {
 
     serverValidate( obj, relativePath ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
-        
         return this.http.post( 
             getBaseUri() + '/' + relativePath, 
             encoded_data, 
