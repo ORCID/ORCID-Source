@@ -140,7 +140,7 @@
                                 <strong><@orcid.msg 'workspace_affiliations_body_list.Nodistinctionorinvitedpositionaddedyet' /></strong>
                             <#else>
                                 <strong>                                
-                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanydistinctionnorinvitedposition' />
+                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
                                 <a href="" (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
                                 <@orcid.msg 'common.or' />
                                 <a href="" (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
@@ -513,7 +513,7 @@
                             <strong><@orcid.msg 'workspace_affiliations_body_list.Noeducationnorqualificationaddedyet' /></strong>
                         <#else>
                             <strong>                                
-                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanyeducationnorqualification' />
+                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
                             <a href="" (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducationnow' /></a>
                             <@orcid.msg 'common.or' />
                             <a href="" (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualificationnow' /></a>
@@ -787,7 +787,7 @@
                             <strong><@orcid.msg 'workspace_affiliations_body_list.Noemploymentddedyet' /></strong>
                         <#else>
                             <strong>                                
-                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanyemployment' />
+                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
                             <a href="" (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemploymentnow' /></a>
                             <@orcid.msg 'common.now' />                                
                             </strong>
@@ -1073,7 +1073,7 @@
                                 <strong><@orcid.msg 'workspace_affiliations_body_list.Nomembershiporserviceaddedyet' /></strong>
                             <#else>
                                 <strong>                                
-                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanymembershipnorservice' />
+                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
                                 <a href="" (click)="addAffiliationModal('membership')"><@orcid.msg 'workspace_affiliations_body_list.addmembershipnow' /></a>
                                 <@orcid.msg 'common.or' />
                                 <a href="" (click)="addAffiliationModal('service')"><@orcid.msg 'workspace_affiliations_body_list.addservicenow' /></a>
