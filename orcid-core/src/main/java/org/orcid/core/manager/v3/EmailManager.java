@@ -41,7 +41,7 @@ public interface EmailManager extends EmailManagerReadOnly {
 
     void addSourceToEmail(String email, String sourceId);
     
-    boolean verifyEmail(String email);
+    boolean verifyEmail(String email, String orcid);
     
     boolean verifyPrimaryEmail(String orcid);
     
