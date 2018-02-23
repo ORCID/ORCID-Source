@@ -335,7 +335,7 @@ public class PasswordResetController extends BaseController {
         profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password,
                 reactivation.getActivitiesVisibilityDefault().getVisibility());
         // Verify email used to reactivate
-        emailManager.verifyEmail(email);
+        emailManager.verifyEmail(email, orcid);
         registrationController.logUserIn(request, response, orcid, password);
     }
 }
