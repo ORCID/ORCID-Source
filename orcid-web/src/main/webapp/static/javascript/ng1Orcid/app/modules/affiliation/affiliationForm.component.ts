@@ -569,8 +569,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     showAddModal(): void{
         let numOfResults = 25;
-        console.log("ShowAddModal");
-        this.bindTypeahead();
     };
 
     showAffiliationExtIdPopOver(id): void{
@@ -584,30 +582,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     showTooltip(element): void{        
         this.showElement[element] = true;
-    };
-
-    sort(key, desc?): void {
-
-        this.sortState.sortBy(key);
-
-        if( desc ){
-            this.sortState.reverse = desc;
-        } else {
-            this.sortState.reverse = false;
-        }
-        
-        if( key == "startDate" ){
-            this.sortState.predicate = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
-        }
-        if( key == "endDate" ) {
-            this.sortState.predicate = ['endDate.year', 'endDate.month', 'endDate.day', 'affiliationName.value'];
-            this.sortState.reverse = false;
-        }
-        if( key == "title" ) {
-            this.sortState.predicate = ['affiliationName.value'];
-        }
-        
-        
     };
 
     showURLPopOver(id): void {
@@ -678,6 +652,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.affiliationService.notifyObservable$.subscribe(
             (res) => {
+                this.bindTypeahead();
                 this.addAffType = res.type;
                 if( res.affiliation != undefined ) {
                     this.editAffiliation = res.affiliation;
