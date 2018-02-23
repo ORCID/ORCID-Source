@@ -161,7 +161,8 @@ public class MemberDetailsForm implements ErrorsInterface, Serializable {
         CommunityType researchCommunity = member.getResearchCommunity();
         form.setCommunity(Text.valueOf(researchCommunity != null ? researchCommunity.name() : null));
         form.setSubMembers(memberDetails.getSubMembers());
-        form.setConsortiumLead(member.getConsortiumLeadId() == null);
+        String consortiumLeadId = member.getConsortiumLeadId();
+        form.setConsortiumLead(consortiumLeadId == null || consortiumLeadId.equals(member.getId()));
         return form;
     }
 
