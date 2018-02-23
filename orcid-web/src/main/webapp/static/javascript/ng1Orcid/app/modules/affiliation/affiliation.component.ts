@@ -158,8 +158,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
                     console.log('ng2 affi', affiliation);
-                    this.affiliationService.type = type;
-                    this.affiliationService.affiliation = affiliation;
+                    this.affiliationService.notifyOther({ affiliation:affiliation, type: type });
                     this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm'});
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});

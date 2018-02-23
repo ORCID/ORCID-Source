@@ -49,6 +49,7 @@ import { CommonService }
 })
 export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
 
     /*
     emailSrvc: any;
@@ -666,6 +667,13 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        this.subscription = this.affiliationService.notifyObservable$.subscribe(
+            (res) => {
+                this.addAffType = res.type;
+                this.editAffiliation = res.affiliation;
+                console.log('res.affiliation',res);
+            }
+        );
     };
 
     ngOnDestroy() {
