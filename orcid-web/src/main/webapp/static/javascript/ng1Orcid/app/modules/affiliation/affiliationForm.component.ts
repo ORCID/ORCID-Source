@@ -101,6 +101,10 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.displayAffiliationExtIdPopOver = {};
         this.displayURLPopOver = {};
         this.editAffiliation = {
+            affiliationType: {
+                errors: {},
+                value: ""
+            },
             affiliationName: {
                 errors: {},
                 value: ""
@@ -684,10 +688,11 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.affiliationService.notifyObservable$.subscribe(
             (res) => {
-                console.log('res.affiliation',res);
+                this.addAffType = res.type;
                 if( res.affiliation != undefined ) {
-                    this.addAffType = res.type;
                     this.editAffiliation = res.affiliation;
+                } else {
+                    this.editAffiliation.affiliationType.value = this.addAffType;
                 }
             }
         );

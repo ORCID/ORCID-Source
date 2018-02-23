@@ -22,11 +22,14 @@
         <form><!-- update-fn="addAffiliation()" -->
        
             <div class="row">
-                <div class="col-md-9 col-sm-8 col-xs-12">
-                    
+                <div class="col-md-9 col-sm-8 col-xs-12">                    
                     <h1 *ngIf="addAffType == null || addAffType == undefined " class="lightbox-title pull-left">
                         <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></span>
                         <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_affiliation'/></span>
+                    </h1>
+                    <h1 *ngIf="addAffType == 'distinction'" class="lightbox-title pull-left">
+                        <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_distinction'/></span>
+                        <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_distinction'/></span>
                     </h1>
                     <h1 *ngIf="addAffType == 'education'" class="lightbox-title pull-left">
                         <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></span>
@@ -36,7 +39,22 @@
                         <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></span>
                         <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_employment'/></span>
                     </h1>
-                    
+                    <h1 *ngIf="addAffType == 'invited-position'" class="lightbox-title pull-left">
+                        <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_invited_position'/></span>
+                        <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_invited_position'/></span>
+                    </h1>
+                    <h1 *ngIf="addAffType == 'membership'" class="lightbox-title pull-left">
+                        <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_membership'/></span>
+                        <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_membership'/></span>
+                    </h1>
+                    <h1 *ngIf="addAffType == 'qualification'" class="lightbox-title pull-left">
+                        <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_qualification'/></span>
+                        <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_qualification'/></span>
+                    </h1>
+                    <h1 *ngIf="addAffType == 'service'" class="lightbox-title pull-left">
+                        <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_service'/></span>
+                        <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_service'/></span>
+                    </h1>
                 </div>
             </div>
 
