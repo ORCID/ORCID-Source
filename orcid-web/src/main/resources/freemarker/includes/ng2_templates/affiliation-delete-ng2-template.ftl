@@ -21,7 +21,7 @@
     <div class="row">
         <div class="col-md-12 col-xs-12 col-sm-12">
             <h3><@orcid.msg 'manage.deleteAffiliation.pleaseConfirm' /></h3>
-            <p>{{fixedTitle}}</p>       
+            <p>{{deleteAffiliationObj.affiliationName.value}}</p>       
             <div id="confirm_delete_affiliation" class="btn btn-danger" (click)="deleteAffiliation()">
                 <@orcid.msg 'freemarker.btnDelete' />
             </div>

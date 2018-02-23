@@ -50,15 +50,7 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    /*
-    emailSrvc: any;
-    workspaceSrvc: any;
-    */
-
     deleteAffiliationObj: any;
-
-    
-
     constructor(
         private affiliationService: AffiliationService,
         private emailService: EmailService,
@@ -69,7 +61,11 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
         private commonSrvc: CommonService,
     ) {
 
-        this.deleteAffiliationObj = null;
+        this.deleteAffiliationObj = {
+            affiliationName: {
+                value: null
+            }
+        };
 
     }
 
@@ -78,10 +74,7 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
     };
 
 
-    deleteAffiliation(): void {
-        
-        console.log('delete', this.deleteAffiliationObj);
-        
+    deleteAffiliation(): void {        
         this.affiliationService.deleteAffiliation(this.deleteAffiliationObj)
             .takeUntil(this.ngUnsubscribe)
             .subscribe(data => {       
@@ -99,12 +92,12 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-            this.subscription = this.affiliationService.notifyObservable$.subscribe(
-                (res) => {
-                    this.deleteAffiliationObj = res.affiliation;
-                    console.log('res.affiliation',res);
-                }
-            );
+        this.subscription = this.affiliationService.notifyObservable$.subscribe(
+            (res) => {
+                this.deleteAffiliationObj = res.affiliation;
+                console.log('res.affiliation',this.deleteAffiliationObj);
+            }
+        );
     };
 
     ngOnDestroy() {
