@@ -137,14 +137,13 @@
                         <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycountry'/></label>
                         <span class="required" [ngClass]="isValidClass(editAffiliation.country)">*</span>
                         <div>
-                            <!--
+                            
                             <select id="country" name="country" [(ngModel)]="editAffiliation.country.value" (ngModelChange)="serverValidate('affiliations/affiliation/countryValidate.json')" class="form-control">
                                 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
                                 <#list isoCountries?keys as key>
                                         <option value="${key}">${isoCountries[key]}</option>
                                 </#list>
                             </select>
-                            -->
                             <span class="orcid-error" *ngIf="editAffiliation.country.errors.length > 0">
                                 <div *ngFor='let error of editAffiliation.country.errors' [innerHtml]="error"></div>
                             </span>
@@ -198,12 +197,11 @@
                         <label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
                         <span class="required" [ngClass]="isValidStartDate(editAffiliation.startDate)">*</span>
                         <div>
-                            <!--              
                             <select id="startYear" name="startMonth" [(ngModel)]="editAffiliation.startDate.year" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
                                 <#list years?keys as key>
                                     <option value="${key}">${years[key]}</option>
                                 </#list>
-                            </select>                   
+                            </select>                          
                             <select id="startMonth" name="startMonth" [(ngModel)]="editAffiliation.startDate.month" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
                                 <#list months?keys as key>
                                     <option value="${key}">${months[key]}</option>
@@ -214,7 +212,6 @@
                                     <option value="${key}">${days[key]}</option>
                                 </#list>
                             </select>
-                            -->
                         </div>
                         
                         <span class="orcid-error" *ngIf="editAffiliation.startDate.errors.length > 0">
@@ -226,7 +223,7 @@
                     <div class="control-group">
                         <label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDateLeave'/></label>
                         <div class="relative">
-                            <!--
+                            
                             <select id="endYear" name="endMonth" [(ngModel)]="editAffiliation.endDate.year">
                                 <#list years?keys as key>
                                     <option value="${key}">${years[key]}</option>
@@ -242,7 +239,6 @@
                                     <option value="${key}">${days[key]}</option>
                                 </#list>
                             </select>
-                            -->
                         </div>
                         
                         <span class="orcid-error" *ngIf="editAffiliation.endDate.errors.length > 0">

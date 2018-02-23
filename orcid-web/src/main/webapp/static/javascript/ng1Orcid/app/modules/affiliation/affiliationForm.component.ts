@@ -161,7 +161,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.sectionOneElements = [];
         this.displayNewAffiliationTypesFeatureEnabled = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
         this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
-        this.addAffType = "education";
+        this.addAffType = null;
     }
 
      addAffiliation(): void {
@@ -537,6 +537,21 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         }
     };
 
+    serverValidate(relativePath): void {
+        this.affiliationService.serverValidate(this.editAffiliation, relativePath)
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                console.log('data', data);
+                if (data != null) {
+                    this.commonSrvc.copyErrorsLeft(this.editAffiliation, data);
+                }
+            },
+            error => {
+            } 
+        );
+    }
+
     setAddAffiliationPrivacy(priv, $event): void {
         $event.preventDefault();
         this.editAffiliation.visibility.visibility = priv;
@@ -669,9 +684,11 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.affiliationService.notifyObservable$.subscribe(
             (res) => {
-                this.addAffType = res.type;
-                this.editAffiliation = res.affiliation;
                 console.log('res.affiliation',res);
+                if( res.affiliation != undefined ) {
+                    this.addAffType = res.type;
+                    this.editAffiliation = res.affiliation;
+                }
             }
         );
     };
@@ -735,22 +752,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
             
 
-            $scope.serverValidate = function (relativePath) {
-                $.ajax({
-                    url: getBaseUri() + '/' + relativePath,
-                    type: 'POST',
-                    data:  angular.toJson($scope.editAffiliation),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
-                        $scope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    //console.log("serverValidate() error");
-                });
-            };
+            
 
             
 

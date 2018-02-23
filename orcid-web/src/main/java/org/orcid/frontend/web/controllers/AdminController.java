@@ -34,6 +34,7 @@ import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -79,6 +80,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
     
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_STRING_SEPARATOR = "		";
@@ -436,7 +440,8 @@ public class AdminController extends BaseController {
     public @ResponseBody String adminVerifyEmail(@RequestBody String email) {
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
-            emailManager.verifyEmail(email);            
+        	String orcid = emailManagerReadOnly.findOrcidIdByEmail(email);
+            emailManager.verifyEmail(email, orcid);            
         } else {
             result = getMessage("admin.verify_email.fail", email);
         }
