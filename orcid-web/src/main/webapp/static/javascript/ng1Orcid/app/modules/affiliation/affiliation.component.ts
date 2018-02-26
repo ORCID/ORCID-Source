@@ -138,7 +138,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         
     };
 
-
     closeMoreInfo(key): void {
         this.moreInfo[key]=false;
     };
@@ -216,7 +215,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 error => {
                     console.log('getAffiliationsById error', error);
                 } 
-
         );
     };
 
@@ -227,8 +225,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 if( data.length != 0 ) {
                     let affiliationIds = data.splice(0,20).join();
-                    this.getAffiliationsById( affiliationIds );
-                    
+                    this.getAffiliationsById( affiliationIds );                    
                 }
             },
             error => {
@@ -265,35 +262,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     hideAffiliationExtIdPopOver(id): void{
         this.displayAffiliationExtIdPopOver[id] = false;
-    };
-
-    isValidClass(cur): any {
-        let valid = true;
-
-        if (cur === undefined) {
-            return '';
-        }
-        if ( 
-            ( cur.required && (cur.value == null || cur.value.trim() == '') ) 
-            || 
-            ( cur.errors !== undefined && cur.errors.length > 0 ) 
-        ) {
-            valid = false;
-        }
-
-        return valid ? '' : 'text-error';
-    };
-
-    isValidStartDate(start): any {
-        if (start === undefined) {
-            return '';
-        }
-        
-        if (start.errors !== undefined && start.errors.length > 0) {
-            return 'text-error';
-        }
-        
-        return '';
     };
 
     moreInfoMouseEnter(key, $event): void {
@@ -436,8 +404,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
 
         this.subscription = this.affiliationService.notifyObservable$.subscribe(
-            (res) => {
-                console.log('res', res);
+            (res) => {                
                 if(res.action == 'delete') {
                     if(res.deleteAffiliationObj.affiliationType != null && res.deleteAffiliationObj.affiliationType.value != null) {
                         if(res.deleteAffiliationObj.affiliationType.value == 'distinction' || res.deleteAffiliationObj.affiliationType.value == 'invited-position') {
