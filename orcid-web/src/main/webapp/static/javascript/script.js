@@ -514,8 +514,8 @@ $(function() {
         var wHtml = '<div class="alert" id="browser-warn-div">';
         wHtml = wHtml + '<strong>';
         wHtml = wHtml + om.get('common.old.browser_1');
-        wHtml = wHtml + '<a href="http://support.orcid.org/knowledgebase/articles/159728-upgrade-your-browser">' + om.get('common.old.browser_2') + '</a>';
-        wHtml = wHtml + om.get('common.old.browser_2');
+        wHtml = wHtml + '<a href="https://support.orcid.org/knowledgebase/articles/1804765-technical-requirements-for-using-the-orcid-site" target="common.old_browser_2">' + om.get('common.old_browser_2') + '</a> ';
+        wHtml = wHtml + om.get('common.old_browser_3');
         wHtml = wHtml + '</strong>';
         wHtml = wHtml + '</div>';
         $('body').prepend(wHtml);
