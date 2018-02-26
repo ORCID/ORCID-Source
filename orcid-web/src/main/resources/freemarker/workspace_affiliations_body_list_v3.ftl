@@ -24,6 +24,7 @@
     <affiliation-ng2></affiliation-ng2>
 </@orcid.checkFeatureStatus>
 
+<@orcid.checkFeatureStatus 'ANGULAR2_DEV' false> 
     <div ng-controller="AffiliationCtrl">
         <!-- Education -->
         <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
@@ -40,5 +41,4 @@
             </div>
         </div>
     </div>
-<@orcid.checkFeatureStatus 'ANGULAR2_DEV' false> 
 </@orcid.checkFeatureStatus>

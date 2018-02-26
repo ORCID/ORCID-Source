@@ -19,7 +19,7 @@
 
 <script type="text/ng-template" id="affiliation-form-ng2-template">
     <div id="edit-affiliation" class="edit-affiliation colorbox-content">
-        <form><!-- update-fn="addAffiliation()" -->
+        <form>
        
             <div class="row">
                 <div class="col-md-9 col-sm-8 col-xs-12">                    
@@ -77,7 +77,7 @@
                         <div class="relative" style="font-weight: strong;">
                             <span>{{disambiguatedAffiliation.value}}</span> <br />
                             <div>
-                                <span>{{disambiguatedAffiliation.city}}</span><span *ngIf="disambiguatedAffiliation.region"> (<span>{{disambiguatedAffiliation.region}}</span>)</span><span *ngIf="disambiguatedAffiliation.orgType">, <span>{{disambiguatedAffiliation.orgType}}</span></span>
+                                <span>{{disambiguatedAffiliation.city}}</span><span *ngIf="disambiguatedAffiliation?.region"> (<span>{{disambiguatedAffiliation?.region}}</span>)</span><span *ngIf="disambiguatedAffiliation?.orgType">, <span>{{disambiguatedAffiliation?.orgType}}</span></span>
                             </div>
                         </div>
                     </div>

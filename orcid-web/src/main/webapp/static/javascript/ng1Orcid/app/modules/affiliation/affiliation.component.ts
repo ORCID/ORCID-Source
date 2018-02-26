@@ -77,7 +77,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     membershipsAndServices: any;
     orgIdsFeatureEnabled: boolean;
     displayNewAffiliationTypesFeatureEnabled: boolean;
-    //TODO: remove when new aff types is live and leave only educationsAndQualifications
+    //: remove when new aff types is live and leave only educationsAndQualifications
     sectionOneElements: any;
     
     constructor(
@@ -118,38 +118,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
     }
 
-    addAffiliation(): void {
-        if (this.addingAffiliation == true) {
-            return; // don't process if adding affiliation
-        }
-
-        this.addingAffiliation = true;
-        this.editAffiliation.errors.length = 0;
-        
-        this.affiliationService.setData( this.editAffiliation )
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.editAffiliation = data;
-                //console.log('this.editAffiliation response', this.editAffiliation);
-                this.addingAffiliation = false;
-                this.close();
-                //affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
-                if (data.errors.length > 0){
-                    /*
-                    $scope.editAffiliation = data;
-                    commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
-                    $scope.addingAffiliation = false;
-                    $scope.$apply();
-                    */
-                }
-            },
-            error => {
-                //console.log('setBiographyFormError', error);
-            } 
-        );
-    };
-
     addAffiliationModal(type, affiliation): void {
         this.emailService.getEmails()
         .takeUntil(this.ngUnsubscribe)
@@ -157,7 +125,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
-                    console.log('ng2 affi', affiliation);
                     this.affiliationService.notifyOther({ affiliation:affiliation, type: type });
                     this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm'});
                 }else{
@@ -168,77 +135,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
-        /*
-        if(this.emailVerified === true || this.configuration.showModalManualEditVerificationEnabled == false){
-            this.addAffType = type;
-            if(affiliation === undefined) {
-                this.removeDisambiguatedAffiliation();
-                $.ajax({
-                    url: getBaseUri() + '/affiliations/affiliation.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        this.editAffiliation = data;
-                        if (type != null){
-                            this.editAffiliation.affiliationType.value = type;
-                        }
-                        $scope.$apply(function() {
-                            $scope.showAddModal();
-                        });
-                    }
-                }).fail(function(e) {
-                    //console.log("Error fetching affiliation: ", $scope.editAffiliation.affiliationType.value,  e);
-                });
-            } else {
-                this.editAffiliation = affiliation;
-                if(this.editAffiliation.orgDisambiguatedId != null){
-                    this.getDisambiguatedAffiliation(this.editAffiliation.orgDisambiguatedId.value);
-                }
-                this.showAddModal();
-            }
-        }else{
-            this.showEmailVerificationModal();
-        }
-        */
         
     };
 
-    bindTypeahead(): void {
-        let numOfResults = 100;
-
-        $("#affiliationName").typeahead({
-            name: 'affiliationName',
-            limit: numOfResults,
-            remote: {
-                url: getBaseUri()+'/affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
-            },
-            template: function (datum) {
-                var forDisplay =
-                    '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
-                    +'<span style=\'font-size: 80%;\'>'
-                    + ' <br />' + datum.city;
-                if(datum.region){
-                    forDisplay += ", " + datum.region;
-                }
-                if (datum.orgType != null && datum.orgType.trim() != ''){
-                    forDisplay += ", " + datum.orgType;
-                }
-                forDisplay += '</span><hr />';
-                return forDisplay;
-            }
-        });
-        $("#affiliationName").bind("typeahead:selected", function(obj, datum) {
-            //$scope.selectAffiliation(datum);
-            //$scope.$apply();
-        });
-    };
-
-    close(): void {
-        //$.colorbox.close();
-    };
-
-    closeModal(): void {
-        //$.colorbox.close();
-    };
 
     closeMoreInfo(key): void {
         this.moreInfo[key]=false;
@@ -261,33 +160,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
-        /*
-        this.affiliationService.deleteAffiliation(affiliation)
-            .takeUntil(this.ngUnsubscribe)
-            .subscribe(data => {         
-                if(data.errors.length == 0) {
-                    if(affiliation.affiliationType != null && affiliation.affiliationType.value != null) {
-                        if(affiliation.affiliationType.value == 'distinction' || affiliation.affiliationType.value == 'invited-position') {
-                            this.removeFromArray(this.distinctionsAndInvitedPositions, affiliation.putCode.value);
-                        } else if (affiliation.affiliationType.value == 'education' || affiliation.affiliationType.value == 'qualification'){
-                            this.removeFromArray(this.educationsAndQualifications, affiliation.putCode.value);
-                            if(affiliation.affiliationType.value == 'education') {
-                                this.removeFromArray(this.educations, affiliation.putCode.value);
-                            }                            
-                        } else if (affiliation.affiliationType.value == 'employment'){
-                            this.removeFromArray(this.employments, affiliation.putCode.value);                            
-                        } else if(affiliation.affiliationType.value == 'membership' || affiliation.affiliationType.value == 'service') {
-                            this.removeFromArray(this.membershipsAndServices, affiliation.putCode.value);                            
-                        } 
-                    }                    
-                }                                
-            });         
-        */
     };
     
     removeFromArray(affArray, putCode): void {
-        console.log("putCode: " + putCode);
-        console.log(affArray);
         for(let idx in affArray) {
             if(affArray[idx].putCode.value == putCode) {
                 affArray.splice(idx, 1);
@@ -437,21 +312,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.addAffiliationModal(affiliation.affiliationType.value, affiliation);
     };
 
-    removeDisambiguatedAffiliation(): void {
-        this.bindTypeahead();
-        
-        if (this.disambiguatedAffiliation != undefined) {
-            delete this.disambiguatedAffiliation;
-        }
-        
-        if (this.editAffiliation != undefined && this.editAffiliation.disambiguatedAffiliationSourceId != undefined) {
-            delete this.editAffiliation.disambiguatedAffiliationSourceId;
-        }
-        
-        if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {
-        	delete this.editAffiliation.orgDisambiguatedId;
-        }
-    };
 
     selectAffiliation(datum): void {
         if (datum != undefined && datum != null) {
@@ -475,7 +335,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
             if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
                 this.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-                this.unbindTypeahead();
             }
         }
     };
@@ -491,20 +350,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.affiliationService.updateVisibility(aff)
             .takeUntil(this.ngUnsubscribe)
             .subscribe(data => {});
-    };
-
-    showAddModal(): void{
-        let numOfResults = 25;
-        /*
-        $.colorbox({
-            html: $compile($('#add-affiliation-modal').html())($scope),            
-            onComplete: function() {
-                // resize to insure content fits
-                formColorBoxResize();
-                $scope.bindTypeahead();
-            }
-        });
-        */
     };
 
     showAffiliationExtIdPopOver(id): void{
@@ -586,10 +431,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         return index; // or item.id
     };
 
-    unbindTypeahead(): void {
-        $('#affiliationName').typeahead('destroy');
-    };
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
@@ -626,75 +467,3 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getAffiliationsId();
     }; 
 }
-
-/*
-        '$scope', 
-        '$rootScope', 
-        '$compile', 
-        '$filter', 
-        'affiliationsSrvc', 
-        'commonSrvc', 
-        'emailSrvc', 
-        'initialConfigService', 
-        'workspaceSrvc', 
-        function (
-            $scope, 
-            $rootScope, 
-            $compile, 
-            $filter, 
-            affiliationsSrvc, 
-            commonSrvc, 
-            emailSrvc, 
-            initialConfigService,
-            workspaceSrvc
-        ){
-            
-            // For resizing color box in case of error
-            $scope.$watch(
-                'addingAffiliation', 
-                function() {
-                    setTimeout(
-                        function(){
-                            $.colorbox.resize();;
-                        }, 
-                        50
-                    );
-                }
-            );
-
-            
-
-            
-
-            
-
-            
-
-            $scope.serverValidate = function (relativePath) {
-                $.ajax({
-                    url: getBaseUri() + '/' + relativePath,
-                    type: 'POST',
-                    data:  angular.toJson($scope.editAffiliation),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
-                        $scope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    //console.log("serverValidate() error");
-                });
-            };
-
-            
-
-            
-
-            
-
-            
-        }
-    ]
-
-    */

@@ -53,12 +53,7 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
     deleteAffiliationObj: any;
     constructor(
         private affiliationService: AffiliationService,
-        private emailService: EmailService,
-        //private groupedActivitiesUtilService: GroupedActivitiesUtilService,
-        private modalService: ModalService,
-        private workspaceSrvc: WorkspaceService,
-        private featuresService: FeaturesService,
-        private commonSrvc: CommonService,
+        private modalService: ModalService
     ) {
 
         this.deleteAffiliationObj = {
