@@ -1087,7 +1087,7 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
     
     private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
         if(!v.equals(currentDefaultVisibility)) {
-            changeDefaultUserVisibility(webDriver, v);
+            changeDefaultUserVisibility(webDriver, v.name());
             currentDefaultVisibility = v;
         }
     }
