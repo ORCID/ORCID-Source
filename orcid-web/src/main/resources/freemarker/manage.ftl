@@ -68,10 +68,6 @@
                         <emails-form-ng2 popUp="false"></emails-form-ng2>                                            
                     </td>
                 </tr>
-                <!--
-                <tr ng-include="'edit-emails'">
-                </tr>
-                -->
                 
                 <tr>
                     <th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
@@ -986,7 +982,6 @@
     </div>
 </script>
 
-<#include "/includes/record/email_settings.ftl">
 <#include "/includes/language_selector.ftl">
 
 </@protected>

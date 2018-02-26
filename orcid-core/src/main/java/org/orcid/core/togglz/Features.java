@@ -87,7 +87,13 @@ public enum Features implements Feature {
     DISABLE_RECAPTCHA,
     
     @Label("Display the new affiliation types in the workspace")
-    DISPLAY_NEW_AFFILIATION_TYPES; 
+    DISPLAY_NEW_AFFILIATION_TYPES, 
+    
+    @Label("Disable 1.2 API from the public API")
+    DISABLE_1_2_ON_PUB_API,
+    
+    @Label("Disable 1.2 API from the member API")
+    DISABLE_1_2_ON_MEMBER_API;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

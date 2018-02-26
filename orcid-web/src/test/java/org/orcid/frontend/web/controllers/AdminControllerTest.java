@@ -57,6 +57,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
@@ -64,6 +65,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -106,6 +108,11 @@ public class AdminControllerTest extends BaseControllerTest {
     @Mock
     private NotificationManager mockNotificationManager;
     
+    @Mock
+    private ProfileLastModifiedAspect mockProfileLastModifiedAspect; 
+    
+    @Mock
+    private EmailManagerReadOnly mockEmailManagerReadOnly;
     
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -298,7 +305,9 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     public void verifyEmailTest() {
         TargetProxyHelper.injectIntoProxy(emailManager, "notificationManager", mockNotificationManager);
-
+        TargetProxyHelper.injectIntoProxy(adminController, "emailManagerReadOnly", mockEmailManagerReadOnly);
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail("not-verified@email.com")).thenReturn("4444-4444-4444-4499");
+        
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpSession session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
