@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
@@ -514,13 +515,7 @@ public class BaseController {
      */
     protected boolean validateEmailAddress(String email) {
         if (StringUtils.isNotBlank(email)) {
-            try {
-                InternetAddress addr = new InternetAddress(email);
-                addr.validate();
-                return true;
-            } catch (AddressException ex) {
-
-            }
+        	return EmailValidator.getInstance().isValid(email);
         }
         return false;
     }
