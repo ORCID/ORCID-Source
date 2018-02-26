@@ -180,7 +180,7 @@
                                         <ul class="workspace-private-toolbar"> 
                                             <div *ngIf="orgIdsFeatureEnabled">
                                                 <li class="works-details">
-                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                         <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                         </span>
                                                     </a>
@@ -213,8 +213,8 @@
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">*** | orderBy:["-relationship.value", "type.value"] track by $index
-                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers | orderBy:["relationship.value", "type.value"]' class="url-popover">
+                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -242,7 +242,7 @@
                                                 <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
                                                     <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
                                                     <ul class="reset">
-                                                        <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                        <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType ">
                                                             {{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                                                     </ul>
                                                 </div>
@@ -257,7 +257,7 @@
                                         <div class="col-md-12">
                                             <div class="bottomBuffer">
                                                 <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                                <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                                <span>{{group.createdDate}}</span>
                                             </div>
                                         </div>  
                                     </div>
@@ -553,7 +553,7 @@
                                     <ul class="workspace-private-toolbar"> 
                                         <div *ngIf="orgIdsFeatureEnabled">
                                             <li class="works-details">
-                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>
@@ -605,11 +605,9 @@
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
                                             <span class="url-popover">{{group.disambiguatedAffiliationSourceId.value}}</span>
-                                            <!--
-                                            ***
+
                                             <span [innerHTML]='group.disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.disambiguationSource.value:group.putCode.value:group.disambiguationSource' class="url-popover"> 
                                             </span>
-                                            -->
                                         </div>
                                         <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
                                             <span *ngIf="group.orgDisambiguatedName">{{group.orgDisambiguatedName}}</span><span *ngIf="group.orgDisambiguatedCity || group.orgDisambiguatedRegion || group.orgDisambiguatedCountry">: </span><span *ngIf="group.orgDisambiguatedCity">{{group.orgDisambiguatedCity}}</span><span *ngIf="group.orgDisambiguatedCity && group.orgDisambiguatedRegion">, </span><span *ngIf="group.orgDisambiguatedRegion">{{group.orgDisambiguatedRegion}}</span><span *ngIf="group.orgDisambiguatedCountry && (group.orgDisambiguatedCity || group.orgDisambiguatedRegion)">, </span><span *ngIf="group.orgDisambiguatedCountry">{{group.orgDisambiguatedCountry}}</span>
@@ -794,7 +792,7 @@
                         </#if>
                     </strong>
                 </div>
-                <ul id="employments-list" ng-hide="!employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                <ul id="employments-list" *ngIf="employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments | orderBy: sortState.predicate:sortState.reverse" [attr.employment-put-code]="group.putCode.value">
                         <div class="row">                
                             <div class="col-md-9 col-sm-9 col-xs-7">
@@ -825,7 +823,7 @@
                                     <ul class="workspace-private-toolbar"> 
                                         <div *ngIf="orgIdsFeatureEnabled">
                                             <li class="works-details">
-                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>
@@ -858,8 +856,8 @@
                                 <ul class="id-details">
                                     <li class="url-work">
                                         <ul class="id-details">
-                                            <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">*** | orderBy:["-relationship.value", "type.value"] track by $index
-                                                <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+                                            <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">
+                                                <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
                                             </li>
                                         </ul>                                   
                                     </li>
@@ -887,7 +885,7 @@
                                             <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
                                                 <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
                                                 <ul class="reset">
-                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
                                                         {{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                                                 </ul>
                                             </div>
@@ -902,7 +900,7 @@
                                     <div class="col-md-12">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                            <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                            <span>{{group.createdDate}}</span>
                                         </div>
                                     </div>  
                                 </div>
@@ -1113,7 +1111,7 @@
                                         <ul class="workspace-private-toolbar"> 
                                             <div *ngIf="orgIdsFeatureEnabled">
                                                 <li class="works-details">
-                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                         <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                         </span>
                                                     </a>
@@ -1146,8 +1144,8 @@
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">*** | orderBy:["-relationship.value", "type.value"] track by $index
-                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -1175,7 +1173,7 @@
                                                 <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
                                                     <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
                                                     <ul class="reset">
-                                                        <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                        <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
                                                             {{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                                                     </ul>
                                                 </div>
@@ -1190,7 +1188,7 @@
                                         <div class="col-md-12">
                                             <div class="bottomBuffer">
                                                 <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                                <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                                <span>{{group.createdDate}}</span>
                                             </div>
                                         </div>  
                                     </div>

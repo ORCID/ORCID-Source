@@ -186,12 +186,14 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                 this.editAffiliation = data;
                 //console.log('this.editAffiliation response', this.editAffiliation);
                 this.addingAffiliation = false;
-                this.closeModal();
                 //affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
                 if (data.errors.length > 0){
                     
                     this.editAffiliation = data;
                     this.commonSrvc.copyErrorsLeft(this.editAffiliation, data);
+                } else {
+                    this.closeModal();
+                    
                 }
             },
             error => {

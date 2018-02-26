@@ -74,7 +74,7 @@
                             </a>
                         </span>
 
-                        <div class="relative" style="font-weight: strong;">
+                        <div class="relative" style="font-weight: strong;" *ngIf="disambiguatedAffiliation">
                             <span>{{disambiguatedAffiliation.value}}</span> <br />
                             <div>
                                 <span>{{disambiguatedAffiliation.city}}</span><span *ngIf="disambiguatedAffiliation?.region"> (<span>{{disambiguatedAffiliation?.region}}</span>)</span><span *ngIf="disambiguatedAffiliation?.orgType">, <span>{{disambiguatedAffiliation?.orgType}}</span></span>
@@ -94,7 +94,7 @@
                            <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayinstitutionemployer'/></label>
                            <span class="required" [ngClass]="isValidClass(editAffiliation.affiliationName)">*</span>
                         </span>
-                        <div>           
+                        <div *ngIf="editAffiliation?.affiliationName">           
                             <input 
                             id="affiliationName" 
                             class="form-control" 
@@ -116,7 +116,7 @@
                         <label *ngIf="!disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></label>
                         <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycity'/></label>
                         <span class="required" [ngClass]="isValidClass(editAffiliation.city)">*</span>
-                        <div>
+                        <div *ngIf="editAffiliation?.city">
                                             
                             <input id="city" name="city" class="form-control" type="text" [(ngModel)]="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" (ngModelChange)="serverValidate('affiliations/affiliation/cityValidate.json')" />
                             <span class="orcid-error" *ngIf="editAffiliation?.city?.errors?.length > 0">
@@ -131,7 +131,7 @@
                         <label *ngIf="!disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelregion'/></label>
                         <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayregion'/></label>
                         
-                        <div>
+                        <div *ngIf="editAffiliation?.region">
                             
                             <input name="region" type="text" class="form-control"  [(ngModel)]="editAffiliation.region.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_region'/>" (ngModelChange)="serverValidate('affiliations/affiliation/regionValidate.json')" />
                             <span class="orcid-error" *ngIf="editAffiliation?.region?.errors?.length > 0">
@@ -147,7 +147,7 @@
                         <label *ngIf="!disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelcountry'/></label>
                         <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycountry'/></label>
                         <span class="required" [ngClass]="isValidClass(editAffiliation.country)">*</span>
-                        <div>
+                        <div *ngIf="editAffiliation?.country">
                             
                             <select id="country" name="country" [(ngModel)]="editAffiliation.country.value" (ngModelChange)="serverValidate('affiliations/affiliation/countryValidate.json')" class="form-control">
                                 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
@@ -169,7 +169,7 @@
                     <!-- Department -->
                     <div class="form-group">
                         <label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
-                        <div>
+                        <div *ngIf="editAffiliation?.departmentName">
                             
                             <input id="departmentName" class="form-control" name="departmentName" type="text" [(ngModel)]="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" (ngModelChange)="serverValidate('affiliations/affiliation/departmentValidate.json')" />
                             <span class="orcid-error" *ngIf="editAffiliation.departmentName.errors.length > 0">
@@ -182,7 +182,7 @@
                     <div class="form-group">
                         <label *ngIf="addAffType != 'education'"><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
                         <label *ngIf="addAffType == 'education'"><@orcid.msg 'manual_affiliation_form_contents.labeldegreetitle'/></label>
-                        <div>
+                        <div *ngIf="editAffiliation?.roleTitle">
                             
                             <input name="roletitle" type="text" class="form-control"  [(ngModel)]="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" (ngModelChange)="serverValidate('affiliations/affiliation/roleTitleValidate.json')" />
                             <span class="orcid-error" *ngIf="editAffiliation.roleTitle.errors.length > 0">
@@ -192,7 +192,7 @@
                         </div>
                     </div>
                     <!-- URL -->
-                    <div class="form-group">
+                    <div class="form-group" *ngIf="editAffiliation?.url">
                         <label><@orcid.msg 'manual_affiliation_form_contents.url'/></label>
                         <div>
                             
