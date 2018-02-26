@@ -73,7 +73,7 @@ public class AccountSettingsPage {
         }
 
         public List<Email> getEmails() {
-            List<WebElement> emailRows = xpath.findElements("//div[@ng-controller='EmailEditCtrl']//tr");
+            List<WebElement> emailRows = xpath.findElements("//emails-form-ng2//tr");
             return emailRows.stream().map(Email::new).collect(Collectors.toList());
         }
 
