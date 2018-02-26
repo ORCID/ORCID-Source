@@ -77,7 +77,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     membershipsAndServices: any;
     orgIdsFeatureEnabled: boolean;
     displayNewAffiliationTypesFeatureEnabled: boolean;
-    //TODO: remove when new aff types is live and leave only educationsAndQualifications
+    //: remove when new aff types is live and leave only educationsAndQualifications
     sectionOneElements: any;
     addAffType: any;
     
@@ -121,11 +121,16 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                 errors: [],
                 value: ""
             },
+            disambiguatedAffiliationSourceId: "",
+            disambiguationSource: "",
             endDate: {
                 errors: [],
                 value: ""
             },
             errors: [],
+            orgDisambiguatedId: {
+                value: ""
+            },
             putCode: {
                 value: null
             },
@@ -305,10 +310,25 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                 return forDisplay;
             }
         });
-        $("#affiliationName").bind("typeahead:selected", function(obj, datum) {
-            //$scope.selectAffiliation(datum);
-            //$scope.$apply();
-        });
+        /*
+        $("#affiliationName").bind(
+            "typeahead:selected",
+            function(obj, datum) {
+                console.log('typeahead', obj, datum, this);
+                this.selectAffiliation(datum);
+                //$scope.$apply();
+            }
+        );
+        */
+        $('#affiliationName').bind(
+            "typeahead:selected", 
+            (
+                function(obj, datum) {
+                    console.log('typeahead', obj, datum, this);
+                    this.selectAffiliation(datum);
+                }
+            ).bind(this)
+        );
     };
 
     close(): void {
@@ -427,6 +447,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         .subscribe(
             data => {
                 if (data != null) {
+                    console.log('getDisambiguatedAffiliation', data, this.editAffiliation);
                     this.disambiguatedAffiliation = data;
                     this.editAffiliation.orgDisambiguatedId.value = id;
                     this.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
@@ -513,6 +534,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     selectAffiliation(datum): void {
+        console.log('selectAffiliation', datum);
         if (datum != undefined && datum != null) {
             this.editAffiliation.affiliationName.value = datum.value;
             this.editAffiliation.city.value = datum.city;
