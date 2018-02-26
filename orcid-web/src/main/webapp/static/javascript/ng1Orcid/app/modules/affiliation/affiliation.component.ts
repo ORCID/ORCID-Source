@@ -126,7 +126,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
                     this.affiliationService.notifyOther({ affiliation:affiliation, type: type });
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm'});
+                    if(affiliation == undefined) {
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm', edit: false});
+                    } else {
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm', edit: true});
+                    }                    
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
@@ -286,7 +290,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     openEditAffiliation(affiliation): void {
         this.addAffiliationModal(affiliation.affiliationType.value, affiliation);
     };
-
 
     selectAffiliation(datum): void {
         if (datum != undefined && datum != null) {

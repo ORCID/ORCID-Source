@@ -50,6 +50,7 @@ import { CommonService }
 export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+    private viewSubscription: Subscription;
 
     /*
     emailSrvc: any;
@@ -355,8 +356,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         }
     };
 
-    selectAffiliation(datum): void {
-        console.log('selectAffiliation', datum);
+    selectAffiliation(datum): void {        
         if (datum != undefined && datum != null) {
             this.editAffiliation.affiliationName.value = datum.value;
             this.editAffiliation.city.value = datum.city;
@@ -501,9 +501,22 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                 if( res.affiliation != undefined ) {
                     this.editAffiliation = res.affiliation;
                 } else {
+                    this.editAffiliation = this.getEmptyAffiliation();
                     this.editAffiliation.affiliationType.value = this.addAffType;
                 }
             }
+        );
+        
+        this.viewSubscription = this.modalService.notifyObservable$.subscribe(
+                (res) => {
+                    console.log(JSON.stringify(res));
+                    if(res.moduleId = "modalAffiliationForm") {
+                        if(res.action == "open" && res.edit == false) {
+                            this.editAffiliation = this.getEmptyAffiliation();
+                            this.editAffiliation.affiliationType.value = this.addAffType;
+                        }
+                    }
+                }
         );
     };
 

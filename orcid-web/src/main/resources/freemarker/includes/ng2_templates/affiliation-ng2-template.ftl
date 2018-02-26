@@ -773,8 +773,7 @@
                                 </a>                
                             </li>
                         </ul>
-                        </#if>
-                                    
+                        </#if>                                   
                     </div>
                 </div>
             </div>                        
@@ -792,7 +791,7 @@
                         </#if>
                     </strong>
                 </div>
-                <ul id="employments-list" *ngIf="employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                <ul id="employments-list" *ngIf="employments.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments | orderBy: sortState.predicate:sortState.reverse" [attr.employment-put-code]="group.putCode.value">
                         <div class="row">                
                             <div class="col-md-9 col-sm-9 col-xs-7">

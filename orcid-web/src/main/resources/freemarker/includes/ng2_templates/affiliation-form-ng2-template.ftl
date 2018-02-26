@@ -208,7 +208,7 @@
                         <label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
                         <span class="required" [ngClass]="isValidStartDate(editAffiliation.startDate)">*</span>
                         <div>
-                            <select id="startYear" name="startMonth" [(ngModel)]="editAffiliation.startDate.year" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
+                            <select id="startYear" name="startYear" [(ngModel)]="editAffiliation.startDate.year" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
                                 <#list years?keys as key>
                                     <option value="${key}">${years[key]}</option>
                                 </#list>
@@ -235,7 +235,7 @@
                         <label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDateLeave'/></label>
                         <div class="relative">
                             
-                            <select id="endYear" name="endMonth" [(ngModel)]="editAffiliation.endDate.year">
+                            <select id="endYear" name="endYear" [(ngModel)]="editAffiliation.endDate.year">
                                 <#list years?keys as key>
                                     <option value="${key}">${years[key]}</option>
                                 </#list>
