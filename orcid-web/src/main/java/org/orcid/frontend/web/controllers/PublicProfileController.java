@@ -362,7 +362,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         
-        if (worksPaginator.getWorksCount(orcid) > 0) {
+        if (worksPaginator.getPublicWorksCount(orcid) > 0) {
             isProfileEmtpy = false;
         }
 

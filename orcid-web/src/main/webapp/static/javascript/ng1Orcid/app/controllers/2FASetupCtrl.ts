@@ -123,6 +123,11 @@ export const _2FASetupCtrl = angular.module('orcidApp').controller(
                 });
             };
             
+            $('#showQRCodeAgain').click(function() {
+                $scope.showTextCode = false;
+                $scope.showQRCode = true;
+            });
+            
             //Convert to angular...
             $('#getTextCode').click(function() {
                 $.ajax({
@@ -146,7 +151,6 @@ export const _2FASetupCtrl = angular.module('orcidApp').controller(
                 }
                 return recoveryCodesString;
             }
-            
         }
     ]
 );

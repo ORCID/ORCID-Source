@@ -97,7 +97,7 @@ public class MemberV3Dev1Test extends BlackBoxBaseV3_0_dev1 {
             return;
         }
         showMyOrcidPage();
-        createGroupIds();
+        createGroupIdsV3();
         allSet = true;
     }          
 

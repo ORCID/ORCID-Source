@@ -92,7 +92,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         }
         showMyOrcidPage();
         createGroupIds();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, false);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), false);
         allSet = true;
     }
 

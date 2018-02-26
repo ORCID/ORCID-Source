@@ -733,6 +733,21 @@ the software.
                 <version>3.1.0</version>
                 <scope>provided</scope>
             </dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>2.5.1</version>
+			</dependency>
+            <dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.5.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>2.5.1</version>
+			</dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
@@ -1087,7 +1102,18 @@ the software.
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <repository>
+		<repository>
+            <id>spring-social-facebook-orcid-snapshot</id>
+            <name>copy of spring-social-facebook to work with Graph API 2.10</name>
+            <url>https://raw.github.com/ORCID/spring-social-facebook/mvn-repo/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+		<repository>
             <id>spring-s3</id>
             <name>Spring S3</name>
             <url>http://maven.springframework.org/milestone</url>
