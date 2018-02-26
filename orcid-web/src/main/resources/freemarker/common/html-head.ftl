@@ -170,10 +170,15 @@
     </@orcid.checkFeatureStatus> 
 
     <#if springMacroRequestContext.requestUri?contains("/account") >
+        <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
+        <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
+        <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
+        <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
         <#include "/includes/ng2_templates/works-privacy-preferences-ng2-template.ftl">
     </#if>
 
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/my-orcid")>
+        <#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-frequency-ng2-template.ftl">
         <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/emails-ng2-template.ftl">

@@ -81,6 +81,7 @@
                     </td>
                 </tr>
                 </@orcid.checkFeatureStatus>
+                <!--
                 <tr ng-controller="languageCtrl" ng-show="showEditLanguage" ng-cloak>                                
                     <td colspan="2">
                         <p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
@@ -92,7 +93,7 @@
                         </div>                      
                     </td>
                 </tr>
-                
+                -->
                 <!-- Notifications -->
                 <tr>
                     <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.notification_preferences")}</th>
@@ -107,7 +108,7 @@
                     </td>
                 </tr>
                 </@orcid.checkFeatureStatus>
-
+                <!--
                 <tr ng-controller="NotificationPreferencesCtrl"
                     ng-show="showEditEmailPreferences" ng-cloak>
                     <td colspan="2">
@@ -152,11 +153,19 @@
                         </p>
                     </td>
                 </tr>
+                -->
                 <tr>
                     <th><a name="editPassword"></a>${springMacroRequestContext.getMessage("manage.password")}</th>
                     <td><a href="" ng-click="togglePasswordEdit()"
                         ng-bind="passwordToggleText"></a></td>
                 </tr>
+
+                <tr ng-show="showEditPassword">
+                    <td colspan="2">
+                        <password-edit-ng2></password-edit-ng2>
+                    </td>
+                </tr>
+                <!--
                 <tr ng-controller="PasswordEditCtrl" ng-show="showEditPassword"
                     ng-cloak>
                     <td colspan="2" class="reset" id="password-edit">
@@ -190,7 +199,7 @@
                         <a class="cancel-option inner-row" ng-click="getChangePassword()" id="bottom-clear-password-changes">${springMacroRequestContext.getMessage("freemarker.btncancel")}</a>                                    
                     </td>
                 </tr>
-                
+                -->
                 
                 <!-- Privacy preferences -->
                 <tr>
@@ -271,6 +280,14 @@
                     <td><a href="" ng-click="toggleDeactivateEdit()"
                         ng-bind="deactivateToggleText"></a></td>
                 </tr>
+
+                <tr ng-show="showEditDeactivate" >
+                    <td colspan="2">
+                        <deactivate-account-ng2></deactivate-account-ng2>
+                    </td>
+                </tr>
+
+                <!--
                 <tr ng-controller="DeactivateAccountCtrl"
                     ng-show="showEditDeactivate" ng-cloak>
                     <td colspan="2">
@@ -303,6 +320,7 @@
                         </div>
                     </td>
                 </tr>
+                -->
                 <!-- / Deactivate Account -->
                 <!-- Deprecate duplicate account -->
                 <tr>
@@ -310,6 +328,12 @@
                     <td><a href="" ng-click="toggleDeprecateEdit()"
                         ng-bind="deprecateToggleText"></a></td>
                 </tr>
+                <tr ng-show="showEditDeprecate" >
+                    <td colspan="2">
+                        <deprecate-account-ng2></deprecate-account-ng2>
+                    </td>
+                </tr>
+                <!--
                 <tr ng-controller="DeprecateAccountCtrl"
                     ng-show="showEditDeprecate" ng-cloak>
                     <td colspan="2">
@@ -348,11 +372,18 @@
                         </div>
                     </td>
                 </tr>
+                -->
                 <@orcid.checkFeatureStatus 'TWO_FACTOR_AUTHENTICATION'>
                     <tr>
                         <th><a name="edit2FA"></a>${springMacroRequestContext.getMessage("manage.2FA")}</th>
                         <td><a href="" ng-click="toggle2FAEdit()" ng-bind="twoFAToggleText"></a></td>
                     </tr>
+                    <tr ng-show="showEdit2FA" >
+                        <td colspan="2">
+                            <two-fa-state-ng2></two-fa-state-ng2>
+                        </td>
+                    </tr>
+                    <!--
                     <tr ng-controller="2FAStateCtrl" ng-init="check2FAState()" ng-show="showEdit2FA" ng-cloak>
                         <td colspan="2">
                             <p>
@@ -373,6 +404,7 @@
                             </div>
                         </td>
                     </tr>
+                    -->
                 </@orcid.checkFeatureStatus>
                 <#if RequestParameters['OrcidSocial']??>
                     <tr>
@@ -380,6 +412,12 @@
                         <td><a href="" ng-click="toggleSocialNetworksEdit()"
                             ng-bind="socialNetworksToggleText"></a></td>
                     </tr>
+                    <tr ng-show="showEditSocialSettings" >
+                        <td colspan="2">
+                            <social-networks-ng2></social-networks-ng2>
+                        </td>
+                    </tr>
+                    <!--
                     <tr ng-controller="SocialNetworksCtrl" ng-show="showEditSocialSettings" ng-cloak id="social-networks">
                         <td colspan="2">
                             <div class="editTablePadCell35">
@@ -407,6 +445,7 @@
                             </div>
                         </td>
                     </tr>
+                    -->
                 </#if>
             </tbody>
         </table>

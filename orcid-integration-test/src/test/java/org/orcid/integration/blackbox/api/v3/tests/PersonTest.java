@@ -71,7 +71,7 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
         signin();
         
         //Set the default visibility to public, so, all elements created are public by default
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, false);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name(), false);
         
         showMyOrcidPage();
 
@@ -100,19 +100,19 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
                 
         // Set biography to public
         String bio = BBBUtil.getProperty("org.orcid.web.testUser1.bio");
-        changeBiography(bio, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeBiography(bio, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
 
         // Set names to public
-        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updatePrimaryEmailVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         removePopOver();
         if (emailExists(limitedEmail)) {
-            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
         } else {
-            addEmail(limitedEmail, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+            addEmail(limitedEmail, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
         }                
     }
     
@@ -137,8 +137,8 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
         showMyOrcidPage();
         
         openEditExternalIdentifiersModal();
-        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
-        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
         saveExternalIdentifiersModal();
         
         allSet = true;
