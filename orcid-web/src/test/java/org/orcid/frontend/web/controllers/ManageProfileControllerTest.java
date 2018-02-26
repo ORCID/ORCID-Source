@@ -926,6 +926,8 @@ public class ManageProfileControllerTest {
     	assertTrue(controller.validateEmailAddress("example-indeed@strange-example.com"));
     	assertTrue(controller.validateEmailAddress("#!$%&'*+-/=?^_`{}|~@example.org"));
     	
+    	assertFalse(controller.validateEmailAddress(null));
+    	assertFalse(controller.validateEmailAddress(""));
     	assertFalse(controller.validateEmailAddress("@"));
     	assertFalse(controller.validateEmailAddress("@."));
     	assertFalse(controller.validateEmailAddress("test"));
