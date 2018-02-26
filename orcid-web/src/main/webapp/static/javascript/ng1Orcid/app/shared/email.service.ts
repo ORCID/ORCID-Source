@@ -152,8 +152,7 @@ export class EmailService {
     }
 
     notifyOther(): void {
-        this.notify.next();
-        console.log('notify');
+        this.notify.next();        
     }
 
     saveEmail( obj ): Observable<any> {

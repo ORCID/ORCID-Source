@@ -135,39 +135,3 @@ export class AffiliationService {
         }
     }
 }
-
-/*
-angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
-    var serv = {
-        educations: new Array(),
-        employments: new Array(),
-        loading: false,
-        affiliationsToAddIds: null,
-        
-        ,
-        setIdsToAdd: function(ids) {
-            serv.affiliationsToAddIds = ids;
-        },
-        ,
-        updateProfileAffiliation: function(aff) {
-            $.ajax({
-                url: getBaseUri() + '/affiliations/affiliation.json',
-                type: 'PUT',
-                data: angular.toJson(aff),
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function(data) {
-                    if(data.errors.length != 0){
-                        console.log("Unable to update profile affiliation.");
-                    }
-                    $rootScope.$apply();
-                }
-            }).fail(function() {
-                console.log("Error updating profile affiliation.");
-            });
-        },
-       
-    };
-    return serv;
-}]);
-*/

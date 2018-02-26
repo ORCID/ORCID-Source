@@ -219,6 +219,13 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getAffiliationsId(): void {
+        //Be sure all arrays are empty
+        this.distinctionsAndInvitedPositions.length = 0;
+        this.educationsAndQualifications.length = 0;
+        this.educations.length = 0;
+        this.employments.length = 0;
+        this.membershipsAndServices.length = 0; 
+        
         this.affiliationService.getAffiliationsId()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -420,7 +427,12 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                             this.removeFromArray(this.membershipsAndServices, res.deleteAffiliationObj.putCode.value);                            
                         } 
                     }  
-                }
+                } else if(res.action == 'add') {
+                    if(res.successful == true) {
+                        console.log("Fetching affiliations data");
+                        this.getAffiliationsId();
+                    }
+                }                
             }
         );
     };

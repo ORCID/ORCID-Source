@@ -195,6 +195,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                     this.closeModal();
                     this.removeDisambiguatedAffiliation();
                     this.editAffiliation = this.getEmptyAffiliation();
+                    this.affiliationService.notifyOther({action:'add', successful:true});
                 }
             },
             error => {
