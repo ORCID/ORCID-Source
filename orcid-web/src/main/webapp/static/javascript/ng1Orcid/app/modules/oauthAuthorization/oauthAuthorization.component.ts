@@ -6,7 +6,7 @@ declare var addShibbolethGa: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef  } 
     from '@angular/core';
 
 import { Observable } 
@@ -21,19 +21,22 @@ import { Subscription }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
+import { ModalService } 
+    from '../../shared/modal.service.ts'; 
+
 import { OauthService } 
     from '../../shared/oauth.service.ts';
 
 
 @Component({
     selector: 'oauth-authorization-ng2',
-    template:  scriptTmpl("oauth-authorization-ng2-template"),
-    providers: [OauthService]
-
+    template:  scriptTmpl("oauth-authorization-ng2-template")
 })
 export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+
+    res: any;
 
     allowEmailAccess: any;
     authorizationForm: any;
@@ -68,7 +71,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     generalRegistrationError: any;
 
     constructor(
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
+        private modalService: ModalService,
         private oauthService: OauthService
     ) {
         this.allowEmailAccess = true;
@@ -182,10 +187,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     switchForm(): void {
+        console.log("switch form");
         this.showRegisterForm = !this.showRegisterForm;
+        console.log(this.showRegisterForm);
         if (!this.personalLogin) {
             this.personalLogin = true;
         }
+        this.cdr.detectChanges();
     };
 
     toggleClientDescription(): void {
@@ -206,7 +214,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };  
 
     removeEmailField(index): void {
+        console.log("remove email" + index);
         this.registrationForm.emailsAdditional.splice(index, 1);
+        this.cdr.detectChanges();
     };
 
     authorizeRequest(): void {
@@ -333,11 +343,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 this.registrationForm = data;
+
                 if(givenName || familyName || email || linkFlag){
                     this.registrationForm.givenNames.value=givenName;
                     this.registrationForm.familyNames.value=familyName;
                     this.registrationForm.email.value=email; 
                 }
+                console.log(this.registrationForm);
 
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
                 this.registrationForm.linkType=linkFlag;
@@ -382,7 +394,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     return;
                 }
                 if (this.duplicates.length > 0 ) {
-                    this.showDuplicatesColorBox();
+                    //this.showDuplicatesColorBox();
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates', duplicates: this.duplicates});
                 } else {
                     this.oauth2ScreensPostRegisterConfirm();                          
                 }
@@ -426,13 +439,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     oauth2ScreensPostRegisterConfirm(): void {
-         var baseUri = getBaseUri();
-                
+        console.log("postRegisterConfirm");
+        var baseUri = getBaseUri();       
         if(this.registrationForm.linkType === 'shibboleth'){
             baseUri += '/shibboleth';
         }
         
-        this.showProcessingColorBox();
+        //this.showProcessingColorBox();
         this.registrationForm.valNumClient = this.registrationForm.valNumServer / 2;
 
         this.oauthService.oauth2ScreensPostRegisterConfirm(this.registrationForm)
@@ -442,7 +455,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 if(data != null && data.errors != null && data.errors.length > 0) {
                     //TODO: Display error in the page
                     this.generalRegistrationError = data.errors[0];
-                    $.colorbox.close();
+                    this.modalService.notifyOther({action:'close', moduleId: 'modalRegisterDuplicates'});
                 } else {
                     if (this.gaString){
                         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth ' + this.gaString]);
@@ -481,7 +494,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 this.registrationForm = data;
                 if (this.registrationForm.errors == undefined 
                     || this.registrationForm.errors.length == 0) {                            
-                    this.showProcessingColorBox();                            
+                    //this.showProcessingColorBox();                            
                     this.getDuplicates();
                 } else {
                     if(this.registrationForm.email.errors.length > 0) {
@@ -508,6 +521,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 this.commonSrvc.copyErrorsLeft(this.registrationForm, data);
+                console.log(data);
                 if(field == 'Email') {
                     if (this.registrationForm.email.errors.length > 0) {
                         for(var i = 0; i < this.registrationForm.email.errors.length; i++){
@@ -517,6 +531,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                         this.emailTrustAsHtmlErrors = [];
                     }
                 }
+                this.cdr.detectChanges();
             },
             error => {
                 ////console.log('setBiographyFormError', error);
@@ -536,6 +551,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         });
         $.colorbox.resize({width:"780px" , height:"400px"});
         */
+
+        this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates'});
     };
 
    
@@ -566,7 +583,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
-
         this.loadRequestInfoForm();
         if(orcidVar.oauth2Screens) {
             if(orcidVar.oauthUserId && orcidVar.showLogin){
@@ -578,7 +594,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 this.showRegisterForm = !orcidVar.showLogin;
             }
         }  
-
         window.onkeydown = function(e) {
             if (e.keyCode == 13) {     
                 if(orcidVar.originalOauth2Process) { 
@@ -592,5 +607,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         });
 
         this.oauth2ScreensLoadRegistrationForm('', '', '', '');
+
+        this.subscription = this.oauthService.notifyObservable$.subscribe(
+            (res) => {
+                console.log(res);
+                if(res !== "undefined" && res.action === "confirm" && res.moduleId === "registerDuplicates"){
+                    this.oauth2ScreensPostRegisterConfirm();
+                }
+                //this.getMemberDetails();
+                //this.getContacts();
+            }
+        );
     };
 }

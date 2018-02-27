@@ -39,12 +39,12 @@
                 <div *ngFor="let error of registrationForm.givenNames.errors" [innerHTML]="error"></div>
             </span>
         </div>
-    </div>	
-     <!-- Last name -->
+    </div>
+    <!-- Last name -->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
         <div class="bottomBuffer">
-            <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class=""  [(ngModel)]="registrationForm.familyNames.value" (blur)="serverValidate('familyNames')"/>
+            <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class=""  [(ngModel)]="registrationForm.familyNames.value"/>
             <span class="orcid-error" *ngIf="registrationForm.familyNames.errors.length > 0">
                 <div *ngFor="let error of registrationForm.familyNames.errors" [innerHTML]="error"></div>
             </span>
@@ -56,7 +56,7 @@
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
             <div class="relative">          
                 <input name="emailprimary234" type="text" tabindex="3" class="input-xlarge" [(ngModel)]="registrationForm.email.value" (blur)="serverValidate('Email')"/>
-                <span class="required" [ngClass]="isValidClass(register.email)">*</span>
+                <span class="required" [ngClass]="isValidClass(registrationForm.email)">*</span>
                 <span class="orcid-error" *ngIf="registrationForm.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
                     <div *ngFor="let error of registrationForm.email.errors" [innerHTML]="error"></div>
                 </span>
@@ -67,13 +67,13 @@
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                 </span>
             </div>
-        </div>  
+        </div>
         <!-- Additional emails -->
-        <div class="form-group clear-fix" *ngFor="let emailAdditional of registrationForm.emailsAdditional;trackBy:$index">
-            <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
+        <div class="form-group clear-fix" *ngFor="let emailAdditional of registrationForm.emailsAdditional;let i = index;trackBy:trackByIndex">
+            <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}{{i}}</label>
             <div class="relative">
-                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" [(ngModel)]="registrationForm.emailsAdditional[$index].value" focus-last-input="$index == focusIndex" (blur)="serverValidate('EmailsAdditional')"/>
-                <div *ngIf="$first" class="popover-help-container leftBuffer">
+                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" [(ngModel)]="registrationForm.emailsAdditional[i].value" focus-last-input="i == focusIndex" (blur)="serverValidate('EmailsAdditional')"/>
+                <div *ngIf="i == 0" class="popover-help-container leftBuffer">
                     <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
                     <div id="email-additional-help" class="popover bottom">
                         <div class="arrow"></div>
@@ -83,21 +83,21 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="!$first" class="popover-help-container leftBuffer">
-                    <a class="btn-white-no-border" (click)="removeEmailField($index)"><i class="glyphicon glyphicon-remove-sign"></i></a>
+                <div *ngIf="i != 0" class="popover-help-container leftBuffer">
+                    <a class="btn-white-no-border" (click)="removeEmailField(i)"><i class="glyphicon glyphicon-remove-sign"></i></a>
                 </div>
-                <span class="orcid-error" *ngIf="registrationForm.emailsAdditional[$index].errors.length > 0 && !showEmailsAdditionalDeactivatedError[$index] && !showEmailsAdditionalReactivationSent[$index]">
-                    <div *ngFor="let error of registrationForm.emailsAdditional[$index].errors;trackBy:$index" [innerHTML]="error"></div>
+                <span class="orcid-error" *ngIf="registrationForm.emailsAdditional[i].errors && registrationForm.emailsAdditional[i].errors.length > 0 && !showEmailsAdditionalDeactivatedError[i] && !showEmailsAdditionalReactivationSent[i]">
+                    <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex" [innerHTML]="error"></div>
                 </span>
-                <span class="orcid-error" *ngIf="showEmailsAdditionalDeactivatedError[$index]" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" (click)="sendEmailsAdditionalReactivationEmail($index)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                <span class="orcid-error" *ngIf="showEmailsAdditionalDeactivatedError[i]" ng-cloak>
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" (click)="sendEmailsAdditionalReactivationEmail(i)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
-                <span class="orcid-error" *ngIf="showEmailsAdditionalReactivationSent[$index]" ng-cloak>
+                <span class="orcid-error" *ngIf="showEmailsAdditionalReactivationSent[i]" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                 </span>
             </div>
         </div>
-        <button (click)="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>
+        <button (click)="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>  
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL' enabled=false> 
         <!-- Email -->                  
@@ -139,8 +139,8 @@
                 <div *ngFor="let error of registrationForm.password.errors" [innerHTML]="error"></div>
             </span>
         </div>
-    </div>  	
-	<!--Confirm password-->
+    </div>
+    <!--Confirm password-->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
         <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
@@ -205,9 +205,9 @@
             </div>
         </div>
         <!--Terms and conditions-->
-        <!--<div class="bottomBuffer">
+        <div class="bottomBuffer">
             <h4><@orcid.msg 'register.labelTermsofUse'/>
-                <span class="required" [ngClass]="{'text-error':register.termsOfUse.value == false}"></span></h4>  
+                <span class="required" [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}"></span></h4>  
             <p>
                 <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (blur)="serverValidate('TermsOfUse')" />
                 <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
@@ -215,10 +215,11 @@
             <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
                 <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
             </span>
-        </div>-->
+        </div>
         <!--Recaptcha-->
         <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
-            <div>
+            <div>   
+                Recaptcha goes here
                 <div class="bottomBuffer relative recaptcha"  id="recaptcha">
                     <div vc-recaptcha
                     theme="'light'"
@@ -272,7 +273,7 @@
         <!--<div class="bottomBuffer">
             <label for="termsConditions">
                 <@orcid.msg 'register.labelTermsofUse'/>
-                <span class="required"  [ngClass]="{'text-error':register.termsOfUse.value == false}">*</span>
+                <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}">*</span>
             </label>
             <p>
                 <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (blur)="serverValidate('TermsOfUse')" />
@@ -282,9 +283,9 @@
                 <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
             </span>
         </div>-->
-    </@orcid.checkFeatureStatus>  
+    </@orcid.checkFeatureStatus>   	
     <!--Registration error-->
-    <div style="margin-bottom: 15px;" *ngIf="generalRegistrationError == null">
+    <div style="margin-bottom: 15px;" *ngIf="generalRegistrationError != null">
         <span class="orcid-error" [innerHtml]="generalRegistrationError"></span>
     </div> 
     <!-- Buttons  -->
@@ -295,4 +296,4 @@
             <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (click)="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
         </#if>
     </div>   
-</div>    
+</div>   

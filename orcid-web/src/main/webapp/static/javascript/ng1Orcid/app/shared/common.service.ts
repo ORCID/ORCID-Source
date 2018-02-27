@@ -33,6 +33,16 @@ export class CommonService {
         for (let key in data1) {
             if (key == 'errors') {
                 data1.errors = data2.errors;
+            } else if (key == 'emailsAdditional'){
+                for (var index in data1.emailsAdditional) {
+                    if (data1.emailsAdditional[index] != null) {
+                        if(data2.emailsAdditional[index] == undefined){
+                            data1.emailsAdditional[index].errors = null;
+                        } else {
+                            data1.emailsAdditional[index].errors = data2.emailsAdditional[index].errors;
+                        }
+                    }
+                }
             } else {
                 if (data1[key] != null && data1[key].errors !== undefined) {
                     data1[key].errors = data2[key].errors;
