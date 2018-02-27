@@ -211,7 +211,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     
     parseAffiliations( data ): void {
         for (let i in data) {
-            console.log("Type: " + data[i].affiliationType.value);
+            console.log(JSON.stringify(data[i]));
             if (data[i].affiliationType != null 
                 && data[i].affiliationType.value != null) {                            
                 if(data[i].affiliationType.value == 'distinction') {
@@ -249,9 +249,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.educations.length = 0;
         this.employments.length = 0;
         this.membershipsAndServices.length = 0; 
-        
-        console.log("Is true?" + (this.publicView === "true"));
-        console.log("Is false?" + (this.publicView === "false"));
         
         if(this.publicView === "true") {
             this.getPublicAffiliationsById( orcidVar.affiliationIdsJson );

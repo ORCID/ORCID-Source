@@ -146,7 +146,6 @@
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <!-- NG2: Under development -->
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
         <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
         <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
@@ -169,6 +168,10 @@
     </#if>
     </@orcid.checkFeatureStatus> 
 
+    <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
+        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+    </@orcid.checkFeatureStatus> 
+    
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
         <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
