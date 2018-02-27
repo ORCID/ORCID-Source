@@ -30,8 +30,6 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +40,6 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -52,6 +49,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/** The file can be found here: https://leidata.gleif.org/api/v1/concatenated-files/lei2/20180227/zip
+ * 1) wget file, 
+ * 2) unzip file
+ * 3) import:  mvn exec:java -Dexec.mainClass=org.orcid.core.cli.LoadLEIData -Dorg.orcid.config.file=file:///Users/tom/git/ORCID-Source/orcid-persistence/src/main/resources/staging-persistence.properties -Dexec.args="-f path/to/extracted_file.xml"
+ * 4) reindex: mvn exec:java -Dexec.mainClass=org.orcid.core.cli.ProcessDisambiguatedOrgsForIndexing -Dorg.orcid.config.file=file:///path/to/ORCID-Source/orcid-persistence/src/main/resources/staging-persistence.properties
+ * 
+ * @author tom
+ *
+ */
 public class LoadLEIData {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadLEIData.class);
@@ -63,7 +69,6 @@ public class LoadLEIData {
     @Option(name = "-f", usage = "Path to RDF file containing LEI data dump to load into DB")
     private File fileToLoad;
 
-    private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private OrgDao orgDao;
     
@@ -72,8 +77,7 @@ public class LoadLEIData {
     private long addedDisambiguatedOrgs = 0;
     private long updatedOrgs = 0;
     private long addedOrgs = 0;
-    private long deprecatedOrgs = 0;
-    private long obsoletedOrgs = 0;
+    private long count = 0;
 
     /** Grab the file, check it exists, stream the file, extract the entities, update the DB.
      * 
@@ -117,8 +121,6 @@ public class LoadLEIData {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDao = (OrgDao) context.getBean("orgDao");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
-        orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
-
     }
 
     /** Stream the XML using Stax.
@@ -128,7 +130,6 @@ public class LoadLEIData {
      */
     public void execute() throws XMLStreamException, FileNotFoundException {
         Instant start = Instant.now();
-        int count = 0;
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLEventReader r = null;
         try {
@@ -169,6 +170,8 @@ public class LoadLEIData {
                 } else if (event.isEndElement()) {
                     String endElement = event.asEndElement().getName().getLocalPart();
                     if (endElement.equals("LEIRecord")) {
+                        count ++;
+                        LOGGER.info("Processing ["+count+"] LEI:"+org.id);
                         processOrg(org);
                     }
                 }
@@ -244,6 +247,7 @@ public class LoadLEIData {
                 else if("INACTIVE".equals(org.status)) {            
                     existingDO.setStatus(OrganizationStatus.OBSOLETE.name());            
                 }
+                LOGGER.info("Merging LEI:"+org.id);
                 existingDO = orgDisambiguatedDao.merge(existingDO);
                 updatedDisambiguatedOrgs++;
             }
@@ -267,6 +271,7 @@ public class LoadLEIData {
                 orgDisambiguatedEntity.setStatus(OrganizationStatus.OBSOLETE.name());            
             }            
             orgDisambiguatedEntity.setSourceType(LEI_SOURCE_TYPE); 
+            LOGGER.info("Creating LEI:"+org.id);
             orgDisambiguatedDao.persist(orgDisambiguatedEntity);
             existingDO = orgDisambiguatedEntity;
             addedDisambiguatedOrgs++;
@@ -286,6 +291,7 @@ public class LoadLEIData {
                 newOrg.setRegion(otherOrg.hqAddres.region);
                 newOrg.setName(otherOrg.name);
                 newOrg.setOrgDisambiguated(existingDO);
+                LOGGER.info("Creating org LEI:"+org.id);
                 orgDao.persist(newOrg);
                 addedOrgs++;
             }

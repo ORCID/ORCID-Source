@@ -16,10 +16,9 @@
  */
 package org.orcid.core.cli;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -168,6 +167,6 @@ public class LoadLEIDataTest {
         assertEquals("BG", orgArgument.getAllValues().get(0).getCountry().value());
         assertEquals("BG-22", orgArgument.getAllValues().get(0).getRegion());
         assertEquals("213800ZH4VUOQOUVYX93", orgArgument.getAllValues().get(0).getOrgDisambiguated().getSourceId());        
-
     }
+    
 }
