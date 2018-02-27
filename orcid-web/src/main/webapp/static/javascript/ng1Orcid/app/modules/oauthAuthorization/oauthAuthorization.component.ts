@@ -9,8 +9,6 @@ import { NgFor, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef  } 
     from '@angular/core';
 
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
 import { Observable } 
     from 'rxjs/Rx';
 
@@ -588,7 +586,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
-        this.loadRequestInfoForm();
+        this.authorizationForm = {
+            userName:  {value: ""}
+        } 
         if(orcidVar.oauth2Screens) {
             if(orcidVar.oauthUserId && orcidVar.showLogin){
                 this.showRegisterForm = false;
@@ -596,7 +596,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     userName:  {value: orcidVar.oauthUserId}
                 } 
             } else{
-                this.showRegisterForm = !orcidVar.showLogin;
+                this.showRegisterForm = !orcidVar.showLogin;  
             }
         }  
         window.onkeydown = function(e) {
@@ -619,8 +619,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 if(res !== "undefined" && res.action === "confirm" && res.moduleId === "registerDuplicates"){
                     this.oauth2ScreensPostRegisterConfirm();
                 }
-                //this.getMemberDetails();
-                //this.getContacts();
             }
         );
     };

@@ -21,6 +21,9 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
+import { CommonService } 
+    from '../../shared/common.service.ts';
+
 import { RequestPasswordResetService } 
     from '../../shared/requestPasswordReset.service.ts';
 
@@ -31,6 +34,8 @@ import { RequestPasswordResetService }
 })
 export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, OnInit {
     
+    @Input() authorizationForm : any;
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     showResetPassword: any;
     resetPasswordToggleText: any;
@@ -39,6 +44,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
 
     constructor(
         private cdr:ChangeDetectorRef,
+        private commonService: CommonService,
         private requestPasswordResetService: RequestPasswordResetService,
     ) {
         this.showSendResetLinkError = false;
@@ -85,16 +91,9 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         this.showResetPassword = !this.showResetPassword;
 
         // pre-populate with email from signin form 
-       /* if(typeof this.userId != "undefined" 
-            && this.userId 
-            && utilsService.isEmail(this.userId)
-        ){
-            this.requestResetPassword = {
-                email:  this.userId
-            } 
-        } else if (typeof this.authorizationForm != "undefined" 
+        if (typeof this.authorizationForm != "undefined" 
             && this.authorizationForm.userName
-            && utilsService.isEmail(this.authorizationForm.userName.value)
+            && this.commonService.isEmail(this.authorizationForm.userName.value)
         ) {
             this.requestResetPassword = {
                 email:  this.authorizationForm.userName.value
@@ -103,7 +102,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
             this.requestResetPassword = {
                 email:  ""
             }
-        }*/
+        }
     };
 
     //Default init functions provided by Angular Core

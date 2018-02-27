@@ -29,7 +29,7 @@
              <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>
              </small>
         </p>
-        <form id="password-reset-form" name="emailAddressForm">
+        <div id="password-reset" name="emailAddressForm">
             <span class="orcid-error" *ngIf="requestResetPassword.errors && requestResetPassword.errors.length > 0">
                <div *ngFor='let error of requestResetPassword.errors' [innerHTML]="error"></div>
             </span>
@@ -39,7 +39,7 @@
             <div class="control-group">
                 <label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label>                       
                 <div class="controls"> 
-                    <input id="email" name="email" ctype="text" class="form-control" [(ngModel)]="requestResetPassword.email" />
+                    <input id="email" name="email" type="text" class="form-control" [(ngModel)]="requestResetPassword.email" />
                 </div>
                 <!--General error-->
                 <div style="margin-bottom: 15px;" *ngIf="showSendResetLinkError">
@@ -47,7 +47,7 @@
                 </div>  
                 <button class="btn btn-primary" (click)="postPasswordResetRequest(requestResetPassword)">${springMacroRequestContext.getMessage("reset_password.sendResetLink")}</button>
             </div>
-        </form>
+        </div>
     </div>
 </div>                     
 </script>

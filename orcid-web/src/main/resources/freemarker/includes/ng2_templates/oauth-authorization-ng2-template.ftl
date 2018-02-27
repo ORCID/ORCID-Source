@@ -92,12 +92,12 @@
                                 <div class="personal-account-login">
                                     <p class="title">${springMacroRequestContext.getMessage("login.signinwithyourorcidaccount")}</p>
                                     <form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
-                                        <#include "/includes/login_personal_fields_inc.ftl"/>
+                                        <#include "/includes/login_personal_fields_inc_ng2.ftl"/>
                                     </form>
                                 </div>
                                 <!-- RESET PASSWORD -->
                                 
-                                <request-password-reset-ng2></request-password-reset-ng2>
+                                <request-password-reset-ng2 [authorizationForm]="authorizationForm"></request-password-reset-ng2>
 
                                 <!-- SOCIAL LOGIN -->                               
                                 <div class="social-login">
