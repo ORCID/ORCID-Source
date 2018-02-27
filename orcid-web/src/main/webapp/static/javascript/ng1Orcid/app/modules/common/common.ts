@@ -48,6 +48,9 @@ import { EmailFrecuencyNg2Module }
 import { LanguageNg2Module }
     from './../language/language.ts';
 
+import { RequestPasswordResetNg2Module }
+    from './../requestPasswordReset/requestPasswordReset.ts';
+
 //User generated services
 
 import { AffiliationService } 
@@ -98,6 +101,9 @@ import { OauthService }
 import { PreferencesService }
     from '../../shared/preferences.service.ts';
 
+import { RequestPasswordResetService }
+    from '../../shared/requestPasswordReset.service.ts';
+
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
 
@@ -123,7 +129,8 @@ import { WorksService }
             //User Modules
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
-            PrivacytoggleNg2Module
+            PrivacytoggleNg2Module,
+            RequestPasswordResetNg2Module
         ],
         declarations: [ 
             AjaxFormDateToISO8601Pipe,
@@ -134,7 +141,8 @@ import { WorksService }
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
-            WorkExternalIdentifierHtmlPipe
+            WorkExternalIdentifierHtmlPipe,
+
         ],
         exports: [
             //Angular Libraries
@@ -153,7 +161,8 @@ import { WorksService }
             //User Modules
             LanguageNg2Module,
             EmailFrecuencyNg2Module,
-            PrivacytoggleNg2Module
+            PrivacytoggleNg2Module,
+            RequestPasswordResetNg2Module
         ],
         providers: [
             AffiliationService,
@@ -172,6 +181,7 @@ import { WorksService }
             NameService,
             OauthService,
             PreferencesService,
+            RequestPasswordResetService,
             TwoFAStateService,
             WebsitesService,
             WidgetService,

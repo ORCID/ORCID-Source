@@ -89,6 +89,9 @@ import { OauthAuthorizationNg2Module }
 import { RegisterDuplicatesNg2Module } 
     from './registerDuplicates/registerDuplicates.ts';
 
+import { RequestPasswordResetNg2Module } 
+    from './requestPasswordReset/requestPasswordReset.ts';
+
 import { SearchNg2Module } 
     from './search/search.ts';
 
@@ -196,6 +199,7 @@ export class RootCmp {
         NameNg2Module, //Approved
         OauthAuthorizationNg2Module,
         RegisterDuplicatesNg2Module,
+        RequestPasswordResetNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
         SelfServiceAddContactNg2Module, //Approved

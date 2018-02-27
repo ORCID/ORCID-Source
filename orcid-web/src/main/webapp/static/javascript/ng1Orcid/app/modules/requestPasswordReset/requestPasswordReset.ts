@@ -1,9 +1,6 @@
 import * as angular 
     from 'angular';
 
-import { CommonModule } 
-    from '@angular/common'; 
-
 import { Directive, NgModule } 
     from '@angular/core';
 
@@ -14,6 +11,9 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated components
+import { CommonModule } 
+    from '@angular/common'; 
+
 import { RequestPasswordResetComponent } 
     from './requestPasswordReset.component.ts';
 
@@ -33,9 +33,12 @@ export const RequestPasswordResetModule = angular.module(
         entryComponents: [ 
             RequestPasswordResetComponent 
         ],
+        exports: [
+            RequestPasswordResetComponent
+        ],
         imports: [
             CommonModule,
-            FormsModule,
+            FormsModule
         ],
         providers: [
         ]

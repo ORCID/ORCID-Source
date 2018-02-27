@@ -96,7 +96,9 @@
                                     </form>
                                 </div>
                                 <!-- RESET PASSWORD -->
-                                <#include "/includes/login_reset_password_inc.ftl"/>
+                                
+                                <request-password-reset-ng2></request-password-reset-ng2>
+
                                 <!-- SOCIAL LOGIN -->                               
                                 <div class="social-login">
                                     <div class="title">

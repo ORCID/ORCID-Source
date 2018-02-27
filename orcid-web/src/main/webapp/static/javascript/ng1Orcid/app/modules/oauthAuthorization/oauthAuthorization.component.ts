@@ -9,6 +9,8 @@ import { NgFor, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef  } 
     from '@angular/core';
 
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
 import { Observable } 
     from 'rxjs/Rx';
 
@@ -17,6 +19,9 @@ import { Subject }
 
 import { Subscription }
     from 'rxjs/Subscription';
+
+import { CommonNg2Module }
+    from './../common/common.ts';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
