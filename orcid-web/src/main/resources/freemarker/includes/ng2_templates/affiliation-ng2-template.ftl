@@ -325,7 +325,7 @@
                                     <div id="education-qualification-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
-                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
+                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
                                         </div>
                                     </div>
                                 </div>  
@@ -705,7 +705,7 @@
                             <div id="employment-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_new'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div>
@@ -753,8 +753,7 @@
                                         <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
-                                            <ul class="menu-options employment">                            
-                                                
+                                            <ul class="menu-options employment">                                                
                                                 <li>                            
                                                     <a id="add-employment" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                                         <span class="glyphicon glyphicon-plus"></span>

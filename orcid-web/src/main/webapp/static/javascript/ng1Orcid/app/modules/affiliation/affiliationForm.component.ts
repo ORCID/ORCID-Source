@@ -274,7 +274,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         .subscribe(
             data => {
                 if (data != null) {
-                    console.log('getDisambiguatedAffiliation', data, this.editAffiliation);
                     this.disambiguatedAffiliation = data;
                     this.editAffiliation.orgDisambiguatedId.value = id;
                     this.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
