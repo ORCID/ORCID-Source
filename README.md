@@ -4,25 +4,26 @@ Welcome to ORCID Source. Here are some resources to get you started.
 
 * [What is ORCID?](http://orcid.org/about/what-is-orcid)
 
-* [ORCID Source Technical Community](http://orcid.org/about/community/orcid-technical-community)
+* [ORCID API introduction](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
 
-* [ORCID Source Wiki](https://github.com/ORCID/ORCID-Source/wiki)
-
-* [ORCID's Public API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-pub-web)
-
-* [ORCID's Member API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
-
-* [POPULAR CLIENT LIBRARIES](https://github.com/ORCID/ORCID-Source/blob/master/POPULAR_CLIENT_LIBRARIES.md)
-
-* [ORCID's API XSD - API message](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)
+* [ORCID's API XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)
+  * [Current stable XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1)
 
 * [ORCID's Localization Reference](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n)
 
 * [ORCID's OpenID Connect HOWTO Guide](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/OPEN_ID_CONNECT_HOWTO.md)
 
+* [ORCID API user's listserv](https://groups.google.com/forum/#!forum/orcid-api-users)
+
+* [ORCID member support center](https://members.orcid.org/)
+
+* [ORCID Source Wiki](https://github.com/ORCID/ORCID-Source/wiki)
+
+* [Popular Client Libraries](https://github.com/ORCID/ORCID-Source/blob/master/POPULAR_CLIENT_LIBRARIES.md)
+
 # Getting Support
 
-If you are experience problems using ORCID you can check our [help page](http://orcid.org/help). 
+If you are experience problems using ORCID you can check our [help page](http://orcid.org/help) or reach out on the [API user's listserv](https://groups.google.com/forum/#!forum/orcid-api-users). 
 
 # General Application Stack
 

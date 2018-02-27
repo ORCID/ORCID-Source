@@ -16,6 +16,11 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,6 +37,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.YearsList;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -110,6 +116,37 @@ public class BaseWorkspaceController extends BaseController {
     public String getcountryName(String Iso3166Country) {
         Map<String, String> countries = retrieveIsoCountries();
         return countries.get(Iso3166Country);
+    }
+    
+    protected boolean validDate(Date date) {
+        DateTimeFormatter[] formatters = {
+                new DateTimeFormatterBuilder().appendPattern("yyyy")
+                        .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
+                        .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                        .toFormatter(),
+                new DateTimeFormatterBuilder().appendPattern("yyyyMM")
+                        .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                        .toFormatter(),
+                new DateTimeFormatterBuilder().appendPattern("yyyyMMdd")
+                        .parseStrict().toFormatter() };
+        String dateString = date.getYear();
+        if (date.getMonth() != null) {
+            dateString += date.getMonth();
+            if (date.getDay() != null) {
+                dateString += date.getDay();
+            }
+        }
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                LocalDate localDate = LocalDate.parse(dateString, formatter);
+                if (PojoUtil.isEmpty(date.getDay()) || localDate.getDayOfMonth() == Integer.parseInt(date.getDay())) {
+                    // formatter will correct day to last valid day of month if it is too great
+                    return true;
+                }
+            } catch (DateTimeParseException e) {
+            }
+        }
+        return false;
     }
     
 }

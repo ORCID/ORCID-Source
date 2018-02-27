@@ -29,6 +29,9 @@ import { UpgradeModule }
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
 
+import { AffiliationDeleteNg2Module } 
+    from './affiliation/affiliationDelete.ts';
+
 import { AffiliationFormNg2Module } 
     from './affiliation/affiliationForm.ts';
 
@@ -179,6 +182,7 @@ export class RootCmp {
         UpgradeModule,
         /* User Generated Modules */
         AffiliationNg2Module,
+        AffiliationDeleteNg2Module,
         AffiliationFormNg2Module,
         AlsoKnownAsFormNg2Module,
         AlsoKnownAsNg2Module,

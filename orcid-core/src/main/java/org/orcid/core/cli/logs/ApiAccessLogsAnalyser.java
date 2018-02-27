@@ -16,12 +16,14 @@
  */
 package org.orcid.core.cli.logs;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.NoResultException;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -36,8 +38,18 @@ public class ApiAccessLogsAnalyser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiAccessLogsAnalyser.class);
 
+    private static final int BEARER_TOKEN_LENGTH = 36;
+
+    static final String UNKNOWN_CLIENT = "Unknown";
+
     @Option(name = "-f", usage = "Path to directory containing logs and / or directories of logs")
     private File logsDir;
+
+    @Option(name = "-o", usage = "Output file")
+    private File outputFile;
+
+    @Option(name = "-d", usage = "Debug", required = false)
+    private boolean debug = false;
 
     private OrcidOauth2TokenDetailDao tokenDao;
 
@@ -45,7 +57,9 @@ public class ApiAccessLogsAnalyser {
 
     private Map<String, String> tokenToClientDetails = new HashMap<>();
 
-    private AnalysisResults results = new AnalysisResults();
+    private AnalysisResults results;
+
+    private LogReader logReader;
 
     public static void main(String[] args) {
         ApiAccessLogsAnalyser analyser = new ApiAccessLogsAnalyser();
@@ -57,7 +71,6 @@ public class ApiAccessLogsAnalyser {
             analyser.analyse();
             analyser.shutdown();
         } catch (CmdLineException e) {
-            System.err.println(e.getMessage());
             parser.printUsage(System.err);
             System.exit(1);
         }
@@ -68,58 +81,69 @@ public class ApiAccessLogsAnalyser {
         LOGGER.info("Initialising Api access logs analysis...");
         applicationContext = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
         tokenDao = (OrcidOauth2TokenDetailDao) applicationContext.getBean("orcidOauth2TokenDetailDao");
+        logReader = new LogReader();
+        logReader.init(logsDir);
+        results = new AnalysisResults();
+        try {
+            results.setOutputStream(new FileOutputStream(outputFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error creating output stream to file " + outputFile.getAbsolutePath(), e);
+        }
     }
 
     private void shutdown() {
         applicationContext.close();
     }
 
-    private void analyse() {
+    void analyse() {
         LOGGER.info("Analysing log files, base directory: " + logsDir.getAbsolutePath());
-        analyseDir(logsDir);
-        LOGGER.info("Analysis complete");
-        results.outputClientStats(System.out);
-    }
-
-    private void analyseDir(File dir) {
-        LOGGER.info("Examining directory {}", dir.getAbsolutePath());
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                analyseDir(file);
-            } else {
-                analyseLogFile(file);
-            }
+        String line = logReader.getNextLine();
+        while (line != null) {
+            analyseLog(line);
+            line = logReader.getNextLine();
         }
-    }
-
-    private void analyseLogFile(File file) {
-        LOGGER.info("Examining log file {}", file.getAbsolutePath());
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line = reader.readLine();
-            while (line != null) {
-                analyseLog(line);
-                line = reader.readLine();
-            }
+        LOGGER.info("Analysis complete");
+        try {
+            results.outputClientStats();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Error outputting results");
+            System.exit(1);
         }
     }
 
     private void analyseLog(String line) {
         ApiLog log = ApiLog.parse(line);
-        String client = getClientDetailsId(log.getBearerToken());
-        if (client != null) { // discard if no client token
-            results.record(client, log);
+        if (log != null) {
+            if (debug) {
+                LOGGER.info("Found log data {}", log.toString());
+            }
+
+            if (log.getBearerToken() != null && log.getBearerToken().length() == BEARER_TOKEN_LENGTH) {
+                String client = getClientDetailsId(log.getBearerToken());
+                if (debug) {
+                    LOGGER.info("Found client {}", client);
+                }
+                if (client != null) { // discard if no client token
+                    results.record(client, log);
+                }
+            }
         }
     }
 
     private String getClientDetailsId(String token) {
-         if (!tokenToClientDetails.containsKey(token)) {
-         OrcidOauth2TokenDetail tokenDetail =
-         tokenDao.findByTokenValue(token);
-         tokenToClientDetails.put(token, tokenDetail.getClientDetailsId());
-         }
-         return tokenToClientDetails.get(token);
+        if (!tokenToClientDetails.containsKey(token)) {
+            OrcidOauth2TokenDetail tokenDetail = null;
+            try {
+                tokenDetail = tokenDao.findByTokenValue(token);
+                tokenToClientDetails.put(token, tokenDetail.getClientDetailsId());
+            } catch (NoResultException e) {
+                if (debug) {
+                    LOGGER.info("Couldn't find client for token {}", token);
+                }
+                tokenToClientDetails.put(token, UNKNOWN_CLIENT);
+            }
+        }
+        return tokenToClientDetails.get(token);
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
@@ -128,6 +152,13 @@ public class ApiAccessLogsAnalyser {
         }
         if (!logsDir.exists()) {
             throw new CmdLineException(parser, "Logs dir " + logsDir.getAbsolutePath() + " does not exist");
+        }
+        if (!outputFile.exists()) {
+            try {
+                outputFile.createNewFile();
+            } catch (IOException e) {
+                throw new CmdLineException(parser, "Invalid output file " + outputFile.getAbsolutePath());
+            }
         }
     }
 

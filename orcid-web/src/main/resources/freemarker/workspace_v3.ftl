@@ -73,7 +73,7 @@
             <#include "includes/print_record.ftl"/>
 
             <div class="qrcode-container">
-                <a href="http://qrcode.orcid.org" target="workspace.qrcode.link.text"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
+                <a href="<@orcid.rootPath "/my-orcid-qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
                     <div class="popover-help-container">
                         <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
                         <div id="qrcode-help" class="popover bottom">
@@ -745,30 +745,34 @@
 </modalngcomponent><!-- Ng2 component -->  
 </@orcid.checkFeatureStatus> 
 
-<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
-    <keywords-form-ng2></keywords-form-ng2>
+<modalngcomponent elementHeight="300" elementId="modalAffiliationDelete" elementWidth="300">
+    <affiliation-delete-ng2></affiliation-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
+    <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
     <emails-form-ng2 popUp="true"></emails-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
-    <email-unverified-warning-ng2></email-unverified-warning-ng2>
-</modalngcomponent><!-- Ng2 component --> 
-
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<modalngcomponent elementHeight="645" elementId="affiliationForm" elementWidth="700">
-    <affiliation-form-ng2></affiliation-form-ng2>
+<modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
+    <email-unverified-warning-ng2></email-unverified-warning-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
+    <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
+
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
 
 <#include "/includes/record/record_modals.ftl">
-<#include "/includes/record/email_settings.ftl">
 
 </@protected>  

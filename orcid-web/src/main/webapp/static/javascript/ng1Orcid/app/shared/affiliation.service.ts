@@ -1,11 +1,14 @@
 import { Injectable } 
     from '@angular/core';
 
-import { Headers, Http, RequestOptions, Response } 
+import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
 import { Observable } 
     from 'rxjs/Observable';
+
+import { Subject }
+    from 'rxjs/Subject';
 
 import 'rxjs/Rx';
 
@@ -18,18 +21,18 @@ export class AffiliationService {
     private urlAffiliationDisambiguated: string;
     private urlAffiliations: string;
 
-	public educations: any;
-    public employments: any;
-    public loading: boolean;
+	public loading: boolean;
     public affiliationsToAddIds: any;
 
-	public educationsAndQualifications: any;
+    public affiliation: any;
+    public type: string;
 
+    private notify = new Subject<any>();
+    
+    notifyObservable$ = this.notify.asObservable();
+	
     constructor( private http: Http ){
         this.affiliationsToAddIds = null,
-        this.educations = new Array(),
-        this.employments = new Array(),
-        this.educationsAndQualifications = new Array(),
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 
@@ -41,56 +44,17 @@ export class AffiliationService {
         this.urlAffiliationById = getBaseUri() + '/affiliations/affiliations.json?affiliationIds=';
         this.urlAffiliationDisambiguated = getBaseUri() + '/affiliations/disambiguated/id/';
         this.urlAffiliations = getBaseUri() + '/affiliations/affiliations.json';
+        this.affiliation = null;
+        this.type = '';
     }
 
-    deleteAffiliation( data ) {        
-        let arr = null;
-        let idx;
-        
-        let tmpArr = null;
-        let tmpIdx = null;
-        
-        if(data.affiliationType != null && data.affiliationType.value != null) {
-        	if (data.affiliationType.value == 'education'){
-            	arr = this.educations;
-	        	tmpArr = this.educationsAndQualifications;
-	        } else if (data.affiliationType.value == 'employment'){
-	            arr = this.employments;
-	        } else if(data.affiliationType.value == 'distinction') {
-	        	//TODO
-	        } else if(data.affiliationType.value == 'invited-position') {
-	        	//TODO
-	        } else if(data.affiliationType.value == 'membership') {
-	        	//TODO
-	        } else if(data.affiliationType.value == 'qualification') {
-	        	tmpArr = this.educationsAndQualifications;
-	        } else if(data.affiliationType.value == 'service') {
-	        	//TODO
-	        }
-        }
-        
-        for (idx in arr) {
-            if (arr[idx].activePutCode == data.putCode.value) {
-                break;
-            }
-        }
-        
-        arr.splice(idx, 1);
-        
-        //TODO: remove when new affiliation types get live
-        if(tmpArr != null){
-	        for (tmpIdx in tmpArr) {
-	            if (tmpArr[tmpIdx].activePutCode == data.putCode.value) {
-	                break;
-	            }
-	        }
-	        
-	        tmpArr.splice(tmpIdx, 1);        
-        }
-        
-        
+    deleteAffiliation( data ) {     
+        let options = new RequestOptions(
+            { headers: this.headers }
+        );
+
         return this.http.delete( 
-            this.urlAffiliation + '?id=' + data.putCode.value,             
+            this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
         )
         .map(
@@ -117,9 +81,6 @@ export class AffiliationService {
     getAffiliationsId() {
         this.loading = true;
         this.affiliationsToAddIds = null;
-        this.educations.length = 0;
-        this.employments.length = 0;
-        this.educationsAndQualifications.lenght = 0;
         return this.http.get(
             this.urlAffiliationId
         )
@@ -156,6 +117,12 @@ export class AffiliationService {
             { headers: this.headers }
         )
         .map((res:Response) => res.json()).share();
+    }
+
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
     }
 }
 

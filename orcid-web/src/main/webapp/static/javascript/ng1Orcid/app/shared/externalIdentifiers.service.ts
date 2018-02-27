@@ -70,18 +70,19 @@ export class ExternalIdentifiersService {
     }
 
      removeExternalIdentifier( data ) {
-        let encoded_data = JSON.stringify( data );
+        let options = new RequestOptions(
+            { headers: this.headers }
+        );
         
         return this.http.delete( 
-            getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encoded_data, 
-            //encoded_data, 
-            { headers: this.headers }
+            getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encodeURIComponent(data),             
+            options
         )
         .map(
             (res:Response) => res.json()
         )
         .do(
-            (data) => {                     
+            (data) => {                   
             }
         )
         .share();
