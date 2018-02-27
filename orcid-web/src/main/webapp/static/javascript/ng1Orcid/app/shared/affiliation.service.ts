@@ -94,6 +94,12 @@ export class AffiliationService {
         .map((res:Response) => res.json()).share();
     }
 
+    getPublicAffiliationsById( idList ) {
+        return this.http.get(
+                getBaseUri() + '/' + orcidVar.orcidId + '/affiliations.json?affiliationIds=' + idList
+        ).map((res:Response) => res.json()).share();
+    }
+    
     getData(): Observable<any> {
         return this.http.get(
             this.urlAffiliation

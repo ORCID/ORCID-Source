@@ -9,7 +9,7 @@ declare var typeahead: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
 
 import { Observable } 
@@ -48,6 +48,7 @@ import { CommonService }
     providers: [CommonService]
 })
 export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
+    @Input() publicView: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -87,7 +88,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
         private featuresService: FeaturesService,
-        private commonSrvc: CommonService
+        private commonSrvc: CommonService,
+        private elementRef: ElementRef
     ) {
         /*
         this.emailSrvc = emailSrvc;
@@ -116,6 +118,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.sectionOneElements = [];
         this.displayNewAffiliationTypesFeatureEnabled = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
         this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
+        this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 
     addAffiliationModal(type, affiliation): void {
@@ -182,44 +185,61 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     	return this.workspaceSrvc.displayEducationAndQualification;
     };
 
+    getPublicAffiliationsById( affiliationIds ): void {
+        this.affiliationService.getPublicAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    this.parseAffiliations(data);
+                },
+                error => {
+                    console.log('getPublicAffiliationsById error', error);
+                } 
+        );
+    };
+    
     getAffiliationsById( affiliationIds ): void {
         this.affiliationService.getAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
             .subscribe(
                 data => {
-                    for (let i in data) {
-                        if (data[i].affiliationType != null 
-                            && data[i].affiliationType.value != null) {                            
-                            if(data[i].affiliationType.value == 'distinction') {
-                                this.distinctionsAndInvitedPositions.push( data[i] );
-                            } else if(data[i].affiliationType.value == 'education'){
-                                this.educations.push(data[i]);
-                                this.educationsAndQualifications.push( data[i] );
-                            } else if ( data[i].affiliationType.value == 'employment' ) {
-                                this.employments.push( data[i] );
-                            } else if(data[i].affiliationType.value == 'invited-position') {
-                                this.distinctionsAndInvitedPositions.push( data[i] );
-                            } else if(data[i].affiliationType.value == 'membership') {
-                                this.membershipsAndServices.push( data[i] );
-                            } else if (data[i].affiliationType.value == 'qualification') {
-                                this.educationsAndQualifications.push(data[i]);                             
-                            } else if(data[i].affiliationType.value == 'service') {
-                                this.membershipsAndServices.push( data[i] );
-                            }
-                        }
-                    };
-                    
-                    if(this.displayNewAffiliationTypesFeatureEnabled) {
-                        this.sectionOneElements = this.educationsAndQualifications;
-                    } else {
-                        this.sectionOneElements = this.educations;
-                    } 
-                    
-                    this.sort('endDate', true);
+                    this.parseAffiliations(data);
                 },
                 error => {
                     console.log('getAffiliationsById error', error);
                 } 
         );
+    };
+    
+    parseAffiliations( data ): void {
+        for (let i in data) {
+            console.log("Type: " + data[i].affiliationType.value);
+            if (data[i].affiliationType != null 
+                && data[i].affiliationType.value != null) {                            
+                if(data[i].affiliationType.value == 'distinction') {
+                    this.distinctionsAndInvitedPositions.push( data[i] );
+                } else if(data[i].affiliationType.value == 'education'){
+                    this.educations.push(data[i]);
+                    this.educationsAndQualifications.push( data[i] );
+                } else if ( data[i].affiliationType.value == 'employment' ) {
+                    this.employments.push( data[i] );
+                } else if(data[i].affiliationType.value == 'invited-position') {
+                    this.distinctionsAndInvitedPositions.push( data[i] );
+                } else if(data[i].affiliationType.value == 'membership') {
+                    this.membershipsAndServices.push( data[i] );
+                } else if (data[i].affiliationType.value == 'qualification') {
+                    this.educationsAndQualifications.push(data[i]);                             
+                } else if(data[i].affiliationType.value == 'service') {
+                    this.membershipsAndServices.push( data[i] );
+                }
+            }
+        };
+        
+        if(this.displayNewAffiliationTypesFeatureEnabled) {
+            this.sectionOneElements = this.educationsAndQualifications;
+        } else {
+            this.sectionOneElements = this.educations;
+        } 
+        
+        this.sort('endDate', true);
     };
 
     getAffiliationsId(): void {
@@ -230,19 +250,26 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.employments.length = 0;
         this.membershipsAndServices.length = 0; 
         
-        this.affiliationService.getAffiliationsId()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                if( data.length != 0 ) {
-                    let affiliationIds = data.splice(0,20).join();
-                    this.getAffiliationsById( affiliationIds );                    
-                }
-            },
-            error => {
-                console.log('getAffiliationsId', error);
-            } 
-        );
+        console.log("Is true?" + (this.publicView === "true"));
+        console.log("Is false?" + (this.publicView === "false"));
+        
+        if(this.publicView === "true") {
+            this.getPublicAffiliationsById( orcidVar.affiliationIdsJson );
+        } else {
+            this.affiliationService.getAffiliationsId()
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    if( data.length != 0 ) {
+                        let affiliationIds = data.splice(0,20).join();
+                        this.getAffiliationsById( affiliationIds );
+                    }
+                },
+                error => {
+                    console.log('getAffiliationsId', error);
+                } 
+            );
+        }
     };
 
     getDisambiguatedAffiliation = function(id) {

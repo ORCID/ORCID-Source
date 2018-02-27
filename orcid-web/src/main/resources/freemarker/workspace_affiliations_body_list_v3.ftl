@@ -21,7 +21,7 @@
 <#include "includes/affiliate/add_affiliate_inc.ftl"/>
 
 <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-    <affiliation-ng2></affiliation-ng2>
+    <affiliation-ng2 publicView="false"></affiliation-ng2>
 </@orcid.checkFeatureStatus>
 
 <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES' false> 
