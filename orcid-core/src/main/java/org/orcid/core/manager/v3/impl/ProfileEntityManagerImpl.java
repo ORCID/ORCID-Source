@@ -443,6 +443,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profile.setIndexingStatus(IndexingStatus.REINDEX);
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());
+        profile.setEncryptedPassword(encryptionManager.hashForInternalUse(claim.getPassword().getValue()));
         if (locale != null) {
             profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
         }
@@ -539,7 +540,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public void updatePassword(String orcid, String password) {
         String encryptedPassword = encryptionManager.hashForInternalUse(password);
-        profileDao.updateEncryptedPassword(orcid, encryptedPassword);
+        profileDao.updateEncryptedPassword(orcid, encryptedPassword);        
     }
 
     @Override
