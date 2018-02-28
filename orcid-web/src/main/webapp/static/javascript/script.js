@@ -698,7 +698,9 @@ $(function() {
     }
     
     function showLoginDeactivatedError() {
-        angular.element($("#login-deactivated-error")).scope().showDeactivationError();
+        //TODO add togglz for ng2 feature
+        window.angularComponentReference.zone.run(() => { window.angularComponentReference.showDeactivationError(); });
+        //angular.element($("#login-deactivated-error")).scope().showDeactivationError();
         if ($('form#loginForm #login-error-mess').length == 0) {
             $('form#loginForm #login-deactivated-error').fadeIn('fast');
         } else {

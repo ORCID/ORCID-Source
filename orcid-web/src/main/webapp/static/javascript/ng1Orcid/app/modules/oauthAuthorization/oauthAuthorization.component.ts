@@ -7,7 +7,7 @@ declare var addShibbolethGa: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild  } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
     from '@angular/core';
 
 import { ReCaptchaComponent } 
@@ -81,11 +81,18 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     generalRegistrationError: any;
 
     constructor(
+        private zone:NgZone,
         private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private modalService: ModalService,
         private oauthService: OauthService
     ) {
+        window['angularComponentReference'] = {
+            zone: this.zone,
+            showDeactivationError: () => this.showDeactivationError(),
+            component: this,
+        };
+
         this.allowEmailAccess = true;
         this.authorizationForm = {};
         this.counter = 0;
@@ -410,10 +417,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     sendReactivationEmail(email): void {
         
 
-        this.oauthService.sendReactivationEmail( { email: email })
+        this.oauthService.sendReactivationEmail(email)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
+                //TODO: show reactivation sent msg
             },
             error => {
                 ////console.log('setBiographyFormError', error);

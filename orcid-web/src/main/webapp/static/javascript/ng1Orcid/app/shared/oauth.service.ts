@@ -14,6 +14,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class OauthService {
+    private formHeaders: Headers;
     private headers: Headers;
     private notify = new Subject<any>();
     private url: string;
@@ -21,6 +22,7 @@ export class OauthService {
     notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: Http ){
+        this.formHeaders = new Headers({'Content-Type': 'application/x-www-form-urlencoded'});
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 
@@ -111,13 +113,15 @@ export class OauthService {
         .map((res:Response) => res.json()).share();
     }
 
-    sendReactivationEmail( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
+    sendReactivationEmail( email ): Observable<any> {
+        //let data = JSON.stringify(obj);
+
+        let data = 'email=' + email;
         
         return this.http.post( 
             getBaseUri() + '/sendReactivation.json', 
-            encoded_data, 
-            { headers: this.headers }
+            data, 
+            { headers: this.formHeaders }
         )
         .map((res:Response) => res.json()).share();
     }
