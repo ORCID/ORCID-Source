@@ -237,6 +237,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
         newRecord.setUsedRecaptchaOnRegistration(usedCaptcha);
         newRecord.setUserLastIp(ip);
+        newRecord.setLastLogin(now);
         if (PojoUtil.isEmpty(registration.getSendEmailFrequencyDays())) {
             newRecord.setSendEmailFrequencyDays(Float.valueOf(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS));
         } else {

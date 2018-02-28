@@ -702,6 +702,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @ExcludeFromProfileLastModifiedUpdate
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         Query query = entityManager.createNativeQuery("update profile set last_login=now(), user_last_ip=:ipAddr where orcid=:orcid");
         query.setParameter("orcid", orcid);
