@@ -17,11 +17,13 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,6 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -45,14 +49,18 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -75,6 +83,8 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import org.togglz.junit.TogglzRule;
 
 import com.google.common.collect.Lists;
@@ -108,6 +118,12 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Mock
     private OrcidProfileManager orcidProfileManager;
     
+    @Mock
+    private EncryptionManager encryptionManagerMock;
+    
+    @Mock
+    private EmailManagerReadOnly emailManagerReadOnlyMock;
+    
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
     
@@ -128,6 +144,10 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManager", emailManager); 
         TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);
         TargetProxyHelper.injectIntoProxy(registrationController, "orcidProfileManager", orcidProfileManager);
+        TargetProxyHelper.injectIntoProxy(registrationController, "encryptionManager", encryptionManagerMock);
+        TargetProxyHelper.injectIntoProxy(registrationController, "emailManagerReadOnly", emailManagerReadOnlyMock);
+        
+        when(servletRequest.getLocale()).thenReturn(Locale.ENGLISH);
         
         // Disable all features by default
         togglzRule.disableAll();
@@ -489,5 +509,121 @@ public class RegistrationControllerTest extends DBUnitTest {
         OrcidWorks orcidWorks = new OrcidWorks();
         profile.setOrcidWorks(orcidWorks);        
         return profile;
+    }
+    
+    @Test
+    public void verifyEmailTest() throws UnsupportedEncodingException {
+        String orcid = "0000-0000-0000-0000";
+        String email = "user_1@test.orcid.org";
+        SecurityContextTestUtils.setupSecurityContextForWebUser(orcid, email);
+        String encodedEmail = new String(Base64.encodeBase64(email.getBytes()));
+        when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
+        when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
+        when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(emailManager.verifyEmail(email, orcid)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
+        
+        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
+        
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        assertNotNull(mav);
+        assertEquals("redirect:/my-orcid", mav.getViewName());
+        assertTrue(ra.getFlashAttributes().containsKey("emailVerified"));
+        assertTrue((Boolean) ra.getFlashAttributes().get("emailVerified"));
+        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
+        verify(emailManager, times(1)).verifyEmail(email, orcid);
+    }
+    
+    @Test
+    public void verifyEmail_InvalidUserTest() throws UnsupportedEncodingException {
+        String orcid = "0000-0000-0000-0000";
+        String otherOrcid = "0000-0000-0000-0001";
+        String email = "user_1@test.orcid.org";
+        String otherEmail = "user_2@test.orcid.org";
+        SecurityContextTestUtils.setupSecurityContextForWebUser(otherOrcid, otherEmail);
+        String encodedEmail = new String(Base64.encodeBase64(email.getBytes()));
+        when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
+        when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
+        when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(emailManager.verifyEmail(email, orcid)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
+        
+        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
+        
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        assertNotNull(mav);
+        assertEquals("wrong_user", mav.getViewName());
+        assertFalse(ra.getFlashAttributes().containsKey("emailVerified"));
+        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
+        verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
+    }
+    
+    @Test
+    public void verifyEmail_InvalidEmailTest() throws UnsupportedEncodingException {
+        String orcid = "0000-0000-0000-0000";
+        String email = "user_1@test.orcid.org";
+        SecurityContextTestUtils.setupSecurityContextForWebUser(orcid, email);
+        String encodedEmail = new String(Base64.encodeBase64(email.getBytes()));
+        when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
+        // Email doesn't exists
+        when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(false);
+        when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(emailManager.verifyEmail(email, orcid)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
+        
+        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
+        
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        assertNotNull(mav);
+        assertEquals("redirect:/my-orcid", mav.getViewName());
+        assertFalse(ra.getFlashAttributes().containsKey("emailVerified"));
+        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
+        verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
+    }
+    
+    @Test
+    public void verifyEmail_NotVerifiedTest() throws UnsupportedEncodingException {
+        String orcid = "0000-0000-0000-0000";
+        String email = "user_1@test.orcid.org";
+        SecurityContextTestUtils.setupSecurityContextForWebUser(orcid, email);
+        String encodedEmail = new String(Base64.encodeBase64(email.getBytes()));
+        when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
+        when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
+        when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
+        // For some reason the email wasn't verified
+        when(emailManager.verifyEmail(email, orcid)).thenReturn(false);
+        when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
+        
+        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
+        
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        assertNotNull(mav);
+        assertEquals("redirect:/my-orcid", mav.getViewName());
+        assertTrue(ra.getFlashAttributes().containsKey("emailVerified"));
+        assertFalse((Boolean) ra.getFlashAttributes().get("emailVerified"));
+        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
+        verify(emailManager, times(1)).verifyEmail(Mockito.anyString(), Mockito.anyString());
+    }
+    
+    @Test
+    public void verifyEmail_UnableToDecryptEmailTest() throws UnsupportedEncodingException {
+        String orcid = "0000-0000-0000-0000";
+        String email = "user_1@test.orcid.org";
+        SecurityContextTestUtils.setupSecurityContextForWebUser(orcid, email);
+        String encodedEmail = new String(Base64.encodeBase64(email.getBytes()));
+        when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenThrow(new EncryptionOperationNotPossibleException());
+        
+        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
+        
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        assertNotNull(mav);
+        assertEquals("redirect:/my-orcid", mav.getViewName());
+        assertTrue(ra.getFlashAttributes().containsKey("invalidVerifyUrl"));
+        assertTrue((Boolean) ra.getFlashAttributes().get("invalidVerifyUrl"));
+        verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
 }

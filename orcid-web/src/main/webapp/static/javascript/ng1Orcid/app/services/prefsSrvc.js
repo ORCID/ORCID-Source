@@ -1,3 +1,5 @@
+//migrated
+
 angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
     var serv = {
         prefs: null,

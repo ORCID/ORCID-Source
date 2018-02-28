@@ -24,8 +24,8 @@ import { CommonService }
     from '../../shared/common.service.ts'; 
 
 @Component({
-    selector: 'Claim-ng2',
-    template:  scriptTmpl("Claim-ng2-template")
+    selector: 'claim-ng2',
+    template:  scriptTmpl("claim-ng2-template")
 })
 export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -47,10 +47,10 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.register = data;
-                console.log('this.registerData', this.register);
+                //console.log('this.registerData', this.register);
             },
             error => {
-                console.log('getregisterDataError', error);
+                //console.log('getregisterDataError', error);
             } 
         );
     };
@@ -92,7 +92,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
             },
             error => {
                 this.postingClaim = false;
-                console.log('setformDataError', error);
+                //console.log('setformDataError', error);
             } 
         );
     };
@@ -108,7 +108,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.commonService.copyErrorsLeft(this.register, data);
             },
             error => {
-                console.log("serverValidate() error", error);
+                //console.log("serverValidate() error", error);
             } 
         );
     };

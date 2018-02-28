@@ -32,4 +32,6 @@ public interface OrgDisambiguatedSolrDao {
 
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly);
 
+    List<OrgDisambiguatedSolrDocument> getOrgsForSelfService(String searchTerm, int firstResult, int maxResult);
+
 }

@@ -15,8 +15,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { AccountService } 
-    from '../../shared/account.service.ts'; 
+import { DeprecateProfileService } 
+    from '../../shared/deprecateProfile.service.ts'; 
 
 
 @Component({
@@ -27,7 +27,7 @@ export class DeprecateAccountFormComponent implements AfterViewInit, OnDestroy, 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
    
     constructor(
-        private accountService: AccountService
+        private deprecateProfileService: DeprecateProfileService
     ) {
 
     }
@@ -103,7 +103,7 @@ export const DeprecateAccountCtrl = angular.module('orcidApp').controller(
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with change DeactivateAccount");
+                    //console.log("error with change DeactivateAccount");
                 });
             };
 
@@ -116,7 +116,7 @@ export const DeprecateAccountCtrl = angular.module('orcidApp').controller(
                         $scope.$apply();
                     }
                 }).fail(function() {
-                    console.log("An error occurred preparing deprecate profile");
+                    //console.log("An error occurred preparing deprecate profile");
                 });
             };
 
@@ -143,7 +143,7 @@ export const DeprecateAccountCtrl = angular.module('orcidApp').controller(
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error confirming account deprecation");
+                    //console.log("error confirming account deprecation");
                 });
             };
             

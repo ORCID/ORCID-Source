@@ -265,7 +265,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV3_0_dev1 {
     private Long createExternalIdentifier(String name, org.orcid.jaxb.model.v3.dev1.common.Visibility defaultUserVisibility) throws InterruptedException, JSONException {
         //Change user visibility if needed
         if(!defaultUserVisibility.equals(currentUserVisibility)) {
-            changeDefaultUserVisibility(webDriver, defaultUserVisibility, false);
+            changeDefaultUserVisibility(webDriver, defaultUserVisibility.name(), false);
             currentUserVisibility = defaultUserVisibility;
         }
         

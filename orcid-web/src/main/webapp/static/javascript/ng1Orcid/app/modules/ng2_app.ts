@@ -29,6 +29,12 @@ import { UpgradeModule }
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
 
+import { AffiliationDeleteNg2Module } 
+    from './affiliation/affiliationDelete.ts';
+
+import { AffiliationFormNg2Module } 
+    from './affiliation/affiliationForm.ts';
+
 import { AlsoKnownAsNg2Module } 
     from './alsoKnownAs/alsoKnownAs.ts';
 
@@ -59,11 +65,20 @@ import { EmailVerificationSentMesssageNg2Module }
 import { FundingNg2Module } 
     from './funding/funding.ts';
 
+import { HomeNg2Module } 
+    from './home/home.ts';
+
 import { KeywordsNg2Module } 
     from './keywords/keywords.ts';
 
 import { KeywordsFormNg2Module } 
     from './keywordsForm/keywordsForm.ts';
+
+import { HeaderNg2Module } 
+    from './header/header.ts';
+
+import { LanguageNg2Module }
+    from './language/language.ts';
 
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
@@ -94,6 +109,9 @@ import { ThanksForRegisteringNg2Module }
 
 import { ThanksForVerifyingNg2Module } 
     from './thanksForVerifying/thanksForVerifying.ts';
+
+import { TwoFASetupNg2Module }
+    from './2FASetup/twoFASetup.ts';
 
 import { WebsitesNg2Module } 
     from './websites/websites.ts';
@@ -155,31 +173,37 @@ export class RootCmp {
         UpgradeModule,
         /* User Generated Modules */
         AffiliationNg2Module,
+        AffiliationDeleteNg2Module,
+        AffiliationFormNg2Module,
         AlsoKnownAsFormNg2Module,
         AlsoKnownAsNg2Module,
-        BiographyNg2Module,
-        CountryFormNg2Module,
-        CountryNg2Module,
+        BiographyNg2Module, //Approved
+        CountryFormNg2Module,//Approved
+        CountryNg2Module,//Approved
         EmailsFormNg2Module,
         EmailsNg2Module,
         EmailUnverifiedWarningNg2Module,
         EmailVerificationSentMesssageNg2Module,
+        HeaderNg2Module,
         //FundingNg2Module,
-        KeywordsFormNg2Module,
-        KeywordsNg2Module,
-        ModalNg2Module,
-        NameNg2Module,
-        SearchNg2Module,
-        SelfServiceNg2Module,
-        SelfServiceAddContactNg2Module,
-        SelfServiceExistingSubMemberNg2Module,
-        SelfServiceRemoveContactNg2Module,
-        SelfServiceRemoveSubMemberNg2Module,
+        HomeNg2Module,
+        KeywordsFormNg2Module,//Approved
+        KeywordsNg2Module,//Approved
+        LanguageNg2Module,
+        ModalNg2Module, //Approved
+        NameNg2Module, //Approved
+        SearchNg2Module, //Approved
+        SelfServiceNg2Module, //Approved
+        SelfServiceAddContactNg2Module, //Approved
+        SelfServiceExistingSubMemberNg2Module, //Approved
+        SelfServiceRemoveContactNg2Module, //Approved
+        SelfServiceRemoveSubMemberNg2Module, //Approved
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
-        WebsitesFormNg2Module,
-        WebsitesNg2Module,
-        WidgetNg2Module,
+        TwoFASetupNg2Module,
+        WebsitesFormNg2Module, //Approved
+        WebsitesNg2Module, //Approved
+        WidgetNg2Module, //Approved
         WorksNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
@@ -194,6 +218,6 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.101');
+        //console.log('v0.102');
     }
 }

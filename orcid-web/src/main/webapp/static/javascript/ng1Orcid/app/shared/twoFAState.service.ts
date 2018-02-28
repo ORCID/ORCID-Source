@@ -77,6 +77,24 @@ export class TwoFAStateService {
         .map((res:Response) => res.json()).share();
     }
 
+    init(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/social/2FA/authenticationCode.json'
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    submitCode( obj ): Observable<any> {   
+        let encoded_data = JSON.stringify(obj);
+
+        return this.http.post( 
+            getBaseUri() + '/social/2FA/submitCode.json',
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
     notifyOther(): void {
         this.notify.next();
         console.log('notify');

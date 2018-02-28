@@ -112,6 +112,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         document.setOrgDisambiguatedRegion(entity.getRegion());
         if (entity.getCountry() != null)
             document.setOrgDisambiguatedCountry(entity.getCountry().value());
+        document.setOrgDisambiguatedIdFromSource(entity.getSourceId());
+        document.setOrgDisambiguatedIdSourceType(entity.getSourceType());
         document.setOrgDisambiguatedType(entity.getOrgType());
         document.setOrgDisambiguatedPopularity(entity.getPopularity());
         Set<String> orgNames = new HashSet<>();
@@ -152,16 +154,34 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         List<OrgDisambiguatedSolrDocument> docs = orgDisambiguatedSolrDao.getOrgs(searchTerm, firstResult, maxResult, fundersOnly);
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
         for (OrgDisambiguatedSolrDocument doc: docs){
-            OrgDisambiguated org = new OrgDisambiguated();
-            org.setValue(doc.getOrgDisambiguatedName());
-            org.setCity(doc.getOrgDisambiguatedCity());
-            org.setRegion(doc.getOrgDisambiguatedRegion());
-            org.setCountry(doc.getOrgDisambiguatedCountry());
-            org.setOrgType(doc.getOrgDisambiguatedType());
-            org.setDisambiguatedAffiliationIdentifier(Long.toString(doc.getOrgDisambiguatedId()));
+            OrgDisambiguated org = convertSolrDocument(doc);
             ret.add(org);            
         }
         return ret;
+    }
+    
+    @Override
+    public List<OrgDisambiguated> searchOrgsFromSolrForSelfService(String searchTerm, int firstResult, int maxResult) {
+        List<OrgDisambiguatedSolrDocument> docs = orgDisambiguatedSolrDao.getOrgsForSelfService(searchTerm, firstResult, maxResult);
+        List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
+        for (OrgDisambiguatedSolrDocument doc: docs){
+            OrgDisambiguated org = convertSolrDocument(doc);
+            ret.add(org);            
+        }
+        return ret;
+    }
+
+    private OrgDisambiguated convertSolrDocument(OrgDisambiguatedSolrDocument doc) {
+        OrgDisambiguated org = new OrgDisambiguated();
+        org.setValue(doc.getOrgDisambiguatedName());
+        org.setCity(doc.getOrgDisambiguatedCity());
+        org.setRegion(doc.getOrgDisambiguatedRegion());
+        org.setCountry(doc.getOrgDisambiguatedCountry());
+        org.setOrgType(doc.getOrgDisambiguatedType());
+        org.setDisambiguatedAffiliationIdentifier(Long.toString(doc.getOrgDisambiguatedId()));
+        org.setSourceType(doc.getOrgDisambiguatedIdSourceType());
+        org.setSourceId(doc.getOrgDisambiguatedIdFromSource());
+        return org;
     }
 
     @Override

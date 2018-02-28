@@ -52,10 +52,10 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.formData = data;
-                //console.log('this.keywords', this.form);
+                ////console.log('this.keywords', this.form);
             },
             error => {
-                console.log('getKeywordsFormError', error);
+                //console.log('getKeywordsFormError', error);
             } 
         );
     };
@@ -73,7 +73,7 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };
@@ -85,7 +85,7 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.subscription = this.keywordsService.notifyObservable$.subscribe(
             (res) => {
                 this.getData();
-                //console.log('notified', res);
+                ////console.log('notified', res);
             }
         );
     };

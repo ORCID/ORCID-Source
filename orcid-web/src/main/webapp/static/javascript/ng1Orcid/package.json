@@ -27,6 +27,7 @@
     "rxjs": "^5.4.2",
     "systemjs": "0.19.40",
     "typescript": "^2.4.2",
+    "xml2js": "^0.4.19",
     "zone.js": "^0.7.6"
   },
   "description": "Angular 1.5 Orcid App",

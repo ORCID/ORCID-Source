@@ -39,12 +39,12 @@ export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('this.getForm', data);
+                //console.log('this.getForm', data);
                 this.update2FAStatus( data );
 
             },
             error => {
-                console.log('An error occurred disabling user 2FA', error);
+                //console.log('An error occurred disabling user 2FA', error);
             } 
         );
     };
@@ -64,12 +64,12 @@ export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log('this.getForm', data);
+                //console.log('this.getForm', data);
                 this.update2FAStatus( data );
 
             },
             error => {
-                console.log('getTwoFAStateFormError', error);
+                //console.log('getTwoFAStateFormError', error);
             } 
         );
     };
@@ -84,6 +84,7 @@ export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        this.check2FAState();
     };
 
 }

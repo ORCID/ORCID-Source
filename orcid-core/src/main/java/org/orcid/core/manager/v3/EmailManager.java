@@ -19,9 +19,9 @@ package org.orcid.core.manager.v3;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 
 
 /**
@@ -41,7 +41,7 @@ public interface EmailManager extends EmailManagerReadOnly {
 
     void addSourceToEmail(String email, String sourceId);
     
-    boolean verifyEmail(String email);
+    boolean verifyEmail(String email, String orcid);
     
     boolean verifyPrimaryEmail(String orcid);
     
@@ -62,7 +62,9 @@ public interface EmailManager extends EmailManagerReadOnly {
      */
     boolean isAutoDeprecateEnableForEmail(String email);
 
-    void update(EmailEntity emailEntity);
-    
     boolean hideAllEmails(String orcid);
+
+    boolean updateVisibility(String orcid, String email, Visibility visibility);
+    
+    void setPrimary(String orcid, String email, HttpServletRequest request);
 }

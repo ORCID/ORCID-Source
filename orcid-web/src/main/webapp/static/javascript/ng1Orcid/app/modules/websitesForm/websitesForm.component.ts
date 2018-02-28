@@ -107,7 +107,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData = data;
                 this.newElementDefaultVisibility = this.formData.visibility.visibility;
 
-                //console.log('this.getForm websites', this.formData);
+                ////console.log('this.getForm websites', this.formData);
 
                 if( this.formData.websites == null ) {
                     this.formData.websites = { value: null };
@@ -139,7 +139,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getWebsitesFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };
@@ -162,12 +162,12 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.closeEditModal();
                     }
                 }else{
-                    console.log(this.formData.errors);
+                    //console.log(this.formData.errors);
                 }
 
             },
             error => {
-                console.log('setWebsites', error);
+                //console.log('setWebsites', error);
             } 
         );
         this.formData.visibility = null;

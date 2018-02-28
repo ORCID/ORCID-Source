@@ -41,7 +41,7 @@ public class OrgDisambiguatedSolrDocument {
 
     @Field(SolrConstants.ORG_DISAMBIGUATED_COUNTRY)
     private String orgDisambiguatedCountry;
-
+    
     @Field(SolrConstants.ORG_DISAMBIGUATED_TYPE)
     private String orgDisambiguatedType;
 
@@ -50,6 +50,12 @@ public class OrgDisambiguatedSolrDocument {
 
     @Field(SolrConstants.ORG_NAMES)
     private List<String> orgNames;
+    
+    @Field(SolrConstants.ORG_DISAMBIGUATED_ID_FROM_SOURCE)
+    private String orgDisambiguatedIdFromSource;
+    
+    @Field(SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE)
+    private String orgDisambiguatedIdSourceType;
 
     @Field(SolrConstants.IS_FUNDING_ORG)
     private boolean isFundingOrg;
@@ -94,6 +100,9 @@ public class OrgDisambiguatedSolrDocument {
         this.orgDisambiguatedCountry = orgDisambiguatedCountry;
     }
 
+    /**
+     * The type of org, e.g. academic, government.
+     */
     public String getOrgDisambiguatedType() {
         return orgDisambiguatedType;
     }
@@ -125,4 +134,24 @@ public class OrgDisambiguatedSolrDocument {
     public void setFundingOrg(boolean isFundingOrg) {
         this.isFundingOrg = isFundingOrg;
     }
+
+    public String getOrgDisambiguatedIdFromSource() {
+        return orgDisambiguatedIdFromSource;
+    }
+
+    public void setOrgDisambiguatedIdFromSource(String orgDisambiguatedIdFromSource) {
+        this.orgDisambiguatedIdFromSource = orgDisambiguatedIdFromSource;
+    }
+
+    /**
+     * The type of ID, e.g. RINGGOLD, FUNDREF
+     */
+    public String getOrgDisambiguatedIdSourceType() {
+        return orgDisambiguatedIdSourceType;
+    }
+
+    public void setOrgDisambiguatedIdSourceType(String orgDisambiguatedIdSourceType) {
+        this.orgDisambiguatedIdSourceType = orgDisambiguatedIdSourceType;
+    }
+
 }

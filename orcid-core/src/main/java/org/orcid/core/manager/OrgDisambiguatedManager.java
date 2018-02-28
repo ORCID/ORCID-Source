@@ -32,6 +32,8 @@ public interface OrgDisambiguatedManager {
     
     public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly);
     
+    List<OrgDisambiguated> searchOrgsFromSolrForSelfService(String searchTerm, int firstResult, int maxResult);
+    
     public OrgDisambiguated findInDB(Long id);
 
 }

@@ -85,7 +85,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
         openEditAddressModal();
         deleteAddresses();
         createAddress(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         saveEditAddressModal();        
     }
 
@@ -96,12 +96,12 @@ public class AddressTest extends BlackBoxBaseV2Release {
         deleteAddresses();
         saveEditAddressModal();
         signout();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
     }
 
     private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
         if(!v.equals(currentDefaultVisibility)) {
-            changeDefaultUserVisibility(webDriver, v);
+            changeDefaultUserVisibility(webDriver, v.name());
             currentDefaultVisibility = v;
         }
     }
@@ -603,7 +603,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
         // SET THEM ALL TO LIMITED
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         saveEditAddressModal();
 
         // RC2
@@ -660,7 +660,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
         // SET THEM ALL TO PRIVATE
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         saveEditAddressModal();
 
         // RC2
@@ -704,7 +704,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         saveEditAddressModal();
     }
 
@@ -794,7 +794,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
         assertTrue(found);
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         saveEditAddressModal();
 
         // RC2
@@ -839,7 +839,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
         assertTrue(found);
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         saveEditAddressModal();
     }
 

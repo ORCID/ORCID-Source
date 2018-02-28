@@ -191,17 +191,17 @@
                 <div class="control-group">
                     <label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDateLeave'/></label>
                     <div class="relative">
-                        <select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year">
+                        <select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
                             <#list years?keys as key>
                                 <option value="${key}">${years[key]}</option>
                             </#list>
                         </select>
-                        <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month">
+                        <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
                             <#list months?keys as key>
                                 <option value="${key}">${months[key]}</option>
                             </#list>
                         </select>
-                        <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day">
+                        <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
                             <#list days?keys as key>
                                 <option value="${key}">${days[key]}</option>
                             </#list>

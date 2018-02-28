@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
@@ -33,10 +34,12 @@ import org.orcid.core.salesforce.model.ContactPermission;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.ContactsForm;
 import org.orcid.pojo.ajaxForm.MemberDetailsForm;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
@@ -66,6 +69,9 @@ public class SelfServiceController extends BaseController {
 
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
+    
+    @Resource
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     @ModelAttribute("contactRoleTypes")
     public Map<String, String> retrieveContactRoleTypesAsMap() {
@@ -283,6 +289,25 @@ public class SelfServiceController extends BaseController {
         }
         return contactsForm;
     }
+    
+    @RequestMapping(value = "/get-org-ids.json", method = RequestMethod.GET)
+    public @ResponseBody List<OrgId> getOrgIds(@RequestParam("accountId") String accountId) {
+        checkAccess(accountId);
+        return salesForceManager.retrieveOrgIdsByAccountId(accountId);
+    }
+
+    @RequestMapping(value = "/add-org-id.json", method = RequestMethod.POST)
+    public @ResponseBody OrgId addOrgId(@RequestBody OrgId orgId) {
+        checkFullAccess(orgId.getAccountId());
+        salesForceManager.createOrgId(orgId);
+        return orgId;
+    }
+    
+    @RequestMapping(value = "/remove-org-id.json", method = RequestMethod.POST)
+    public @ResponseBody void removeOrgId(@RequestBody OrgId orgId) {
+        checkFullAccess(orgId.getAccountId());
+        salesForceManager.removeOrgId(orgId);
+    }
 
     @RequestMapping(value = "/validate-sub-member-initial-contact-email.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm validateSubMemberInitialContactEmail(@RequestBody SubMemberForm subMember) {
@@ -411,6 +436,15 @@ public class SelfServiceController extends BaseController {
     public @ResponseBody void cancelSubMemberAddition(@RequestBody SubMember subMember) {
         checkFullAccess(subMember.getParentAccountId());
         salesForceManager.removeOpportunity(subMember.getOpportunity());
+    }
+    
+    @RequestMapping(value = "/disambiguated/search", method = RequestMethod.GET)
+    public @ResponseBody List<Map<String, String>> searchDisambiguated(@RequestParam("q") String query, @RequestParam(value = "limit") int limit) {
+        List<Map<String, String>> datums = new ArrayList<>();
+        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolrForSelfService(query, 0, limit)) {
+            datums.add(orgDisambiguated.toMap());
+        }
+        return datums;
     }
 
     private void checkFullAccess(String memberId) {

@@ -23,8 +23,14 @@ import { FilterImportWizardsPipe }
 import { LatexPipe }
     from '../../pipes/latexNg2.ts';
 
+    import { OrgIdentifierHtmlPipe }
+    from '../../pipes/orgIdentifierHtmlNg2.ts';    
+    
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
+
+import { OrderObjectByPipe }
+    from '../../pipes/orderObjectByNg2.ts'
 
 import { UrlProtocolPipe }
     from '../../pipes/urlProtocolNg2.ts';
@@ -33,8 +39,55 @@ import { WorkExternalIdentifierHtmlPipe }
     from '../../pipes/workExternalIdentifierHtmlNg2.ts';
 
 //User generated modules
+/*
+import { DeactivateAccountNg2Module }
+    from './../deactivateAccount/deactivateAccount.ts';
+import { DelegatesNg2Module }
+    from './../delegates/delegates.ts';
+
+import { DeprecateAccountNg2Module }
+    from './../deprecateAccount/deprecateAccount.ts';
+
+import { EditTableNg2Module }
+    from './../editTable/editTable.ts';
+*/
+
+import { EmailFrecuencyNg2Module }
+    from './../emailFrecuency/emailFrecuency.ts';
+
+import { HeaderNg2Module }
+    from './../header/header.ts';
+
+import { LanguageNg2Module }
+    from './../language/language.ts';
+
+import { NotificationsCountNg2Module }
+    from './../notificationsCount/notificationsCount.ts';
+
+import { NotificationPreferenceNg2Module }
+    from './../notificationPreferences/notificationPreference.ts';
+
+import { PasswordEditNg2Module }
+    from './../passwordEdit/passwordEdit.ts';
+
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
+
+/*
+import { RevokeApplicationFormNg2Module }
+    from './../revokeApplicationForm/revokeApplicationForm.ts';
+import { ShowEditLanguageNg2Module }
+    from './../showEditLanguage/showEditLanguage.ts';
+*/
+
+import { SecurityQuestionEditNg2Module }
+    from './../securityQuestionEdit/securityQuestionEdit.ts';
+/*
+import { SocialNg2Module }
+    from './../social/social.ts';
+import { SwitchUserNg2Module }
+    from './../switchUser/switchUser.ts';
+*/
 
 //User generated services
 
@@ -59,6 +112,9 @@ import { CountryService }
 import { EmailService } 
     from '../../shared/email.service.ts';
 
+import { FeaturesService }
+    from '../../shared/features.service.ts';
+
 import { FundingService } 
     from '../../shared/funding.service.ts';
 
@@ -68,14 +124,26 @@ import { FundingService }
 import { KeywordsService } 
     from '../../shared/keywords.service.ts';
 
+import { LanguageService }
+    from '../../shared/language.service.ts';
+
 import { ModalService } 
     from '../../shared/modal.service.ts';
 
 import { NameService } 
-    from '../../shared/name.service.ts'; 
+    from '../../shared/name.service.ts';
+
+import { PreferencesService }
+    from '../../shared/preferences.service.ts';
+
+import { TwoFAStateService } 
+    from '../../shared/twoFAState.service.ts';
 
 import { WebsitesService } 
     from '../../shared/websites.service.ts';
+
+import { WidgetService }
+    from '../../shared/widget.service.ts'
 
 import { WorkspaceService } 
     from '../../shared/workspace.service.ts'; 
@@ -91,6 +159,12 @@ import { WorksService }
             CommonModule,
             FormsModule,
             //User Modules
+            //DeactivateAccountNg2Module,
+            //DelegatesNg2Module,
+            //DeprecateAccountNg2Module,
+            //EditTableNg2Module,
+            EmailFrecuencyNg2Module,
+            LanguageNg2Module,
             PrivacytoggleNg2Module
         ],
         declarations: [ 
@@ -98,7 +172,9 @@ import { WorksService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrgIdentifierHtmlPipe,
             OrderByPipe,
+            OrderObjectByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe
         ],
@@ -111,10 +187,18 @@ import { WorksService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrgIdentifierHtmlPipe,
             OrderByPipe,
+            OrderObjectByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
+            //DeactivateAccountNg2Module,
+            //DelegatesNg2Module,
+            //DeprecateAccountNg2Module,
+            //EditTableNg2Module,
+            LanguageNg2Module,
+            EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module
         ],
         providers: [
@@ -125,12 +209,17 @@ import { WorksService }
             ConsortiaService,
             CountryService,
             EmailService,
+            FeaturesService,
             FundingService,
             //GroupedActivitiesUtilService,
             KeywordsService,
+            LanguageService,
             ModalService,
             NameService,
+            PreferencesService,
+            TwoFAStateService,
             WebsitesService,
+            WidgetService,
             WorksService,
             WorkspaceService
         ]

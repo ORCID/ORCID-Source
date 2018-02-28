@@ -40,7 +40,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);    
 
-    boolean deprecateProfile(String deprecated, String primary);
+    boolean deprecateProfile(String deprecated, String primary, String deprecatedMethod, String adminUser);
     
     boolean isProfileDeprecated(String orcid);
 

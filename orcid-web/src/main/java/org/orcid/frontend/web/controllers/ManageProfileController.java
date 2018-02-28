@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,6 +47,7 @@ import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
@@ -59,7 +61,6 @@ import org.orcid.jaxb.model.v3.dev1.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
@@ -77,7 +78,6 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
@@ -120,6 +120,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
     @Resource
     private UserConnectionManager userConnectionManager;
 
@@ -476,7 +479,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             return deprecateProfile;
         }
 
-        boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId());
+        boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
         if (!deprecated) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
         }
@@ -552,12 +555,17 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {   
-        String currentUserOrcid = getCurrentUserOrcid();
+    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {  
+    	String currentUserOrcid = getCurrentUserOrcid();
         String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
         if (primaryEmail.equals(email))
             request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
 
+        String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        if(!currentUserOrcid.equals(emailOwner)) {
+        	throw new IllegalArgumentException("Invalid email address provided");
+        }
+        
         notificationManager.sendVerificationEmail(currentUserOrcid, email);
         return new Errors();
     }
@@ -620,60 +628,65 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Email deleteEmailJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
-        List<String> emailErrors = new ArrayList<String>();
+    public @ResponseBody Errors deleteEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
+        Errors errors = new Errors();
         String currentUserOrcid = getCurrentUserOrcid();
-        // clear erros
-        email.setErrors(new ArrayList<String>());
-
+        
         // if blank
-        if (email.getValue() == null || email.getValue().trim().equals("")) {
-            emailErrors.add(getMessage("Email.personalInfoForm.email"));
+        if (PojoUtil.isEmpty(email)) {
+            errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
         
-        if (emailManager.isPrimaryEmail(currentUserOrcid, email.getValue())) {
-            emailErrors.add(getMessage("manage.email.primaryEmailDeletion"));
+        
+        
+        String owner = null;
+        
+        try {
+        	owner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        } catch(NoResultException nre) {
+        	
+        }
+        
+        if(!currentUserOrcid.equals(owner)) {
+        	errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
+        }
+        
+        if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
+            errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
         }
 
-        email.setErrors(emailErrors);
-
-        if (emailErrors.size() == 0) {            
-            emailManager.removeEmail(currentUserOrcid, email.getValue());
+        if (errors.getErrors().size() == 0) {            
+            emailManager.removeEmail(currentUserOrcid, email);
+        }
+        return errors;
+    }
+    
+    @RequestMapping(value = "/email/visibility", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email updateEmailVisibility(@RequestBody org.orcid.pojo.ajaxForm.Email email) {
+        String orcid = getCurrentUserOrcid();
+        String owner = emailManager.findOrcidIdByEmail(email.getValue());
+        if(orcid.equals(owner)) {
+            if(email.getVisibility() != null) {
+                // Updates the visibility on the given email
+                emailManager.updateVisibility(orcid, email.getValue(), email.getVisibility());
+            }            
         }
         return email;
     }
     
-    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
-        org.orcid.pojo.ajaxForm.Email newPrime = null;
-        List<String> allErrors = new ArrayList<String>();
-
-        for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
-            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-            validateEmailAddress(email.getValue(), request, mbr);
-            List<String> emailErrors = new ArrayList<String>();
-            for (ObjectError oe : mbr.getAllErrors()) {
-                String msg = getMessage(oe.getCode(), email.getValue());
-                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
-                allErrors.add(msg);
-            }
-            email.setErrors(emailErrors);
-            if (email.isPrimary())
-                newPrime = email;
+    @RequestMapping(value = "/email/setPrimary", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email setPrimary(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
+        String orcid = getCurrentUserOrcid();
+        String owner = emailManager.findOrcidIdByEmail(email.getValue());
+        if(orcid.equals(owner)) {            
+            // Sets the given user as primary
+            emailManager.setPrimary(orcid, email.getValue(), request);   
+            // Updates the last modified of the record
+            profileEntityManager.updateLastModifed(orcid);
         }
-
-        if (newPrime == null) {
-            allErrors.add("A Primary Email Must be selected");
-        }
-
-        emails.setErrors(allErrors);
-        if (allErrors.size() == 0) {
-            emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
-            
-        }
-        return emails;
+        return email;
     }
-
+    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
@@ -925,5 +938,37 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
+    }
+    
+    @Deprecated
+    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
+        org.orcid.pojo.ajaxForm.Email newPrime = null;
+        List<String> allErrors = new ArrayList<String>();
+
+        for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
+            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+            validateEmailAddress(email.getValue(), request, mbr);
+            List<String> emailErrors = new ArrayList<String>();
+            for (ObjectError oe : mbr.getAllErrors()) {
+                String msg = getMessage(oe.getCode(), email.getValue());
+                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
+                allErrors.add(msg);
+            }
+            email.setErrors(emailErrors);
+            if (email.isPrimary())
+                newPrime = email;
+        }
+
+        if (newPrime == null) {
+            allErrors.add("A Primary Email Must be selected");
+        }
+
+        emails.setErrors(allErrors);
+        if (allErrors.size() == 0) {
+            emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
+            
+        }
+        return emails;
     }
 }

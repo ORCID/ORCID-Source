@@ -76,10 +76,10 @@ export class WebsitesComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 }
 
-                console.log('this.getForm websites', this.formData);
+                //console.log('this.getForm websites', this.formData);
             },
             error => {
-                console.log('getWebsitesFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };
@@ -97,7 +97,7 @@ export class WebsitesComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('getEmails', error);
+                //console.log('getEmails', error);
             } 
         );
     };

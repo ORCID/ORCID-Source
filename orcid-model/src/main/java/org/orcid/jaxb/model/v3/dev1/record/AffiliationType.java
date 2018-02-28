@@ -29,7 +29,7 @@ import java.io.Serializable;
 public enum AffiliationType implements Serializable {
 
     @XmlEnumValue("distinction")
-    DISTINCTION("distiction"),
+    DISTINCTION("distinction"),
     
     @XmlEnumValue("education")
     EDUCATION("education"),

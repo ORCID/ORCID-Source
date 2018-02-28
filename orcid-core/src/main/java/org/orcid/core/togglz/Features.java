@@ -63,7 +63,10 @@ public enum Features implements Feature {
     
     @Label("API analytics debug logging")
     API_ANALYTICS_DEBUG,
-    
+
+    @Label("Self service org ids")
+    SELF_SERVICE_ORG_IDS,
+
     @Label("Turn on angular2 features that are on development")
     ANGULAR2_DEV,
 
@@ -74,7 +77,23 @@ public enum Features implements Feature {
     ANGULAR1_LEGACY,  
     
     @Label("Set the 2.0 API as the default one in the public API")
-    PUB_API_2_0_BY_DEFAULT;  
+    PUB_API_2_0_BY_DEFAULT,
+    
+
+    @Label("Set the 2.0 API as the default one in the members API")
+    MEMBER_API_2_0_BY_DEFAULT,  
+
+    @Label("Disable reCAPTCHA")
+    DISABLE_RECAPTCHA,
+    
+    @Label("Display the new affiliation types in the workspace")
+    DISPLAY_NEW_AFFILIATION_TYPES, 
+    
+    @Label("Disable 1.2 API from the public API")
+    DISABLE_1_2_ON_PUB_API,
+    
+    @Label("Disable 1.2 API from the member API")
+    DISABLE_1_2_ON_MEMBER_API;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

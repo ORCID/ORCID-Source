@@ -68,6 +68,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private static final long serialVersionUID = 7215593667128405456L;
 
     private static final String PROFILE = "profile";
+    
+    public static final String USER_DRIVEN_DEPRECATION = "USER_DRIVEN";
+    
+    public static final String ADMIN_DEPRECATION = "ADMIN";
+    
+    public static final String AUTO_DEPRECATION = "AUTO";
 
     public ProfileEntity() {
 
@@ -105,6 +111,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     // Deprecation fields
     private ProfileEntity primaryRecord;
     private Date deprecatedDate;
+    private String deprecatedMethod;
+    private String deprecatingAdmin;
 
     // Internally used fields
     private String creationMethod;
@@ -847,6 +855,24 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      * */
     public void setDeprecatedDate(Date deprecatedDate) {
         this.deprecatedDate = deprecatedDate;
+    }
+    
+    @Column(name = "deprecated_method")
+    public String getDeprecatedMethod() {
+        return deprecatedMethod;
+    }
+
+    public void setDeprecatedMethod(String deprecatedMethod) {
+        this.deprecatedMethod = deprecatedMethod;
+    }
+
+    @Column(name = "deprecating_admin")
+    public String getDeprecatingAdmin() {
+        return deprecatingAdmin;
+    }
+
+    public void setDeprecatingAdmin(String deprecatingAdmin) {
+        this.deprecatingAdmin = deprecatingAdmin;
     }
 
     @Column(name = "salesforce_id")

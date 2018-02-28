@@ -38,6 +38,7 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
@@ -50,7 +51,6 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -132,6 +132,9 @@ public class RegistrationController extends BaseController {
 
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;   
+    
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -556,25 +559,26 @@ public class RegistrationController extends BaseController {
     public ModelAndView verifyEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
             throws UnsupportedEncodingException {
         try {
-            String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-            EmailEntity emailEntity = emailManager.find(decryptedEmail);
-            String emailOrcid = emailEntity.getProfile().getId();
-            if (!getCurrentUserOrcid().equals(emailOrcid)) {
-                return new ModelAndView("wrong_user");
-            }
-            emailEntity.setVerified(true);
-            emailEntity.setCurrent(true);
-            emailManager.update(emailEntity);
-            
-            profileEntityManager.updateLocale(emailOrcid, org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
-            redirectAttributes.addFlashAttribute("emailVerified", true);
-            
-            if (!emailEntity.getPrimary()) {
-                boolean isPrimaryEmailVerified = emailManager.isPrimaryEmailVerified(emailOrcid);
-                if (!isPrimaryEmailVerified) {
-                    redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
+            String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));            
+            if(emailManagerReadOnly.emailExists(decryptedEmail)) {
+                String orcid = emailManagerReadOnly.findOrcidIdByEmail(decryptedEmail);
+                if(!getCurrentUserOrcid().equals(orcid)) {
+                    return new ModelAndView("wrong_user");
                 }
-            }
+                
+                boolean verified = emailManager.verifyEmail(decryptedEmail, orcid);
+                if(verified) {
+                    profileEntityManager.updateLocale(decryptedEmail, org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+                    redirectAttributes.addFlashAttribute("emailVerified", true);
+                    if(!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
+                        if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
+                            redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
+                        }
+                    }
+                } else {
+                    redirectAttributes.addFlashAttribute("emailVerified", false);                    
+                }
+            }            
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);

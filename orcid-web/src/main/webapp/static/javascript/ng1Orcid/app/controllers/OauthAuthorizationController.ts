@@ -1,3 +1,5 @@
+//Migrated
+
 declare var $: any;
 declare var basePath: any;
 declare var baseUrl: any;

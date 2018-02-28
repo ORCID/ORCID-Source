@@ -1,3 +1,5 @@
+//Migrated - Not in use?
+
 declare var $: any;
 declare var colorbox: any;
 declare var getBaseUri: any;

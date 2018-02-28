@@ -7,6 +7,7 @@ declare var isMobile: any;
 declare var logAjaxError: any;
 declare var om: any;
 declare var orcidVar: any;
+declare var orcidGA: any;
 declare var scriptTmpl: any;
 declare var NODE_ENV: string;
 interface GlobalEnvironment {

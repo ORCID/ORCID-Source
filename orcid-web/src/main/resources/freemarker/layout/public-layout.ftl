@@ -54,6 +54,9 @@
 <!--hide header if oauth login-->
 <#if !(RequestParameters['oauth'])??>
 <div class="container">
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+        <header-ng2></header-ng2>
+        </@orcid.checkFeatureStatus>
         <div class="header center" ng-controller="headerCtrl">
             <div class="row">
                 <div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"
@@ -170,16 +173,23 @@
                             <span class="glyphicon glyphicon-user"></span>
                         </a>                
                         
-                        <!--  Desktop / Tablet menu -->             
+                        <!--  Desktop / Tablet menu -->         
                         <ul class="menu" ng-show="menuVisible == true" ng-cloak resize>
-                            <!-- FOR RESEARCHERS -->
+                        <!-- FOR RESEARCHERS -->
+                        <#if (showSecondaryMenu??)>
+                            <li class="first expanded">
+                        <#else>
                             <li class="first expanded active-trail">
+                        </#if>
+
                                 <a href="${aboutUri}/about/what-is-orcid/mission" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
                                 'public-layout.for_researchers'/></a>
+                                
                                 <ul class="menu lang-fixes">
                                     <!-- Mobile view Only -->
                                     <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
-                                
+
+                                    
                                     <@security.authorize access="!hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">                              
                                         <li class="leaf last"><a ${(nav=="signin")?then('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
                                         <li class="leaf last"><a ${(nav=="register")?then('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                              
@@ -213,6 +223,7 @@
                                     </@security.authorize>                                                             
                                     <li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
                                 </ul>
+                                
                             </li>
         
                             <!-- DRUPAL WEBSITE MENUS -->

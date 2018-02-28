@@ -106,10 +106,10 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.nameForm.givenNames = { value: null };
                 }
                 this.originalData = this.nameForm;
-                //console.log('this.nameForm', this.nameForm);
+                ////console.log('this.nameForm', this.nameForm);
             },
             error => {
-                console.log('getNameForm Error', error);
+                //console.log('getNameForm Error', error);
             } 
         );
     };
@@ -125,7 +125,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.nameForm = data;
-                //console.log('this.nameForm response', this.nameForm);
+                ////console.log('this.nameForm response', this.nameForm);
                 if( closeAfterAction == true 
                     && this.nameForm.errors.length == 0 
                 ) {
@@ -133,7 +133,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('setNameForm Error', error);
+                //console.log('setNameForm Error', error);
             } 
         );
     };

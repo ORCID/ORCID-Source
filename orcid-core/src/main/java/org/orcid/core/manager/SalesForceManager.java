@@ -29,6 +29,7 @@ import org.orcid.core.salesforce.model.ContactPermission;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.OrgId;
 
 /**
  * 
@@ -62,6 +63,10 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     void addOrcidsToContacts(List<Contact> contacts);
 
     void addAccessInfoToContacts(List<Contact> contacts, String accountId);
+    
+    List<OrgId> retrieveOrgIdsByAccountId(String accountId);
+
+    List<OrgId> retrieveFreshOrgIdsByAccountId(String accountId);
 
     void enableAccess(String accountId, List<Contact> contactsList);
 
@@ -86,6 +91,10 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
      * @return the boolean indicating whether submember exists in member
      */
     boolean checkExistingSubMember(Member member, String parentAccountId);
+    
+    void createOrgId(OrgId orgId);
+    
+    void removeOrgId(OrgId orgId);
 
     /**
      * 
