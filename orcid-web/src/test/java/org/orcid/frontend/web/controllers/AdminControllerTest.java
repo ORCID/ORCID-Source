@@ -59,10 +59,10 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
@@ -105,6 +105,9 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
+    
     @Mock
     private NotificationManager mockNotificationManager;
     
@@ -137,18 +140,7 @@ public class AdminControllerTest extends BaseControllerTest {
     @Override
     protected Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
-
-        OrcidProfileUserDetails details = null;
-        if (orcidProfile.getType() != null) {
-            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
-        } else {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
-        }
+        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcidProfile.retrieveOrcidPath());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4440", orcidProfile.getPassword(), getRole());
         auth.setDetails(details);
         return auth;

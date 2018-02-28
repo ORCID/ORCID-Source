@@ -18,6 +18,7 @@ package org.orcid.frontend.web.util;
 
 import java.util.Arrays;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -28,8 +29,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.test.DBUnitTest;
@@ -46,6 +47,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class BaseControllerTest extends DBUnitTest {
 
     protected OrcidProfile orcidProfile;
+    
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -73,17 +77,7 @@ public class BaseControllerTest extends DBUnitTest {
             orcidProfile = getOrcidProfile();
         }
 
-        OrcidProfileUserDetails details = null;
-        if (orcidProfile.getType() != null) {
-            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
-        } else {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
-        }
+        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcidProfile.retrieveOrcidPath());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, details.getPassword(), Arrays.asList(OrcidWebRole.ROLE_USER));
         auth.setDetails(details);
         return auth;

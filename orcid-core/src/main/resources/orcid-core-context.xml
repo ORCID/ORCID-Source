@@ -54,6 +54,8 @@
 	
 	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
 	
+	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
+	
 	<!-- Effectively a wrapper around the client details service, converting client to user details -->
     <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
         <constructor-arg ref="clientDetailsManager"/>
