@@ -395,7 +395,16 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
         if(record.getActivitiesSummary() != null) {
             if(record.getActivitiesSummary() != null) {
                 //Distinctions
-                fail();
+            	if(record.getActivitiesSummary().getDistinctions() != null) {
+                    Distinctions d = record.getActivitiesSummary().getDistinctions();
+                    if(d.getSummaries() != null) {
+                        for(DistinctionSummary s : d.getSummaries()) {
+                            assertNotNull(s.getSource());                            
+                            assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                        }
+                    }
+                }
+                
                 //Educations
                 if(record.getActivitiesSummary().getEducations() != null) {
                     Educations e = record.getActivitiesSummary().getEducations();
@@ -418,13 +427,45 @@ public class RecordTest extends BlackBoxBaseV3_0_dev1 {
                 }
                 
                 //InvitedPositions
-                fail();
+                if(record.getActivitiesSummary().getInvitedPositions() != null) {
+                    InvitedPositions i = record.getActivitiesSummary().getInvitedPositions();
+                    if(i.getSummaries() != null) {
+                        for(InvitedPositionSummary s : i.getSummaries()) {
+                            assertNotNull(s.getSource());                            
+                            assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                        }
+                    }
+                }
                 //Memberships
-                fail();
+                if(record.getActivitiesSummary().getMemberships() != null) {
+                    Memberships m = record.getActivitiesSummary().getMemberships();
+                    if(m.getSummaries() != null) {
+                        for(MembershipSummary s : m.getSummaries()) {
+                            assertNotNull(s.getSource());                            
+                            assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                        }
+                    }
+                }
                 //Qualifications
-                fail();
+                if(record.getActivitiesSummary().getQualifications() != null) {
+                	Qualifications q = record.getActivitiesSummary().getQualifications();
+                    if(q.getSummaries() != null) {
+                        for(QualificationSummary s : q.getSummaries()) {
+                            assertNotNull(s.getSource());                            
+                            assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                        }
+                    }
+                }
                 //Services
-                fail();
+                if(record.getActivitiesSummary().getServices() != null) {
+                	Services sv = record.getActivitiesSummary().getServices();
+                    if(sv.getSummaries() != null) {
+                        for(ServiceSummary s : sv.getSummaries()) {
+                            assertNotNull(s.getSource());                            
+                            assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                        }
+                    }
+                }
                 
                 //Fundings
                 if(record.getActivitiesSummary().getFundings() != null) {
