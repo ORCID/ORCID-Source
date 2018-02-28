@@ -78,7 +78,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     membershipsAndServices: any;
     orgIdsFeatureEnabled: boolean;
     displayNewAffiliationTypesFeatureEnabled: boolean;
-    //: remove when new aff types is live and leave only educationsAndQualifications
+    //TODO: Remove when new aff types is live and leave only educationsAndQualifications
     sectionOneElements: any;
     
     constructor(
