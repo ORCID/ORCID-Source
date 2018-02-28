@@ -10,6 +10,9 @@ import { Directive, NgModule }
 import { FormsModule }
     from '@angular/forms'; // <-- NgModel lives here
 
+import { ReCaptchaModule } 
+    from 'angular2-recaptcha';
+
 //User generated filters
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
@@ -176,6 +179,7 @@ import { WorksService }
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
             PrivacytoggleNg2Module,
+            ReCaptchaModule,
             RequestPasswordResetNg2Module
         ],
         declarations: [ 
@@ -212,6 +216,7 @@ import { WorksService }
             LanguageNg2Module,
             EmailFrecuencyNg2Module,
             PrivacytoggleNg2Module,
+            ReCaptchaModule,
             RequestPasswordResetNg2Module
         ],
         providers: [

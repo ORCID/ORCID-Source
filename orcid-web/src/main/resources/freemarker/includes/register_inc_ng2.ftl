@@ -219,16 +219,11 @@
         <!--Recaptcha-->
         <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
             <div>   
-                Recaptcha goes here
                 <div class="bottomBuffer relative recaptcha"  id="recaptcha">
-                    <div vc-recaptcha
-                    theme="'light'"
-                    key="model.key"
-                    on-create="setRecaptchaWidgetId(widgetId)"
-                    on-success="setRecatchaResponse(response)"></div>
-                        <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
-                            <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
-                        </span>
+                    <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
+                    <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
+                        <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
+                    </span>
                 </div>
             </div>
         </@orcid.checkFeatureStatus> 
@@ -256,16 +251,12 @@
         
         <!--Recaptcha-->
         <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
-            <div>
+            <div>   
                 <div class="bottomBuffer relative recaptcha"  id="recaptcha">
-                    <div vc-recaptcha
-                    theme="'light'"
-                    key="model.key"
-                    on-create="setRecaptchaWidgetId(widgetId)"
-                    on-success="setRecatchaResponse(response)"></div>
-                        <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
-                            <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
-                        </span>
+                    <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
+                    <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
+                        <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
+                    </span>
                 </div>
             </div>
         </@orcid.checkFeatureStatus>

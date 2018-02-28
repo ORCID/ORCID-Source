@@ -1,4 +1,5 @@
 declare var $: any; //delete
+declare var OrcidCookie: any;
 declare var orcidVar: any;
 declare var orcidGA: any;
 declare var addShibbolethGa: any;
@@ -6,8 +7,11 @@ declare var addShibbolethGa: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef  } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild  } 
     from '@angular/core';
+
+import { ReCaptchaComponent } 
+    from 'angular2-recaptcha';
 
 import { Observable } 
     from 'rxjs/Rx';
@@ -36,6 +40,8 @@ import { OauthService }
     template:  scriptTmpl("oauth-authorization-ng2-template")
 })
 export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, OnInit {
+    @ViewChild(ReCaptchaComponent) captcha: ReCaptchaComponent;
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -44,13 +50,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     allowEmailAccess: any;
     authorizationForm: any;
     counter: any;
+    currentLanguage: any;
     duplicates: any;
     gaString: any;
     focusIndex: any;
     emailTrustAsHtmlErrors: any;
     enablePersistentToken: any;
     isOrcidPresent: any;
-    model: any;
     oauthSignin: any;
     personalLogin: any;
     recaptchaWidgetId: any;
@@ -58,6 +64,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     requestInfoForm: any;
     registrationForm: any;
     scriptsInjected: any;
+    site_key: any;
     showBulletIcon: any;
     showClientDescription: any;
     showCreateIcon: any;
@@ -82,15 +89,14 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.allowEmailAccess = true;
         this.authorizationForm = {};
         this.counter = 0;
+        this.currentLanguage = OrcidCookie.getCookie('locale_v3');
         this.duplicates = {};
         this.gaString = null;
         this.emailTrustAsHtmlErrors = [];
         this.enablePersistentToken = true;
         this.focusIndex = null;
         this.isOrcidPresent = false;
-        this.model = {
-            key: orcidVar.recaptchaKey
-        };
+        this.site_key = orcidVar.recaptchaKey;
         this.oauthSignin = false;
         this.personalLogin = true;
         this.recaptchaWidgetId = null;
@@ -149,7 +155,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     loginSocial(idp): void {
-        console.log("login social");
         if(this.gaString){
             orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + this.gaString]);
         } else {
@@ -158,13 +163,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
     };
 
-    setRecaptchaWidgetId(widgetId): void {
-        this.recaptchaWidgetId = widgetId;        
-    };
-
-    setRecatchaResponse(response): void {
-        this.recatchaResponse = response;        
-    };
 
     showDeactivationError(): void {
         this.showDeactivatedError = true;
@@ -190,9 +188,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     switchForm(): void {
-        console.log("switch form");
         this.showRegisterForm = !this.showRegisterForm;
-        console.log(this.showRegisterForm);
         if (!this.personalLogin) {
             this.personalLogin = true;
         }
@@ -217,7 +213,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };  
 
     removeEmailField(index): void {
-        console.log("remove email" + index);
         this.registrationForm.emailsAdditional.splice(index, 1);
         this.cdr.detectChanges();
     };
@@ -442,7 +437,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     oauth2ScreensPostRegisterConfirm(): void {
-        console.log("postRegisterConfirm");
         var baseUri = getBaseUri();       
         if(this.registrationForm.linkType === 'shibboleth'){
             baseUri += '/shibboleth';
@@ -524,7 +518,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 this.commonSrvc.copyErrorsLeft(this.registrationForm, data);
-                console.log(data);
                 if(field == 'Email') {
                     if (this.registrationForm.email.errors.length > 0) {
                         for(var i = 0; i < this.registrationForm.email.errors.length; i++){
@@ -558,7 +551,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates'});
     };
 
-   
+    handleCaptchaResponse($event): void {
+        this.recaptchaWidgetId = this.captcha.widgetId;
+        this.recatchaResponse = this.captcha.getResponse();
+    };
+
     showProcessingColorBox(): void  {
         /*
         $.colorbox({
