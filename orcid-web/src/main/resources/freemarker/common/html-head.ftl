@@ -169,7 +169,9 @@
     </@orcid.checkFeatureStatus> 
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+        <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
+            <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+        </#if>
     </@orcid.checkFeatureStatus> 
     
     <#if springMacroRequestContext.requestUri?contains("/account") >
