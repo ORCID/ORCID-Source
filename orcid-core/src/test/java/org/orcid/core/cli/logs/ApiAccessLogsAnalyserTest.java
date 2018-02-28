@@ -97,7 +97,7 @@ public class ApiAccessLogsAnalyserTest {
                         "127.0.0.1 - - [17/Oct/2017:00:00:08 +0000] \"GET /orcid-api-web/v2.0/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
                                 + TOKEN_2 + "\" \"-\" \"-\" \"-\"\n")
                 .thenReturn(
-                        "127.0.0.1 - - [17/Oct/2017:00:00:09 +0000] \"GET /orcid-api-web/v2.0/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
+                        "???d??? 127.0.0.1 - - 10.183.248.6 Thu 10-17-2017 00:00:08.238 UTC \"GET /orcid-api-web/v2.0/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
                                 + TOKEN_2 + "\" \"-\" \"-\" \"-\"\n")
                 .thenReturn(null);
         Mockito.when(tokenDao.findByTokenValue(Mockito.eq(TOKEN_1))).thenReturn(getOrcidOauth2TokenDetailClientA());
