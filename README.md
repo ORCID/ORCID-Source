@@ -6,8 +6,6 @@ Welcome to ORCID Source. Here are some resources to get you started.
 
 * [ORCID Source Technical Community](http://orcid.org/about/community/orcid-technical-community)
 
-* [ORCID Source Wiki](https://github.com/ORCID/ORCID-Source/wiki)
-
 * [ORCID's Public API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-pub-web)
 
 * [ORCID's Member API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
