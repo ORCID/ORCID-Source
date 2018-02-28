@@ -19,28 +19,32 @@ package org.orcid.core.cli.logs;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 public class ApiLog {
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiLog.class);
+
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss xx");
-    
+
     private LocalDateTime dateTime;
-    
+
     private String method;
-    
+
     private String endpoint;
-    
+
     private HttpStatus status;
-    
+
     private String bearerToken;
-    
+
     private String version;
-    
+
     private ApiLog() {
-        
+
     }
-    
+
     public LocalDateTime getDateTime() {
         return dateTime;
     }
@@ -72,7 +76,7 @@ public class ApiLog {
     public void setStatus(HttpStatus status) {
         this.status = status;
     }
-    
+
     public String getBearerToken() {
         return bearerToken;
     }
@@ -80,7 +84,7 @@ public class ApiLog {
     public void setBearerToken(String bearerToken) {
         this.bearerToken = bearerToken;
     }
-    
+
     public String getVersion() {
         return version;
     }
@@ -90,16 +94,21 @@ public class ApiLog {
     }
 
     public static ApiLog parse(String line) {
-        ApiLog log = new ApiLog();
-        log.setDateTime(getDate(line));
-        log.setMethod(getMethod(line));
-        log.setEndpoint(getEndpoint(line));
-        log.setStatus(getStatus(line));
-        log.setBearerToken(getBearerToken(line));
-        log.setVersion(getVersion(log.getEndpoint()));
-        return log;
+        try {
+            ApiLog log = new ApiLog();
+            log.setDateTime(getDate(line));
+            log.setMethod(getMethod(line));
+            log.setEndpoint(getEndpoint(line));
+            log.setStatus(getStatus(line));
+            log.setBearerToken(getBearerToken(line));
+            log.setVersion(getVersion(log.getEndpoint()));
+            return log;
+        } catch (Exception e) {
+            LOGGER.warn("Failed to parse line {}", line, e);
+            return null;
+        }
     }
-    
+
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(dateTime);
@@ -110,14 +119,14 @@ public class ApiLog {
         builder.append(" ").append(version);
         return builder.toString();
     }
-    
+
     private static String getVersion(String endpoint) {
         int index = endpoint.indexOf("/", 1);
         int nextIndex = endpoint.indexOf("/", index + 1);
         if (nextIndex < 0) {
             return null;
         }
-        
+
         String possibleVersion = endpoint.substring(index + 1, nextIndex);
         if (possibleVersion.matches("v\\d{1,}.*")) {
             return possibleVersion;
@@ -131,7 +140,7 @@ public class ApiLog {
             return null;
         }
         index += "bearer".length();
-        
+
         int nextIndex = line.indexOf("\"", index);
         return line.substring(index, nextIndex).trim();
     }
@@ -164,7 +173,5 @@ public class ApiLog {
         String dateString = line.substring(index + 1, nextIndex);
         return LocalDateTime.parse(dateString, DATE_FORMAT);
     }
-    
-    
-    
+
 }

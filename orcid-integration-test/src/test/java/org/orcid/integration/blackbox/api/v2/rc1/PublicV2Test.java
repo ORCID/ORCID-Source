@@ -97,7 +97,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         
     private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
         if (!v.equals(currentDefaultVisibility)) {
-            changeDefaultUserVisibility(webDriver, v, false);
+            changeDefaultUserVisibility(webDriver, v.name(), false);
             currentDefaultVisibility = v;
         }
     }

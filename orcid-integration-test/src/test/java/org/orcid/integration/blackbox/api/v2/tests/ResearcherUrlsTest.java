@@ -83,9 +83,9 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         openEditResearcherUrlsModal();
         deleteResearcherUrls();
         createResearcherUrl(researcherUrl1);
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         saveResearcherUrlsModal();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, false);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), false);
     }
 
     @AfterClass
@@ -1055,7 +1055,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         // SET ALL TO LIMITED
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         saveResearcherUrlsModal();
 
         // RC2
@@ -1099,7 +1099,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         saveResearcherUrlsModal();
     }
 
@@ -1111,7 +1111,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         // SET THEM ALL TO LIMITED
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         saveResearcherUrlsModal();
 
         // RC2
@@ -1167,7 +1167,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         // SET THEM ALL TO PRIVATE
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         saveResearcherUrlsModal();
 
         // RC2
@@ -1211,7 +1211,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         saveResearcherUrlsModal();
     }
 

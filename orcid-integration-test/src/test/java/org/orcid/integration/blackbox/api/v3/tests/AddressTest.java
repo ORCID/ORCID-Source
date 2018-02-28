@@ -63,7 +63,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         openEditAddressModal();
         deleteAddresses();
         createAddress(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         saveEditAddressModal();        
     }
 
@@ -74,12 +74,12 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         deleteAddresses();
         saveEditAddressModal();
         signout();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
     }
 
     private void changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
         if(!v.equals(currentDefaultVisibility)) {
-            changeDefaultUserVisibility(webDriver, v);
+            changeDefaultUserVisibility(webDriver, v.name());
             currentDefaultVisibility = v;
         }
     }
@@ -193,7 +193,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO LIMITED
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
         saveEditAddressModal();
 
         ClientResponse response = memberV3Dev1ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
@@ -208,7 +208,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO PRIVATE
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE.name());
         saveEditAddressModal();
 
         response = memberV3Dev1ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
@@ -220,7 +220,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         saveEditAddressModal();
     }
 
@@ -245,7 +245,7 @@ public class AddressTest extends BlackBoxBaseV3_0_dev1 {
         assertTrue(found);
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         saveEditAddressModal();
     }
 

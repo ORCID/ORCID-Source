@@ -18,7 +18,6 @@ package org.orcid.frontend.web.pagination;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
@@ -105,6 +104,17 @@ public class WorksPaginatorTest {
                 assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
             }
         }
+    }
+    
+    @Test
+    public void testGetPublicWorksCount() {
+        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroups());
+        int count = worksPaginator.getPublicWorksCount("orcid");
+        assertEquals(WorksPaginator.PAGE_SIZE / 2, count);
+        
+        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(getFiveLimitedWorkGroups());
+        count = worksPaginator.getPublicWorksCount("orcid");
+        assertEquals(0, count);
     }
 
     @Test
@@ -207,6 +217,34 @@ public class WorksPaginatorTest {
             works.getWorkGroup().add(getMixedWorkGroup(i));
         }
         return works;
+    }
+    
+    private Works getFiveLimitedWorkGroups() {
+        Works works = new Works();
+        works.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        works.setPath("some path");
+
+        for (int i = 0; i < 5; i++) {
+            works.getWorkGroup().add(getLimitedWorkGroup(i));
+        }
+        return works;
+    }
+    
+    private WorkGroup getLimitedWorkGroup(int i) {
+        WorkGroup workGroup = new WorkGroup();
+        workGroup.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        for (int x = 0; x < 10; x++) {
+            WorkSummary workSummary = new WorkSummary();
+            workSummary.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+            workSummary.setTitle(getTitle(i));
+            workSummary.setVisibility(Visibility.LIMITED);
+            workSummary.setDisplayIndex(Integer.toString(x));
+            workSummary.setPutCode(Long.valueOf(new StringBuilder(i).append(x).toString()));
+            workSummary.setSource(getSource());
+            workSummary.setType(WorkType.EDITED_BOOK);
+            workGroup.getWorkSummary().add(workSummary);
+        }
+        return workGroup;
     }
 
     private WorkGroup getMixedWorkGroup(int i) {

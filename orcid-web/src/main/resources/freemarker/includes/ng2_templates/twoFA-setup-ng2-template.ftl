@@ -26,19 +26,23 @@
                 <hr>
                 <div *nfIf="showSetup2FA" >
                     <p>
-                        ${springMacroRequestContext.getMessage("2FA.details")}
+                        ${springMacroRequestContext.getMessage("2FA.setup.details")}
                         <br />
-                        <a href="${knowledgeBaseUri}/articles/580410"
-                            target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
+                        <a href="${knowledgeBaseUri}/articles/1190068"
+                            target="2FA.setup.see.knowledgebase">${springMacroRequestContext.getMessage("2FA.setup.see.knowledgebase")}</a>
                     </p>
                     <ul id="2FASetupSteps" class="twoFactorAuthSetup">
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step1")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details")}</p>
+                        <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_2")}<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">${springMacroRequestContext.getMessage("2FA.setup.step1.details.googleAuthenticator")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.list_separator")}<a href="https://freeotp.github.io">${springMacroRequestContext.getMessage("2FA.setup.step1.details.freeOTP")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.list_separator")}${springMacroRequestContext.getMessage("2FA.setup.step1.details.or")}<a href="https://authy.com">${springMacroRequestContext.getMessage("2FA.setup.step1.details.authy")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.end")}</p>
+                        <p><a href="https://support.orcid.org/knowledgebase/articles/1190068">${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_3")}</a></p>
+                        <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_4")}</p>
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
                         <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a href="javascript:void(0);" id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
                         <img id="2FA-QR-code" *nfIf="showQRCode" />
                         <pre *nfIf="showTextCode">{{textCodeFor2FA}}</pre>
+                        <p *nfIf="showTextCode">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR")}<a href="javascript:void(0);" (click)="showQRCodeAgain()">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR.click_here")}</a></p>
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step3.details")}</p>
                     </ul>
@@ -55,7 +59,7 @@
                     <p>
                         ${springMacroRequestContext.getMessage("2FA.recoveryCodes.details")}
                         <br />
-                        <a href="${knowledgeBaseUri}/articles/1190068" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
+                        <a href="${knowledgeBaseUri}/articles/1190068" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.recoveryCodes.learn_more")}</a>
                     </p>
                     <div id="recoveryCodes">
                         <span ng-repeat="recoveryCode in recoveryCodes">{{recoveryCode}}<br></span>
@@ -63,6 +67,7 @@
                     <div class="form-group">
                         <button (click)="downloadRecoveryCodes()" class="btn btn-white"><span class="glyphicon glyphicon-download-alt"></span> ${springMacroRequestContext.getMessage("2FA.recoveryCodes.download")}</button>
                         <button (click)="copyRecoveryCodes()" class="btn btn-white"><span class="glyphicon glyphicon-file"></span> ${springMacroRequestContext.getMessage("2FA.recoveryCodes.copy")}</button>
+                        <p>${springMacroRequestContext.getMessage("2FA.recoveryCodes.passwordManager")}</p>
                     </div>
                     <div class="form-group">
                         <p><span>${springMacroRequestContext.getMessage("2FA.recoveryCodes.warning.heading")}</span>&nbsp;${springMacroRequestContext.getMessage("2FA.recoveryCodes.warning.details")}</p>

@@ -74,14 +74,14 @@ public class PersonalDetailsTest extends BlackBoxBaseV3_0_dev1 {
         PersonalDetailsTest.otherName2 = otherName2;
 
         otherNamesLastVisibility = org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC;
-        changeOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         saveOtherNamesModal();
 
         // Set biography to public
-        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
 
         // Set names to public
-        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
     }
 
     @AfterClass
@@ -136,7 +136,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV3_0_dev1 {
     public void changeToLimitedAndCheckWithPublicAPI() throws Exception {
         // Change names to limited
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
 
         ClientResponse getPersonalDetailsResponse = publicV3ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
@@ -175,7 +175,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV3_0_dev1 {
         assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         // Change bio to limited
-        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
 
         getPersonalDetailsResponse = publicV3ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
@@ -189,9 +189,9 @@ public class PersonalDetailsTest extends BlackBoxBaseV3_0_dev1 {
         ////////////////////////////
         // Rollback to public again//
         ////////////////////////////
-        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         setOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
-        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
     }
 
     @Test
@@ -238,9 +238,9 @@ public class PersonalDetailsTest extends BlackBoxBaseV3_0_dev1 {
 
         // Change all to LIMITED
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
         setOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
-        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
 
         // Verify they are still visible
         getPersonalDetailsResponse = memberV3Dev1ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
@@ -289,9 +289,9 @@ public class PersonalDetailsTest extends BlackBoxBaseV3_0_dev1 {
 
         // Change all to PRIVATE
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE);
+        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE.name());
         setOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE);
-        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE);
+        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.PRIVATE.name());
 
         // Check nothing is visible
         getPersonalDetailsResponse = memberV3Dev1ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
@@ -306,16 +306,16 @@ public class PersonalDetailsTest extends BlackBoxBaseV3_0_dev1 {
 
         // Change all to PUBLIC
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         setOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
-        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
     }
     
     private void setOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) throws Exception {
         if (!v.equals(otherNamesLastVisibility)) {
             otherNamesLastVisibility = v;
             openEditOtherNamesModal();
-            changeOtherNamesVisibility(v);
+            changeOtherNamesVisibility(v.name());
             saveOtherNamesModal();
         }
     }

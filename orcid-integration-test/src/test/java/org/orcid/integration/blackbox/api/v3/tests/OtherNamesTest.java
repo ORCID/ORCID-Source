@@ -70,7 +70,7 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         deleteOtherNames();
         createOtherName(otherName1);
         createOtherName(otherName2);
-        changeOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         saveOtherNamesModal();
     }    
 
@@ -85,7 +85,7 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
 
     private void changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
         if (!v.equals(currentDefaultVisibility)) {
-            changeDefaultUserVisibility(webDriver, v, false);
+            changeDefaultUserVisibility(webDriver, v.name(), false);
             currentDefaultVisibility = v;
         }
     }
@@ -94,7 +94,7 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         if(!v.equals(currentOtherNamesVisibility)) {
             showMyOrcidPage();
             openEditOtherNamesModal();
-            changeOtherNamesVisibility(v);
+            changeOtherNamesVisibility(v.name());
             saveOtherNamesModal();            
             currentOtherNamesVisibility = v;
         }

@@ -89,14 +89,14 @@ public class KeywordsTest extends BlackBoxBaseV2Release {
         deleteKeywords();
         createKeyword(keyword1);
         createKeyword(keyword2);
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         saveKeywordsModal(); 
         currentKeywordsVisibility = org.orcid.jaxb.model.common_v2.Visibility.PUBLIC;
     }
 
     private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
         if (!v.equals(currentDefaultVisibility)) {
-            changeDefaultUserVisibility(webDriver, v, false);
+            changeDefaultUserVisibility(webDriver, v.name(), false);
             currentDefaultVisibility = v;
         }
     }
@@ -105,7 +105,7 @@ public class KeywordsTest extends BlackBoxBaseV2Release {
         if(!v.equals(currentKeywordsVisibility)) {
             showMyOrcidPage();
             openEditKeywordsModal();
-            changeKeywordsVisibility(v);
+            changeKeywordsVisibility(v.name());
             saveKeywordsModal();            
             currentKeywordsVisibility = v;
         }

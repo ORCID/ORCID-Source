@@ -73,7 +73,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         showMyOrcidPage();
-    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
         workToCreate.setPutCode(null);
@@ -134,7 +134,7 @@ public class WorksTest extends BlackBoxBaseV3_0_dev1 {
     @Test
     public void createViewUpdateAndDeleteWorkWithLegacyUpdateScope() throws JSONException, InterruptedException, URISyntaxException {
         showMyOrcidPage();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_3.0_dev1/samples/read_samples/work-3.0_dev1.xml", Work.class);
         workToCreate.setPutCode(null);

@@ -5872,6 +5872,17 @@ a:hover .mozilla-badge {
     padding-right: 0
 }
 
+a#reset-password-toggle-text,
+a#reset-password-toggle-text:visited {
+    color: #e00;
+    font-weight: bold;
+}
+
+a#reset-password-toggle-text:hover,
+a#reset-password-toggle-text:hover:active {
+    color: #770000;
+}
+
 .login .social-login {
     margin-top: 30px;
     margin-bottom: 30px

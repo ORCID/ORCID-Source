@@ -71,7 +71,7 @@ public class WorksTest extends BlackBoxBaseRC4 {
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         showMyOrcidPage();
-    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc4/samples/work-2.0_rc4.xml", Work.class);
         workToCreate.setPutCode(null);
@@ -374,16 +374,17 @@ public class WorksTest extends BlackBoxBaseRC4 {
                 assertTrue(OrcidError.class.isAssignableFrom(element.getClass()));
                 OrcidError error = (OrcidError) element;
                 switch(i) {
-                case 3: 
-                    assertEquals(Integer.valueOf(9037), error.getErrorCode());
-                    assertTrue(error.getDeveloperMessage().startsWith("Invalid work type"));
+                case 3:
+                    assertEquals(Integer.valueOf(9001), error.getErrorCode());
+                    assertTrue(error.getDeveloperMessage().endsWith("\"http://www.orcid.org/ns/work\":type}' is expected.)"));
                     break;
-                case 5: 
-                    assertEquals(Integer.valueOf(9022), error.getErrorCode());
+                case 5:
+                    assertEquals(Integer.valueOf(9001), error.getErrorCode());
+                    assertTrue(error.getDeveloperMessage().contains("Object must have some value in its @XmlValue field: org.orcid.jaxb.model.common_rc4.Title"));
                     break;
-                case 7: 
-                    assertEquals(Integer.valueOf(9037), error.getErrorCode());
-                    assertTrue(error.getDeveloperMessage().startsWith("Invalid translated title"));
+                case 7:
+                    assertEquals(Integer.valueOf(9001), error.getErrorCode());
+                    assertTrue(error.getDeveloperMessage().endsWith("Attribute 'language-code' must appear on element 'common:translated-title'.)"));
                     break;
                 }
             } else {

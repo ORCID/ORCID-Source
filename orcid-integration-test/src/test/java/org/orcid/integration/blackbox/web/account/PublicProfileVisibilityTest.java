@@ -76,7 +76,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        addEmail(emailValue, Visibility.PRIVATE);
+        addEmail(emailValue, Visibility.PRIVATE.name());
         
         showPublicProfilePage(getUser1OrcidId());
         try {
@@ -90,7 +90,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to limited
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updateEmailVisibility(emailValue, Visibility.LIMITED);
+        updateEmailVisibility(emailValue, Visibility.LIMITED.name());
         showPublicProfilePage(getUser1OrcidId());
         try {
             //Verify it doesn't appear in the public page
@@ -103,7 +103,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to public
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updateEmailVisibility(emailValue, Visibility.PUBLIC);
+        updateEmailVisibility(emailValue, Visibility.PUBLIC.name());
         //Verify it appears in the public page
         showPublicProfilePage(getUser1OrcidId());
         emailAppearsInPublicPage(emailValue);
@@ -122,7 +122,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
         openEditOtherNamesModal();
         createOtherName(otherNameValue);
-        changeOtherNamesVisibility(Visibility.PRIVATE);
+        changeOtherNamesVisibility(Visibility.PRIVATE.name());
         saveOtherNamesModal();
         
         //Verify it doesn't appear in the public page
@@ -137,7 +137,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to limited
         showMyOrcidPage();
         openEditOtherNamesModal();        
-        changeOtherNamesVisibility(Visibility.LIMITED);
+        changeOtherNamesVisibility(Visibility.LIMITED.name());
         saveOtherNamesModal();
         
         //Verify it doesn't appear in the public page
@@ -152,7 +152,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility again to public
         showMyOrcidPage();
         openEditOtherNamesModal();        
-        changeOtherNamesVisibility(Visibility.PUBLIC);
+        changeOtherNamesVisibility(Visibility.PUBLIC.name());
         saveOtherNamesModal();
         
         //Verify it appears again in the public page
@@ -171,7 +171,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         openEditAddressModal();
         deleteAddresses();
         createAddress(Iso3166Country.AD.name());
-        changeAddressVisibility(Visibility.PUBLIC);
+        changeAddressVisibility(Visibility.PUBLIC.name());
         saveEditAddressModal();
         
         //Verify it appears again in the public page
@@ -181,7 +181,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to private
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(Visibility.PRIVATE);
+        changeAddressVisibility(Visibility.PRIVATE.name());
         saveEditAddressModal();
         
         //Verify it doesn't appears in the public page
@@ -196,7 +196,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to limited
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(Visibility.LIMITED);
+        changeAddressVisibility(Visibility.LIMITED.name());
         saveEditAddressModal();
         
         //Verify it doesn't appears again in the public page
@@ -211,7 +211,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change it to public again and verify it appears in the public paget
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(Visibility.PUBLIC);
+        changeAddressVisibility(Visibility.PUBLIC.name());
         saveEditAddressModal();
         showPublicProfilePage(getUser1OrcidId());
         addressAppearsInPublicPage("Andorra");
@@ -229,7 +229,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
         openEditKeywordsModal();
         createKeyword(keywordValue);
-        changeKeywordsVisibility(Visibility.PRIVATE);
+        changeKeywordsVisibility(Visibility.PRIVATE.name());
         saveKeywordsModal();
         
         //Verify it doesn't appear in the public page
@@ -244,7 +244,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to limited
         showMyOrcidPage();
         openEditKeywordsModal();        
-        changeKeywordsVisibility(Visibility.LIMITED);
+        changeKeywordsVisibility(Visibility.LIMITED.name());
         saveKeywordsModal();
         
         //Verify it doesn't appear in the public page
@@ -259,7 +259,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility again to public
         showMyOrcidPage();
         openEditKeywordsModal();
-        changeKeywordsVisibility(Visibility.PUBLIC);
+        changeKeywordsVisibility(Visibility.PUBLIC.name());
         saveKeywordsModal();
         
         //Verify it appears again in the public page
@@ -280,7 +280,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
         openEditResearcherUrlsModal();
         createResearcherUrl(rUrl);
-        changeResearcherUrlsVisibility(Visibility.PRIVATE);
+        changeResearcherUrlsVisibility(Visibility.PRIVATE.name());
         saveResearcherUrlsModal();
         
         try {
@@ -295,7 +295,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to limited
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(Visibility.LIMITED);
+        changeResearcherUrlsVisibility(Visibility.LIMITED.name());
         saveResearcherUrlsModal();
         
         try {
@@ -310,7 +310,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to public
         showMyOrcidPage();
         openEditResearcherUrlsModal();
-        changeResearcherUrlsVisibility(Visibility.PUBLIC);
+        changeResearcherUrlsVisibility(Visibility.PUBLIC.name());
         saveResearcherUrlsModal();
         
         //Verify it appears again in the public page
@@ -330,7 +330,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         createExternalIdentifier(extId, getUser1OrcidId(), accessToken);
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
-        changeExternalIdentifiersVisibility(Visibility.PRIVATE);
+        changeExternalIdentifiersVisibility(Visibility.PRIVATE.name());
         saveExternalIdentifiersModal();
         try {
             //Verify it doesn't appear in the public page
@@ -344,7 +344,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility to limited
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
-        changeExternalIdentifiersVisibility(Visibility.LIMITED);
+        changeExternalIdentifiersVisibility(Visibility.LIMITED.name());
         saveExternalIdentifiersModal();
         
         try {
@@ -359,7 +359,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Change visibility back to public
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
-        changeExternalIdentifiersVisibility(Visibility.PUBLIC);
+        changeExternalIdentifiersVisibility(Visibility.PUBLIC.name());
         saveExternalIdentifiersModal();
         
         //Verify it appears again in the public page
@@ -377,7 +377,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
         openAddWorkModal();
         createWork(workTitle);
-        changeWorksVisibility(workTitle, Visibility.PRIVATE);
+        changeWorksVisibility(workTitle, Visibility.PRIVATE.name());
         
         try {
             //Verify it doesn't appear in the public page
@@ -390,7 +390,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     
         //Change visibility to limited
         showMyOrcidPage();
-        changeWorksVisibility(workTitle, Visibility.LIMITED);
+        changeWorksVisibility(workTitle, Visibility.LIMITED.name());
         
         try {
             //Verify it doesn't appear in the public page
@@ -402,7 +402,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         }
         
         showMyOrcidPage();
-        changeWorksVisibility(workTitle, Visibility.PUBLIC);
+        changeWorksVisibility(workTitle, Visibility.PUBLIC.name());
         
         //Verify it appear in the public page
         showPublicProfilePage(getUser1OrcidId());
@@ -418,7 +418,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
         openAddEducationModal();
         createEducation(institutionName);
-        changeEducationVisibility(institutionName, Visibility.PRIVATE);        
+        changeEducationVisibility(institutionName, Visibility.PRIVATE.name());        
         
         try {
             //Verify it doesn't appear in the public page
@@ -430,7 +430,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         }   
         
         showMyOrcidPage();
-        changeEducationVisibility(institutionName, Visibility.LIMITED);
+        changeEducationVisibility(institutionName, Visibility.LIMITED.name());
         
         try {
             //Verify it doesn't appear in the public page
@@ -442,7 +442,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         } 
         
         showMyOrcidPage();
-        changeEducationVisibility(institutionName, Visibility.PUBLIC);
+        changeEducationVisibility(institutionName, Visibility.PUBLIC.name());
         
         //Verify it appears in the public page
         showPublicProfilePage(getUser1OrcidId());
@@ -458,7 +458,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
         openAddEmploymentModal();
         createEmployment(institutionName);
-        changeEmploymentVisibility(institutionName, Visibility.PRIVATE);        
+        changeEmploymentVisibility(institutionName, Visibility.PRIVATE.name());        
         
         try {
             //Verify it doesn't appear in the public page
@@ -470,7 +470,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         }
         
         showMyOrcidPage();
-        changeEmploymentVisibility(institutionName, Visibility.LIMITED);
+        changeEmploymentVisibility(institutionName, Visibility.LIMITED.name());
         
         try {
             //Verify it doesn't appear in the public page
@@ -482,7 +482,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         } 
         
         showMyOrcidPage();
-        changeEmploymentVisibility(institutionName, Visibility.PUBLIC);
+        changeEmploymentVisibility(institutionName, Visibility.PUBLIC.name());
         
         //Verify it appears in the public page
         showPublicProfilePage(getUser1OrcidId());
@@ -498,7 +498,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
         openAddFundingModal();
         createFunding(fundingTitle);
-        changeFundingVisibility(fundingTitle, Visibility.PRIVATE);       
+        changeFundingVisibility(fundingTitle, Visibility.PRIVATE.name());       
         
         try {
             //Verify it doesn't appear in the public page
@@ -510,7 +510,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         }
         
         showMyOrcidPage();
-        changeFundingVisibility(fundingTitle, Visibility.LIMITED);
+        changeFundingVisibility(fundingTitle, Visibility.LIMITED.name());
         
         try {
             //Verify it doesn't appear in the public page
@@ -522,7 +522,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         } 
         
         showMyOrcidPage();
-        changeFundingVisibility(fundingTitle, Visibility.PUBLIC);
+        changeFundingVisibility(fundingTitle, Visibility.PUBLIC.name());
         
         //Verify it appears in the public page
         showPublicProfilePage(getUser1OrcidId());
@@ -572,7 +572,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         peerReview = getResponse.getEntity(PeerReview.class);
         
         showMyOrcidPage();
-        changePeerReviewVisibility(g1.getName(), Visibility.PRIVATE);
+        changePeerReviewVisibility(g1.getName(), Visibility.PRIVATE.name());
         
         try {
             //Verify it doesn't appear in the public page
@@ -584,7 +584,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         } 
         
         showMyOrcidPage();
-        changePeerReviewVisibility(g1.getName(), Visibility.LIMITED);
+        changePeerReviewVisibility(g1.getName(), Visibility.LIMITED.name());
         
         try {
             //Verify it doesn't appear in the public page
@@ -596,7 +596,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         }
         
         showMyOrcidPage();
-        changePeerReviewVisibility(g1.getName(), Visibility.PUBLIC);
+        changePeerReviewVisibility(g1.getName(), Visibility.PUBLIC.name());
         
         showPublicProfilePage(getUser1OrcidId());
         peerReviewAppearsInPublicPage(g1.getName());

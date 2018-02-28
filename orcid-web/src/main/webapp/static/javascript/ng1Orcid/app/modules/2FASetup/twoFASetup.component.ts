@@ -119,7 +119,12 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         */
 
     }
-
+    
+    showQRCodeAgain(): void {
+        this.showTextCode = false;
+        this.showQRCode = true;
+    }
+    
     getRecoveryCodesString(): string {
         var recoveryCodesString = "";
         for (var i = 0; i < this.recoveryCodes.length; i++) {

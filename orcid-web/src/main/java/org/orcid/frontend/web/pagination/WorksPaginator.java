@@ -42,9 +42,10 @@ public class WorksPaginator {
     @Resource
     private WorksCacheManager worksCacheManager;
     
-    public int getWorksCount(String orcid) {
+    public int getPublicWorksCount(String orcid) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        return works.getWorkGroup().size();
+        List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> groups = filter(works, true);
+        return groups.size();
     }
 
     public WorksPage getWorksPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {
