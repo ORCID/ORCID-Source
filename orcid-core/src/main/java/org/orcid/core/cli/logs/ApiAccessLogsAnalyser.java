@@ -58,7 +58,7 @@ public class ApiAccessLogsAnalyser {
     private Map<String, String> tokenToClientDetails = new HashMap<>();
 
     private AnalysisResults results;
-    
+
     private LogReader logReader;
 
     public static void main(String[] args) {
@@ -113,17 +113,19 @@ public class ApiAccessLogsAnalyser {
 
     private void analyseLog(String line) {
         ApiLog log = ApiLog.parse(line);
-        if (debug) {
-            LOGGER.info("Found log data {}", log.toString());
-        }
-
-        if (log.getBearerToken() != null && log.getBearerToken().length() == BEARER_TOKEN_LENGTH) {
-            String client = getClientDetailsId(log.getBearerToken());
+        if (log != null) {
             if (debug) {
-                LOGGER.info("Found client {}", client);
+                LOGGER.info("Found log data {}", log.toString());
             }
-            if (client != null) { // discard if no client token
-                results.record(client, log);
+
+            if (log.getBearerToken() != null && log.getBearerToken().length() == BEARER_TOKEN_LENGTH) {
+                String client = getClientDetailsId(log.getBearerToken());
+                if (debug) {
+                    LOGGER.info("Found client {}", client);
+                }
+                if (client != null) { // discard if no client token
+                    results.record(client, log);
+                }
             }
         }
     }
