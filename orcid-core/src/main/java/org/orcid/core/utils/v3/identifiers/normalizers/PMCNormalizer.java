@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.utils.v3.identifiers;
+package org.orcid.core.utils.v3.identifiers.normalizers;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,19 +26,14 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-public class ISSNNormalizer implements Normalizer{
+public class PMCNormalizer implements Normalizer {
 
-    private static final List<String> canHandle = Lists.newArrayList("issn");
-    private static final Pattern pattern = Pattern.compile("(?:^|[^\\d])(\\d{4}\\ {0,1}[-–]{0,1}\\ {0,1}\\d{3}[\\dXx])(?:$|[^-\\d])");
+    private static final List<String> canHandle = Lists.newArrayList("pmc");
+    private static final Pattern pattern = Pattern.compile("(?:^|[Pp][Mm][Cc]-?)\\s*(\\d{5,9}(?!.+PMC))(?:$|\\b)");
     
     @Override
     public List<String> canHandle() {
         return canHandle;
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
     }
 
     @Override
@@ -49,15 +44,15 @@ public class ISSNNormalizer implements Normalizer{
         if (m.find()){
             String n = m.group(1);
             if (n != null){
-                n = n.replace(" ", "");
-                n = n.replace("-", "");
-                n = n.replace("–", "");
-                n = n.replace("x", "X");
-                n= n.substring(0,4) +"-"+n.substring(4,8);//0000-000X
-                return n;
+                return "PMC"+n;
             }
         }
         return "";
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
 }

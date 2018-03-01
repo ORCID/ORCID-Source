@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 
 import org.junit.Test;
+import org.orcid.core.utils.v3.identifiers.normalizers.BibcodeNormalizer;
 
 import com.google.common.collect.Lists;
 
