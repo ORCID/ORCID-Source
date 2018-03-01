@@ -21,7 +21,7 @@
     <div>
         <!-- DISTINCTION AND INVITED POSITION -->
         <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
-            <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active">
+            <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && distinctionsAndInvitedPositions.length < 1">
                 <div class="workspace-accordion-header clearfix">
                     <div class="row">
                         <div class="col-md-5 col-sm-5 col-xs-12">
@@ -55,7 +55,7 @@
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
                                                     <span *ngIf="sortState.reverseKey['startDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='startDate'}"></span>
                                                     <span *ngIf="sortState.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
-                                                </a>                                                                                    
+                                                </a>
                                             </li>
                                             <li [ngClass]="{'checked':sortState.predicateKey=='endDate'}">
                                                 <a (click)="sort('endDate');" class="action-option manage-button">
@@ -162,8 +162,10 @@
                                             <span class="affiliation-date" *ngIf="group.startDate">
                                                 <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
                                                 <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                                                <span [hidden]="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                                <span [hidden]="group.endDate && group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                                <span *ngIf="group.endDate">
+                                                    <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>                                                
+                                                </span>
                                             </span>
                                             <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
                                                  <span  *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
@@ -309,7 +311,7 @@
             </div>
         </div>
         <!-- EDUCATION AND QUALIFICATION -->
-        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active">
+        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && sectionOneElements.length < 1">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">                    
                     <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
@@ -535,8 +537,10 @@
                                         <span class="affiliation-date" *ngIf="group.startDate">
                                             <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
                                             <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                                            <span [hidden]="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                            <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            <span [hidden]="group.endDate && group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                            <span *ngIf="group.endDate">
+                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            </span>
                                         </span>
                                         <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
                                              <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
@@ -690,7 +694,7 @@
             </div>
         </div>
         <!-- EMPLOYMENT -->
-        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active">
+        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && employments.length < 1">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-3 col-sm-3 col-xs-12">
@@ -803,8 +807,10 @@
                                         <span class="affiliation-date" *ngIf="group.startDate">
                                             <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
                                             <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                                            <span [hidden]="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                            <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            <span [hidden]="group.endDate && group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                            <span *ngIf="group.endDate">
+                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            </span>
                                         </span>
                                         <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
                                              <span  *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
@@ -950,7 +956,7 @@
         </div>        
         <!-- MEMBERSHIP AND SERVICE -->
         <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
-            <div id="workspace-membership-service" class="workspace-accordion-item workspace-accordion-active">
+            <div id="workspace-membership-service" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && membershipsAndServices.length < 1">
                 <div class="workspace-accordion-header clearfix">
                     <div class="row">
                         <div class="col-md-5 col-sm-5 col-xs-12">
@@ -1091,8 +1097,10 @@
                                             <span class="affiliation-date" *ngIf="group.startDate">
                                                 <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
                                                 <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                                                <span [hidden]="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                                <span [hidden]="group.endDate && group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                                <span *ngIf="group.endDate">    
+                                                    <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                                </span>
                                             </span>
                                             <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
                                                  <span  *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
