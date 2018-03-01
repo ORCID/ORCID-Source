@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;

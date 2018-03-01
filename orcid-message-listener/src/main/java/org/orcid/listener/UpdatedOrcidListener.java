@@ -24,6 +24,7 @@ import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +49,12 @@ public class UpdatedOrcidListener {
 
     Logger LOG = LoggerFactory.getLogger(UpdatedOrcidListener.class);
 
+    @Value("${org.orcid.message-listener.index.activities:false}")
+    private boolean indexActivities;
+    
+    @Value("${org.orcid.message-listener.index.summaries:false}")
+    private boolean indexSummaries;
+    
     @Resource
     public UpdatedOrcidExpringQueue<UpdatedOrcidWorker> cacheQueue;
 
@@ -64,5 +71,16 @@ public class UpdatedOrcidListener {
         if (existingMessage == null || message.getLastUpdated().after(existingMessage.getLastUpdated()))
             cacheQueue.getCache().put(message.getOrcid(), message);
     }
-
+    
+    @JmsListener(containerFactory="jmsTopicListenerContainerFactory", destination = MessageConstants.Queues.UPDATED_ORCIDS)
+    public void processMessageV2(final Map<String, String> map) {
+    	LastModifiedMessage message = new LastModifiedMessage(map);
+    	if(indexSummaries) {
+    		System.out.println("IndexingSummaries");
+    	}
+    	
+    	if(indexActivities) {
+    		System.out.println("IndexingActivities");
+    	}
+    }
 }

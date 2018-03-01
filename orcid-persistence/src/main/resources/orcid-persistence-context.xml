@@ -541,10 +541,28 @@
 	
 	<bean id="jmsMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">
 		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
+		<property name="jmsTemplate" ref="jmsTemplate" />
 	</bean>
 
 	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>	
+
+	<!-- ActiveMQ Topic config -->
+	<bean id="mailDestination" class="org.apache.activemq.command.ActiveMQTopic">
+  		<constructor-arg value="mail.topic" />
+	</bean>
+	
+	<bean id="topicJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+ 		<property name="connectionFactory" ref="jmsConnectionFactory" />
+ 		<property name="defaultDestination" ref="mailDestination" />
+ 		<!-- Topic setting -->
+ 		<property name="pubSubDomain" value="true"/>
+	</bean>
+
+	<bean id="jmsTopicMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">
+		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
+		<property name="jmsTemplate" ref="topicJmsTemplate" />
+	</bean>
 
 </beans>

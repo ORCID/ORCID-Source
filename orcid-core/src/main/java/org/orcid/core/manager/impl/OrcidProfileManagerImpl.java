@@ -221,9 +221,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
 
-    @Resource
+    @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
-
+    
+    @Resource(name = "jmsTopicMessageSender")
+    private JmsMessageSender jmsTopicMessageSender;
+    
     private int claimReminderAfterDays = 8;
 
     @Value("${org.orcid.core.activities.max:10000}")
@@ -1636,10 +1639,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 String orcid = p.getLeft();
                 Date last = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
-                if (messaging.send(mess, destination))
-                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
-                else
+                if (messaging.send(mess, destination)) {
+                	jmsTopicMessageSender.send(mess, destination);
+                	profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                } else {
                     connectionIssue = true;
+                }
             }
         } while (!connectionIssue && !orcidsForIndexing.isEmpty());
         if (connectionIssue)
@@ -1700,7 +1705,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         jmsDestination = JmsDestination.UPDATED_ORCIDS;
                     }
                     if (messaging.send(mess, jmsDestination)) {
-                        LOG.info("Record " + orcid + " was sent to the message queue");
+                    	jmsTopicMessageSender.send(mess, jmsDestination);
+                    	LOG.info("Record " + orcid + " was sent to the message queue");
                     } else {
                         LOG.error("Record " + orcid + " couldnt been sent to the message queue");
                         profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);

@@ -73,6 +73,21 @@
 		<property name="concurrency" value="${org.orcid.listener.concurrency:1-2}" />		
 	</bean>
 
+	
+	
+	
+	
+	<bean id="jmsTopicListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="concurrency" value="${org.orcid.listener.concurrency:1-2}" />
+		<property name="pubSubDomain" value="true" />		
+	</bean>
+	
+	
+	
+	
+	
+	
 	<!-- Default Destination Queue Definition -->
 	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
 		<!-- name of the queue -->
