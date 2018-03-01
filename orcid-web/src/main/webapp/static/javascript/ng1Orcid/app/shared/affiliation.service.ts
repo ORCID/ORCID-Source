@@ -94,6 +94,12 @@ export class AffiliationService {
         .map((res:Response) => res.json()).share();
     }
 
+    getPublicAffiliationsById( idList ) {
+        return this.http.get(
+                getBaseUri() + '/' + orcidVar.orcidId + '/affiliations.json?affiliationIds=' + idList
+        ).map((res:Response) => res.json()).share();
+    }
+    
     getData(): Observable<any> {
         return this.http.get(
             this.urlAffiliation
@@ -104,6 +110,16 @@ export class AffiliationService {
     getDisambiguatedAffiliation( id ): Observable<any> {
         return this.http.get(
             this.urlAffiliationDisambiguated + id
+        )
+        .map((res:Response) => res.json()).share();
+    }
+
+    serverValidate( obj, relativePath ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        return this.http.post( 
+            getBaseUri() + '/' + relativePath, 
+            encoded_data, 
+            { headers: this.headers }
         )
         .map((res:Response) => res.json()).share();
     }
@@ -125,39 +141,3 @@ export class AffiliationService {
         }
     }
 }
-
-/*
-angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
-    var serv = {
-        educations: new Array(),
-        employments: new Array(),
-        loading: false,
-        affiliationsToAddIds: null,
-        
-        ,
-        setIdsToAdd: function(ids) {
-            serv.affiliationsToAddIds = ids;
-        },
-        ,
-        updateProfileAffiliation: function(aff) {
-            $.ajax({
-                url: getBaseUri() + '/affiliations/affiliation.json',
-                type: 'PUT',
-                data: angular.toJson(aff),
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function(data) {
-                    if(data.errors.length != 0){
-                        console.log("Unable to update profile affiliation.");
-                    }
-                    $rootScope.$apply();
-                }
-            }).fail(function() {
-                console.log("Error updating profile affiliation.");
-            });
-        },
-       
-    };
-    return serv;
-}]);
-*/

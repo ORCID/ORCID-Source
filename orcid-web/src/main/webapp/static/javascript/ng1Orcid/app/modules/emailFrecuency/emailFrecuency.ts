@@ -28,7 +28,6 @@ export const EmailFrecuencyModule = angular.module(
 @NgModule(
     {
         imports: [
-            //CommonNg2Module
             CommonModule
         ],
         declarations: [ 

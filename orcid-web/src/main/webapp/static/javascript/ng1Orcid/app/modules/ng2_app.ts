@@ -50,6 +50,12 @@ import { CountryNg2Module }
 import { CountryFormNg2Module } 
     from './countryForm/countryForm.ts';
 
+import { DeactivateAccountNg2Module }
+    from './deactivateAccount/deactivateAccount.ts';
+
+import { DeprecateAccountNg2Module }
+    from './deprecateAccount/deprecateAccount.ts';
+
 import { EmailsNg2Module } 
     from './emails/emails.ts';
 
@@ -86,6 +92,9 @@ import { ModalNg2Module }
 import { NameNg2Module } 
     from './name/name.ts';
 
+import { PasswordEditNg2Module } 
+    from './passwordEdit/passwordEdit.ts';
+
 import { SearchNg2Module } 
     from './search/search.ts';
 
@@ -104,6 +113,9 @@ import { SelfServiceRemoveContactNg2Module }
 import { SelfServiceRemoveSubMemberNg2Module } 
     from './selfServiceRemoveSubMember/selfServiceRemoveSubMember.ts';
 
+import { SocialNetworksNg2Module }
+    from './socialNetworks/socialNetworks.ts';
+
 import { ThanksForRegisteringNg2Module } 
     from './thanksForRegistering/thanksForRegistering.ts';
 
@@ -112,6 +124,9 @@ import { ThanksForVerifyingNg2Module }
 
 import { TwoFASetupNg2Module }
     from './2FASetup/twoFASetup.ts';
+
+import { TwoFAStateNg2Module }
+    from './2FAState/twoFAState.ts';
 
 import { WebsitesNg2Module } 
     from './websites/websites.ts';
@@ -172,18 +187,20 @@ export class RootCmp {
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
-        AffiliationNg2Module,
-        AffiliationDeleteNg2Module,
-        AffiliationFormNg2Module,
+        AffiliationNg2Module,//Aproved
+        AffiliationDeleteNg2Module,//Aproved
+        AffiliationFormNg2Module,//Aproved
         AlsoKnownAsFormNg2Module,
         AlsoKnownAsNg2Module,
         BiographyNg2Module, //Approved
         CountryFormNg2Module,//Approved
         CountryNg2Module,//Approved
-        EmailsFormNg2Module,
-        EmailsNg2Module,
-        EmailUnverifiedWarningNg2Module,
-        EmailVerificationSentMesssageNg2Module,
+        DeactivateAccountNg2Module,
+        DeprecateAccountNg2Module,
+        EmailsFormNg2Module,//Aproved
+        EmailsNg2Module,//Aproved
+        EmailUnverifiedWarningNg2Module,//Aproved
+        EmailVerificationSentMesssageNg2Module,//Aproved
         HeaderNg2Module,
         //FundingNg2Module,
         HomeNg2Module,
@@ -192,14 +209,17 @@ export class RootCmp {
         LanguageNg2Module,
         ModalNg2Module, //Approved
         NameNg2Module, //Approved
+        PasswordEditNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
         SelfServiceAddContactNg2Module, //Approved
         SelfServiceExistingSubMemberNg2Module, //Approved
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
+        SocialNetworksNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
+        TwoFAStateNg2Module,
         TwoFASetupNg2Module,
         WebsitesFormNg2Module, //Approved
         WebsitesNg2Module, //Approved
