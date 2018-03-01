@@ -71,7 +71,7 @@ public class LoadLEIData {
 
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private OrgDao orgDao;
-    
+
     // Statistics
     private long updatedDisambiguatedOrgs = 0;
     private long addedDisambiguatedOrgs = 0;
@@ -79,7 +79,9 @@ public class LoadLEIData {
     private long addedOrgs = 0;
     private long count = 0;
 
-    /** Grab the file, check it exists, stream the file, extract the entities, update the DB.
+    /**
+     * Grab the file, check it exists, stream the file, extract the entities,
+     * update the DB.
      * 
      * @param args
      */
@@ -113,7 +115,8 @@ public class LoadLEIData {
         }
     }
 
-    /** Setup our spring resources
+    /**
+     * Setup our spring resources
      * 
      */
     @SuppressWarnings({ "resource" })
@@ -123,10 +126,11 @@ public class LoadLEIData {
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
     }
 
-    /** Stream the XML using Stax.
-     * Create orgs and process them as we go
+    /**
+     * Stream the XML using Stax. Create orgs and process them as we go
+     * 
      * @throws XMLStreamException
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException
      */
     public void execute() throws XMLStreamException, FileNotFoundException {
         Instant start = Instant.now();
@@ -143,10 +147,9 @@ public class LoadLEIData {
                         org = new LEIOrganization();
                     } else if (startElement.equals("LEI")) {
                         org.id = r.getElementText();
-                    } else if (startElement.equals("LegalName") ) {
+                    } else if (startElement.equals("LegalName")) {
                         org.name = r.getElementText();
-                    } else if (startElement.equals("OtherEntityName")
-                            || startElement.equals("TransliteratedOtherEntityName")) {
+                    } else if (startElement.equals("OtherEntityName") || startElement.equals("TransliteratedOtherEntityName")) {
                         Attribute type = event.asStartElement().getAttributeByName(QNAME_TYPE);
                         if (type != null && type.getValue().equals(TRANSLITERATED_LEGAL_NAME_TYPE))
                             org.transliteratedLegalNames.add(r.getElementText());
@@ -154,28 +157,31 @@ public class LoadLEIData {
                             org.otherNames.add(r.getElementText());
                     } else if (startElement.equals("HeadquartersAddress")) {
                         org.hqAddres = extractAddress(r);
-                    } else if (startElement.equals("LegalAddress") 
-                            || startElement.equals("OtherAddress")
-                            || startElement.equals("TransliteratedOtherAddress")) {
+                    } else if (startElement.equals("LegalAddress") || startElement.equals("OtherAddress") || startElement.equals("TransliteratedOtherAddress")) {
                         org.otherAddresses.add(extractAddress(r));
                     } else if (startElement.equals("EntityStatus")) {
-                        org.status = r.getElementText(); //ACTIVE || INACTIVE
-                    } else if (startElement.equals("SuccessorLEI")) { 
-                        org.successorLEI = r.getElementText(); //can be active and have successor
-                    } else if (startElement.equals("OtherLegalForm")) { 
-                        org.type = r.getElementText(); //see https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list for vocab
+                        org.status = r.getElementText(); // ACTIVE || INACTIVE
+                    } else if (startElement.equals("SuccessorLEI")) {
+                        org.successorLEI = r.getElementText(); // can be active
+                                                               // and have
+                                                               // successor
+                    } else if (startElement.equals("OtherLegalForm")) {
+                        org.type = r.getElementText(); // see
+                                                       // https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list
+                                                       // for vocab
                         if ("OTHER - please specify".equals(org.type))
-                        org.type = "OTHER";
-                    }//we also have general purpose AssociatedLEI, for active and inactive records.
+                            org.type = "OTHER";
+                    } // we also have general purpose AssociatedLEI, for active
+                      // and inactive records.
                 } else if (event.isEndElement()) {
                     String endElement = event.asEndElement().getName().getLocalPart();
                     if (endElement.equals("LEIRecord")) {
-                        count ++;
-                        LOGGER.info("Processing ["+count+"] LEI:"+org.id);
+                        count++;
+                        LOGGER.info("Processing [" + count + "] LEI:" + org.id);
                         processOrg(org);
                     }
                 }
-                //we also have //LastUpdateDate
+                // we also have //LastUpdateDate
             }
         } finally {
             if (r != null)
@@ -188,7 +194,8 @@ public class LoadLEIData {
         LOGGER.info("Time taken to process the data: {}", Duration.between(start, Instant.now()).toString());
     }
 
-    /** Process Address subtrees from the Stax Stream.
+    /**
+     * Process Address subtrees from the Stax Stream.
      * 
      * @param r
      * @return
@@ -198,90 +205,90 @@ public class LoadLEIData {
         LEIAddress address = new LEIAddress();
         while (r.hasNext()) {
             XMLEvent event = r.nextEvent();
-            if (event.isStartElement()){
+            if (event.isStartElement()) {
                 String startElement = event.asStartElement().getName().getLocalPart();
-                if (startElement.equals("City")){
-                    address.city=r.getElementText();
-                }else if (startElement.equals("Region")){
-                    address.region=r.getElementText();
-                }else if (startElement.equals("Country")){
+                if (startElement.equals("City")) {
+                    address.city = r.getElementText();
+                } else if (startElement.equals("Region")) {
+                    address.region = r.getElementText();
+                } else if (startElement.equals("Country")) {
                     String c = r.getElementText();
                     address.country = StringUtils.isBlank(c) ? null : Iso3166Country.fromValue(c);
-                } 
-            }else if (event.isEndElement()){
+                }
+            } else if (event.isEndElement()) {
                 String endElement = event.asEndElement().getName().getLocalPart();
-                if (endElement.equals("HeadquartersAddress")
-                        || endElement.equals("LegalAddress") 
-                        || endElement.equals("OtherAddress")
+                if (endElement.equals("HeadquartersAddress") || endElement.equals("LegalAddress") || endElement.equals("OtherAddress")
                         || endElement.equals("TransliteratedOtherAddress")) {
                     return address;
                 }
-            }            
+            }
         }
-        return null;//impossible
+        return null;// impossible
     }
-    
-    /** Add/Update Orgs in the DB
+
+    /**
+     * Add/Update Orgs in the DB
      * 
      * @param org
      */
     public void processOrg(LEIOrganization org) {
         Date now = new Date();
         OrgDisambiguatedEntity existingDO = orgDisambiguatedDao.findBySourceIdAndSourceType(org.id, LEI_SOURCE_TYPE);
-        if (existingDO != null){
-            //update
-            if (org.differentFrom(existingDO)){
+        if (existingDO != null) {
+            // update
+            if (org.differentFrom(existingDO)) {
                 existingDO.setCity(org.hqAddres.city);
                 existingDO.setCountry(org.hqAddres.country);
                 existingDO.setName(org.name);
                 existingDO.setOrgType(org.type);
                 existingDO.setRegion(org.hqAddres.region);
-                existingDO.setUrl("https://www.gleif.org/lei/"+org.id);
+                existingDO.setUrl("https://www.gleif.org/lei/" + org.id);
                 existingDO.setLastModified(now);
                 existingDO.setIndexingStatus(IndexingStatus.PENDING);
                 // Is it replaced?
-                if(!PojoUtil.isEmpty(org.successorLEI)) {
+                if (!PojoUtil.isEmpty(org.successorLEI)) {
                     existingDO.setSourceParentId(org.successorLEI);
                     existingDO.setStatus(OrganizationStatus.DEPRECATED.name());
-                } //or is is simply gone
-                else if("INACTIVE".equals(org.status)) {            
-                    existingDO.setStatus(OrganizationStatus.OBSOLETE.name());            
+                } // or is is simply gone
+                else if ("INACTIVE".equals(org.status)) {
+                    existingDO.setStatus(OrganizationStatus.OBSOLETE.name());
                 }
-                LOGGER.info("Merging LEI:"+org.id);
+                LOGGER.info("Merging LEI:" + org.id);
                 existingDO = orgDisambiguatedDao.merge(existingDO);
                 updatedDisambiguatedOrgs++;
             }
-        }else{
-            //create
+        } else {
+            // create
             Iso3166Country country = org.hqAddres.country;
             OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
             orgDisambiguatedEntity.setName(org.name);
-            orgDisambiguatedEntity.setCountry(country);       
+            orgDisambiguatedEntity.setCountry(country);
             orgDisambiguatedEntity.setCity(org.hqAddres.city);
-            orgDisambiguatedEntity.setRegion(org.hqAddres.region);        
+            orgDisambiguatedEntity.setRegion(org.hqAddres.region);
             orgDisambiguatedEntity.setOrgType(org.type);
             orgDisambiguatedEntity.setSourceId(org.id);
-            orgDisambiguatedEntity.setSourceUrl("https://www.gleif.org/lei/"+org.id);                
+            orgDisambiguatedEntity.setSourceUrl("https://www.gleif.org/lei/" + org.id);
             // Is it replaced?
-            if(!PojoUtil.isEmpty(org.successorLEI)) {
+            if (!PojoUtil.isEmpty(org.successorLEI)) {
                 orgDisambiguatedEntity.setSourceParentId(org.successorLEI);
                 orgDisambiguatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
-            } //or is is simply gone
-            else if("INACTIVE".equals(org.status)) {            
-                orgDisambiguatedEntity.setStatus(OrganizationStatus.OBSOLETE.name());            
-            }            
-            orgDisambiguatedEntity.setSourceType(LEI_SOURCE_TYPE); 
-            LOGGER.info("Creating LEI:"+org.id);
+            } // or is is simply gone
+            else if ("INACTIVE".equals(org.status)) {
+                orgDisambiguatedEntity.setStatus(OrganizationStatus.OBSOLETE.name());
+            }
+            orgDisambiguatedEntity.setSourceType(LEI_SOURCE_TYPE);
+            LOGGER.info("Creating LEI:" + org.id);
             orgDisambiguatedDao.persist(orgDisambiguatedEntity);
             existingDO = orgDisambiguatedEntity;
             addedDisambiguatedOrgs++;
         }
-        
-        //Other names
-        for (LEIOrganization otherOrg : org.toOtherOrgs()){
-            OrgEntity existingOrg = orgDao.findByAddressAndDisambiguatedOrg(otherOrg.name, otherOrg.hqAddres.city, otherOrg.hqAddres.region, otherOrg.hqAddres.country, existingDO);
+
+        // Other names
+        for (LEIOrganization otherOrg : org.toOtherOrgs()) {
+            OrgEntity existingOrg = orgDao.findByAddressAndDisambiguatedOrg(otherOrg.name, otherOrg.hqAddres.city, otherOrg.hqAddres.region, otherOrg.hqAddres.country,
+                    existingDO);
             if (existingOrg != null) {
-                //do nothing (nothing to update!)
+                // do nothing (nothing to update!)
             } else {
                 OrgEntity newOrg = new OrgEntity();
                 newOrg.setDateCreated(now);
@@ -291,11 +298,11 @@ public class LoadLEIData {
                 newOrg.setRegion(otherOrg.hqAddres.region);
                 newOrg.setName(otherOrg.name);
                 newOrg.setOrgDisambiguated(existingDO);
-                LOGGER.info("Creating org LEI:"+org.id);
+                LOGGER.info("Creating org LEI:" + org.id);
                 orgDao.persist(newOrg);
                 addedOrgs++;
             }
-        }        
+        }
     }
 
     // ========================================================================
@@ -309,26 +316,23 @@ public class LoadLEIData {
         LEIAddress hqAddres;
         LEIAddress legalAddres;
         Set<LEIAddress> otherAddresses = new HashSet<LEIAddress>();
-        
+
         public boolean differentFrom(OrgDisambiguatedEntity other) {
-            return (!StringUtils.equals(this.name,other.getName())
-                 || !StringUtils.equals(this.type,other.getOrgType())
-                 || !StringUtils.equals(this.hqAddres.city,other.getCity())
-                 || !StringUtils.equals(this.hqAddres.region,other.getRegion())
-                 || !StringUtils.equals(this.successorLEI,other.getSourceParentId())
-                 || (other.getCountry() != null && !other.getCountry().equals(this.hqAddres.country))
-                 || (OrganizationStatus.OBSOLETE.name().equals(other.getStatus()) && this.status.equals("ACTIVE"))
-                 || (!OrganizationStatus.OBSOLETE.name().equals(other.getStatus()) && this.status.equals("INACTIVE"))
-                 );
+            return (!StringUtils.equals(this.name, other.getName()) || !StringUtils.equals(this.type, other.getOrgType())
+                    || !StringUtils.equals(this.hqAddres.city, other.getCity()) || !StringUtils.equals(this.hqAddres.region, other.getRegion())
+                    || !StringUtils.equals(this.successorLEI, other.getSourceParentId())
+                    || (other.getCountry() != null && !other.getCountry().equals(this.hqAddres.country))
+                    || (OrganizationStatus.OBSOLETE.name().equals(other.getStatus()) && this.status.equals("ACTIVE"))
+                    || (!OrganizationStatus.OBSOLETE.name().equals(other.getStatus()) && this.status.equals("INACTIVE")));
         }
 
         /** Get Orgs with translated legal names */
-        private Set<LEIOrganization> toOtherOrgs(){
+        private Set<LEIOrganization> toOtherOrgs() {
             Set<LEIOrganization> orgs = new HashSet<LEIOrganization>();
-            for (String tName:this.transliteratedLegalNames){
-                if (!this.name.equals(tName)){
-                    //add org
-                    LEIOrganization tOrg= new LEIOrganization();
+            for (String tName : this.transliteratedLegalNames) {
+                if (!this.name.equals(tName)) {
+                    // add org
+                    LEIOrganization tOrg = new LEIOrganization();
                     tOrg.name = tName;
                     tOrg.hqAddres = this.hqAddres;
                     tOrg.id = this.id;
@@ -339,8 +343,8 @@ public class LoadLEIData {
                 }
             }
             return orgs;
-        } 
-        
+        }
+
         @Override
         public String toString() {
             return "LEIOrganization [type=" + type + ", successorLEI=" + successorLEI + ", id=" + id + ", status=" + status + ", name=" + name + ", otherNames="
@@ -398,7 +402,7 @@ public class LoadLEIData {
         private LoadLEIData getOuterType() {
             return LoadLEIData.this;
         }
-        
+
         @Override
         public String toString() {
             return "LEIAddress [country=" + country + ", region=" + region + ", city=" + city + "]";
