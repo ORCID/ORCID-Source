@@ -114,16 +114,14 @@ export class OauthService {
     }
 
     sendReactivationEmail( email ): Observable<any> {
-        //let data = JSON.stringify(obj);
-
         let data = 'email=' + email;
         
         return this.http.post( 
             getBaseUri() + '/sendReactivation.json', 
             data, 
-            { headers: this.formHeaders }
+            { headers: this.formHeaders}
         )
-        .map((res:Response) => res.json()).share();
+        .share();
     }
 
     sendEmailsAdditionalReactivationEmail( obj ): Observable<any> {

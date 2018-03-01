@@ -699,8 +699,11 @@ $(function() {
     
     function showLoginDeactivatedError() {
         //TODO add togglz for ng2 feature
-        window.angularComponentReference.zone.run(() => { window.angularComponentReference.showDeactivationError(); });
-        //angular.element($("#login-deactivated-error")).scope().showDeactivationError();
+        if(orcidVar.features['ANGULAR2_QA']){
+            window.angularComponentReference.zone.run(() => { window.angularComponentReference.showDeactivationError(); });
+        } else {
+          angular.element($("#login-deactivated-error")).scope().showDeactivationError();  
+        }
         if ($('form#loginForm #login-error-mess').length == 0) {
             $('form#loginForm #login-deactivated-error').fadeIn('fast');
         } else {
