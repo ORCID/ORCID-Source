@@ -175,28 +175,18 @@ public class ClaimController extends BaseController {
             return claim;
         }
 
-        // Do it in a transaction
-        try {
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                public void doInTransactionWithoutResult(TransactionStatus status) {
-                    Locale requestLocale = RequestContextUtils.getLocale(request);
-                    org.orcid.jaxb.model.v3.dev1.common.Locale userLocale = (requestLocale == null) ? null
-                            : org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(requestLocale.toString());
-                    boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
-                    if (!claimed) {
-                        throw new IllegalStateException("Unable to claim record " + orcid);
-                    }                    
-                    // Update the password
-                    profileEntityManager.updatePassword(orcid, claim.getPassword().getValue());
-                    // Notify
-                    notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
-                }
-            });
-
-        } catch (Exception e) {
-            throw new InvalidRequestException("Unable to claim record due: " + e.getMessage(), e.getCause());
-        }
-
+        Locale requestLocale = RequestContextUtils.getLocale(request);
+        org.orcid.jaxb.model.v3.dev1.common.Locale userLocale = (requestLocale == null) ? null
+                : org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(requestLocale.toString());
+        
+        boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
+        if (!claimed) {
+            throw new IllegalStateException("Unable to claim record " + orcid);
+        }                    
+                
+        // Notify
+        notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
+        // Log user in 
         automaticallyLogin(request, claim.getPassword().getValue(), orcid);
         // detech this situation
         String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
@@ -282,7 +272,7 @@ public class ClaimController extends BaseController {
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);
-            LOGGER.warn("User {0} should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
+            LOGGER.warn("User " + orcid + " should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
         }
     }
 }

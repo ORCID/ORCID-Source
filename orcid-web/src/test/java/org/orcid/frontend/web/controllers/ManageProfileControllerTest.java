@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -909,6 +910,36 @@ public class ManageProfileControllerTest {
         assertEquals("manage.pleaseProvideAnAnswer", s.getErrors().get(0));
         
         verify(mockProfileEntityManager, times(0)).updateSecurityQuestion(Mockito.anyString(), Mockito.any(), Mockito.any());       
+    }
+    
+    @Test
+    public void validateEmailAddressTest() {
+    	assertTrue(controller.validateEmailAddress("test@orcid.org"));
+    	assertTrue(controller.validateEmailAddress("test.test@orcid.org"));
+    	assertTrue(controller.validateEmailAddress("test-test@orcid.org"));
+    	assertTrue(controller.validateEmailAddress("test_test@orcid.org"));
+    	assertTrue(controller.validateEmailAddress("1test@orcid.org"));
+    	assertTrue(controller.validateEmailAddress("test1@orcid.org"));
+    	// Examples from https://en.wikipedia.org/wiki/Email_address#Examples
+    	assertTrue(controller.validateEmailAddress("user.name+tag+sorting@example.com"));
+    	assertTrue(controller.validateEmailAddress("example-indeed@strange-example.com"));
+    	assertTrue(controller.validateEmailAddress("#!$%&'*+-/=?^_`{}|~@example.org"));
+    	
+    	assertFalse(controller.validateEmailAddress(null));
+    	assertFalse(controller.validateEmailAddress(""));
+    	assertFalse(controller.validateEmailAddress("@"));
+    	assertFalse(controller.validateEmailAddress("@."));
+    	assertFalse(controller.validateEmailAddress("test"));
+    	assertFalse(controller.validateEmailAddress("test@"));
+    	assertFalse(controller.validateEmailAddress("test@test"));
+    	assertFalse(controller.validateEmailAddress("@test"));
+    	assertFalse(controller.validateEmailAddress("@test.com"));
+    	// Examples from https://en.wikipedia.org/wiki/Email_address#Examples
+    	assertFalse(controller.validateEmailAddress("Abc.example.com"));
+    	assertFalse(controller.validateEmailAddress("A@b@c@example.com"));
+    	assertFalse(controller.validateEmailAddress("john.doe@example..com"));
+    	assertFalse(controller.validateEmailAddress("john..doe@example.com"));
+    	assertFalse(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
     }
     
     protected Authentication getAuthentication(String orcid) {

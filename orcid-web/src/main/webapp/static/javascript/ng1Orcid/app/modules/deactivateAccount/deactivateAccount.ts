@@ -8,11 +8,12 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated
+import { CommonNg2Module }
+    from './../common/common.ts';
+    
 import { DeactivateAccountComponent } 
     from './deactivateAccount.component.ts';
 
-import { CommonNg2Module }
-    from './../common/common.ts';
 
 // This is the Angular 1 part of the module
 export const DeactivateAccountModule = angular.module(
@@ -23,14 +24,14 @@ export const DeactivateAccountModule = angular.module(
 // This is the Angular 2 part of the module
 @NgModule(
     {
-        imports: [
-            CommonNg2Module
-        ],
         declarations: [ 
             DeactivateAccountComponent
         ],
         entryComponents: [ 
             DeactivateAccountComponent 
+        ],
+        imports: [
+            CommonNg2Module
         ],
         providers: [
             

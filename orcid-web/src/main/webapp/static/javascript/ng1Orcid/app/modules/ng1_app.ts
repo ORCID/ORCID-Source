@@ -36,6 +36,12 @@ import { CountryModule }
 import { CountryFormModule } 
     from './countryForm/countryForm.ts';
 
+import { DeactivateAccountModule }
+    from './deactivateAccount/deactivateAccount.ts';
+
+import { DeprecateAccountModule }
+    from './deprecateAccount/deprecateAccount.ts';
+
 import { EmailsModule } 
     from './emails/emails.ts';
 
@@ -72,6 +78,9 @@ import { ModalModule }
 import { NameModule } 
     from './name/name.ts';
 
+import { PasswordEditModule } 
+    from './passwordEdit/passwordEdit.ts';
+
 import { SearchModule } 
     from './search/search.ts';
 
@@ -90,6 +99,9 @@ import { SelfServiceRemoveContactModule }
 import { SelfServiceRemoveSubMemberModule } 
     from './selfServiceRemoveSubMember/selfServiceRemoveSubMember.ts';
 
+import { SocialNetworksModule }
+    from './socialNetworks/socialNetworks.ts';
+
 import { ThanksForRegisteringModule } 
     from './thanksForRegistering/thanksForRegistering.ts';
 
@@ -98,6 +110,9 @@ import { ThanksForVerifyingModule }
 
 import { TwoFASetupModule } 
     from './2FASetup/twoFASetup.ts';
+
+import { TwoFAStateModule }
+    from './2FAState/twoFAState.ts';
 
 import { WebsitesModule } 
     from './websites/websites.ts';
@@ -129,6 +144,8 @@ export const orcidApp = angular.module(
         BiographyModule.name,
         CountryModule.name,
         CountryFormModule.name,
+        DeactivateAccountModule.name,
+        DeprecateAccountModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
         EmailUnverifiedWarningModule.name,
@@ -141,15 +158,18 @@ export const orcidApp = angular.module(
         LanguageModule.name,
         ModalModule.name,
         NameModule.name,
+        PasswordEditModule.name,
         SearchModule.name,
         SelfServiceModule.name,
         SelfServiceAddContactModule.name,
         SelfServiceExistingSubMemberModule.name,
         SelfServiceRemoveContactModule.name,
         SelfServiceRemoveSubMemberModule.name,
+        SocialNetworksModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
         TwoFASetupModule.name,
+        TwoFAStateModule.name,
         WebsitesFormModule.name,
         WebsitesModule.name,
         WidgetModule.name,

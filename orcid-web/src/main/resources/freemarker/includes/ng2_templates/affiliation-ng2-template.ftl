@@ -21,7 +21,7 @@
     <div>
         <!-- DISTINCTION AND INVITED POSITION -->
         <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
-            <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active">
+            <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && distinctionsAndInvitedPositions.length < 1">
                 <div class="workspace-accordion-header clearfix">
                     <div class="row">
                         <div class="col-md-5 col-sm-5 col-xs-12">
@@ -55,7 +55,7 @@
                                                     <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
                                                     <span *ngIf="sortState.reverseKey['startDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='startDate'}"></span>
                                                     <span *ngIf="sortState.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
-                                                </a>                                                                                    
+                                                </a>
                                             </li>
                                             <li [ngClass]="{'checked':sortState.predicateKey=='endDate'}">
                                                 <a (click)="sort('endDate');" class="action-option manage-button">
@@ -140,7 +140,7 @@
                                 <strong><@orcid.msg 'workspace_affiliations_body_list.Nodistinctionorinvitedpositionaddedyet' /></strong>
                             <#else>
                                 <strong>                                
-                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanydistinctionnorinvitedposition' />
+                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
                                 <a href="" (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
                                 <@orcid.msg 'common.or' />
                                 <a href="" (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
@@ -162,8 +162,10 @@
                                             <span class="affiliation-date" *ngIf="group.startDate">
                                                 <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
                                                 <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                                                <span [hidden]="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                                <span [hidden]="group.endDate && group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                                <span *ngIf="group.endDate">
+                                                    <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>                                                
+                                                </span>
                                             </span>
                                             <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
                                                  <span  *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
@@ -180,7 +182,7 @@
                                         <ul class="workspace-private-toolbar"> 
                                             <div *ngIf="orgIdsFeatureEnabled">
                                                 <li class="works-details">
-                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                         <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                         </span>
                                                     </a>
@@ -213,8 +215,8 @@
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">*** | orderBy:["-relationship.value", "type.value"] track by $index
-                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers | orderBy:["relationship.value", "type.value"]' class="url-popover">
+                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -242,7 +244,7 @@
                                                 <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
                                                     <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
                                                     <ul class="reset">
-                                                        <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                        <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType ">
                                                             {{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                                                     </ul>
                                                 </div>
@@ -257,7 +259,7 @@
                                         <div class="col-md-12">
                                             <div class="bottomBuffer">
                                                 <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                                <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                                <span>{{group.createdDate}}</span>
                                             </div>
                                         </div>  
                                     </div>
@@ -309,7 +311,7 @@
             </div>
         </div>
         <!-- EDUCATION AND QUALIFICATION -->
-        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active">
+        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && sectionOneElements.length < 1">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">                    
                     <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
@@ -325,7 +327,7 @@
                                     <div id="education-qualification-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
-                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
+                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
                                         </div>
                                     </div>
                                 </div>  
@@ -513,7 +515,7 @@
                             <strong><@orcid.msg 'workspace_affiliations_body_list.Noeducationnorqualificationaddedyet' /></strong>
                         <#else>
                             <strong>                                
-                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanyeducationnorqualification' />
+                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
                             <a href="" (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducationnow' /></a>
                             <@orcid.msg 'common.or' />
                             <a href="" (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualificationnow' /></a>
@@ -535,8 +537,10 @@
                                         <span class="affiliation-date" *ngIf="group.startDate">
                                             <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
                                             <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                                            <span [hidden]="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                            <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            <span [hidden]="group.endDate && group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                            <span *ngIf="group.endDate">
+                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            </span>
                                         </span>
                                         <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
                                              <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
@@ -553,7 +557,7 @@
                                     <ul class="workspace-private-toolbar"> 
                                         <div *ngIf="orgIdsFeatureEnabled">
                                             <li class="works-details">
-                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>
@@ -605,11 +609,9 @@
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
                                             <span class="url-popover">{{group.disambiguatedAffiliationSourceId.value}}</span>
-                                            <!--
-                                            ***
+
                                             <span [innerHTML]='group.disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.disambiguationSource.value:group.putCode.value:group.disambiguationSource' class="url-popover"> 
                                             </span>
-                                            -->
                                         </div>
                                         <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
                                             <span *ngIf="group.orgDisambiguatedName">{{group.orgDisambiguatedName}}</span><span *ngIf="group.orgDisambiguatedCity || group.orgDisambiguatedRegion || group.orgDisambiguatedCountry">: </span><span *ngIf="group.orgDisambiguatedCity">{{group.orgDisambiguatedCity}}</span><span *ngIf="group.orgDisambiguatedCity && group.orgDisambiguatedRegion">, </span><span *ngIf="group.orgDisambiguatedRegion">{{group.orgDisambiguatedRegion}}</span><span *ngIf="group.orgDisambiguatedCountry && (group.orgDisambiguatedCity || group.orgDisambiguatedRegion)">, </span><span *ngIf="group.orgDisambiguatedCountry">{{group.orgDisambiguatedCountry}}</span>
@@ -692,7 +694,7 @@
             </div>
         </div>
         <!-- EMPLOYMENT -->
-        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active">
+        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && employments.length < 1">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-3 col-sm-3 col-xs-12">
@@ -707,7 +709,7 @@
                             <div id="employment-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_new'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div>
@@ -755,8 +757,7 @@
                                         <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
-                                            <ul class="menu-options employment">                            
-                                                
+                                            <ul class="menu-options employment">                                                
                                                 <li>                            
                                                     <a id="add-employment" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                                         <span class="glyphicon glyphicon-plus"></span>
@@ -775,8 +776,7 @@
                                 </a>                
                             </li>
                         </ul>
-                        </#if>
-                                    
+                        </#if>                                   
                     </div>
                 </div>
             </div>                        
@@ -787,14 +787,14 @@
                             <strong><@orcid.msg 'workspace_affiliations_body_list.Noemploymentddedyet' /></strong>
                         <#else>
                             <strong>                                
-                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanyemployment' />
+                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
                             <a href="" (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemploymentnow' /></a>
                             <@orcid.msg 'common.now' />                                
                             </strong>
                         </#if>
                     </strong>
                 </div>
-                <ul id="employments-list" ng-hide="!employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                <ul id="employments-list" *ngIf="employments.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments | orderBy: sortState.predicate:sortState.reverse" [attr.employment-put-code]="group.putCode.value">
                         <div class="row">                
                             <div class="col-md-9 col-sm-9 col-xs-7">
@@ -807,8 +807,10 @@
                                         <span class="affiliation-date" *ngIf="group.startDate">
                                             <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
                                             <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                                            <span [hidden]="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                            <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            <span [hidden]="group.endDate && group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                            <span *ngIf="group.endDate">
+                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                            </span>
                                         </span>
                                         <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
                                              <span  *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
@@ -825,7 +827,7 @@
                                     <ul class="workspace-private-toolbar"> 
                                         <div *ngIf="orgIdsFeatureEnabled">
                                             <li class="works-details">
-                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>
@@ -858,8 +860,8 @@
                                 <ul class="id-details">
                                     <li class="url-work">
                                         <ul class="id-details">
-                                            <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">*** | orderBy:["-relationship.value", "type.value"] track by $index
-                                                <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+                                            <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">
+                                                <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
                                             </li>
                                         </ul>                                   
                                     </li>
@@ -887,7 +889,7 @@
                                             <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
                                                 <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
                                                 <ul class="reset">
-                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
                                                         {{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                                                 </ul>
                                             </div>
@@ -902,7 +904,7 @@
                                     <div class="col-md-12">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                            <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                            <span>{{group.createdDate}}</span>
                                         </div>
                                     </div>  
                                 </div>
@@ -954,7 +956,7 @@
         </div>        
         <!-- MEMBERSHIP AND SERVICE -->
         <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
-            <div id="workspace-membership-service" class="workspace-accordion-item workspace-accordion-active">
+            <div id="workspace-membership-service" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && membershipsAndServices.length < 1">
                 <div class="workspace-accordion-header clearfix">
                     <div class="row">
                         <div class="col-md-5 col-sm-5 col-xs-12">
@@ -1073,7 +1075,7 @@
                                 <strong><@orcid.msg 'workspace_affiliations_body_list.Nomembershiporserviceaddedyet' /></strong>
                             <#else>
                                 <strong>                                
-                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedanymembershipnorservice' />
+                                <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
                                 <a href="" (click)="addAffiliationModal('membership')"><@orcid.msg 'workspace_affiliations_body_list.addmembershipnow' /></a>
                                 <@orcid.msg 'common.or' />
                                 <a href="" (click)="addAffiliationModal('service')"><@orcid.msg 'workspace_affiliations_body_list.addservicenow' /></a>
@@ -1095,8 +1097,10 @@
                                             <span class="affiliation-date" *ngIf="group.startDate">
                                                 <span *ngIf="group.startDate.year">{{group.startDate.year}}</span><span *ngIf="group.startDate.month">-{{group.startDate.month}}</span><span *ngIf="group.startDate.day">-{{group.startDate.day}}</span>
                                                 <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                                                <span [hidden]="group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                                <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                                <span [hidden]="group.endDate && group.endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                                <span *ngIf="group.endDate">    
+                                                    <span *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
+                                                </span>
                                             </span>
                                             <span class="affiliation-date" *ngIf="!group.startDate && group.endDate">
                                                  <span  *ngIf="group.endDate.year">{{group.endDate.year}}</span><span *ngIf="group.endDate.month">-{{group.endDate.month}}</span><span *ngIf="group.endDate.day">-{{group.endDate.day}}</span>
@@ -1113,7 +1117,7 @@
                                         <ul class="workspace-private-toolbar"> 
                                             <div *ngIf="orgIdsFeatureEnabled">
                                                 <li class="works-details">
-                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                         <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                         </span>
                                                     </a>
@@ -1146,8 +1150,8 @@
                                     <ul class="id-details">
                                         <li class="url-work">
                                             <ul class="id-details">
-                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">*** | orderBy:["-relationship.value", "type.value"] track by $index
-                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>***| affiliationExternalIdentifierHtml:group.putCode.value:$index
+                                                <li *ngFor='let extID of group.affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -1175,7 +1179,7 @@
                                                 <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
                                                     <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
                                                     <ul class="reset">
-                                                        <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers ">***| orderBy:orgDisambiguatedExternalIdentifier.identifierType
+                                                        <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
                                                             {{orgDisambiguatedExternalIdentifier.identifierType}}:  <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span *ngIf="orgDisambiguatedExternalIdentifier.all"><span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
                                                     </ul>
                                                 </div>
@@ -1190,7 +1194,7 @@
                                         <div class="col-md-12">
                                             <div class="bottomBuffer">
                                                 <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                                <span>{{group.createdDate}}***| ajaxFormDateToISO8601</span>
+                                                <span>{{group.createdDate}}</span>
                                             </div>
                                         </div>  
                                     </div>

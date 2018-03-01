@@ -17,7 +17,7 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', '$timeout', fun
                     url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
                     dataType: 'json',
                     success: function(data) {
-                        console.log('addFundingToScope', path, data);
+                        //console.log('addFundingToScope', path, data);
                         for (var i in data) {
                             var funding = data[i];
                             groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);

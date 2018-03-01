@@ -45,7 +45,7 @@
             </div>
         </div>
        <span class="orcid-error"
-            *ngIf="deprecateProfilePojo.errors.length > 0">
+            *ngIf="deprecateProfilePojo?.errors?.length > 0">
             <div *ngFor='let error of deprecateProfilePojo.errors'
                 [innerHTML]="error"></div>
         </span>
