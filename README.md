@@ -15,8 +15,6 @@ Welcome to ORCID Source. Here are some resources to get you started.
 
 * [ORCID member support center](https://members.orcid.org/)
 
-* [ORCID Source Wiki](https://github.com/ORCID/ORCID-Source/wiki)
-
 * [Popular Client Libraries](https://github.com/ORCID/ORCID-Source/blob/master/POPULAR_CLIENT_LIBRARIES.md)
 
 # Getting Support
