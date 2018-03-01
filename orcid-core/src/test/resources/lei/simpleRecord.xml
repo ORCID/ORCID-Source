@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<lei:LEIData xmlns:lei="http://www.leiroc.org/data/schema/leidata/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<lei:LEIRecords>
+<lei:LEIRecord xmlns:lei="http://www.gleif.org/data/schema/leidata/2016" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <lei:LEI>213800GW5X3N23U2YM51</lei:LEI>
+      <lei:Entity>
+        <lei:LegalName>UNIVERSITY OF BATH (THE)</lei:LegalName>
+        <lei:LegalAddress>
+          <lei:FirstAddressLine>CLAVERTON DOWN</lei:FirstAddressLine>
+          <lei:City>BATH</lei:City>
+          <lei:Country>GB</lei:Country>
+          <lei:PostalCode>BA2 7AY</lei:PostalCode>
+        </lei:LegalAddress>
+        <lei:HeadquartersAddress>
+          <lei:FirstAddressLine>CLAVERTON DOWN</lei:FirstAddressLine>
+          <lei:City>BATH</lei:City>
+          <lei:Country>GB</lei:Country>
+          <lei:PostalCode>BA2 7AY</lei:PostalCode>
+        </lei:HeadquartersAddress>
+        <lei:RegistrationAuthority>
+          <lei:RegistrationAuthorityID>RA000585</lei:RegistrationAuthorityID>
+          <lei:RegistrationAuthorityEntityID>RC000644</lei:RegistrationAuthorityEntityID>
+        </lei:RegistrationAuthority>
+        <lei:LegalJurisdiction>GB</lei:LegalJurisdiction>
+        <lei:LegalForm>
+          <lei:EntityLegalFormCode>8888</lei:EntityLegalFormCode>
+          <lei:OtherLegalForm>OTHER - please specify</lei:OtherLegalForm>
+        </lei:LegalForm>
+        <lei:EntityStatus>ACTIVE</lei:EntityStatus>
+      </lei:Entity>
+      <lei:Registration>
+        <lei:InitialRegistrationDate>2014-02-18T00:00:00Z</lei:InitialRegistrationDate>
+        <lei:LastUpdateDate>2017-04-03T11:18:57.147Z</lei:LastUpdateDate>
+        <lei:RegistrationStatus>ISSUED</lei:RegistrationStatus>
+        <lei:NextRenewalDate>2018-04-03T00:00:00Z</lei:NextRenewalDate>
+        <lei:ManagingLOU>213800WAVVOPS85N2205</lei:ManagingLOU>
+        <lei:ValidationSources>FULLY_CORROBORATED</lei:ValidationSources>
+        <lei:ValidationAuthority>
+          <lei:ValidationAuthorityID>RA000585</lei:ValidationAuthorityID>
+          <lei:ValidationAuthorityEntityID>RC000644</lei:ValidationAuthorityEntityID>
+        </lei:ValidationAuthority>
+      </lei:Registration>
+    </lei:LEIRecord>
+</lei:LEIRecords>
+</lei:LEIData>
