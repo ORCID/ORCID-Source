@@ -67,14 +67,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     site_key: any;
     showBulletIcon: any;
     showClientDescription: any;
-    showCreateIcon: any;
     showDeactivatedError: any;
+    showDuplicateEmailError: any;
     showEmailsAdditionalDeactivatedError: any;
+    showEmailsAdditionalDuplicateEmailError: any;
     showEmailsAdditionalReactivationSent: any;
     showLimitedIcon: any;
     showLongDescription: any;
     showReactivationSent: any;
     showRegisterForm: any;
+    showRegisterProcessing: any;
     showUpdateIcon: any;
     socialSignInForm: any;
     loadTime: any;
@@ -113,14 +115,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.scriptsInjected = false;
         this.showBulletIcon = false;
         this.showClientDescription = false;
-        this.showCreateIcon = false;
         this.showDeactivatedError = false;
+        this.showDuplicateEmailError = false;
         this.showEmailsAdditionalDeactivatedError = [false];
+        this.showEmailsAdditionalDuplicateEmailError = [false];
         this.showEmailsAdditionalReactivationSent = [false];
         this.showLimitedIcon = false;    
         this.showLongDescription = {};
         this.showReactivationSent = false;
         this.showRegisterForm = false;
+        this.showRegisterProcessing = false;
         this.showUpdateIcon = false;
         this.socialSignInForm = {};
         this.loadTime = 0;
@@ -313,22 +317,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 if(data){
-                    /*
-                    angular.forEach(data.scopes, function (scope) {
-                        if (scope.value == "/email/read-private") {
-                            this.emailRequested = true;
-                        } else if(scope.value.endsWith('/create')) {
-                            this.showCreateIcon = true;
-                        } else if(scope.value.endsWith('/update')) {
+                    data.scopes.forEach((scope) => {
+                        if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
                         } else if(scope.value.endsWith('/read-limited')) {
                             this.showLimitedIcon = true;
                         } else {
                             this.showBulletIcon = true;
                         }
-                    })
-                    */
-                                                                                                            
+                    });
+                                                                                   
                     this.requestInfoForm = data;              
                     this.gaString = orcidGA.buildClientString(this.requestInfoForm.memberName, this.requestInfoForm.clientName);
                 }
@@ -359,32 +357,23 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
                 this.registrationForm.linkType=linkFlag;
                 
-                /*            
-                // special handling of deactivation error for primary email
-                $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
-                    $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
-                    $scope.showReactivationSent = false;
-                }); // initialize the watch
+                this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
+                this.showReactivationSent = false;
 
-                // special handling of deactivation error for additional emails
-                $scope.$watch('registrationForm.emailsAdditional', function(newValue, oldValue) {
-                    for (var index in $scope.registrationForm.emailsAdditional) {
-                        $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.emailsAdditional[index].errors) != -1));
-                        $scope.showEmailsAdditionalReactivationSent.splice(index, 1, false);
-                    }                              
-                }, true); // initialize the watch
-                */
-
+                for (var index in this.registrationForm.emailsAdditional) {
+                    this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                    this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                }  
             },
             error => {
-                //console.log('getformDataError', error);
+                console.log("An error occured initializing the registration form.");
             } 
         );
 
     };
 
     getDuplicates(): void{
-  
+        console.log(this.showRegisterProcessing);
         let url = getBaseUri() + '/dupicateResearcher.json?familyNames=' + this.registrationForm.familyNames.value + '&givenNames=' + this.registrationForm.givenNames.value;
 
         this.oauthService.getDuplicates( url )
@@ -399,7 +388,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     return;
                 }
                 if (this.duplicates.length > 0 ) {
-                    //this.showDuplicatesColorBox();
+                    this.showRegisterProcessing = false;
                     this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates', duplicates: this.duplicates});
                 } else {
                     this.oauth2ScreensPostRegisterConfirm();                          
@@ -415,16 +404,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     sendReactivationEmail(email): void {
-        
-
         this.oauthService.sendReactivationEmail(email)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
-            data => {
-                //TODO: show reactivation sent msg
+            (response: Response) => {
+                this.showDeactivatedError = false;
+                this.showReactivationSent = true;
+                this.cdr.detectChanges();
             },
             error => {
-                ////console.log('setBiographyFormError', error);
+                console.log("error sending reactivation email");
             } 
         );
     };
@@ -433,24 +422,24 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showEmailsAdditionalDeactivatedError.splice(index, 1, false);
         this.showEmailsAdditionalReactivationSent.splice(index, 1, true);
 
-        this.oauthService.sendEmailsAdditionalReactivationEmail({ email: this.registrationForm.emailsAdditional[index].value })
+        this.oauthService.sendEmailsAdditionalReactivationEmail(this.registrationForm.emailsAdditional[index].value)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
             },
             error => {
-                ////console.log('setBiographyFormError', error);
+                console.log("error sending reactivation email");
             } 
         );
     };
 
     oauth2ScreensPostRegisterConfirm(): void {
+        this.showRegisterProcessing = true;
         var baseUri = getBaseUri();       
         if(this.registrationForm.linkType === 'shibboleth'){
             baseUri += '/shibboleth';
         }
         
-        //this.showProcessingColorBox();
         this.registrationForm.valNumClient = this.registrationForm.valNumServer / 2;
 
         this.oauthService.oauth2ScreensPostRegisterConfirm(this.registrationForm)
@@ -458,7 +447,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 if(data != null && data.errors != null && data.errors.length > 0) {
-                    //TODO: Display error in the page
+                    this.showRegisterProcessing = false;
                     this.generalRegistrationError = data.errors[0];
                     this.modalService.notifyOther({action:'close', moduleId: 'modalRegisterDuplicates'});
                 } else {
@@ -498,8 +487,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             data => {
                 this.registrationForm = data;
                 if (this.registrationForm.errors == undefined 
-                    || this.registrationForm.errors.length == 0) {                            
-                    //this.showProcessingColorBox();                            
+                    || this.registrationForm.errors.length == 0) {                                 
                     this.getDuplicates();
                 } else {
                     if(this.registrationForm.email.errors.length > 0) {
@@ -527,57 +515,40 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             data => {
                 this.commonSrvc.copyErrorsLeft(this.registrationForm, data);
                 if(field == 'Email') {
-                    if (this.registrationForm.email.errors.length > 0) {
-                        for(var i = 0; i < this.registrationForm.email.errors.length; i++){
-                            //this.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml(this.registrationForm.email.errors[i]);
-                        }
-                    } else {
-                        this.emailTrustAsHtmlErrors = [];
+                    //deactivated error
+                    this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
+                    this.showReactivationSent = false;
+                    //duplicate email error
+                    if($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1){
+                        this.showDuplicateEmailError = true;
+                        this.authorizationForm.userName.value = this.registrationForm.email.value;
                     }
+                }
+                if(field == 'EmailsAdditional') {
+                    for (var index in this.registrationForm.emailsAdditional) {
+                        //deactivated error
+                        this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                        this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                        //duplicate email error
+                        this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                    }                              
                 }
                 this.cdr.detectChanges();
             },
             error => {
-                ////console.log('setBiographyFormError', error);
+                // something bad is happening!
+                console.log("serverValidate() error");
             } 
         );
     };
 
     showDuplicatesColorBox(): void {
-        /*
-        $.colorbox({
-            html : $compile($('#duplicates').html())(this),
-            escKey:false,
-            overlayClose:false,
-            transition: 'fade',
-            close: '',
-            scrolling: true
-        });
-        $.colorbox.resize({width:"780px" , height:"400px"});
-        */
-
         this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates'});
     };
 
     handleCaptchaResponse($event): void {
         this.recaptchaWidgetId = this.captcha.widgetId;
         this.recatchaResponse = this.captcha.getResponse();
-    };
-
-    showProcessingColorBox(): void  {
-        /*
-        $.colorbox({
-            html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">' + om.get('common.processing') + '&nbsp;<i id="ajax-loader" class="glyphicon glyphicon-refresh spin green"></i></div>'),
-            width: '400px',
-            height:"100px",
-            close: '',
-            escKey:false,
-            overlayClose:false,
-            onComplete: function() {
-                $.colorbox.resize({width:"400px" , height:"100px"});
-            }
-        });
-        */
     };
 
     //Default init functions provided by Angular Core
