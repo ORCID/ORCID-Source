@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.SlackManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
@@ -55,6 +56,9 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     @Resource
     private OrcidSecurityManager securityMgr;
 
+    @Resource
+    private SlackManager slackManager;
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -82,10 +86,15 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         return loadUserByProfile(profile);
     }
 
-    /* (non-Javadoc)
-     * @see org.orcid.core.security.OrcidUserDetailsService#loadUserByProfile(org.orcid.persistence.jpa.entities.ProfileEntity)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.orcid.core.security.OrcidUserDetailsService#loadUserByProfile(org.
+     * orcid.persistence.jpa.entities.ProfileEntity)
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrcidProfileUserDetails loadUserByProfile(ProfileEntity profile) {
         if (profile == null) {
             throw new UsernameNotFoundException("Bad username or password");
@@ -95,10 +104,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     }
 
     private OrcidProfileUserDetails createUserDetails(ProfileEntity profile) {
-        String primaryEmail = null;
-        // Clients doesnt have primary email, so, we need to cover that case.
-        if (profile.getPrimaryEmail() != null)
-            primaryEmail = profile.getPrimaryEmail().getId();
+        String primaryEmail = retrievePrimaryEmail(profile);
 
         OrcidProfileUserDetails userDetails = null;
 
@@ -109,6 +115,18 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
             userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
         }
         return userDetails;
+    }
+
+    private String retrievePrimaryEmail(ProfileEntity profile) {
+        String orcid = profile.getId();
+        try {
+            return emailDao.findPrimaryEmail(orcid).getId();
+        } catch (javax.persistence.NoResultException nre) {
+            String message = String.format("User with orcid %s have no primary email", orcid);
+            LOGGER.error(message);
+            slackManager.sendSystemAlert(message);
+            throw nre;
+        }
     }
 
     private void checkStatuses(ProfileEntity profile) {
@@ -137,7 +155,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         }
         return profile;
     }
-    
+
     private Collection<? extends GrantedAuthority> buildAuthorities(OrcidType orcidType, MemberType groupType) {
         Collection<OrcidWebRole> result = null;
         // If the orcid type is null, assume it is a normal user
