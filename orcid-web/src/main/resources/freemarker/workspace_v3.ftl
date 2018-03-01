@@ -79,7 +79,7 @@
                         <div id="qrcode-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">
-                                <p><@orcid.msg 'workspace.qrcode.help'/></p>
+                                <p><@orcid.msg 'workspace.qrcode.help'/><a href="https://support.orcid.org/knowledgebase/articles/116878"><@orcid.msg 'common.learn_more'/></a></p>
                             </div>
                         </div>
                     </div>
