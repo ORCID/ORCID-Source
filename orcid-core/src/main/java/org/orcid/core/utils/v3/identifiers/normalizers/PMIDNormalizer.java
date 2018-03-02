@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.utils.v3.identifiers;
+package org.orcid.core.utils.v3.identifiers.normalizers;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,23 +26,15 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-public class ISBNNormalizer implements Normalizer{
+public class PMIDNormalizer implements Normalizer {
 
-    private static final List<String> canHandle = Lists.newArrayList("isbn");
-    
-    //This sometimes gives false matches for number strings between 10-17 chars long.  
-    //The code deals with these false matches by ignoring ISBNs that are not 10 or 13 chars long.
-    //The other solution is a super complicated regex to deal with it.
-    private static final Pattern pattern = Pattern.compile("([0-9][-0-9 ]{8,15}[0-9xX])(?:$|[^0-9])");
+    private static final List<String> canHandle = Lists.newArrayList("pmid");
+    //only match numbers that don't end in a . or -
+    private static final Pattern pattern = Pattern.compile("(?:^\\s*|PMID:?\\s*|pubmed\\/|med\\/)(\\d+)(?:$|[^a-zA-Z0-9\\.\\-])",Pattern.CASE_INSENSITIVE);
     
     @Override
     public List<String> canHandle() {
         return canHandle;
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
     }
 
     @Override
@@ -53,14 +45,15 @@ public class ISBNNormalizer implements Normalizer{
         if (m.find()){
             String n = m.group(1);
             if (n != null){
-                n = n.replace("-", "");
-                n = n.replace(" ", "");
-                n = n.replace("x", "X");
-                if (n.length() == 10 || n.length() == 13)
-                    return n;
+                return n;
             }
         }
         return "";
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
 }

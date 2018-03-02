@@ -1,0 +1,41 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="UPDATE-TO-HTTPS" author="Tom Demeranville">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck expectedResult="5">select count(*) from identifier_type WHERE id_name in ('ISBN','ARXIV','PMC','PMID','RRID');</sqlCheck>
+			</preConditions>
+			<sql>UPDATE identifier_type SET id_resolution_prefix = 'https://www.worldcat.org/isbn/' WHERE id_name = 'ISBN';
+			UPDATE identifier_type SET id_resolution_prefix = 'https://arxiv.org/abs/' WHERE id_name = 'ARXIV';
+			UPDATE identifier_type SET id_resolution_prefix = 'https://europepmc.org/articles/' WHERE id_name = 'PMC';
+			UPDATE identifier_type SET id_resolution_prefix = 'https://www.ncbi.nlm.nih.gov/pubmed/' WHERE id_name = 'PMID';
+			UPDATE identifier_type SET id_resolution_prefix = 'https://identifiers.org/rrid/' WHERE id_name = 'RRID';</sql>
+	</changeSet>
+	
+	<!-- this is because the curie part is case sensitive! -->
+	<changeSet id="RRID-CASE-SENSITIVE" author="Tom Demeranville">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck expectedResult="1">select count(*) from identifier_type WHERE id_name = 'RRID';</sqlCheck>
+			</preConditions>
+			<sql>UPDATE identifier_type SET "case_sensitive" = true WHERE id_name = 'RRID';</sql>
+	</changeSet>
+
+</databaseChangeLog>

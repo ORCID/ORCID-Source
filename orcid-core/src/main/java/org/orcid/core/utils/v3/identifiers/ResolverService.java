@@ -27,31 +27,29 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
-import org.orcid.pojo.IdentifierType;
+import org.orcid.core.utils.v3.identifiers.resolvers.Resolver;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NormalizationService {
+public class ResolverService {
 
     @Resource
-    List<Normalizer> normalizers = new ArrayList<Normalizer>();
+    List<Resolver> Resolvers = new ArrayList<Resolver>();
 
     @Resource
     IdentifierTypeManager idman;
 
-    Map<String, LinkedList<Normalizer>> map = new HashMap<String, LinkedList<Normalizer>>();
+    Map<String, LinkedList<Resolver>> map = new HashMap<String, LinkedList<Resolver>>();
 
     @PostConstruct
     public void init() {
-        Collections.sort(normalizers, AnnotationAwareOrderComparator.INSTANCE);
+        Collections.sort(Resolvers, AnnotationAwareOrderComparator.INSTANCE);
         for (String type : idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).keySet()) {
-            map.put(type, new LinkedList<Normalizer>());
+            map.put(type, new LinkedList<Resolver>());
         }
-        for (Normalizer n : normalizers) {
+        for (Resolver n : Resolvers) {
             List<String> supported = n.canHandle();
             if (supported.isEmpty()) {
                 for (String type : map.keySet())
@@ -67,40 +65,20 @@ public class NormalizationService {
     /**
      * Ensure this is the API type name, not the DB type name.
      * 
-     * Will return empty strings for values that cannot be normalised (because they're not recognised)
-     * 
      * @param type
      * @param value
      * @return
      */
-    public String normalise(String apiTypeName, String value) {
-        if (apiTypeName == null)
-            return value;
-        String returnValue = value;
-        for (Normalizer n : normalizers) {
-            returnValue = n.normalise(apiTypeName, returnValue);
+    public boolean canResolve(String apiTypeName, String value, String providedURL) {
+        boolean ret = false;
+        for (Resolver r : map.get(apiTypeName)) {
+            boolean returnValue = r.canResolve(apiTypeName, value, providedURL);
+            if (returnValue) {
+                ret = returnValue;
+                break;
+            }
         }
-        return returnValue;
-    }
-    
-    /** Creates a normalised URL if possible
-     * Uses normalised identifier and prefix (if available)
-     * 
-     * Will return empty strings for values that cannot be normalised (because they're not recognised)
-     * 
-     * @param apiTypeName
-     * @param value
-     * @return
-     */
-    public String generateNormalisedURL(String apiTypeName, String value){
-        String norm = this.normalise(apiTypeName, value);
-        if (!norm.isEmpty()){
-            IdentifierType type = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
-            String prefix = type.getResolutionPrefix();
-            if (!StringUtils.isEmpty(prefix))
-                return prefix+norm;
-        }
-        return "";
+        return ret;
     }
 
 }

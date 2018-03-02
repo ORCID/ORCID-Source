@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.utils.v3.identifiers;
+package org.orcid.core.utils.v3.identifiers.normalizers;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,10 +26,10 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-public class BibcodeNormalizer implements Normalizer {
+public class DOINormalizer implements Normalizer {
 
-    private static final List<String> canHandle = Lists.newArrayList("bibcode");
-    private static final Pattern pattern = Pattern.compile("(?:^|[Bb][Ii][Bb][Bc][Oo][Dd][Ee]:?\\s*|[^a-zA-Z0-9\\.])([0-9]{4}[\\.a-zA-Z0-9]{15})(?:$|[^a-zA-Z0-9\\.])");
+    private static final List<String> canHandle = Lists.newArrayList("doi");
+    private static final Pattern pattern = Pattern.compile("(10\\.[0-9a-zA-Z]+\\/(?:(?![\"&\\'])\\S)+)\\b");
     
     @Override
     public List<String> canHandle() {

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.utils.v3.identifiers;
+package org.orcid.core.utils.v3.identifiers.normalizers;
 
 import java.util.List;
 import java.util.Locale;
