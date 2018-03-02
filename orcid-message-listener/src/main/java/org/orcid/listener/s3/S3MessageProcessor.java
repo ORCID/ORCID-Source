@@ -22,7 +22,6 @@ import java.util.function.Consumer;
 import javax.annotation.Resource;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
@@ -80,8 +79,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     public void accept(LastModifiedMessage m) {
         String orcid = m.getOrcid();
         update_1_2_API(orcid);
-        update_2_0_API(m);
-        update_2_0_Activities_API(m);
+        update_2_0_API(m);        
     }
 
     public void accept(RetryMessage m) {
@@ -91,9 +89,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             update_1_2_API(orcid);
         } else if (AvailableBroker.DUMP_STATUS_2_0_API.equals(destinationBroker)) {
             update_2_0_API(m);
-        } else if (AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API.equals(destinationBroker)) {
-            update_2_0_Activities_API(m);
-        }
+        } 
     }
 
     private void update_1_2_API(String orcid) {
@@ -191,45 +187,6 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                 // runtime exception
                 LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
                 recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-            }
-        }
-    }
-
-    private void update_2_0_Activities_API(BaseMessage message) {
-        String orcid = message.getOrcid();
-        if (is20ActivitiesIndexingEnabled) {
-            // Update API 2.0
-            try {
-                ActivitiesSummary as = orcid20ApiClient.fetchPublicActivities(message);
-                if (as != null) {
-                    s3Updater.updateS3(orcid, as);
-                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
-                }
-            } catch (LockedRecordException | DeprecatedRecordException e) {
-                try {
-                    OrcidError error = null;
-                    if (e instanceof LockedRecordException) {
-                        LOG.error("Record " + orcid + " is locked");
-                        error = ((LockedRecordException) e).getOrcidError();
-                    } else {
-                        LOG.error("Record " + orcid + " is deprecated");
-                        error = ((DeprecatedRecordException) e).getOrcidError();
-                    }
-                    exceptionHandler.handle20ActivitiesException(orcid, error);
-                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
-                } catch (Exception e1) {
-                    LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
-                    recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
-                }
-            } catch (AmazonClientException e) {
-                LOG.error("Unable to fetch activities for record record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-            } catch (Exception e) {
-                // something else went wrong fetching activities from ORCID and
-                // threw a
-                // runtime exception
-                LOG.error("Unable to fetch activities for record record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API);
             }
         }
     }

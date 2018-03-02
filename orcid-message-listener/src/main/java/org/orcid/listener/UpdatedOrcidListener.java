@@ -77,9 +77,7 @@ public class UpdatedOrcidListener {
     	LastModifiedMessage message = new LastModifiedMessage(map);
     	if(indexSummaries) {
     		System.out.println("IndexingSummaries");
-    	}
-    	
-    	if(indexActivities) {
+    	} else if(indexActivities) {
     		System.out.println("IndexingActivities");
     	}
     }

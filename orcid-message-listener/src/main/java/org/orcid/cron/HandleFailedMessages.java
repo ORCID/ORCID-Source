@@ -92,16 +92,11 @@ public class HandleFailedMessages {
                 if (element.getSolrStatus20Api() > 0) {
                     RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.SOLR.value());
                     jmsTemplate.convertAndSend(MessageConstants.Queues.RETRY, message.getMap());
-                }
-                // Send RetryMessage for 2.0 activities dump
-                if (element.getDumpStatus20ActivitiesApi() > 0) {
-                    RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.DUMP_STATUS_2_0_ACTIVITIES_API.value());
-                    jmsTemplate.convertAndSend(MessageConstants.Queues.RETRY, message.getMap());
-                }
+                }                
 
                 // Should we notify about this element?
                 if ((element.getDumpStatus12Api() > maxFailuresBeforeNotify) || (element.getDumpStatus20Api() > maxFailuresBeforeNotify)
-                        || (element.getSolrStatus20Api() > maxFailuresBeforeNotify) || (element.getDumpStatus20ActivitiesApi() > maxFailuresBeforeNotify)) {
+                        || (element.getSolrStatus20Api() > maxFailuresBeforeNotify)) {
                     elementsToNotify.add(element);
                 }
             } catch (JmsException e) {

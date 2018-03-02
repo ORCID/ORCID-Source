@@ -24,7 +24,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
@@ -96,16 +95,6 @@ public class Orcid20APIClient {
         cached = response.getEntity(Record.class);
         v2PerMessageQueue.put(message, cached);
         return cached;
-    }
-    
-    /**
-     * Fetches the public activities from the ORCID API v2.0
-     * 
-     * @param orcid
-     * @return Record
-     */
-    public ActivitiesSummary fetchPublicActivities(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
-        return this.fetchPublicRecord(message).getActivitiesSummary();
     }
     
     public Funding fetchFunding(String orcid, Long putCode){
