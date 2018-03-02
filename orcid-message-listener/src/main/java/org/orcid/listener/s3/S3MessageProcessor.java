@@ -62,6 +62,12 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     @Value("${org.orcid.message-listener.api20ActivitiesEnabled:true}")
     private boolean is20ActivitiesIndexingEnabled;
 
+    @Value("${org.orcid.message-listener.index.summaries:false}")
+    private boolean summaryIndexerEnabled;
+    
+    @Value("${org.orcid.message-listener.index.activities:false}")
+    private boolean activitiesIndexerEnabled;
+    
     @Resource
     private Orcid12APIClient orcid12ApiClient;
     @Resource
