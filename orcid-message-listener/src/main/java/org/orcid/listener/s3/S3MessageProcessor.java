@@ -217,7 +217,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 		if (activitiesIndexerEnabled) {
 			try {
 				ActivitiesSummary as = orcid20ApiClient.fetchPublicActivitiesSummary(message);
-				Map<ActivityType, List<S3ObjectSummary>> existingActivities = s3MessagingService
+				Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3MessagingService
 						.searchActivities(orcid);
 				if (as.getEducations() != null && !as.getEducations().getSummaries().isEmpty()) {
 					for (EducationSummary x : as.getEducations().getSummaries()) {

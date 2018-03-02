@@ -18,10 +18,8 @@ package org.orcid.listener.s3;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -105,15 +103,15 @@ public class S3MessagingService {
 		return true;
 	}
 
-	public Map<ActivityType, List<S3ObjectSummary>> searchActivities(String orcid)
+	public Map<ActivityType, Map<String, S3ObjectSummary>> searchActivities(String orcid)
 			throws AmazonClientException, AmazonServiceException {
-		Map<ActivityType, List<S3ObjectSummary>> activitiesOnS3 = new HashMap<ActivityType, List<S3ObjectSummary>>();
+		Map<ActivityType, Map<String, S3ObjectSummary>> activitiesOnS3 = new HashMap<ActivityType, Map<String, S3ObjectSummary>>();
 
-		List<S3ObjectSummary> educations = new ArrayList<S3ObjectSummary>();
-		List<S3ObjectSummary> employments = new ArrayList<S3ObjectSummary>();
-		List<S3ObjectSummary> fundings = new ArrayList<S3ObjectSummary>();
-		List<S3ObjectSummary> works = new ArrayList<S3ObjectSummary>();
-		List<S3ObjectSummary> peerReviews = new ArrayList<S3ObjectSummary>();
+		Map<String, S3ObjectSummary> educations = new HashMap<String, S3ObjectSummary>();
+		Map<String, S3ObjectSummary> employments = new HashMap<String, S3ObjectSummary>();
+		Map<String, S3ObjectSummary> fundings = new HashMap<String, S3ObjectSummary>();
+		Map<String, S3ObjectSummary> works = new HashMap<String, S3ObjectSummary>();
+		Map<String, S3ObjectSummary> peerReviews = new HashMap<String, S3ObjectSummary>();
 
 		activitiesOnS3.put(ActivityType.EDUCATIONS, educations);
 		activitiesOnS3.put(ActivityType.EMPLOYMENTS, employments);
@@ -127,28 +125,33 @@ public class S3MessagingService {
 			objects = s3.listObjectsV2("API_2_0", prefix);
 			for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
 				String activityPath = objectSummary.getKey();
-				// To improve performance, sort these if/else based on https://orcid.org/statistics, were the type with more elements should go on top
+				String putCode = getActivityPutCode(activityPath);
+				// To improve performance, sort these if/else based on
+				// https://orcid.org/statistics, were the type with more
+				// elements should go on top
 				if (activityPath.contains(ActivityType.WORKS.getPathDiscriminator())) {
-					works.add(objectSummary);
-				} else if(activityPath.contains(ActivityType.EDUCATIONS.getPathDiscriminator())) {
-					educations.add(objectSummary);
-				} else if(activityPath.contains(ActivityType.EMPLOYMENTS.getPathDiscriminator())) {
-					employments.add(objectSummary);
-				} else if(activityPath.contains(ActivityType.FUNDINGS.getPathDiscriminator())) {
-					fundings.add(objectSummary);
-				} else if(activityPath.contains(ActivityType.PEER_REVIEWS.getPathDiscriminator())) {
-					peerReviews.add(objectSummary);
+					works.put(putCode, objectSummary);
+				} else if (activityPath.contains(ActivityType.EDUCATIONS.getPathDiscriminator())) {
+					educations.put(putCode, objectSummary);
+				} else if (activityPath.contains(ActivityType.EMPLOYMENTS.getPathDiscriminator())) {
+					employments.put(putCode, objectSummary);
+				} else if (activityPath.contains(ActivityType.FUNDINGS.getPathDiscriminator())) {
+					fundings.put(putCode, objectSummary);
+				} else if (activityPath.contains(ActivityType.PEER_REVIEWS.getPathDiscriminator())) {
+					peerReviews.put(putCode, objectSummary);
 				}
 			}
-
 			objects.setContinuationToken(objects.getNextContinuationToken());
 		} while (objects.isTruncated());
 
 		return activitiesOnS3;
 	}
 
+	public String getActivityPutCode(String activityPath) {
+		return activityPath.substring(activityPath.lastIndexOf('_') + 1, activityPath.lastIndexOf('.'));
+	}
+
 	private String buildPrefix(String orcid) {
 		return orcid.substring(16) + "/activities/" + orcid + "/xml/";
 	}
-	
 }
