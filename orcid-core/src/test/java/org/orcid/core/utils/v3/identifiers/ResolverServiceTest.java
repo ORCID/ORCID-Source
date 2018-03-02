@@ -82,12 +82,5 @@ public class ResolverServiceTest {
         assertTrue(resolver.canResolve("pmid", "22791631","https://www.ncbi.nlm.nih.gov/pubmed/22791631"));
         assertFalse(resolver.canResolve("pmid", "junk",null));
     }
-    
-    @Test
-    public void testExists(){
-        //this should work, but fails because of http->https not following redirects
-        //
-
-    }
 
 }
