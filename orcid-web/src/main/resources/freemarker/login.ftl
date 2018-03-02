@@ -25,10 +25,13 @@
 		<@orcid.checkFeatureStatus 'ANGULAR2_QA'>
 			<#include "/includes/ng2_templates/modal-ng2-template.ftl">
 			<#include "/includes/ng2_templates/register-duplicates-ng2-template.ftl">
+			
             <oauth-authorization-ng2></oauth-authorization-ng2>
+
             <modalngcomponent elementHeight="400" elementId="modalRegisterDuplicates" elementWidth="780">
 			    <register-duplicates-ng2></register-duplicates-ng2>
 			</modalngcomponent><!-- Ng2 component --> 
+
         </@orcid.checkFeatureStatus>
 		<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
 			<div class="col-md-6 col-md-offset-3" ng-controller="OauthAuthorizationController">

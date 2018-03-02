@@ -54,7 +54,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     duplicates: any;
     gaString: any;
     focusIndex: any;
-    emailTrustAsHtmlErrors: any;
     enablePersistentToken: any;
     isOrcidPresent: any;
     oauthSignin: any;
@@ -72,9 +71,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     showEmailsAdditionalDeactivatedError: any;
     showEmailsAdditionalDuplicateEmailError: any;
     showEmailsAdditionalReactivationSent: any;
+    showGeneralRegistrationError: any;
     showLimitedIcon: any;
     showLongDescription: any;
     showReactivationSent: any;
+    showRecaptcha: any
     showRegisterForm: any;
     showRegisterProcessing: any;
     showUpdateIcon: any;
@@ -101,7 +102,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.currentLanguage = OrcidCookie.getCookie('locale_v3');
         this.duplicates = {};
         this.gaString = null;
-        this.emailTrustAsHtmlErrors = [];
         this.enablePersistentToken = true;
         this.focusIndex = null;
         this.isOrcidPresent = false;
@@ -120,8 +120,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showEmailsAdditionalDeactivatedError = [false];
         this.showEmailsAdditionalDuplicateEmailError = [false];
         this.showEmailsAdditionalReactivationSent = [false];
+        this.showGeneralRegistrationError = false
         this.showLimitedIcon = false;    
         this.showLongDescription = {};
+        this.showRecaptcha = true;
         this.showReactivationSent = false;
         this.showRegisterForm = false;
         this.showRegisterProcessing = false;
@@ -255,7 +257,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                ////console.log('setBiographyFormError', error);
+                console.log("An error occured authorizing the user.");
             } 
         );
     };
@@ -304,7 +306,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                //console.log('getformDataError', error);
+                console.log("An error occured initializing the form.");
             } 
         );
 
@@ -333,7 +335,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                //console.log('getformDataError', error);
+                console.log("An error occured initializing the form.");
             } 
         );
 
@@ -363,7 +365,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 for (var index in this.registrationForm.emailsAdditional) {
                     this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
                     this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
-                }  
+                } 
+                this.cdr.detectChanges(); 
             },
             error => {
                 console.log("An error occured initializing the registration form.");
@@ -373,9 +376,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     getDuplicates(): void{
-        console.log(this.showRegisterProcessing);
         let url = getBaseUri() + '/dupicateResearcher.json?familyNames=' + this.registrationForm.familyNames.value + '&givenNames=' + this.registrationForm.givenNames.value;
-
         this.oauthService.getDuplicates( url )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -396,9 +397,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                //console.log('getformDataError', error);
+                // something bad is happening!
+                console.log("error fetching dupicateResearcher.json");
+                // continue to registration, as solr dup lookup failed.
                 this.oauth2ScreensPostRegisterConfirm();
-            } 
+        } 
         );
 
     };
@@ -434,22 +437,22 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     oauth2ScreensPostRegisterConfirm(): void {
-        this.showRegisterProcessing = true;
-        var baseUri = getBaseUri();       
+        var baseUri = getBaseUri();  
         if(this.registrationForm.linkType === 'shibboleth'){
             baseUri += '/shibboleth';
         }
-        
         this.registrationForm.valNumClient = this.registrationForm.valNumServer / 2;
-
         this.oauthService.oauth2ScreensPostRegisterConfirm(this.registrationForm)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
+                console.log(data)
                 if(data != null && data.errors != null && data.errors.length > 0) {
-                    this.showRegisterProcessing = false;
                     this.generalRegistrationError = data.errors[0];
+                    this.showGeneralRegistrationError = true;
+                    this.showRegisterProcessing = false;
                     this.modalService.notifyOther({action:'close', moduleId: 'modalRegisterDuplicates'});
+                    this.cdr.detectChanges();
                 } else {
                     if (this.gaString){
                         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth ' + this.gaString]);
@@ -460,7 +463,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }   
             },
             error => {
-                ////console.log('setBiographyFormError', error);
+                // something bad is happening!
+                console.log("OauthAuthorizationController.postRegister() error");
             } 
         );
     };
@@ -491,19 +495,34 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.getDuplicates();
                 } else {
                     if(this.registrationForm.email.errors.length > 0) {
-                        for(var i = 0; i < this.registrationForm.email.errors.length; i++){
-                            //this.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml(this.registrationForm.email.errors[i]);
-                        }
-                    } else {
-                        this.emailTrustAsHtmlErrors = [];
+                        //deactivated error
+                            this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
+                            this.showReactivationSent = false;
+                            
+                            //duplicate email error
+                            if($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1){
+                                this.showDuplicateEmailError = true;
+                                this.authorizationForm.userName.value = this.registrationForm.email.value;
+                            }
                     }
+
+                    for (var index in this.registrationForm.emailsAdditional) {
+                        //deactivated error
+                        this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                        this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                        //duplicate email error
+                        this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                    }
+
                     if (this.registrationForm.grecaptcha.errors.length == 0) {
-                        //angular.element(document.querySelector('#recaptcha')).remove();
+                        this.showRecaptcha = false;
                     }
                 }
+                this.cdr.detectChanges();
             },
             error => {
-                ////console.log('setBiographyFormError', error);
+                // something bad is happening!
+                console.log("oauth2ScreensRegister() error");
             } 
         );
     };

@@ -47,7 +47,7 @@ export class RegisterDuplicatesNg2Module {}
 //Must convert as much as possible of our code to directives
 
 RegisterDuplicatesModule.directive(
-    'requestPasswordResetNg2', 
+    'registerDuplicatesNg2', 
     <any>downgradeComponent(
         {
             component: RegisterDuplicatesComponent

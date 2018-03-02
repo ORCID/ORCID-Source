@@ -221,7 +221,7 @@
             <h4><@orcid.msg 'register.labelTermsofUse'/>
                 <span class="required" [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}"></span></h4>  
             <p>
-                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (blur)="serverValidate('TermsOfUse')" />
+                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
                 <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
             </p>
             <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
@@ -231,7 +231,7 @@
         <!--Recaptcha-->
         <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
             <div>   
-                <div class="bottomBuffer relative recaptcha"  id="recaptcha">
+                <div *ngIf="showRecaptcha" class="bottomBuffer relative recaptcha"  id="recaptcha">
                     <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
                     <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
                         <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
@@ -273,7 +273,7 @@
             </div>
         </@orcid.checkFeatureStatus>
         <!--Terms and conditions-->
-        <!--<div class="bottomBuffer">
+        <div class="bottomBuffer">
             <label for="termsConditions">
                 <@orcid.msg 'register.labelTermsofUse'/>
                 <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}">*</span>
@@ -285,12 +285,12 @@
             <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
                 <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
             </span>
-        </div>-->
+        </div>
     </@orcid.checkFeatureStatus>   	
     <!--Registration error-->
-    <div style="margin-bottom: 15px;" *ngIf="generalRegistrationError != null">
+    <div style="margin-bottom: 15px;" *ngIf="showGeneralRegistrationError">
         <span class="orcid-error" [innerHtml]="generalRegistrationError"></span>
-    </div> 
+    </div>
     <!-- Buttons  -->
     <div class="bottomBuffer col-xs-12 col-sm-3">
         <#if (RequestParameters['linkRequest'])??>

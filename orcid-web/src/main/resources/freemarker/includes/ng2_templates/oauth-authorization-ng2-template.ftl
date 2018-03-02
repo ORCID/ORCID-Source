@@ -20,7 +20,7 @@
 <script type="text/ng-template" id="oauth-authorization-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/confirm-oauth-access.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/signin") && (RequestParameters['oauth'])??>
-        <div class="container top-green-border confirm-oauth-access oneStepWidth">     
+        <div class="container confirm-oauth-access oneStepWidth">     
             <!-- /Freemarker and GA variables -->
             <@security.authorize access="hasRole('ROLE_USER')">
                 <div class="row top-header">
@@ -96,7 +96,6 @@
                                     </form>
                                 </div>
                                 <!-- RESET PASSWORD -->
-                                
                                 <request-password-reset-ng2 [authorizationForm]="authorizationForm"></request-password-reset-ng2>
 
                                 <!-- SOCIAL LOGIN -->                               

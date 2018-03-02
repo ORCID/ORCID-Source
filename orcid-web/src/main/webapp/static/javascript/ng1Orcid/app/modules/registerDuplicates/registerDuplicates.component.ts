@@ -21,7 +21,7 @@ import { OauthService }
 
 @Component({
     selector: 'register-duplicates-ng2',
-    template:  scriptTmpl("register-duplicates-ng2-template"),
+    template:  scriptTmpl("register-duplicates-ng2-template")
 })
 export class RegisterDuplicatesComponent {
     
@@ -42,7 +42,7 @@ export class RegisterDuplicatesComponent {
     }
 
     closeModal(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalSelfServiceExistingSubMember'});
+        this.modalService.notifyOther({action:'close', moduleId: 'modalRegisterDuplicates'});
     };
     
     ngOnInit() {
