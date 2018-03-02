@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Education;
@@ -32,7 +33,6 @@ import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.BaseMessage;

@@ -105,27 +105,39 @@ public class S3MessagingService {
 		return true;
 	}
 
-	public Map<ActivityType, List<String>> searchActivities(String bucketName, String prefix)
+	public Map<ActivityType, List<S3ObjectSummary>> searchActivities(String orcid)
 			throws AmazonClientException, AmazonServiceException {
-		Map<ActivityType, List<String>> activitiesOnS3 = new HashMap<ActivityType, List<String>>();
+		Map<ActivityType, List<S3ObjectSummary>> activitiesOnS3 = new HashMap<ActivityType, List<S3ObjectSummary>>();
 
-		for (ActivityType a : ActivityType.values()) {
-			activitiesOnS3.put(a, new ArrayList<String>());
-		}
+		List<S3ObjectSummary> educations = new ArrayList<S3ObjectSummary>();
+		List<S3ObjectSummary> employments = new ArrayList<S3ObjectSummary>();
+		List<S3ObjectSummary> fundings = new ArrayList<S3ObjectSummary>();
+		List<S3ObjectSummary> works = new ArrayList<S3ObjectSummary>();
+		List<S3ObjectSummary> peerReviews = new ArrayList<S3ObjectSummary>();
 
+		activitiesOnS3.put(ActivityType.EDUCATIONS, educations);
+		activitiesOnS3.put(ActivityType.EMPLOYMENTS, employments);
+		activitiesOnS3.put(ActivityType.FUNDINGS, fundings);
+		activitiesOnS3.put(ActivityType.WORKS, works);
+		activitiesOnS3.put(ActivityType.PEER_REVIEWS, peerReviews);
+
+		String prefix = buildPrefix(orcid);
 		ListObjectsV2Result objects;
 		do {
-			objects = s3.listObjectsV2(bucketName, prefix);
-
+			objects = s3.listObjectsV2("API_2_0", prefix);
 			for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
-				Date lastModified = objectSummary.getLastModified();
-				System.out.println(lastModified);
 				String activityPath = objectSummary.getKey();
-				for (ActivityType a : ActivityType.values()) {
-					if (activityPath.contains(a.getPathDiscriminator())) {
-						activitiesOnS3.get(a).add(activityPath);
-						break;
-					}
+				// To improve performance, sort these if/else based on https://orcid.org/statistics, were the type with more elements should go on top
+				if (activityPath.contains(ActivityType.WORKS.getPathDiscriminator())) {
+					works.add(objectSummary);
+				} else if(activityPath.contains(ActivityType.EDUCATIONS.getPathDiscriminator())) {
+					educations.add(objectSummary);
+				} else if(activityPath.contains(ActivityType.EMPLOYMENTS.getPathDiscriminator())) {
+					employments.add(objectSummary);
+				} else if(activityPath.contains(ActivityType.FUNDINGS.getPathDiscriminator())) {
+					fundings.add(objectSummary);
+				} else if(activityPath.contains(ActivityType.PEER_REVIEWS.getPathDiscriminator())) {
+					peerReviews.add(objectSummary);
 				}
 			}
 
@@ -135,4 +147,8 @@ public class S3MessagingService {
 		return activitiesOnS3;
 	}
 
+	private String buildPrefix(String orcid) {
+		return orcid.substring(16) + "/activities/" + orcid + "/xml/";
+	}
+	
 }

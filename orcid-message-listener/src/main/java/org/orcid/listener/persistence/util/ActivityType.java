@@ -17,14 +17,9 @@
 package org.orcid.listener.persistence.util;
 
 public enum ActivityType {
-	DISTINCTIONS("/distinctions/"),
 	EDUCATIONS("/educations/"),
 	EMPLOYMENTS("/employments/"),
 	FUNDINGS("/fundings/"),
-	INVITED_POSITIONS("/invited-positions/"),
-	MEMBERSHIPS("/memberships/"),
-	QUALIFICATIONS("/qualifications/"),
-	SERVICES("/services/"),
 	PEER_REVIEWS("/peer-reviews/"),
 	WORKS("/works/");
 	

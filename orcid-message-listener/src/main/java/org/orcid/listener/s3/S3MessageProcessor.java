@@ -17,17 +17,29 @@
 package org.orcid.listener.s3;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.annotation.Resource;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid12APIClient;
 import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
+import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -38,6 +50,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 /**
  * Core logic for listeners
@@ -78,6 +91,8 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     private ExceptionHandler exceptionHandler;
     @Resource
     private RecordStatusManager recordStatusManager;
+    @Resource
+    private S3MessagingService s3MessagingService;
 
     /**
      * Populates the Amazon S3 buckets
@@ -196,5 +211,59 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             }
         }
     }
+    
+	private void update_2_0_Activities(BaseMessage message) {
+		String orcid = message.getOrcid();
+		if (activitiesIndexerEnabled) {
+			try {
+				ActivitiesSummary as = orcid20ApiClient.fetchPublicActivitiesSummary(message);
+				Map<ActivityType, List<S3ObjectSummary>> existingActivities = s3MessagingService
+						.searchActivities(orcid);
+				if (as.getEducations() != null && !as.getEducations().getSummaries().isEmpty()) {
+					for (EducationSummary x : as.getEducations().getSummaries()) {
 
+					}
+				}
+
+				if (as.getEmployments() != null && !as.getEmployments().getSummaries().isEmpty()) {
+					for (EmploymentSummary x : as.getEmployments().getSummaries()) {
+
+					}
+				}
+
+				if (as.getFundings() != null && !as.getFundings().getFundingGroup().isEmpty()) {
+					for(FundingGroup g : as.getFundings().getFundingGroup()) {
+						for (FundingSummary x : g.getFundingSummary()) {
+	
+						}
+					}
+				}
+
+				if (as.getWorks() != null && !as.getWorks().getWorkGroup().isEmpty()) {
+					for(WorkGroup g : as.getWorks().getWorkGroup()) {
+						for (WorkSummary x : g.getWorkSummary()) {
+	
+						}
+					}
+				}
+
+				if (as.getPeerReviews() != null && !as.getPeerReviews().getPeerReviewGroup().isEmpty()) {
+					for(PeerReviewGroup g : as.getPeerReviews().getPeerReviewGroup()) {
+						for (PeerReviewSummary x : g.getPeerReviewSummary()) {
+	
+						}
+					}
+				}
+			} catch (LockedRecordException | DeprecatedRecordException e) {
+				// TODO: Delete all the activities for the given record
+			}
+		}
+	}
+    
+    private void update_2_0_Summary(BaseMessage message) {
+        String orcid = message.getOrcid();
+        if(summaryIndexerEnabled) {
+        	
+        }        
+    }
 }
