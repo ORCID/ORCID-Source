@@ -102,7 +102,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private SalesForceDao salesForceDao;
     
     @Resource(name = "salesForceConnectionEntityCacheManager")
-    GenericCacheManager<OrcidString, List<SalesForceConnectionEntity>> salesForceConnectionEntityCacheManager;
+    private GenericCacheManager<OrcidString, List<SalesForceConnectionEntity>> salesForceConnectionEntityCacheManager;
 
     @Resource
     private SalesForceConnectionDao salesForceConnectionDao;

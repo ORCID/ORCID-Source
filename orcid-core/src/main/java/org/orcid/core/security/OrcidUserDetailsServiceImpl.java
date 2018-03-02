@@ -16,13 +16,16 @@
  */
 package org.orcid.core.security;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -36,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Propagation;
@@ -58,6 +60,9 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
 
     @Resource
     private SlackManager slackManager;
+
+    @Resource
+    private SalesForceManager salesForceManager;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -114,6 +119,9 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         } else {
             userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
         }
+        if (!salesForceManager.retrieveAccountIdsByOrcid(profile.getId()).isEmpty()) {
+            userDetails.getAuthorities().add(OrcidWebRole.ROLE_SELF_SERVICE);
+        }
         return userDetails;
     }
 
@@ -156,32 +164,39 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         return profile;
     }
 
-    private Collection<? extends GrantedAuthority> buildAuthorities(OrcidType orcidType, MemberType groupType) {
+    private Collection<OrcidWebRole> buildAuthorities(OrcidType orcidType, MemberType groupType) {
         Collection<OrcidWebRole> result = null;
         // If the orcid type is null, assume it is a normal user
         if (orcidType == null)
-            result = Arrays.asList(OrcidWebRole.ROLE_USER);
+            result = rolesAsList(OrcidWebRole.ROLE_USER);
         else if (orcidType == OrcidType.ADMIN)
-            result = Arrays.asList(OrcidWebRole.ROLE_ADMIN, OrcidWebRole.ROLE_USER);
+            result = rolesAsList(OrcidWebRole.ROLE_ADMIN, OrcidWebRole.ROLE_USER);
         else if (orcidType.equals(OrcidType.GROUP)) {
             switch (groupType) {
             case BASIC:
-                result = Arrays.asList(OrcidWebRole.ROLE_BASIC, OrcidWebRole.ROLE_USER);
+                result = rolesAsList(OrcidWebRole.ROLE_BASIC, OrcidWebRole.ROLE_USER);
                 break;
             case PREMIUM:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM, OrcidWebRole.ROLE_USER);
+                result = rolesAsList(OrcidWebRole.ROLE_PREMIUM, OrcidWebRole.ROLE_USER);
                 break;
             case BASIC_INSTITUTION:
-                result = Arrays.asList(OrcidWebRole.ROLE_BASIC_INSTITUTION, OrcidWebRole.ROLE_USER);
+                result = rolesAsList(OrcidWebRole.ROLE_BASIC_INSTITUTION, OrcidWebRole.ROLE_USER);
                 break;
             case PREMIUM_INSTITUTION:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION, OrcidWebRole.ROLE_USER);
+                result = rolesAsList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION, OrcidWebRole.ROLE_USER);
                 break;
             }
         } else {
-            result = Arrays.asList(OrcidWebRole.ROLE_USER);
+            result = rolesAsList(OrcidWebRole.ROLE_USER);
         }
 
         return result;
+    }
+
+    private List<OrcidWebRole> rolesAsList(OrcidWebRole... roles) {
+        // Make a mutable list
+        List<OrcidWebRole> list = new ArrayList<OrcidWebRole>(Arrays.asList(roles));
+        return list;
+
     }
 }

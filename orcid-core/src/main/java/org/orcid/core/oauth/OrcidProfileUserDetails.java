@@ -17,9 +17,9 @@
 package org.orcid.core.oauth;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 
-import org.springframework.security.core.GrantedAuthority;
+import org.orcid.core.security.OrcidWebRole;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -35,7 +35,7 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private String password;
 
-    private Collection<? extends GrantedAuthority> grantedAuthorities = Collections.emptySortedSet();
+    private Collection<OrcidWebRole> grantedAuthorities = new HashSet<>();
 
     public OrcidProfileUserDetails() {
     }
@@ -46,7 +46,7 @@ public class OrcidProfileUserDetails implements UserDetails {
         this.password = password;
     }
 
-    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, Collection<? extends GrantedAuthority> grantedAuthorities) {
+    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, Collection<OrcidWebRole> grantedAuthorities) {
         this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
@@ -60,7 +60,7 @@ public class OrcidProfileUserDetails implements UserDetails {
      * @return the authorities, sorted by natural key (never <code>null</code>)
      */
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<OrcidWebRole> getAuthorities() {
         return grantedAuthorities;
     }
 
