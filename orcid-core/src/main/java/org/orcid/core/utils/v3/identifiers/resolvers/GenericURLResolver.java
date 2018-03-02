@@ -24,7 +24,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hsqldb.lib.StringUtil;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.NormalizationService;
 import org.orcid.core.utils.v3.identifiers.ResolverCache;
@@ -62,7 +61,7 @@ public class GenericURLResolver implements Resolver {
      */
     @Override
     public boolean canResolve(String apiTypeName, String value, String providedURL) {
-        if (StringUtil.isEmpty(value))
+        if (StringUtils.isEmpty(value))
             return false;
 
         // if value is a URL, try that
@@ -72,7 +71,7 @@ public class GenericURLResolver implements Resolver {
         }
 
         // If the value is in the providedURL, try using that
-        if (!StringUtil.isEmpty(providedURL) && providedURL.toLowerCase().contains(value.toLowerCase()) && !providedURL.equals(value)) {
+        if (!StringUtils.isEmpty(providedURL) && providedURL.toLowerCase().contains(value.toLowerCase()) && !providedURL.equals(value)) {
             if (cache.isHttp200(providedURL))
                 return true;
         }

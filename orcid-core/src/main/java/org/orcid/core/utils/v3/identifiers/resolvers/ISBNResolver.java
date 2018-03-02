@@ -21,7 +21,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hsqldb.lib.StringUtil;
 import org.orcid.core.utils.v3.identifiers.NormalizationService;
 import org.orcid.core.utils.v3.identifiers.ResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.ISBNNormalizer;
@@ -46,7 +45,7 @@ public class ISBNResolver implements Resolver {
     @Override
     public boolean canResolve(String apiTypeName, String value, String providedURL) {
         // If the value is in the providedURL, try using that
-        if (!StringUtil.isEmpty(providedURL) && providedURL.toLowerCase().contains(value.toLowerCase()) && !providedURL.equals(value)) {
+        if (!StringUtils.isEmpty(providedURL) && providedURL.toLowerCase().contains(value.toLowerCase()) && !providedURL.equals(value)) {
             if (cache.isHttp200(providedURL)) // assuming not worldcat!
                 return true;
         }

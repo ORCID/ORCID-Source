@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.hsqldb.lib.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
 import org.orcid.pojo.IdentifierType;
@@ -97,7 +97,7 @@ public class NormalizationService {
         if (!norm.isEmpty()){
             IdentifierType type = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
             String prefix = type.getResolutionPrefix();
-            if (!StringUtil.isEmpty(prefix))
+            if (!StringUtils.isEmpty(prefix))
                 return prefix+norm;
         }
         return "";
