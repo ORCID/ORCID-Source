@@ -50,7 +50,7 @@
             </span>
         </div>
     </div>
-    <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
+    <div *ngIf="regMultiEmailFeatureEnabled">
         <!-- Primary email -->
         <div class="form-group clear-fix">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
@@ -105,8 +105,8 @@
             </div>
         </div>
         <button (click)="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>  
-    </@orcid.checkFeatureStatus>
-    <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL' enabled=false> 
+    </div><!--reg multi email feature enabled-->
+    <div *ngIf="!regMultiEmailFeatureEnabled">
         <!-- Email -->                  
         <div class="form-group clear-fix">
             <label class="control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
@@ -139,7 +139,7 @@
                 </span>
             </div>
         </div>
-    </@orcid.checkFeatureStatus>
+    </div><!--reg multi email feature disabled-->
     <!--Password-->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
@@ -161,7 +161,7 @@
             <div *ngFor="let error of registrationForm.passwordConfirm.errors" [innerHTML]="error"></div>
         </span>
     </div>
-    <@orcid.checkFeatureStatus featureName='GDPR_UI'> 
+    <div *ngIf="gdprUiFeatureEnabled">
         <!--Visibility default-->
         <div class="form-group clear-fix popover-registry">  
             <h4>${springMacroRequestContext.getMessage("register.privacy_settings")}</h4>         
@@ -229,18 +229,16 @@
             </span>
         </div>
         <!--Recaptcha-->
-        <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
-            <div>   
-                <div *ngIf="showRecaptcha" class="bottomBuffer relative recaptcha"  id="recaptcha">
-                    <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
-                    <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
-                        <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
-                    </span>
-                </div>
+        <div *ngIf="!disableRecaptchaFeatureEnabled">  
+            <div *ngIf="showRecaptcha" class="bottomBuffer relative recaptcha"  id="recaptcha">
+                <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
+                <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
+                    <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
+                </span>
             </div>
-        </@orcid.checkFeatureStatus> 
-    </@orcid.checkFeatureStatus>
-    <@orcid.checkFeatureStatus featureName='GDPR_UI' enabled=false> 
+        </div>
+    </div><!--GDPR UI feature enabled-->
+    <div *ngIf="!gdprUiFeatureEnabled">
         <!--Visibility default-->
         <div class="form-group clear-fix popover-registry">
             <div class="oauth-privacy">                   
@@ -260,18 +258,15 @@
                 <@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
             </div>
         </div>
-        
         <!--Recaptcha-->
-        <@orcid.checkFeatureStatus featureName='DISABLE_RECAPTCHA' enabled=false> 
-            <div>   
-                <div class="bottomBuffer relative recaptcha"  id="recaptcha">
-                    <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
-                    <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
-                        <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
-                    </span>
-                </div>
+        <div *ngIf="!disableRecaptchaFeatureEnabled">   
+            <div class="bottomBuffer relative recaptcha"  id="recaptcha">
+                <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
+                <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
+                    <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
+                </span>
             </div>
-        </@orcid.checkFeatureStatus>
+        </div>
         <!--Terms and conditions-->
         <div class="bottomBuffer">
             <label for="termsConditions">
@@ -286,7 +281,7 @@
                 <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
             </span>
         </div>
-    </@orcid.checkFeatureStatus>   	
+    </div><!--GDPR UI feature disabled-->  	
     <!--Registration error-->
     <div style="margin-bottom: 15px;" *ngIf="showGeneralRegistrationError">
         <span class="orcid-error" [innerHtml]="generalRegistrationError"></span>

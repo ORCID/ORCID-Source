@@ -507,15 +507,21 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro checkFeatureStatus featureName enabled=true>
-	<#if enabled>
-		<#if RequestParameters[featureName]??>		
-			<#nested>
-		<#elseif FEATURE[featureName]>	
-			<#nested>
-		</#if>
-	<#else>
-		<#if !RequestParameters[featureName]?? && !FEATURE[featureName]>
-			<#nested>
-		</#if>
-	</#if>
+    <#if enabled>
+        <#if RequestParameters[featureName]??>
+            <!-- fire off event feature enabled when the request param exists -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>      
+            <#nested>
+        <#elseif FEATURE[featureName]>
+            <!-- fire off event feature enabled when it is an enabled feature -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>      
+            <#nested>
+        </#if>
+    <#else>
+        <#if !RequestParameters[featureName]?? && !FEATURE[featureName]>
+            <!-- fire off event feature disabled -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'disabled']);</script>
+            <#nested>
+        </#if>
+    </#if>
 </#macro>

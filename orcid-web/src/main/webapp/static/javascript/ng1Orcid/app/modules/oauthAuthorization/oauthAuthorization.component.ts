@@ -28,6 +28,9 @@ import { CommonNg2Module }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
+import { FeaturesService }
+    from '../../shared/features.service.ts'
+
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 
@@ -82,11 +85,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     socialSignInForm: any;
     loadTime: any;
     generalRegistrationError: any;
+    //registration form togglz features
+    regMultiEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('REG_MULTI_EMAIL');
+    gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
+    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');
 
     constructor(
         private zone:NgZone,
         private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
+        private featuresService: FeaturesService,
         private modalService: ModalService,
         private oauthService: OauthService
     ) {
