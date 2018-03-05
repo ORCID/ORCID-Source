@@ -19,6 +19,10 @@
 <@public>
 <div class="row">
 	<div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+        <reset-password-ng2></reset-password-ng2>
+        </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
 		<div ng-controller="ResetPasswordCtrl" ng-init="getResetPasswordForm()">
 			<form id="reg-form-password" autocomplete="off">
 				<div class="control-group">
@@ -62,6 +66,7 @@
     			</div>    
 			</form>
 		</div>
+        </@orcid.checkFeatureStatus>
 	</div>
 </div>
 </@public>

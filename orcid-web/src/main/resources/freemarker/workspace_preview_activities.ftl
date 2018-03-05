@@ -19,6 +19,10 @@
 <!-- User workspace_preview_activities_v3.ftl instead of this one -->
 <#if !(affiliationsEmpty)??>
 <!-- Education -->
+<@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+<public-edu-affiliation-ng2></public-edu-affiliation-ng2>
+</@orcid.checkFeatureStatus>
+<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>   
 <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEduAffiliation" ng-hide="!affiliationsSrvc.educations.length" ng-cloack>	       
       <div class="workspace-accordion-header">
            <a href="" ng-click="workspaceSrvc.toggleEducation()" class="toggle-text">
@@ -29,6 +33,7 @@
 		<#include "includes/affiliate/edu_body_inc.ftl" />
       </div>	       
 </div>
+</@orcid.checkFeatureStatus>
 <!-- Employment -->
 <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEmpAffiliation" ng-hide="!affiliationsSrvc.employments.length" ng-cloack>
       <div class="workspace-accordion-header">

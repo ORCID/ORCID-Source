@@ -18,6 +18,10 @@
 -->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <link-account-ng2></link-account-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="LinkAccountController" ng-init="setEntityId('${providerId}')">
         <#if unsupportedInstitution??>
             <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3">
@@ -77,4 +81,5 @@
             </div> 
         </#if>
     </div>
+    </@orcid.checkFeatureStatus>
 </@public>
