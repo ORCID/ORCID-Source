@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.listener.persistence.entities.ActivitiesStatusEntity;
 import org.orcid.listener.persistence.util.ActivityType;
-import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.listener.persistence.util.Constants;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;

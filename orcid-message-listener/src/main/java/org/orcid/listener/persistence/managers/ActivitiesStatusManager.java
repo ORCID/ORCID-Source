@@ -16,9 +16,41 @@
  */
 package org.orcid.listener.persistence.managers;
 
+import java.util.List;
+
+import org.orcid.listener.persistence.dao.ActivitiesStatusDao;
+import org.orcid.listener.persistence.entities.ActivitiesStatusEntity;
+import org.orcid.listener.persistence.util.ActivityType;
+import org.orcid.listener.persistence.util.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ActivitiesStatusManager {
 
+	@Autowired
+	private ActivitiesStatusDao dao;
+	
+	@Transactional
+    public void markAsSent(String orcid, ActivityType type) {
+        if (dao.exists(orcid)) {
+            dao.success(orcid, type);
+        } else {
+            dao.create(orcid, type, Constants.OK);
+        }
+    }
+
+    @Transactional
+    public void markAsFailed(String orcid, ActivityType type) {
+        if (dao.exists(orcid)) {
+            dao.updateFailCount(orcid, type);
+        } else {
+            dao.create(orcid, type, Constants.FIRST_FAIL);
+        }
+    }
+    
+    public List<ActivitiesStatusEntity> getFailedElements(int batchSize) {
+        return dao.getFailedElements(batchSize);
+    }
 }
