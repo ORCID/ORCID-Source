@@ -19,6 +19,7 @@ package org.orcid.listener.s3;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -47,6 +48,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.services.s3.model.ListObjectsV2Request;
+import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,9 +57,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 @Component
-public class S3Updater {
+public class S3Manager {
 
-    Logger LOG = LoggerFactory.getLogger(S3Updater.class);
+    Logger LOG = LoggerFactory.getLogger(S3Manager.class);
 
     private final ObjectMapper mapper;
 
@@ -82,7 +85,7 @@ public class S3Updater {
      * @throws JAXBException
      */
     @Autowired
-    public S3Updater(@Value("${org.orcid.message-listener.s3.bucket_prefix}") String bucketPrefix) throws JAXBException {
+    public S3Manager(@Value("${org.orcid.message-listener.s3.bucket_prefix}") String bucketPrefix) throws JAXBException {
         mapper = new ObjectMapper();
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         mapper.registerModule(module);
@@ -293,7 +296,47 @@ public class S3Updater {
     }
     
     public Map<ActivityType, Map<String, S3ObjectSummary>> searchActivities(String orcid) {
-    	return s3MessagingService.searchActivities(orcid);
+    	Map<ActivityType, Map<String, S3ObjectSummary>> activitiesOnS3 = new HashMap<ActivityType, Map<String, S3ObjectSummary>>();
+
+		Map<String, S3ObjectSummary> educations = new HashMap<String, S3ObjectSummary>();
+		Map<String, S3ObjectSummary> employments = new HashMap<String, S3ObjectSummary>();
+		Map<String, S3ObjectSummary> fundings = new HashMap<String, S3ObjectSummary>();
+		Map<String, S3ObjectSummary> works = new HashMap<String, S3ObjectSummary>();
+		Map<String, S3ObjectSummary> peerReviews = new HashMap<String, S3ObjectSummary>();
+
+		activitiesOnS3.put(ActivityType.EDUCATIONS, educations);
+		activitiesOnS3.put(ActivityType.EMPLOYMENTS, employments);
+		activitiesOnS3.put(ActivityType.FUNDINGS, fundings);
+		activitiesOnS3.put(ActivityType.WORKS, works);
+		activitiesOnS3.put(ActivityType.PEER_REVIEWS, peerReviews);
+
+		String prefix = buildPrefix(orcid);
+		final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(S3MessagingService.API_2_0_DEFAULT_BUCKET_NAME).withPrefix(prefix).withMaxKeys(3000);
+        ListObjectsV2Result objects;
+		do {			
+			objects = s3MessagingService.listObjects(req);
+			for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
+				String activityPath = objectSummary.getKey();
+				String putCode = getActivityPutCode(activityPath);
+				// To improve performance, sort these if/else based on
+				// https://orcid.org/statistics, were the type with more
+				// elements should go on top
+				if (activityPath.contains(ActivityType.WORKS.getPathDiscriminator())) {
+					works.put(putCode, objectSummary);
+				} else if (activityPath.contains(ActivityType.EDUCATIONS.getPathDiscriminator())) {
+					educations.put(putCode, objectSummary);
+				} else if (activityPath.contains(ActivityType.EMPLOYMENTS.getPathDiscriminator())) {
+					employments.put(putCode, objectSummary);
+				} else if (activityPath.contains(ActivityType.FUNDINGS.getPathDiscriminator())) {
+					fundings.put(putCode, objectSummary);
+				} else if (activityPath.contains(ActivityType.PEER_REVIEWS.getPathDiscriminator())) {
+					peerReviews.put(putCode, objectSummary);
+				}
+			}
+			req.setContinuationToken(objects.getNextContinuationToken());
+		} while (objects.isTruncated());
+
+		return activitiesOnS3;
     }
     
     public void removeActivity(String orcid, String putCode, ActivityType type) {
@@ -303,11 +346,34 @@ public class S3Updater {
     	s3MessagingService.removeElement(getElementName(orcid, putCode, type, "json"));
     }
     
+    public void clearActivities(String orcid) {
+    	String prefix = buildPrefix(orcid);
+    	final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(S3MessagingService.API_2_0_DEFAULT_BUCKET_NAME).withPrefix(prefix).withMaxKeys(3000);
+        ListObjectsV2Result objects;
+		do {			
+			objects = s3MessagingService.listObjects(req);
+			for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
+				String elementName = objectSummary.getKey();
+				s3MessagingService.removeElement(elementName);
+			}
+			req.setContinuationToken(objects.getNextContinuationToken());
+		} while (objects.isTruncated());
+
+    }
+    
     private String getElementName(String orcid, String format) {
     	return orcid.substring(16) + "/summaries/" + orcid + "." + format;    	    
     }
     
     private String getElementName(String orcid, String putCode, ActivityType type, String format) {
-    	return orcid.substring(16) + "/activities/" + orcid + "/" + format + type.getPathDiscriminator() + orcid + "_" + type.getName() + "_" + putCode + "." + format;    	    
+    	return orcid.substring(16) + "/activities/" + orcid + "/" + format + type.getPathDiscriminator() + orcid + "_" + type.getValue() + "_" + putCode + "." + format;    	    
     }
+    
+	private String getActivityPutCode(String activityPath) {
+		return activityPath.substring(activityPath.lastIndexOf('_') + 1, activityPath.lastIndexOf('.'));
+	}
+
+	private String buildPrefix(String orcid) {
+		return orcid.substring(16) + "/activities/" + orcid + "/xml/";
+	}
 }

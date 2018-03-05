@@ -29,8 +29,8 @@ import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.listener.persistence.entities.RecordStatusEntity;
-import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
+import org.orcid.listener.persistence.util.Constants;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,17 +46,17 @@ public class RecordStatusDaoTest {
     public void createTest() {
         String orcid = "0000-0000-0000-0000";
         assertFalse(recordStatusDao.exists(orcid));
-        recordStatusDao.create(orcid, AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
+        recordStatusDao.create(orcid, AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
         assertTrue(recordStatusDao.exists(orcid));
     }
 
     @Test
     @Transactional
     public void existsTest() {
-        recordStatusDao.create("0000-0000-0001", AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
-        recordStatusDao.create("0000-0000-0002", AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
-        recordStatusDao.create("0000-0000-0003", AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
-        recordStatusDao.create("0000-0000-0004", AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
+        recordStatusDao.create("0000-0000-0001", AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
+        recordStatusDao.create("0000-0000-0002", AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
+        recordStatusDao.create("0000-0000-0003", AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
+        recordStatusDao.create("0000-0000-0004", AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
         assertTrue(recordStatusDao.exists("0000-0000-0001"));
         assertTrue(recordStatusDao.exists("0000-0000-0002"));
         assertTrue(recordStatusDao.exists("0000-0000-0003"));
@@ -89,7 +89,7 @@ public class RecordStatusDaoTest {
     @Transactional
     public void updateStatus1Test() throws InterruptedException {
         String orcid = "0000-0000-1001";
-        recordStatusDao.create(orcid, AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
+        recordStatusDao.create(orcid, AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
         assertTrue(recordStatusDao.exists(orcid));
         assertTrue(recordStatusDao.updateFailCount(orcid, AvailableBroker.DUMP_STATUS_1_2_API));
         assertTrue(recordStatusDao.updateFailCount(orcid, AvailableBroker.DUMP_STATUS_2_0_API));
@@ -101,15 +101,15 @@ public class RecordStatusDaoTest {
     @Transactional
     public void getFailedElementsTest() {
         recordStatusDao.create("0000-0000-0001-0000", AvailableBroker.DUMP_STATUS_1_2_API, 1);
-        recordStatusDao.create("0000-0000-0001-0001", AvailableBroker.DUMP_STATUS_2_0_API, RecordStatusManager.OK);
-        recordStatusDao.create("0000-0000-0001-0002", AvailableBroker.SOLR, RecordStatusManager.OK);
-        recordStatusDao.create("0000-0000-0001-0003", AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
+        recordStatusDao.create("0000-0000-0001-0001", AvailableBroker.DUMP_STATUS_2_0_API, Constants.OK);
+        recordStatusDao.create("0000-0000-0001-0002", AvailableBroker.SOLR, Constants.OK);
+        recordStatusDao.create("0000-0000-0001-0003", AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
         recordStatusDao.create("0000-0000-0001-0004", AvailableBroker.DUMP_STATUS_2_0_API, 1);
-        recordStatusDao.create("0000-0000-0001-0005", AvailableBroker.SOLR, RecordStatusManager.OK);
-        recordStatusDao.create("0000-0000-0001-0006", AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
-        recordStatusDao.create("0000-0000-0001-0007", AvailableBroker.DUMP_STATUS_2_0_API, RecordStatusManager.OK);
+        recordStatusDao.create("0000-0000-0001-0005", AvailableBroker.SOLR, Constants.OK);
+        recordStatusDao.create("0000-0000-0001-0006", AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
+        recordStatusDao.create("0000-0000-0001-0007", AvailableBroker.DUMP_STATUS_2_0_API, Constants.OK);
         recordStatusDao.create("0000-0000-0001-0008", AvailableBroker.SOLR, 1);
-        recordStatusDao.create("0000-0000-0001-0009", AvailableBroker.DUMP_STATUS_1_2_API, RecordStatusManager.OK);
+        recordStatusDao.create("0000-0000-0001-0009", AvailableBroker.DUMP_STATUS_1_2_API, Constants.OK);
 
         List<RecordStatusEntity> list = recordStatusDao.getFailedElements(100);
         assertEquals(3, list.size());

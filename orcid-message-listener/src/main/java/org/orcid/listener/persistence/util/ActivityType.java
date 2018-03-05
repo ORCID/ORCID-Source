@@ -24,28 +24,40 @@ import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Work;
 
 public enum ActivityType {
-	EDUCATIONS("/educations/", "educations"),
-	EMPLOYMENTS("/employments/", "employments"),
-	FUNDINGS("/fundings/", "fundings"),
-	PEER_REVIEWS("/peer-reviews/", "peer-reviews"),
-	WORKS("/works/", "works");
+	EDUCATIONS("/educations/", "educations", "educations_status", "educations_last_indexed"),
+	EMPLOYMENTS("/employments/", "employments", "employments_status", "employments_last_indexed"),
+	FUNDINGS("/fundings/", "fundings", "fundings_status", "fundings_last_indexed"),
+	PEER_REVIEWS("/peer-reviews/", "peer-reviews", "peer_reviews_status", "peer_reviews_last_indexed"),
+	WORKS("/works/", "works", "works_status", "works_last_indexed");
 	
 	private final String pathDiscriminator;
-	private final String name;
+	private final String value;
+	private final String statusColumnName;
+	private final String lastIndexedColumnName;
 	
-	ActivityType(String pathDiscriminator, String name) {
+	ActivityType(String pathDiscriminator, String value, String statusColumnName, String lastIndexedColumnName) {
 		this.pathDiscriminator = pathDiscriminator;
-		this.name = name;
+		this.value = value;
+		this.statusColumnName = statusColumnName;
+		this.lastIndexedColumnName = lastIndexedColumnName;
 	}
 	
 	public String getPathDiscriminator() {
         return pathDiscriminator;
     }
 	
-	public String getName() {
-		return name;
+	public String getValue() {
+		return value;
 	}
 	
+	public String getStatusColumnName() {
+		return statusColumnName;
+	}
+
+	public String getLastIndexedColumnName() {
+		return lastIndexedColumnName;
+	}
+
 	public static ActivityType inferFromActivity(Activity a) {
 		if(a.getClass().isAssignableFrom(Education.class)) {
 			return EDUCATIONS;

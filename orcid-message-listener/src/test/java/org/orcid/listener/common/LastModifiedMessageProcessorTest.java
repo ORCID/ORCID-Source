@@ -48,7 +48,7 @@ import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.listener.s3.ExceptionHandler;
 import org.orcid.listener.s3.S3MessageProcessor;
-import org.orcid.listener.s3.S3Updater;
+import org.orcid.listener.s3.S3Manager;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -72,7 +72,7 @@ public class LastModifiedMessageProcessorTest {
     private Orcid20APIClient mock_orcid20ApiClient;
     
     @Mock
-    private S3Updater mock_s3Updater; 
+    private S3Manager mock_s3Updater; 
     
     @Mock
     private ExceptionHandler mock_exceptionHandler;
