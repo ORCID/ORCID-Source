@@ -27,7 +27,6 @@ import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
@@ -36,13 +35,13 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Activity;
-import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid12APIClient;
 import org.orcid.listener.orcid.Orcid20APIClient;
+import org.orcid.listener.persistence.managers.ActivitiesStatusManager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
@@ -98,6 +97,8 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     private ExceptionHandler exceptionHandler;
     @Resource
     private RecordStatusManager recordStatusManager;    
+    @Resource
+    private ActivitiesStatusManager activitiesStatusManager;
 
     /**
      * Populates the Amazon S3 buckets
@@ -227,9 +228,8 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 			} catch (LockedRecordException | DeprecatedRecordException e) {				
 				// Remove all activities from this record
 				s3Manager.clearActivities(orcid);
-				
 				// Mark brokers as ok
-				//TODO
+				activitiesStatusManager.markAllAsSent(orcid);
 			}
 
 			if (as != null) {
