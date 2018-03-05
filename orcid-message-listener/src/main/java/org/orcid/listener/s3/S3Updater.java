@@ -18,6 +18,8 @@ package org.orcid.listener.s3;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -29,7 +31,15 @@ import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record_v2.Activity;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.listener.persistence.util.ActivityType;
+import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +47,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -56,6 +67,7 @@ public class S3Updater {
 
     private final JAXBContext jaxbContext_1_2_api;
     private final JAXBContext jaxbContext_2_0_api;
+    private final JAXBContext jaxbContext_2_0_activities_api;
 
     public void setS3MessagingService(S3MessagingService s3MessagingService) {
         this.s3MessagingService = s3MessagingService;
@@ -81,8 +93,10 @@ public class S3Updater {
         // Initialize JAXBContext
         this.jaxbContext_1_2_api = JAXBContext.newInstance(OrcidMessage.class, OrcidDeprecated.class);
         this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
+        this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
     }
     
+    @Deprecated
     public void updateS3(String orcid, byte [] element, String mediaType) throws IOException {
         if(S3MessageProcessor.VND_ORCID_XML.equals(mediaType)) {
             s3MessagingService.send(getBucketName("api-1-2", "xml", orcid), orcid + ".xml", element, mediaType);
@@ -91,6 +105,7 @@ public class S3Updater {
         }        
     }
 
+    @Deprecated
     public void updateS3(String orcid, Object object) throws IOException, JAXBException {
         // API 1.2
         if (OrcidMessage.class.isAssignableFrom(object.getClass())) {
@@ -204,21 +219,26 @@ public class S3Updater {
         return mapper.writeValueAsBytes(object);
     }
 
-    private byte[] toXML(Object object) throws JAXBException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Marshaller marshaller = null;
-        if (OrcidMessage.class.isAssignableFrom(object.getClass()) || OrcidDeprecated.class.isAssignableFrom(object.getClass())) {
-            marshaller = jaxbContext_1_2_api.createMarshaller();
-        } else if (Record.class.isAssignableFrom(object.getClass()) || ActivitiesSummary.class.isAssignableFrom(object.getClass())
-                || OrcidError.class.isAssignableFrom(object.getClass())) {
-            marshaller = jaxbContext_2_0_api.createMarshaller();
-        } else {
-            throw new IllegalArgumentException("Unable to unmarshall class " + object.getClass());
-        }
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(object, baos);
-        return baos.toByteArray();
-    }
+	private byte[] toXML(Object object) throws JAXBException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		Marshaller marshaller = null;
+		Class<?> c = object.getClass();
+		if (OrcidMessage.class.isAssignableFrom(c) || OrcidDeprecated.class.isAssignableFrom(c)) {
+			marshaller = jaxbContext_1_2_api.createMarshaller();
+		} else if (Record.class.isAssignableFrom(c) || ActivitiesSummary.class.isAssignableFrom(c)
+				|| OrcidError.class.isAssignableFrom(c)) {
+			marshaller = jaxbContext_2_0_api.createMarshaller();
+		} else if (Education.class.isAssignableFrom(c) || Employment.class.isAssignableFrom(c)
+				|| Funding.class.isAssignableFrom(c) || Work.class.isAssignableFrom(c)
+				|| PeerReview.class.isAssignableFrom(c)) {
+			marshaller = jaxbContext_2_0_activities_api.createMarshaller();
+		} else {
+			throw new IllegalArgumentException("Unable to unmarshall class " + c);
+		}
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		marshaller.marshal(object, baos);
+		return baos.toByteArray();
+	}
 
     public String getBucketName(String apiVersion, String format, String orcid) {
         if (bucketPrefix.endsWith("-dev") || bucketPrefix.endsWith("-qa") || bucketPrefix.endsWith("-sandbox")) {
@@ -230,5 +250,64 @@ public class S3Updater {
             }
             return bucketPrefix + '-' + apiVersion + '-' + format + '-' + c;
         }
+    }
+    
+    public void uploadRecordSummary(String orcid, Record record) throws JAXBException, JsonProcessingException {
+    	Date lastModified = DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue());
+    	//Upload XML
+    	String xmlElementName = getElementName(orcid, "xml");
+    	byte[] xmlElement = toXML(record);
+    	s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified);
+    	
+    	//Upload JSON
+    	String jsonElementName = getElementName(orcid, "json");
+    	byte[] jsonElement = toJson(record);
+    	s3MessagingService.send(jsonElementName, jsonElement, MediaType.APPLICATION_JSON, lastModified);    	
+    }
+    
+    public void uploadActivity(String orcid, String putCode, Activity activity) throws JAXBException, JsonProcessingException {
+    	Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
+    	//Upload XML
+    	String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity), "xml");
+    	byte[] xmlElement = toXML(activity);
+    	s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified);
+    	
+    	//Upload JSON
+    	String jsonElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity), "json");
+    	byte[] jsonElement = toJson(activity);
+    	s3MessagingService.send(jsonElementName, jsonElement, MediaType.APPLICATION_JSON, lastModified);    	    	
+    }
+    
+    public void uploadOrcidError(String orcid, OrcidError error) throws JAXBException, JsonProcessingException {
+    	Date lastModified = new Date();
+    	
+    	//Upload XML
+    	String xmlElementName = getElementName(orcid, "xml");
+    	byte[] xmlElement = toXML(error);
+    	s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified);
+    	
+    	//Upload JSON
+    	String jsonElementName = getElementName(orcid, "json");
+    	byte[] jsonElement = toJson(error);
+    	s3MessagingService.send(jsonElementName, jsonElement, MediaType.APPLICATION_JSON, lastModified);
+    }
+    
+    public Map<ActivityType, Map<String, S3ObjectSummary>> searchActivities(String orcid) {
+    	return s3MessagingService.searchActivities(orcid);
+    }
+    
+    public void removeActivity(String orcid, String putCode, ActivityType type) {
+    	// Delete the XML activity file
+    	s3MessagingService.removeElement(getElementName(orcid, putCode, type, "xml"));
+    	// Delete the JSON activity file
+    	s3MessagingService.removeElement(getElementName(orcid, putCode, type, "json"));
+    }
+    
+    private String getElementName(String orcid, String format) {
+    	return orcid.substring(16) + "/summaries/" + orcid + "." + format;    	    
+    }
+    
+    private String getElementName(String orcid, String putCode, ActivityType type, String format) {
+    	return orcid.substring(16) + "/activities/" + orcid + "/" + format + type.getPathDiscriminator() + orcid + "_" + type.getName() + "_" + putCode + "." + format;    	    
     }
 }

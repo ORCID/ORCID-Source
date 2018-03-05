@@ -17,11 +17,12 @@
 package org.orcid.listener.s3;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Date;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
@@ -33,6 +34,8 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record_v2.Affiliation;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
@@ -41,6 +44,7 @@ import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.RetryMessage;
@@ -51,6 +55,7 @@ import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Core logic for listeners
@@ -90,9 +95,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     @Resource
     private ExceptionHandler exceptionHandler;
     @Resource
-    private RecordStatusManager recordStatusManager;
-    @Resource
-    private S3MessagingService s3MessagingService;
+    private RecordStatusManager recordStatusManager;    
 
     /**
      * Populates the Amazon S3 buckets
@@ -212,16 +215,37 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         }
     }
     
-	private void update_2_0_Activities(BaseMessage message) {
+	private void update_2_0_Activities(BaseMessage message) throws JsonProcessingException, JAXBException {
 		String orcid = message.getOrcid();
 		if (activitiesIndexerEnabled) {
 			try {
 				ActivitiesSummary as = orcid20ApiClient.fetchPublicActivitiesSummary(message);
-				Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3MessagingService
+				Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Updater
 						.searchActivities(orcid);
+				
+				//TODO: HANDLE EXCEPTIONS!!!!!
 				if (as.getEducations() != null && !as.getEducations().getSummaries().isEmpty()) {
+					Map<String, S3ObjectSummary> existingEducations = existingActivities.get(ActivityType.EDUCATIONS);
 					for (EducationSummary x : as.getEducations().getSummaries()) {
-
+						String putCodeString = String.valueOf(x.getPutCode());
+						if(existingEducations.containsKey(putCodeString)) {
+							S3ObjectSummary existingObject = existingEducations.get(putCodeString);
+							Date elementLastModified = DateUtils.convertToDate(x.getLastModifiedDate().getValue());
+							Date s3LastModified = existingObject.getLastModified();
+							if(elementLastModified.after(s3LastModified)) {
+								Affiliation aff = orcid20ApiClient.fetchAffiliation(orcid, x.getPutCode(), AffiliationType.EDUCATION);
+								s3Updater.uploadActivity(orcid, putCodeString, aff);
+							}
+							//Removing this element means that we already process it
+							existingEducations.remove(putCodeString);
+						} else {
+							Affiliation aff = orcid20ApiClient.fetchAffiliation(orcid, x.getPutCode(), AffiliationType.EDUCATION);
+							s3Updater.uploadActivity(orcid, putCodeString, aff);
+						}
+					}
+					//TODO: Remove from S3 all element that still exists on the existingEducations map
+					for(String putCode : existingEducations.keySet()) {
+						s3Updater.removeActivity(orcid, putCode, ActivityType.EDUCATIONS);
 					}
 				}
 

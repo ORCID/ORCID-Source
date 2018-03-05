@@ -23,7 +23,7 @@ import org.orcid.jaxb.model.common_v2.Organization;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
 
-public interface Affiliation {
+public interface Affiliation extends Activity {
     String getDepartmentName();
 
     void setDepartmentName(String value);

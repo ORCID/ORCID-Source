@@ -48,6 +48,8 @@ public class S3MessagingService {
 	Logger LOG = LoggerFactory.getLogger(S3MessagingService.class);
 
 	private final AmazonS3 s3;
+	
+	public static final String API_2_0_DEFAULT_BUCKET_NAME = "API_2_0";
 
 	/**
 	 * Initialize the Amazon S3 connection object
@@ -92,14 +94,14 @@ public class S3MessagingService {
 		return true;
 	}
 
-	public boolean send(String bucketName, String elementName, byte[] elementContent, String contentType,
+	public boolean send(String elementName, byte[] elementContent, String contentType,
 			Date lastModified) throws AmazonClientException, AmazonServiceException {
 		InputStream is = new ByteArrayInputStream(elementContent);
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentType(contentType);
 		metadata.setContentLength(elementContent.length);
 		metadata.setLastModified(lastModified);
-		s3.putObject(new PutObjectRequest(bucketName, elementName, is, metadata));
+		s3.putObject(new PutObjectRequest(API_2_0_DEFAULT_BUCKET_NAME, elementName, is, metadata));
 		return true;
 	}
 
@@ -122,7 +124,7 @@ public class S3MessagingService {
 		String prefix = buildPrefix(orcid);
 		ListObjectsV2Result objects;
 		do {
-			objects = s3.listObjectsV2("API_2_0", prefix);
+			objects = s3.listObjectsV2(API_2_0_DEFAULT_BUCKET_NAME, prefix);
 			for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
 				String activityPath = objectSummary.getKey();
 				String putCode = getActivityPutCode(activityPath);
@@ -146,12 +148,16 @@ public class S3MessagingService {
 
 		return activitiesOnS3;
 	}
+	
+	public void removeElement(String elementName) throws AmazonClientException, AmazonServiceException {
+		s3.deleteObject(API_2_0_DEFAULT_BUCKET_NAME, elementName);
+	}
 
-	public String getActivityPutCode(String activityPath) {
+	private String getActivityPutCode(String activityPath) {
 		return activityPath.substring(activityPath.lastIndexOf('_') + 1, activityPath.lastIndexOf('.'));
 	}
 
 	private String buildPrefix(String orcid) {
 		return orcid.substring(16) + "/activities/" + orcid + "/xml/";
-	}
+	}		
 }
