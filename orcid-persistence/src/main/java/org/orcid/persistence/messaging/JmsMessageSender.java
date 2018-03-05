@@ -63,11 +63,8 @@ public class JmsMessageSender {
         }
     }
         
+    @Resource
     private JmsTemplate jmsTemplate;
-    
-    public void setJmsTemplate(JmsTemplate otherJmsTemplate) {
-    	this.jmsTemplate = otherJmsTemplate;
-    }
     
     protected boolean sendText(final String text, JmsDestination dest ) throws JmsException{
         if (isEnabled() && !pauseForAWhile){
