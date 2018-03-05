@@ -19,7 +19,7 @@
 <@public classes=['home'] nav="signin">
 	<div class="row">
 		<#include "sandbox_warning.ftl"/>
-		<!--<#include "/common/browser-checks.ftl" />-->
+		<#include "/common/browser-checks.ftl" />
 		<@spring.bind "loginForm" />
 		<@spring.showErrors "<br/>" "error" />
 		<@orcid.checkFeatureStatus 'ANGULAR2_QA'>
