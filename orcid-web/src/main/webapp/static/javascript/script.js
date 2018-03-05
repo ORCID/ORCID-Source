@@ -698,7 +698,6 @@ $(function() {
     }
     
     function showLoginDeactivatedError() {
-        //TODO add togglz for ng2 feature
         if(orcidVar.features['ANGULAR2_QA']){
             window.angularComponentReference.zone.run(() => { window.angularComponentReference.showDeactivationError(); });
         } else {
