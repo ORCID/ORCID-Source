@@ -9,7 +9,7 @@ declare var typeahead: any;
 import { NgFor, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
 
 import { Observable } 
@@ -48,7 +48,9 @@ import { CommonService }
     providers: [CommonService]
 })
 export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
+    @Input() publicView: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
 
     /*
     emailSrvc: any;
@@ -76,7 +78,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     membershipsAndServices: any;
     orgIdsFeatureEnabled: boolean;
     displayNewAffiliationTypesFeatureEnabled: boolean;
-    //TODO: remove when new aff types is live and leave only educationsAndQualifications
+    //TODO: Remove when new aff types is live and leave only educationsAndQualifications
     sectionOneElements: any;
     
     constructor(
@@ -86,7 +88,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
         private featuresService: FeaturesService,
-        private commonSrvc: CommonService
+        private commonSrvc: CommonService,
+        private elementRef: ElementRef
     ) {
         /*
         this.emailSrvc = emailSrvc;
@@ -115,39 +118,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.sectionOneElements = [];
         this.displayNewAffiliationTypesFeatureEnabled = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
         this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
+        this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
-
-    addAffiliation(): void {
-        if (this.addingAffiliation == true) {
-            return; // don't process if adding affiliation
-        }
-
-        this.addingAffiliation = true;
-        this.editAffiliation.errors.length = 0;
-        
-        this.affiliationService.setData( this.editAffiliation )
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.editAffiliation = data;
-                //console.log('this.editAffiliation response', this.editAffiliation);
-                this.addingAffiliation = false;
-                this.close();
-                //affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
-                if (data.errors.length > 0){
-                    /*
-                    $scope.editAffiliation = data;
-                    commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
-                    $scope.addingAffiliation = false;
-                    $scope.$apply();
-                    */
-                }
-            },
-            error => {
-                //console.log('setBiographyFormError', error);
-            } 
-        );
-    };
 
     addAffiliationModal(type, affiliation): void {
         this.emailService.getEmails()
@@ -156,10 +128,12 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
-                    console.log('ng2 affi', affiliation);
-                    this.affiliationService.type = type;
-                    this.affiliationService.affiliation = affiliation;
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm'});
+                    this.affiliationService.notifyOther({ affiliation:affiliation, type: type });
+                    if(affiliation == undefined) {
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm', edit: false});
+                    } else {
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalAffiliationForm', edit: true});
+                    }                    
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
@@ -168,76 +142,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
-        /*
-        if(this.emailVerified === true || this.configuration.showModalManualEditVerificationEnabled == false){
-            this.addAffType = type;
-            if(affiliation === undefined) {
-                this.removeDisambiguatedAffiliation();
-                $.ajax({
-                    url: getBaseUri() + '/affiliations/affiliation.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        this.editAffiliation = data;
-                        if (type != null){
-                            this.editAffiliation.affiliationType.value = type;
-                        }
-                        $scope.$apply(function() {
-                            $scope.showAddModal();
-                        });
-                    }
-                }).fail(function(e) {
-                    //console.log("Error fetching affiliation: ", $scope.editAffiliation.affiliationType.value,  e);
-                });
-            } else {
-                this.editAffiliation = affiliation;
-                if(this.editAffiliation.orgDisambiguatedId != null){
-                    this.getDisambiguatedAffiliation(this.editAffiliation.orgDisambiguatedId.value);
-                }
-                this.showAddModal();
-            }
-        }else{
-            this.showEmailVerificationModal();
-        }
-        */
         
-    };
-
-    bindTypeahead(): void {
-        let numOfResults = 100;
-
-        $("#affiliationName").typeahead({
-            name: 'affiliationName',
-            limit: numOfResults,
-            remote: {
-                url: getBaseUri()+'/affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
-            },
-            template: function (datum) {
-                var forDisplay =
-                    '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
-                    +'<span style=\'font-size: 80%;\'>'
-                    + ' <br />' + datum.city;
-                if(datum.region){
-                    forDisplay += ", " + datum.region;
-                }
-                if (datum.orgType != null && datum.orgType.trim() != ''){
-                    forDisplay += ", " + datum.orgType;
-                }
-                forDisplay += '</span><hr />';
-                return forDisplay;
-            }
-        });
-        $("#affiliationName").bind("typeahead:selected", function(obj, datum) {
-            //$scope.selectAffiliation(datum);
-            //$scope.$apply();
-        });
-    };
-
-    close(): void {
-        //$.colorbox.close();
-    };
-
-    closeModal(): void {
-        //$.colorbox.close();
     };
 
     closeMoreInfo(key): void {
@@ -261,33 +166,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
-        /*
-        this.affiliationService.deleteAffiliation(affiliation)
-            .takeUntil(this.ngUnsubscribe)
-            .subscribe(data => {         
-                if(data.errors.length == 0) {
-                    if(affiliation.affiliationType != null && affiliation.affiliationType.value != null) {
-                        if(affiliation.affiliationType.value == 'distinction' || affiliation.affiliationType.value == 'invited-position') {
-                            this.removeFromArray(this.distinctionsAndInvitedPositions, affiliation.putCode.value);
-                        } else if (affiliation.affiliationType.value == 'education' || affiliation.affiliationType.value == 'qualification'){
-                            this.removeFromArray(this.educationsAndQualifications, affiliation.putCode.value);
-                            if(affiliation.affiliationType.value == 'education') {
-                                this.removeFromArray(this.educations, affiliation.putCode.value);
-                            }                            
-                        } else if (affiliation.affiliationType.value == 'employment'){
-                            this.removeFromArray(this.employments, affiliation.putCode.value);                            
-                        } else if(affiliation.affiliationType.value == 'membership' || affiliation.affiliationType.value == 'service') {
-                            this.removeFromArray(this.membershipsAndServices, affiliation.putCode.value);                            
-                        } 
-                    }                    
-                }                                
-            });         
-        */
     };
     
     removeFromArray(affArray, putCode): void {
-        console.log("putCode: " + putCode);
-        console.log(affArray);
         for(let idx in affArray) {
             if(affArray[idx].putCode.value == putCode) {
                 affArray.splice(idx, 1);
@@ -304,62 +185,88 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     	return this.workspaceSrvc.displayEducationAndQualification;
     };
 
+    getPublicAffiliationsById( affiliationIds ): void {
+        this.affiliationService.getPublicAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    this.parseAffiliations(data);
+                },
+                error => {
+                    console.log('getPublicAffiliationsById error', error);
+                } 
+        );
+    };
+    
     getAffiliationsById( affiliationIds ): void {
         this.affiliationService.getAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
             .subscribe(
                 data => {
-                    for (let i in data) {
-                        if (data[i].affiliationType != null 
-                            && data[i].affiliationType.value != null) {                            
-                            if(data[i].affiliationType.value == 'distinction') {
-                                this.distinctionsAndInvitedPositions.push( data[i] );
-                            } else if(data[i].affiliationType.value == 'education'){
-                                this.educations.push(data[i]);
-                                this.educationsAndQualifications.push( data[i] );
-                            } else if ( data[i].affiliationType.value == 'employment' ) {
-                                this.employments.push( data[i] );
-                            } else if(data[i].affiliationType.value == 'invited-position') {
-                                this.distinctionsAndInvitedPositions.push( data[i] );
-                            } else if(data[i].affiliationType.value == 'membership') {
-                                this.membershipsAndServices.push( data[i] );
-                            } else if (data[i].affiliationType.value == 'qualification') {
-                                this.educationsAndQualifications.push(data[i]);                             
-                            } else if(data[i].affiliationType.value == 'service') {
-                                this.membershipsAndServices.push( data[i] );
-                            }
-                        }
-                    };
-                    
-                    if(this.displayNewAffiliationTypesFeatureEnabled) {
-                        this.sectionOneElements = this.educationsAndQualifications;
-                    } else {
-                        this.sectionOneElements = this.educations;
-                    } 
-                    
-                    this.sort('endDate', true);
+                    this.parseAffiliations(data);
                 },
                 error => {
                     console.log('getAffiliationsById error', error);
                 } 
-
         );
+    };
+    
+    parseAffiliations( data ): void {
+        for (let i in data) {
+            console.log(JSON.stringify(data[i]));
+            if (data[i].affiliationType != null 
+                && data[i].affiliationType.value != null) {                            
+                if(data[i].affiliationType.value == 'distinction') {
+                    this.distinctionsAndInvitedPositions.push( data[i] );
+                } else if(data[i].affiliationType.value == 'education'){
+                    this.educations.push(data[i]);
+                    this.educationsAndQualifications.push( data[i] );
+                } else if ( data[i].affiliationType.value == 'employment' ) {
+                    this.employments.push( data[i] );
+                } else if(data[i].affiliationType.value == 'invited-position') {
+                    this.distinctionsAndInvitedPositions.push( data[i] );
+                } else if(data[i].affiliationType.value == 'membership') {
+                    this.membershipsAndServices.push( data[i] );
+                } else if (data[i].affiliationType.value == 'qualification') {
+                    this.educationsAndQualifications.push(data[i]);                             
+                } else if(data[i].affiliationType.value == 'service') {
+                    this.membershipsAndServices.push( data[i] );
+                }
+            }
+        };
+        
+        if(this.displayNewAffiliationTypesFeatureEnabled) {
+            this.sectionOneElements = this.educationsAndQualifications;
+        } else {
+            this.sectionOneElements = this.educations;
+        } 
+        
+        this.sort('endDate', true);
     };
 
     getAffiliationsId(): void {
-        this.affiliationService.getAffiliationsId()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                if( data.length != 0 ) {
-                    let affiliationIds = data.splice(0,20).join();
-                    this.getAffiliationsById( affiliationIds );
-                    
-                }
-            },
-            error => {
-                console.log('getAffiliationsId', error);
-            } 
-        );
+        //Be sure all arrays are empty
+        this.distinctionsAndInvitedPositions.length = 0;
+        this.educationsAndQualifications.length = 0;
+        this.educations.length = 0;
+        this.employments.length = 0;
+        this.membershipsAndServices.length = 0; 
+        
+        if(this.publicView === "true") {
+            this.getPublicAffiliationsById( orcidVar.affiliationIdsJson );
+        } else {
+            this.affiliationService.getAffiliationsId()
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    if( data.length != 0 ) {
+                        let affiliationIds = data.splice(0,20).join();
+                        this.getAffiliationsById( affiliationIds );
+                    }
+                },
+                error => {
+                    console.log('getAffiliationsId', error);
+                } 
+            );
+        }
     };
 
     getDisambiguatedAffiliation = function(id) {
@@ -392,35 +299,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.displayAffiliationExtIdPopOver[id] = false;
     };
 
-    isValidClass(cur): any {
-        let valid = true;
-
-        if (cur === undefined) {
-            return '';
-        }
-        if ( 
-            ( cur.required && (cur.value == null || cur.value.trim() == '') ) 
-            || 
-            ( cur.errors !== undefined && cur.errors.length > 0 ) 
-        ) {
-            valid = false;
-        }
-
-        return valid ? '' : 'text-error';
-    };
-
-    isValidStartDate(start): any {
-        if (start === undefined) {
-            return '';
-        }
-        
-        if (start.errors !== undefined && start.errors.length > 0) {
-            return 'text-error';
-        }
-        
-        return '';
-    };
-
     moreInfoMouseEnter(key, $event): void {
         $event.stopPropagation();
         if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
@@ -435,22 +313,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openEditAffiliation(affiliation): void {
         this.addAffiliationModal(affiliation.affiliationType.value, affiliation);
-    };
-
-    removeDisambiguatedAffiliation(): void {
-        this.bindTypeahead();
-        
-        if (this.disambiguatedAffiliation != undefined) {
-            delete this.disambiguatedAffiliation;
-        }
-        
-        if (this.editAffiliation != undefined && this.editAffiliation.disambiguatedAffiliationSourceId != undefined) {
-            delete this.editAffiliation.disambiguatedAffiliationSourceId;
-        }
-        
-        if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {
-        	delete this.editAffiliation.orgDisambiguatedId;
-        }
     };
 
     selectAffiliation(datum): void {
@@ -475,7 +337,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
             if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
                 this.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-                this.unbindTypeahead();
             }
         }
     };
@@ -491,20 +352,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.affiliationService.updateVisibility(aff)
             .takeUntil(this.ngUnsubscribe)
             .subscribe(data => {});
-    };
-
-    showAddModal(): void{
-        let numOfResults = 25;
-        /*
-        $.colorbox({
-            html: $compile($('#add-affiliation-modal').html())($scope),            
-            onComplete: function() {
-                // resize to insure content fits
-                formColorBoxResize();
-                $scope.bindTypeahead();
-            }
-        });
-        */
     };
 
     showAffiliationExtIdPopOver(id): void{
@@ -586,13 +433,35 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         return index; // or item.id
     };
 
-    unbindTypeahead(): void {
-        $('#affiliationName').typeahead('destroy');
-    };
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+
+        this.subscription = this.affiliationService.notifyObservable$.subscribe(
+            (res) => {                
+                if(res.action == 'delete') {
+                    if(res.deleteAffiliationObj.affiliationType != null && res.deleteAffiliationObj.affiliationType.value != null) {
+                        if(res.deleteAffiliationObj.affiliationType.value == 'distinction' || res.deleteAffiliationObj.affiliationType.value == 'invited-position') {
+                            this.removeFromArray(this.distinctionsAndInvitedPositions, res.deleteAffiliationObj.putCode.value);
+                        } else if (res.deleteAffiliationObj.affiliationType.value == 'education' || res.deleteAffiliationObj.affiliationType.value == 'qualification'){
+                            this.removeFromArray(this.educationsAndQualifications, res.deleteAffiliationObj.putCode.value);
+                            if(res.deleteAffiliationObj.affiliationType.value == 'education') {
+                                this.removeFromArray(this.educations, res.deleteAffiliationObj.putCode.value);
+                            }                            
+                        } else if (res.deleteAffiliationObj.affiliationType.value == 'employment'){
+                            this.removeFromArray(this.employments, res.deleteAffiliationObj.putCode.value);                            
+                        } else if(res.deleteAffiliationObj.affiliationType.value == 'membership' || res.deleteAffiliationObj.affiliationType.value == 'service') {
+                            this.removeFromArray(this.membershipsAndServices, res.deleteAffiliationObj.putCode.value);                            
+                        } 
+                    }  
+                } else if(res.action == 'add') {
+                    if(res.successful == true) {
+                        console.log("Fetching affiliations data");
+                        this.getAffiliationsId();
+                    }
+                }                
+            }
+        );
     };
 
     ngOnDestroy() {
@@ -604,75 +473,3 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getAffiliationsId();
     }; 
 }
-
-/*
-        '$scope', 
-        '$rootScope', 
-        '$compile', 
-        '$filter', 
-        'affiliationsSrvc', 
-        'commonSrvc', 
-        'emailSrvc', 
-        'initialConfigService', 
-        'workspaceSrvc', 
-        function (
-            $scope, 
-            $rootScope, 
-            $compile, 
-            $filter, 
-            affiliationsSrvc, 
-            commonSrvc, 
-            emailSrvc, 
-            initialConfigService,
-            workspaceSrvc
-        ){
-            
-            // For resizing color box in case of error
-            $scope.$watch(
-                'addingAffiliation', 
-                function() {
-                    setTimeout(
-                        function(){
-                            $.colorbox.resize();;
-                        }, 
-                        50
-                    );
-                }
-            );
-
-            
-
-            
-
-            
-
-            
-
-            $scope.serverValidate = function (relativePath) {
-                $.ajax({
-                    url: getBaseUri() + '/' + relativePath,
-                    type: 'POST',
-                    data:  angular.toJson($scope.editAffiliation),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
-                        $scope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    //console.log("serverValidate() error");
-                });
-            };
-
-            
-
-            
-
-            
-
-            
-        }
-    ]
-
-    */

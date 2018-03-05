@@ -78,19 +78,16 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
         return fundingMap;
     }
 
-    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {
-        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
-        List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcid);        
-        for(Affiliation affiliation : affiliations) {
-            // For now, ignore DISTINCTION, INVITED_POSITION, MEMBERSHIP, QUALIFICATION and SERVICE affiliations
-            if(Education.class.isAssignableFrom(affiliation.getClass()) || Employment.class.isAssignableFrom(affiliation.getClass())) {
-                if(Visibility.PUBLIC.equals(affiliation.getVisibility())) {
-                    affiliationMap.put(affiliation.getPutCode(), affiliation);
-                }
-            }            
-        }
-        return affiliationMap;
-    }
+	public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {
+		LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
+		List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcid);
+		for (Affiliation affiliation : affiliations) {
+			if (Visibility.PUBLIC.equals(affiliation.getVisibility())) {
+				affiliationMap.put(affiliation.getPutCode(), affiliation);
+			}
+		}
+		return affiliationMap;
+	}
 
     public String getCreditName(ProfileEntity profile) {
         String creditName = null;

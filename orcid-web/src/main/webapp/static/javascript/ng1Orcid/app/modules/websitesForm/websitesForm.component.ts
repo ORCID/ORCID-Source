@@ -199,7 +199,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    updateDisplayIndex(): void{
+    updateDisplayIndex(): void {
         let idx: any;
         for (idx in this.formData.websites) {         
             this.formData.websites[idx]['displayIndex'] = this.formData.websites.length - idx;

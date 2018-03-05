@@ -20,11 +20,11 @@
 
 <#include "includes/affiliate/add_affiliate_inc.ftl"/>
 
-<@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
-    <affiliation-ng2></affiliation-ng2>
+<@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
+    <affiliation-ng2 publicView="false"></affiliation-ng2>
 </@orcid.checkFeatureStatus>
 
-<@orcid.checkFeatureStatus 'ANGULAR2_DEV' false> 
+<@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES' false> 
     <div ng-controller="AffiliationCtrl">
         <!-- Education -->
         <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
