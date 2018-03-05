@@ -16,9 +16,6 @@
  */
 package org.orcid.core.cli.logs;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -26,10 +23,6 @@ import org.springframework.http.HttpStatus;
 public class ApiLog {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiLog.class);
-
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss xx");
-
-    private LocalDateTime dateTime;
 
     private String method;
 
@@ -43,14 +36,6 @@ public class ApiLog {
 
     private ApiLog() {
 
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
     }
 
     public String getMethod() {
@@ -96,7 +81,6 @@ public class ApiLog {
     public static ApiLog parse(String line) {
         try {
             ApiLog log = new ApiLog();
-            log.setDateTime(getDate(line));
             log.setMethod(getMethod(line));
             log.setEndpoint(getEndpoint(line));
             log.setStatus(getStatus(line));
@@ -111,8 +95,7 @@ public class ApiLog {
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(dateTime);
-        builder.append(" ").append(method);
+        builder.append(method);
         builder.append(" ").append(endpoint);
         builder.append(" ").append(status);
         builder.append(" ").append(bearerToken);
@@ -165,13 +148,6 @@ public class ApiLog {
         int index = line.indexOf("\"");
         int nextIndex = line.indexOf(" ", index);
         return line.substring(index + 1, nextIndex);
-    }
-
-    private static LocalDateTime getDate(String line) {
-        int index = line.indexOf("[");
-        int nextIndex = line.indexOf("]", index);
-        String dateString = line.substring(index + 1, nextIndex);
-        return LocalDateTime.parse(dateString, DATE_FORMAT);
     }
 
 }

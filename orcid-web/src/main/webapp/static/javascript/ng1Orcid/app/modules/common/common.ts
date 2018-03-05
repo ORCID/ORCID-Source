@@ -43,13 +43,8 @@ import { WorkExternalIdentifierHtmlPipe }
 
 //User generated modules
 /*
-import { DeactivateAccountNg2Module }
-    from './../deactivateAccount/deactivateAccount.ts';
 import { DelegatesNg2Module }
     from './../delegates/delegates.ts';
-
-import { DeprecateAccountNg2Module }
-    from './../deprecateAccount/deprecateAccount.ts';
 
 import { EditTableNg2Module }
     from './../editTable/editTable.ts';
@@ -83,8 +78,6 @@ import { RequestPasswordResetNg2Module }
 /*
 import { RevokeApplicationFormNg2Module }
     from './../revokeApplicationForm/revokeApplicationForm.ts';
-import { ShowEditLanguageNg2Module }
-    from './../showEditLanguage/showEditLanguage.ts';
 */
 
 import { SecurityQuestionEditNg2Module }
@@ -101,6 +94,9 @@ import { SwitchUserNg2Module }
 import { AffiliationService } 
     from '../../shared/affiliation.service.ts';
 
+import { AccountService }
+    from '../../shared/account.service.ts';
+
 import { AlsoKnownAsService } 
     from '../../shared/alsoKnownAs.service.ts';
 
@@ -115,6 +111,9 @@ import { ConsortiaService }
 
 import { CountryService } 
     from '../../shared/country.service.ts';
+
+import { DeprecateProfileService }
+    from '../../shared/deprecateProfile.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -172,9 +171,7 @@ import { WorksService }
             CommonModule,
             FormsModule,
             //User Modules
-            //DeactivateAccountNg2Module,
             //DelegatesNg2Module,
-            //DeprecateAccountNg2Module,
             //EditTableNg2Module,
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
@@ -209,23 +206,23 @@ import { WorksService }
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
-            //DeactivateAccountNg2Module,
             //DelegatesNg2Module,
-            //DeprecateAccountNg2Module,
             //EditTableNg2Module,
-            LanguageNg2Module,
             EmailFrecuencyNg2Module,
+            LanguageNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module
         ],
         providers: [
+            AccountService,
             AffiliationService,
             AlsoKnownAsService,
             BiographyService,
             CommonService,
             ConsortiaService,
             CountryService,
+            DeprecateProfileService,
             EmailService,
             FeaturesService,
             FundingService,

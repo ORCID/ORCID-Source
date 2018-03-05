@@ -161,16 +161,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     checkCredentials(popup): void {
         this.password = null;
-        if(orcidVar.isPasswordConfirmationRequired){
-            /*
-            if (!popup){
-                $.colorbox({
-                    html: $compile($('#check-password-modal').html())($scope)
-                });
-                $.colorbox.resize();
-            }else{
-            }
-            */
+        if(orcidVar.isPasswordConfirmationRequired){            
             this.showConfirmationBox = true;            
         }else{
             this.submitModal(this.inputEmail);
@@ -254,13 +245,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     confirmDeleteEmail(email): void {
-        this.emailService.delEmail = email;
-        /*
-        $.colorbox({
-            html : $compile($('#delete-email-modal').html())($scope)
-        });
-        $.colorbox.resize();
-        */
+        this.emailService.delEmail = email;        
         this.emailService.deleteEmail()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -297,18 +282,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     confirmDeleteEmailInline(email, $event): void {
         $event.preventDefault();
         this.showDeleteBox = true;
-        this.emailService.delEmail = email;
-        
-        /*
-        $scope.$watch(
-            function () {
-                return document.getElementsByClassName('delete-email-box').length; 
-            },
-            function (newValue, oldValue) {             
-                $.colorbox.resize();
-            }
-        );
-        */
+        this.emailService.delEmail = email;                
     };
 
     setPrimary( email ): void {

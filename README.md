@@ -11,13 +11,9 @@ Welcome to ORCID Source. Here are some resources to get you started.
 
 * [ORCID's Localization Reference](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n)
 
-* [ORCID's OpenID Connect HOWTO Guide](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/OPEN_ID_CONNECT_HOWTO.md)
-
 * [ORCID API user's listserv](https://groups.google.com/forum/#!forum/orcid-api-users)
 
 * [ORCID member support center](https://members.orcid.org/)
-
-* [ORCID Source Wiki](https://github.com/ORCID/ORCID-Source/wiki)
 
 * [Popular Client Libraries](https://github.com/ORCID/ORCID-Source/blob/master/POPULAR_CLIENT_LIBRARIES.md)
 

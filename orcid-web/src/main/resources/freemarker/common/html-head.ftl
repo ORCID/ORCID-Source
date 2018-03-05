@@ -73,7 +73,7 @@
         orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
         orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
         orcidVar.features = JSON.parse("${featuresJson}");
-      
+        
         <#if (oauth2Screens)??>
         orcidVar.oauth2Screens = true;
         <#else>
@@ -146,7 +146,6 @@
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <!-- NG2: Under development -->
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
         <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
         <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
@@ -173,11 +172,22 @@
     </#if>
     </@orcid.checkFeatureStatus> 
 
+    <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
+        <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
+            <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+        </#if>
+    </@orcid.checkFeatureStatus> 
+    
     <#if springMacroRequestContext.requestUri?contains("/account") >
+        <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
+        <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
+        <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
+        <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
         <#include "/includes/ng2_templates/works-privacy-preferences-ng2-template.ftl">
     </#if>
 
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/my-orcid")>
+        <#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-frequency-ng2-template.ftl">
         <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/emails-ng2-template.ftl">
