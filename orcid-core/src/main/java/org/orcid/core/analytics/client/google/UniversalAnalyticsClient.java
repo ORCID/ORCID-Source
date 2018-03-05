@@ -67,9 +67,9 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
     protected static final String RESPONSE_CODE_PARAM = "cd3";
 
     protected static final String CLIENT_PARAM = "cd4";
-    
+
     protected static final String SESSION_CONTROL_PARAM = "sc";
-    
+
     protected static final String SESSION_CONTROL_VALUE = "start";
 
     @Value("${org.orcid.core.api.analytics.trackingCode:}")
@@ -133,12 +133,12 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
         payload.append("&").append(HIT_TYPE_PARAM).append("=").append(HIT_TYPE_VALUE_EVENT);
         payload.append("&").append(EVENT_ACTION_PARAM).append("=").append(data.getMethod());
         payload.append("&").append(EVENT_CATEGORY_PARAM).append("=").append(data.getCategory());
-        payload.append("&").append(EVENT_LABEL_PARAM).append("=").append(data.getUrl());
         payload.append("&").append(API_VERSION_PARAM).append("=").append(data.getApiVersion());
         payload.append("&").append(CONTENT_TYPE_PARAM).append("=").append(data.getContentType());
         payload.append("&").append(RESPONSE_CODE_PARAM).append("=").append(data.getResponseCode());
         payload.append("&").append(CLIENT_PARAM).append("=").append(data.getClientDetailsString());
         payload.append("&").append(SESSION_CONTROL_PARAM).append("=").append(SESSION_CONTROL_VALUE);
+        payload.append("&").append(EVENT_LABEL_PARAM).append("=").append(data.getCategory()).append(":").append(data.getMethod());
         return UriEncoder.encode(payload.toString());
     }
 
