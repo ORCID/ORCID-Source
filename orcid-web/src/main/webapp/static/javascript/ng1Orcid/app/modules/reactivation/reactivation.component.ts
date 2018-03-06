@@ -43,14 +43,13 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     constructor(
         private oauthService: OauthService,
-        private commonService: CommonService,
+        private commonSrvc: CommonService,
         private featuresService: FeaturesService,
         private reactivationService: ReactivationService,
         private cdr:ChangeDetectorRef
     ) {
         this.privacyHelp = {};
-        this.registrationForm = {};
-        
+        this.registrationForm = {}; 
     }
 
     getReactivation(resetParams, linkFlag): void{
@@ -60,7 +59,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.registrationForm = data;
                 this.registrationForm.resetParams = resetParams;
-                if (orcidVar.features['GDPR_UI'] == true){
+                if (orcidVar.features['GDPR_UI'] === true){
                     this.registrationForm.activitiesVisibilityDefault.visibility = null;
                 }
                 this.cdr.detectChanges();              
@@ -73,7 +72,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     isValidClass(cur) : string{
-        return this.commonService.isValidClass(cur);
+        return this.commonSrvc.isValidClass(cur);
     };
 
     postReactivationConfirm(): void {
@@ -109,7 +108,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.commonService.copyErrorsLeft(this.registrationForm, data);
+                this.commonSrvc.copyErrorsLeft(this.registrationForm, data);
             },
             error => {
                 // something bad is happening!
@@ -119,14 +118,8 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     trimAjaxFormText(pojoMember): void {
-        this.commonService.trimAjaxFormText(pojoMember);
+        this.commonSrvc.trimAjaxFormText(pojoMember);
     }
-
-    /*$scope.toggleClickPrivacyHelp = function(key) {
-        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
-            $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-        }
-    };*/
 
     updateActivitiesVisibilityDefault(priv, $event): void {
         this.registrationForm.activitiesVisibilityDefault.visibility = priv;

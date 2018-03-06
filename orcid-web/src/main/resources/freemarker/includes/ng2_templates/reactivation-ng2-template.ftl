@@ -21,7 +21,7 @@
     	<div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 oauth-registration">
     	    <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.thank_you")}</p>
     	    <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.please_complete")}</p>
-    		<div>
+            <div>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <!-- First name -->
                 <div class="form-group clear-fix">
@@ -36,9 +36,9 @@
                                 <div class="arrow"></div>
                                 <div class="popover-content">
                                     <p><@orcid.msg ''/></p>
-                                    <p><@orcid.msg 'orcid.frontend.registrationForm.help.last_name'/></p>
-                                    <p><@orcid.msg 'orcid.frontend.registrationForm.help.update_names'/></p>
-                                    <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="orcid.frontend.registrationForm.help.more_info.link.text"><@orcid.msg 'orcid.frontend.registrationForm.help.more_info.link.text'/></a>
+                                    <p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
+                                    <p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
+                                    <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="orcid.frontend.register.help.more_info.link.text"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
                                 </div>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                         </span>
                     </div>
                 </div>
-	    		<!--Password-->
+                <!--Password-->
                 <div class="form-group clear-fix">
                     <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
                     <div class="bottomBuffer">
@@ -88,13 +88,13 @@
                         <p><b>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</b></p>
                         <div class="visibilityDefault">
                             <div class="radio">
-                              <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PUBLIC" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'registrationForm.privacy_everyone_text'/></span></label>
+                              <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PUBLIC" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
                             </div>
                             <div class="radio">
-                              <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="LIMITED" (blur)="serversValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'registrationForm.privacy_limited_text'/></span></label>
+                              <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="LIMITED" (blur)="serversValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
                             </div>
                             <div class="radio">
-                              <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PRIVATE" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'registrationForm.privacy_private_text'/></span></label>
+                              <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PRIVATE" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
                             </div>
                         </div>
                         <div class="visibilityHelp">
@@ -118,13 +118,14 @@
                         <span class="orcid-error" *ngIf="registrationForm.activitiesVisibilityDefault.errors.length > 0">
                             <div *ngFor="let error of registrationForm.activitiesVisibilityDefault.errors" [innerHTML]="error"></div>
                         </span>
+                    </div>
                     <!--Terms and conditions-->
-                    <div class="bottomBuffer form-group clear-fix">
-                        <h4><@orcid.msg 'registrationForm.labelTermsofUse'/>
-                            <span class="required" [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}"></span></h4>  
+                    <div class="form-group clear-fix bottomBuffer">
+                        <h4><@orcid.msg 'register.labelTermsofUse'/>
+                            <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}"></span></h4>  
                         <p>
                             <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
-                            <@orcid.msg 'registrationForm.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="registrationForm.labelprivacypolicy"><@orcid.msg 'registrationForm.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'registrationForm.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
+                            <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
                         </p>
                         <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
                             <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
@@ -138,31 +139,32 @@
                             <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
                             <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
                             <@orcid.privacyToggle3Ng2
-                                angularModel="default_visibility"
+                                angularModel="registrationForm.activitiesVisibilityDefault.visibility"
                                 publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
                                 limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
                                 privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
-                                elementId="workPrivHelp" /> 
+                                elementId="workPrivHelp"
+                                position="bottom" /> 
                         </div>
                     </div>
                     <!--Terms and conditions-->
-                    <div class="bottomBuffer">
+                    <div class="form-group clear-fix bottomBuffer">
                         <label for="termsConditions">
-                            <@orcid.msg 'registrationForm.labelTermsofUse'/>
+                            <@orcid.msg 'register.labelTermsofUse'/>
                             <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}">*</span>
                         </label>
                         <p>
-                            <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (blur)="serverValidate('TermsOfUse')" />
-                            <@orcid.msg 'registrationForm.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="registrationForm.labelprivacypolicy"><@orcid.msg 'registrationForm.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'registrationForm.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
+                            <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
+                            <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
                         </p>
                         <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
                             <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
                         </span>
                     </div>
                 </div>
-				<div class="relative">
-                    <button type="submit" tabindex="10" class="btn btn-primary" ng-click="postReactivationConfirm(null)">${springMacroRequestContext.getMessage("orcid.frontend.reactivate")}</button>
+                <div class="relative">
+                    <button tabindex="10" class="btn btn-primary" (click)="postReactivationConfirm(null)">${springMacroRequestContext.getMessage("orcid.frontend.reactivate")}</button>
                 </div>
-    		</div>
+            </div>
     	</div>
 </script>
