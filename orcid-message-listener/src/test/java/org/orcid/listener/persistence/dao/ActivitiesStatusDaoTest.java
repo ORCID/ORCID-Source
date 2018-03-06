@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
 public class ActivitiesStatusDaoTest {
-	@Resource
+    @Resource
     private ActivitiesStatusDao activitiesStatusDao;
 
     @Test
@@ -49,7 +49,7 @@ public class ActivitiesStatusDaoTest {
         activitiesStatusDao.create(orcid, ActivityType.EDUCATIONS, Constants.OK);
         assertTrue(activitiesStatusDao.exists(orcid));
     }
-    
+
     @Test
     @Transactional
     public void existsTest() {
@@ -81,7 +81,7 @@ public class ActivitiesStatusDaoTest {
         assertNotNull(entity.getLastModified());
         assertNotNull(entity.getEducationsLastIndexed());
         assertNull(entity.getEmploymentsLastIndexed());
-        assertNull(entity.getFundingsLastIndexed());        
+        assertNull(entity.getFundingsLastIndexed());
     }
 
     @Test
@@ -129,8 +129,8 @@ public class ActivitiesStatusDaoTest {
         assertEquals(Integer.valueOf(0), e3.getEducationsStatus());
         assertEquals(Integer.valueOf(0), e3.getEmploymentsStatus());
         assertEquals(Integer.valueOf(1), e3.getFundingsStatus());
-        
+
         list = activitiesStatusDao.getFailedElements(2);
         assertEquals(2, list.size());
-    }    
+    }
 }

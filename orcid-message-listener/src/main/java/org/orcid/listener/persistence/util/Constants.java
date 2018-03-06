@@ -17,7 +17,7 @@
 package org.orcid.listener.persistence.util;
 
 public class Constants {
-	public static final Integer FIRST_FAIL = 1;
+    public static final Integer FIRST_FAIL = 1;
 
     public static final Integer OK = 0;
 }

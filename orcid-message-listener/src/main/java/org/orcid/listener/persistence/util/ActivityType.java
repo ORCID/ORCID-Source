@@ -24,53 +24,55 @@ import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Work;
 
 public enum ActivityType {
-	EDUCATIONS("/educations/", "educations", "educations_status", "educations_last_indexed"),
-	EMPLOYMENTS("/employments/", "employments", "employments_status", "employments_last_indexed"),
-	FUNDINGS("/fundings/", "fundings", "fundings_status", "fundings_last_indexed"),
-	PEER_REVIEWS("/peer-reviews/", "peer-reviews", "peer_reviews_status", "peer_reviews_last_indexed"),
-	WORKS("/works/", "works", "works_status", "works_last_indexed");
-	
-	private final String pathDiscriminator;
-	private final String value;
-	private final String statusColumnName;
-	private final String lastIndexedColumnName;
-	
-	ActivityType(String pathDiscriminator, String value, String statusColumnName, String lastIndexedColumnName) {
-		this.pathDiscriminator = pathDiscriminator;
-		this.value = value;
-		this.statusColumnName = statusColumnName;
-		this.lastIndexedColumnName = lastIndexedColumnName;
-	}
-	
-	public String getPathDiscriminator() {
+    //@formatter:off
+    EDUCATIONS("/educations/", "educations", "educations_status", "educations_last_indexed"), 
+    EMPLOYMENTS("/employments/", "employments", "employments_status", "employments_last_indexed"), 
+    FUNDINGS("/fundings/", "fundings", "fundings_status", "fundings_last_indexed"), 
+    PEER_REVIEWS("/peer-reviews/", "peer-reviews", "peer_reviews_status", "peer_reviews_last_indexed"), 
+    WORKS("/works/", "works", "works_status", "works_last_indexed");
+    //@formatter:on
+
+    private final String pathDiscriminator;
+    private final String value;
+    private final String statusColumnName;
+    private final String lastIndexedColumnName;
+
+    ActivityType(String pathDiscriminator, String value, String statusColumnName, String lastIndexedColumnName) {
+        this.pathDiscriminator = pathDiscriminator;
+        this.value = value;
+        this.statusColumnName = statusColumnName;
+        this.lastIndexedColumnName = lastIndexedColumnName;
+    }
+
+    public String getPathDiscriminator() {
         return pathDiscriminator;
     }
-	
-	public String getValue() {
-		return value;
-	}
-	
-	public String getStatusColumnName() {
-		return statusColumnName;
-	}
 
-	public String getLastIndexedColumnName() {
-		return lastIndexedColumnName;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public static ActivityType inferFromActivity(Activity a) {
-		if(a.getClass().isAssignableFrom(Education.class)) {
-			return EDUCATIONS;
-		} else if(a.getClass().isAssignableFrom(Employment.class)) {
-			return EMPLOYMENTS;
-		} else if(a.getClass().isAssignableFrom(Funding.class)) {
-			return FUNDINGS;
-		} else if(a.getClass().isAssignableFrom(PeerReview.class)) {
-			return PEER_REVIEWS;
-		} else if(a.getClass().isAssignableFrom(Work.class)) {
-			return WORKS;
-		} 
-		
-		throw new IllegalArgumentException("Unable to find activity of type " + a.getClass().toGenericString());
-	}
+    public String getStatusColumnName() {
+        return statusColumnName;
+    }
+
+    public String getLastIndexedColumnName() {
+        return lastIndexedColumnName;
+    }
+
+    public static ActivityType inferFromActivity(Activity a) {
+        if (a.getClass().isAssignableFrom(Education.class)) {
+            return EDUCATIONS;
+        } else if (a.getClass().isAssignableFrom(Employment.class)) {
+            return EMPLOYMENTS;
+        } else if (a.getClass().isAssignableFrom(Funding.class)) {
+            return FUNDINGS;
+        } else if (a.getClass().isAssignableFrom(PeerReview.class)) {
+            return PEER_REVIEWS;
+        } else if (a.getClass().isAssignableFrom(Work.class)) {
+            return WORKS;
+        }
+
+        throw new IllegalArgumentException("Unable to find activity of type " + a.getClass().toGenericString());
+    }
 }

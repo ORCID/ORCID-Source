@@ -29,10 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class ActivitiesStatusManager {
 
-	@Autowired
-	private ActivitiesStatusDao dao;
-	
-	@Transactional
+    @Autowired
+    private ActivitiesStatusDao dao;
+
+    @Transactional
     public void markAsSent(String orcid, ActivityType type) {
         if (dao.exists(orcid)) {
             dao.success(orcid, type);
@@ -49,17 +49,17 @@ public class ActivitiesStatusManager {
             dao.create(orcid, type, Constants.FIRST_FAIL);
         }
     }
-    
+
     @Transactional
     public void markAllAsSent(String orcid) {
-    	dao.successAll(orcid);
+        dao.successAll(orcid);
     }
-    
+
     @Transactional
     public void markAllAsFailed(String orcid) {
-    	dao.failAll(orcid);
+        dao.failAll(orcid);
     }
-    
+
     public List<ActivitiesStatusEntity> getFailedElements(int batchSize) {
         return dao.getFailedElements(batchSize);
     }

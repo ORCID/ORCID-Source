@@ -24,137 +24,137 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "record_status")
+@Table(name = "activities_status")
 public class ActivitiesStatusEntity {
-	private Date dateCreated;
-	private Date lastModified;
-	private String orcid;
-	private Integer educationsStatus = 0;
-	private Integer employmentsStatus = 0;
-	private Integer fundingsStatus = 0;
-	private Integer peerReviewsStatus = 0;
-	private Integer worksStatus = 0;
-	private Date educationsLastIndexed;
-	private Date employmentsLastIndexed;
-	private Date fundingsLastIndexed;
-	private Date peerReviewsLastIndexed;
-	private Date worksLastIndexed;
+    private Date dateCreated;
+    private Date lastModified;
+    private String orcid;
+    private Integer educationsStatus = 0;
+    private Integer employmentsStatus = 0;
+    private Integer fundingsStatus = 0;
+    private Integer peerReviewsStatus = 0;
+    private Integer worksStatus = 0;
+    private Date educationsLastIndexed;
+    private Date employmentsLastIndexed;
+    private Date fundingsLastIndexed;
+    private Date peerReviewsLastIndexed;
+    private Date worksLastIndexed;
 
-	@Id
-	@Column(name = "orcid", length = 19)
-	public String getId() {
-		return orcid;
-	}
+    @Id
+    @Column(name = "orcid", length = 19)
+    public String getId() {
+        return orcid;
+    }
 
-	public void setId(String orcid) {
-		this.orcid = orcid;
-	}
+    public void setId(String orcid) {
+        this.orcid = orcid;
+    }
 
-	@Column(name = "date_created")
-	public Date getDateCreated() {
-		return dateCreated;
-	}
+    @Column(name = "date_created")
+    public Date getDateCreated() {
+        return dateCreated;
+    }
 
-	public void setDateCreated(Date dateCreated) {
-		this.dateCreated = dateCreated;
-	}
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 
-	@Column(name = "last_modified")
-	public Date getLastModified() {
-		return lastModified;
-	}
+    @Column(name = "last_modified")
+    public Date getLastModified() {
+        return lastModified;
+    }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
-	@Column(name = "educations_status")
-	public Integer getEducationsStatus() {
-		return educationsStatus;
-	}
+    @Column(name = "educations_status")
+    public Integer getEducationsStatus() {
+        return educationsStatus;
+    }
 
-	public void setEducationsStatus(Integer educationsStatus) {
-		this.educationsStatus = educationsStatus;
-	}
+    public void setEducationsStatus(Integer educationsStatus) {
+        this.educationsStatus = educationsStatus;
+    }
 
-	@Column(name = "employments_status")
-	public Integer getEmploymentsStatus() {
-		return employmentsStatus;
-	}
+    @Column(name = "employments_status")
+    public Integer getEmploymentsStatus() {
+        return employmentsStatus;
+    }
 
-	public void setEmploymentsStatus(Integer employmentsStatus) {
-		this.employmentsStatus = employmentsStatus;
-	}
+    public void setEmploymentsStatus(Integer employmentsStatus) {
+        this.employmentsStatus = employmentsStatus;
+    }
 
-	@Column(name = "fundings_status")
-	public Integer getFundingsStatus() {
-		return fundingsStatus;
-	}
+    @Column(name = "fundings_status")
+    public Integer getFundingsStatus() {
+        return fundingsStatus;
+    }
 
-	public void setFundingsStatus(Integer fundingsStatus) {
-		this.fundingsStatus = fundingsStatus;
-	}
+    public void setFundingsStatus(Integer fundingsStatus) {
+        this.fundingsStatus = fundingsStatus;
+    }
 
-	@Column(name = "peer_reviews_status")
-	public Integer getPeerReviewsStatus() {
-		return peerReviewsStatus;
-	}
+    @Column(name = "peer_reviews_status")
+    public Integer getPeerReviewsStatus() {
+        return peerReviewsStatus;
+    }
 
-	public void setPeerReviewsStatus(Integer peerReviewsStatus) {
-		this.peerReviewsStatus = peerReviewsStatus;
-	}
+    public void setPeerReviewsStatus(Integer peerReviewsStatus) {
+        this.peerReviewsStatus = peerReviewsStatus;
+    }
 
-	@Column(name = "works_status")
-	public Integer getWorksStatus() {
-		return worksStatus;
-	}
+    @Column(name = "works_status")
+    public Integer getWorksStatus() {
+        return worksStatus;
+    }
 
-	public void setWorksStatus(Integer worksStatus) {
-		this.worksStatus = worksStatus;
-	}
+    public void setWorksStatus(Integer worksStatus) {
+        this.worksStatus = worksStatus;
+    }
 
-	@Column(name = "educations_last_indexed")
-	public Date getEducationsLastIndexed() {
-		return educationsLastIndexed;
-	}
+    @Column(name = "educations_last_indexed")
+    public Date getEducationsLastIndexed() {
+        return educationsLastIndexed;
+    }
 
-	public void setEducationsLastIndexed(Date educationsLastIndexed) {
-		this.educationsLastIndexed = educationsLastIndexed;
-	}
+    public void setEducationsLastIndexed(Date educationsLastIndexed) {
+        this.educationsLastIndexed = educationsLastIndexed;
+    }
 
-	@Column(name = "employments_last_indexed")
-	public Date getEmploymentsLastIndexed() {
-		return employmentsLastIndexed;
-	}
+    @Column(name = "employments_last_indexed")
+    public Date getEmploymentsLastIndexed() {
+        return employmentsLastIndexed;
+    }
 
-	public void setEmploymentsLastIndexed(Date employmentsLastIndexed) {
-		this.employmentsLastIndexed = employmentsLastIndexed;
-	}
+    public void setEmploymentsLastIndexed(Date employmentsLastIndexed) {
+        this.employmentsLastIndexed = employmentsLastIndexed;
+    }
 
-	@Column(name = "fundings_last_indexed")
-	public Date getFundingsLastIndexed() {
-		return fundingsLastIndexed;
-	}
+    @Column(name = "fundings_last_indexed")
+    public Date getFundingsLastIndexed() {
+        return fundingsLastIndexed;
+    }
 
-	public void setFundingsLastIndexed(Date fundingsLastIndexed) {
-		this.fundingsLastIndexed = fundingsLastIndexed;
-	}
+    public void setFundingsLastIndexed(Date fundingsLastIndexed) {
+        this.fundingsLastIndexed = fundingsLastIndexed;
+    }
 
-	@Column(name = "peer_reviews_last_indexed")
-	public Date getPeerReviewsLastIndexed() {
-		return peerReviewsLastIndexed;
-	}
+    @Column(name = "peer_reviews_last_indexed")
+    public Date getPeerReviewsLastIndexed() {
+        return peerReviewsLastIndexed;
+    }
 
-	public void setPeerReviewsLastIndexed(Date peerReviewsLastIndexed) {
-		this.peerReviewsLastIndexed = peerReviewsLastIndexed;
-	}
+    public void setPeerReviewsLastIndexed(Date peerReviewsLastIndexed) {
+        this.peerReviewsLastIndexed = peerReviewsLastIndexed;
+    }
 
-	@Column(name = "works_last_indexed")
-	public Date getWorksLastIndexed() {
-		return worksLastIndexed;
-	}
+    @Column(name = "works_last_indexed")
+    public Date getWorksLastIndexed() {
+        return worksLastIndexed;
+    }
 
-	public void setWorksLastIndexed(Date worksLastIndexed) {
-		this.worksLastIndexed = worksLastIndexed;
-	}
+    public void setWorksLastIndexed(Date worksLastIndexed) {
+        this.worksLastIndexed = worksLastIndexed;
+    }
 }

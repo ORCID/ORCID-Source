@@ -51,15 +51,16 @@ public class UpdatedOrcidListener {
 
     @Value("${org.orcid.message-listener.index.activities:false}")
     private boolean indexActivities;
-    
+
     @Value("${org.orcid.message-listener.index.summaries:false}")
     private boolean indexSummaries;
-    
+
     @Resource
     public UpdatedOrcidExpringQueue<UpdatedOrcidWorker> cacheQueue;
 
     /**
-     * Queues incoming messages for processing, eventually handled by UpdatedOrcidWorker
+     * Queues incoming messages for processing, eventually handled by
+     * UpdatedOrcidWorker
      * 
      * @param map
      */
@@ -70,15 +71,5 @@ public class UpdatedOrcidListener {
         LastModifiedMessage existingMessage = cacheQueue.getCache().getIfPresent(message.getOrcid());
         if (existingMessage == null || message.getLastUpdated().after(existingMessage.getLastUpdated()))
             cacheQueue.getCache().put(message.getOrcid(), message);
-    }
-    
-    @JmsListener(containerFactory="jmsTopicListenerContainerFactory", destination = MessageConstants.Queues.UPDATED_ORCIDS)
-    public void processMessageV2(final Map<String, String> map) {
-    	LastModifiedMessage message = new LastModifiedMessage(map);
-    	if(indexSummaries) {
-    		System.out.println("IndexingSummaries");
-    	} else if(indexActivities) {
-    		System.out.println("IndexingActivities");
-    	}
     }
 }

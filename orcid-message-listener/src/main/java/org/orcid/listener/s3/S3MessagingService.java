@@ -42,76 +42,75 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 @Component
 public class S3MessagingService {
 
-	Logger LOG = LoggerFactory.getLogger(S3MessagingService.class);
+    Logger LOG = LoggerFactory.getLogger(S3MessagingService.class);
 
-	private final AmazonS3 s3;
-	
-	private final String bucketName;
+    private final AmazonS3 s3;
 
-	public String getBucketName() {
-		return this.bucketName;
-	}
-	
-	/**
-	 * Initialize the Amazon S3 connection object
-	 * 
-	 * @param secretKey
-	 *            Secret key to connect to S3
-	 * @param accessKey
-	 *            Access key to connect to S3
-	 */
-	@Autowired
-	public S3MessagingService(@Value("${org.orcid.message-listener.s3.secretKey}") String secretKey,
-			@Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, @Value("${org.orcid.message-listener.index.bucket_name}") String bucketName) throws JAXBException {
-		try {
-			AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-			this.s3 = new AmazonS3Client(credentials);
-			this.bucketName = bucketName;
-		} catch (Exception e) {
-			LOG.error("Unable to connect to the Amazon S3 service", e);
-			throw e;
-		}
-	}
+    private final String bucketName;
 
-	/**
-	 * Sends the content to the given bucket
-	 * 
-	 * @param bucketName
-	 *            The name of the bucket.
-	 * @param elementName
-	 *            The name of the object to create.
-	 * @param elementContent
-	 *            the content of the object to create.
-	 * 
-	 * @return true if the element was correctly sent to the bucket
-	 * 
-	 **/
-	public boolean send(String bucketName, String elementName, byte[] elementContent, String contentType)
-			throws AmazonClientException, AmazonServiceException {
-		InputStream is = new ByteArrayInputStream(elementContent);
-		ObjectMetadata metadata = new ObjectMetadata();
-		metadata.setContentType(contentType);
-		metadata.setContentLength(elementContent.length);
-		s3.putObject(new PutObjectRequest(bucketName, elementName, is, metadata));
-		return true;
-	}
+    public String getBucketName() {
+        return this.bucketName;
+    }
 
-	public boolean send(String elementName, byte[] elementContent, String contentType,
-			Date lastModified) throws AmazonClientException, AmazonServiceException {
-		InputStream is = new ByteArrayInputStream(elementContent);
-		ObjectMetadata metadata = new ObjectMetadata();
-		metadata.setContentType(contentType);
-		metadata.setContentLength(elementContent.length);
-		metadata.setLastModified(lastModified);
-		s3.putObject(new PutObjectRequest(this.bucketName, elementName, is, metadata));
-		return true;
-	}
+    /**
+     * Initialize the Amazon S3 connection object
+     * 
+     * @param secretKey
+     *            Secret key to connect to S3
+     * @param accessKey
+     *            Access key to connect to S3
+     */
+    @Autowired
+    public S3MessagingService(@Value("${org.orcid.message-listener.s3.secretKey}") String secretKey,
+            @Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, @Value("${org.orcid.message-listener.index.bucket_name}") String bucketName)
+            throws JAXBException {
+        try {
+            AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+            this.s3 = new AmazonS3Client(credentials);
+            this.bucketName = bucketName;
+        } catch (Exception e) {
+            LOG.error("Unable to connect to the Amazon S3 service", e);
+            throw e;
+        }
+    }
 
-	public ListObjectsV2Result listObjects(ListObjectsV2Request request) {
-		return s3.listObjectsV2(request);
-	}
-	
-	public void removeElement(String elementName) throws AmazonClientException, AmazonServiceException {
-		s3.deleteObject(this.bucketName, elementName);		
-	}	
+    /**
+     * Sends the content to the given bucket
+     * 
+     * @param bucketName
+     *            The name of the bucket.
+     * @param elementName
+     *            The name of the object to create.
+     * @param elementContent
+     *            the content of the object to create.
+     * 
+     * @return true if the element was correctly sent to the bucket
+     * 
+     **/
+    public boolean send(String bucketName, String elementName, byte[] elementContent, String contentType) throws AmazonClientException, AmazonServiceException {
+        InputStream is = new ByteArrayInputStream(elementContent);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(contentType);
+        metadata.setContentLength(elementContent.length);
+        s3.putObject(new PutObjectRequest(bucketName, elementName, is, metadata));
+        return true;
+    }
+
+    public boolean send(String elementName, byte[] elementContent, String contentType, Date lastModified) throws AmazonClientException, AmazonServiceException {
+        InputStream is = new ByteArrayInputStream(elementContent);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(contentType);
+        metadata.setContentLength(elementContent.length);
+        metadata.setLastModified(lastModified);
+        s3.putObject(new PutObjectRequest(this.bucketName, elementName, is, metadata));
+        return true;
+    }
+
+    public ListObjectsV2Result listObjects(ListObjectsV2Request request) {
+        return s3.listObjectsV2(request);
+    }
+
+    public void removeElement(String elementName) throws AmazonClientException, AmazonServiceException {
+        s3.deleteObject(this.bucketName, elementName);
+    }
 }
