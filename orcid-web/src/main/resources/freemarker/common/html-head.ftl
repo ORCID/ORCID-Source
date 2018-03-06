@@ -67,6 +67,7 @@
         orcidVar.lastModified = '${(lastModifiedTime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
+        orcidVar.resetParams = '${(resetParams)!}';
         orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};

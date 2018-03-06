@@ -95,6 +95,9 @@ import { NameNg2Module }
 import { PasswordEditNg2Module } 
     from './passwordEdit/passwordEdit.ts';
 
+import { ReactivationNg2Module } 
+    from './reactivation/reactivation.ts';
+
 import { SearchNg2Module } 
     from './search/search.ts';
 
@@ -210,6 +213,7 @@ export class RootCmp {
         ModalNg2Module, //Approved
         NameNg2Module, //Approved
         PasswordEditNg2Module,
+        ReactivationNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
         SelfServiceAddContactNg2Module, //Approved

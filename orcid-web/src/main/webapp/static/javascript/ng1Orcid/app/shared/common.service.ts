@@ -129,6 +129,21 @@ export class CommonService {
         }
     };
 
+    isValidClass(cur) : string{
+        let valid : boolean;
+        if (cur === undefined) {
+            return '';
+        }
+        valid = true;
+        if (cur.required && (cur.value == null || cur.value.trim() == '')) {
+            valid = false;
+        }
+        if (cur.errors !== undefined && cur.errors.length > 0) {
+            valid = false;
+        }
+        return valid ? '' : 'text-error';
+    };
+
     openImportWizardUrl(url): void {
         let win = window.open(url, "_target");
         setTimeout( function() {
@@ -184,5 +199,10 @@ export class CommonService {
         
         this.shownElement[elem] = true;
     };
-            
+
+    trimAjaxFormText(pojoMember) {
+        if (pojoMember != null && pojoMember.value != null && (pojoMember.value.charAt(0) == ' ' || pojoMember.value.charAt(pojoMember.value.length - 1) == ' ')) {
+            pojoMember.value = pojoMember.value.trim();
+        }
+    };            
 }

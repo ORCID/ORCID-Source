@@ -249,7 +249,7 @@ kind of variable. This temp value is only used in this macro lib -->
 					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}
 						<ul>
 							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
-							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * &#40; &#41; ~ ` &nbsp; &#123; &#125; &#91; &#93; | \ &amp; _</li>
 						</ul>
 					</li>
 					<li>

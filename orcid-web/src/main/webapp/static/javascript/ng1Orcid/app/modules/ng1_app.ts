@@ -81,6 +81,9 @@ import { NameModule }
 import { PasswordEditModule } 
     from './passwordEdit/passwordEdit.ts';
 
+import { ReactivationModule } 
+    from './reactivation/reactivation.ts';
+
 import { SearchModule } 
     from './search/search.ts';
 
@@ -159,6 +162,7 @@ export const orcidApp = angular.module(
         ModalModule.name,
         NameModule.name,
         PasswordEditModule.name,
+        ReactivationModule.name,
         SearchModule.name,
         SelfServiceModule.name,
         SelfServiceAddContactModule.name,

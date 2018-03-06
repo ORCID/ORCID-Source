@@ -132,8 +132,14 @@ import { ModalService }
 import { NameService } 
     from '../../shared/name.service.ts';
 
+import { OauthService }
+    from '../../shared/oauth.service.ts';
+
 import { PreferencesService }
     from '../../shared/preferences.service.ts';
+
+import { ReactivationService }
+    from '../../shared/reactivation.service.ts';
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
@@ -213,7 +219,9 @@ import { WorksService }
             LanguageService,
             ModalService,
             NameService,
+            OauthService,
             PreferencesService,
+            ReactivationService,
             TwoFAStateService,
             WebsitesService,
             WidgetService,
