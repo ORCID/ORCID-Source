@@ -119,6 +119,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         } 
     }
 
+    @Deprecated
     private void update_1_2_API(String orcid) {
         if (is12IndexingEnabled) {
             try {
@@ -161,6 +162,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         }
     }
     
+    @Deprecated
     private boolean update_1_2_API_XML(String orcid) throws LockedRecordException, DeprecatedRecordException, IOException {
         byte [] data = orcid12ApiClient.fetchPublicProfile(orcid, VND_ORCID_XML);
         if(data != null) {
@@ -170,6 +172,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         return false;
     }
 
+    @Deprecated
     private boolean update_1_2_API_JSON(String orcid) throws LockedRecordException, DeprecatedRecordException, IOException {
         byte [] data = orcid12ApiClient.fetchPublicProfile(orcid, VND_ORCID_JSON);
         if(data != null) {
@@ -179,6 +182,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         return false;
     }
     
+    @Deprecated 
     private void update_2_0_API(BaseMessage message) {
         String orcid = message.getOrcid();
         if (is20IndexingEnabled) {
@@ -216,6 +220,44 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                 recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
             }
         }
+    }
+    
+    private void update_2_0_Summary(BaseMessage message) {    	
+        String orcid = message.getOrcid();
+        if(summaryIndexerEnabled) {
+        	try {
+        		Record record = orcid20ApiClient.fetchPublicRecord(message);
+                if (record != null) {
+                    s3Manager.uploadRecordSummary(orcid, record);
+                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                }
+        	} catch (LockedRecordException | DeprecatedRecordException e) {
+                try {
+                    OrcidError error = null;
+                    if (e instanceof LockedRecordException) {
+                        LOG.error("Record " + orcid + " is locked");
+                        error = ((LockedRecordException) e).getOrcidError();
+                    } else {
+                        LOG.error("Record " + orcid + " is deprecated");
+                        error = ((DeprecatedRecordException) e).getOrcidError();
+                    }
+                    s3Manager.uploadOrcidError(orcid, error);
+                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                } catch (Exception e1) {
+                    LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
+                    recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                }
+            } catch (AmazonClientException e) {
+                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+            } catch (Exception e) {
+                // something else went wrong fetching record from ORCID and
+                // threw a
+                // runtime exception
+                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+            }
+        }        
     }
     
 	private void update_2_0_activities(BaseMessage message) throws JsonProcessingException, JAXBException {
@@ -293,13 +335,6 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 			}
 		}
 	}
-    
-    private void update_2_0_Summary(BaseMessage message) {
-        String orcid = message.getOrcid();
-        if(summaryIndexerEnabled) {
-        	
-        }        
-    }
     
     private void processActivities(String orcid, List<? extends Activity> activities, Map<String, S3ObjectSummary> existingElements, ActivityType type) throws JsonProcessingException, JAXBException {
     	try {
