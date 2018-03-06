@@ -361,7 +361,27 @@ public class S3Manager {
 			}
 			req.setContinuationToken(objects.getNextContinuationToken());
 		} while (objects.isTruncated());
+    }
+    
+    public void clearActivitiesByType(String orcid, ActivityType type) {
+    	// Clear xml activities
+    	removeElements(buildPrefix(orcid, type, "xml"));
+    	// Clear json activities
+    	removeElements(buildPrefix(orcid, type, "json"));
+    }
+    
+    private void removeElements(String prefix) {
+    	ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
 
+    	ListObjectsV2Result objects;
+		do {			
+			objects = s3MessagingService.listObjects(req);
+			for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
+				String elementName = objectSummary.getKey();
+				s3MessagingService.removeElement(elementName);
+			}
+			req.setContinuationToken(objects.getNextContinuationToken());
+		} while (objects.isTruncated());
     }
     
     private String getElementName(String orcid, String format) {
@@ -378,5 +398,9 @@ public class S3Manager {
 
 	private String buildPrefix(String orcid) {
 		return orcid.substring(16) + "/activities/" + orcid + "/xml/";
+	}
+	
+	private String buildPrefix(String orcid, ActivityType type, String format) {
+		return orcid.substring(16) + "/activities/" + orcid + "/" + format + "/" + type.getValue();
 	}
 }
