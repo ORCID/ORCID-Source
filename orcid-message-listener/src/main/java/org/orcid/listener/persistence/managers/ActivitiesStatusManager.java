@@ -55,6 +55,11 @@ public class ActivitiesStatusManager {
     	dao.successAll(orcid);
     }
     
+    @Transactional
+    public void markAllAsFailed(String orcid) {
+    	dao.failAll(orcid);
+    }
+    
     public List<ActivitiesStatusEntity> getFailedElements(int batchSize) {
         return dao.getFailedElements(batchSize);
     }

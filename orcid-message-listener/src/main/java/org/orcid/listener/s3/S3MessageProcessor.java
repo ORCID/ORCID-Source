@@ -228,8 +228,11 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 			} catch (LockedRecordException | DeprecatedRecordException e) {				
 				// Remove all activities from this record
 				s3Manager.clearActivities(orcid);
-				// Mark brokers as ok
+				// Mark all activities as ok
 				activitiesStatusManager.markAllAsSent(orcid);
+			} catch (Exception e) {
+				// Mark all activities as failed
+				activitiesStatusManager.markAllAsFailed(orcid);
 			}
 
 			if (as != null) {

@@ -100,6 +100,13 @@ public class ActivitiesStatusDao {
 		return query.executeUpdate() > 0;
 	}
 
+	public boolean failAll(String orcid) {
+		Query query = entityManager.createNativeQuery(
+				"UPDATE activities_status SET educations_status=(educations_status + 1), employments_status=(employments_status + 1), fundings_status=(fundings_status + 1), peer_reviews_status=(peer_reviews_status + 1), works_status=(works_status + 1), last_modified=now() WHERE orcid = :orcid");
+		query.setParameter("orcid", orcid);
+		return query.executeUpdate() > 0;
+	}
+	
 	public List<ActivitiesStatusEntity> getFailedElements(int batchSize) {
 		TypedQuery<ActivitiesStatusEntity> query = entityManager.createQuery(
 				"FROM ActivitiesStatusEntity WHERE educationsStatus > 0 OR employmentsStatus > 0 OR fundingsStatus > 0 OR peerReviewsStatus > 0 OR worksStatus > 0 ORDER BY id",
