@@ -88,6 +88,10 @@
         </#if>     
       
         orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
+        orcidVar.firstName = "${(RequestParameters.firstName?js_string)!}";
+        orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
+        orcidVar.emailId = "${(RequestParameters.emailId?js_string)!}";
+        orcidVar.linkRequest = "${(RequestParameters.linkRequest?js_string)!}";
         orcidVar.memberSlug = "${(memberSlug?js_string)!}";
     </script>
 

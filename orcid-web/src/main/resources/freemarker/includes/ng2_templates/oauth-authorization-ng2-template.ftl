@@ -188,14 +188,8 @@
     </#if>
     <#if springMacroRequestContext.requestUri?contains("/register") >
         <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/register.ftl -->
-        <#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
-            <div id="RegistrationForm" ng-init="oauth2ScreensLoadRegistrationForm('${RequestParameters.firstName?js_string}', '${RequestParameters.lastName?js_string}', '${RequestParameters.emailId?js_string}', '${RequestParameters.linkRequest?js_string}')">
+        <div id="RegistrationForm">
             <#include "/includes/register_inc_ng2.ftl" />
-            </div>
-        <#else>
-            <div id="RegistrationCtr" ng-init="oauth2ScreensLoadRegistrationForm()">
-            <#include "/includes/register_inc_ng2.ftl" />
-            </div>
-        </#if>
+        </div>
     </#if>
 </script>

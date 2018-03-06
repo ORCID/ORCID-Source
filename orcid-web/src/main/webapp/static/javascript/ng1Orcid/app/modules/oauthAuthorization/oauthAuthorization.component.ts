@@ -601,7 +601,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             } else{
                 this.showRegisterForm = !orcidVar.showLogin;  
             }
-        }  
+        }
+
         window.onkeydown = function(e) {
             if (e.keyCode == 13) {     
                 if(orcidVar.originalOauth2Process) { 
@@ -614,7 +615,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             $('#recoveryCodeSignin').show(); 
         });
 
-        this.oauth2ScreensLoadRegistrationForm('', '', '', '');
+        if (orcidVar.firstName || orcidVar.lastName || orcidVar.emailId || orcidVar.linkRequest) {
+            this.oauth2ScreensLoadRegistrationForm(orcidVar.firstName, orcidVar.lastName, orcidVar.emailId, orcidVar.linkRequest);
+        } else {
+            this.oauth2ScreensLoadRegistrationForm('', '', '', '');
+        }
+
+        
 
         this.subscription = this.oauthService.notifyObservable$.subscribe(
             (res) => {
