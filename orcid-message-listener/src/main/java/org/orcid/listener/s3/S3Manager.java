@@ -71,6 +71,9 @@ public class S3Manager {
     private final JAXBContext jaxbContext_1_2_api;
     private final JAXBContext jaxbContext_2_0_api;
     private final JAXBContext jaxbContext_2_0_activities_api;
+    
+    @Value("${org.orcid.message-listener.index.s3.search.max_elements:3000}")
+    private Integer maxElements;
 
     public void setS3MessagingService(S3MessagingService s3MessagingService) {
         this.s3MessagingService = s3MessagingService;
@@ -311,7 +314,7 @@ public class S3Manager {
 		activitiesOnS3.put(ActivityType.PEER_REVIEWS, peerReviews);
 
 		String prefix = buildPrefix(orcid);
-		final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(S3MessagingService.API_2_0_DEFAULT_BUCKET_NAME).withPrefix(prefix).withMaxKeys(3000);
+		final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
 		do {			
 			objects = s3MessagingService.listObjects(req);
@@ -348,7 +351,7 @@ public class S3Manager {
     
     public void clearActivities(String orcid) {
     	String prefix = buildPrefix(orcid);
-    	final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(S3MessagingService.API_2_0_DEFAULT_BUCKET_NAME).withPrefix(prefix).withMaxKeys(3000);
+    	final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
 		do {			
 			objects = s3MessagingService.listObjects(req);

@@ -46,8 +46,12 @@ public class S3MessagingService {
 
 	private final AmazonS3 s3;
 	
-	public static final String API_2_0_DEFAULT_BUCKET_NAME = "API_2_0";
+	private final String bucketName;
 
+	public String getBucketName() {
+		return this.bucketName;
+	}
+	
 	/**
 	 * Initialize the Amazon S3 connection object
 	 * 
@@ -58,10 +62,11 @@ public class S3MessagingService {
 	 */
 	@Autowired
 	public S3MessagingService(@Value("${org.orcid.message-listener.s3.secretKey}") String secretKey,
-			@Value("${org.orcid.message-listener.s3.accessKey}") String accessKey) throws JAXBException {
+			@Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, @Value("${org.orcid.message-listener.index.bucket_name}") String bucketName) throws JAXBException {
 		try {
 			AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 			this.s3 = new AmazonS3Client(credentials);
+			this.bucketName = bucketName;
 		} catch (Exception e) {
 			LOG.error("Unable to connect to the Amazon S3 service", e);
 			throw e;
@@ -98,7 +103,7 @@ public class S3MessagingService {
 		metadata.setContentType(contentType);
 		metadata.setContentLength(elementContent.length);
 		metadata.setLastModified(lastModified);
-		s3.putObject(new PutObjectRequest(API_2_0_DEFAULT_BUCKET_NAME, elementName, is, metadata));
+		s3.putObject(new PutObjectRequest(this.bucketName, elementName, is, metadata));
 		return true;
 	}
 
@@ -107,6 +112,6 @@ public class S3MessagingService {
 	}
 	
 	public void removeElement(String elementName) throws AmazonClientException, AmazonServiceException {
-		s3.deleteObject(API_2_0_DEFAULT_BUCKET_NAME, elementName);		
+		s3.deleteObject(this.bucketName, elementName);		
 	}	
 }
