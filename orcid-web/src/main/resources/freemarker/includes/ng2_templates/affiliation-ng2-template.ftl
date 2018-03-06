@@ -21,7 +21,7 @@
     <div>
         <!-- DISTINCTION AND INVITED POSITION -->
         <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
-            <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && distinctionsAndInvitedPositions.length < 1">
+            <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && distinctionsAndInvitedPositions.length < 1">
                 <div class="workspace-accordion-header clearfix">
                     <div class="row">
                         <div class="col-md-5 col-sm-5 col-xs-12">
@@ -311,7 +311,7 @@
             </div>
         </div>
         <!-- EDUCATION AND QUALIFICATION -->
-        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && sectionOneElements.length < 1">
+        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && sectionOneElements.length < 1">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">                    
                     <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
@@ -694,7 +694,7 @@
             </div>
         </div>
         <!-- EMPLOYMENT -->
-        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && employments.length < 1">
+        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && employments.length < 1">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-3 col-sm-3 col-xs-12">
@@ -956,7 +956,7 @@
         </div>        
         <!-- MEMBERSHIP AND SERVICE -->
         <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
-            <div id="workspace-membership-service" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView && membershipsAndServices.length < 1">
+            <div id="workspace-membership-service" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && membershipsAndServices.length < 1">
                 <div class="workspace-accordion-header clearfix">
                     <div class="row">
                         <div class="col-md-5 col-sm-5 col-xs-12">
