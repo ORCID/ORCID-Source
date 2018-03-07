@@ -35,9 +35,9 @@ import { PreferencesService }
     template:  scriptTmpl("works-privacy-preferences-ng2-template"),
 })
 export class WorksPrivacyPreferencesComponent implements OnInit {
+    errorUpdatingVisibility: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     prefs: any;
-    saved: boolean
     gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
     
     constructor(
@@ -47,22 +47,23 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
         private prefsSrvc: PreferencesService
        
     ) {
+        this.errorUpdatingVisibility = false;
         this.prefs = {};
-        this.saved = false;
     }
 
-    updateActivitiesVisibilityDefault(priv: string, $event: any): void {
-        this.prefs['default_visibility'] = priv;      
-        console.log(this.prefs['default_visibility']);
-        this.prefsSrvc.updateDefaultVisibility(this.prefs)
+    updateActivitiesVisibilityDefault(oldPriv, newPriv, $event: any): void {
+        this.errorUpdatingVisibility = false;
+        this.prefsSrvc.updateDefaultVisibility(newPriv)
             .takeUntil(this.ngUnsubscribe)
                 .subscribe(
                     response => {
-                        console.log(response._body);
+                        this.prefs['default_visibility'] = newPriv;
                         this.cdr.detectChanges();
                     },
                     error => {
-                        //TODO show error message on page and reset to previous value
+                        this.prefs['default_visibility'] = oldPriv; 
+                        this.errorUpdatingVisibility = true;
+                        this.cdr.detectChanges();
                         // something bad is happening!
                         console.log("error updating preferences");
                     } 
@@ -86,6 +87,5 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
 
     ngOnInit() {
         this.getPreferences();
-        console.log(this.gdprUiFeatureEnabled);
     }
 }

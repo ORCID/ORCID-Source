@@ -24,13 +24,13 @@
             <br>
             <div class="visibilityDefault">
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="prefs['default_visibility']" value="PUBLIC" (change)="updateActivitiesVisibilityDefault('PUBLIC', $event)"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
+                  <label><input type="radio" name="defaultVisibility" [ngModel]="prefs['default_visibility']" value="PUBLIC" (change)="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'PUBLIC', $event)"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
                 </div>
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="prefs['default_visibility']" value="LIMITED" (change)="updateActivitiesVisibilityDefault('LIMITED', $event)"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
+                  <label><input type="radio" name="defaultVisibility" [ngModel]="prefs['default_visibility']" value="LIMITED" (change)="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'LIMITED', $event)"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
                 </div>
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="prefs['default_visibility']" value="PRIVATE" (change)="updateActivitiesVisibilityDefault('PRIVATE', $event)"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
+                  <label><input type="radio" name="defaultVisibility" [ngModel]="prefs['default_visibility']" value="PRIVATE" (change)="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'PRIVATE', $event)"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
                 </div>
             </div>
             <div class="visibilityHelp">
@@ -50,6 +50,9 @@
                     </div>
                 </div>
             </div>
+            <span class="orcid-error" *ngIf="errorUpdatingVisibility">
+                ${springMacroRequestContext.getMessage("privacy_preferences.error_updating_visibility")}
+            </span>
         </div>
     </div>
     <div *ngIf="!gdprUiFeatureEnabled">
