@@ -109,7 +109,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         update_2_0_API(m);
         //TODO: Just for testing, remove before sending it to QA
         System.out.println("Processing message for " + orcid);
-        update_2_0_Summary(m);
+        update_2_0_summary(m);
         update_2_0_activities(m);
         //TODO
     }
@@ -227,7 +227,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         }
     }
 
-    private void update_2_0_Summary(BaseMessage message) {
+    private void update_2_0_summary(BaseMessage message) {
         String orcid = message.getOrcid();
         if (summaryIndexerEnabled) {
             LOG.info("Processing summary for record " + orcid);
