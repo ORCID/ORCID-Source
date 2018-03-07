@@ -54,6 +54,7 @@ import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.util.IOUtils;
@@ -83,6 +84,10 @@ public class LastModifiedMessageProcessorTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
+        //TODO: Improve this unit test for new summary indexer and activities indexer
+        ReflectionTestUtils.setField(processor, "summaryIndexerEnabled", false);
+        ReflectionTestUtils.setField(processor, "activitiesIndexerEnabled", false);
+        //TODO
         TargetProxyHelper.injectIntoProxy(processor, "orcid12ApiClient", mock_orcid12ApiClient);
         TargetProxyHelper.injectIntoProxy(processor, "orcid20ApiClient", mock_orcid20ApiClient);
         TargetProxyHelper.injectIntoProxy(processor, "exceptionHandler", mock_exceptionHandler);
