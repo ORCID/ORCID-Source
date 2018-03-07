@@ -383,7 +383,7 @@ public class S3Manager {
     }
 
     private String getElementName(String orcid, String format) {
-        return orcid.substring(16) + "/summaries/" + orcid + "." + format;
+        return orcid.substring(16) + "/summaries/" + format + "/" + orcid + "." + format;
     }
 
     private String getElementName(String orcid, String putCode, ActivityType type, String format) {

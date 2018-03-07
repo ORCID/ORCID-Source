@@ -107,6 +107,11 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         String orcid = m.getOrcid();
         update_1_2_API(orcid);
         update_2_0_API(m);
+        //TODO: Just for testing, remove before sending it to QA
+        System.out.println("Processing message for " + orcid);
+        update_2_0_Summary(m);
+        update_2_0_activities(m);
+        //TODO
     }
 
     public void accept(RetryMessage m) {
@@ -225,6 +230,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     private void update_2_0_Summary(BaseMessage message) {
         String orcid = message.getOrcid();
         if (summaryIndexerEnabled) {
+            LOG.info("Processing summary for record " + orcid);
             try {
                 Record record = orcid20ApiClient.fetchPublicRecord(message);
                 if (record != null) {
@@ -260,9 +266,10 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         }
     }
 
-    private void update_2_0_activities(BaseMessage message) throws JsonProcessingException, JAXBException {
+    private void update_2_0_activities(BaseMessage message) {
         String orcid = message.getOrcid();
         if (activitiesIndexerEnabled) {
+            LOG.info("Processing activities for record " + orcid);
             ActivitiesSummary as = null;
 
             try {
@@ -335,8 +342,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         }
     }
 
-    private void processActivities(String orcid, List<? extends Activity> activities, Map<String, S3ObjectSummary> existingElements, ActivityType type)
-            throws JsonProcessingException, JAXBException {
+    private void processActivities(String orcid, List<? extends Activity> activities, Map<String, S3ObjectSummary> existingElements, ActivityType type) {
         try {
             for (Activity x : activities) {
                 String putCodeString = String.valueOf(x.getPutCode());
@@ -348,6 +354,8 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                     if (elementLastModified.after(s3LastModified)) {
                         activity = fetchActivity(orcid, x.getPutCode(), type);
                     }
+                    // Remove it from the existingElements list since it was already processed 
+                    existingElements.remove(putCodeString);
                 } else {
                     activity = fetchActivity(orcid, x.getPutCode(), type);
                 }
