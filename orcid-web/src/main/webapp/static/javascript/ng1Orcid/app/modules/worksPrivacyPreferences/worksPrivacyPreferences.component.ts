@@ -1,70 +1,91 @@
-import { BrowserModule } from '@angular/platform-browser'; 
-import { Observable } from 'rxjs/Observable';
-import { AfterViewInit, Component, Directive, Inject, Injector, Input, ViewChild, ElementRef, OnInit } from '@angular/core'; 
+declare var orcidVar: any;
 
-import 'rxjs/add/operator/switchMap';
+//Import all the angular components
+
+import { NgFor, NgIf } 
+    from '@angular/common'; 
+
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+    from '@angular/core';
+
+import { Observable } 
+    from 'rxjs/Rx';
+
+import { Subject } 
+    from 'rxjs/Subject';
+
+import { Subscription }
+    from 'rxjs/Subscription';
 
 import { Preferences } 
     from '../../interfaces/preferences.ts';
     
 import { CommonService } 
     from '../../shared/common.service.ts';
-import { PrefsSrvc } 
-    from '../../shared/prefs.service.ts';
+
+import { FeaturesService } 
+    from '../../shared/features.service.ts'; 
+
+import { PreferencesService } 
+    from '../../shared/preferences.service.ts';
 
 
 @Component({
     selector: 'works-privacy-preferences-ng2',
     template:  scriptTmpl("works-privacy-preferences-ng2-template"),
-    providers: [PrefsSrvc, CommonService]
 })
 export class WorksPrivacyPreferencesComponent implements OnInit {
-    private response: any;
-    default_visibility: string;
-    preferences: Preferences[];
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    prefs: any;
     saved: boolean
+    gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
     
     constructor(
-
-        private prefsSrvc: PrefsSrvc,
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
+        private featuresService: FeaturesService,
+        private prefsSrvc: PreferencesService
        
     ) {
-
-        this.default_visibility = '';
+        this.prefs = {};
         this.saved = false;
     }
 
     updateActivitiesVisibilityDefault(priv: string, $event: any): void {
-        this.preferences['default_visibility'] = priv;      
-        this.prefsSrvc.updateDefaultVisibility(this.preferences).subscribe(
-            (response) => {
-                this.response = response;
-                let preferences_parsed = null;
-                preferences_parsed = JSON.parse(JSON.stringify(this.preferences, null, 2));
-                this.default_visibility = preferences_parsed.default_visibility;
-                this.saved = true;
-            },
-            (err) => {
-                //console.log(err);
-            },
-            () => {}
-        );       
+        this.prefs['default_visibility'] = priv;      
+        console.log(this.prefs['default_visibility']);
+        this.prefsSrvc.updateDefaultVisibility(this.prefs)
+            .takeUntil(this.ngUnsubscribe)
+                .subscribe(
+                    response => {
+                        console.log(response._body);
+                        this.cdr.detectChanges();
+                    },
+                    error => {
+                        //TODO show error message on page and reset to previous value
+                        // something bad is happening!
+                        console.log("error updating preferences");
+                    } 
+                );    
     };
 
     getPreferences(): void {
-        this.prefsSrvc.getPreferences().subscribe(
-            preferences => {
-                let preferences_parsed = null;
-                this.preferences = preferences;
-                preferences_parsed = JSON.parse(JSON.stringify(this.preferences, null, 2));
-                this.default_visibility = preferences_parsed.default_visibility;
-            }
-        );
-    }
+        this.prefsSrvc.getPrivacyPreferences()
+            .takeUntil(this.ngUnsubscribe)
+                .subscribe(
+                    preferences => {
+                        this.prefs = preferences;
+                        this.cdr.detectChanges();
+                    },
+                    error => {
+                        // something bad is happening!
+                        console.log("error getting preferences");
+                    } 
+                );
+    };
 
     ngOnInit() {
         this.getPreferences();
-        ////console.log("prefs service init");
+        console.log(this.gdprUiFeatureEnabled);
     }
 }
