@@ -16,9 +16,6 @@ import { Subject }
 
 import { Subscription }
     from 'rxjs/Subscription';
-
-import { Preferences } 
-    from '../../interfaces/preferences.ts';
     
 import { CommonService } 
     from '../../shared/common.service.ts';
