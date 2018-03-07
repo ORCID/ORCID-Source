@@ -348,7 +348,7 @@ public class S3Manager {
     }
 
     public void clearActivities(String orcid) {
-        String prefix = buildPrefix(orcid);
+        String prefix = orcid.substring(16) + "/activities/" + orcid;
         final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
