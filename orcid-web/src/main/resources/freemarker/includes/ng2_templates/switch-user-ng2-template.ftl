@@ -40,8 +40,7 @@
                             </ul>
                         </a>
                     </li>
-                    <!--TODO: orderBy:giverName.value pipe-->
-                    <li *ngFor="let delegationDetails of delegators | slice:0:10">
+                    <li *ngFor="let delegationDetails of delegators | orderBy:'giverName.value' | slice:0:10">
                         <a (click)="switchUser(delegationDetails.giverOrcid.path)">
                             <ul>
                                 <li>{{delegationDetails.giverName.value}}</li>

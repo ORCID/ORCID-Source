@@ -118,17 +118,6 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
             );
     };
 
-    /*$document.bind(
-        'click',
-        function(event){
-            if(event.target.id !== "delegators-search"){
-                $scope.isDroppedDown = false;
-                $scope.searchTerm = '';
-                $scope.$apply();
-            }
-        }
-    );*/
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
@@ -141,6 +130,18 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getDelegates();
-          
+
+        //close delegate dropdown
+        $(document).bind(
+        'click',
+            (
+                function(event){
+                    if(event.target.id !== "delegators-search"){
+                        this.isDroppedDown = false;
+                        this.searchTerm = '';
+                    }
+                }
+            ).bind(this)
+        );    
     }; 
 }

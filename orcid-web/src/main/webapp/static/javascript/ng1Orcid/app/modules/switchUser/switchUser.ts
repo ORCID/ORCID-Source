@@ -17,6 +17,10 @@ import { CommonModule }
 import { SwitchUserComponent } 
     from './switchUser.component.ts';
 
+//User generated filters
+import { OrderByPipe }
+    from '../../pipes/orderByNg2Child.ts'; 
+
 // This is the Angular 1 part of the module
 export const SwitchUserModule = angular.module(
     'SwitchUserModule', 
@@ -28,7 +32,8 @@ export const SwitchUserModule = angular.module(
 @NgModule(
     {
         declarations: [
-            SwitchUserComponent
+            SwitchUserComponent,
+            OrderByPipe
         ],
         entryComponents: [ 
             SwitchUserComponent 
