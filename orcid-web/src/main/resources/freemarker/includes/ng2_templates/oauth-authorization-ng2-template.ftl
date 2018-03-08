@@ -19,7 +19,7 @@
 
 <script type="text/ng-template" id="oauth-authorization-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/confirm-oauth-access.ftl -->
-    <#if springMacroRequestContext.requestUri?contains("/oauth/authorize")??>
+    <#if springMacroRequestContext.requestUri?contains("/oauth/authorize")>
         <div class="container confirm-oauth-access oneStepWidth">     
             <!-- /Freemarker and GA variables -->
             <@security.authorize access="hasRole('ROLE_USER')">
