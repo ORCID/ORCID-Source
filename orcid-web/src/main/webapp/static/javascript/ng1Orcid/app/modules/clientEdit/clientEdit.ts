@@ -43,7 +43,7 @@ export class ClientEditNg2Module {}
 //Must convert as much as possible of our code to directives
 
 ClientEditModule.directive(
-    'ClientEditNg2', 
+    'clientEditNg2',
     <any>downgradeComponent(
         {
             component: ClientEditComponent

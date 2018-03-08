@@ -18,6 +18,10 @@
 -->
 <@public classes=['home'] nav="signin">
     <#include "sandbox_warning.ftl"/>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <social2-F-A-ng2></social2-F-A-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="Social2FACtrl" ng-init="init()">
         <form class="form-social-sign-in" id="social2FaCodeForm" ng-submit="submitCode()" method="post">
             <div class="row">
@@ -60,4 +64,5 @@
             </div>
         </form>
     </div>
+    </@orcid.checkFeatureStatus>
 </@public>

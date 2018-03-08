@@ -55,7 +55,7 @@
            
             <input type="text" [(ngModel)]="nameForm.givenNames.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
            
-            <span class="orcid-error" *ngIf="nameForm.givenNames.errors.length > 0">
+            <span class="orcid-error" *ngIf="nameForm?.givenNames?.errors?.length > 0">
                 <div *ngFor='let error of nameForm.givenNames.errors'>{{error}}</div>
             </span>
             <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>

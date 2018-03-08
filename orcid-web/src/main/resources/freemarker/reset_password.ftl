@@ -17,6 +17,12 @@
 
 -->
 <@public classes=['home'] nav="register">
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <!-- ****
+    <request-password-reset-ng2></request-password-reset-ng2>
+    -->
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getResetPasswordForm()" class="row">
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
             <h2>${springMacroRequestContext.getMessage("reset_password.h2ForgottenPassword")}</h2>
@@ -52,4 +58,5 @@
         	</form>
         </div>       
     </div>
+    </@orcid.checkFeatureStatus>
 </@public>

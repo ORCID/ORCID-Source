@@ -23,8 +23,8 @@
             <div class="control-group">
                 <p><small>${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.label")}</small></p>
             </div>
-            <span class="orcid-error" ng-show="resetPasswordForm.errors.length > 0">
-                <div ng-repeat='error in resetPasswordForm.errors' ng-bind-html="error"></div>
+            <span class="orcid-error" *ngIf="resetPasswordForm?.errors?.length > 0">
+                <div *ngFor='let error of resetPasswordForm.errors'>{{error}}</div>
             </span>   
             <div class="control-group">
                 <label for="passwordField" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.pleaseenternewpassword")}</label>
