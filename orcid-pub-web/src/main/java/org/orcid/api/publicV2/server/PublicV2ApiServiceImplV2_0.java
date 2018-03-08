@@ -18,6 +18,7 @@ package org.orcid.api.publicV2.server;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
+import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
@@ -32,7 +33,9 @@ import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDINGS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.N_TRIPLES;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
@@ -46,6 +49,8 @@ import static org.orcid.core.api.OrcidApiConstants.RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
@@ -414,7 +419,7 @@ public class PublicV2ApiServiceImplV2_0 {
     
     //Record 
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, JSON_LD, N_TRIPLES })
     @Path(OrcidApiConstants.RECORD_SIMPLE)
     @ApiOperation(value = "Fetch record details", response = Record.class)
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
