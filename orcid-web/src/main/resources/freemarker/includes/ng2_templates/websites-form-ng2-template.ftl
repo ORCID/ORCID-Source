@@ -77,7 +77,7 @@
                                 <span class="created-date pull-right" *ngIf="website.createdDate" [ngClass]="{'hidden-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
                                 <span class="created-date pull-left" *ngIf="website.createdDate" [ngClass]="{'visible-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
                             </div>                              
-                            <div *ngIf="website.errors.length > 0" class="col-md-12">                                 
+                            <div *ngIf="website?.errors?.length > 0" class="col-md-12">                                 
                                 <div *ngFor="let error of website.errors">
                                     <span class="red">{{error}}</span>
                                 </div>

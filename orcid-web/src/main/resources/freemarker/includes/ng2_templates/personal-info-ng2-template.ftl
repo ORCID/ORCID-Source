@@ -40,24 +40,30 @@
                 </#if>
                 <#assign publicProfile = true />
                 <#if !(affiliationsEmpty)??>
-                    <!-- Education -->
+                    <!-- Education 
                     <public-edu-affiliation-ng2></public-edu-affiliation-ng2>
-                    <!-- Employment -->
+                    <!-- Employment 
                     <public-emp-affiliation-ng2></public-emp-affiliation-ng2>
+                    -->
                 </#if>
                   
                 <!-- Funding -->
-                <#if !(fundingEmpty)??>     
+                <#if !(fundingEmpty)??>
+                    <!-- 
                     <public-funding-ng2></public-funding-ng2>
+                -->
                 </#if>
 
                 <!-- Works -->
+                <!--
                 <public-works-ng2></public-works-ng2>
-
+                -->
                 <!-- Peer Review -->
 
                 <#if !(peerReviewsEmpty)??>
+                    <!--
                     <public-peer-reviews-ng2></public-peer-reviews-ng2>
+                -->
                 </#if>                          
             </#if>
         </div>                     
@@ -85,7 +91,10 @@
                     </div>
                 </#if>
                 <#assign publicProfile = true />
-                <#include "workspace_preview_activities_v3.ftl"/>                           
+                <!-- ***
+                include "workspace_preview_activities_v3.ftl"   
+                ***
+                -->                        
             </#if>
             <@orcid.checkFeatureStatus 'LAST_MOD'>
                 <div id="public-last-modified">
@@ -99,7 +108,9 @@
 
     <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" >              
         <div class="workspace-accordion-content" *ngIf="displayInfo">
-            <#include "workspace_personal_v3.ftl"/>
+            <!-- ***
+            include "workspace_personal_v3.ftl"
+            -->
         </div>
     </div>
 </script>
