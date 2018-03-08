@@ -87,7 +87,7 @@ public class ActivitiesStatusDao {
 
     public boolean success(String orcid, ActivityType type) {
         Query query = entityManager.createNativeQuery(
-                "UPDATE activities_status SET " + type.getStatusColumnName() + " = 0, " + type.getLastIndexedColumnName() + " = now() WHERE orcid = :orcid");
+                "UPDATE activities_status SET " + type.getStatusColumnName() + " = 0, " + type.getLastIndexedColumnName() + " = now(), last_modified=now() WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }

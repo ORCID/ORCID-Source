@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
@@ -56,7 +55,6 @@ import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Core logic for listeners
@@ -373,6 +371,9 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             for (String putCode : existingElements.keySet()) {
                 s3Manager.removeActivity(orcid, putCode, type);
             }
+            
+            // Mark them as sent
+            activitiesStatusManager.markAsSent(orcid, type);
         } catch (Exception e) {
             LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid);
             // Mark collection as failed
