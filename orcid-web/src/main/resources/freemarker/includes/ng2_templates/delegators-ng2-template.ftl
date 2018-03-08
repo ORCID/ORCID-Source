@@ -25,7 +25,7 @@
                 <input id="delegatorsSearch" type="text" placeholder="<@orcid.msg 'manage_delegators.search.placeholder' />" class="input-xlarge inline-input"></input>
             </form>
         </p>
-        <table class="table table-bordered settings-table normal-width" *ngIf="delegators.length > 0" >
+        <table class="table table-bordered settings-table normal-width" *ngIf="delegators?.length > 0" >
             <thead>
                 <tr>
                     <th width="35%" (click)="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>

@@ -155,25 +155,39 @@
 
     <!-- NG2: QA -->
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
+    <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
+    <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
+    <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
+    <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
         <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
         <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
         <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/country-ng2-template.ftl">
+        <#include "/includes/ng2_templates/country-ng2-template.ftl">       
         <#include "/includes/ng2_templates/websites-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/works-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/workspace-summary-ng2-template.ftl">
+        <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
     </#if>
     </@orcid.checkFeatureStatus> 
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
-            <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
-        </#if>
+    <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
+        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">       
+    </#if>
     </@orcid.checkFeatureStatus> 
+
+    <#if springMacroRequestContext.requestUri?contains("/my-orcid") 
+        || springMacroRequestContext.requestUri?contains("/print")
+        || (isPublicProfile??)>
+        <#include "/includes/ng2_templates/personal-info-ng2-template.ftl">
+    </#if>
     
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">

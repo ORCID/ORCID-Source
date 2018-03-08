@@ -44,6 +44,12 @@ import { AlsoKnownAsFormNg2Module }
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 
+import { ClaimThanksNg2Module } 
+    from './claimThanks/claimThanks.ts';
+
+import { ClientEditNg2Module } 
+    from './clientEdit/clientEdit.ts';
+
 import { CountryNg2Module } 
     from './country/country.ts';
 
@@ -68,6 +74,9 @@ import { EmailUnverifiedWarningNg2Module }
 import { EmailVerificationSentMesssageNg2Module } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 
+import { ExternalIdentifiersNg2Module }
+    from './externalIdentifiers/externalIdentifiers.ts';
+
 import { FundingNg2Module } 
     from './funding/funding.ts';
 
@@ -86,17 +95,32 @@ import { HeaderNg2Module }
 import { LanguageNg2Module }
     from './language/language.ts';
 
+import { LinkAccountNg2Module } 
+    from './linkAccount/linkAccount.ts';
+
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 
 import { NameNg2Module } 
     from './name/name.ts';
 
+import { NotificationsNg2Module }
+    from './notifications/notifications.ts';
+
 import { PasswordEditNg2Module } 
     from './passwordEdit/passwordEdit.ts';
 
+import { PersonalInfoNg2Module } 
+    from './personalInfo/personalInfo.ts';
+
+import { PublicEduAffiliationNg2Module }
+    from './publicEduAffiliation/publicEduAffiliation.ts';
+
 import { ReactivationNg2Module } 
     from './reactivation/reactivation.ts';
+
+import { ResetPasswordNg2Module }
+    from './resetPassword/resetPassword.ts';
 
 import { SearchNg2Module } 
     from './search/search.ts';
@@ -116,6 +140,9 @@ import { SelfServiceRemoveContactNg2Module }
 import { SelfServiceRemoveSubMemberNg2Module } 
     from './selfServiceRemoveSubMember/selfServiceRemoveSubMember.ts';
 
+import { Social2FANg2Module }
+    from './social2FA/social2FA.ts';
+
 import { SocialNetworksNg2Module }
     from './socialNetworks/socialNetworks.ts';
 
@@ -130,6 +157,9 @@ import { TwoFASetupNg2Module }
 
 import { TwoFAStateNg2Module }
     from './2FAState/twoFAState.ts';
+
+import { VerifyEmailNg2Module }
+    from './verifyEmail/verifyEmail.ts';
 
 import { WebsitesNg2Module } 
     from './websites/websites.ts';
@@ -149,8 +179,12 @@ import { SearchService }
 import { WorkspaceService } 
     from '../shared/workspace.service.ts'; 
 
+import { WorkSpaceSummaryNg2Module } 
+    from './workspaceSummary/workspaceSummary.ts';
+
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
+
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -196,6 +230,8 @@ export class RootCmp {
         AlsoKnownAsFormNg2Module,
         AlsoKnownAsNg2Module,
         BiographyNg2Module, //Approved
+        ClaimThanksNg2Module,
+        ClientEditNg2Module,
         CountryFormNg2Module,//Approved
         CountryNg2Module,//Approved
         DeactivateAccountNg2Module,
@@ -204,31 +240,40 @@ export class RootCmp {
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved
         EmailVerificationSentMesssageNg2Module,//Aproved
+        ExternalIdentifiersNg2Module,
         HeaderNg2Module,
-        //FundingNg2Module,
+        FundingNg2Module,
         HomeNg2Module,
         KeywordsFormNg2Module,//Approved
         KeywordsNg2Module,//Approved
         LanguageNg2Module,
+        LinkAccountNg2Module,
         ModalNg2Module, //Approved
         NameNg2Module, //Approved
+        NotificationsNg2Module,
         PasswordEditNg2Module,
+        PersonalInfoNg2Module,
+        PublicEduAffiliationNg2Module,
         ReactivationNg2Module,
+        ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
         SelfServiceAddContactNg2Module, //Approved
         SelfServiceExistingSubMemberNg2Module, //Approved
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
+        Social2FANg2Module,
         SocialNetworksNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
         TwoFAStateNg2Module,
         TwoFASetupNg2Module,
+        VerifyEmailNg2Module,
         WebsitesFormNg2Module, //Approved
         WebsitesNg2Module, //Approved
         WidgetNg2Module, //Approved
         WorksNg2Module,
+        WorkSpaceSummaryNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
     providers: [
