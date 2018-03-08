@@ -111,6 +111,9 @@ import { SelfServiceRemoveSubMemberModule }
 import { SocialNetworksModule }
     from './socialNetworks/socialNetworks.ts';
 
+import { SwitchUserModule }
+    from './switchUser/switchUser.ts';
+
 import { ThanksForRegisteringModule } 
     from './thanksForRegistering/thanksForRegistering.ts';
 
@@ -178,6 +181,7 @@ export const orcidApp = angular.module(
         SelfServiceRemoveContactModule.name,
         SelfServiceRemoveSubMemberModule.name,
         SocialNetworksModule.name,
+        SwitchUserModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
         TwoFASetupModule.name,

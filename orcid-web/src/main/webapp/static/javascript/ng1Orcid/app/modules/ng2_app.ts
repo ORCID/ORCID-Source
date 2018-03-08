@@ -125,6 +125,9 @@ import { SelfServiceRemoveSubMemberNg2Module }
 import { SocialNetworksNg2Module }
     from './socialNetworks/socialNetworks.ts';
 
+import { SwitchUserNg2Module }
+    from './switchUser/switchUser.ts';
+
 import { ThanksForRegisteringNg2Module } 
     from './thanksForRegistering/thanksForRegistering.ts';
 
@@ -229,6 +232,7 @@ export class RootCmp {
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
         SocialNetworksNg2Module,
+        SwitchUserNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
         TwoFAStateNg2Module,

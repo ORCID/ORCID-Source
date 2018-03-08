@@ -25,7 +25,6 @@
 		<@orcid.checkFeatureStatus 'ANGULAR2_QA'>
 			<#include "/includes/ng2_templates/modal-ng2-template.ftl">
 			<#include "/includes/ng2_templates/register-duplicates-ng2-template.ftl">
-			
             <oauth-authorization-ng2></oauth-authorization-ng2>
 
             <modalngcomponent elementHeight="400" elementId="modalRegisterDuplicates" elementWidth="780">

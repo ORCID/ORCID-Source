@@ -589,6 +589,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
+        this.loadRequestInfoForm();
         this.authorizationForm = {
             userName:  {value: ""}
         } 

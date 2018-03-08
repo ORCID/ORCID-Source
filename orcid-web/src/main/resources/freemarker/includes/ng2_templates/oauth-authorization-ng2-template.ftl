@@ -19,7 +19,7 @@
 
 <script type="text/ng-template" id="oauth-authorization-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/confirm-oauth-access.ftl -->
-    <#if springMacroRequestContext.requestUri?contains("/signin") && (RequestParameters['oauth'])??>
+    <#if springMacroRequestContext.requestUri?contains("/oauth/authorize")??>
         <div class="container confirm-oauth-access oneStepWidth">     
             <!-- /Freemarker and GA variables -->
             <@security.authorize access="hasRole('ROLE_USER')">
@@ -29,15 +29,14 @@
                             <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
                         </div>      
                     </div>
-                    
                     <div class="col-md-8 col-sm-12 col-xs-12">
-                         <#include "includes/mini_id_banner.ftl"/>                
-                    </div>      
+                        <#include "/includes/mini_id_banner_ng2.ftl"/>              
+                    </div>     
                 </div>  
                 <div class="row">
                     <div class="col-md-12"> 
                         <div class="app-client-name"> 
-                            <h3 (click)="toggleClientDescription()">{{requestInfoForm.clientName}}
+                            <h3 (click)="toggleClientDescription()">{{requestInfoForm?.clientName}}
                                 <a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>               
                             </h3>
                         </div>
@@ -50,7 +49,7 @@
                             <p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
                         </div>
                         <div>
-                            <#include "includes/oauth/scopes.ftl"/>
+                            <#include "/includes/oauth/scopes_ng2.ftl"/>
                         </div>
                         <div>
                             <p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="public-layout.privacy_policy"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>

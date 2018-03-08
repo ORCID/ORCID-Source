@@ -85,9 +85,11 @@ import { SecurityQuestionEditNg2Module }
 /*
 import { SocialNg2Module }
     from './../social/social.ts';
+*/
+
 import { SwitchUserNg2Module }
     from './../switchUser/switchUser.ts';
-*/
+
 
 //User generated services
 
@@ -148,6 +150,9 @@ import { PreferencesService }
 import { RequestPasswordResetService }
     from '../../shared/requestPasswordReset.service.ts';
 
+import { SwitchUserService } 
+    from '../../shared/switchUser.service.ts';
+
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
 
@@ -177,7 +182,8 @@ import { WorksService }
             LanguageNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
-            RequestPasswordResetNg2Module
+            RequestPasswordResetNg2Module,
+            SwitchUserNg2Module
         ],
         declarations: [ 
             AjaxFormDateToISO8601Pipe,
@@ -212,7 +218,8 @@ import { WorksService }
             LanguageNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
-            RequestPasswordResetNg2Module
+            RequestPasswordResetNg2Module,
+            SwitchUserNg2Module
         ],
         providers: [
             AccountService,
@@ -235,6 +242,7 @@ import { WorksService }
             PreferencesService,
             RequestPasswordResetService,
             TwoFAStateService,
+            SwitchUserService,
             WebsitesService,
             WidgetService,
             WorksService,
