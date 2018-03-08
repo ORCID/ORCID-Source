@@ -287,7 +287,7 @@
                     <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <a name='workspace-educations-qualifications'></a>
-                            <a href="" (click)="toggleEducationAndQualification()" class="toggle-text">
+                            <a href="" (click)="workspaceSrvc.toggleEducation($event);workspaceSrvc.toggleEducationAndQualification($event);" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducationAndQualification()==false }"></i>                               
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education_qualification'/> (<span>{{sectionOneElements.length}}</span>)
                             </a>    
