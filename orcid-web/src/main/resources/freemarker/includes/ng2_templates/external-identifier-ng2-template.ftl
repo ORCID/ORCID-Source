@@ -18,7 +18,7 @@
 -->
 
 <script type="text/ng-template" id="external-identifiers-ng2">
-    <div *ngIf="!(!externalIdentifiersForm.externalIdentifiers.length)" class="workspace-section">
+    <div *ngIf="externalIdentifiersForm?.externalIdentifiers?.length" class="workspace-section">
         <div class="workspace-section-header">
             <div class="workspace-section-title">                 
                 <div id="open-edit-external-identifiers" class="edit-websites edit-option" (click)="openEditModal()">

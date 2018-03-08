@@ -19,7 +19,7 @@
 
 <script type="text/ng-template" id="security-question-edit-ng2-template">
     <div class="editTablePadCell35">
-        <span class="orcid-error" *ngIf="errors.length > 0"> <span
+        <span class="orcid-error" *ngIf="errors?.length > 0"> <span
             *ngFor='let error of errors' [innerHTML]="error"></span>
         </span>
         <div class="control-group">

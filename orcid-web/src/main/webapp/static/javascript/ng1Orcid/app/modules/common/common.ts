@@ -84,6 +84,9 @@ import { SwitchUserNg2Module }
 
 //User generated services
 
+import { AdminDelegatesService }
+    from '../../shared/adminDelegates.service.ts';
+
 import { AffiliationService } 
     from '../../shared/affiliation.service.ts';
 
@@ -96,6 +99,15 @@ import { AlsoKnownAsService }
 import { BiographyService } 
     from '../../shared/biography.service.ts';
 
+import { BlogService }
+    from '../../shared/blog.service.ts';
+
+import { ClaimService }
+    from '../../shared/claim.service.ts';
+
+import { ClientService }
+    from '../../shared/client.service.ts';
+
 import { CommonService }
     from '../../shared/common.service.ts'
 
@@ -105,11 +117,17 @@ import { ConsortiaService }
 import { CountryService } 
     from '../../shared/country.service.ts';
 
+import { DelegatorsService }
+    from '../../shared/delegators.service.ts';
+
 import { DeprecateProfileService }
     from '../../shared/deprecateProfile.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
+
+import { ExternalIdentifiersService } 
+    from '../../shared/externalIdentifiers.service.ts';
 
 import { FeaturesService }
     from '../../shared/features.service.ts';
@@ -126,14 +144,32 @@ import { KeywordsService }
 import { LanguageService }
     from '../../shared/language.service.ts';
 
+import { ManageMembersService } 
+    from '../../shared/manageMembers.service.ts';
+
 import { ModalService } 
     from '../../shared/modal.service.ts';
 
 import { NameService } 
     from '../../shared/name.service.ts';
 
+import { NotificationsService } 
+    from '../../shared/notifications.service.ts';
+
+import { OauthService }
+    from '../../shared/oauth.service.ts';
+
+import { PasswordService }
+    from '../../shared/password.service.ts';
+
 import { PreferencesService }
     from '../../shared/preferences.service.ts';
+
+import { SocialNetworkService }
+    from '../../shared/socialNetwork.service.ts';
+
+import { StaticsService }
+    from '../../shared/statics.service.ts';
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
@@ -198,22 +234,34 @@ import { WorksService }
         ],
         providers: [
             AccountService,
+            AdminDelegatesService,
             AffiliationService,
             AlsoKnownAsService,
             BiographyService,
+            BlogService,
+            ClaimService,
+            ClientService,
             CommonService,
             ConsortiaService,
             CountryService,
+            DelegatorsService,
             DeprecateProfileService,
             EmailService,
+            ExternalIdentifiersService,
             FeaturesService,
             FundingService,
             //GroupedActivitiesUtilService,
             KeywordsService,
             LanguageService,
+            ManageMembersService,
             ModalService,
             NameService,
+            NotificationsService,
+            OauthService,
+            PasswordService,
             PreferencesService,
+            SocialNetworkService,
+            StaticsService,
             TwoFAStateService,
             WebsitesService,
             WidgetService,

@@ -17,6 +17,10 @@
 
 -->
 <#escape x as x?html>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <biography-ng2></biography-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
    	<div class="biography-controller" ng-controller="BiographyCtrl">
    			<strong ng-click="toggleEdit()">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong>
    			<span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" ng-hide="showEdit == true" title=""></span><br />
@@ -57,5 +61,6 @@
    			    </div>													        
    			</div>
    	</div>
+    </@orcid.checkFeatureStatus>
    	<br />
 </#escape>

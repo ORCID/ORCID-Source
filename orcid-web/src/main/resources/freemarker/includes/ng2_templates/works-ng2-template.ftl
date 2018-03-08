@@ -97,13 +97,13 @@
                     <#if !(isPublicProfile??)>
                     <ul class="workspace-bar-menu">
                 
-                        <li *ngIf="worksService.groups.length > 1" >
+                        <li *ngIf="worksService?.groups?.length > 1" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
                                 <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                             </a>
                         </li>
 
-                        <li *ngIf="worksService.groups.length > 0" >
+                        <li *ngIf="worksService?.groups?.length > 0" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : showBibtexExport}" (click)="toggleBibtexExport()">
                                 <span class="glyphicon glyphicon-save"></span>
                                 <@orcid.msg 'groups.common.export_works'/>
@@ -313,7 +313,7 @@
                     <div class="col-md-3 col-sm-3 col-xs-4">
                         <span class="bibtext-options">                                        
                             <a class="bibtex-cancel" (click)="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.cancel'/></a>             
-                            <span *ngIf="!(worksFromBibtex.length > 0)" class="import-label" (click)="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
+                            <span *ngIf="!(worksFromBibtex?.length > 0)" class="import-label" (click)="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
                         </span>                   
                     </div>
                 </div>
@@ -350,8 +350,8 @@
                     <div class="col-md-3 col-sm-3 col-xs-4">
                         <span class="bibtext-options">                                        
                             <a class="bibtex-cancel" (click)="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>            
-                            <span *ngIf="!(worksFromBibtex.length > 0)" class="import-label" (click)="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
-                            <span *ngIf="worksFromBibtex.length > 0" class="import-label" (click)="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>                                              
+                            <span *ngIf="!(worksFromBibtex?.length > 0)" class="import-label" (click)="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
+                            <span *ngIf="worksFromBibtex?.length > 0" class="import-label" (click)="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>                                              
                             <input id="inputBibtex" type="file" class="upload-button" [(ngModel)]="textFiles" accept="*" /><!-- *** update-fn="loadBibtexJs()"  app-file-text-reader multiple  -->
                         </span>                   
                     </div>
@@ -360,7 +360,7 @@
             <div class="alert alert-block" *ngIf="bibtexParsingError">
                 <strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
             </div>
-            <span class="dotted-bar" *ngIf="worksFromBibtex.length > 0"></span>
+            <span class="dotted-bar" *ngIf="worksFromBibtex?.length > 0"></span>
             <div *ngFor="let work of worksFromBibtex; let index = index; let first = first; let last = last;" class="bottomBuffer">             
                 <div class="row full-height-row">   
                     <div class="col-md-9 col-sm-9 col-xs-7">
@@ -374,7 +374,7 @@
                             <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate?.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate?.day">-</span><span *ngIf="work.publicationDate?.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
 
                   
-                            <span class="capitalize" *ngIf="work.workType?.value.length > 0">{{work.workType.value}}</span>
+                            <span class="capitalize" *ngIf="work.workType?.value?.length > 0">{{work.workType.value}}</span>
                             <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 
                         </div>
@@ -384,8 +384,9 @@
                                     <li class="url-work">
                                         <ul class="id-details">
                                             <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
-
+                                                <!-- ***
                                                 <span *ngIf="work.workExternalIdentifiers[0].workExternalIdentifierId.value.length > 0" >{{ie | workExternalIdentifierHtml:first:last:work.workExternalIdentifiers.length:moreInfo[group.groupId]}}</span>
+                                                -->
                                             </li>
                                         </ul>                                   
                                     </li>
@@ -410,9 +411,9 @@
                     <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                            
                         <ul>
                             <li><a (click)="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
-                            <li><a *ngIf="work.errors.length == 0" (click)="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
-                            <li><a *ngIf="work.errors.length > 0" (click)="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
-                            <li><span *ngIf="work.errors.length > 0"><a (click)="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
+                            <li><a *ngIf="work?.errors?.length == 0" (click)="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
+                            <li><a *ngIf="work?.errors?.length > 0" (click)="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
+                            <li><span *ngIf="work?.errors?.length > 0"><a (click)="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
                         </ul>
                     </div>
                 </div>
@@ -424,7 +425,7 @@
             include "includes/work/del_work_modal_inc.ftl"
             
 
-            <ul *ngIf="worksService.groups.length" class="workspace-publications bottom-margin-medium" id="body-work-list">
+            <ul *ngIf="worksService?.groups?.length" class="workspace-publications bottom-margin-medium" id="body-work-list">
                 <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of worksService.groups">
                     <div class="work-list-container">
                         <ul class="sources-edit-list">
@@ -554,7 +555,9 @@
                                                 <li class="url-work clearfix">
                                                     <ul class="id-details clearfix">
                                                         <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
+                                                            <!-- ***
                                                             <span [innerHTML]="ie | workExternalIdentifierHtml:first:last:work.workExternalIdentifiers.length:moreInfo[group.groupId]"></span>
+                                                            -->
                                                         </li>
                                                     </ul>                                   
                                                 </li>
@@ -836,7 +839,7 @@
                                         </div>
                                         
                                         <div class="col-md-3 col-sm-3 col-xs-9">
-                                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group.works.length != 1">(</span><a (click)="showSources(group)" *ngIf="group.works.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.works.length}}</a><span *ngIf="group.works.length != 1">)</span>
+                                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.works?.length != 1">(</span><a (click)="showSources(group)" *ngIf="group?.works?.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.works.length}}</a><span *ngIf="group?.works?.length != 1">)</span>
 
                                             <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
                                                 <div class="arrow"></div>
@@ -873,7 +876,7 @@
                                                     />
                                                 </li>
 
-                                                <li *ngIf="!(editSources[group.groupId] == true || group.works.length == 1)">
+                                                <li *ngIf="!(editSources[group.groupId] == true || group?.works?.length == 1)">
                                                     <a (click)="showSources(group)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
@@ -885,7 +888,7 @@
                                                     </div>
                                                 </li>
 
-                                                <li *ngIf="group.works.length == 1">
+                                                <li *ngIf="group?.works?.length == 1">
                                                     <a (click)="deleteWorkConfirm(group.activePutCode, false)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
@@ -909,10 +912,10 @@
                 </li>
             </ul>
             <button *ngIf="worksService.showLoadMore" (click)="loadMore()" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace.works.load_more")}</button>
-            <div *ngIf="worksService.loading" class="text-center" id="workSpinner">
+            <div *ngIf="worksService?.loading" class="text-center" id="workSpinner">
                 <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
             </div>
-            <div *ngIf="worksService.loading == false && worksService.groups.length == 0">
+            <div *ngIf="worksService?.loading == false && worksService?.groups?.length == 0">
                 <strong>
                     <#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} 
                     <a *ngIf="noLinkFlag" (click)="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a>

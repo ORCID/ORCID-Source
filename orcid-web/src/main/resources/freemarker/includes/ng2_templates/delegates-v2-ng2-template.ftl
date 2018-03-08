@@ -31,7 +31,7 @@
         id="DelegatesCtrl" 
         data-search-query-url="${searchBaseUrl}"
     > 
-        <div *ngIf="delegation.length > 0" >
+        <div *ngIf="delegation?.length > 0" >
             <div class="ng-hide" *ngIf="showInitLoader == true;">
 
             </div>
@@ -44,12 +44,12 @@
                             <th class="width-10" ></th>
                         </tr>
                     </thead>
-                    <tbody *ngIf="!delegation.length > 0" >
+                    <tbody *ngIf="!delegation?.length > 0" >
                         <tr>
                             <td>No trusted individuals added yet</td>
                         </tr>
                     </tbody>
-                    <tbody *ngIf="delegation.length > 0" >
+                    <tbody *ngIf="delegation?.length > 0" >
                         <tr *ngFor="let delegationDetails of delegation | orderBy:sort.column:sort.descending">
                             <td><a href="{{delegationDetails.receiverOrcid.uri}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
                             <td><a href="{{delegationDetails.receiverOrcid.uri}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.uri}}</a></td>
