@@ -52,10 +52,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     private subscription: Subscription;
     private viewSubscription: Subscription;
 
-    /*
-    emailSrvc: any;
-    workspaceSrvc: any;
-    */
     addingAffiliation: boolean;
     deleAff: any;
     disambiguatedAffiliation: any;
@@ -85,17 +81,13 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     constructor(
         private affiliationService: AffiliationService,
+        private commonSrvc: CommonService,
         private emailService: EmailService,
-        //private groupedActivitiesUtilService: GroupedActivitiesUtilService,
+        private featuresService: FeaturesService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
-        private featuresService: FeaturesService,
-        private commonSrvc: CommonService,
     ) {
-        /*
-        this.emailSrvc = emailSrvc;
-        this.workspaceSrvc = workspaceSrvc;
-        */
+ 
         this.addingAffiliation = false;
         this.deleAff = null;
         this.disambiguatedAffiliation = null;

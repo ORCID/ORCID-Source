@@ -26,7 +26,7 @@
             <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
             <a href="" (click)="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
         </form>
-        <div ng-show="errors.length === 0">
+        <div *ngIf="errors?.length === 0">
             <br>
         </div>
     </div>

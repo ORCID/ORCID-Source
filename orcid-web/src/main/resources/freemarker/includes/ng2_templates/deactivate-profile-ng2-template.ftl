@@ -25,14 +25,14 @@
         </p>                
         
         <div class="collapsible bottom-margin-small admin-modal" id="deactivation_modal" style="display:none;">
-            <div class="alert alert-success" *ngIf="result.deactivateSuccessfulList.length || result.notFoundList.length || result.alreadyDeactivatedList.length" style="overflow-x:auto;">
-                <div *ngIf="result.deactivateSuccessfulList.length"><@spring.message "admin.profile_deactivation.deactivation_success"/>
+            <div class="alert alert-success" *ngIf="result?.deactivateSuccessfulList?.length || result?.notFoundList?.length || result?.alreadyDeactivatedList?.length" style="overflow-x:auto;">
+                <div *ngIf="result?.deactivateSuccessfulList?.length"><@spring.message "admin.profile_deactivation.deactivation_success"/>
                     <br>{{result.deactivateSuccessfulList}}
                 </div>
-                <div *ngIf="result.alreadyDeactivatedList.length"><br><@spring.message "admin.profile_deactivation.already_deactivated"/>
+                <div *ngIf="result?.alreadyDeactivatedList?.length"><br><@spring.message "admin.profile_deactivation.already_deactivated"/>
                     <br>{{result.alreadyDeactivatedList}}
                 </div>
-                <div *ngIf="result.notFoundList.length"><br><@spring.message "admin.profile_deactivation.not_found"/>
+                <div *ngIf="result?.notFoundList?.length"><br><@spring.message "admin.profile_deactivation.not_found"/>
                     <br>{{result.notFoundList}}
                 </div>
             </div>

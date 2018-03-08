@@ -134,7 +134,7 @@
                     </div>
                 </div>                        
                 <div *ngIf="workspaceSrvc.displayDistinctionAndInvitedPosition" class="workspace-accordion-content">
-                    <div id="distinction-invited-position-empty" *ngIf="!distinctionsAndInvitedPositions.length">
+                    <div id="distinction-invited-position-empty" *ngIf="!distinctionsAndInvitedPositions?.length">
                         <strong>
                             <#if (publicProfile)?? && publicProfile == true>
                                 <strong><@orcid.msg 'workspace_affiliations_body_list.Nodistinctionorinvitedpositionaddedyet' /></strong>
@@ -149,7 +149,7 @@
                             </#if>
                         </strong>
                     </div>
-                    <ul id="distinction-invited-position-list" *ngIf="distinctionsAndInvitedPositions.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                    <ul id="distinction-invited-position-list" *ngIf="distinctionsAndInvitedPositions?.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                         <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of distinctionsAndInvitedPositions | orderBy: sortState.predicate:sortState.reverse" [attr.distinction-invited-position-put-code]="group.putCode.value">
                             <div class="row">                
                                 <div class="col-md-9 col-sm-9 col-xs-7">
@@ -216,7 +216,7 @@
                                         <li class="url-work">
                                             <ul class="id-details">
                                                 <li *ngFor='let extID of group.affiliationExternalIdentifiers | orderBy:["relationship.value", "type.value"]' class="url-popover">
-                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
+                                                    <span *ngIf="group?.affiliationExternalIdentifiers[0]?.value?.value?.length > 0">{{extID}}</span>
                                                 </li>
                                             </ul>                                   
                                         </li>
@@ -509,7 +509,7 @@
                 </div>
             </div>            
             <div *ngIf="workspaceSrvc.displayEducation || workspaceSrvc.displayEducationAndQualification" class="workspace-accordion-content"> 
-                <div id="educations-distinctions-empty" *ngIf="!sectionOneElements.length && workspaceSrvc.displayEducationAndQualification">
+                <div id="educations-distinctions-empty" *ngIf="!sectionOneElements?.length && workspaceSrvc?.displayEducationAndQualification">
                     <strong>
                         <#if (publicProfile)?? && publicProfile == true>
                             <strong><@orcid.msg 'workspace_affiliations_body_list.Noeducationnorqualificationaddedyet' /></strong>
@@ -524,7 +524,7 @@
                         </#if>
                     </strong>
                 </div>
-                <ul id="educations-distinctions-list" *ngIf="sectionOneElements.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                <ul id="educations-distinctions-list" *ngIf="sectionOneElements?.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of sectionOneElements | orderBy: sortState.predicate:sortState.reverse" [attr.education-distinction-put-code]="group.putCode.value">
                         <div class="row">                                 
                             <div class="col-md-9 col-sm-9 col-xs-7">
@@ -591,7 +591,7 @@
                                     <li class="url-work">
                                         <ul class="id-details">
                                             <li *ngFor='let extID of group.affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"]; trackBy: trackByFn' class="url-popover">
-                                                <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>                                                
+                                                <span *ngIf="group?.affiliationExternalIdentifiers[0]?.value?.value?.length > 0">{{extID}}</span>                                                
                                             </li>
                                         </ul>                                   
                                     </li>
@@ -781,7 +781,7 @@
                 </div>
             </div>                        
             <div *ngIf="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
-                <div id="employments-empty" *ngIf="!employments.length">
+                <div id="employments-empty" *ngIf="!employments?.length">
                     <strong>
                         <#if (publicProfile)?? && publicProfile == true>
                             <strong><@orcid.msg 'workspace_affiliations_body_list.Noemploymentddedyet' /></strong>
@@ -794,7 +794,7 @@
                         </#if>
                     </strong>
                 </div>
-                <ul id="employments-list" *ngIf="employments.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                <ul id="employments-list" *ngIf="employments?.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of employments | orderBy: sortState.predicate:sortState.reverse" [attr.employment-put-code]="group.putCode.value">
                         <div class="row">                
                             <div class="col-md-9 col-sm-9 col-xs-7">
@@ -861,7 +861,7 @@
                                     <li class="url-work">
                                         <ul class="id-details">
                                             <li *ngFor='let extID of group.affiliationExternalIdentifiers' class="url-popover">
-                                                <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
+                                                <span *ngIf="group?.affiliationExternalIdentifiers[0]?.value?.value?.length > 0">{{extID}}</span>
                                             </li>
                                         </ul>                                   
                                     </li>
@@ -1069,7 +1069,7 @@
                     </div>
                 </div>                        
                 <div *ngIf="workspaceSrvc.displayMembershipAndService" class="workspace-accordion-content">
-                    <div id="membership-service-empty" *ngIf="!membershipsAndServices.length">
+                    <div id="membership-service-empty" *ngIf="!membershipsAndServices?.length">
                         <strong>
                             <#if (publicProfile)?? && publicProfile == true>
                                 <strong><@orcid.msg 'workspace_affiliations_body_list.Nomembershiporserviceaddedyet' /></strong>
@@ -1084,7 +1084,7 @@
                             </#if>
                         </strong>
                     </div>
-                    <ul id="membership-service-list" *ngIf="membershipsAndServices.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
+                    <ul id="membership-service-list" *ngIf="membershipsAndServices?.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
                         <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of membershipsAndServices | orderBy: sortState.predicate:sortState.reverse" [attr.membership-service-put-code]="group.putCode.value">
                             <div class="row">                
                                 <div class="col-md-9 col-sm-9 col-xs-7">
@@ -1151,7 +1151,7 @@
                                         <li class="url-work">
                                             <ul class="id-details">
                                                 <li *ngFor='let extID of group.affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"]' class="url-popover">
-                                                    <span *ngIf="group.affiliationExternalIdentifiers[0].value.value.length > 0">{{extID}}</span>
+                                                    <span *ngIf="group?.affiliationExternalIdentifiers[0]?.value?.value?.length > 0">{{extID}}</span>
                                                 </li>
                                             </ul>                                   
                                         </li>
