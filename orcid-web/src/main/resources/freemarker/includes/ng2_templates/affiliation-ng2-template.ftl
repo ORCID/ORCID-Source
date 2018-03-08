@@ -875,18 +875,18 @@
                                 </div>
                                 <span class="dotted-bar"></span>    
                                 <div class="row">
-                                    <div class="org-ids" *ngIf="group.orgDisambiguatedId.value">
+                                    <div class="org-ids" *ngIf="group?.orgDisambiguatedId?.value">
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
                                             <span [innerHTML]='group.disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group.disambiguationSource.value:group.putCode.value:group.disambiguationSource' class="url-popover"> 
                                             </span>
                                         </div>
                                         <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
-                                            <span *ngIf="group.orgDisambiguatedName">{{group.orgDisambiguatedName}}</span><span *ngIf="group.orgDisambiguatedCity || group.orgDisambiguatedRegion || group.orgDisambiguatedCountry">: </span><span *ngIf="group.orgDisambiguatedCity">{{group.orgDisambiguatedCity}}</span><span *ngIf="group.orgDisambiguatedCity && group.orgDisambiguatedRegion">, </span><span *ngIf="group.orgDisambiguatedRegion">{{group.orgDisambiguatedRegion}}</span><span *ngIf="group.orgDisambiguatedCountry && (group.orgDisambiguatedCity || group.orgDisambiguatedRegion)">, </span><span *ngIf="group.orgDisambiguatedCountry">{{group.orgDisambiguatedCountry}}</span>
-                                            <span *ngIf="group.orgDisambiguatedUrl"><br>
+                                            <span *ngIf="group?.orgDisambiguatedName">{{group.orgDisambiguatedName}}</span><span *ngIf="group?.orgDisambiguatedCity || group?.orgDisambiguatedRegion || group?.orgDisambiguatedCountry">: </span><span *ngIf="group?.orgDisambiguatedCity">{{group.orgDisambiguatedCity}}</span><span *ngIf="group?.orgDisambiguatedCity && group?.orgDisambiguatedRegion">, </span><span *ngIf="group?.orgDisambiguatedRegion">{{group.orgDisambiguatedRegion}}</span><span *ngIf="group?.orgDisambiguatedCountry && (group?.orgDisambiguatedCity || group?.orgDisambiguatedRegion)">, </span><span *ngIf="group?.orgDisambiguatedCountry">{{group.orgDisambiguatedCountry}}</span>
+                                            <span *ngIf="group?.orgDisambiguatedUrl"><br>
                                             <a href="{{group.orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span>{{group.orgDisambiguatedUrl}}</span></a>
                                             </span>                                            
-                                            <div *ngIf="group.orgDisambiguatedExternalIdentifiers">
+                                            <div *ngIf="group?.orgDisambiguatedExternalIdentifiers">
                                                 <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.disambiguationSource.value}}</strong><br>
                                                 <ul class="reset">
                                                     <li *ngFor="let orgDisambiguatedExternalIdentifier of group.orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
