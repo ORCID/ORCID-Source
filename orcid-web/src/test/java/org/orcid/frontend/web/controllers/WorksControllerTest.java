@@ -41,7 +41,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.BaseControllerTest;

@@ -975,6 +975,8 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateNewWorkGroup() {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
+        WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
+        
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManager);
         
@@ -1018,6 +1020,7 @@ public class WorkManagerTest extends BaseTest {
         
         // reset dao
         ReflectionTestUtils.setField(workManager, "workDao", workDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
     }
     
     private WorkEntity getUserPreferredWork() {
