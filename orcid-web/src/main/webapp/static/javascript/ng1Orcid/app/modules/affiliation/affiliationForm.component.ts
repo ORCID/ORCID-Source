@@ -375,6 +375,17 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     serverValidate(relativePath): void {
+        if( relativePath == 'affiliations/affiliation/datesValidate.json' ){
+            if( this.editAffiliation.startDate.month == "" 
+                || this.editAffiliation.startDate.day == ""
+                || this.editAffiliation.startDate.year == ""
+                || this.editAffiliation.endDate.month == "" 
+                || this.editAffiliation.endDate.day == ""
+                || this.editAffiliation.endDate.year == ""  ){
+                return;
+            }
+        }
+        console.log('server validate', this.editAffiliation);
         this.affiliationService.serverValidate(this.editAffiliation, relativePath)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(

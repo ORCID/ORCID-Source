@@ -350,6 +350,17 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.serverValidate = function (relativePath) {
+                console.log('serverValidate ng1', relativePath, $scope.editAffiliation);
+                if( relativePath == 'affiliations/affiliation/datesValidate.json' ){
+                    if( $scope.editAffiliation.startDate.month == "" 
+                        || $scope.editAffiliation.startDate.day == ""
+                        || $scope.editAffiliation.startDate.year == ""
+                        || $scope.editAffiliation.endDate.month == "" 
+                        || $scope.editAffiliation.endDate.day == ""
+                        || $scope.editAffiliation.endDate.year == ""  ){
+                        return;
+                    }
+                }
                 $.ajax({
                     url: getBaseUri() + '/' + relativePath,
                     type: 'POST',
