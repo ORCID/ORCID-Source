@@ -785,10 +785,10 @@
                             <#else>
                                 <strong>                                
                                 <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                                <a href="" (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
-                                <@orcid.msg 'common.or' />
                                 <a href="" (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
-                                <@orcid.msg 'common.now' />                                
+                                <@orcid.msg 'common.or' />
+                                <a href="" (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
+                                <@orcid.msg 'common.now' /> 
                                 </strong>
                             </#if>
                         </strong>
