@@ -28,7 +28,7 @@
                 <li>
                     <button class="btn btn-primary" (click)="notificationsSrvc.toggleArchived()">
                         <span *ngIf="!notificationsSrvc.showArchived" >${springMacroRequestContext.getMessage("notifications.show_archived")}</span>
-                        <span *ngIf="notificationsSrvc.showArchived" >${springMacroRequestContext.getMessage("notifications.hide_archived")}
+                        <span *ngIf="notificationsSrvc.showArchived" >${springMacroRequestContext.getMessage("notifications.hide_archived")}</span>
                     </button>                   
                 </li>
             </ul>

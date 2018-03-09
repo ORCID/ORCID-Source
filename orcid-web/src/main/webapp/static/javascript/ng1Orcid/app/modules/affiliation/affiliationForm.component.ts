@@ -375,17 +375,23 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     serverValidate(relativePath): void {
+        //console.log('server validate', relativePath, this.editAffiliation);
         if( relativePath == 'affiliations/affiliation/datesValidate.json' ){
             if( this.editAffiliation.startDate.month == "" 
                 || this.editAffiliation.startDate.day == ""
                 || this.editAffiliation.startDate.year == ""
                 || this.editAffiliation.endDate.month == "" 
                 || this.editAffiliation.endDate.day == ""
-                || this.editAffiliation.endDate.year == ""  ){
+                || this.editAffiliation.endDate.year == ""
+                || this.editAffiliation.startDate.month == null 
+                || this.editAffiliation.startDate.day == null
+                || this.editAffiliation.startDate.year == null
+                || this.editAffiliation.endDate.month == null 
+                || this.editAffiliation.endDate.day == null
+                || this.editAffiliation.endDate.year == null  ){
                 return;
             }
         }
-        console.log('server validate', this.editAffiliation);
         this.affiliationService.serverValidate(this.editAffiliation, relativePath)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -512,7 +518,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
                 (res) => {
                     console.log(JSON.stringify(res));
-                    if(res.moduleId = "modalAffiliationForm") {
+                    if(res.moduleId == "modalAffiliationForm") {
                         if(res.action == "open" && res.edit == false) {
                             this.editAffiliation = this.getEmptyAffiliation();
                             this.editAffiliation.affiliationType.value = this.addAffType;
