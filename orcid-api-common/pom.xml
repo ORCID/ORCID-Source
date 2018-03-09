@@ -128,7 +128,7 @@
     <build>
         <finalName>orcid-api-common</finalName>        
          <plugins>
-            <plugin>               
+            <!-- plugin>               
                 <groupId>com.mycila.maven-license-plugin</groupId>               
                 <artifactId>maven-license-plugin</artifactId>                                                     
                 <configuration>
@@ -181,7 +181,7 @@
 			        </source>			        
 		        </fileOptions>
 		      </configuration>
-		    </plugin>
+		    </plugin -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
