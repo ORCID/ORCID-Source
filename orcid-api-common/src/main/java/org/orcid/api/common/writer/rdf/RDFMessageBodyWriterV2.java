@@ -300,7 +300,7 @@ public class RDFMessageBodyWriterV2 implements MessageBodyWriter<Record>{
         Individual person = m.createIndividual(orcidUri, FOAF.Person);
         person.addRDFType(PROV.Person);
 
-        if (record.getPerson().getBiography() == null) {
+        if (record.getPerson() == null) {
             return person;
         }
 
@@ -352,14 +352,14 @@ public class RDFMessageBodyWriterV2 implements MessageBodyWriter<Record>{
         if (urlName == null) {
             return false;
         }
-        return urlName.equals(URL_NAME_FOAF);
+        return urlName.equalsIgnoreCase(URL_NAME_FOAF);
     }
 
     private boolean isWebID(String urlName) {
         if (urlName == null) {
             return false;
         }
-        return urlName.equals(URL_NAME_WEBID);
+        return urlName.toLowerCase().equals(URL_NAME_WEBID);
     }
 
     private boolean isInbox(String urlName) {
@@ -396,7 +396,7 @@ public class RDFMessageBodyWriterV2 implements MessageBodyWriter<Record>{
     }
 
     private void describeBiography(org.orcid.jaxb.model.record_v2.Biography biography, Individual person, OntModel m) {
-        if (biography != null) {
+        if (biography != null && biography.getContent()!=null) {
             // FIXME: Which language is the biography written in? Can't assume
             // EN
             person.addProperty(FOAF.plan, biography.getContent());
