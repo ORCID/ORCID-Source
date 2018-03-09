@@ -127,6 +127,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
+                console.log('open add aff modal');
                 if( this.emailService.getEmailPrimary().verified ){
                     this.affiliationService.notifyOther({ affiliation:affiliation, type: type });
                     if(affiliation == undefined) {
