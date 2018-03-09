@@ -177,4 +177,9 @@
         <property name="serviceDelegator" ref="identifierApiServiceDelegator"/>
     </bean>
     
+    <bean id="experimentalRDFResourceV1" class="org.orcid.api.lod.ExperimentalRDFResource">
+        <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorV2_1"/>
+    </bean>
+    
+    
 </beans>
