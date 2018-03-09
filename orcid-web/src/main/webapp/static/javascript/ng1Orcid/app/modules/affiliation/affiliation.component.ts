@@ -421,16 +421,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
-
-    toggleEducation(): void {
-        this.workspaceSrvc.toggleEducation();
-    };
-
-	toggleEducationAndQualification(): void {
-        this.workspaceSrvc.toggleEducationAndQualification();
-    };
-
-    trackByFn(index, item): any {
+    
+	trackByFn(index, item): any {
         return index; // or item.id
     };
 
