@@ -137,7 +137,7 @@
                         <exclude>**/rebel.xml</exclude>
                     </excludes>               
                 </configuration>
-            </plugin>
+            </plugin -->
 		    <plugin>
 		      <groupId>org.apache.jena</groupId>
 		      <artifactId>jena-maven-tools</artifactId>
@@ -181,7 +181,7 @@
 			        </source>			        
 		        </fileOptions>
 		      </configuration>
-		    </plugin -->
+		    </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
