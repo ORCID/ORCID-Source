@@ -170,10 +170,10 @@ the software.
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
-            <plugin>
+            <!-- plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
-            </plugin>
+            </plugin -->
         </plugins>
 
         <pluginManagement>
