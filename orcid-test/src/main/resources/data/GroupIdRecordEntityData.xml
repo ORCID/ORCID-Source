@@ -1,22 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <dataset>
     <group_id_record id="1" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636" group_id="issn:0000001" group_name="TestGroup1" group_description="TestDescription1" group_type="publisher" client_source_id="APP-5555555555555555"/>
     <group_id_record id="2" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636" group_id="issn:0000002" group_name="TestGroup2" group_description="TestDescription2" group_type="publisher" client_source_id="APP-5555555555555555"/>
