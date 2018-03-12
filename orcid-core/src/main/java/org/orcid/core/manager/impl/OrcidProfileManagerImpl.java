@@ -1647,28 +1647,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + destination.name());
     }
 
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
     @Override
     public void processProfilesWithPendingFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, JmsDestination.UPDATED_ORCIDS);
     }
 
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
     @Override
     public void processProfilesWithReindexFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
     }
 
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
     @Override
     public void processProfilesWithFailedFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
