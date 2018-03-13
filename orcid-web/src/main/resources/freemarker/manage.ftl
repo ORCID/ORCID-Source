@@ -210,7 +210,7 @@
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
                         ng-bind="privacyPreferencesToggleText" id="privacyPreferencesToggle"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
+                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=true>
                 <tr ng-controller="WorksPrivacyPreferencesCtrl"
                     ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection" ng-cloak>
                     <td colspan="2">
