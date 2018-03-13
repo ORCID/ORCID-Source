@@ -37,6 +37,11 @@ public enum MessageConstants {
         public static final String REINDEX = "reindex";
         public static final String RETRY = "retry";
     }
+    
+    public static class Topics {
+        public static final String UPDATED_ORCIDS = "updated_orcids";
+        public static final String REINDEX = "reindex";
+    }
         
     public final String value;
     

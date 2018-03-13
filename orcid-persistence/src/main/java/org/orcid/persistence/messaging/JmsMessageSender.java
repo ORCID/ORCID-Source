@@ -55,8 +55,8 @@ public class JmsMessageSender {
     public enum JmsDestination{
         TEST(MessageConstants.Queues.TEST),
         TEST_REPLY(MessageConstants.Queues.TEST_REPLY), 
-        UPDATED_ORCIDS(MessageConstants.Queues.UPDATED_ORCIDS), 
-        REINDEX(MessageConstants.Queues.REINDEX);        
+        UPDATED_ORCIDS(MessageConstants.Topics.UPDATED_ORCIDS), 
+        REINDEX(MessageConstants.Topics.REINDEX);        
         public final String value;
         JmsDestination(String value){
             this.value = value;

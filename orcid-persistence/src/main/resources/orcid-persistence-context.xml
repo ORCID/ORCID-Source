@@ -527,16 +527,12 @@
 	    <property name="concurrency" value="1-10"/>
 	</bean>
 	
-	<!-- Default Destination Queue Definition -->
-	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
-	  <!-- name of the queue -->
-	  <constructor-arg index="0" value="test" />
-	</bean>
-	 
 	<!-- JmsTemplate Definition so we can send to queues -->
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 	  <property name="connectionFactory" ref="jmsConnectionFactory" />
-	  <property name="defaultDestination" ref="defaultJmsDestination" />
+	  
+	  <!-- set to topics rather than queues -->
+	  <property name="pubSubDomain" value="true"/>
 	</bean>
 	
 	<bean id="jmsMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">
