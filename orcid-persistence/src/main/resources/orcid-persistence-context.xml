@@ -513,9 +513,18 @@
     	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
 	<jms:annotation-driven/>
+	
+	<bean id="redeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
+        <property name="initialRedeliveryDelay" value="2000" />
+        <property name="backOffMultiplier" value="2" />
+        <property name="useExponentialBackOff" value="true" />
+        <property name="maximumRedeliveries" value="5" />
+	</bean>
+	
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
 		<!-- lets use an embedded broker for now (easier to test!) -->
     	<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
+    	<property name="redeliveryPolicy" ref="redeliveryPolicy" />
 	</bean>
 	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
     	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
