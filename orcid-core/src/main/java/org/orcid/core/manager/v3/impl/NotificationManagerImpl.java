@@ -369,31 +369,34 @@ public class NotificationManagerImpl implements NotificationManager {
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     @Override
     public void sendVerificationEmail(String userOrcid, String email) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(profile);
-        Locale locale = getUserLocaleFromProfileEntity(profile);
-        String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
-        // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+        processVerificationEmail(userOrcid, email);
     }
 
     @Override
     public void sendVerificationReminderEmail(String userOrcid, String email) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
+        processVerificationEmail(userOrcid, email);
+    }
+    
+    private void processVerificationEmail(String userOrcid, String email) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale locale = getUserLocaleFromProfileEntity(profile);
+        
+        boolean useV2Template = false;
+        try {
+            messageSourceNoFallback.getMessage("email.common.need_help.description.1", null, locale);
+            useV2Template = true;
+        } catch(NoSuchMessageException e) {
+            
+        }
+        
         String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(record);
-        Locale locale = getUserLocaleFromProfileEntity(record);
+        String emailFriendlyName = deriveEmailFriendlyName(profile);
         String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email,
-                primaryEmail, locale);
+        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
         // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+        String body = (useV2Template) ? templateManager.processTemplate("verification_email_v2.ftl", templateParams) : templateManager.processTemplate("verification_email.ftl", templateParams);
+        String htmlBody = (useV2Template) ? templateManager.processTemplate("verification_email_html_v2.ftl", templateParams) : templateManager.processTemplate("verification_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);    
     }
 
     private String createSubjectForVerificationEmail(String email, String primaryEmail, Locale userLocale) {
