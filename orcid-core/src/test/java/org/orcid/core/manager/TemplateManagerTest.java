@@ -47,7 +47,7 @@ public class TemplateManagerTest {
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
 
     @Test

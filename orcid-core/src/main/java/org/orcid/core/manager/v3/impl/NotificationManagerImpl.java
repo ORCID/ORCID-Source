@@ -138,8 +138,11 @@ public class NotificationManagerImpl implements NotificationManager {
     
     private int verifyReminderAfterDays = 7;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
+    
+    @Resource(name = "messageSourceNoFallback")
+    private MessageSource messageSourceNoFallback;
 
     @Resource
     private MailGunManager mailGunManager;
@@ -249,7 +252,7 @@ public class NotificationManagerImpl implements NotificationManager {
         boolean useV2Template = false;
         String subject;
         try {
-            subject = messages.getMessage("email.subject.register.welcome", null, userLocale);
+            subject = messageSourceNoFallback.getMessage("email.subject.register.welcome", null, userLocale);
             useV2Template = true;
         } catch(NoSuchMessageException e) {
             subject = messages.getMessage("email.subject.register.thanks", null, userLocale);
@@ -1167,7 +1170,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (locale != null) {
             return LocaleUtils.toLocale(locale.value());
         }
-        
+
         return LocaleUtils.toLocale("en");
     }
 
