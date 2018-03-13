@@ -150,8 +150,6 @@
     <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
     <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-        <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
-        <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
     </#if>
 
@@ -185,7 +183,9 @@
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
-        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">       
+        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+        <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
+        <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
     </#if>
     </@orcid.checkFeatureStatus> 
 
