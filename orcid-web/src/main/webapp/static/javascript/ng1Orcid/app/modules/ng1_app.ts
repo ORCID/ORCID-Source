@@ -102,6 +102,9 @@ import { PasswordEditModule }
 import { PublicEduAffiliationModule }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
+import { ReactivationModule } 
+    from './reactivation/reactivation.ts';
+
 import { ResetPasswordModule }
     from './resetPassword/resetPassword.ts';
 
@@ -200,6 +203,7 @@ export const orcidApp = angular.module(
         PasswordEditModule.name,
         PersonalInfoModule.name,
         PublicEduAffiliationModule.name,
+        ReactivationModule.name,
         ResetPasswordModule.name,
         SearchModule.name,
         SelfServiceModule.name,

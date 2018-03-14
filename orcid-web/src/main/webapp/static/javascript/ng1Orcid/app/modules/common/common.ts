@@ -165,6 +165,9 @@ import { PasswordService }
 import { PreferencesService }
     from '../../shared/preferences.service.ts';
 
+import { ReactivationService }
+    from '../../shared/reactivation.service.ts';
+
 import { SocialNetworkService }
     from '../../shared/socialNetwork.service.ts';
 
@@ -260,6 +263,7 @@ import { WorksService }
             OauthService,
             PasswordService,
             PreferencesService,
+            ReactivationService,
             SocialNetworkService,
             StaticsService,
             TwoFAStateService,

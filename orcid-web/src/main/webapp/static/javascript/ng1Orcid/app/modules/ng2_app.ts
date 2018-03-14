@@ -116,6 +116,9 @@ import { PersonalInfoNg2Module }
 import { PublicEduAffiliationNg2Module }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
+import { ReactivationNg2Module } 
+    from './reactivation/reactivation.ts';
+
 import { ResetPasswordNg2Module }
     from './resetPassword/resetPassword.ts';
 
@@ -251,6 +254,7 @@ export class RootCmp {
         PasswordEditNg2Module,
         PersonalInfoNg2Module,
         PublicEduAffiliationNg2Module,
+        ReactivationNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
