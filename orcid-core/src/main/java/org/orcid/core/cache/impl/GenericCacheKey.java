@@ -14,35 +14,36 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.impl;
+package org.orcid.core.cache.impl;
 
 import java.io.Serializable;
+
+import org.orcid.utils.ReleaseNameUtils;
 
 /**
  * 
  * @author Will Simpson
  * 
  */
-public class ProfileCacheKey implements Serializable {
+class GenericCacheKey<K> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String orcid;
-    private long lastModified;
-    private String releaseName;
+    private K baseKey;
+    private long profileLastModified;
+    private String releaseName = ReleaseNameUtils.getReleaseName();
 
-    public ProfileCacheKey(String orcid, long lastModified, String releaseName) {
-        this.orcid = orcid;
-        this.lastModified = lastModified;
-        this.releaseName = releaseName;
+    public GenericCacheKey(K baseKey, long profileLastModified) {
+        this.baseKey = baseKey;
+        this.profileLastModified = profileLastModified;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (lastModified ^ (lastModified >>> 32));
-        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
+        result = prime * result + ((baseKey == null) ? 0 : baseKey.hashCode());
+        result = prime * result + (int) (profileLastModified ^ (profileLastModified >>> 32));
         result = prime * result + ((releaseName == null) ? 0 : releaseName.hashCode());
         return result;
     }
@@ -55,13 +56,14 @@ public class ProfileCacheKey implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ProfileCacheKey other = (ProfileCacheKey) obj;
-        if (lastModified != other.lastModified)
-            return false;
-        if (orcid == null) {
-            if (other.orcid != null)
+        @SuppressWarnings("rawtypes")
+        GenericCacheKey other = (GenericCacheKey) obj;
+        if (baseKey == null) {
+            if (other.baseKey != null)
                 return false;
-        } else if (!orcid.equals(other.orcid))
+        } else if (!baseKey.equals(other.baseKey))
+            return false;
+        if (profileLastModified != other.profileLastModified)
             return false;
         if (releaseName == null) {
             if (other.releaseName != null)
@@ -73,6 +75,7 @@ public class ProfileCacheKey implements Serializable {
 
     @Override
     public String toString() {
-        return "ProfileCacheKey [orcid=" + orcid + ", lastModified=" + lastModified + ", releaseName=" + releaseName + "]";
-    }    
+        return "GenericCacheKey [baseKey=" + baseKey + ", profileLastModified=" + profileLastModified + ", releaseName=" + releaseName + "]";
+    }
+
 }

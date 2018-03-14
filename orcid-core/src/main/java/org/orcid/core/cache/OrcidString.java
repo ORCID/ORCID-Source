@@ -14,36 +14,40 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.impl;
+package org.orcid.core.cache;
 
 import java.io.Serializable;
 
+import org.orcid.persistence.jpa.entities.OrcidAware;
+
 /**
  * 
- * @author Will Simpson
+ * Use as the key for a generic cache, but the key is just a string
  * 
+ * @author Will Simpson
+ *
  */
-public class ProfileCacheKey implements Serializable {
+public class OrcidString implements OrcidAware, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String orcid;
-    private long lastModified;
-    private String releaseName;
 
-    public ProfileCacheKey(String orcid, long lastModified, String releaseName) {
+    public OrcidString(String orcid) {
+        super();
         this.orcid = orcid;
-        this.lastModified = lastModified;
-        this.releaseName = releaseName;
+    }
+
+    @Override
+    public String getOrcid() {
+        return orcid;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (lastModified ^ (lastModified >>> 32));
         result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
-        result = prime * result + ((releaseName == null) ? 0 : releaseName.hashCode());
         return result;
     }
 
@@ -55,24 +59,18 @@ public class ProfileCacheKey implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ProfileCacheKey other = (ProfileCacheKey) obj;
-        if (lastModified != other.lastModified)
-            return false;
+        OrcidString other = (OrcidString) obj;
         if (orcid == null) {
             if (other.orcid != null)
                 return false;
         } else if (!orcid.equals(other.orcid))
-            return false;
-        if (releaseName == null) {
-            if (other.releaseName != null)
-                return false;
-        } else if (!releaseName.equals(other.releaseName))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "ProfileCacheKey [orcid=" + orcid + ", lastModified=" + lastModified + ", releaseName=" + releaseName + "]";
-    }    
+        return "OrcidString [orcid=" + orcid + "]";
+    }
+
 }

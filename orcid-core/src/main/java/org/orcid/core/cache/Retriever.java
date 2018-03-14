@@ -14,19 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.core.security;
-
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+package org.orcid.core.cache;
 
 /**
  * 
+ * Interface to use with GenericCache, for looking things up from the DB.
+ * 
  * @author Will Simpson
  *
+ * @param <K>
+ *            The key to use when retrieving.
+ * @param <V>
+ *            The value that is retrieved.
  */
-public interface OrcidUserDetailsService extends UserDetailsService {
+public interface Retriever<K, V> {
 
-    OrcidProfileUserDetails loadUserByProfile(ProfileEntity profile);
+    V retrieve(K key);
 
 }

@@ -14,19 +14,23 @@
  *
  * =============================================================================
  */
-package org.orcid.core.security;
+package org.orcid.core.cache;
 
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.orcid.persistence.jpa.entities.OrcidAware;
 
 /**
  * 
  * @author Will Simpson
  *
+ * @param <K>
+ *            The key used by the cache, should implement hash code and equals
+ *            (but does not need to include profile last modified or release
+ *            name, because they are added automatically)
+ * @param <V>
+ *            The type of object in the cache
  */
-public interface OrcidUserDetailsService extends UserDetailsService {
+public interface GenericCacheManager<K extends OrcidAware, V> {
 
-    OrcidProfileUserDetails loadUserByProfile(ProfileEntity profile);
+    V retrieve(K key);
 
 }

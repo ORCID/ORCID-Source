@@ -54,6 +54,8 @@
 	
 	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
 	
+	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
+	
 	<!-- Effectively a wrapper around the client details service, converting client to user details -->
     <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
         <constructor-arg ref="clientDetailsManager"/>
@@ -938,6 +940,13 @@
     <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl">
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
+    
+    <bean id="salesForceConnectionEntityCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+        <property name="cache" ref="salesForceConnectionCache" />
+        <property name="retriever">
+            <bean class="org.orcid.core.cache.impl.SalesForceConnectionEntityRetriever" />
+        </property>
+    </bean>
 
 	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
 	
@@ -1239,6 +1248,11 @@
             <bean class="org.orcid.core.salesforce.cache.ContactsCacheEntryFactory" />
         </property>
     </bean>
+    
+    <bean id="salesForceConnectionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheName" value="sales-force-connection" />
+		<property name="cacheManager" ref="coreCacheManager" />
+	</bean>
     
     <bean id="identityProviderNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="identity-provider-name" />
