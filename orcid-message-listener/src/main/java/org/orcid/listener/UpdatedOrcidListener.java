@@ -21,11 +21,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.utils.listener.LastModifiedMessage;
-import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,6 +52,9 @@ public class UpdatedOrcidListener {
 
     @Value("${org.orcid.message-listener.index.summaries:false}")
     private boolean indexSummaries;
+    
+    @Value("${org.orcid.persistence.messaging.topic.updateOrcids}")
+    private String updateOrcidsTopicName;
 
     @Resource
     public UpdatedOrcidExpringQueue<UpdatedOrcidWorker> cacheQueue;
@@ -64,10 +65,9 @@ public class UpdatedOrcidListener {
      * 
      * @param map
      */
-    @JmsListener(destination = MessageConstants.Queues.UPDATED_ORCIDS)
     public void processMessage(final Map<String, String> map) {
         LastModifiedMessage message = new LastModifiedMessage(map);
-        LOG.info("Recieved " + MessageConstants.Queues.UPDATED_ORCIDS + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
+        LOG.info("Recieved " + updateOrcidsTopicName + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
         LastModifiedMessage existingMessage = cacheQueue.getCache().getIfPresent(message.getOrcid());
         if (existingMessage == null || message.getLastUpdated().after(existingMessage.getLastUpdated()))
             cacheQueue.getCache().put(message.getOrcid(), message);

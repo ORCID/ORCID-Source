@@ -536,7 +536,6 @@
 	    <property name="concurrency" value="1-10"/>
 	</bean>
 	
-	<!-- JmsTemplate Definition so we can send to queues -->
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 	  <property name="connectionFactory" ref="jmsConnectionFactory" />
 	  
