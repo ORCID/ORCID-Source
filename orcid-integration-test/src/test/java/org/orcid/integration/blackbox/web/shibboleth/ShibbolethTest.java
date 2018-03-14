@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -81,6 +82,7 @@ public class ShibbolethTest {
         // Marionette does not allow untrusted certs yet
         options.setCapability(FirefoxDriver.MARIONETTE, false);
         WebDriver webDriver = new FirefoxDriver(options);
+        webDriver.manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
         return webDriver;
     }
 
