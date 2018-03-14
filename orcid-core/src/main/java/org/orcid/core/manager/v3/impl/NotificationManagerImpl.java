@@ -369,21 +369,21 @@ public class NotificationManagerImpl implements NotificationManager {
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     @Override
     public void sendVerificationEmail(String userOrcid, String email) {
-        processVerificationEmail(userOrcid, email);
+        processVerificationEmail(userOrcid, email, false);
     }
 
     @Override
     public void sendVerificationReminderEmail(String userOrcid, String email) {
-        processVerificationEmail(userOrcid, email);
+        processVerificationEmail(userOrcid, email, true);
     }
     
-    private void processVerificationEmail(String userOrcid, String email) {
+    private void processVerificationEmail(String userOrcid, String email, boolean isVerificationReminder) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale locale = getUserLocaleFromProfileEntity(profile);
         
         boolean useV2Template = false;
         try {
-            messageSourceNoFallback.getMessage("email.common.need_help.description.1", null, locale);
+            messageSourceNoFallback.getMessage("email.verify.primary_reminder_v2", null, locale);
             useV2Template = true;
         } catch(NoSuchMessageException e) {
             
@@ -393,6 +393,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String emailFriendlyName = deriveEmailFriendlyName(profile);
         String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
         Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
+        templateParams.put("isReminder", isVerificationReminder);
         // Generate body from template
         String body = (useV2Template) ? templateManager.processTemplate("verification_email_v2.ftl", templateParams) : templateManager.processTemplate("verification_email.ftl", templateParams);
         String htmlBody = (useV2Template) ? templateManager.processTemplate("verification_email_html_v2.ftl", templateParams) : templateManager.processTemplate("verification_email_html.ftl", templateParams);

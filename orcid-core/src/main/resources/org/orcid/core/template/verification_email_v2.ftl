@@ -19,8 +19,15 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<#if isPrimary?? && isPrimary><@emailMacros.msg "email.verify.primary_reminder" /><@emailMacros.space /></#if><@emailMacros.msg "email.verify.thank_you" />
-
+<#if isReminder?? && isReminder>
+    <#if isPrimary?? && isPrimary>
+        <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />
+    </#if>
+    <@emailMacros.msg "email.verify.click_link" />
+<#else>
+    <@emailMacros.msg "email.verify.thank_you" />    
+</#if>
+    
 ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.verify.1" /><@emailMacros.space />${orcid}<@emailMacros.msg "email.verify.2" /><@emailMacros.space />${baseUri}/${orcid}?lang=${locale}<@emailMacros.space /><@emailMacros.msg "email.verify.primary_email_1" /><@emailMacros.space />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
@@ -29,7 +36,7 @@ ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.common.did_you_know" /><@emailMacros.space />${baseUri}/blog
 
-<@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.1.text" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><@emailMacros.msg "email.common.need_help.description.2.text" />
+<@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.1.text" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2.text" />
 
 <@emailMacros.msg "email.common.kind_regards.simple" />
 ${baseUri}/home?lang=${locale}

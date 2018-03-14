@@ -24,14 +24,23 @@
 	<title>${subject}</title>
 	</head>
 	<body>
-		<div  style="padding: 20px; padding-top: 10px; width: 700px; margin: auto;">
+		<div  style="padding: 20px; padding-top: 10px; margin: auto;">
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
 		      <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		        <#if isPrimary?? && isPrimary><@emailMacros.msg "email.verify.primary_reminder" /><@emailMacros.space /></#if><@emailMacros.msg "email.verify.thank_you" /><br /><br /><a href="${verificationUrl}?lang=${locale}" target="orcid.blank">${verificationUrl}</a> 
+		        <#if isReminder?? && isReminder>
+                    <#if isPrimary?? && isPrimary>
+                        <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />
+                    </#if>
+                    <@emailMacros.msg "email.verify.click_link" />
+                <#else>
+                    <@emailMacros.msg "email.verify.thank_you" />
+                </#if>
+                <br /><br />
+                <a href="${verificationUrl}?lang=${locale}" target="orcid.blank">${verificationUrl}</a>        
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.verify.1" /><@emailMacros.space />${orcid}<@emailMacros.msg "email.verify.2" /><@emailMacros.space /><a href="${baseUri}/${orcid}?lang=${locale}" target="orcid.blank">${baseUri}/${orcid}</a><@emailMacros.space /><@emailMacros.msg "email.verify.primary_email_1" /><@emailMacros.space />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />. 	        		    	
