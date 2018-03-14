@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
@@ -35,6 +37,8 @@ import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.v3.identifiers.ResolverService;
+import org.orcid.core.utils.v3.identifiers.resolvers.ResolutionResult;
 import org.orcid.frontend.web.pagination.WorksPage;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -96,6 +100,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource(name = "bibtexManagerV3")
     private BibtexManager bibtexManager;
+    
+    @Resource
+    ResolverService resolverService;
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody ArrayList<Long> removeWork(@PathVariable("workIdsStr") String workIdsStr) {
@@ -560,15 +567,24 @@ public class WorksController extends BaseWorkspaceController {
                 setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
             }
 
+            //check type is valid
             Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
             if (wId.getWorkExternalIdentifierType().getValue() != null  
                     && !wId.getWorkExternalIdentifierType().getValue().trim().isEmpty() 
                     && !types.keySet().contains(wId.getWorkExternalIdentifierType().getValue())){
                 setError(wId.getWorkExternalIdentifierType(), "manualWork.id_invalid");
-            
-            
-            validateUrl(wId.getUrl());            
             }
+            
+            //IF WE WANT TO CHECK IDs for resolvability, do it here:
+            /*else if (types.get(wId.getWorkExternalIdentifierType().getValue()).getResolutionPrefix() != null || wId.getWorkExternalIdentifierType().getValue().equals("uri")){
+                //if we have a valid type, that can be turned into a URL, check that we can resolve it
+                boolean resolved = resolverService.canResolve(wId.getWorkExternalIdentifierType().getValue(), wId.getWorkExternalIdentifierId().getValue().trim(),wId.getUrl().getValue());
+                if (!resolved){
+                    setError(wId.getWorkExternalIdentifierId(),"manualWork.id_unresolvable");
+                }
+            }*/
+            
+            validateUrl(wId.getUrl());                        
         }
 
         return work;
@@ -726,6 +742,19 @@ public class WorksController extends BaseWorkspaceController {
         }
         
         return datums;
+    }
+    
+    /** Attempts to resolve an identifier to a landing page.
+     * 
+     * Do it real time (on exit)
+     * 
+     * @param type
+     * @param value
+     * @return "resolved" if it can be resolved, "resolvableType" if we attempted to resolve it.
+     */
+    @RequestMapping(value = "/id/{type}", method = RequestMethod.GET)
+    public @ResponseBody ResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value){        
+        return resolverService.resolve(type, value);
     }
 
 }

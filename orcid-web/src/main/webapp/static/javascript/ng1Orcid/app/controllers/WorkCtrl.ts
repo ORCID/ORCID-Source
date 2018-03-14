@@ -722,6 +722,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             }
 
             $scope.serverValidate = function (relativePath) {
+                console.log(getBaseUri() + '/' + relativePath);
                 $.ajax({
                     url: getBaseUri() + '/' + relativePath,
                     type: 'POST',

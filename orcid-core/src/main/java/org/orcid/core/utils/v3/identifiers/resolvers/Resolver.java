@@ -38,6 +38,6 @@ public interface Resolver {
      * @param providedURL
      * @return
      */
-    public boolean canResolve(String apiTypeName, String value, String providedURL);
+    public ResolutionResult resolve(String apiTypeName, String value);
 
 }

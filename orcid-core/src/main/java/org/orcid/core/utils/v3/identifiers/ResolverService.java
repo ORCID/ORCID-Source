@@ -28,6 +28,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.utils.v3.identifiers.resolvers.ResolutionResult;
 import org.orcid.core.utils.v3.identifiers.resolvers.Resolver;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
@@ -65,20 +66,20 @@ public class ResolverService {
     /**
      * Ensure this is the API type name, not the DB type name.
      * 
-     * @param type
-     * @param value
-     * @return
+     * @param type the api type name
+     * @param value the url value
+     * @return a resolution result containing the resolved URL (if successful), 
+     * a flag indicating success and a flag indicating if resolution was attempted 
+     * (i.e. there is a resolver that can handle the type)
      */
-    public boolean canResolve(String apiTypeName, String value, String providedURL) {
-        boolean ret = false;
+    public ResolutionResult resolve(String apiTypeName, String value) {
+        ResolutionResult result = new ResolutionResult(false,null);
         for (Resolver r : map.get(apiTypeName)) {
-            boolean returnValue = r.canResolve(apiTypeName, value, providedURL);
-            if (returnValue) {
-                ret = returnValue;
-                break;
-            }
-        }
-        return ret;
+            result = r.resolve(apiTypeName, value);
+            if (result.isResolved())
+                return result;
+        } 
+        return result;
     }
 
 }
