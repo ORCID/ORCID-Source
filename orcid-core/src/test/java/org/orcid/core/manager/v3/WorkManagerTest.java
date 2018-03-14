@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -36,9 +37,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
+import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.common.Title;
@@ -57,9 +61,13 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateUtils;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -963,6 +971,102 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(found3);
     }
     
+    @Test
+    public void testCreateNewWorkGroup() {
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
+        WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
+        
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManager);
+        
+        // no work where user is source
+        List<MinimizedWorkEntity> works = getMinimizedWorksListForGrouping();
+        Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
+        
+        // full work matching user preferred id should be loaded from db (10 is highest display index)
+        Mockito.when(mockDao.find(Mockito.eq(4l))).thenReturn(getUserPreferredWork());
+        
+        workManager.createNewWorkGroup(Arrays.asList(1l, 2l, 3l, 4l), "some-orcid");
+        
+        // as no work with user as source, new work should be created
+        ArgumentCaptor<WorkEntity> captor = ArgumentCaptor.forClass(WorkEntity.class);
+        Mockito.verify(mockDao).persist(captor.capture());
+        
+        WorkEntity entity = captor.getValue();
+        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":null,\"url\":null,\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},{\"relationship\":null,\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}", entity.getExternalIdentifiersJson());
+        assertEquals("some title", entity.getTitle());
+        assertEquals("some subtitle", entity.getSubtitle());
+        
+        // now test where user is source of one work
+        works = getMinimizedWorksListForGrouping();
+        MinimizedWorkEntity userSource = works.get(0);
+        userSource.setSourceId("some-orcid");
+        Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
+        
+        // full work matching user preferred id should be loaded from db (10 is highest display index)
+        Mockito.when(mockDao.find(Mockito.eq(4l))).thenReturn(getUserPreferredWork());
+        
+        workManager.createNewWorkGroup(Arrays.asList(1l, 2l, 3l, 4l), "some-orcid");
+        
+        // no new work should be created
+        Mockito.verify(mockDao, Mockito.times(1)).persist(Mockito.any(WorkEntity.class));
+        
+        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":null,\"url\":null,\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},{\"relationship\":null,\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}", userSource.getExternalIdentifiersJson());
+        
+        // only identifiers should have been updated
+        assertEquals("work:title", userSource.getTitle());
+        assertEquals("work:subtitle", userSource.getSubtitle());
+        
+        // reset dao
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
+    }
+    
+    private WorkEntity getUserPreferredWork() {
+        WorkEntity userPreferred = new WorkEntity();
+        userPreferred.setId(4l);
+        userPreferred.setDisplayIndex(4l);
+        userPreferred.setTitle("some title");
+        userPreferred.setSubtitle("some subtitle");
+        userPreferred.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
+        return userPreferred;
+    }
+    
+    private List<MinimizedWorkEntity> getMinimizedWorksListForGrouping() {
+        Date date = DateUtils.convertToDate("2018-01-01T10:15:20");
+        List<MinimizedWorkEntity> minWorks = new ArrayList<>();
+        
+        for (long l = 1; l <= 4; l++) {
+            MinimizedWorkEntity work = new MinimizedWorkEntity();
+            work.setDateCreated(date);
+            work.setLastModified(date);
+            work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+            work.setDisplayIndex(l);
+            work.setDateCreated(date);
+            work.setDescription("work:description");
+            work.setId(l);
+            work.setJournalTitle("work:journalTitle");
+            work.setLanguageCode("EN");
+            work.setLastModified(date);
+            work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
+            work.setSubtitle("work:subtitle");
+            work.setTitle("work:title");
+            work.setTranslatedTitle("work:translatedTitle");
+            work.setTranslatedTitleLanguageCode("ES");
+            work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE);
+            work.setWorkUrl("work:url");
+            
+            if (l == 4l) {
+                work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
+            } else {
+                work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
+            }
+            minWorks.add(work);
+        }
+        return minWorks;
+    }
+
     private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) {
         return getWorkSummary(titleValue, extIdValue, visibility, "0");
     }

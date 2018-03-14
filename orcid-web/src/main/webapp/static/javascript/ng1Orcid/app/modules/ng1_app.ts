@@ -105,6 +105,9 @@ import { PersonalInfoModule }
 import { PublicEduAffiliationModule }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
+import { ReactivationModule } 
+    from './reactivation/reactivation.ts';
+
 import { RegisterDuplicatesModule } 
     from './registerDuplicates/registerDuplicates.ts';
 
@@ -113,7 +116,6 @@ import { RequestPasswordResetModule }
 
 import { ResetPasswordModule }
     from './resetPassword/resetPassword.ts';
-
 
 import { SearchModule } 
     from './search/search.ts';
@@ -214,6 +216,7 @@ export const orcidApp = angular.module(
         PersonalInfoModule.name,
         PublicEduAffiliationModule.name,
         NotificationsModule.name,
+        ReactivationModule.name,
         RegisterDuplicatesModule.name,
         RequestPasswordResetModule.name,
         ResetPasswordModule.name,

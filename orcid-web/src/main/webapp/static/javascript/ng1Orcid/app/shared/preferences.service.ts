@@ -61,15 +61,13 @@ export class PreferencesService {
         .map((res:Response) => res.json()).share();
     }
 
-    updateDefaultVisibility(): Observable<any> {
-        let encoded_data = JSON.stringify( this.prefs['default_visibility'] );
-        
+    updateDefaultVisibility(newPriv): Observable<any> {
         return this.http.post( 
             getBaseUri() + '/account/default_visibility.json', 
-            encoded_data, 
+            newPriv, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        .share();
     }
 
     clearMessage(): void {

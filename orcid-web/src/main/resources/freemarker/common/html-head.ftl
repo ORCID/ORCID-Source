@@ -67,6 +67,7 @@
         orcidVar.lastModified = '${(lastModifiedTime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
+        orcidVar.resetParams = '${(resetParams)!}';
         orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
@@ -149,23 +150,28 @@
 
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <!-- NG2: Under development -->
+    <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
+    <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
+    <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
+    <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-        <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
-        <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
+    </#if>
+
+    <!-- Probably this one wont be needed -->
+    <#if springMacroRequestContext.requestUri?contains("/my-orcid") 
+        || springMacroRequestContext.requestUri?contains("/print")
+        || (isPublicProfile??)>
+        <#include "/includes/ng2_templates/personal-info-ng2-template.ftl">
     </#if>
     </@orcid.checkFeatureStatus> 
 
     <!-- NG2: QA -->
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-    <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
-    <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
-    <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
     <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
     <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
-    <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
     <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
@@ -184,15 +190,13 @@
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
-        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">       
+        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+        <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
+        <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
     </#if>
     </@orcid.checkFeatureStatus> 
 
-    <#if springMacroRequestContext.requestUri?contains("/my-orcid") 
-        || springMacroRequestContext.requestUri?contains("/print")
-        || (isPublicProfile??)>
-        <#include "/includes/ng2_templates/personal-info-ng2-template.ftl">
-    </#if>
+    
     
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">

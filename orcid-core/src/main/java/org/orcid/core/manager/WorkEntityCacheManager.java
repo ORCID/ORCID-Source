@@ -47,6 +47,8 @@ public interface WorkEntityCacheManager {
     List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified);
 
     List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
+    
+    List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, List<Long> ids, long profileLastModified);
 
     WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified);
     
