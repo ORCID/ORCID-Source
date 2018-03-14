@@ -1,4 +1,5 @@
 declare var getBaseUri: any;
+declare var orcidVar: any;
 declare var trimAjaxFormText: any;
 
 import * as angular from 'angular';
@@ -28,6 +29,9 @@ export const ReactivationCtrl = angular.module('orcidApp').controller(
                     success: function(data) {
                        $scope.register = data;
                        $scope.register.resetParams = resetParams;
+                       if (orcidVar.features['GDPR_UI'] == true){
+                            $scope.register.activitiesVisibilityDefault.visibility = null;
+                        }
                        $scope.$apply();               
             
                        $scope.$watch('register.givenNames.value', function() {

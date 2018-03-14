@@ -83,6 +83,7 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
             // init reset password toggle text
             $scope.showSendResetLinkError = false;
             $scope.showResetPassword = (window.location.hash === "#resetPassword");
+            console.log('showResetPassword', $scope.showResetPassword);
             $scope.resetPasswordToggleText = om.get("login.forgotten_password");
         }
     ]

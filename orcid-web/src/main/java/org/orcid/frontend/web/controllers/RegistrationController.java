@@ -348,7 +348,7 @@ public class RegistrationController extends BaseController {
         return reg;
     }
     
-    @RequestMapping(value = "/registerActivitiesVisibilityDefault.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/registerActivitiesVisibilityDefaultValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerActivitiesVisibilityDefaultValidate(@RequestBody Registration reg) {
         activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
         return reg;
