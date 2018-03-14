@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -38,7 +39,7 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
 
-    private static final List<String> IGNORE_LIST = Arrays.asList("/resources/", "/search/", "/oauth/token", "/experimental_rdf_v1/", "/static/");
+    private static final List<String> IGNORE_LIST = Arrays.asList("/resources/", "/search/", "/oauth/token", OrcidApiConstants.EXPERIMENTAL_RDF_V1 + "/", "/static/");
 
     private static final String WEBHOOK_PATH_REGEX = "^/" + OrcidStringUtils.ORCID_STRING + "/webhook/.+";
 
@@ -69,7 +70,11 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
             }
 
             if (PojoUtil.isEmpty(version)) {
-                if (feature.isActive() && !isLOD(request.getHeader("Accept"))) {
+                if (isLOD(request.getHeader("Accept"))) {
+                    String redirectUri = orcidUrlManager.getPubBaseUrl() + OrcidApiConstants.EXPERIMENTAL_RDF_V1 + "/" + path;
+                    response.sendRedirect(redirectUri);
+                }
+                if (feature.isActive()) {
                     String baseUrl = Features.PUB_API_2_0_BY_DEFAULT.equals(feature) ? orcidUrlManager.getPubBaseUrl() : orcidUrlManager.getApiBaseUrl();
                     String redirectUri = baseUrl + "/v2.0" + path;
                     response.sendRedirect(redirectUri);
@@ -81,10 +86,10 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
             }
         }
     }
-
+    
     private boolean isLOD(String accept) {
         if (accept == null)
             return false;
-        return (accept.contains("n3") || accept.contains("rdf") || accept.contains("n-triples") || accept.contains("turtle"));
+        return (accept.contains("n3") || accept.contains("rdf") || accept.contains("n-triples") || accept.contains("turtle") || accept.contains("json-ld"));
     }
 }

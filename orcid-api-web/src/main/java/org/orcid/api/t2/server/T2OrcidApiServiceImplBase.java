@@ -180,38 +180,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * GETs the RDF Turtle representation of the ORCID record containing only
-     * the Biography details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the RDF Turtle representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { TEXT_N3, TEXT_TURTLE })
-    @Path(BIO_PATH)
-    public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findBioDetails(orcid);
-    }
-
-    /**
-     * GETs the RDF/XML representation of the ORCID record containing only the
-     * Biography details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the RDF/XML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { APPLICATION_RDFXML })
-    @Path(BIO_PATH)
-    public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findBioDetails(orcid);
-    }
-
-    /**
      * GETs the HTML representation of the ORCID external identifiers
      * 
      * @param orcid
