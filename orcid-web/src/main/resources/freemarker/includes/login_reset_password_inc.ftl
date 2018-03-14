@@ -17,9 +17,9 @@
 
 -->
 <div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getRequestResetPassword()" class="reset-password">
+    <a name="resetPassword"></a>
+    <a href="" id="reset-password-toggle-text" ng-click="toggleResetPassword()" ng-bind="resetPasswordToggleText"></a>
     <div ng-show="showResetPassword == true" ng-cloak>
-        <a name="resetPassword"></a>
-        <a href="" id="reset-password-toggle-text" ng-click="toggleResetPassword()" ng-bind="resetPasswordToggleText"></a>
         <p>
              <small>
                  ${springMacroRequestContext.getMessage("reset_password.enterEmail_1")}
