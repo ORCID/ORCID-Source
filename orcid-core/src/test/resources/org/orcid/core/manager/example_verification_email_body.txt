@@ -1,21 +1,18 @@
 Dear Josiah Carberry,
 
-To verify your email address, click the following link and sign into your ORCID record. If you can't click the link, copy and paste it into your browser's address bar:
+To verify your email address, click the following link and sign into your ORCID record. If you can't click the link, copy and paste it into your browser's address bar:    
 http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0?lang=en
 
 Your 16-digit ORCID identifier is 4444-4444-4444-4446, and your full ORCID iD and the link to your public record is https://testserver.orcid.org/4444-4444-4444-4446?lang=en (primary email address: josiah_carberry@brown.edu).
  
-If you did not add this email address to your ORCID record, please contact us immediately by replying to this email
+If you did not add this email address to your ORCID record, please contact us immediately by replying to this email.
 DID YOU KNOW? 
 The ORCID Registry is always evolving. Stay up-to-date on the latest at our
-blog: https://testserver.orcid.org/about/news
+blog: https://testserver.orcid.org/blog
 
-If you have any questions or need help, please contact the ORCID support 
-team at support@orcid.org or visit https://support.orcid.org.
-
+If you have any questions or need help, visit https://orcid.org/help or contact us at https://orcid.org/help/contact-us
 Kind Regards,
 The ORCID Team 
-support@orcid.org
 https://testserver.orcid.org/home?lang=en
 
 You have received this email as a service announcement related to your
