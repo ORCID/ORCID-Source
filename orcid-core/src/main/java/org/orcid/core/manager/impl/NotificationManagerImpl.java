@@ -124,7 +124,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
 
     @Resource
