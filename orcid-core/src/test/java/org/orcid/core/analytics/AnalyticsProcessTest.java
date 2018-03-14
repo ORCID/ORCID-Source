@@ -108,7 +108,6 @@ public class AnalyticsProcessTest {
         assertEquals(ClientType.PUBLIC_CLIENT.value() + " | a public client - some-client-details-id", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
-        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
         assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
@@ -148,7 +147,6 @@ public class AnalyticsProcessTest {
         assertEquals(ClientType.PUBLIC_CLIENT.value() + " | a public + client - some-client-details-id", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
-        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
         assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
@@ -182,7 +180,6 @@ public class AnalyticsProcessTest {
 
         AnalyticsData data = captor.getValue();
         assertNotNull(data);
-        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
     }
     
     @Test
@@ -220,7 +217,6 @@ public class AnalyticsProcessTest {
         assertEquals(ClientType.PUBLIC_CLIENT.value() + " | a public client - some-client-details-id", data.getClientDetailsString());
         assertEquals("0:0:0:0:0:0:0:0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
-        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
         assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
@@ -260,7 +256,6 @@ public class AnalyticsProcessTest {
         assertEquals(ClientType.CREATOR.value() + " | a member client - some-client-details-id", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
-        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
         assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
@@ -297,7 +292,6 @@ public class AnalyticsProcessTest {
         assertEquals("Unknown", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
-        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
         assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
@@ -334,7 +328,6 @@ public class AnalyticsProcessTest {
         assertEquals("Unknown", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
-        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid, data.getUrl());
         assertEquals("blah", data.getUserAgent());
         assertEquals(MediaType.APPLICATION_XML, data.getContentType());
     }
@@ -371,7 +364,6 @@ public class AnalyticsProcessTest {
         assertEquals("Unknown", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
-        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
         assertNotNull(data.getContentType());
         assertEquals("default", data.getContentType()); // default content type

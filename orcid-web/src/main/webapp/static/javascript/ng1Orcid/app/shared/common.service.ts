@@ -33,6 +33,16 @@ export class CommonService {
         for (let key in data1) {
             if (key == 'errors') {
                 data1.errors = data2.errors;
+            } else if (key == 'emailsAdditional'){
+                for (var index in data1.emailsAdditional) {
+                    if (data1.emailsAdditional[index] != null) {
+                        if(data2.emailsAdditional[index] == undefined){
+                            data1.emailsAdditional[index].errors = null;
+                        } else {
+                            data1.emailsAdditional[index].errors = data2.emailsAdditional[index].errors;
+                        }
+                    }
+                }
             } else {
                 if (data1[key] != null && data1[key].errors !== undefined) {
                     data1[key].errors = data2[key].errors;
@@ -129,6 +139,21 @@ export class CommonService {
         }
     };
 
+    isValidClass(cur) : string{
+        let valid : boolean;
+        if (cur === undefined) {
+            return '';
+        }
+        valid = true;
+        if (cur.required && (cur.value == null || cur.value.trim() == '')) {
+            valid = false;
+        }
+        if (cur.errors !== undefined && cur.errors.length > 0) {
+            valid = false;
+        }
+        return valid ? '' : 'text-error';
+    };
+
     openImportWizardUrl(url): void {
         let win = window.open(url, "_target");
         setTimeout( function() {
@@ -184,5 +209,10 @@ export class CommonService {
         
         this.shownElement[elem] = true;
     };
-            
+
+    trimAjaxFormText(pojoMember) {
+        if (pojoMember != null && pojoMember.value != null && (pojoMember.value.charAt(0) == ' ' || pojoMember.value.charAt(pojoMember.value.length - 1) == ' ')) {
+            pojoMember.value = pojoMember.value.trim();
+        }
+    };            
 }

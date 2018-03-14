@@ -90,7 +90,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
 
     @Resource

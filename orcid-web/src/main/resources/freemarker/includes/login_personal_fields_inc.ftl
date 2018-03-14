@@ -40,7 +40,7 @@
     <input id="recoveryCode" name="recoveryCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">                                        
 </div>
 <div class="form-group">
-    <button id='form-sign-in-button' class="btn btn-primary" type="submit" class="form-control">${springMacroRequestContext.getMessage("login.signin")}</button>					                    
+    <button id="form-sign-in-button" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>					                    
     <span id="ajax-loader" class="no-visible"><i id="ajax-loader-icon" class="glyphicon glyphicon-refresh spin x2 green"></i></span>					                    
     <#if (RequestParameters['alreadyClaimed'])??>
     <div class="alert"><@spring.message "orcid.frontend.security.already_claimed"/></div>

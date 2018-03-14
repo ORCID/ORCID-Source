@@ -46,12 +46,12 @@ public class UniversalAnalyticsClientTest {
         assertEquals(UniversalAnalyticsClient.HIT_TYPE_PARAM + "=event", params[5]);
         assertEquals(UniversalAnalyticsClient.EVENT_ACTION_PARAM + "=" + data.getMethod(), params[6]);
         assertEquals(UniversalAnalyticsClient.EVENT_CATEGORY_PARAM + "=" + data.getCategory(), params[7]);
-        assertEquals(UniversalAnalyticsClient.EVENT_LABEL_PARAM + "=" + data.getUrl(), params[8]);
-        assertEquals(UniversalAnalyticsClient.API_VERSION_PARAM + "=" + data.getApiVersion(), params[9]);
-        assertEquals(UniversalAnalyticsClient.CONTENT_TYPE_PARAM + "=" + data.getContentType(), params[10]);
-        assertEquals(UniversalAnalyticsClient.RESPONSE_CODE_PARAM + "=" + data.getResponseCode(), params[11]);
-        assertEquals(UniversalAnalyticsClient.CLIENT_PARAM + "=" + data.getClientDetailsString(), params[12]);
-        assertEquals(UniversalAnalyticsClient.SESSION_CONTROL_PARAM + "=" + UniversalAnalyticsClient.SESSION_CONTROL_VALUE, params[13]);
+        assertEquals(UniversalAnalyticsClient.API_VERSION_PARAM + "=" + data.getApiVersion(), params[8]);
+        assertEquals(UniversalAnalyticsClient.CONTENT_TYPE_PARAM + "=" + data.getContentType(), params[9]);
+        assertEquals(UniversalAnalyticsClient.RESPONSE_CODE_PARAM + "=" + data.getResponseCode(), params[10]);
+        assertEquals(UniversalAnalyticsClient.CLIENT_PARAM + "=" + data.getClientDetailsString(), params[11]);
+        assertEquals(UniversalAnalyticsClient.SESSION_CONTROL_PARAM + "=" + UniversalAnalyticsClient.SESSION_CONTROL_VALUE, params[12]);
+        assertEquals(UniversalAnalyticsClient.EVENT_LABEL_PARAM + "=" + data.getCategory() + ":" + data.getMethod(), params[13]);
     }
     
     @Test
@@ -67,7 +67,6 @@ public class UniversalAnalyticsClientTest {
         AnalyticsData data = new AnalyticsData();
         data.setApiVersion("v2.0");
         data.setCategory("works");
-        data.setUrl("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works");
         data.setClientId("client id");
         data.setClientDetailsString("Client name - client id");
         data.setContentType("application/xml");

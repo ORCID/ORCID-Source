@@ -116,6 +116,18 @@ import { PersonalInfoNg2Module }
 import { PublicEduAffiliationNg2Module }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
+import { OauthAuthorizationNg2Module } 
+    from './oauthAuthorization/oauthAuthorization.ts';
+
+import { ReactivationNg2Module } 
+    from './reactivation/reactivation.ts';
+
+import { RegisterDuplicatesNg2Module } 
+    from './registerDuplicates/registerDuplicates.ts';
+
+import { RequestPasswordResetNg2Module } 
+    from './requestPasswordReset/requestPasswordReset.ts';
+
 import { ResetPasswordNg2Module }
     from './resetPassword/resetPassword.ts';
 
@@ -142,6 +154,9 @@ import { Social2FANg2Module }
 
 import { SocialNetworksNg2Module }
     from './socialNetworks/socialNetworks.ts';
+
+import { SwitchUserNg2Module }
+    from './switchUser/switchUser.ts';
 
 import { ThanksForRegisteringNg2Module } 
     from './thanksForRegistering/thanksForRegistering.ts';
@@ -251,6 +266,10 @@ export class RootCmp {
         PasswordEditNg2Module,
         PersonalInfoNg2Module,
         PublicEduAffiliationNg2Module,
+        OauthAuthorizationNg2Module,
+        ReactivationNg2Module,
+        RegisterDuplicatesNg2Module,
+        RequestPasswordResetNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
@@ -260,6 +279,7 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         SocialNetworksNg2Module,
+        SwitchUserNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
         TwoFAStateNg2Module,
