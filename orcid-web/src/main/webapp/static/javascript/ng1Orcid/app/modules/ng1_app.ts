@@ -93,17 +93,26 @@ import { NameModule }
 import { NotificationsModule }
     from './notifications/notifications.ts';
 
-import { PersonalInfoModule } 
-    from './personalInfo/personalInfo.ts';
+import { OauthAuthorizationModule } 
+    from './oauthAuthorization/oauthAuthorization.ts';
 
 import { PasswordEditModule } 
     from './passwordEdit/passwordEdit.ts';
+
+import { PersonalInfoModule } 
+    from './personalInfo/personalInfo.ts';
 
 import { PublicEduAffiliationModule }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
 import { ReactivationModule } 
     from './reactivation/reactivation.ts';
+
+import { RegisterDuplicatesModule } 
+    from './registerDuplicates/registerDuplicates.ts';
+
+import { RequestPasswordResetModule } 
+    from './requestPasswordReset/requestPasswordReset.ts';
 
 import { ResetPasswordModule }
     from './resetPassword/resetPassword.ts';
@@ -131,6 +140,9 @@ import { Social2FAModule }
 
 import { SocialNetworksModule }
     from './socialNetworks/socialNetworks.ts';
+
+import { SwitchUserModule }
+    from './switchUser/switchUser.ts';
 
 import { ThanksForRegisteringModule } 
     from './thanksForRegistering/thanksForRegistering.ts';
@@ -199,11 +211,14 @@ export const orcidApp = angular.module(
         LinkAccountModule.name,
         ModalModule.name,
         NameModule.name,
-        NotificationsModule.name,
+        OauthAuthorizationModule.name,
         PasswordEditModule.name,
         PersonalInfoModule.name,
         PublicEduAffiliationModule.name,
+        NotificationsModule.name,
         ReactivationModule.name,
+        RegisterDuplicatesModule.name,
+        RequestPasswordResetModule.name,
         ResetPasswordModule.name,
         SearchModule.name,
         SelfServiceModule.name,
@@ -213,6 +228,7 @@ export const orcidApp = angular.module(
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
         SocialNetworksModule.name,
+        SwitchUserModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
         TwoFASetupModule.name,

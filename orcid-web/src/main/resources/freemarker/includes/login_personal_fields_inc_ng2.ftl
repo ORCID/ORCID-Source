@@ -19,7 +19,7 @@
 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <div class="form-group">
     <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
-    <input type="text" id="userId" name="userId" ng-model="authorizationForm.userName.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">
+    <input type="text" id="userId" name="userId" [(ngModel)]="authorizationForm.userName.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">
 </div>
 <div class="form-group">
     <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>					
@@ -50,10 +50,10 @@
     </#if>
 </div>
 <div id="login-deactivated-error" class="orcid-error" style="display:none">
-    <span ng-show="showDeactivatedError">
-    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail(authorizationForm.userName.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+    <span *ngIf="showDeactivatedError">
+    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="javascript:void(0);" (click)="sendReactivationEmail(authorizationForm.userName.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
     </span>
-    <span ng-show="showReactivationSent">
+    <span *ngIf="showReactivationSent">
     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
     </span>
 </div>

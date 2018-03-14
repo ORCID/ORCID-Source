@@ -89,6 +89,10 @@
         </#if>     
       
         orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
+        orcidVar.firstName = "${(RequestParameters.firstName?js_string)!}";
+        orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
+        orcidVar.emailId = "${(RequestParameters.emailId?js_string)!}";
+        orcidVar.linkRequest = "${(RequestParameters.linkRequest?js_string)!}";
         orcidVar.memberSlug = "${(memberSlug?js_string)!}";
     </script>
 
@@ -166,6 +170,8 @@
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
+    <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
+    <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
     <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >

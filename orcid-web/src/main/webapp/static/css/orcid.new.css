@@ -7053,7 +7053,7 @@ ul.comma li:last-child:after {
         line-height: 18px
     }
 
-    #password-reset-form #userEmailAddress {
+    #password-reset #userEmailAddress {
         width: 95%
     }
 
