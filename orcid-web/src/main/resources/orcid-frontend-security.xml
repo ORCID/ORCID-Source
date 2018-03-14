@@ -406,6 +406,8 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/works/countries.json(\?.*)?" 
 			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/get-my-data" 
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/togglz/*" 
 			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
