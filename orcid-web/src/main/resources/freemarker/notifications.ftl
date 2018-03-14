@@ -22,6 +22,10 @@
     <div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
         <#include "admin_menu.ftl"/>
     </div>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <notifications-ng2></notifications-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >        
         <div class="notification-top-bar">
         	<ul class="inline-list pull-right">
@@ -96,6 +100,7 @@
             <![endif]-->
         </div>
     </div>
+    </@orcid.checkFeatureStatus>
 </div>
 
 </#escape>

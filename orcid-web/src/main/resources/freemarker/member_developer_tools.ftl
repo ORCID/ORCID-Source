@@ -22,7 +22,11 @@
 	<div class="col-md-3 col-sm-12 col-xs-12">
 		<#include "includes/id_banner.ftl"/>
 	</div>
-	<div class="col-md-9 col-sm-12 col-xs-12 margin-top-box-mobile">		
+	<div class="col-md-9 col-sm-12 col-xs-12 margin-top-box-mobile">
+		<@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+	    <client-edit-ng2></client-edit-ng2>
+	    </@orcid.checkFeatureStatus>
+    	<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 	
 		<div ng-controller="ClientEditCtrl" id="member_developer_tools_header">	
 			<!-- Header -->			
 			<div class="row">
@@ -445,6 +449,7 @@
 				</div>		
 			</div>
 		</div>
+		</@orcid.checkFeatureStatus>
 	</div>
 </div>
 

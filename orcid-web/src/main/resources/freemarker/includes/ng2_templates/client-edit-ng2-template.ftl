@@ -45,11 +45,11 @@
             <div class="row">
                 <div class="col-md-12 client-api">
                     <p><@orcid.msg 'manage.developer_tools.group.description.1' />&nbsp;<a href="<@orcid.msg 'manage.developer_tools.group.description.link.url' />"><@orcid.msg 'manage.developer_tools.group.description.link.text' /></a><@orcid.msg 'manage.developer_tools.group.description.2' /></p>     
-                    <div *ngIf="clients.length == 0" >
+                    <div *ngIf="clients?.length == 0" >
                         <span><@orcid.msg 'manage.developer_tools.group.no_clients'/></span><br />
                         <span><@orcid.msg 'manage.developer_tools.group.register_now'/>&nbsp;<a href="" (click)="showAddClient()"><@orcid.msg 'manage.developer_tools.group.add'/></a></span>
                     </div>  
-                    <div *ngIf="clients.length > 0" >
+                    <div *ngIf="clients?.length > 0" >
                         <table class="table sub-table">
                             <tbody>
                                 <tr>
@@ -84,7 +84,7 @@
                     <div class="inner-row margin-left-fix">
                         <span><strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong></span>
                         <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.display_name_placeholder'/>" class="input-xlarge" [(ngModel)]="newClient.displayName.value" />
-                        <span class="orcid-error" *ngIf="newClient.displayName.errors.length > 0">
+                        <span class="orcid-error" *ngIf="newClient?.displayName?.errors?.length > 0">
                             <div *ngFor='let error of newClient.displayName.errors' [innerHTML]="error"></div>
                         </span>                 
                     </div>      
@@ -96,7 +96,7 @@
                     <div class="inner-row margin-left-fix">
                         <span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
                         <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.website_placeholder'/>" class="input-xlarge" [(ngModel)]="newClient.website.value" />
-                        <span class="orcid-error" *ngIf="newClient.website.errors.length > 0">
+                        <span class="orcid-error" *ngIf="newClient?.website?.errors?.length > 0">
                             <div *ngFor='let error of newClient.website.errors' [innerHTML]="error"></div>
                         </span>                 
                     </div>      
@@ -108,7 +108,7 @@
                     <div class="inner-row margin-left-fix">
                         <span><strong><@orcid.msg 'manage.developer_tools.group.description'/></strong></span>
                         <textarea class="input-xlarge" placeholder="<@orcid.msg 'manage.developer_tools.group.description_placeholder'/>" [(ngModel)]="newClient.shortDescription.value"></textarea>                       
-                        <span class="orcid-error" *ngIf="newClient.shortDescription.errors.length > 0">
+                        <span class="orcid-error" *ngIf="newClient?.shortDescription?.errors?.length > 0">
                             <div *ngFor='let error of newClient.shortDescription.errors' [innerHTML]="error"></div>
                         </span>
                     </div>                                                          
@@ -142,7 +142,7 @@
                             <div class="inner-row margin-left-fix">                         
                                 <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge ruri" [(ngModel)]="rUri.value.value" />                                                         
                                 <a href (click)="deleteUriOnNewClient($index)" class="glyphicon glyphicon-trash grey"></a>
-                                <span class="orcid-error" *ngIf="rUri.errors.length > 0">
+                                <span class="orcid-error" *ngIf="rUri?.errors?.length > 0">
                                     <div *ngFor='let error of rUri.errors' [innerHTML]="error"></div>
                                 </span>                                 
                             </div>                                          
@@ -332,7 +332,7 @@
                     <div class="inner-row margin-left-fix">
                         <span><strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong></span>
                         <input type="text" class="input-xlarge" [(ngModel)]="clientToEdit.displayName.value" placeholder="<@orcid.msg 'manage.developer_tools.group.display_name_placeholder'/>"/>
-                        <span class="orcid-error" *ngIf="clientToEdit.displayName.errors.length > 0">
+                        <span class="orcid-error" *ngIf="clientToEdit?.displayName?.errors?.length > 0">
                             <div *ngFor='let error of clientToEdit.displayName.errors' [innerHTML]="error"></div>
                         </span>                 
                     </div>      
@@ -344,7 +344,7 @@
                     <div class="inner-row margin-left-fix">
                         <span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
                         <input type="text" class="input-xlarge" [(ngModel)]="clientToEdit.website.value" placeholder="<@orcid.msg 'manage.developer_tools.group.website_placeholder'/>"/>
-                        <span class="orcid-error" *ngIf="clientToEdit.website.errors.length > 0">
+                        <span class="orcid-error" *ngIf="clientToEdit?.website?.errors?.length > 0">
                             <div *ngFor='let error of clientToEdit.website.errors' [innerHTML]="error"></div>
                         </span>                 
                     </div>      
@@ -356,7 +356,7 @@
                     <div class="inner-row margin-left-fix">
                         <span><strong><@orcid.msg 'manage.developer_tools.group.description'/></strong></span>
                         <textarea class="input-xlarge" [(ngModel)]="clientToEdit.shortDescription.value" placeholder="<@orcid.msg 'manage.developer_tools.group.description_placeholder'/>"></textarea>                        
-                        <span class="orcid-error" *ngIf="clientToEdit.shortDescription.errors.length > 0">
+                        <span class="orcid-error" *ngIf="clientToEdit?.shortDescription?.errors?.length > 0">
                             <div *ngFor='let error of clientToEdit.shortDescription.errors' [innerHTML]="error"></div>
                         </span>
                     </div>                                                          
@@ -410,7 +410,7 @@
                             <div class="inner-row margin-left-fix">                         
                                 <input type="text" class="input-xlarge ruri" [(ngModel)]="rUri.value.value" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>"/>
                                 <a href (click)="deleteUriOnExistingClient($index)" class="glyphicon glyphicon-trash grey pull-right"></a>
-                                <span class="orcid-error" *ngIf="rUri.errors.length > 0">
+                                <span class="orcid-error" *ngIf="rUri?.errors?.length > 0">
                                     <div *ngFor='let error of rUri.errors' [innerHTML]="error"></div>
                                 </span>                                                                                             
                             </div>                                          

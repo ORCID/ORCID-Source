@@ -151,7 +151,7 @@
                                         <span (click)="checkCredentials(popUp)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
                                                     
                                         <span class="orcid-error"
-                                            *ngIf="inputEmail.errors.length > 0"> <span
+                                            *ngIf="inputEmail?.errors?.length > 0"> <span
                                             *ngFor='let error of inputEmail.errors'
                                             [innerHTML]="error"></span>
                                         </span>
