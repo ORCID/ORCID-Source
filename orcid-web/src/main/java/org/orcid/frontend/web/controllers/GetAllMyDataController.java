@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.frontend.web.controllers;
 
 import java.io.ByteArrayOutputStream;
@@ -16,14 +32,18 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.collections4.ListUtils;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
 import org.orcid.jaxb.model.v3.dev1.record.Distinction;
 import org.orcid.jaxb.model.v3.dev1.record.Education;
 import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.dev1.record.Funding;
 import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.dev1.record.Membership;
+import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
 import org.orcid.jaxb.model.v3.dev1.record.Person;
 import org.orcid.jaxb.model.v3.dev1.record.Qualification;
 import org.orcid.jaxb.model.v3.dev1.record.Service;
@@ -49,6 +69,15 @@ public class GetAllMyDataController extends BaseController {
     private static final String PEER_REVIEWS_DIR_NAME = "peer_reviews";
     private static final String WORKS_DIR_NAME = "works";
 
+    private final Marshaller marshaller;
+
+    public GetAllMyDataController() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(Person.class, Distinction.class, Education.class, Employment.class, InvitedPosition.class, Membership.class,
+                Qualification.class, Service.class, Funding.class, PeerReview.class, Work.class);
+        marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+    }
+
     @Value("${org.orcid.download.activities.batch_size:50}")
     private Integer batchSize;
 
@@ -61,6 +90,12 @@ public class GetAllMyDataController extends BaseController {
     @Resource(name = "affiliationManagerReadOnlyV3")
     private AffiliationsManagerReadOnly affiliationManagerReadOnly;
 
+    @Resource(name = "profileFundingManagerReadOnlyV3")
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
+
+    @Resource(name = "peerReviewManagerReadOnlyV3")
+    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
+
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
 
@@ -68,21 +103,11 @@ public class GetAllMyDataController extends BaseController {
     public void getMyData(HttpServletResponse response) throws JAXBException, IOException {
         String currentUserOrcid = getCurrentUserOrcid();
         String fileName = currentUserOrcid + ".zip";
-        Person person = personDetailsManager.getPersonDetails(currentUserOrcid);
-
-        JAXBContext context = JAXBContext.newInstance(person.getClass());
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(person, baos);
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(result);
-        ZipEntry zipEntry = new ZipEntry("Person.xml");
-        zip.putNextEntry(zipEntry);
-        zip.write(baos.toByteArray());
 
+        generatePersonData(currentUserOrcid, zip);
         generateAffiliationsData(currentUserOrcid, zip);
         generateFundingData(currentUserOrcid, zip);
         generatePeerReviewData(currentUserOrcid, zip);
@@ -96,15 +121,15 @@ public class GetAllMyDataController extends BaseController {
         response.flushBuffer();
     }
 
+    private void generatePersonData(String orcid, ZipOutputStream zip) throws JAXBException, IOException {
+        Person person = personDetailsManager.getPersonDetails(orcid);
+        writeElement(toByteArray(person), "person.xml", zip);
+    }
+
     private void generateAffiliationsData(String orcid, ZipOutputStream zip) throws JAXBException, IOException {
         List<Affiliation> affiliations = affiliationManagerReadOnly.getAffiliations(orcid);
-        JAXBContext context = JAXBContext.newInstance(Distinction.class, Education.class, Employment.class, InvitedPosition.class, Membership.class, Qualification.class,
-                Service.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
         for (Affiliation affiliation : affiliations) {
-            ByteArrayOutputStream workBaos = new ByteArrayOutputStream();
-            marshaller.marshal(affiliation, workBaos);
             String elementName = null;
             if (affiliation instanceof Distinction) {
                 elementName = DISTINCTIONS_DIR_NAME + '/' + affiliation.getPutCode() + ".xml";
@@ -123,33 +148,44 @@ public class GetAllMyDataController extends BaseController {
             } else {
                 throw new IllegalArgumentException("Invalid affiliation type: " + affiliation.getClass().getName());
             }
-            ZipEntry zipEntry = new ZipEntry(elementName);
-            zip.putNextEntry(zipEntry);
-            zip.write(workBaos.toByteArray());
+            writeElement(toByteArray(affiliation), elementName, zip);
         }
     }
 
-    private void generateFundingData(String currentUserOrcid, ZipOutputStream zip) throws JAXBException, IOException {
+    private void generateFundingData(String orcid, ZipOutputStream zip) throws JAXBException, IOException {
+        List<Funding> fundings = profileFundingManagerReadOnly.getFundingList(orcid);
+        for (Funding funding : fundings) {
+            writeElement(toByteArray(funding), (FUNDINGS_DIR_NAME + '/' + funding.getPutCode() + ".xml"), zip);
+        }
     }
 
-    private void generatePeerReviewData(String currentUserOrcid, ZipOutputStream zip) throws JAXBException, IOException {
+    private void generatePeerReviewData(String orcid, ZipOutputStream zip) throws JAXBException, IOException {
+        List<PeerReview> peerReviews = peerReviewManagerReadOnly.findPeerReviews(orcid);
+        for (PeerReview peerReview : peerReviews) {
+            writeElement(toByteArray(peerReview), (PEER_REVIEWS_DIR_NAME + '/' + peerReview.getPutCode() + ".xml"), zip);
+        }
     }
 
     private void generateWorksData(String orcid, ZipOutputStream zip) throws JAXBException, IOException {
         List<WorkLastModifiedEntity> elements = workEntityCacheManager.retrieveWorkLastModifiedList(orcid, workManagerReadOnly.getLastModified(orcid));
-        JAXBContext context = JAXBContext.newInstance(Work.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         for (List<WorkLastModifiedEntity> list : ListUtils.partition(elements, this.batchSize)) {
             List<Work> works = workManagerReadOnly.findWorks(orcid, list);
-            for (Work w : works) {
-                ByteArrayOutputStream workBaos = new ByteArrayOutputStream();
-                marshaller.marshal(w, workBaos);
-                ZipEntry zipEntry = new ZipEntry(WORKS_DIR_NAME + '/' + w.getPutCode() + ".xml");
-                zip.putNextEntry(zipEntry);
-                zip.write(workBaos.toByteArray());
+            for (Work work : works) {
+                writeElement(toByteArray(work), (WORKS_DIR_NAME + '/' + work.getPutCode() + ".xml"), zip);
             }
         }
+    }
+
+    private byte[] toByteArray(Object o) throws JAXBException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        marshaller.marshal(o, baos);
+        return baos.toByteArray();
+    }
+
+    private void writeElement(byte[] data, String name, ZipOutputStream zip) throws IOException {
+        ZipEntry zipEntry = new ZipEntry(name);
+        zip.putNextEntry(zipEntry);
+        zip.write(data);
     }
 
 }
