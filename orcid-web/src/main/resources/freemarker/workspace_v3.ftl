@@ -770,10 +770,14 @@
 
 <modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
     <websites-form-ng2></websites-form-ng2>
-</modalngcomponent><!-- Ng2 component -->  
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
+    <works-form-ng2></works-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
 </@orcid.checkFeatureStatus> 
 
-<modalngcomponent elementHeight="300" elementId="modalAffiliationDelete" elementWidth="300">
+<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 

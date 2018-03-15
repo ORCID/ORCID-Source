@@ -153,6 +153,9 @@ import { WebsitesFormModule }
 import { WidgetModule } 
     from './widget/widget.ts';
 
+import { WorksFormModule } 
+    from './works/worksForm.ts';
+
 import { WorksModule } 
     from './works/works.ts';
 
@@ -217,6 +220,7 @@ export const orcidApp = angular.module(
         WebsitesFormModule.name,
         WebsitesModule.name,
         WidgetModule.name,
+        WorksFormModule.name,
         WorksModule.name,
         WorkSpaceSummaryModule.name,
         WorksPrivacyPreferencesModule.name

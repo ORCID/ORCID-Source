@@ -34,10 +34,10 @@ import { WorkspaceService }
     from '../../shared/workspace.service.ts'; 
 
 @Component({
-    selector: 'works-ng2',
-    template:  scriptTmpl("works-ng2-template")
+    selector: 'works-form-ng2',
+    template:  scriptTmpl("works-form-ng2-template")
 })
-export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
+export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -80,6 +80,18 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workImportWizardsOriginal: any;
     workType: any;
     worksFromBibtex: any;
+    contentCopy: any;
+    badgesRequested: any; 
+    bibtexGenerated: any;            
+    bibtexURL: any;
+    canReadFiles: any;
+    combiningWorks: any;
+    editTranslatedTitle: any;
+    externalIDNamesToDescriptions: any;//caches name->description lookup so we can display the description not the name after selection
+    externalIDTypeCache: any;//cache responses
+    generatingBibtex: any;
+    privacyHelp: any;
+    types: any;
 
     constructor( 
         private commonService: CommonService,
@@ -89,7 +101,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private worksService: WorksService
     ) {
         //console.log('works component init');
-
+        this.contentCopy = {
+            titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+            titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
+        };
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexLoading = false;
@@ -106,7 +121,65 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.delCountVerify = 0;
         this.displayURLPopOver = {};
         this.editSources = {};
-        this.editWork = null;
+        this.editWork = {
+            citation: {
+                citation: {
+                    errors: {}, 
+                    value: null
+                },
+                citationType: {
+                    errors: {}, 
+                    value: null
+                }
+            },
+            contributors: {},
+            countryCode: {
+                errors: {}, 
+                value: null
+            },
+            errors: {},
+            journalTitle: {
+                errors: {}, 
+                value: null
+            },
+            languageCode: {
+                errors: {}, 
+                value: null
+            },
+            publicationDate: {
+                errors: {}, 
+                value: null
+            },
+            putCode: {
+                value: null
+            },
+            shortDescription: {
+                errors: {}, 
+                value: null
+            },
+            subtitle: {
+                errors: {}, 
+                value: null
+            },
+            title: {
+                errors: {}, 
+                value: null
+            },
+            translatedTitle: {
+                content: null,
+                errors: {}, 
+            },
+            url: {
+                errors: {}, 
+                value: null
+            },
+            workCategory: {
+                errors: {}, 
+                value: null
+            },
+            workExternalIdentifiers: {
+            },
+        };
         this.emails = {};
         this.formData = {
             works: null
@@ -130,6 +203,17 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.workImportWizardsOriginal = null;
         this.workType = ['All'];
         this.worksFromBibtex = null;
+        this.badgesRequested = {};  
+        this.bibtexGenerated = false;            
+        this.bibtexURL = "";
+        this.canReadFiles = false;
+        this.combiningWorks = false;
+        this.editTranslatedTitle = false;
+        this.externalIDNamesToDescriptions = [];//caches name->description lookup so we can display the description not the name after selection
+        this.externalIDTypeCache = [];//cache responses
+        this.generatingBibtex = false;
+        this.privacyHelp = {};
+        this.types = null;
     }
 
     addExternalIdentifier(): void {
@@ -159,28 +243,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.putWork();        
     };
 
-    addWorkModal(work): void {
-        this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.emails = data;
-                console.log('open add aff modal');
-                if( this.emailService.getEmailPrimary().verified ){
-                    this.worksService.notifyOther({ work:work });
-                    if(work == undefined) {
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false});
-                    } else {
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: true});
-                    }                    
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
+    addWorkModal(data): void {
         /*
         if(emailVerified === true 
             || configuration.showModalManualEditVerificationEnabled == false
@@ -363,6 +426,17 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     hideURLPopOver(id): void {       
         this.displayURLPopOver[id] = false;
+    };
+
+    isValidClass(cur): any {
+        var valid = true;
+        if (cur === undefined || cur == null) {
+            return '';
+        }
+        if ( ( cur.required && (cur.value == null || cur.value.trim() == '') ) || ( cur.errors !== undefined && cur.errors.length > 0 ) ){
+            valid = false;
+        }
+        return valid ? '' : 'text-error';
     };
 
     loadDetails(putCode, event): void {
@@ -782,10 +856,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.canReadFiles = false;
             $scope.combiningWorks = false;
             
-            $scope.contentCopy = {
-                titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
-                titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
-            };
+            
             
             
             
@@ -988,16 +1059,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
             
-            $scope.isValidClass = function (cur) {
-                var valid = true;
-                if (cur === undefined || cur == null) {
-                    return '';
-                }
-                if ( ( cur.required && (cur.value == null || cur.value.trim() == '') ) || ( cur.errors !== undefined && cur.errors.length > 0 ) ){
-                    valid = false;
-                }
-                return valid ? '' : 'text-error';
-            };
+            
 
             $scope.loadBibtexJs = function() {
                 try {

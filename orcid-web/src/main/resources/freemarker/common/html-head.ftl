@@ -176,6 +176,8 @@
         <#include "/includes/ng2_templates/websites-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/works-ng2-template.ftl">
         <#include "/includes/ng2_templates/workspace-summary-ng2-template.ftl">
         <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
     </#if>
