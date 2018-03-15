@@ -19,10 +19,10 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<#if isReminder?? && isReminder>
-    <#if isPrimary?? && isPrimary>
-        <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />
-    </#if>
+<#if isPrimary?? && isPrimary>
+    <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />
+</#if>
+<#if isReminder?? && isReminder>    
     <@emailMacros.msg "email.verify.click_link" />
 <#else>
     <@emailMacros.msg "email.verify.thank_you" />    
