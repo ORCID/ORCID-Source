@@ -43,6 +43,7 @@ import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
 
@@ -211,6 +212,16 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             throw new ExceedMaxNumberOfPutCodesException(MAX_BULK_PUT_CODES);
         }
         return putCodeArray;
+    }
+
+    @Override
+    public List<Work> findWorks(String orcid, List<WorkLastModifiedEntity> elements) {
+        List<Work> result = new ArrayList<Work>();
+        for(WorkLastModifiedEntity w : elements) {
+            WorkEntity entity = workEntityCacheManager.retrieveFullWork(orcid, w.getId(), w.getLastModified().getTime());
+            result.add(jpaJaxbWorkAdapter.toWork(entity));
+        }
+        return result;
     }
 
 }
