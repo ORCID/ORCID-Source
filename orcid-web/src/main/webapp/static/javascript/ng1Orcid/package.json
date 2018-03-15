@@ -18,6 +18,7 @@
     "angular-route": "^1.6.1",
     "angular-sanitize": "~1.6.4",
     "angular-ui-bootstrap": "~2.5.0",
+    "angular2-recaptcha": "^0.6.0",
     "core-js": "^2.4.1",
     "intl": "~1.2.5",
     "jquery": "^3.2.1",

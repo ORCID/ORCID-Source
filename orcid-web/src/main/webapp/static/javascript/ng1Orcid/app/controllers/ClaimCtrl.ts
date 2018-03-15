@@ -2,6 +2,7 @@
 
 declare var getBaseUri: any;
 declare var orcidGA: any;
+declare var orcidVar: any;
 
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
@@ -25,8 +26,11 @@ export const ClaimCtrl = angular.module('orcidApp').controller(
                     url: $scope.getClaimAjaxUrl(),
                     dataType: 'json',
                     success: function(data) {
-                       $scope.register = data;
-                    $scope.$apply();
+                        $scope.register = data;
+                        if (orcidVar.features['GDPR_UI'] == true){
+                            $scope.register.activitiesVisibilityDefault.visibility = null;
+                        }
+                        $scope.$apply();
                     }
                 }).fail(function(){
                     // something bad is happening!

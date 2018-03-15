@@ -32,6 +32,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.cache.GenericCacheManager;
+import org.orcid.core.cache.OrcidString;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
@@ -98,6 +100,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Resource
     private SalesForceDao salesForceDao;
+    
+    @Resource(name = "salesForceConnectionEntityCacheManager")
+    private GenericCacheManager<OrcidString, List<SalesForceConnectionEntity>> salesForceConnectionEntityCacheManager;
 
     @Resource
     private SalesForceConnectionDao salesForceConnectionDao;
@@ -244,13 +249,13 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public List<String> retrieveAccountIdsByOrcid(String orcid) {
-        List<SalesForceConnectionEntity> connections = salesForceConnectionDao.findByOrcid(orcid);
+        List<SalesForceConnectionEntity> connections = salesForceConnectionEntityCacheManager.retrieve(new OrcidString(orcid));
         return connections.stream().map(c -> c.getSalesForceAccountId()).collect(Collectors.toList());
     }
 
     @Override
     public String retrievePrimaryAccountIdByOrcid(String orcid) {
-        List<SalesForceConnectionEntity> connections = salesForceConnectionDao.findByOrcid(orcid);
+        List<SalesForceConnectionEntity> connections = salesForceConnectionEntityCacheManager.retrieve(new OrcidString(orcid));
         return connections.stream().filter(c -> c.isPrimary()).findFirst().get().getSalesForceAccountId();
     }
 

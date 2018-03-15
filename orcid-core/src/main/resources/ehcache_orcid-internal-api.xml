@@ -404,5 +404,11 @@
 	<cache name="identifier-types-map" maxElementsInMemory="500" eternal="true"
 		copyOnRead="true" copyOnWrite="true">
 		<persistence strategy="localTempSwap" />
-	</cache>						
+	</cache>	
+	
+	<cache name="sales-force-connection" maxElementsInMemory="2000" timeToLiveSeconds="86400"
+		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>					
 </ehcache>
