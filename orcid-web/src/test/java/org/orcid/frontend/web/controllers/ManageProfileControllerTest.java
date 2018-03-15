@@ -60,7 +60,6 @@ import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.jaxb.model.v3.dev1.common.CreditName;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.Biography;
 import org.orcid.jaxb.model.v3.dev1.record.Email;
@@ -944,8 +943,9 @@ public class ManageProfileControllerTest {
     }
     
     protected Authentication getAuthentication(String orcid) {
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null, OrcidType.USER);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, null, Arrays.asList(OrcidWebRole.ROLE_USER));
+        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null, roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, null, roles);
         auth.setDetails(details);
         return auth;
     }

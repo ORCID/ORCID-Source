@@ -249,7 +249,7 @@ kind of variable. This temp value is only used in this macro lib -->
 					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}
 						<ul>
 							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
-							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * &#40; &#41; ~ ` &nbsp; &#123; &#125; &#91; &#93; | \ &amp; _</li>
 						</ul>
 					</li>
 					<li>
@@ -444,7 +444,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </div>
 </#macro>
 
-<#macro privacyToggle3Ng2 angularModel publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle=""> 
+<#macro privacyToggle3Ng2 angularModel publicClick limitedClick privateClick elementId position="top" publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle=""> 
     <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
         <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
             <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a (click)="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
@@ -453,7 +453,7 @@ kind of variable. This temp value is only used in this macro lib -->
         </ul>
     </div>
     <div class="popover-help-container" >
-       <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[${elementId} +'-privacy'] == true ? 'block' : ''">
+       <div class="popover ${position} privacy-myorcid3" [ngClass]="commonSrvc.shownElement[${elementId} +'-privacy'] == true ? 'block' : ''">
             <div class="arrow"></div>
             <div class="popover-content">
                 <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
@@ -507,21 +507,21 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro checkFeatureStatus featureName enabled=true>
-	<#if enabled>
-		<#if RequestParameters[featureName]??>
-			<!-- fire off event feature enabled when the request param exists -->
-        	<script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>		
-			<#nested>
-		<#elseif FEATURE[featureName]>
-			<!-- fire off event feature enabled when it is an enabled feature -->
-        	<script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>		
-			<#nested>
-		</#if>
-	<#else>
-		<#if !RequestParameters[featureName]?? && !FEATURE[featureName]>
-			<!-- fire off event feature disabled -->
-        	<script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'disabled']);</script>
-			<#nested>
-		</#if>
-	</#if>
+    <#if enabled>
+        <#if RequestParameters[featureName]??>
+            <!-- fire off event feature enabled when the request param exists -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>      
+            <#nested>
+        <#elseif FEATURE[featureName]>
+            <!-- fire off event feature enabled when it is an enabled feature -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>      
+            <#nested>
+        </#if>
+    <#else>
+        <#if !RequestParameters[featureName]?? && !FEATURE[featureName]>
+            <!-- fire off event feature disabled -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'disabled']);</script>
+            <#nested>
+        </#if>
+    </#if>
 </#macro>

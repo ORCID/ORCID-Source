@@ -38,6 +38,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -87,6 +88,12 @@ public class ClaimController extends BaseController {
 
     @Resource
     private TransactionTemplate transactionTemplate;
+    
+    @RequestMapping(value = "/claimActivitiesVisibilityDefaultValidate.json", method = RequestMethod.POST)
+    public @ResponseBody Claim claimActivitiesVisibilityDefaultValidate(@RequestBody Claim claim) {
+        activitiesVisibilityDefaultValidate(claim.getActivitiesVisibilityDefault());
+        return claim;
+    }
 
     @RequestMapping(value = "/claimPasswordConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody Claim claimPasswordConfirmValidate(@RequestBody Claim claim) {

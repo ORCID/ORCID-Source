@@ -17,10 +17,10 @@
 package org.orcid.api.common.writer.rdf;
 
 import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
-import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
-import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 import static org.orcid.core.api.OrcidApiConstants.N_TRIPLES;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,24 +40,6 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.api.common.writer.rdf.vocabs.Geonames;
-import org.orcid.api.common.writer.rdf.vocabs.PAV;
-import org.orcid.api.common.writer.rdf.vocabs.PROV;
-import org.orcid.jaxb.model.message.Address;
-import org.orcid.jaxb.model.message.Biography;
-import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.ErrorDesc;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.springframework.beans.factory.annotation.Value;
-
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
@@ -66,43 +48,52 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResIterator;
+import org.orcid.api.common.writer.rdf.vocabs.Geonames;
+import org.orcid.api.common.writer.rdf.vocabs.PAV;
+import org.orcid.api.common.writer.rdf.vocabs.PROV;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.History;
+import org.orcid.jaxb.model.record_v2.Name;
+import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.springframework.beans.factory.annotation.Value;
 
-/**
- * @author Stian Soiland-Reyes
- * @author Sarven Capadisli
- */
+//Record
 @Provider
 @Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, JSON_LD, N_TRIPLES })
-public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
-	
-	/** 
-	 * Extension of Jena's outdated FOAF vocabulary
-	 *
-	 */
-	public static class FOAF extends org.apache.jena.sparql.vocabulary.FOAF {
+public class RDFMessageBodyWriterV2 implements MessageBodyWriter<Record>{
+    
+    /**
+     * Extension of Jena's outdated FOAF vocabulary
+     *
+     */
+    public static class FOAF extends org.apache.jena.sparql.vocabulary.FOAF {
 
-	    /** The RDF model that holds the vocabulary terms */
-	    private static Model m_model = ModelFactory.createDefaultModel();
-	    
-	    /** The namespace of the vocabulary as a string< */
-	    public static final String NS = "http://xmlns.com/foaf/0.1/";
-	    
-	    
-	    // The properties below are from:
-	    // FOAF Vocabulary Specification 0.99
-	    // http://xmlns.com/foaf/spec/20140114.html
-	    // .. which seems to be missing from Jena's FOAF
-	    
-	    /** Indicates an account held by this agent.< */
-	    public static final Property account = m_model.createProperty( NS + "account" );
-	    /** The given name of some person. */
-	    public static final Property givenName = m_model.createProperty( "http://xmlns.com/foaf/0.1/givenName" );
-	    /** The family_name of some person. */
-	    public static final Property familyName = m_model.createProperty( "http://xmlns.com/foaf/0.1/familyName" );
+        /** The RDF model that holds the vocabulary terms */
+        private static Model m_model = ModelFactory.createDefaultModel();
 
-	    
-		
-	}
+        /** The namespace of the vocabulary as a string< */
+        public static final String NS = "http://xmlns.com/foaf/0.1/";
+
+        // The properties below are from:
+        // FOAF Vocabulary Specification 0.99
+        // http://xmlns.com/foaf/spec/20140114.html
+        // .. which seems to be missing from Jena's FOAF
+
+        /** Indicates an account held by this agent.< */
+        public static final Property account = m_model.createProperty(NS + "account");
+        /** The given name of some person. */
+        public static final Property givenName = m_model.createProperty("http://xmlns.com/foaf/0.1/givenName");
+        /** The family_name of some person. */
+        public static final Property familyName = m_model.createProperty("http://xmlns.com/foaf/0.1/familyName");
+
+    }
+
     public static class LDP {
 
         /** The RDF model that holds the vocabulary terms */
@@ -111,8 +102,9 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         /** The namespace of the vocabulary as a string */
         public static final String NS = "http://www.w3.org/ns/ldp#";
 
-        public static final Property inbox = m_model.createProperty( NS + "inbox" );
+        public static final Property inbox = m_model.createProperty(NS + "inbox");
     }
+
     public static class AS {
 
         /** The RDF model that holds the vocabulary terms */
@@ -121,8 +113,9 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         /** The namespace of the vocabulary as a string */
         public static final String NS = "https://www.w3.org/ns/activitystreams#";
 
-        public static final Property outbox = m_model.createProperty( NS + "outbox" );
+        public static final Property outbox = m_model.createProperty(NS + "outbox");
     }
+
     public static class PIM {
 
         /** The RDF model that holds the vocabulary terms */
@@ -131,10 +124,11 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         /** The namespace of the vocabulary as a string */
         public static final String NS = "http://www.w3.org/ns/pim/space#";
 
-        public static final Property storage = m_model.createProperty( NS + "storage" );
+        public static final Property storage = m_model.createProperty(NS + "storage");
     }
+
     private static final String COUNTRIES_TTL = "countries.ttl";
-	private static final String MEMBER_API = "https://api.orcid.org/";
+    private static final String MEMBER_API = "https://api.orcid.org/";
     private static final String EN = "en";
 
     private static final List<String> URL_NAME_HOMEPAGE = Arrays.asList("homepage", "home", "home page", "personal", "personal homepage", "personal home page");
@@ -144,7 +138,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final String URL_NAME_OUTBOX = "outbox";
     private static final String URL_NAME_STORAGE = "storage";
 
-	private static OntModel countries;
+    private static OntModel countries;
 
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = "http://orcid.org";
@@ -152,108 +146,28 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     @Context
     private UriInfo uriInfo;
 
-    /**
-     * Ascertain if the MessageBodyWriter supports a particular type.
-     * 
-     * 
-     * @param type
-     *            the class of object that is to be written.
-     * @param genericType
-     *            the type of object to be written, obtained either by
-     *            reflection of a resource method return type or via inspection
-     *            of the returned instance.
-     *            {@link javax.ws.rs.core.GenericEntity} provides a way to
-     *            specify this information at runtime.
-     * @param annotations
-     *            an array of the annotations on the resource method that
-     *            returns the object.
-     * @param mediaType
-     *            the media type of the HTTP entity.
-     * @return true if the type is supported, otherwise false.
-     */
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return OrcidMessage.class.isAssignableFrom(type);
+        return Record.class.isAssignableFrom(type);
     }
 
-    /**
-     * Called before <code>writeTo</code> to ascertain the length in bytes of
-     * the serialized form of <code>t</code>. A non-negative return value is
-     * used in a HTTP <code>Content-Length</code> header.
-     * 
-     * @param message
-     *            the instance to write
-     * @param type
-     *            the class of object that is to be written.
-     * @param genericType
-     *            the type of object to be written, obtained either by
-     *            reflection of a resource method return type or by inspection
-     *            of the returned instance.
-     *            {@link javax.ws.rs.core.GenericEntity} provides a way to
-     *            specify this information at runtime.
-     * @param annotations
-     *            an array of the annotations on the resource method that
-     *            returns the object.
-     * @param mediaType
-     *            the media type of the HTTP entity.
-     * @return length in bytes or -1 if the length cannot be determined in
-     *         advance
-     */
     @Override
-    public long getSize(OrcidMessage message, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        // TODO: Can we calculate the size in advance?
-        // It would mean buffering up the actual RDF
+    public long getSize(Record t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return -1;
     }
 
-    /**
-     * Write a type to an HTTP response. The response header map is mutable but
-     * any changes must be made before writing to the output stream since the
-     * headers will be flushed prior to writing the response body.
-     * 
-     * @param message
-     *            the instance to write.
-     * @param type
-     *            the class of object that is to be written.
-     * @param genericType
-     *            the type of object to be written, obtained either by
-     *            reflection of a resource method return type or by inspection
-     *            of the returned instance.
-     *            {@link javax.ws.rs.core.GenericEntity} provides a way to
-     *            specify this information at runtime.
-     * @param annotations
-     *            an array of the annotations on the resource method that
-     *            returns the object.
-     * @param mediaType
-     *            the media type of the HTTP entity.
-     * @param httpHeaders
-     *            a mutable map of the HTTP response headers.
-     * @param entityStream
-     *            the {@link java.io.OutputStream} for the HTTP entity. The
-     *            implementation should not close the output stream.
-     * @throws java.io.IOException
-     *             if an IO error arises
-     * @throws javax.ws.rs.WebApplicationException
-     *             if a specific HTTP error response needs to be produced. Only
-     *             effective if thrown prior to the response being committed.
-     */
     @Override
-    public void writeTo(OrcidMessage xml, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders,
+    public void writeTo(Record record, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders,
             OutputStream entityStream) throws IOException, WebApplicationException {
 
         OntModel m = getOntModel();
 
-        if (xml.getErrorDesc() != null) {
-            describeError(xml.getErrorDesc(), m);
-        }
-
-        OrcidProfile orcidProfile = xml.getOrcidProfile();
         // System.out.println(httpHeaders);
         Individual profileDoc = null;
-        if (orcidProfile != null) {
-            Individual person = describePerson(orcidProfile, m);
+        if (record != null) {
+            Individual person = describePerson(record, m);
             if (person != null) {
-                profileDoc = describeAccount(orcidProfile, m, person);
+                profileDoc = describeAccount(record, m, person);
             }
         }
         MediaType jsonLd = new MediaType("application", "ld+json");
@@ -261,33 +175,26 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         MediaType rdfXml = new MediaType("application", "rdf+xml");
         String base = null;
         if (getUriInfo() != null) {
-        	getUriInfo().getAbsolutePath().toASCIIString();
+                getUriInfo().getAbsolutePath().toASCIIString();
         }
         if (mediaType.isCompatible(nTriples)) { 
-        	// NOTE: N-Triples requires absolute URIs
-        	m.write(entityStream, "N-TRIPLES");
+                // NOTE: N-Triples requires absolute URIs
+                m.write(entityStream, "N-TRIPLES");
         }
         else if (mediaType.isCompatible(jsonLd)) {
-        	m.write(entityStream, "JSON-LD", base);
+                m.write(entityStream, "JSON-LD", base);
         }
         else if (mediaType.isCompatible(rdfXml)) {
             m.write(entityStream, "RDF/XML", base);        
         } else {
-        	// Turtle is the safest default        	
+                // Turtle is the safest default         
             m.write(entityStream, "TURTLE", base);            
         }
     }
 
-    protected void describeError(ErrorDesc errorDesc, OntModel m) {
-        String error = errorDesc.getContent();
-        Individual root = m.createIndividual(m.createResource());
-        root.setLabel("Error", EN);
-        root.setComment(error, EN);
-    }
-
-    private Individual describeAccount(OrcidProfile orcidProfile, OntModel m, Individual person) {
-        String orcidURI = orcidProfile.getOrcidIdentifier().getUri();
-		String orcidPublicationsUri = orcidURI + "#workspace-works";
+    private Individual describeAccount(Record record, OntModel m, Individual person) {
+        String orcidURI = record.getOrcidIdentifier().getUri();
+                String orcidPublicationsUri = orcidURI + "#workspace-works";
         Individual publications = m.createIndividual(orcidPublicationsUri, FOAF.Document);
 
         // list of publications
@@ -304,7 +211,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             webSite = m.createIndividual(baseUri, null);
             account.addProperty(FOAF.accountServiceHomepage, webSite);
         }
-        String orcId = orcidProfile.getOrcidIdentifier().getPath();
+        String orcId = record.getOrcidIdentifier().getPath();
         account.addProperty(FOAF.accountName, orcId);
         account.addLabel(orcId, null);
 
@@ -322,20 +229,20 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         
         String profileUri;
         if (getUriInfo() != null) {
-        	profileUri = getUriInfo().getAbsolutePath().toASCIIString();
+                profileUri = getUriInfo().getAbsolutePath().toASCIIString();
         } else { 
-        	// Some kind of fallback, although the PersonalProfiledocument should be an 
-        	// information resource without #anchor
-        	profileUri = orcidURI + "#personalProfileDocument";
+                // Some kind of fallback, although the PersonalProfiledocument should be an 
+                // information resource without #anchor
+                profileUri = orcidURI + "#personalProfileDocument";
         }
         Individual profileDoc = m.createIndividual(profileUri, 
-        		FOAF.PersonalProfileDocument);
+                        FOAF.PersonalProfileDocument);
         profileDoc.addProperty(FOAF.primaryTopic, person);
-        OrcidHistory history = orcidProfile.getOrcidHistory();
+        History history = record.getHistory();
         if (history != null) {
-            if (history.isClaimed().booleanValue()) {
+            if (history.getClaimed()) {
                 // Set account as PersonalProfileDocument
-            	profileDoc.addProperty(FOAF.maker, person);
+                profileDoc.addProperty(FOAF.maker, person);
 
             }
             // Who made the profile?
@@ -343,25 +250,25 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             case DIRECT:
             case MEMBER_REFERRED:
             case WEBSITE:
-            	profileDoc.addProperty(PAV.createdBy, person);
-            	profileDoc.addProperty(PROV.wasAttributedTo, person);
+                profileDoc.addProperty(PAV.createdBy, person);
+                profileDoc.addProperty(PROV.wasAttributedTo, person);
                 if (webSite != null && 
-                		(history.getCreationMethod() == CreationMethod.WEBSITE || history.getCreationMethod() == CreationMethod.DIRECT)) {
-                	profileDoc.addProperty(PAV.createdWith, webSite);
+                                (history.getCreationMethod() == CreationMethod.WEBSITE || history.getCreationMethod() == CreationMethod.DIRECT)) {
+                        profileDoc.addProperty(PAV.createdWith, webSite);
                 }
                 break;
             case API:
                 Individual api = m.createIndividual(MEMBER_API, PROV.SoftwareAgent);
                 profileDoc.addProperty(PAV.importedBy, api);
 
-                if (history.isClaimed().booleanValue()) {
-                	profileDoc.addProperty(PAV.curatedBy, person);
+                if (history.getClaimed()) {
+                        profileDoc.addProperty(PAV.curatedBy, person);
                 }
 
                 break;
             default:
                 // Some unknown agent!
-            	profileDoc.addProperty(PAV.createdWith, m.createIndividual(null, PROV.Agent));
+                profileDoc.addProperty(PAV.createdWith, m.createIndividual(null, PROV.Agent));
             }
 
             if (history.getLastModifiedDate() != null) {
@@ -370,13 +277,13 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
                 profileDoc.addLiteral(PROV.generatedAtTime, when);
             }
             if (history.getSubmissionDate() != null) {
-            	profileDoc.addLiteral(PAV.createdOn, calendarAsLiteral(history.getSubmissionDate().getValue(), m));
+                profileDoc.addLiteral(PAV.createdOn, calendarAsLiteral(history.getSubmissionDate().getValue(), m));
             }
             if (history.getCompletionDate() != null) {
-            	profileDoc.addLiteral(PAV.contributedOn, calendarAsLiteral(history.getCompletionDate().getValue(), m));
+                profileDoc.addLiteral(PAV.contributedOn, calendarAsLiteral(history.getCompletionDate().getValue(), m));
             }
             if (history.getDeactivationDate() != null) {
-            	profileDoc.addLiteral(PROV.invalidatedAtTime, calendarAsLiteral(history.getDeactivationDate().getValue(), m));
+                profileDoc.addLiteral(PROV.invalidatedAtTime, calendarAsLiteral(history.getDeactivationDate().getValue(), m));
             }
 
         }
@@ -388,33 +295,29 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         return m.createTypedLiteral(cal.toXMLFormat(), XSDDatatype.XSDdateTime);
     }
 
-    private Individual describePerson(OrcidProfile orcidProfile, OntModel m) {
-        String orcidUri = orcidProfile.getOrcidIdentifier().getUri();
+    private Individual describePerson(Record record, OntModel m) {
+        String orcidUri = record.getOrcidIdentifier().getUri();
         Individual person = m.createIndividual(orcidUri, FOAF.Person);
         person.addRDFType(PROV.Person);
 
-        if (orcidProfile.getOrcidBio() == null) {
-            return person;
-        }
-        OrcidBio orcidBio = orcidProfile.getOrcidBio();
-        if (orcidBio == null) {
+        if (record.getPerson() == null) {
             return person;
         }
 
-        describePersonalDetails(orcidBio.getPersonalDetails(), person, m);
-        describeContactDetails(orcidBio.getContactDetails(), person, m);
-        describeBiography(orcidBio.getBiography(), person, m);
-        describeResearcherUrls(orcidBio.getResearcherUrls(), person, m);
+        describePersonalDetails(record.getPerson().getName(), person, m);
+        describeContactDetails(record.getPerson(), person, m);
+        describeBiography(record.getPerson().getBiography(), person, m);
+        describeResearcherUrls(record.getPerson().getResearcherUrls(), person, m);
         return person;
     }
 
-    private void describeResearcherUrls(ResearcherUrls researcherUrls, Individual person, OntModel m) {
-        if (researcherUrls == null || researcherUrls.getResearcherUrl() == null) {
+    private void describeResearcherUrls(org.orcid.jaxb.model.record_v2.ResearcherUrls researcherUrls, Individual person, OntModel m) {
+        if (researcherUrls == null || researcherUrls.getResearcherUrls() == null) {
             return;
         }
-        for (ResearcherUrl url : researcherUrls.getResearcherUrl()) {
+        for (ResearcherUrl url : researcherUrls.getResearcherUrls()) {
             Individual page = m.createIndividual(url.getUrl().getValue(), null);
-            String urlName = getUrlName(url);
+            String urlName = url.getUrlName();
             if (isHomePage(urlName)) {
                 person.addProperty(FOAF.homepage, page);
             } else if (isFoaf(urlName)) {
@@ -445,25 +348,18 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         }
     }
 
-    private String getUrlName(ResearcherUrl url) {
-        if (url.getUrlName() == null) {
-            return null;
-        }
-        return url.getUrlName().getContent().toLowerCase();
-    }
-
     private boolean isFoaf(String urlName) {
         if (urlName == null) {
             return false;
         }
-        return urlName.equals(URL_NAME_FOAF);
+        return urlName.equalsIgnoreCase(URL_NAME_FOAF);
     }
 
     private boolean isWebID(String urlName) {
         if (urlName == null) {
             return false;
         }
-        return urlName.equals(URL_NAME_WEBID);
+        return urlName.toLowerCase().equals(URL_NAME_WEBID);
     }
 
     private boolean isInbox(String urlName) {
@@ -499,31 +395,32 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         return URL_NAME_HOMEPAGE.contains(urlName);
     }
 
-    private void describeBiography(Biography biography, Individual person, OntModel m) {
-        if (biography != null) {
+    private void describeBiography(org.orcid.jaxb.model.record_v2.Biography biography, Individual person, OntModel m) {
+        if (biography != null && biography.getContent()!=null) {
             // FIXME: Which language is the biography written in? Can't assume
             // EN
             person.addProperty(FOAF.plan, biography.getContent());
         }
     }
 
-    private void describeContactDetails(ContactDetails contactDetails, Individual person, OntModel m) {
-        if (contactDetails == null) {
+    private void describeContactDetails(Person orcidPerson, Individual person, OntModel m) {
+        if (orcidPerson == null) {
             return;
         }
 
-        List<Email> emails = contactDetails.getEmail();
+        Emails emails = orcidPerson.getEmails();
         if (emails != null) {
-            for (Email email : emails) {
+            for (Email email : emails.getEmails()) {
                 if (email.isCurrent()) {
 
-                    Individual mbox = m.createIndividual("mailto:" + email.getValue(), null);
+                    Individual mbox = m.createIndividual("mailto:" + email.getEmail(), null);
                     person.addProperty(FOAF.mbox, mbox);
                 }
             }
         }
 
-        Address addr = contactDetails.getAddress();
+        Addresses addresses = orcidPerson.getAddresses();
+        Address addr = (addresses != null && addresses.getAddress().size()>0)?addresses.getAddress().get(0):null;
         if (addr != null) {
             if (addr.getCountry() != null) {
                 String countryCode = addr.getCountry().getValue().name();
@@ -534,7 +431,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
                 Individual country = getCountry(countryCode);                
                 if (country != null) {
-                	country = addToModel(position.getOntModel(), country);
+                        country = addToModel(position.getOntModel(), country);
                     position.addProperty(Geonames.parentCountry, country);
                 }
 
@@ -560,17 +457,14 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
     }
 
-    private void describePersonalDetails(PersonalDetails personalDetails, Individual person, OntModel m) {
-        if (personalDetails == null) {
-            return;
-        }
-
-        if (personalDetails.getCreditName() != null) {
+    private void describePersonalDetails(Name name, Individual person, OntModel m) {
+        
+        if (name.getCreditName() != null) {
             // User has provided full name
-            String creditName = personalDetails.getCreditName().getContent();
+            String creditName = name.getCreditName().getContent();
             person.addProperty(FOAF.name, creditName);
             person.addLabel(creditName, null);
-        } else if (personalDetails.getGivenNames() != null && personalDetails.getFamilyName() != null) {
+        } else if (name.getGivenNames() != null && name.getFamilyName() != null) {
             //@formatter:off
             // Naive fallback assuming givenNames ~= first name and familyName ~= lastName
             // See http://www.w3.org/International/questions/qa-personal-names for further
@@ -579,21 +473,21 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
             // NOTE: ORCID gui is westernized asking for "First name" and
             // "Last name" and assuming the above mapping
-            String label = personalDetails.getGivenNames().getContent() + " " + personalDetails.getFamilyName().getContent();
+            String label = name.getGivenNames().getContent() + " " + name.getFamilyName().getContent();
             person.addLabel(label, null);
         }
 
-        if (personalDetails.getGivenNames() != null) {
-            person.addProperty(FOAF.givenName, personalDetails.getGivenNames().getContent());
+        if (name.getGivenNames() != null) {
+            person.addProperty(FOAF.givenName, name.getGivenNames().getContent());
         }
-        if (personalDetails.getFamilyName() != null) {
-            person.addProperty(FOAF.familyName, personalDetails.getFamilyName().getContent());
+        if (name.getFamilyName() != null) {
+            person.addProperty(FOAF.familyName, name.getFamilyName().getContent());
         }
 
     }
 
     protected OntModel getOntModel() {
-    	
+        
         OntModel ontModel = ModelFactory.createOntologyModel();
         ontModel.setNsPrefix("foaf", FOAF.NS);
         ontModel.setNsPrefix("prov", PROV.NS);
@@ -604,15 +498,15 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     protected OntModel getCountries() {
-    	if (countries != null) { 
-    		// Check for a static cache
-    		return countries;
-    	}
-    	
+        if (countries != null) { 
+                // Check for a static cache
+                return countries;
+        }
+        
         // Load list of countries
         InputStream countriesStream = getClass().getResourceAsStream(COUNTRIES_TTL);
         if (countriesStream == null) { 
-        	throw new IllegalStateException("Can't find country resource on classpath: " + COUNTRIES_TTL);
+                throw new IllegalStateException("Can't find country resource on classpath: " + COUNTRIES_TTL);
         }
         OntModel ontModel = ModelFactory.createOntologyModel();
         ontModel.read(countriesStream, "http://example.com/", "TURTLE");

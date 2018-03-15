@@ -174,6 +174,8 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                         dataType: 'json',
                         headers: { Accept: 'application/json'},
                         success: function(data) {
+                            console.log(data.employments['employment-summary'].length);
+                            console.log(data.educations['education-summary'].length);
                             if(data.employments){
                                 for(var i in data.employments['employment-summary']){
                                     if (result['affiliations'].indexOf(data.employments['employment-summary'][i]['organization']['name']) < 0){
@@ -194,8 +196,11 @@ export const SearchCtrlV2 = angular.module('orcidApp').controller(
                         console.log("error getting name for " + orcid);
                     });  
                 } 
-        
-                return result['affiliations'].join(", "); 
+                if(result['affiliations'].length > 0){
+                    return result['affiliations'].join(", "); 
+                } else {
+                    return "";
+                }
             };
 
             $scope.isValid = function(){

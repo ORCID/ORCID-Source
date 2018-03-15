@@ -102,5 +102,12 @@ public interface WorkManager extends WorkManagerReadOnly {
      * */
     Work updateWork(String orcid, Work work, boolean isApiRequest); 
     
-    boolean checkSourceAndRemoveWork(String orcid, Long workId);    
+    boolean checkSourceAndRemoveWork(String orcid, Long workId);
+
+    /**
+     * Groups the collection of works matching the specified work ID list
+     * 
+     * @param workIds
+     */
+    void createNewWorkGroup(List<Long> workIds, String orcid);    
 }
