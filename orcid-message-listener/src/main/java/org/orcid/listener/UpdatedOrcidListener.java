@@ -19,12 +19,13 @@ package org.orcid.listener;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  * This class forms the basis of the message drive data dump and SOLR index
@@ -42,17 +43,10 @@ import org.springframework.stereotype.Component;
  * @author tom
  *
  */
-@Component
-public class UpdatedOrcidListener {
+public class UpdatedOrcidListener extends BaseListener implements MessageListener {
 
     Logger LOG = LoggerFactory.getLogger(UpdatedOrcidListener.class);
 
-    @Value("${org.orcid.message-listener.index.activities:false}")
-    private boolean indexActivities;
-
-    @Value("${org.orcid.message-listener.index.summaries:false}")
-    private boolean indexSummaries;
-    
     @Value("${org.orcid.persistence.messaging.topic.updateOrcids}")
     private String updateOrcidsTopicName;
 
@@ -63,13 +57,17 @@ public class UpdatedOrcidListener {
      * Queues incoming messages for processing, eventually handled by
      * UpdatedOrcidWorker
      * 
-     * @param map
+     * @param message
      */
-    public void processMessage(final Map<String, String> map) {
-        LastModifiedMessage message = new LastModifiedMessage(map);
-        LOG.info("Recieved " + updateOrcidsTopicName + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
-        LastModifiedMessage existingMessage = cacheQueue.getCache().getIfPresent(message.getOrcid());
-        if (existingMessage == null || message.getLastUpdated().after(existingMessage.getLastUpdated()))
-            cacheQueue.getCache().put(message.getOrcid(), message);
+    @Override
+    public void onMessage(Message message) {
+        Map<String, String> map = getMapFromMessage(message);
+        LastModifiedMessage lastModifiedMessage = new LastModifiedMessage(map);
+        LOG.info("Recieved " + updateOrcidsTopicName + " message for orcid " + lastModifiedMessage.getOrcid() + " " + lastModifiedMessage.getLastUpdated());
+        LastModifiedMessage existingMessage = cacheQueue.getCache().getIfPresent(lastModifiedMessage.getOrcid());
+        if (existingMessage == null || lastModifiedMessage.getLastUpdated().after(existingMessage.getLastUpdated())) {
+            cacheQueue.getCache().put(lastModifiedMessage.getOrcid(), lastModifiedMessage);
+        }
     }
+    
 }
