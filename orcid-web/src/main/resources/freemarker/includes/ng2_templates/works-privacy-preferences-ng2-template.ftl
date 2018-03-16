@@ -61,9 +61,9 @@
             <br>
             <@orcid.privacyToggle3Ng2
             angularModel="this.prefs['default_visibility']"
-            publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
-            limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
-            privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
+            publicClick="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'PUBLIC', $event)" 
+            limitedClick="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'LIMITED', $event)" 
+            privateClick="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'PRIVATE', $event)" 
             elementId="workPrivHelp" /> 
         </div>
     </div>
