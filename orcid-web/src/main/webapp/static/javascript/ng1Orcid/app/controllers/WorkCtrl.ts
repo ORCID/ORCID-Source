@@ -374,6 +374,27 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                     }
                 }
             };
+            
+            $scope.resolveUrl = function(extId) {
+                //request server constructs URL and resolves it.
+                //On success, use the returned URL.  On fail show error.  If server doesn't attempt resolution, do nothing.
+                if (extId && extId.workExternalIdentifierId.value && extId.workExternalIdentifierType.value){
+                    $timeout(function() { 
+                        $.ajax({
+                            url: getBaseUri() + '/works/id/'+extId.workExternalIdentifierType.value,
+                            type: 'GET',
+                            data:{value:extId.workExternalIdentifierId.value},
+                            success: function(data) {
+                                for (var key in data) {
+                                    console.log(data);
+                                }
+                            }
+                        }).fail(function() {
+                            console.log("id resolve error");
+                        });
+                    });
+                }
+            };
 
             $scope.formatExternalIDType = function(model) {
                 if (!model){
