@@ -186,9 +186,9 @@ public class BlackBoxBase {
     
     protected static WebDriver webDriver = BlackBoxWebDriver.getWebDriver();
     
-    public void adminSignIn(String adminUserName, String adminPassword) {
-        webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        webDriver.get(this.getWebBaseUrl() + "/admin-actions");
+    public static void adminSignIn(String adminUserName, String adminPassword) {
+        webDriver.get(getWebBaseUri() + "/userStatus.json?logUserOut=true");
+        webDriver.get(getWebBaseUri() + "/admin-actions");
         signIn(webDriver, adminUserName, adminPassword);
         dismissVerifyEmailModal();
     }
@@ -201,16 +201,16 @@ public class BlackBoxBase {
      * @param f
      * @param value
      */
-    public void toggleFeature(String adminUserName, String adminPassword, Features f, boolean value){
+    public static void toggleFeature(String adminUserName, String adminPassword, Features f, boolean value){
         adminSignIn(adminUserName, adminPassword);
-        webDriver.get(this.getWebBaseUrl() + "/togglz/edit?f="+f.name());
+        webDriver.get(getWebBaseUri() + "/togglz/edit?f="+f.name());
         boolean state = webDriver.findElement(By.id("enabled")).isSelected();
         if (state == value)
             return;
         webDriver.findElement(By.id("enabled")).click();
         webDriver.findElement(By.id("enabled")).submit();
     }
-    
+
     /** 
      * Returns current state of toggle feature
      * @param adminUserName
@@ -218,9 +218,9 @@ public class BlackBoxBase {
      * @param feature
      * @param value
      */
-    public boolean getTogglzFeatureState(String adminUserName, String adminPassword, Features feature) {
+    public static boolean getTogglzFeatureState(String adminUserName, String adminPassword, Features feature) {
         adminSignIn(adminUserName, adminPassword);
-        webDriver.get(this.getWebBaseUrl() + "/togglz/edit?f=" + feature.name());
+        webDriver.get(getWebBaseUri() + "/togglz/edit?f=" + feature.name());
         return webDriver.findElement(By.id("enabled")).isSelected();
     }
 
@@ -282,7 +282,7 @@ public class BlackBoxBase {
     }
     
     public static void changeDefaultUserVisibility(WebDriver webDriver, String visibility, boolean logUserOut) {
-        String baseUri = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String baseUri = getWebBaseUri();
         String userOrcid = BBBUtil.getProperty("org.orcid.web.testUser1.username");
         String userPassword = BBBUtil.getProperty("org.orcid.web.testUser1.password");
         
@@ -380,7 +380,7 @@ public class BlackBoxBase {
     }
     
     public static void showMyOrcidPage() {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String baseUrl = getWebBaseUri();
         webDriver.get(baseUrl + "/my-orcid");
         BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
@@ -394,14 +394,14 @@ public class BlackBoxBase {
     }
     
     public static void signin(String userName, String password) {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");        
+        String baseUrl = getWebBaseUri();        
         webDriver.get(baseUrl + "/signin");
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         signIn(webDriver, userName, password);
     }
 
     public static void signout() {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String baseUrl = getWebBaseUri();
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
     }
     
@@ -1093,7 +1093,7 @@ public class BlackBoxBase {
      * ACCOUNT SETTINGS PAGE
      * */
     public static void showAccountSettingsPage() {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String baseUrl = getWebBaseUri();
         webDriver.get(baseUrl + "/account");
         BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
@@ -1400,12 +1400,16 @@ public class BlackBoxBase {
         return Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
     }
     
-    public String getAdminUserName() {
-        return adminUserName;
+    private static String getWebBaseUri() {
+        return BBBUtil.getProperty("org.orcid.web.baseUri");
     }
 
-    public String getAdminPassword() {
-        return adminPassword;
+    public static String getAdminUserName() {
+        return BBBUtil.getProperty("org.orcid.web.adminUser.username");
+    }
+
+    public static String getAdminPassword() {
+        return BBBUtil.getProperty("org.orcid.web.adminUser.password");
     }
 
     public String getAdminOrcidId() {
