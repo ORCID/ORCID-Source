@@ -235,10 +235,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private String baseUri = null;
     
     @Value("${org.orcid.persistence.messaging.topic.reindex}")
-    private static String reindexTopicName;
+    private String reindexTopicName;
     
     @Value("${org.orcid.persistence.messaging.topic.updateOrcids}")
-    private static String updateOrcidsTopicName;
+    private String updateOrcidsTopicName;
     
     private ConcurrentMap<String, Object> addWorksLock = new ConcurrentHashMap<>();
     
