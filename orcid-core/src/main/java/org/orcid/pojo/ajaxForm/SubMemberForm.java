@@ -122,7 +122,11 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
         Member member = new Member();
         member.setConsortiumLeadId(getParentAccountId());
         String trimmedName = getName().getValue().trim();
-        member.setName(trimmedName.substring(0, 41));
+        if (trimmedName.length() > 41) {
+            member.setName(trimmedName.substring(0, 41));
+        } else {
+            member.setName(trimmedName);
+        }
         member.setPublicDisplayName(trimmedName);
         try {
             String websiteValue = getWebsite().getValue();
