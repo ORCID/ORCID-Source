@@ -227,55 +227,51 @@
                             <span><strong><@orcid.msg 'manual_work_form_contents.titleexternalidentifier'/></strong></span>
                         </div>
                             <div ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers"> 
-                                <@orcid.checkFeatureStatus featureName='EX_ID_RESOLVER' enabled=false>
-                                <p>Hello, this is the not enabled html block</p>
-	                                <div class="form-group">
-	                                    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
-	                                    <div class="relative">
-	                                        
-	                                        <input id="worksIdType{{$index}}" class="form-control" type="text" 
-	                                        ng-model="workExternalIdentifier.workExternalIdentifierType.value" 
-	                                        placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" 
-	                                        uib-typeahead="eid.name as eid.description for eid in getExternalIDTypes($viewValue)" 
-	                                        typeahead-loading="loading" 
-	                                        typeahead-min-length="0" 
-	                                        typeahead-wait-ms="300" 
-	                                        typeahead-on-select="resolveUrl(workExternalIdentifier);$scope.$apply();"
-	                                        typeahead-input-formatter="formatExternalIDType($model)"
-	                                        typeahead-show-hint="true"
-	                                        typeahead-highlight="false"
-	                                        typeahead-editable="false"
-	                                        />
-	                                        
-	                                        <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
-	                                            <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
-	                                        </span>
-	                                    </div>
-	                                </div>
-	
-	                                <div class="form-group">
-	                                    <label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
-	                                    <div class="relative">
-	                                        <input id="worksIdValue{{$index}}" name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="resolveUrl(workExternalIdentifier)" ng-model-onblur/>
-	                                        <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
-	                                            <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
-	                                        </span>
-	                                    </div>                      
-	                                </div>      
-	                                <div class="form-group">
-	                                    <label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
-	                                    <div class="relative">
-	                                        <input id="worksIdUrl{{$index}}"name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
-	                                        <span class="orcid-error" ng-show="workExternalIdentifier.url.errors.length > 0">
-	                                            <div ng-repeat='error in workExternalIdentifier.url.errors' ng-bind-html="error"></div>
-	                                        </span>
-	                                    </div>
-	                                </div>   
-                                </@orcid.checkFeatureStatus>
-                                <@orcid.checkFeatureStatus featureName='EX_ID_RESOLVER'> 
-                                <p>hello, this is the enabled feature!</p>
-                                </@orcid.checkFeatureStatus>
-                                               
+                                <div class="form-group">
+                                    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
+                                    <div class="relative">
+                                        
+                                        <input id="worksIdType{{$index}}" class="form-control" type="text" 
+                                        ng-model="workExternalIdentifier.workExternalIdentifierType.value" 
+                                        placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" 
+                                        uib-typeahead="eid.name as eid.description for eid in getExternalIDTypes($viewValue)" 
+                                        typeahead-loading="loading" 
+                                        typeahead-min-length="0" 
+                                        typeahead-wait-ms="300" 
+                                        typeahead-on-select="changeIdType(workExternalIdentifier);$scope.$apply();"
+                                        typeahead-input-formatter="formatExternalIDType($model)"
+                                        typeahead-show-hint="true"
+                                        typeahead-highlight="false"
+                                        typeahead-editable="false"
+                                        />
+                                        
+                                        <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
+                                            <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
+                                    <div class="relative">
+                                        <input id="worksIdValue{{$index}}" name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="fillUrl(workExternalIdentifier)" ng-model-onblur/>
+                                        <span ng-show="workExternalIdentifier.resolvingId">
+                                            <i class="glyphicon glyphicon-refresh spin green"></i>
+                                        </span>
+                                        <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
+                                            <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
+                                        </span>
+                                    </div>                      
+                                </div>      
+                                <div class="form-group">
+                                    <label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
+                                    <div class="relative">
+                                        <input id="worksIdUrl{{$index}}"name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
+                                        <span class="orcid-error" ng-show="workExternalIdentifier.url.errors.length > 0">
+                                            <div ng-repeat='error in workExternalIdentifier.url.errors' ng-bind-html="error"></div>
+                                        </span>
+                                    </div>
+                                </div>     
                                 <div class="bottomBuffer">
                                     <label><@orcid.msg 'common.ext_id.relationship'/>
                                         <div class="popover-help-container">

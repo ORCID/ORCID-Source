@@ -355,44 +355,64 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 });        
             };
 
+            $scope.changeIdType = function(extId){
+                if (orcidVar.features['EX_ID_RESOLVER'] == true){
+                    if(extId.url == null) {
+                        extId.url = {value:""};
+                    }else{
+                        extId.url.value="";                        
+                    }
+                }
+                $scope.fillUrl(extId);
+            }
+            
             //--typeahead
             //populates the external id URL based on type and value.
             $scope.fillUrl = function(extId) {
-                var url;
-                if(extId != null) {
-                    url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
-                    /* Code to fetch from DB...
-                    if (extId.workExternalIdentifierType.value){
-                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
-                        if (url && extId.workExternalIdentifierId.value)
-                            url += extId.workExternalIdentifierId.value;
-                    }*/
-                    if(extId.url == null) {
-                        extId.url = {value:url};
-                    }else{
-                        extId.url.value=url;                        
-                    }
-                }
-            };
-            
-            $scope.resolveUrl = function(extId) {
-                //request server constructs URL and resolves it.
-                //On success, use the returned URL.  On fail show error.  If server doesn't attempt resolution, do nothing.
-                if (extId && extId.workExternalIdentifierId.value && extId.workExternalIdentifierType.value){
-                    $timeout(function() { 
-                        $.ajax({
-                            url: getBaseUri() + '/works/id/'+extId.workExternalIdentifierType.value,
-                            type: 'GET',
-                            data:{value:extId.workExternalIdentifierId.value},
-                            success: function(data) {
-                                for (var key in data) {
-                                    console.log(data);
+                //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
+                if (orcidVar.features['EX_ID_RESOLVER'] == true){
+                    if (extId && extId.workExternalIdentifierId.value && extId.workExternalIdentifierType.value){
+                        $timeout(function() {
+                            extId.resolvingId = true;
+                            $.ajax({
+                                url: getBaseUri() + '/works/id/'+extId.workExternalIdentifierType.value,
+                                type: 'GET',
+                                data:{value:extId.workExternalIdentifierId.value},
+                                success: function(data) {
+                                    if (data.resolved){
+                                        if(extId.url == null) {
+                                            extId.url = {value:data.resolvedUrl};
+                                        }else{
+                                            extId.url.value=data.resolvedUrl;                        
+                                        }
+                                        extId.workExternalIdentifierId.errors = [];
+                                    } else if (data.attemptedResolution){
+                                        if(extId.url == null) {
+                                            extId.url = {value:""};
+                                        }else{
+                                            extId.url.value="";                        
+                                        }
+                                        extId.workExternalIdentifierId.errors = [];
+                                        extId.workExternalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
+                                    }
+                                    extId.resolvingId = false;
                                 }
-                            }
-                        }).fail(function() {
-                            console.log("id resolve error");
+                            }).fail(function() {
+                                console.log("id resolve error");
+                                extId.resolvingId = false;
+                            });
                         });
-                    });
+                    }
+                }else{
+                    var url;
+                    if(extId != null) {
+                        url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+                        if(extId.url == null) {
+                            extId.url = {value:url};
+                        }else{
+                            extId.url.value=url;                        
+                        }
+                    }
                 }
             };
 
@@ -671,6 +691,13 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                     $scope.editWork = data;                    
                                     commonSrvc.copyErrorsLeft($scope.editWork, data);
                                     $scope.addingWork = false;
+                                    //re-populate any id resolution errors.
+                                    //do it here because they're by-passable
+                                    if (orcidVar.features['EX_ID_RESOLVER'] == true){
+                                        for (var extId in $scope.editWork.workExternalIdentifiers){
+                                            $scope.fillUrl($scope.editWork.workExternalIdentifiers[extId]);                                                                                    
+                                        }
+                                    }
                                 });
                                 // make sure colorbox is shown if there are errors
                                 if (!($("#colorbox").css("display")=="block")) {
