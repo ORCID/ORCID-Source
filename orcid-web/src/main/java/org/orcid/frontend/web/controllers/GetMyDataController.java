@@ -54,9 +54,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller("getAllMyDataController")
+@Controller("getMyDataController")
 @RequestMapping(value = { "/get-my-data" })
-public class GetAllMyDataController extends BaseController {
+public class GetMyDataController extends BaseController {
 
     private static final String DISTINCTIONS_DIR_NAME = "affiliations/distinctions";
     private static final String EDUCATIONS_DIR_NAME = "affiliations/educations";
@@ -71,7 +71,7 @@ public class GetAllMyDataController extends BaseController {
 
     private final Marshaller marshaller;
 
-    public GetAllMyDataController() throws JAXBException {
+    public GetMyDataController() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Person.class, Distinction.class, Education.class, Employment.class, InvitedPosition.class, Membership.class,
                 Qualification.class, Service.class, Funding.class, PeerReview.class, Work.class);
         marshaller = context.createMarshaller();

@@ -116,6 +116,11 @@ export const EditTableCtrl = angular.module('orcidApp').controller(
                 $scope.showEdit2FA = !$scope.showEdit2FA;
                 $scope.update2FAToggleText();
             };
+            
+            $scope.toggleGetMyDataEdit = function() {                
+                $scope.showEditGetMyData = !$scope.showEditGetMyData;        
+                $scope.getMyDataToggleText = ($scope.showEditGetMyData ? om.get("manage.editTable.hide") : om.get("manage.editTable.edit"));        
+            };
 
             $scope.toggleDeactivateEdit = function() {
                 $scope.showEditDeactivate = !$scope.showEditDeactivate;
@@ -209,6 +214,7 @@ export const EditTableCtrl = angular.module('orcidApp').controller(
             $scope.showEditSocialSettings = (window.location.hash === "#editSocialNetworks");
             $scope.socialNetworksUpdateToggleText();
 
+            $scope.showEditGetMyData = false;            
         }
     ]
 );

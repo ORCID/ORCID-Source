@@ -415,6 +415,27 @@
                     </tr>
                     </@orcid.checkFeatureStatus>
                 </@orcid.checkFeatureStatus>
+                <@orcid.checkFeatureStatus 'GET_MY_DATA'>
+                    <tr>
+                        <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
+                        <td><a href="" ng-click="toggleGetMyDataEdit()" ng-bind="getMyDataToggleText" /></a></td>
+                    </tr>
+                    <tr ng-show="showEditGetMyData">
+                        <td colspan="2">
+                            <p>
+                                <@orcid.msg 'manage.get_my_data.details.p1' />
+                            </p>
+                            <p>
+                                <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="https://support.orcid.org/knowledgebase/articles/117225"><@orcid.msg 'common.learn_more' /></a>
+                            </p>
+                            <p>
+                                <a href="${baseUri}/get-my-data" id="getMyData" class="btn btn-primary">
+                                    <@orcid.msg 'manage.get_my_data.button' />
+                                </a>
+                            </p>
+                        </td>
+                    </tr>
+                </@orcid.checkFeatureStatus>                
                 <#if RequestParameters['OrcidSocial']??>
                     <tr>
                         <th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
