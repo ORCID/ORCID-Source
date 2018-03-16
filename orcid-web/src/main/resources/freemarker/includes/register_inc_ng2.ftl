@@ -245,17 +245,17 @@
                 <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
                 <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
                 <@orcid.privacyToggle3Ng2
-                    angularModel="default_visibility"
+                    angularModel="registrationForm.activitiesVisibilityDefault.visibility"
                     publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
                     limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
                     privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
-                    elementId="workPrivHelp" /> 
+                    elementId="workPrivHelp" position="bottom" /> 
             </div>
         </div>
         <!--Email frequency-->
         <div>
             <div class="relative">              
-                <@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
+                <@orcid.registrationEmailFrequencySelectorNg2 angularElementName="registrationForm" />
             </div>
         </div>
         <!--Recaptcha-->
@@ -274,7 +274,7 @@
                 <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}">*</span>
             </label>
             <p>
-                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (blur)="serverValidate('TermsOfUse')" />
+                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
                 <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
             </p>
             <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">

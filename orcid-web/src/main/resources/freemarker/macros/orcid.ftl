@@ -484,6 +484,22 @@ kind of variable. This temp value is only used in this macro lib -->
 </div>        
 </#macro>
 
+<#macro registrationEmailFrequencySelectorNg2 angularElementName>
+<div>   
+    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
+    <label class="control-label dark-label">
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+    </label>
+    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+        class="input-xlarge"
+        [(ngModel)]="${angularElementName}.sendEmailFrequencyDays.value">
+        <#list sendEmailFrequencies?keys as key>
+            <option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+        </#list>
+    </select>        
+</div>        
+</#macro>
+
 <#macro tooltip elementId message>
 	<div>	
 		<div class="popover popover-tooltip top" ng-class="commonSrvc.shownElement[${elementId}] == true ? 'block' : ''">
