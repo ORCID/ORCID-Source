@@ -31,7 +31,9 @@ import static org.orcid.integration.blackbox.api.BBBUtil.waitForElementVisibilit
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.codehaus.jettison.json.JSONException;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -49,6 +51,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {   
     
     private String authorizeScreen = null;
+    
+    private static boolean previousRegMultiEmailState;
+
+    @BeforeClass
+    public static void beforeClass() {
+        previousRegMultiEmailState = getTogglzFeatureState(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, previousRegMultiEmailState);
+    }
     
     @Before    
     public void before() {
