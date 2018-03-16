@@ -87,7 +87,7 @@ public class GetAllMyDataController extends BaseController {
     @Resource
     private WorkEntityCacheManager workEntityCacheManager;
 
-    @Resource(name = "affiliationManagerReadOnlyV3")
+    @Resource(name = "affiliationsManagerReadOnlyV3")
     private AffiliationsManagerReadOnly affiliationManagerReadOnly;
 
     @Resource(name = "profileFundingManagerReadOnlyV3")
