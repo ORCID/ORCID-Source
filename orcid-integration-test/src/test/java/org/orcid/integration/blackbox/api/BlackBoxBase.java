@@ -209,6 +209,7 @@ public class BlackBoxBase {
             return;
         webDriver.findElement(By.id("enabled")).click();
         webDriver.findElement(By.id("enabled")).submit();
+        signout();
     }
 
     /** 
@@ -221,7 +222,9 @@ public class BlackBoxBase {
     public static boolean getTogglzFeatureState(String adminUserName, String adminPassword, Features feature) {
         adminSignIn(adminUserName, adminPassword);
         webDriver.get(getWebBaseUri() + "/togglz/edit?f=" + feature.name());
-        return webDriver.findElement(By.id("enabled")).isSelected();
+        boolean isEnabled = webDriver.findElement(By.id("enabled")).isSelected();
+        signout();
+        return isEnabled;
     }
 
     public void adminUnlockAccount(String adminUserName, String adminPassword, String orcidToUnlock) {
