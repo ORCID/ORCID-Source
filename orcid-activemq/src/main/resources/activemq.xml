@@ -27,7 +27,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
  
- 	<context:property-placeholder location="${org.orcid.activemq.config.file}" />
+ 	<context:property-placeholder location="${org.orcid.activemq.config.file},${org.orcid.config.file}" />
  
  	<!-- create an ActiveMQ broker -->
     <!-- do not use the shutdown hook as it would cause the broker to shutdown when you press ctrl + c,
@@ -44,7 +44,11 @@
             <!-- tcp for external communication -->
             <transportConnector name="tcp" uri="tcp://0.0.0.0:61616"/>
         </transportConnectors>
- 
+        
+        <destinations>
+            <topic physicalName="${org.orcid.persistence.messaging.topic.reindex}" name="${org.orcid.persistence.messaging.topic.reindex}" />
+            <topic physicalName="${org.orcid.persistence.messaging.topic.updateOrcids}" name="${org.orcid.persistence.messaging.topic.updateOrcids}" />
+        </destinations>
     </broker>
     
 </beans>
