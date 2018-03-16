@@ -214,6 +214,7 @@ export const EditTableCtrl = angular.module('orcidApp').controller(
             $scope.showEditSocialSettings = (window.location.hash === "#editSocialNetworks");
             $scope.socialNetworksUpdateToggleText();
 
+            $scope.getMyDataToggleText = om.get("manage.editTable.edit");
             $scope.showEditGetMyData = false;            
         }
     ]

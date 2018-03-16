@@ -429,9 +429,12 @@
                                 <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="https://support.orcid.org/knowledgebase/articles/117225"><@orcid.msg 'common.learn_more' /></a>
                             </p>
                             <p>
-                                <a href="${baseUri}/get-my-data" id="getMyData" class="btn btn-primary">
-                                    <@orcid.msg 'manage.get_my_data.button' />
-                                </a>
+                                <form action="${baseUri}/get-my-data" method="POST">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <button class="btn btn-primary">
+                                        <@orcid.msg 'manage.get_my_data.button' />
+                                    </button>
+                                </form>
                             </p>
                         </td>
                     </tr>
