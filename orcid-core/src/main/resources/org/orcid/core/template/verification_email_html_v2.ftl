@@ -31,16 +31,16 @@
 		      <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		        <#if isReminder?? && isReminder>
-                    <#if isPrimary?? && isPrimary>
-                        <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />
-                    </#if>
+		        <#if isPrimary?? && isPrimary>
+                    <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />
+                </#if>
+		        <#if isReminder?? && isReminder>                    
                     <@emailMacros.msg "email.verify.click_link" />
                 <#else>
                     <@emailMacros.msg "email.verify.thank_you" />
                 </#if>
                 <br /><br />
-                <a href="${verificationUrl}?lang=${locale}" target="orcid.blank">${verificationUrl}</a>        
+                <a href="${verificationUrl}?lang=${locale}" target="orcid.blank">${verificationUrl}</a>                 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.verify.1" /><@emailMacros.space />${orcid}<@emailMacros.msg "email.verify.2" /><@emailMacros.space /><a href="${baseUri}/${orcid}?lang=${locale}" target="orcid.blank">${baseUri}/${orcid}</a><@emailMacros.space /><@emailMacros.msg "email.verify.primary_email_1" /><@emailMacros.space />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />. 	        		    	
