@@ -32,12 +32,13 @@ export const WorkCtrl = angular.module('orcidApp').controller(
         '$q', 
         'actBulkSrvc', 
         'commonSrvc', 
-        'emailSrvc', 
+        'emailSrvc',
+        'featuresService', 
         'initialConfigService', 
         'utilsService', 
         'worksSrvc', 
         'workspaceSrvc',     
-        function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService, worksSrvc, workspaceSrvc ) {
+        function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, featuresService, initialConfigService, utilsService, worksSrvc, workspaceSrvc ) {
 
             var savingBibtex = false;
             var utilsService = utilsService;
@@ -65,6 +66,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.editSources = {};
             $scope.editTranslatedTitle = false;
             $scope.emailSrvc = emailSrvc;
+            $scope.exIdResolverFeatureEnabled = featuresService.isFeatureEnabled('EX_ID_RESOLVER');
             $scope.externalIDNamesToDescriptions = [];//caches name->description lookup so we can display the description not the name after selection
             $scope.externalIDTypeCache = [];//cache responses
             $scope.generatingBibtex = false;
@@ -87,6 +89,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.workspaceSrvc = workspaceSrvc;
             $scope.worksSrvc = worksSrvc;
             $scope.workType = ['All'];
+
 
             /////////////////////// Begin of verified email logic for work
             var configuration = initialConfigService.getInitialConfiguration();
@@ -356,7 +359,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.changeIdType = function(extId){
-                if (orcidVar.features['EX_ID_RESOLVER'] == true){
+                if ($scope.exIdResolverFeatureEnabled == true){
                     if(extId.url == null) {
                         extId.url = {value:""};
                     }else{
@@ -370,7 +373,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             //populates the external id URL based on type and value.
             $scope.fillUrl = function(extId) {
                 //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
-                if (orcidVar.features['EX_ID_RESOLVER'] == true){
+                if ($scope.exIdResolverFeatureEnabled == true){
                     if (extId && extId.workExternalIdentifierId.value && extId.workExternalIdentifierType.value){
                         $timeout(function() {
                             extId.resolvingId = true;
@@ -693,7 +696,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                     $scope.addingWork = false;
                                     //re-populate any id resolution errors.
                                     //do it here because they're by-passable
-                                    if (orcidVar.features['EX_ID_RESOLVER'] == true){
+                                    if ($scope.exIdResolverFeatureEnabled == true){
                                         for (var extId in $scope.editWork.workExternalIdentifiers){
                                             $scope.fillUrl($scope.editWork.workExternalIdentifiers[extId]);                                                                                    
                                         }
