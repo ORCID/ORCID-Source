@@ -210,24 +210,6 @@
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
                         ng-bind="privacyPreferencesToggleText" id="privacyPreferencesToggle"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=true>
-                <tr ng-controller="WorksPrivacyPreferencesCtrl"
-                    ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection" ng-cloak>
-                    <td colspan="2">
-                        <div class="editTablePadCell35" id="privacy-settings">
-                            ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
-                            <@orcid.privacyToggle3
-                            angularModel="prefsSrvc.prefs['default_visibility']"
-                            questionClick="toggleClickPrivacyHelp('workPrivHelp')"
-                            clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-                            publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
-                            limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
-                            privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
-                            elementId="workPrivHelp" />    
-                        </div>
-                    </td>
-                </tr>
-                </@orcid.checkFeatureStatus>
                 <tr ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection">
                     <td colspan="2">
                         <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
