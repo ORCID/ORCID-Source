@@ -8,8 +8,6 @@ public class AnalyticsData {
 
     private String clientDetailsString;
 
-    private String url;
-
     private String category;
 
     private String contentType;
@@ -44,14 +42,6 @@ public class AnalyticsData {
 
     public void setClientDetailsString(String clientDetailsId) {
         this.clientDetailsString = clientDetailsId;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getCategory() {
@@ -110,7 +100,6 @@ public class AnalyticsData {
         builder.append("\n Client: ").append(clientDetailsString);
         builder.append("\n IP: ").append(ipAddress);
         builder.append("\n Method: ").append(method);
-        builder.append("\n URL: ").append(url);
         builder.append("\n Response: ").append(responseCode);
         builder.append("\n API version: ").append(apiVersion);
         builder.append("\n Category: ").append(category);

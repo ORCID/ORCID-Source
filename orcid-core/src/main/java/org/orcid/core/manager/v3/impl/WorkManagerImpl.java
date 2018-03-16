@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -31,9 +32,11 @@ import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -366,5 +369,67 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
         return Arrays.asList(item);
+    }
+
+    @Override
+    public void createNewWorkGroup(List<Long> workIds, String orcid) {
+        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
+        JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);
+        ExternalIDs allExternalIDs = new ExternalIDs();
+        MinimizedWorkEntity userVersion = null;
+        MinimizedWorkEntity userPreferred = null;
+        
+        for (MinimizedWorkEntity work : works) {
+            if (orcid.equals(work.getSourceId())) {
+                userVersion = work;
+            }
+            if (userPreferred == null || userPreferred.getDisplayIndex() < work.getDisplayIndex()) {
+                userPreferred = work;
+            }
+            
+            ExternalIDs externalIDs = externalIdConverter.convertFrom(work.getExternalIdentifiersJson(), null);
+            for (ExternalID externalID : externalIDs.getExternalIdentifier()) {
+                if (!allExternalIDs.getExternalIdentifier().contains(externalID)) {
+                    allExternalIDs.getExternalIdentifier().add(externalID);
+                }
+            }
+        }
+        
+        String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);
+        if (userVersion != null) {
+            userVersion.setExternalIdentifiersJson(externalIDsJson);
+        } else {
+            WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
+            allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);
+            workDao.persist(allPreferredMetadata);
+        }
+    }
+    
+    private WorkEntity createCopyOfUserPreferredWork(MinimizedWorkEntity preferred) {
+        WorkEntity preferredFullData = workDao.find(preferred.getId());
+        
+        WorkEntity workEntity = new WorkEntity();
+        workEntity.setAddedToProfileDate(new Date());
+        workEntity.setCitation(preferredFullData.getCitation());
+        workEntity.setCitationType(preferredFullData.getCitationType());
+        workEntity.setContributorsJson(preferredFullData.getContributorsJson());
+        workEntity.setDateCreated(new Date());
+        workEntity.setDescription(preferredFullData.getDescription());
+        workEntity.setDisplayIndex(preferredFullData.getDisplayIndex() -1);
+        workEntity.setIso2Country(preferredFullData.getIso2Country());
+        workEntity.setJournalTitle(preferredFullData.getJournalTitle());
+        workEntity.setLanguageCode(preferredFullData.getLanguageCode());
+        workEntity.setLastModified(new Date());
+        workEntity.setOrcid(preferredFullData.getOrcid());
+        workEntity.setPublicationDate(preferredFullData.getPublicationDate());
+        workEntity.setSourceId(preferredFullData.getOrcid());
+        workEntity.setSubtitle(preferredFullData.getSubtitle());
+        workEntity.setTitle(preferredFullData.getTitle());
+        workEntity.setTranslatedTitle(preferredFullData.getTranslatedTitle());
+        workEntity.setTranslatedTitleLanguageCode(preferredFullData.getTranslatedTitleLanguageCode());
+        workEntity.setVisibility(preferredFullData.getVisibility());
+        workEntity.setWorkType(preferredFullData.getWorkType());
+        workEntity.setWorkUrl(preferredFullData.getWorkUrl());
+        return workEntity;
     }
 }

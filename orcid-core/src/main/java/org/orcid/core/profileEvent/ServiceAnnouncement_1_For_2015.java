@@ -29,7 +29,7 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
     @Resource
     private NotificationManager notificationManager;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
     
     @Resource

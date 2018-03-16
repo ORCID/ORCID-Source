@@ -94,6 +94,14 @@ public class WorksController extends BaseWorkspaceController {
         }
         return workIdLs;
     }
+    
+
+    @RequestMapping(value = "/group/{workIdsStr}", method = RequestMethod.POST)
+    public @ResponseBody List<Long> groupWorks(@PathVariable("workIdsStr") String workIdsStr) {
+        List<Long> workIds = Arrays.stream(workIdsStr.split(",")).mapToLong(n -> Long.parseLong(n)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        workManager.createNewWorkGroup(workIds, getCurrentUserOrcid());
+        return workIds;
+    }
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
     public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") Long putCode) {

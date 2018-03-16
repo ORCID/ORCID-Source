@@ -33,12 +33,17 @@
 
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=" + lang;
-    document.body.appendChild(script);
 </script>
 
+<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
+    <script type="text/javascript">
+        var lang = OrcidCookie.getCookie('locale_v3');
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=" + lang;
+        document.body.appendChild(script);
+    </script>
+</@orcid.checkFeatureStatus>
 
 <script type="text/javascript">
    var script = document.createElement("script");

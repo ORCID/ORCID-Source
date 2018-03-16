@@ -49,6 +49,7 @@
         orcidVar.lastModified = '${(lastModifiedTime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
+        orcidVar.resetParams = '${(resetParams)!}';
         orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
@@ -70,6 +71,10 @@
         </#if>     
       
         orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
+        orcidVar.firstName = "${(RequestParameters.firstName?js_string)!}";
+        orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
+        orcidVar.emailId = "${(RequestParameters.emailId?js_string)!}";
+        orcidVar.linkRequest = "${(RequestParameters.linkRequest?js_string)!}";
         orcidVar.memberSlug = "${(memberSlug?js_string)!}";
     </script>
 
@@ -132,8 +137,6 @@
     <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
     <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-        <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
-        <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
     </#if>
 
@@ -149,6 +152,8 @@
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
+    <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
+    <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
     <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
@@ -167,7 +172,9 @@
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
-        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">       
+        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+        <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
+        <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
     </#if>
     </@orcid.checkFeatureStatus> 
 

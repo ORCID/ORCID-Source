@@ -1,5 +1,7 @@
 package org.orcid.integration.blackbox.api;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -29,6 +31,7 @@ public class BlackBoxWebDriver {
         // Marionette does not allow untrusted certs yet
         options.setCapability(FirefoxDriver.MARIONETTE, false);
         webDriver = new FirefoxDriver(options);
+        webDriver.manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
     }
 
     public static WebDriver getWebDriver() {

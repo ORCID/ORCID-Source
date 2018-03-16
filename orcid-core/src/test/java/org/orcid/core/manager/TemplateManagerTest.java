@@ -31,7 +31,7 @@ public class TemplateManagerTest {
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
 
     @Test
@@ -60,8 +60,8 @@ public class TemplateManagerTest {
         addStandardParams(templateParams);
 
         // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
+        String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
 
         assertEquals(expectedText, body);
         assertEquals(expectedHtml, htmlBody);

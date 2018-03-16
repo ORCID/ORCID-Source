@@ -16,9 +16,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.pojo.ajaxForm.CustomEmailForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -41,6 +41,9 @@ public class CustomEmailControllerTest extends BaseControllerTest {
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
+    
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
 
     @Before
     public void init() {
@@ -63,18 +66,7 @@ public class CustomEmailControllerTest extends BaseControllerTest {
     @Override
     protected Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("5555-5555-5555-5558");
-
-        OrcidProfileUserDetails details = null;
-        if (orcidProfile.getType() != null) {
-            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
-        } else {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
-        }
+        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcidProfile.retrieveOrcidPath());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("5555-5555-5555-5558", details.getPassword(), getRole());
         auth.setDetails(details);
         return auth;

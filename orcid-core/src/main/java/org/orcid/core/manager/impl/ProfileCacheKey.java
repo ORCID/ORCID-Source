@@ -15,8 +15,8 @@ public class ProfileCacheKey implements Serializable {
     private long lastModified;
     private String releaseName;
 
-    public ProfileCacheKey(String clientId, long lastModified, String releaseName) {
-        this.orcid = clientId;
+    public ProfileCacheKey(String orcid, long lastModified, String releaseName) {
+        this.orcid = orcid;
         this.lastModified = lastModified;
         this.releaseName = releaseName;
     }

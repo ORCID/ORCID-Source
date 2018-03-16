@@ -1,18 +1,18 @@
 package org.orcid.frontend.spring;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SlackManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -46,6 +46,9 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+    
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
@@ -77,23 +80,8 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
             }
         }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile.getId(), result.getCredentials(), result.getAuthorities());
-        authentication.setDetails(toOrcidProfileUserDetails(profile));
+        authentication.setDetails(orcidUserDetailsService.loadUserByProfile(profile));
         return authentication;
-    }
-
-    private OrcidProfileUserDetails toOrcidProfileUserDetails(ProfileEntity profileEntity) {
-        String orcid = profileEntity.getId();
-        
-        try {
-            EmailEntity primaryEmail = emailDaoReadOnly.findPrimaryEmail(orcid);
-            OrcidType orcidType = OrcidType.valueOf(profileEntity.getOrcidType().name());
-            return new OrcidProfileUserDetails(orcid, primaryEmail.getId(), profileEntity.getPassword(), orcidType);                    
-        } catch(javax.persistence.NoResultException nre) {
-            String message = String.format("User with orcid %s have no primary email", orcid);
-            LOGGER.error(message);
-            slackManager.sendSystemAlert(message);
-            throw nre;
-        }                
     }
 
     private ProfileEntity getProfileEntity(String username) {

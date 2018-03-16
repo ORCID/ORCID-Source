@@ -21,8 +21,6 @@
 		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />		
 	</bean>
 
-	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />
-
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
           xmlns="http://www.springframework.org/schema/beans">
         <constructor-arg>

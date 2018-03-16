@@ -30,7 +30,7 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
     @Resource
     private NotificationManager notificationManager;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
     
     @Resource

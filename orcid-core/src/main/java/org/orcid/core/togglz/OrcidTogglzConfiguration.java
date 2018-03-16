@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.core.security.OrcidWebRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -67,7 +67,7 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
                         Object principal = authentication.getDetails();
                         if (principal instanceof OrcidProfileUserDetails) {
                             OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-                            isAdmin = OrcidType.ADMIN.equals(userDetails.getOrcidType());
+                            isAdmin = userDetails.getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
                             userOrcid = userDetails.getOrcid();
                         }
                     }

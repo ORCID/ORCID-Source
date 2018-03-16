@@ -28,10 +28,10 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_v2.Filterable;
-import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -109,7 +109,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             Object details = authentication.getDetails();
             if (details instanceof OrcidProfileUserDetails) {
                 OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) details;
-                return OrcidType.ADMIN.equals(userDetails.getOrcidType());
+                return userDetails.getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
             }
         }
         return false;
