@@ -56,7 +56,7 @@
                         </ul>
                     </a>
                 </li>
-                <li ng-show="if delegators.length < 10"><a href="<@orcid.rootPath '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
+                <li ng-show="delegators.length > 10"><a href="<@orcid.rootPath '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
             </ul>
         </div>  
     </#if>
