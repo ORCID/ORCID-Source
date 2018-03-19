@@ -56,6 +56,7 @@
         orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
         orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
         orcidVar.features = JSON.parse("${featuresJson}");
+        orcidVar.providerId = '${(providerId)!}';
         
         <#if (oauth2Screens)??>
         orcidVar.oauth2Screens = true;
@@ -132,7 +133,6 @@
 
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <!-- NG2: Under development -->
-    <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
     <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
     <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
     <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
@@ -155,7 +155,9 @@
     <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
     <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
     <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
-
+    <#if springMacroRequestContext.requestUri?contains("/social") >
+        <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
+    </#if>
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
         <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
         <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
@@ -168,6 +170,7 @@
         <#include "/includes/ng2_templates/workspace-summary-ng2-template.ftl">
         <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
     </#if>
+
     </@orcid.checkFeatureStatus> 
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
