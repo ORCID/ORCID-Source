@@ -591,8 +591,8 @@ public class WorksController extends BaseWorkspaceController {
                     setError(wId.getWorkExternalIdentifierId(),"manualWork.id_unresolvable");
                 }
             }*/
-            
-            validateUrl(wId.getUrl());                        
+            if (wId.getUrl() != null)
+                validateUrl(wId.getUrl());                        
         }
 
         return work;
