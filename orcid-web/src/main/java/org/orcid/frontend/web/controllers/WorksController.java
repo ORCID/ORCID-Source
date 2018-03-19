@@ -583,14 +583,6 @@ public class WorksController extends BaseWorkspaceController {
                 setError(wId.getWorkExternalIdentifierType(), "manualWork.id_invalid");
             }
             
-            //IF WE WANT TO CHECK IDs for resolvability, do it here:
-            /*else if (types.get(wId.getWorkExternalIdentifierType().getValue()).getResolutionPrefix() != null || wId.getWorkExternalIdentifierType().getValue().equals("uri")){
-                //if we have a valid type, that can be turned into a URL, check that we can resolve it
-                boolean resolved = resolverService.canResolve(wId.getWorkExternalIdentifierType().getValue(), wId.getWorkExternalIdentifierId().getValue().trim(),wId.getUrl().getValue());
-                if (!resolved){
-                    setError(wId.getWorkExternalIdentifierId(),"manualWork.id_unresolvable");
-                }
-            }*/
             if (wId.getUrl() != null)
                 validateUrl(wId.getUrl());                        
         }
