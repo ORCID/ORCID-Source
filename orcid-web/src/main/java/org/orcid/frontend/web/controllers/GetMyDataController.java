@@ -97,13 +97,13 @@ public class GetMyDataController extends BaseController {
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
     @Resource(name = "workManagerReadOnlyV3")
-    private WorkManagerReadOnly workManagerReadOnly;        
+    private WorkManagerReadOnly workManagerReadOnly;           
     
     @RequestMapping(method = {RequestMethod.POST},  produces = MediaType.APPLICATION_OCTET_STREAM)
     public void getMyData(HttpServletResponse response) throws JAXBException, IOException {
         String currentUserOrcid = getCurrentUserOrcid();
         String fileName = currentUserOrcid + ".zip";
-
+        
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(result);
 
@@ -112,9 +112,8 @@ public class GetMyDataController extends BaseController {
         generateFundingData(currentUserOrcid, zip);
         generatePeerReviewData(currentUserOrcid, zip);
         generateWorksData(currentUserOrcid, zip);
-
         zip.close();
-
+                   
         response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
         response.setHeader("Content-Type", "application/zip");
         response.getOutputStream().write(result.toByteArray());

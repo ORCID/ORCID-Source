@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
@@ -77,7 +77,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class GetMyDataControllerTest {
 
     private static final String ORCID = "0000-0000-0000-0000";
-    
+
     @Mock
     private PersonDetailsManagerReadOnly mockPersonDetailsManager;
 
@@ -95,17 +95,17 @@ public class GetMyDataControllerTest {
 
     @Mock
     private WorkManagerReadOnly mockWorkManagerReadOnly;
-    
-    GetMyDataController getMyDataController;
-    
+
+    private GetMyDataController getMyDataController;
+
     {
         try {
             getMyDataController = new GetMyDataController();
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail(e.getMessage());
         }
     }
-    
+
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
@@ -116,8 +116,8 @@ public class GetMyDataControllerTest {
         TargetProxyHelper.injectIntoProxy(getMyDataController, "profileFundingManagerReadOnly", mockProfileFundingManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(getMyDataController, "peerReviewManagerReadOnly", mockPeerReviewManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(getMyDataController, "workManagerReadOnly", mockWorkManagerReadOnly);
-        
-        when(mockPersonDetailsManager.getPersonDetails(anyString())).thenAnswer(new Answer<Person>(){
+
+        when(mockPersonDetailsManager.getPersonDetails(anyString())).thenAnswer(new Answer<Person>() {
             @Override
             public Person answer(InvocationOnMock invocation) throws Throwable {
                 Person p = new Person();
@@ -129,17 +129,17 @@ public class GetMyDataControllerTest {
                 name.setCreditName(new CreditName("Credit Name"));
                 p.setName(name);
                 return p;
-            }                        
+            }
         });
-        when(mockAffiliationManagerReadOnly.getAffiliations(anyString())).thenAnswer(new Answer<List<Affiliation>>(){
+        when(mockAffiliationManagerReadOnly.getAffiliations(anyString())).thenAnswer(new Answer<List<Affiliation>>() {
 
             @Override
             public List<Affiliation> answer(InvocationOnMock invocation) throws Throwable {
                 List<Affiliation> affs = new ArrayList<Affiliation>();
-                
+
                 FuzzyDate startDate = new FuzzyDate(new Year(2018), new Month(1), new Day(1));
                 FuzzyDate endDate = new FuzzyDate(new Year(2018), new Month(12), new Day(31));
-                
+
                 Distinction d = new Distinction();
                 d.setDepartmentName("distinction");
                 d.setEndDate(endDate);
@@ -147,7 +147,7 @@ public class GetMyDataControllerTest {
                 d.setPutCode(1L);
                 setOrg(d);
                 affs.add(d);
-                
+
                 Education e = new Education();
                 e.setDepartmentName("education");
                 e.setEndDate(endDate);
@@ -155,7 +155,7 @@ public class GetMyDataControllerTest {
                 e.setPutCode(2L);
                 setOrg(e);
                 affs.add(e);
-                
+
                 Employment emp = new Employment();
                 emp.setDepartmentName("employment");
                 emp.setEndDate(endDate);
@@ -163,7 +163,7 @@ public class GetMyDataControllerTest {
                 emp.setPutCode(3L);
                 setOrg(emp);
                 affs.add(emp);
-                
+
                 InvitedPosition i = new InvitedPosition();
                 i.setDepartmentName("invited position");
                 i.setEndDate(endDate);
@@ -171,7 +171,7 @@ public class GetMyDataControllerTest {
                 i.setPutCode(4L);
                 setOrg(i);
                 affs.add(i);
-                
+
                 Membership m = new Membership();
                 m.setDepartmentName("membership");
                 m.setEndDate(endDate);
@@ -179,7 +179,7 @@ public class GetMyDataControllerTest {
                 m.setPutCode(5L);
                 setOrg(m);
                 affs.add(m);
-                
+
                 Qualification q = new Qualification();
                 q.setDepartmentName("qualification");
                 q.setEndDate(endDate);
@@ -187,7 +187,7 @@ public class GetMyDataControllerTest {
                 q.setPutCode(6L);
                 setOrg(q);
                 affs.add(q);
-                
+
                 Service s = new Service();
                 s.setDepartmentName("service");
                 s.setEndDate(endDate);
@@ -195,12 +195,12 @@ public class GetMyDataControllerTest {
                 s.setPutCode(7L);
                 setOrg(s);
                 affs.add(s);
-                
+
                 return affs;
             }
-            
+
         });
-        
+
         when(mockProfileFundingManagerReadOnly.getFundingList(anyString())).thenAnswer(new Answer<List<Funding>>() {
 
             @Override
@@ -220,7 +220,7 @@ public class GetMyDataControllerTest {
                 return fundings;
             }
         });
-        
+
         when(mockPeerReviewManagerReadOnly.findPeerReviews(anyString())).thenAnswer(new Answer<List<PeerReview>>() {
 
             @Override
@@ -228,12 +228,12 @@ public class GetMyDataControllerTest {
                 List<PeerReview> peerReviews = new ArrayList<PeerReview>();
                 PeerReview p = new PeerReview();
                 setOrg(p);
-                p.setPutCode(1L);                
+                p.setPutCode(1L);
                 peerReviews.add(p);
                 return peerReviews;
-            }           
+            }
         });
-        
+
         when(mockWorkManagerReadOnly.findWorks(anyString(), any())).thenAnswer(new Answer<List<Work>>() {
 
             @Override
@@ -246,11 +246,11 @@ public class GetMyDataControllerTest {
                 works.add(w);
                 return works;
             }
-            
+
         });
-        
+
         when(mockWorkManagerReadOnly.getLastModified(anyString())).thenReturn(0L);
-        
+
         when(mockWorkEntityCacheManager.retrieveWorkLastModifiedList(anyString(), anyLong())).thenAnswer(new Answer<List<WorkLastModifiedEntity>>() {
 
             @Override
@@ -259,29 +259,29 @@ public class GetMyDataControllerTest {
                 WorkLastModifiedEntity w = new WorkLastModifiedEntity();
                 w.setId(1L);
                 w.setOrcid(ORCID);
-                w.setLastModified(new Date());  
+                w.setLastModified(new Date());
                 works.add(w);
                 return works;
             }
-            
+
         });
-        
-    }        
-        
+
+    }
+
     @Test
     public void testDownload() throws JAXBException, IOException {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         MockHttpServletResponse response = new MockHttpServletResponse();
         getMyDataController.getMyData(response);
-        byte [] content = response.getContentAsByteArray();
+        byte[] content = response.getContentAsByteArray();
         ByteArrayInputStream is = new ByteArrayInputStream(content);
         ZipInputStream zip = new ZipInputStream(is);
         ZipEntry zipEntry = zip.getNextEntry();
-        
-        JAXBContext jaxbContext1 = JAXBContext.newInstance(Person.class, Distinction.class, Education.class, Employment.class, InvitedPosition.class, Membership.class, 
+
+        JAXBContext jaxbContext1 = JAXBContext.newInstance(Person.class, Distinction.class, Education.class, Employment.class, InvitedPosition.class, Membership.class,
                 Qualification.class, Service.class, Funding.class, PeerReview.class, Work.class);
         Unmarshaller u = jaxbContext1.createUnmarshaller();
-        
+
         boolean personFound = false;
         boolean distinctionFound = false;
         boolean educationFound = false;
@@ -293,8 +293,8 @@ public class GetMyDataControllerTest {
         boolean fundingFound = false;
         boolean peerReviewFound = false;
         boolean workFound = false;
-        
-        while(zipEntry != null){
+
+        while (zipEntry != null) {
             String fileName = zipEntry.getName();
             byte[] buffer = new byte[1024];
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -303,14 +303,14 @@ public class GetMyDataControllerTest {
                 out.write(buffer, 0, len);
             }
             ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-            
-            if(fileName.equals("person.xml")) {
+
+            if (fileName.equals("person.xml")) {
                 Person x = (Person) u.unmarshal(in);
                 assertNotNull(x);
                 assertEquals("Biography", x.getBiography().getContent());
                 assertEquals(Visibility.LIMITED, x.getBiography().getVisibility());
                 personFound = true;
-            } else if(fileName.startsWith("affiliations/distinctions")) {
+            } else if (fileName.startsWith("affiliations/distinctions")) {
                 assertEquals("affiliations/distinctions/1.xml", fileName);
                 Distinction x = (Distinction) u.unmarshal(in);
                 assertNotNull(x);
@@ -318,7 +318,7 @@ public class GetMyDataControllerTest {
                 assertEquals(Long.valueOf(1), x.getPutCode());
                 validateOrg(x);
                 distinctionFound = true;
-            } else if(fileName.startsWith("affiliations/educations")) {
+            } else if (fileName.startsWith("affiliations/educations")) {
                 assertEquals("affiliations/educations/2.xml", fileName);
                 Education x = (Education) u.unmarshal(in);
                 assertNotNull(x);
@@ -326,7 +326,7 @@ public class GetMyDataControllerTest {
                 assertEquals(Long.valueOf(2), x.getPutCode());
                 validateOrg(x);
                 educationFound = true;
-            } else if(fileName.startsWith("affiliations/employments")) {
+            } else if (fileName.startsWith("affiliations/employments")) {
                 assertEquals("affiliations/employments/3.xml", fileName);
                 Employment x = (Employment) u.unmarshal(in);
                 assertNotNull(x);
@@ -334,7 +334,7 @@ public class GetMyDataControllerTest {
                 assertEquals(Long.valueOf(3), x.getPutCode());
                 validateOrg(x);
                 employmentFound = true;
-            } else if(fileName.startsWith("affiliations/invited_positions")) {
+            } else if (fileName.startsWith("affiliations/invited_positions")) {
                 assertEquals("affiliations/invited_positions/4.xml", fileName);
                 InvitedPosition x = (InvitedPosition) u.unmarshal(in);
                 assertNotNull(x);
@@ -342,7 +342,7 @@ public class GetMyDataControllerTest {
                 assertEquals(Long.valueOf(4), x.getPutCode());
                 validateOrg(x);
                 invitedPositionFound = true;
-            } else if(fileName.startsWith("affiliations/memberships")) {
+            } else if (fileName.startsWith("affiliations/memberships")) {
                 assertEquals("affiliations/memberships/5.xml", fileName);
                 Membership x = (Membership) u.unmarshal(in);
                 assertNotNull(x);
@@ -350,7 +350,7 @@ public class GetMyDataControllerTest {
                 assertEquals(Long.valueOf(5), x.getPutCode());
                 validateOrg(x);
                 membershipFound = true;
-            } else if(fileName.startsWith("affiliations/qualifications")) {
+            } else if (fileName.startsWith("affiliations/qualifications")) {
                 assertEquals("affiliations/qualifications/6.xml", fileName);
                 Qualification x = (Qualification) u.unmarshal(in);
                 assertNotNull(x);
@@ -358,7 +358,7 @@ public class GetMyDataControllerTest {
                 assertEquals(Long.valueOf(6), x.getPutCode());
                 validateOrg(x);
                 qualificationFound = true;
-            } else if(fileName.startsWith("affiliations/services")) {
+            } else if (fileName.startsWith("affiliations/services")) {
                 assertEquals("affiliations/services/7.xml", fileName);
                 Service x = (Service) u.unmarshal(in);
                 assertNotNull(x);
@@ -366,7 +366,7 @@ public class GetMyDataControllerTest {
                 assertEquals(Long.valueOf(7), x.getPutCode());
                 validateOrg(x);
                 serviceFound = true;
-            } else if(fileName.startsWith("fundings")) {
+            } else if (fileName.startsWith("fundings")) {
                 assertEquals("fundings/1.xml", fileName);
                 Funding x = (Funding) u.unmarshal(in);
                 assertNotNull(x);
@@ -376,24 +376,24 @@ public class GetMyDataControllerTest {
                 assertEquals(Long.valueOf(1), x.getPutCode());
                 validateOrg(x);
                 fundingFound = true;
-            } else if(fileName.startsWith("peer_reviews")) {
+            } else if (fileName.startsWith("peer_reviews")) {
                 assertEquals("peer_reviews/1.xml", fileName);
                 PeerReview x = (PeerReview) u.unmarshal(in);
                 assertNotNull(x);
                 validateOrg(x);
                 assertEquals(Long.valueOf(1), x.getPutCode());
                 peerReviewFound = true;
-            } else if(fileName.startsWith("works")) {
+            } else if (fileName.startsWith("works")) {
                 assertEquals("works/1.xml", fileName);
                 Work x = (Work) u.unmarshal(in);
                 assertNotNull(x);
-                assertEquals(Long.valueOf(1), x.getPutCode());                
+                assertEquals(Long.valueOf(1), x.getPutCode());
                 workFound = true;
             }
-            
+
             zipEntry = zip.getNextEntry();
         }
-        
+
         assertTrue(personFound);
         assertTrue(distinctionFound);
         assertTrue(educationFound);
@@ -405,31 +405,31 @@ public class GetMyDataControllerTest {
         assertTrue(fundingFound);
         assertTrue(peerReviewFound);
         assertTrue(workFound);
-        
+
         zip.closeEntry();
         zip.close();
     }
-    
+
     private void setOrg(OrganizationHolder oh) {
         OrganizationAddress address = new OrganizationAddress();
         address.setCity("city");
         address.setCountry(Iso3166Country.US);
-        
+
         Organization org = new Organization();
         org.setName("Organization");
         org.setAddress(address);
-        
+
         oh.setOrganization(org);
     }
-    
+
     private void validateOrg(OrganizationHolder oh) {
         assertNotNull(oh.getOrganization());
         assertEquals("Organization", oh.getOrganization().getName());
         assertEquals("city", oh.getOrganization().getAddress().getCity());
         assertEquals(Iso3166Country.US, oh.getOrganization().getAddress().getCountry());
     }
-    
-    private Authentication getAuthentication() {  
+
+    private Authentication getAuthentication() {
         List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(ORCID, "user_1@test.orcid.org", null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ORCID, null, roles);
