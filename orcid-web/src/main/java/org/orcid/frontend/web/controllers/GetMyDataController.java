@@ -97,7 +97,7 @@ public class GetMyDataController extends BaseController {
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
     @Resource(name = "workManagerReadOnlyV3")
-    private WorkManagerReadOnly workManagerReadOnly;
+    private WorkManagerReadOnly workManagerReadOnly;        
     
     @RequestMapping(method = {RequestMethod.POST},  produces = MediaType.APPLICATION_OCTET_STREAM)
     public void getMyData(HttpServletResponse response) throws JAXBException, IOException {
