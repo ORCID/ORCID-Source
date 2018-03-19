@@ -1,22 +1,4 @@
 <#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-<#--
  * orcid.ftl
  *
  * This file consists of a collection of FreeMarker macros used in various places in the ORCID web interface.
@@ -480,6 +462,22 @@ kind of variable. This temp value is only used in this macro lib -->
 		<#list sendEmailFrequencies?keys as key>
 			<option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
 		</#list>
+    </select>        
+</div>        
+</#macro>
+
+<#macro registrationEmailFrequencySelectorNg2 angularElementName>
+<div>   
+    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
+    <label class="control-label dark-label">
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+    </label>
+    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+        class="input-xlarge"
+        [(ngModel)]="${angularElementName}.sendEmailFrequencyDays.value">
+        <#list sendEmailFrequencies?keys as key>
+            <option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+        </#list>
     </select>        
 </div>        
 </#macro>

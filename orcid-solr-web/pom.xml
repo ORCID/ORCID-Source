@@ -63,7 +63,7 @@
                    <update>true</update>
                </configuration>
             </plugin>
-            <plugin>
+            <!-- plugin>
                 <inherited>true</inherited>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
@@ -95,7 +95,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin -->
         </plugins>
     </build>
     <profiles>

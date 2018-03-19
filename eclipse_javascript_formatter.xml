@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <profiles version="11">
 <profile kind="CodeFormatterProfile" name="ORCID JavaScript Conventions" version="11">
 <setting id="org.eclipse.wst.jsdt.core.formatter.indent_body_declarations_compare_to_annotation_declaration_header" value="true"/>

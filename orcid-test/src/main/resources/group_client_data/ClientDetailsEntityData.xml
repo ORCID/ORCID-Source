@@ -1,22 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <dataset>
 
 	<client_details client_details_id="9999-9999-9999-9991" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 1" client_description="A client" client_website="www.9999-9999-9999-9991.com" group_orcid="9999-9999-9999-9991"/>
