@@ -22,29 +22,29 @@
                     <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                 <![endif]-->
             </div>
-            <div class="row" *ngIf="loadedFeed">
-                <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12 bottomBuffer">
-                    <div>
-                        <h2>${springMacroRequestContext.getMessage("social.link.title.1")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.title.2")}</h2>
-                        <h4>${springMacroRequestContext.getMessage("social.link.you_are")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.as")} ${accountId}</h4>
-                        <p> 
-                            ${springMacroRequestContext.getMessage("social.link.to_finish")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.account_to_orcid")}
-                        </p>
-                        <p>
-                            <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="${knowledgeBaseUri}/articles/892920" target="social.link.visit_knowledgebase_link" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
-                        </p>
+            <form class="form-social-sign-in shibboleth" id="loginForm" *ngIf="loadedFeed" (submit)="linkAccount('${providerId}', '${linkType}')" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">
+                <div class="row">
+                    <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12 bottomBuffer">
+                        <div>
+                            <h2>${springMacroRequestContext.getMessage("social.link.title.1")} <span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.title.2")}</h2>
+                            <h4>${springMacroRequestContext.getMessage("social.link.you_are")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.as")} ${accountId}</h4>
+                            <p> 
+                                ${springMacroRequestContext.getMessage("social.link.to_finish")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.account_to_orcid")}
+                            </p>
+                            <p>
+                                <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="${knowledgeBaseUri}/articles/892920" target="social.link.visit_knowledgebase_link" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row" *ngIf="loadedFeed">
-                <div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">                 
-                    ${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${(emailId!)?url}&firstName=${(firstName!)?url}&lastName=${(lastName!)?url}&providerId=${(providerId!)?url}&accountId=${(accountId!)?url}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
-                    <hr />
-                </div>                  
-            </div>
-            <form class="form-social-sign-in shibboleth" id="loginForm" *ngIf="loadedFeed" action="<@orcid.rootPath '/signin/auth'/>" method="post">
-                <div class="row">              
-
+                <div class="row">
+                    <div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">                       
+                        ${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${(emailId!)?url}&firstName=${(firstName!)?url}&lastName=${(lastName!)?url}&providerId=${(providerId!)?url}&accountId=${(accountId!)?url}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
+                        <hr />
+                    </div>                  
+                    <@spring.bind "loginForm" />             
+                    <@spring.showErrors "<br/>" "error" />             
+                    <#include "/common/browser-checks.ftl" />
                     <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
                         <#include "/includes/login_personal_fields_inc_ng2.ftl"/>
                     </div>
