@@ -41,14 +41,18 @@ public class ApiAccessLogsAnalyserTest {
     private LogReader logReader;
 
     private ByteArrayOutputStream output;
+    
+    private ByteArrayOutputStream summary;
 
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         
         output = new ByteArrayOutputStream();
+        summary = new ByteArrayOutputStream();
         AnalysisResults results = new AnalysisResults();
         results.setOutputStream(output);
+        results.setSummaryOutputStream(summary);
 
         ReflectionTestUtils.setField(analyser, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(analyser, "results", results);
@@ -96,8 +100,8 @@ public class ApiAccessLogsAnalyserTest {
         assertNotNull(outputText);
         assertFalse(outputText.isEmpty());
         AnalysisResults output = JsonUtils.readObjectFromJsonString(outputText, AnalysisResults.class);
-        assertEquals(9, output.getHitsAnalysed());
-        assertEquals(3, output.getClientResults().size());
+        assertEquals(8, output.getHitsAnalysed());
+        assertEquals(2, output.getClientResults().size());
         
         for (ClientStats clientStats : output.getClientResults()) {
             if (CLIENT_DETAILS_1.equals(clientStats.getClientDetailsId())) {
@@ -108,11 +112,14 @@ public class ApiAccessLogsAnalyserTest {
                 assertEquals(1, clientStats.getVersionsHit().size());
                 assertEquals(4, clientStats.getTotalHits());
             }
-            if (ApiAccessLogsAnalyser.UNKNOWN_CLIENT.equals(clientStats.getClientDetailsId())) {
-                assertEquals(1, clientStats.getVersionsHit().size());
-                assertEquals(1, clientStats.getTotalHits());
-            }
         }
+        
+        outputText = summary.toString();
+        AnalysisSummary summary = JsonUtils.readObjectFromJsonString(outputText, AnalysisSummary.class);
+        assertEquals(0, summary.getNumV1Clients());
+        assertEquals(2, summary.getNumV2Clients());
+        assertEquals(1, summary.getNumV3Clients());
+        assertEquals(1, summary.getNumClientsUsingMultipleVersions());
     }
 
     private OrcidOauth2TokenDetail getOrcidOauth2TokenDetailClientB() {
