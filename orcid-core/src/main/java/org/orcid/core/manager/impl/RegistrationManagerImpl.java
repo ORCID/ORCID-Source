@@ -235,6 +235,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         }
         newRecord.setCreationMethod(PojoUtil.isEmpty(registration.getCreationType()) ? CreationMethod.DIRECT.value() : registration.getCreationType().getValue());
         newRecord.setSendChangeNotifications(registration.getSendChangeNotifications().getValue());
+        newRecord.setSendAdministrativeChangeNotifications(true);
         newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());
         newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()));
         // Visibility defaults
