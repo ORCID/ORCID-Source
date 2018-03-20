@@ -12,6 +12,7 @@ import javax.persistence.NoResultException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
@@ -46,6 +47,8 @@ public class ApiAccessLogsAnalyser {
 
     private LogReader logReader;
 
+    private ClientDetailsDao clientDetailsDao;
+
     public static void main(String[] args) {
         ApiAccessLogsAnalyser analyser = new ApiAccessLogsAnalyser();
         CmdLineParser parser = new CmdLineParser(analyser);
@@ -66,9 +69,11 @@ public class ApiAccessLogsAnalyser {
         LOGGER.info("Initialising Api access logs analysis...");
         applicationContext = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
         tokenDao = (OrcidOauth2TokenDetailDao) applicationContext.getBean("orcidOauth2TokenDetailDao");
+        clientDetailsDao = (ClientDetailsDao) applicationContext.getBean("clientDetailsDao");
         logReader = new LogReader();
         logReader.init(logsDir);
         results = new AnalysisResults();
+        results.setClientDetailsDao(clientDetailsDao);
         try {
             results.setOutputStream(new FileOutputStream(outputFile));
         } catch (FileNotFoundException e) {

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.persistence.dao.ClientDetailsDao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,12 +32,19 @@ public class AnalysisResults implements Serializable {
     @JsonIgnore
     private AnalysisSummary summary = new AnalysisSummary();
 
+    @JsonIgnore
+    private ClientDetailsDao clientDetailsDao;
+
     public void setOutputStream(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 
     public void setSummaryOutputStream(OutputStream outputStream) {
         summary.setOutputStream(outputStream);
+    }
+
+    public void setClientDetailsDao(ClientDetailsDao clientDetailsDao) {
+        this.clientDetailsDao = clientDetailsDao;
     }
 
     public void record(String clientDetailsId, ApiLog apiLog) {
@@ -46,6 +54,7 @@ public class AnalysisResults implements Serializable {
         if (stats == null) {
             stats = new ClientStats();
             stats.setClientDetailsId(clientDetailsId);
+            stats.setClientName(clientDetailsDao.getMemberName(clientDetailsId));
         }
         stats.recordVersionHit(apiLog.getVersion());
         stats.incrementTotalHits();
