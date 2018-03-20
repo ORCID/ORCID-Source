@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.persistence.dao;
+package org.orcid.activitiesindexer.listener.persistence.dao;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -25,8 +25,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.listener.persistence.entities.ActivitiesStatusEntity;
-import org.orcid.listener.persistence.util.ActivityType;
+import org.orcid.activitiesindexer.persistence.entities.ActivitiesStatusEntity;
+import org.orcid.activitiesindexer.persistence.util.ActivityType;
 import org.springframework.stereotype.Component;
 
 @Component

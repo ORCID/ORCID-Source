@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<tx:annotation-driven />
+	
+    <context:property-placeholder location="${org.orcid.activities-indexer.properties},${org.orcid.config.file}" />
+    
+	<context:component-scan base-package="org.orcid" />
+	<context:annotation-config />
+
+	<bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
+
+	<!-- JMS Messaging -->
+	<!-- enable the configuration of jms on annotations -->
+	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL}" />
+	</bean>
+	
+	<bean id="reindexListener" class="org.orcid.activitiesindexer.listener.ReIndexListener" />
+	
+    <bean id="updatedOrcidListener" class="org.orcid.activitiesindexer.listener.UpdatedOrcidListener" />
+
+	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="topic">
+	       <jms:listener ref="reindexListener" destination="${org.orcid.persistence.messaging.topic.reindex}" subscription="${org.orcid.activities-indexer.subscription.reindex}" />
+	       <jms:listener ref="updatedOrcidListener" destination="${org.orcid.persistence.messaging.topic.updateOrcids}" subscription="${org.orcid.activities-indexer.subscription.updatedOrcids}" />
+	</jms:listener-container>
+	
+    <!-- Jersey client -->
+    <bean id="jerseyClient" class="org.orcid.activitiesindexer.jersey.OrcidJerseyClientHandler" factory-method="create">
+        <constructor-arg value="${org.orcid.activities-indexer.development_mode:false}" />
+        <constructor-arg ref="jerseyProperties" />
+    </bean>
+
+    <util:map id="jerseyProperties">
+        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
+               value-ref="multiThreadedConnectionManager"/>
+    </util:map>
+
+    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+
+	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="${org.orcid.activities-indexer.db.dialect}" />
+        <property name="showSql" value="${org.orcid.activities-indexer.db.showSql}" />
+        <property name="generateDdl" value="${org.orcid.activities-indexer.db.generateDdl}" />
+    </bean>
+	
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="dataSource" ref="${org.orcid.activities-indexer.db.dataSource}" />
+        <property name="persistenceUnitName" value="messageListener" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="${org.orcid.activities-indexer.db.hibernateStatistics:false}" />    
+            </map>
+        </property>
+    </bean>   
+    
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+        <property name="dataSource" ref="${org.orcid.activities-indexer.db.dataSource}" />
+        <property name="changeLog" value="classpath:activities-indexer-db-master.xml" />
+    </bean>
+    
+    <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${org.orcid.activities-indexer.db.class}" />
+        <property name="jdbcUrl" value="${org.orcid.activities-indexer.db.url}" />
+        <property name="user" value="${org.orcid.activities-indexer.db.username}" />
+        <property name="password" value="${org.orcid.activities-indexer.db.password}" />
+        <property name="initialPoolSize" value="${org.orcid.activities-indexer.db.initialPoolSize}" />
+        <property name="minPoolSize" value="${org.orcid.activities-indexer.db.minPoolSize}" />
+        <property name="maxPoolSize" value="${org.orcid.activities-indexer.db.maxPoolSize}" />
+        <property name="maxStatements" value="${org.orcid.activities-indexer.db.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="${org.orcid.activities-indexer.db.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="${org.orcid.activities-indexer.db.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="${org.orcid.activities-indexer.db.preferredTestQuery}" />
+        <property name="numHelperThreads" value="${org.orcid.activities-indexer.db.numHelperThreads:10}"/>
+    </bean>
+    
+    <bean id="mqEntityManagerFactory" class="org.orcid.activitiesindexer.persistence.spring.OrcidEntityManagerFactory">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    
+    <bean id="entityManager" factory-bean="&amp;mqEntityManagerFactory" factory-method="getObject" />
+       
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+	
+</beans>

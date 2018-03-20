@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<!DOCTYPE log4j:configuration PUBLIC "-//LOGGER"
+        "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="FILE_APPENDER" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="./logs/message-listener.log" />
+		<param name="Append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%t] %C{2} (%F:%L) - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="MES %-5.5p [%-11.11t] %d{HH:mm:ss,SSS} (%F:%L) | %m %n" />
+		</layout>
+	</appender>
+
+	<!-- 3rd party Loggers -->
+	<logger name="org.springframework">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.apache">
+		<level value="INFO" />
+	</logger>
+	
+	  <logger name="org.apache.activemq">
+        <level value="DEBUG" />
+    </logger>
+	
+
+	<!-- Root Logger -->
+	<root>
+		<level value="INFO" />
+		<!-- <appender-ref ref="CONSOLE" /> -->
+		<appender-ref ref="FILE_APPENDER" />
+	</root>
+
+</log4j:configuration>

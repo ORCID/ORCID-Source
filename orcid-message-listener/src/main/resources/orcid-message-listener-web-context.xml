@@ -18,7 +18,8 @@
 	
 	<tx:annotation-driven />
 	
-    <context:property-placeholder location="${org.orcid.message-listener.properties}" />
+    <context:property-placeholder location="${org.orcid.message-listener.properties},${org.orcid.config.file}" />
+    
 	<context:component-scan base-package="org.orcid" />
 	<context:annotation-config />
 
@@ -39,49 +40,19 @@
 
 	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
-	<jms:annotation-driven />
-	
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
 		<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL}" />
 	</bean>
-	<bean id="cachingJmsConnectionFactory"
-		class="org.springframework.jms.connection.CachingConnectionFactory">
-		<property name="targetConnectionFactory" ref="jmsConnectionFactory" />
-	</bean>
+	
+	<bean id="reindexListener" class="org.orcid.listener.ReIndexListener" />
+	
+    <bean id="updatedOrcidListener" class="org.orcid.listener.UpdatedOrcidListener" />
 
-	<!-- so we can listen to queues -->
-	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="concurrency" value="${org.orcid.listener.concurrency:1-2}" />		
-	</bean>
-
+	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="topic">
+	       <jms:listener ref="reindexListener" destination="${org.orcid.persistence.messaging.topic.reindex}" subscription="${org.orcid.message-listener.subscription.reindex}" />
+	       <jms:listener ref="updatedOrcidListener" destination="${org.orcid.persistence.messaging.topic.updateOrcids}" subscription="${org.orcid.message-listener.subscription.updatedOrcids}" />
+	</jms:listener-container>
 	
-	
-	
-	
-	<bean id="jmsTopicListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="concurrency" value="${org.orcid.listener.concurrency:1-2}" />
-		<property name="pubSubDomain" value="true" />		
-	</bean>
-	
-	
-	
-	
-	
-	
-	<!-- Default Destination Queue Definition -->
-	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
-		<!-- name of the queue -->
-		<constructor-arg index="0" value="test" />
-	</bean>
-
-	<!-- JmsTemplate Definition so we can send to queues -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="defaultDestination" ref="defaultJmsDestination" />
-	</bean>
-    
     <!-- Jersey client -->
     <bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">
         <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
