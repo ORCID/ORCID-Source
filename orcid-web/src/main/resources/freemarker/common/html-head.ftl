@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <head>
     <meta charset="utf-8" />
     <title>${title!"ORCID"}</title>
@@ -183,6 +165,8 @@
         <#include "/includes/ng2_templates/websites-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/works-ng2-template.ftl">
         <#include "/includes/ng2_templates/workspace-summary-ng2-template.ftl">
         <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
     </#if>

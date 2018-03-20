@@ -343,9 +343,10 @@ export class WorksService {
     }
     */
 
-    notifyOther(): void {
-        this.notify.next();
-        console.log('notify');
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
     }
 
     setData( obj ): Observable<any> {
