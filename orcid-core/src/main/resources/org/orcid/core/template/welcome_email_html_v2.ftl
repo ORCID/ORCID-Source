@@ -36,6 +36,10 @@
                 <div align="center">
                     <a href="${verificationUrl}?lang=${locale}" target="orcid.blank" 
                     style="text-decoration: none; background: #31789B; border-color: #357ebd; color: #fff; margin-bottom: 0; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; line-height: 1.428571429; border-radius: 4px;"><@emailMacros.msg "email.button" /></a>
+                    <br /><br />
+                    <small style="font-size: 12px">
+                        ${verificationUrl}
+                    </small>
                 </div>
                 <br />
             </p>

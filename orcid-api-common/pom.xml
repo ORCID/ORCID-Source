@@ -128,7 +128,7 @@
     <build>
         <finalName>orcid-api-common</finalName>        
          <plugins>
-            <plugin>               
+            <!-- plugin>               
                 <groupId>com.mycila.maven-license-plugin</groupId>               
                 <artifactId>maven-license-plugin</artifactId>                                                     
                 <configuration>
@@ -137,7 +137,7 @@
                         <exclude>**/rebel.xml</exclude>
                     </excludes>               
                 </configuration>
-            </plugin>
+            </plugin -->
 		    <plugin>
 		      <groupId>org.apache.jena</groupId>
 		      <artifactId>jena-maven-tools</artifactId>

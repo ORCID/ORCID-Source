@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <script>
 // Include the UserVoice JavaScript SDK (only needed once on a page)
 UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/8sVrMcGwO4vg6GT455xOLw.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();

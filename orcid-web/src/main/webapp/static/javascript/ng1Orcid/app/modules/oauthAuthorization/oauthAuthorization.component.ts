@@ -314,7 +314,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                console.log("An error occured initializing the form.");
+                console.log("An error occured initializing the authorization form.");
             } 
         );
 
@@ -343,7 +343,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             },
             error => {
-                console.log("An error occured initializing the form.");
+                console.log("An error occured initializing the request info form.");
             } 
         );
 
@@ -362,6 +362,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.registrationForm.familyNames.value=familyName;
                     this.registrationForm.email.value=email; 
                 }
+
+                if (this.gdprUiFeatureEnabled == true){
+                    this.registrationForm.activitiesVisibilityDefault.visibility = null;
+                }
+
                 console.log(this.registrationForm);
 
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          

@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <div id="proxy" class="colorbox-content inline-modal">
     <div class="col-md-6 col-sm-6 col-xs-12">
         <h1 class="lightbox-title">${springMacroRequestContext.getMessage("common.change_proxy.Signinasaproxy")}</h1>
