@@ -420,13 +420,13 @@
                         <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
                         <td><a href="" ng-click="toggleGetMyDataEdit()" ng-bind="getMyDataToggleText" /></a></td>
                     </tr>
-                    <tr ng-show="showEditGetMyData">
+                    <tr ng-show="showEditGetMyData" ng-cloak id="get-my-data">
                         <td colspan="2">
                             <p>
                                 <@orcid.msg 'manage.get_my_data.details.p1' />
                             </p>
                             <p>
-                                <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="https://support.orcid.org/knowledgebase/articles/117225"><@orcid.msg 'common.learn_more' /></a>
+                                <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="${knowledgeBaseUri}/articles/117225"><@orcid.msg 'common.learn_more' /></a>
                             </p>
                             <p>
                                 <form action="${baseUri}/get-my-data" method="POST">

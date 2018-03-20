@@ -129,10 +129,10 @@
                             <@orcid.msg 'manage.get_my_data.details.p1' />
                         </p>
                         <p>
-                            <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="https://support.orcid.org/knowledgebase/articles/117225"><@orcid.msg 'common.learn_more' /></a>
+                            <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="${knowledgeBaseUri}/articles/117225"><@orcid.msg 'common.learn_more' /></a>
                         </p>
                         <p>
-                            <form action="${baseUri}/get-my-data" method="POST">
+                            <form ngNoForm action="${baseUri}/get-my-data" method="POST">
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <button class="btn btn-primary">
                                     <@orcid.msg 'manage.get_my_data.button' />
@@ -140,8 +140,6 @@
                             </form>
                         </p>
                     </td>
-                </tr>
-            </td>
                 </tr>
             </@orcid.checkFeatureStatus>
             <#if RequestParameters['OrcidSocial']??>
