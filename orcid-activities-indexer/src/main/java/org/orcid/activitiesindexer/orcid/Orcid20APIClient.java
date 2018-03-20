@@ -56,8 +56,8 @@ public class Orcid20APIClient {
     protected final String accessToken;
     
     @Autowired
-    public Orcid20APIClient(@Value("${org.orcid.activities-indexer.api20BaseURI}") String baseUri,
-            @Value("${org.orcid.activities-indexer.api.read_public_access_token}") String accessToken) throws URISyntaxException {
+    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri,
+            @Value("${org.orcid.message-listener.api.read_public_access_token}") String accessToken) throws URISyntaxException {
         LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri);
         this.baseUri = new URI(baseUri);
         this.accessToken = accessToken;

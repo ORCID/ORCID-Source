@@ -72,7 +72,7 @@ public class S3Manager {
     private final JAXBContext jaxbContext_2_0_api;
     private final JAXBContext jaxbContext_2_0_activities_api;
 
-    @Value("${org.orcid.activities-indexer.index.s3.search.max_elements:3000}")
+    @Value("${org.orcid.message-listener.index.s3.search.max_elements:3000}")
     private Integer maxElements;
 
     public void setS3MessagingService(S3MessagingService s3MessagingService) {
@@ -88,7 +88,7 @@ public class S3Manager {
      * @throws JAXBException
      */
     @Autowired
-    public S3Manager(@Value("${org.orcid.activities-indexer.s3.bucket_prefix}") String bucketPrefix) throws JAXBException {
+    public S3Manager(@Value("${org.orcid.message-listener.s3.bucket_prefix}") String bucketPrefix) throws JAXBException {
         mapper = new ObjectMapper();
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         mapper.registerModule(module);

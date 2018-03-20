@@ -30,10 +30,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExceptionHandler {
 
-    @Value("${org.orcid.activities-indexer.api12Enabled:true}")
+    @Value("${org.orcid.message-listener.api12Enabled:true}")
     private boolean is12IndexingEnabled;
 
-    @Value("${org.orcid.activities-indexer.api20Enabled:true}")
+    @Value("${org.orcid.message-listener.api20Enabled:true}")
     private boolean is20IndexingEnabled;
 
     @Resource

@@ -78,7 +78,7 @@
 	
 	<!-- Jersey client -->
     <bean id="jerseyClient" class="org.orcid.activitiesindexer.jersey.OrcidJerseyClientHandler" factory-method="create">
-        <constructor-arg value="${org.orcid.activities-indexer.development_mode:false}" />
+        <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
         <constructor-arg ref="jerseyProperties" />
     </bean>
 
@@ -90,32 +90,32 @@
     <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
     
 	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="databasePlatform" value="${org.orcid.activities-indexer.db.dialect}" />
-        <property name="showSql" value="${org.orcid.activities-indexer.db.showSql}" />
-        <property name="generateDdl" value="${org.orcid.activities-indexer.db.generateDdl}" />
+        <property name="databasePlatform" value="${org.orcid.message-listener.db.dialect}" />
+        <property name="showSql" value="${org.orcid.message-listener.db.showSql}" />
+        <property name="generateDdl" value="${org.orcid.message-listener.db.generateDdl}" />
     </bean>
 	
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="dataSource" ref="${org.orcid.activities-indexer.db.dataSource}" />
+        <property name="dataSource" ref="${org.orcid.message-listener.db.dataSource}" />
         <property name="persistenceUnitName" value="messageListener" />
         <property name="jpaPropertyMap">
             <map>
-                <entry key="hibernate.generate_statistics" value="${org.orcid.activities-indexer.db.hibernateStatistics:false}" />    
+                <entry key="hibernate.generate_statistics" value="${org.orcid.message-listener.db.hibernateStatistics:false}" />    
             </map>
         </property>
     </bean>   
     
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
-        <property name="dataSource" ref="${org.orcid.activities-indexer.db.dataSource}" />
+        <property name="dataSource" ref="${org.orcid.message-listener.db.dataSource}" />
         <property name="changeLog" value="classpath:activities-indexer-db-master.xml" />
     </bean>
     
     <bean id="simpleDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="${org.orcid.activities-indexer.db.class}" />
-        <property name="jdbcUrl" value="${org.orcid.activities-indexer.db.url}" />
-        <property name="user" value="${org.orcid.activities-indexer.db.username}" />
-        <property name="password" value="${org.orcid.activities-indexer.db.password}" />        
+        <property name="driverClass" value="${org.orcid.message-listener.db.class}" />
+        <property name="jdbcUrl" value="${org.orcid.message-listener.db.url}" />
+        <property name="user" value="${org.orcid.message-listener.db.username}" />
+        <property name="password" value="${org.orcid.message-listener.db.password}" />        
     </bean>
         
     <bean id="mqEntityManagerFactory" class="org.orcid.activitiesindexer.persistence.spring.OrcidEntityManagerFactory">

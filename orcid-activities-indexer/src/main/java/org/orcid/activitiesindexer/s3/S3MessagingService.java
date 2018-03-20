@@ -61,8 +61,8 @@ public class S3MessagingService {
      *            Access key to connect to S3
      */
     @Autowired
-    public S3MessagingService(@Value("${org.orcid.activities-indexer.s3.secretKey}") String secretKey,
-            @Value("${org.orcid.activities-indexer.s3.accessKey}") String accessKey, @Value("${org.orcid.activities-indexer.index.bucket_name}") String bucketName)
+    public S3MessagingService(@Value("${org.orcid.message-listener.s3.secretKey}") String secretKey,
+            @Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, @Value("${org.orcid.message-listener.index.bucket_name}") String bucketName)
             throws JAXBException {
         try {
             AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
