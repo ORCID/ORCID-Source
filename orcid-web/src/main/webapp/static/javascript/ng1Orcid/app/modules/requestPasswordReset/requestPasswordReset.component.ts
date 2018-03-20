@@ -73,8 +73,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.requestResetPassword = data;
-                console.log(data);
+                this.requestResetPassword = data;                
                 this.cdr.detectChanges();
             },
             error => {

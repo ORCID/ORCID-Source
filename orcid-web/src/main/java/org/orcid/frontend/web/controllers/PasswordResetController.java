@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -123,29 +124,33 @@ public class PasswordResetController extends BaseController {
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
-        String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        if (profile == null) {
-            String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
-            message += "<a href=\"mailto:support@orcid.org\">";
-            message += getMessage("orcid.frontend.reset.password.email_not_found_3");
-            message += "</a>";
-            message += getMessage("orcid.frontend.reset.password.email_not_found_4");
-            errors.add(message);
-            return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
+        try {
+            String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+            if (profile == null) {
+                String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
+                message += "<a href=\"mailto:support@orcid.org\">";
+                message += getMessage("orcid.frontend.reset.password.email_not_found_3");
+                message += "</a>";
+                message += getMessage("orcid.frontend.reset.password.email_not_found_4");
+                errors.add(message);
+                return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
+            }
+    
+            if (profile.getDeactivationDate() != null) {
+                String message = getMessage("orcid.frontend.reset.password.disabled_account_1");
+                message += "<a href=\"/help/contact-us\">";
+                message += getMessage("orcid.frontend.reset.password.disabled_account_2");
+                message += "</a>";
+                errors.add(message);
+                return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
+            }
+    
+            registrationManager.resetUserPassword(passwordResetRequest.getEmail(), orcid, profile.getClaimed());
+            passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
+        } catch(NoResultException nre) {
+            errors.add(getMessage("Email.resetPasswordForm.error"));
         }
-
-        if (profile.getDeactivationDate() != null) {
-            String message = getMessage("orcid.frontend.reset.password.disabled_account_1");
-            message += "<a href=\"/help/contact-us\">";
-            message += getMessage("orcid.frontend.reset.password.disabled_account_2");
-            message += "</a>";
-            errors.add(message);
-            return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-        }
-
-        registrationManager.resetUserPassword(passwordResetRequest.getEmail(), orcid, profile.getClaimed());
-        passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
         return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
     }
 
