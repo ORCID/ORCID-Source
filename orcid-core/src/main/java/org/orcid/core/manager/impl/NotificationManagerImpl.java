@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
@@ -124,7 +108,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
 
     @Resource

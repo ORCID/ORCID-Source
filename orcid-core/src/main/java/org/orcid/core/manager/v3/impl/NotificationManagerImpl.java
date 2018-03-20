@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.io.UnsupportedEncodingException;
@@ -94,6 +78,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -137,8 +122,11 @@ public class NotificationManagerImpl implements NotificationManager {
     
     private int verifyReminderAfterDays = 7;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
+    
+    @Resource(name = "messageSourceNoFallback")
+    private MessageSource messageSourceNoFallback;
 
     @Resource
     private MailGunManager mailGunManager;
@@ -244,7 +232,16 @@ public class NotificationManagerImpl implements NotificationManager {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        String subject = getSubject("email.subject.register.thanks", userLocale);
+        
+        boolean useV2Template = false;
+        String subject;
+        try {
+            subject = messageSourceNoFallback.getMessage("email.subject.register.welcome", null, userLocale);
+            useV2Template = true;
+        } catch(NoSuchMessageException e) {
+            subject = messages.getMessage("email.subject.register.thanks", null, userLocale);
+        }
+        
         String emailName = deriveEmailFriendlyName(profileEntity);
         String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         String orcidId = userOrcid;
@@ -280,9 +277,9 @@ public class NotificationManagerImpl implements NotificationManager {
         addMessageParams(templateParams, userLocale);
 
         // Generate body from template
-        String body = templateManager.processTemplate("welcome_email.ftl", templateParams);
+        String body = (useV2Template) ? templateManager.processTemplate("welcome_email_v2.ftl", templateParams) : templateManager.processTemplate("welcome_email.ftl", templateParams);
         // Generate html from template
-        String html = templateManager.processTemplate("welcome_email_html.ftl", templateParams);
+        String html = (useV2Template) ? templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams): templateManager.processTemplate("welcome_email_html.ftl", templateParams);
 
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
     }
@@ -356,31 +353,35 @@ public class NotificationManagerImpl implements NotificationManager {
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     @Override
     public void sendVerificationEmail(String userOrcid, String email) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(profile);
-        Locale locale = getUserLocaleFromProfileEntity(profile);
-        String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
-        // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+        processVerificationEmail(userOrcid, email, false);
     }
 
     @Override
     public void sendVerificationReminderEmail(String userOrcid, String email) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
+        processVerificationEmail(userOrcid, email, true);
+    }
+    
+    private void processVerificationEmail(String userOrcid, String email, boolean isVerificationReminder) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale locale = getUserLocaleFromProfileEntity(profile);
+        
+        boolean useV2Template = false;
+        try {
+            messageSourceNoFallback.getMessage("email.verify.primary_reminder_v2", null, locale);
+            useV2Template = true;
+        } catch(NoSuchMessageException e) {
+            
+        }
+        
         String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(record);
-        Locale locale = getUserLocaleFromProfileEntity(record);
+        String emailFriendlyName = deriveEmailFriendlyName(profile);
         String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email,
-                primaryEmail, locale);
+        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
+        templateParams.put("isReminder", isVerificationReminder);
         // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+        String body = (useV2Template) ? templateManager.processTemplate("verification_email_v2.ftl", templateParams) : templateManager.processTemplate("verification_email.ftl", templateParams);
+        String htmlBody = (useV2Template) ? templateManager.processTemplate("verification_email_html_v2.ftl", templateParams) : templateManager.processTemplate("verification_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);    
     }
 
     private String createSubjectForVerificationEmail(String email, String primaryEmail, Locale userLocale) {
@@ -1157,7 +1158,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (locale != null) {
             return LocaleUtils.toLocale(locale.value());
         }
-        
+
         return LocaleUtils.toLocale("en");
     }
 

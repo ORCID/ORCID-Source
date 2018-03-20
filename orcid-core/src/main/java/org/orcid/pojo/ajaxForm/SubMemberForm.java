@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
@@ -121,8 +105,13 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
     public Member toMember() {
         Member member = new Member();
         member.setConsortiumLeadId(getParentAccountId());
-        member.setName(getName().getValue());
-        member.setPublicDisplayName(getName().getValue());
+        String trimmedName = getName().getValue().trim();
+        if (trimmedName.length() > 41) {
+            member.setName(trimmedName.substring(0, 41));
+        } else {
+            member.setName(trimmedName);
+        }
+        member.setPublicDisplayName(trimmedName);
         try {
             String websiteValue = getWebsite().getValue();
             if (!websiteValue.startsWith("http")) {

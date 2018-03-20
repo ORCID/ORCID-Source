@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" 
     <@orcid.checkFeatureStatus featureName='HTTPS_IDS'> 
     id="delegates-v2-ng2-template"
@@ -31,7 +12,7 @@
         id="DelegatesCtrl" 
         data-search-query-url="${searchBaseUrl}"
     > 
-        <div *ngIf="delegation.length > 0" >
+        <div *ngIf="delegation?.length > 0" >
             <div class="ng-hide" *ngIf="showInitLoader == true;">
 
             </div>
@@ -44,12 +25,12 @@
                             <th class="width-10" ></th>
                         </tr>
                     </thead>
-                    <tbody *ngIf="!delegation.length > 0" >
+                    <tbody *ngIf="!delegation?.length > 0" >
                         <tr>
                             <td>No trusted individuals added yet</td>
                         </tr>
                     </tbody>
-                    <tbody *ngIf="delegation.length > 0" >
+                    <tbody *ngIf="delegation?.length > 0" >
                         <tr *ngFor="let delegationDetails of delegation | orderBy:sort.column:sort.descending">
                             <td><a href="{{delegationDetails.receiverOrcid.uri}}" target="delegationDetails.receiverName.value">{{delegationDetails.receiverName.value}}</a></td>
                             <td><a href="{{delegationDetails.receiverOrcid.uri}}" target="delegationDetails.receiverOrcid.value">{{delegationDetails.receiverOrcid.uri}}</a></td>

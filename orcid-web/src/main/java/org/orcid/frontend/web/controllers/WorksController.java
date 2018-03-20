@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
@@ -109,6 +93,14 @@ public class WorksController extends BaseWorkspaceController {
             workManager.removeWorks(getEffectiveUserOrcid(), workIdLs);
         }
         return workIdLs;
+    }
+    
+
+    @RequestMapping(value = "/group/{workIdsStr}", method = RequestMethod.POST)
+    public @ResponseBody List<Long> groupWorks(@PathVariable("workIdsStr") String workIdsStr) {
+        List<Long> workIds = Arrays.stream(workIdsStr.split(",")).mapToLong(n -> Long.parseLong(n)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        workManager.createNewWorkGroup(workIds, getCurrentUserOrcid());
+        return workIds;
     }
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)

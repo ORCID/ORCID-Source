@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected nav="record">
 <#escape x as x?html>
 
@@ -57,9 +39,19 @@
 
     <#-- hidden divs that trigger angular -->
     <#if RequestParameters['recordClaimed']??>
-    <div ng-controller="ClaimThanks" style="display: hidden;"></div>      
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <claim-thanks-ng2></claim-thanks-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
+    <div ng-controller="ClaimThanks" style="display: hidden;"></div>
+    </@orcid.checkFeatureStatus> 
     <#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <verify-email-ng2></verify-email-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
     <div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
+    </@orcid.checkFeatureStatus> 
     </#if>
   
     <!-- ID Banner and other account information -->
@@ -183,7 +175,14 @@
         <emails-ng2></emails-ng2>
 
 
-      <!--  External Identifiers -->          
+      <!--  External Identifiers -->
+
+      <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+      <div ng-hide="!externalIdentifiersForm.externalIdentifiers.length">
+        <external-identifiers-ng2></external-identifiers-ng2>
+      </div>
+      </@orcid.checkFeatureStatus>
+      <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>   
       <div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
         <div class="workspace-section-header">
           <div class="workspace-section-title">                 
@@ -206,7 +205,8 @@
             <span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="externalIdentifier.commonName">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>
           </div>
         </div>
-      </div>          
+      </div>
+      </@orcid.checkFeatureStatus>       
     </div>
   </div>
 
@@ -221,20 +221,30 @@
         </div>
       </div>                
       </#if>
+      <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+      <work-summary-ng2></work-summary-ng2>
+      </@orcid.checkFeatureStatus>         
+        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
       <div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
         <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
           <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/><a href="https://support.orcid.org/knowledgebase/articles/460004" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a><@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
         </div>                
       </div>
+      </@orcid.checkFeatureStatus>  
       <div class="workspace-accordion" id="workspace-accordion">
         <!-- Notification alert -->                       
         <#include "includes/notification_alert.ftl"/>             
         <!-- Personal Information -->
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+        <personal-info-ng2></personal-info-ng2>
+        </@orcid.checkFeatureStatus>         
+        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
         <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">              
           <div class="workspace-accordion-content" ng-if="displayInfo">
             <#include "workspace_personal_v3.ftl"/>
           </div>
         </div>
+        </@orcid.checkFeatureStatus>     
         <!-- Affiliations / Education / Employment -->
         <#include "workspace_affiliations_body_list_v3.ftl"/>
         <!-- Fundings -->
@@ -742,10 +752,14 @@
 
 <modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
     <websites-form-ng2></websites-form-ng2>
-</modalngcomponent><!-- Ng2 component -->  
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
+    <works-form-ng2></works-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
 </@orcid.checkFeatureStatus> 
 
-<modalngcomponent elementHeight="300" elementId="modalAffiliationDelete" elementWidth="300">
+<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 

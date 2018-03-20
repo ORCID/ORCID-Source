@@ -52,10 +52,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     private subscription: Subscription;
     private viewSubscription: Subscription;
 
-    /*
-    emailSrvc: any;
-    workspaceSrvc: any;
-    */
     addingAffiliation: boolean;
     deleAff: any;
     disambiguatedAffiliation: any;
@@ -85,17 +81,13 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     constructor(
         private affiliationService: AffiliationService,
+        private commonSrvc: CommonService,
         private emailService: EmailService,
-        //private groupedActivitiesUtilService: GroupedActivitiesUtilService,
+        private featuresService: FeaturesService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
-        private featuresService: FeaturesService,
-        private commonSrvc: CommonService,
     ) {
-        /*
-        this.emailSrvc = emailSrvc;
-        this.workspaceSrvc = workspaceSrvc;
-        */
+ 
         this.addingAffiliation = false;
         this.deleAff = null;
         this.disambiguatedAffiliation = null;
@@ -383,6 +375,23 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     serverValidate(relativePath): void {
+        //console.log('server validate', relativePath, this.editAffiliation);
+        if( relativePath == 'affiliations/affiliation/datesValidate.json' ){
+            if( this.editAffiliation.startDate.month == "" 
+                || this.editAffiliation.startDate.day == ""
+                || this.editAffiliation.startDate.year == ""
+                || this.editAffiliation.endDate.month == "" 
+                || this.editAffiliation.endDate.day == ""
+                || this.editAffiliation.endDate.year == ""
+                || this.editAffiliation.startDate.month == null 
+                || this.editAffiliation.startDate.day == null
+                || this.editAffiliation.startDate.year == null
+                || this.editAffiliation.endDate.month == null 
+                || this.editAffiliation.endDate.day == null
+                || this.editAffiliation.endDate.year == null  ){
+                return;
+            }
+        }
         this.affiliationService.serverValidate(this.editAffiliation, relativePath)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -509,7 +518,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
                 (res) => {
                     console.log(JSON.stringify(res));
-                    if(res.moduleId = "modalAffiliationForm") {
+                    if(res.moduleId == "modalAffiliationForm") {
                         if(res.action == "open" && res.edit == false) {
                             this.editAffiliation = this.getEmptyAffiliation();
                             this.editAffiliation.affiliationType.value = this.addAffType;

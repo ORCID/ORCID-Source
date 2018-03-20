@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.common;
 
 import javax.ws.rs.GET;
@@ -73,32 +57,6 @@ public interface OrcidApiService<T> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIO_PATH)
     T viewBioDetailsJson(@PathParam("orcid") String orcid);
-
-    /**
-     * GETs the RDF/XML representation of the ORCID record containing only the
-     * Biography details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the RDF/XML representation of the ORCID record
-     */
-    @GET
-    @Produces(value = { APPLICATION_RDFXML })
-    @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
-    T viewBioDetailsRdf(@PathParam("orcid") String orcid);
-
-    /**
-     * GETs the RDF Turtle representation of the ORCID record containing only
-     * the Biography details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the RDF Turtle representation of the ORCID record
-     */
-    @GET
-    @Produces(value = { TEXT_N3, TEXT_TURTLE })
-    @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
-    T viewBioDetailsTurtle(@PathParam("orcid") String orcid);
 
     /**
      * GETs the HTML representation of the ORCID external identifiers

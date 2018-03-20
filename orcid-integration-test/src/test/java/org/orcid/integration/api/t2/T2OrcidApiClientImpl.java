@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.api.t2;
 
 import static org.orcid.core.api.OrcidApiConstants.*;
@@ -363,32 +347,6 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     @Override
     public ClientResponse viewBioDetailsJson(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), VND_ORCID_JSON);
-    }
-
-    /**
-     * GETs the RDF/XML representation of the ORCID record containing only the
-     * Biography details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the RDF/XML representation of the ORCID record
-     */
-    @Override
-    public ClientResponse viewBioDetailsRdf(@PathParam("orcid") String orcid) {
-        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), APPLICATION_RDFXML);
-    }
-
-    /**
-     * GETs the RDF Turtle representation of the ORCID record containing only
-     * the Biography details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the RDF Turtle representation of the ORCID record
-     */
-    @Override
-    public ClientResponse viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
-        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), TEXT_TURTLE);
     }
 
     /**

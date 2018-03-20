@@ -1,22 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <dataset>
 	<work work_id="1" date_created="2011-06-29 15:31:00.00" last_modified="2011-07-02 15:31:00.00"
 		publication_year="2011" publication_month="2" publication_day="1"

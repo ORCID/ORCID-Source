@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -50,6 +34,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.junit.After;
@@ -103,6 +88,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -388,9 +374,16 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
         String userOrcid = "0000-0000-0000-0003";
-        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        ProfileEntity profile = new ProfileEntity(userOrcid);
+        RecordNameEntity recordName = new RecordNameEntity();
+        recordName.setCreditName("My credit name");
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        profile.setRecordNameEntity(recordName);
+        when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
+        String primaryEmail = "limited_0000-0000-0000-0003@test.orcid.org";
         for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
+            profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
             notificationManager.sendVerificationReminderEmail(userOrcid, primaryEmail);
         }
     }

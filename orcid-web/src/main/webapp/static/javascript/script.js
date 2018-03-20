@@ -1,21 +1,4 @@
 /*
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
-
-/*
  * 1 - Utility functions 
  */
 function scriptTmpl(elemId) {
@@ -493,20 +476,27 @@ $(function() {
     // jquery browser is deprecated, when you upgrade
     // to 1.9 or higher you will need to use the pluggin
     var oldBrowserFlag = false;
-
-    if (!!navigator.userAgent.match(/Trident\/7\./)) {
-        // IE 11
-        oldBrowserFlag = false;
-    } else if ($.browser.msie && parseInt($.browser.version, 10) < 8) {
+    console.log(navigator.userAgent.toLowerCase());
+    console.log(parseInt($.browser.version));
+    console.log($.browser.mozilla);
+    //IE 11
+    if (/trident/.test(navigator.userAgent.toLowerCase())
+            && parseInt($.browser.version, 10) < 8) {
+        oldBrowserFlag = true;
+    } else if ($.browser.msie && parseInt($.browser.version, 10) < 10) {
+        oldBrowserFlag = true;
+    } else if (/edge/.test(navigator.userAgent.toLowerCase())
+            && parseInt($.browser.version, 10) < 14) {
         oldBrowserFlag = true;
     } else if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())
-            && parseInt($.browser.version, 10) < 22) {
+            && parseInt($.browser.version, 10) < 55) {
         oldBrowserFlag = true;
-    } else if ($.browser.mozilla && parseInt($.browser.version, 10) < 15) {
+    } else if ($.browser.mozilla && parseInt($.browser.version, 10) < 50) {
         oldBrowserFlag = true;
-    } else if ($.browser.opera && parseInt($.browser.version, 10) < 12) {
+    } else if ($.browser.opera && parseInt($.browser.version, 10) < 42) {
         oldBrowserFlag = true;
-    } else if ($.browser.safari && parseInt($.browser.version, 10) < 6) {
+    //safari 10
+    } else if ($.browser.safari && parseInt($.browser.version, 10) < 602) {
         oldBrowserFlag = true;
     }
 
@@ -514,8 +504,8 @@ $(function() {
         var wHtml = '<div class="alert" id="browser-warn-div">';
         wHtml = wHtml + '<strong>';
         wHtml = wHtml + om.get('common.old.browser_1');
-        wHtml = wHtml + '<a href="https://support.orcid.org/knowledgebase/articles/1804765-technical-requirements-for-using-the-orcid-site" target="common.old_browser_2">' + om.get('common.old_browser_2') + '</a> ';
-        wHtml = wHtml + om.get('common.old_browser_3');
+        wHtml = wHtml + om.get('common.old_browser_2');
+        wHtml = wHtml + ' <a href="https://support.orcid.org/knowledgebase/articles/1804765-technical-requirements-for-using-the-orcid-site" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
         wHtml = wHtml + '</strong>';
         wHtml = wHtml + '</div>';
         $('body').prepend(wHtml);
@@ -698,7 +688,11 @@ $(function() {
     }
     
     function showLoginDeactivatedError() {
-        angular.element($("#login-deactivated-error")).scope().showDeactivationError();
+        if(orcidVar.features['ANGULAR2_QA']){
+            window.angularComponentReference.zone.run(() => { window.angularComponentReference.showDeactivationError(); });
+        } else {
+          angular.element($("#login-deactivated-error")).scope().showDeactivationError();  
+        }
         if ($('form#loginForm #login-error-mess').length == 0) {
             $('form#loginForm #login-deactivated-error').fadeIn('fast');
         } else {

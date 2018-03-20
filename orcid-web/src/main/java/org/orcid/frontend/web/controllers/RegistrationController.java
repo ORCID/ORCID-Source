@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
@@ -39,6 +23,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
@@ -348,7 +333,7 @@ public class RegistrationController extends BaseController {
         return reg;
     }
     
-    @RequestMapping(value = "/registerActivitiesVisibilityDefault.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/registerActivitiesVisibilityDefaultValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerActivitiesVisibilityDefaultValidate(@RequestBody Registration reg) {
         activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
         return reg;
@@ -390,15 +375,23 @@ public class RegistrationController extends BaseController {
             
             if (profileEntityManager.isProfileClaimedByEmail(emailAddress)) {
                 if (isOauthRequest) {
-                    String message = getMessage("oauth.registration.duplicate_email_1", emailAddress);
-                    message += "<a ng-click=\"showToLoginForm()\">";
-                    message += getMessage("oauth.registration.duplicate_email_2");
-                    message += "</a>";
-                    message += getMessage("oauth.registration.duplicate_email_3", emailAddress);
-                    reg.getEmail().getErrors().add(message);
+                    if(Features.ANGULAR2_QA.isActive()) {
+                        reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
+                    } else {
+                        String message = getMessage("oauth.registration.duplicate_email_1", emailAddress);
+                        message += "<a ng-click=\"showToLoginForm()\">";
+                        message += getMessage("oauth.registration.duplicate_email_2");
+                        message += "</a>";
+                        message += getMessage("oauth.registration.duplicate_email_3", emailAddress);
+                        reg.getEmail().getErrors().add(message);
+                    }
                     return reg;
                 }
-                reg.getEmail().getErrors().add(getMessage("orcid.frontend.verify.duplicate_email", emailAddress));
+                if(Features.ANGULAR2_QA.isActive()) {
+                    reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
+                } else {
+                    reg.getEmail().getErrors().add(getMessage("orcid.frontend.verify.duplicate_email", emailAddress));
+                }
                 return reg;
             }
 
@@ -448,26 +441,34 @@ public class RegistrationController extends BaseController {
                             emailAdditional.getErrors().add("orcid.frontend.verify.deactivated_email");
                         } else if(profileEntityManager.isProfileClaimedByEmail(emailAddressAdditional)) {                                                                        
                             if (isOauthRequest) {
-                                String message = getMessage("oauth.registration.duplicate_email_1", emailAddressAdditional);
-                                message += "<a ng-click=\"showToLoginForm()\">";
-                                message += getMessage("oauth.registration.duplicate_email_2");
-                                message += "</a>";
-                                message += getMessage("oauth.registration.duplicate_email_3", emailAddressAdditional);
-                                emailAdditional.getErrors().add(message);
-                            } else {
-                                String link = "/signin";
-                                String linkType = reg.getLinkType();
-                                if ("social".equals(linkType)) {
-                                    link = "/social/access";
-                                } else if ("shibboleth".equals(linkType)) {
-                                    link = "/shibboleth/signin";
+                                if(Features.ANGULAR2_QA.isActive()) {
+                                    emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
+                                } else {
+                                    String message = getMessage("oauth.registration.duplicate_email_1", emailAddressAdditional);
+                                    message += "<a ng-click=\"showToLoginForm()\">";
+                                    message += getMessage("oauth.registration.duplicate_email_2");
+                                    message += "</a>";
+                                    message += getMessage("oauth.registration.duplicate_email_3", emailAddressAdditional);
+                                    emailAdditional.getErrors().add(message);
                                 }
-                                String message = getMessage("oauth.registration.duplicate_email_1", emailAddressAdditional);
-                                message += "<a href=\"" + orcidUrlManager.getBaseUrl() + link + "\">";
-                                message += getMessage("oauth.registration.duplicate_email_2");
-                                message += "</a>";
-                                message += getMessage("oauth.registration.duplicate_email_3", emailAddressAdditional);
-                                emailAdditional.getErrors().add(message);
+                            } else {
+                                if(Features.ANGULAR2_QA.isActive()) {
+                                    emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
+                                } else {
+                                    String link = "/signin";
+                                    String linkType = reg.getLinkType();
+                                    if ("social".equals(linkType)) {
+                                        link = "/social/access";
+                                    } else if ("shibboleth".equals(linkType)) {
+                                        link = "/shibboleth/signin";
+                                    }
+                                    String message = getMessage("oauth.registration.duplicate_email_1", emailAddressAdditional);
+                                    message += "<a href=\"" + orcidUrlManager.getBaseUrl() + link + "\">";
+                                    message += getMessage("oauth.registration.duplicate_email_2");
+                                    message += "</a>";
+                                    message += getMessage("oauth.registration.duplicate_email_3", emailAddressAdditional);
+                                    emailAdditional.getErrors().add(message);
+                                }
                             }
                         } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
                             //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        

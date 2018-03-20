@@ -10,6 +10,9 @@ import { Directive, NgModule }
 import { FormsModule }
     from '@angular/forms'; // <-- NgModel lives here
 
+import { ReCaptchaModule } 
+    from 'angular2-recaptcha';
+
 //User generated filters
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
@@ -56,6 +59,7 @@ import { HeaderNg2Module }
 import { LanguageNg2Module }
     from './../language/language.ts';
 
+
 import { NotificationsCountNg2Module }
     from './../notificationsCount/notificationsCount.ts';
 
@@ -68,6 +72,9 @@ import { PasswordEditNg2Module }
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
+import { RequestPasswordResetNg2Module }
+    from './../requestPasswordReset/requestPasswordReset.ts';
+
 /*
 import { RevokeApplicationFormNg2Module }
     from './../revokeApplicationForm/revokeApplicationForm.ts';
@@ -78,11 +85,16 @@ import { SecurityQuestionEditNg2Module }
 /*
 import { SocialNg2Module }
     from './../social/social.ts';
-import { SwitchUserNg2Module }
-    from './../switchUser/switchUser.ts';
 */
 
+import { SwitchUserNg2Module }
+    from './../switchUser/switchUser.ts';
+
+
 //User generated services
+
+import { AdminDelegatesService }
+    from '../../shared/adminDelegates.service.ts';
 
 import { AffiliationService } 
     from '../../shared/affiliation.service.ts';
@@ -96,6 +108,15 @@ import { AlsoKnownAsService }
 import { BiographyService } 
     from '../../shared/biography.service.ts';
 
+import { BlogService }
+    from '../../shared/blog.service.ts';
+
+import { ClaimService }
+    from '../../shared/claim.service.ts';
+
+import { ClientService }
+    from '../../shared/client.service.ts';
+
 import { CommonService }
     from '../../shared/common.service.ts'
 
@@ -105,11 +126,17 @@ import { ConsortiaService }
 import { CountryService } 
     from '../../shared/country.service.ts';
 
+import { DelegatorsService }
+    from '../../shared/delegators.service.ts';
+
 import { DeprecateProfileService }
     from '../../shared/deprecateProfile.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
+
+import { ExternalIdentifiersService } 
+    from '../../shared/externalIdentifiers.service.ts';
 
 import { FeaturesService }
     from '../../shared/features.service.ts';
@@ -126,14 +153,41 @@ import { KeywordsService }
 import { LanguageService }
     from '../../shared/language.service.ts';
 
+import { ManageMembersService } 
+    from '../../shared/manageMembers.service.ts';
+
 import { ModalService } 
     from '../../shared/modal.service.ts';
 
 import { NameService } 
     from '../../shared/name.service.ts';
 
+import { NotificationsService } 
+    from '../../shared/notifications.service.ts';
+
+import { OauthService }
+    from '../../shared/oauth.service.ts';
+
+import { PasswordService }
+    from '../../shared/password.service.ts';
+
 import { PreferencesService }
     from '../../shared/preferences.service.ts';
+
+import { ReactivationService }
+    from '../../shared/reactivation.service.ts';
+
+import { RequestPasswordResetService }
+    from '../../shared/requestPasswordReset.service.ts';
+
+import { SocialNetworkService }
+    from '../../shared/socialNetwork.service.ts';
+
+import { StaticsService }
+    from '../../shared/statics.service.ts';
+
+import { SwitchUserService } 
+    from '../../shared/switchUser.service.ts';
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
@@ -162,7 +216,10 @@ import { WorksService }
             //EditTableNg2Module,
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
-            PrivacytoggleNg2Module
+            PrivacytoggleNg2Module,
+            ReCaptchaModule,
+            RequestPasswordResetNg2Module,
+            SwitchUserNg2Module
         ],
         declarations: [ 
             AjaxFormDateToISO8601Pipe,
@@ -173,7 +230,8 @@ import { WorksService }
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
-            WorkExternalIdentifierHtmlPipe
+            WorkExternalIdentifierHtmlPipe,
+
         ],
         exports: [
             //Angular Libraries
@@ -194,27 +252,45 @@ import { WorksService }
             //EditTableNg2Module,
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
-            PrivacytoggleNg2Module
+            PrivacytoggleNg2Module,
+            ReCaptchaModule,
+            RequestPasswordResetNg2Module,
+            SwitchUserNg2Module
         ],
         providers: [
             AccountService,
+            AdminDelegatesService,
             AffiliationService,
             AlsoKnownAsService,
             BiographyService,
+            BlogService,
+            ClaimService,
+            ClientService,
             CommonService,
             ConsortiaService,
             CountryService,
+            DelegatorsService,
             DeprecateProfileService,
             EmailService,
+            ExternalIdentifiersService,
             FeaturesService,
             FundingService,
             //GroupedActivitiesUtilService,
             KeywordsService,
             LanguageService,
+            ManageMembersService,
             ModalService,
             NameService,
+            NotificationsService,
+            OauthService,
+            PasswordService,
             PreferencesService,
+            ReactivationService,
+            RequestPasswordResetService,
+            SocialNetworkService,
+            StaticsService,
             TwoFAStateService,
+            SwitchUserService,
             WebsitesService,
             WidgetService,
             WorksService,

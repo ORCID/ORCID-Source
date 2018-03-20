@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="claim-ng2-template">
     <div>
         <div>
@@ -52,7 +33,7 @@
                             </div>                
                         </div>
                     </div>
-                    <span class="orcid-error" *ngIf="register.password.errors.length > 0">
+                    <span class="orcid-error" *ngIf="register?.password?.errors?.length > 0">
                         <div *nfFor='let error of register.password.errors' [innerHTML]="error"></div>
                     </span>
                 </div>
@@ -62,7 +43,7 @@
                 <div class="relative">
                     <input type="password" name="confirmPassword" class="input-xlarge" [(ngModel)]="register.passwordConfirm.value" (ngModelChange)="serverValidate('PasswordConfirm')"/>
                     <span class="required" [ngClass]="isValidClass(register.passwordConfirm)">*</span>
-                    <span class="orcid-error" *ngIf="register.passwordConfirm.errors.length > 0">
+                    <span class="orcid-error" *ngIf="register?.passwordConfirm?.errors?.length > 0">
                         <div *ngFor='let error of register.passwordConfirm.errors' [innerHTML]="error"></div>
                     </span>
                 </div>
@@ -89,7 +70,7 @@
                         <input type="checkbox" name="acceptTermsAndConditions" [(ngModel)]="register.termsOfUse.value" (ngModelChange)="serverValidate('TermsOfUse')"/>
                         ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")} ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}</p>
                     </label>
-                    <span class="orcid-error" *ngIf="register.termsOfUse.errors.length > 0">
+                    <span class="orcid-error" *ngIf="register?.termsOfUse?.errors?.length > 0">
                         <div *ngFor='let error of register.termsOfUse.errors' [innerHTML]="error"></div>
                     </span>
                 </div>

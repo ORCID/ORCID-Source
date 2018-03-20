@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli;
 
 import java.io.File;
@@ -490,6 +474,7 @@ public class LoadRinggoldData {
             LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
             String city = altName.get("city").asText();
             Iso3166Country country = Iso3166Country.fromValue(altName.get("country").asText());
+            //Not happy with line below.  Can steal from other ORG ID types.
             OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, null, country);
             if (existingOrg != null) {
                 if (existingOrg.getOrgDisambiguated() == null) {
@@ -514,6 +499,7 @@ public class LoadRinggoldData {
 
     private void generateOrganizationFromInstitutionNode(OrgDisambiguatedEntity disambiguatedEntity, String name, Iso3166Country country, String city, String region) {
         Date now = new Date();
+        //Not happy with line below.  Can steal from other ORG ID types.
         OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, region, country);
         if (existingOrg != null) {
             if (existingOrg.getOrgDisambiguated() == null) {

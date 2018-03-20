@@ -1,22 +1,8 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <#escape x as x?html>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <biography-ng2></biography-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
    	<div class="biography-controller" ng-controller="BiographyCtrl">
    			<strong ng-click="toggleEdit()">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong>
    			<span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" ng-hide="showEdit == true" title=""></span><br />
@@ -57,5 +43,6 @@
    			    </div>													        
    			</div>
    	</div>
+    </@orcid.checkFeatureStatus>
    	<br />
 </#escape>

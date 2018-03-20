@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
@@ -44,9 +28,9 @@ import org.mockito.Mock;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -88,24 +72,17 @@ public class FundingsControllerTest extends BaseControllerTest {
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
+    
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
 
     @Override
     protected Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
-
-        OrcidProfileUserDetails details = null;
-        if (orcidProfile.getType() != null) {
-            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
-        } else {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
-        }
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4443", details.getPassword(),
-                Arrays.asList(OrcidWebRole.ROLE_USER));
+        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcidProfile.retrieveOrcidPath(),
+                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), null, roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4443", details.getPassword(), roles);
         auth.setDetails(details);
         return auth;
     }

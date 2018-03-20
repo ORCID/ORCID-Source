@@ -1,27 +1,13 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected nav="notifications">
 <#escape x as x?html> 
 <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
         <#include "admin_menu.ftl"/>
     </div>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <notifications-ng2></notifications-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >        
         <div class="notification-top-bar">
         	<ul class="inline-list pull-right">
@@ -96,6 +82,7 @@
             <![endif]-->
         </div>
     </div>
+    </@orcid.checkFeatureStatus>
 </div>
 
 </#escape>

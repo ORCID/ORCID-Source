@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <!DOCTYPE log4j:configuration PUBLIC "-//LOGGER"
         "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
@@ -39,7 +21,7 @@
 	<!-- Root Logger -->
 	<root>
 		<level value="DEBUG" />
-		<!-- <appender-ref ref="CONSOLE" /> -->
+		<!-- <appender-ref ref="CONSOLE" />  -->
 	</root>
 
 </log4j:configuration>

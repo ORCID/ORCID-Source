@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +22,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mockito;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
@@ -52,6 +40,7 @@ import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
 
@@ -72,6 +61,9 @@ public class WorksControllerTest extends BaseControllerTest {
     @Resource
     protected OrcidProfileManager orcidProfileManager;
 
+    @Captor
+    private ArgumentCaptor<List<Long>> idsCaptor;
+
     private String _5000chars = null;
 
     @Before
@@ -88,6 +80,29 @@ public class WorksControllerTest extends BaseControllerTest {
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES));
+    }
+    
+    @Test
+    public void testGroupWorks() {
+        WorkManager oldWorkManager = (WorkManager) ReflectionTestUtils.getField(worksController, "workManager");
+        WorkManager mockWorkManager = Mockito.mock(WorkManager.class);
+        Mockito.doNothing().when(mockWorkManager).createNewWorkGroup(Mockito.anyList(), Mockito.anyString());
+        ReflectionTestUtils.setField(worksController, "workManager", mockWorkManager);
+        
+        ArgumentCaptor<String> orcidCaptor = ArgumentCaptor.forClass(String.class);
+        
+        worksController.groupWorks("1,2,3,4");
+        
+        Mockito.verify(mockWorkManager).createNewWorkGroup(idsCaptor.capture(), orcidCaptor.capture());
+        
+        List<Long> ids = idsCaptor.getValue();
+        assertEquals(4, ids.size());
+        assertEquals(Long.valueOf(1l), ids.get(0));
+        assertEquals(Long.valueOf(2l), ids.get(1));
+        assertEquals(Long.valueOf(3l), ids.get(2));
+        assertEquals(Long.valueOf(4l), ids.get(3));
+        
+        ReflectionTestUtils.setField(worksController, "workManager", oldWorkManager);
     }
 
     @Test

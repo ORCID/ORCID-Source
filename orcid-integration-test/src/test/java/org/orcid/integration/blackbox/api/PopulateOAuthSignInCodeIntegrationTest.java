@@ -1,24 +1,10 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import org.orcid.core.togglz.Features;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import static org.orcid.integration.blackbox.api.BBBUtil.executeJavaScript;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementByXpath;
@@ -29,7 +15,9 @@ import static org.orcid.integration.blackbox.api.BBBUtil.waitForElementVisibilit
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.codehaus.jettison.json.JSONException;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -48,6 +36,18 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
     
     private String authorizeScreen = null;
     
+    private static boolean previousRegMultiEmailState;
+
+    @BeforeClass
+    public static void beforeClass() {
+        previousRegMultiEmailState = getTogglzFeatureState(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, previousRegMultiEmailState);
+    }
+    
     @Before    
     public void before() {
         authorizeScreen = this.getWebBaseUrl() + "/oauth/authorize?client_id=" + this.getClient1ClientId() + "&response_type=code&redirect_uri=" + this.getClient1RedirectUri() + "&scope=/activities/read-limited";
@@ -55,6 +55,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
     
     @Test
     public void checkNoPrePop() throws JSONException, InterruptedException {
+        //Multiple emails disabled
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, false);
+        signout();
         getUrlAndWait(authorizeScreen);
         switchToRegisterForm();
         // make sure we are on the page
@@ -65,10 +68,31 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals(""));
         // verify we don't populate signin
         assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
+        getUrlAndWait(authorizeScreen);
+        switchToRegisterForm();
+        
+        //Multiple emails enabled
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, true);
+        signout();
+        getUrlAndWait(authorizeScreen);
+        switchToRegisterForm();
+        // make sure we are on the page
+        emailElement= By.xpath("//input[@name='emailprimary234']");
+        waitForElementVisibility(emailElement);        
+        assertTrue(findElement(emailElement).getAttribute("value").equals(""));
+        assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals(""));
+        assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals(""));
+        // verify we don't populate signin
+        assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
+        getUrlAndWait(authorizeScreen);
+        switchToRegisterForm();
     }
 
     @Test
     public void emailPrePopulate() throws JSONException, InterruptedException {
+        //Multiple emails disabled
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, false);
+        signout();
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
         getUrlAndWait(url);        
@@ -96,10 +120,28 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         element = By.xpath("//input[@name='userId']");
         waitForElementVisibility(element);                
         assertTrue(findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
+        
+        //Multiple emails enabled
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, true);
+        signout();
+        // test populating form with email that doesn't exist
+        url = authorizeScreen + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
+        getUrlAndWait(url);        
+        
+        element = By.xpath("//input[@name='emailprimary234']");
+        waitForElementVisibility(element);       
+        assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
+        assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
+        assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals("test_given_name"));
+        // verify we don't populate signin
+        assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
     }
         
     @Test
-    public void emailPrePopulateWithHtmlEncodedEmail() throws JSONException, InterruptedException {        
+    public void emailPrePopulateWithHtmlEncodedEmail() throws JSONException, InterruptedException {
+        //Multiple emails disabled
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, false);
+        signout();
         String scapedEmail = StringEscapeUtils.escapeHtml4(this.getUser1UserName());
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";                
@@ -132,6 +174,21 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         element = By.xpath("//input[@name='userId']");
         waitForElementVisibility(element);                
         assertTrue(findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
+        
+        //Multiple emails enabled
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, true);
+        signout();
+        // test populating form with email that doesn't exist
+        url = authorizeScreen + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";                
+        getUrlAndWait(url);
+        
+        element = By.xpath("//input[@name='emailprimary234']");
+        waitForElementVisibility(element);
+        assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
+        assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
+        assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals("test_given_name"));
+        // verify we don't populate signin
+        assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
     }       
 
     @Test

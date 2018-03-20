@@ -1,22 +1,4 @@
 <#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-<#--
  * orcid.ftl
  *
  * This file consists of a collection of FreeMarker macros used in various places in the ORCID web interface.
@@ -249,7 +231,7 @@ kind of variable. This temp value is only used in this macro lib -->
 					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}
 						<ul>
 							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
-							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * &#40; &#41; ~ ` &nbsp; &#123; &#125; &#91; &#93; | \ &amp; _</li>
 						</ul>
 					</li>
 					<li>
@@ -444,7 +426,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </div>
 </#macro>
 
-<#macro privacyToggle3Ng2 angularModel publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle=""> 
+<#macro privacyToggle3Ng2 angularModel publicClick limitedClick privateClick elementId position="top" publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle=""> 
     <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
         <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
             <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a (click)="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
@@ -453,7 +435,7 @@ kind of variable. This temp value is only used in this macro lib -->
         </ul>
     </div>
     <div class="popover-help-container" >
-       <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[${elementId} +'-privacy'] == true ? 'block' : ''">
+       <div class="popover ${position} privacy-myorcid3" [ngClass]="commonSrvc.shownElement[${elementId} +'-privacy'] == true ? 'block' : ''">
             <div class="arrow"></div>
             <div class="popover-content">
                 <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
@@ -484,6 +466,22 @@ kind of variable. This temp value is only used in this macro lib -->
 </div>        
 </#macro>
 
+<#macro registrationEmailFrequencySelectorNg2 angularElementName>
+<div>   
+    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
+    <label class="control-label dark-label">
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+    </label>
+    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+        class="input-xlarge"
+        [(ngModel)]="${angularElementName}.sendEmailFrequencyDays.value">
+        <#list sendEmailFrequencies?keys as key>
+            <option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+        </#list>
+    </select>        
+</div>        
+</#macro>
+
 <#macro tooltip elementId message>
 	<div>	
 		<div class="popover popover-tooltip top" ng-class="commonSrvc.shownElement[${elementId}] == true ? 'block' : ''">
@@ -507,21 +505,21 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro checkFeatureStatus featureName enabled=true>
-	<#if enabled>
-		<#if RequestParameters[featureName]??>
-			<!-- fire off event feature enabled when the request param exists -->
-        	<script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>		
-			<#nested>
-		<#elseif FEATURE[featureName]>
-			<!-- fire off event feature enabled when it is an enabled feature -->
-        	<script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>		
-			<#nested>
-		</#if>
-	<#else>
-		<#if !RequestParameters[featureName]?? && !FEATURE[featureName]>
-			<!-- fire off event feature disabled -->
-        	<script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'disabled']);</script>
-			<#nested>
-		</#if>
-	</#if>
+    <#if enabled>
+        <#if RequestParameters[featureName]??>
+            <!-- fire off event feature enabled when the request param exists -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>      
+            <#nested>
+        <#elseif FEATURE[featureName]>
+            <!-- fire off event feature enabled when it is an enabled feature -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'enabled']);</script>      
+            <#nested>
+        </#if>
+    <#else>
+        <#if !RequestParameters[featureName]?? && !FEATURE[featureName]>
+            <!-- fire off event feature disabled -->
+            <script type="text/javascript">orcidGA.gaPush(['send', 'event', 'feature', '${featureName}', 'disabled']);</script>
+            <#nested>
+        </#if>
+    </#if>
 </#macro>

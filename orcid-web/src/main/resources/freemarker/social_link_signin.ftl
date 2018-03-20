@@ -1,23 +1,9 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <link-account-ng2></link-account-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="LinkAccountController" ng-init="setEntityId('${providerId}')">
         <#if unsupportedInstitution??>
             <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3">
@@ -77,4 +63,5 @@
             </div> 
         </#if>
     </div>
+    </@orcid.checkFeatureStatus>
 </@public>

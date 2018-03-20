@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils.v3.identifiers;
 
 import java.util.ArrayList;
@@ -27,7 +11,10 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
+import org.orcid.pojo.IdentifierType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
@@ -78,6 +65,26 @@ public class NormalizationService {
             returnValue = n.normalise(apiTypeName, returnValue);
         }
         return returnValue;
+    }
+    
+    /** Creates a normalised URL if possible
+     * Uses normalised identifier and prefix (if available)
+     * 
+     * Will return empty strings for values that cannot be normalised (because they're not recognised)
+     * 
+     * @param apiTypeName
+     * @param value
+     * @return
+     */
+    public String generateNormalisedURL(String apiTypeName, String value){
+        String norm = this.normalise(apiTypeName, value);
+        if (!norm.isEmpty()){
+            IdentifierType type = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
+            String prefix = type.getResolutionPrefix();
+            if (!StringUtils.isEmpty(prefix))
+                return prefix+norm;
+        }
+        return "";
     }
 
 }

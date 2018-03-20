@@ -1,23 +1,9 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@public classes=['home'] nav="signin">
     <#include "sandbox_warning.ftl"/>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <social2-F-A-ng2></social2-F-A-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="Social2FACtrl" ng-init="init()">
         <form class="form-social-sign-in" id="social2FaCodeForm" ng-submit="submitCode()" method="post">
             <div class="row">
@@ -43,6 +29,7 @@
                     <div id="2FAInstructions">
                         <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
                         <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device1")} <a href='#' id='enterRecoveryCode'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device2")}</a></p>
+                        <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device_or_recovery")} <a href='https://orcid.org/help/contact-us'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.contact_support")}</a></p>
                     </div>
                     <div id="recoveryCodeSignin" class="form-group" style="display:none">
                         <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
@@ -60,4 +47,5 @@
             </div>
         </form>
     </div>
+    </@orcid.checkFeatureStatus>
 </@public>

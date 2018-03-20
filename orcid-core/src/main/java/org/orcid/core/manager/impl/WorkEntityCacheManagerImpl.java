@@ -1,24 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -300,6 +285,16 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                     throw new IllegalStateException(String.format("Duplicate key %s", u));
                 }, LinkedHashMap::new));
         return this.retrieveWorkList(orcid, workIdsWithLastModified, minimizedWorkEntityCache, idList -> workDao.getMinimizedWorkEntities(idList));
+    }
+    
+    @Override
+    public List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, List<Long> ids, long profileLastModified) {
+        Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
+        Map<Long, Date> filteredWorkIdsWithLastModified = new HashMap<>();
+        for (Long id : ids) {
+            filteredWorkIdsWithLastModified.put(id, workIdsWithLastModified.get(id));
+        }
+        return retrieveWorkList(orcid, filteredWorkIdsWithLastModified, minimizedWorkEntityCache, idList -> workDao.getMinimizedWorkEntities(idList));
     }
 
     private Map<Long, Date> retrieveWorkLastModifiedMap(String orcid, long profileLastModified) {

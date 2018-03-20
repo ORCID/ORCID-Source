@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +31,7 @@ public class TemplateManagerTest {
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
 
     @Test
@@ -76,8 +60,8 @@ public class TemplateManagerTest {
         addStandardParams(templateParams);
 
         // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
+        String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
 
         assertEquals(expectedText, body);
         assertEquals(expectedHtml, htmlBody);

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Has transliterated legal name but does not include language codes -->
+<lei:LEIRecord xmlns:lei="http://www.gleif.org/data/schema/leidata/2016">
+      <lei:LEI>213800ZH4VUOQOUVYX93</lei:LEI>
+      <lei:Entity>
+        <lei:LegalName>МОНБАТ АД</lei:LegalName>
+        <lei:TransliteratedOtherEntityNames>
+          <lei:TransliteratedOtherEntityName type="PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME">MONBAT PLC</lei:TransliteratedOtherEntityName>
+        </lei:TransliteratedOtherEntityNames>
+        <lei:LegalAddress>
+          <lei:FirstAddressLine>32 A CHERNI VRAH BLVD., FL. 4</lei:FirstAddressLine>
+          <lei:City>SOFIA</lei:City>
+          <lei:Region>BG-22</lei:Region>
+          <lei:Country>BG</lei:Country>
+          <lei:PostalCode>1407</lei:PostalCode>
+        </lei:LegalAddress>
+        <lei:HeadquartersAddress>
+          <lei:FirstAddressLine>32 A CHERNI VRAH BLVD., FL. 4</lei:FirstAddressLine>
+          <lei:City>SOFIA</lei:City>
+          <lei:Region>BG-22</lei:Region>
+          <lei:Country>BG</lei:Country>
+          <lei:PostalCode>1407</lei:PostalCode>
+        </lei:HeadquartersAddress>
+        <lei:OtherAddresses>
+          <lei:OtherAddress type="ALTERNATIVE_LANGUAGE_HEADQUARTERS_ADDRESS">
+            <lei:FirstAddressLine>Cherni vrah blvd.</lei:FirstAddressLine>
+            <lei:AddressNumber>32 A</lei:AddressNumber>
+            <lei:MailRouting>investorrelations@monbat.com</lei:MailRouting>
+            <lei:City>Sofia</lei:City>
+            <lei:Region>BG-22</lei:Region>
+            <lei:Country>BG</lei:Country>
+            <lei:PostalCode>1407</lei:PostalCode>
+          </lei:OtherAddress>
+          <lei:OtherAddress type="ALTERNATIVE_LANGUAGE_HEADQUARTERS_ADDRESS">
+            <lei:FirstAddressLine>Cherni vrah blvd.</lei:FirstAddressLine>
+            <lei:AddressNumber>32 A</lei:AddressNumber>
+            <lei:MailRouting>investorrelations@monbat.com</lei:MailRouting>
+            <lei:City>Sofia</lei:City>
+            <lei:Region>BG-22</lei:Region>
+            <lei:Country>BG</lei:Country>
+            <lei:PostalCode>1407</lei:PostalCode>
+          </lei:OtherAddress>
+        </lei:OtherAddresses>
+        <lei:RegistrationAuthority>
+          <lei:RegistrationAuthorityID>RA000065</lei:RegistrationAuthorityID>
+          <lei:RegistrationAuthorityEntityID>111028849</lei:RegistrationAuthorityEntityID>
+        </lei:RegistrationAuthority>
+        <lei:LegalJurisdiction>BG</lei:LegalJurisdiction>
+        <lei:LegalForm>
+          <lei:EntityLegalFormCode>8888</lei:EntityLegalFormCode>
+          <lei:OtherLegalForm>AKTSIONERNO DRUZHESTVO</lei:OtherLegalForm>
+        </lei:LegalForm>
+        <lei:EntityStatus>ACTIVE</lei:EntityStatus>
+      </lei:Entity>
+      <lei:Registration>
+        <lei:InitialRegistrationDate>2017-08-16T00:00:00Z</lei:InitialRegistrationDate>
+        <lei:LastUpdateDate>2017-08-16T14:29:37.997Z</lei:LastUpdateDate>
+        <lei:RegistrationStatus>ISSUED</lei:RegistrationStatus>
+        <lei:NextRenewalDate>2018-08-16T00:00:00Z</lei:NextRenewalDate>
+        <lei:ManagingLOU>213800WAVVOPS85N2205</lei:ManagingLOU>
+        <lei:ValidationSources>FULLY_CORROBORATED</lei:ValidationSources>
+        <lei:ValidationAuthority>
+          <lei:ValidationAuthorityID>RA000065</lei:ValidationAuthorityID>
+          <lei:OtherValidationAuthorityID>.</lei:OtherValidationAuthorityID>
+          <lei:ValidationAuthorityEntityID>111028849</lei:ValidationAuthorityEntityID>
+        </lei:ValidationAuthority>
+      </lei:Registration>
+    </lei:LEIRecord>
+    

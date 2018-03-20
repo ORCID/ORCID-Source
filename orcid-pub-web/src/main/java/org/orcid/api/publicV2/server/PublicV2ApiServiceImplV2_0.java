@@ -1,23 +1,8 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.publicV2.server;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
+import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
@@ -32,7 +17,9 @@ import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDINGS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.N_TRIPLES;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
@@ -46,6 +33,8 @@ import static org.orcid.core.api.OrcidApiConstants.RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;

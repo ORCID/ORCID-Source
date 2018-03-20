@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
@@ -53,6 +35,8 @@
 	</bean>
 	
 	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
+	
+	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
 	
 	<!-- Effectively a wrapper around the client details service, converting client to user details -->
     <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
@@ -938,6 +922,13 @@
     <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl">
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
+    
+    <bean id="salesForceConnectionEntityCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+        <property name="cache" ref="salesForceConnectionCache" />
+        <property name="retriever">
+            <bean class="org.orcid.core.cache.impl.SalesForceConnectionEntityRetriever" />
+        </property>
+    </bean>
 
 	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
 	
@@ -956,6 +947,14 @@
 		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/notranslate" />
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
+	</bean>
+	
+	<bean id="messageSourceNoFallback"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/notranslate" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
+		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
 	
 	<bean id="orcidMessageVersionConverterChain" class="org.orcid.core.version.impl.OrcidMessageVersionConverterChainImpl">
@@ -1239,6 +1238,11 @@
             <bean class="org.orcid.core.salesforce.cache.ContactsCacheEntryFactory" />
         </property>
     </bean>
+    
+    <bean id="salesForceConnectionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheName" value="sales-force-connection" />
+		<property name="cacheManager" ref="coreCacheManager" />
+	</bean>
     
     <bean id="identityProviderNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="identity-provider-name" />

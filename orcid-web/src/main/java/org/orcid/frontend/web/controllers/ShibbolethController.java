@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
@@ -34,10 +18,9 @@ import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -93,6 +76,9 @@ public class ShibbolethController extends BaseController {
 
     @Resource
     private BackupCodeManager backupCodeManager;
+    
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
     
     @RequestMapping(value = { "/2FA/authenticationCode.json" }, method = RequestMethod.GET)
     public @ResponseBody TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
@@ -235,9 +221,7 @@ public class ShibbolethController extends BaseController {
     
     private OrcidProfileUserDetails getOrcidProfileUserDetails(String orcid) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-        Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
-        OrcidType orcidType = OrcidType.valueOf(profileEntity.getOrcidType().name());
-        return new OrcidProfileUserDetails(orcid, email.getEmail(), profileEntity.getPassword(), orcidType);
+        return orcidUserDetailsService.loadUserByProfile(profileEntity);
     }
 
     private Map<String, String> parseOriginalHeaders(String originalHeadersJson) {

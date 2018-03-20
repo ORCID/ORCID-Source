@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Has "ja" and "en" legal name but only "en" address -->
+<lei:LEIRecord xmlns:lei="http://www.gleif.org/data/schema/leidata/2016" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <lei:LEI>353800WM9GXGM1QDQT58</lei:LEI>
+      <lei:Entity>
+        <lei:LegalName xml:lang="ja">立花証券（香港）有限公司</lei:LegalName>
+        <lei:OtherEntityNames>
+          <lei:OtherEntityName xml:lang="en" type="ALTERNATIVE_LANGUAGE_LEGAL_NAME">Tachibana Securities (Hong Kong) Limited</lei:OtherEntityName>
+        </lei:OtherEntityNames>
+        <lei:LegalAddress xml:lang="en">
+          <lei:FirstAddressLine>Suite 1423, Prince's Building, 10 Chater Road</lei:FirstAddressLine>
+          <lei:City>Central Hong Kong</lei:City>
+          <lei:Country>HK</lei:Country>
+          <lei:PostalCode>000</lei:PostalCode>
+        </lei:LegalAddress>
+        <lei:HeadquartersAddress xml:lang="en">
+          <lei:FirstAddressLine>Suite 1423, Prince's Building, 10 Chater Road</lei:FirstAddressLine>
+          <lei:City>Central Hong Kong</lei:City>
+          <lei:Country>HK</lei:Country>
+          <lei:PostalCode>000</lei:PostalCode>
+        </lei:HeadquartersAddress>
+        <lei:OtherAddresses>
+          <lei:OtherAddress xml:lang="en" type="ALTERNATIVE_LANGUAGE_LEGAL_ADDRESS">
+            <lei:FirstAddressLine>Suite 1423, Prince's Building, 10 Chater Road</lei:FirstAddressLine>
+            <lei:City>Central, Hong Kong</lei:City>
+            <lei:Country>HK</lei:Country>
+            <lei:PostalCode>000</lei:PostalCode>
+          </lei:OtherAddress>
+          <lei:OtherAddress xml:lang="en" type="ALTERNATIVE_LANGUAGE_HEADQUARTERS_ADDRESS">
+            <lei:FirstAddressLine>Suite 1423, Prince's Building, 10 Chater Road</lei:FirstAddressLine>
+            <lei:City>Central, Hong Kong</lei:City>
+            <lei:Country>HK</lei:Country>
+            <lei:PostalCode>000</lei:PostalCode>
+          </lei:OtherAddress>
+        </lei:OtherAddresses>
+        <lei:RegistrationAuthority>
+          <lei:RegistrationAuthorityID>RA000412</lei:RegistrationAuthorityID>
+          <lei:RegistrationAuthorityEntityID>17769904-000-01-17-1</lei:RegistrationAuthorityEntityID>
+        </lei:RegistrationAuthority>
+        <lei:LegalJurisdiction>HK</lei:LegalJurisdiction>
+        <lei:EntityStatus>ACTIVE</lei:EntityStatus>
+      </lei:Entity>
+      <lei:Registration>
+        <lei:InitialRegistrationDate>2017-08-01T06:00:02+00:00</lei:InitialRegistrationDate>
+        <lei:LastUpdateDate>2017-08-01T06:00:02+00:00</lei:LastUpdateDate>
+        <lei:RegistrationStatus>ISSUED</lei:RegistrationStatus>
+        <lei:NextRenewalDate>2018-08-01T06:00:02+00:00</lei:NextRenewalDate>
+        <lei:ManagingLOU>353800279ADEFGKNTV65</lei:ManagingLOU>
+        <lei:ValidationSources>FULLY_CORROBORATED</lei:ValidationSources>
+      </lei:Registration>
+    </lei:LEIRecord>
+    
+    

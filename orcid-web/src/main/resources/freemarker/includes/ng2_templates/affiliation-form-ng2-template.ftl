@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="affiliation-form-ng2-template">
     <div id="edit-affiliation" class="edit-affiliation colorbox-content">
         <form>
@@ -155,7 +136,7 @@
                                         <option value="${key}">${isoCountries[key]}</option>
                                 </#list>
                             </select>
-                            <span class="orcid-error" *ngIf="editAffiliation.country.errors.length > 0">
+                            <span class="orcid-error" *ngIf="editAffiliation?.country?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.country.errors' [innerHtml]="error"></div>
                             </span>
                             
@@ -172,7 +153,7 @@
                         <div *ngIf="editAffiliation?.departmentName">
                             
                             <input id="departmentName" class="form-control" name="departmentName" type="text" [(ngModel)]="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" (ngModelChange)="serverValidate('affiliations/affiliation/departmentValidate.json')" />
-                            <span class="orcid-error" *ngIf="editAffiliation.departmentName.errors.length > 0">
+                            <span class="orcid-error" *ngIf="editAffiliation?.departmentName?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.departmentName.errors' [innerHtml]="error"></div>
                             </span>
                         
@@ -185,7 +166,7 @@
                         <div *ngIf="editAffiliation?.roleTitle">
                             
                             <input name="roletitle" type="text" class="form-control"  [(ngModel)]="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" (ngModelChange)="serverValidate('affiliations/affiliation/roleTitleValidate.json')" />
-                            <span class="orcid-error" *ngIf="editAffiliation.roleTitle.errors.length > 0">
+                            <span class="orcid-error" *ngIf="editAffiliation?.roleTitle?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.roleTitle.errors' [innerHtml]="error"></div>
                             </span>
                             
@@ -197,7 +178,7 @@
                         <div>
                             
                             <input name="url" type="text" class="form-control"  [(ngModel)]="editAffiliation.url.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_url'/>" (ngModelChange)="serverValidate('affiliations/affiliation/urlValidate.json')" />
-                            <span class="orcid-error" *ngIf="editAffiliation.url.errors.length > 0">
+                            <span class="orcid-error" *ngIf="editAffiliation?.url?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.url.errors' [innerHtml]="error"></div>
                             </span>
                             
@@ -225,7 +206,7 @@
                             </select>
                         </div>
                         
-                        <span class="orcid-error" *ngIf="editAffiliation.startDate.errors.length > 0">
+                        <span class="orcid-error" *ngIf="editAffiliation?.startDate?.errors?.length > 0">
                             <div *ngFor='let error of editAffiliation.startDate.errors' [innerHtml]="error"></div>
                         </span>
                                 
@@ -252,7 +233,7 @@
                             </select>
                         </div>
                         
-                        <span class="orcid-error" *ngIf="editAffiliation.endDate.errors.length > 0">
+                        <span class="orcid-error" *ngIf="editAffiliation?.endDate?.errors?.length > 0">
                             <div *ngFor='let error of editAffiliation.endDate.errors' [innerHtml]="error"></div>
                         </span>
                         
@@ -277,7 +258,7 @@
                         </ul>
                     </div>
                     <div class="control-group errors">
-                        <span *ngIf="editAffiliation.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>                    
+                        <span *ngIf="editAffiliation?.errors?.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>                    
                     </div>
                 </div>
             </div>

@@ -1,28 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.oauth;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -38,9 +19,7 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private String password;
 
-    private OrcidType orcidType;
-
-    private MemberType groupType;
+    private Collection<OrcidWebRole> grantedAuthorities = new HashSet<>();
 
     public OrcidProfileUserDetails() {
     }
@@ -51,19 +30,11 @@ public class OrcidProfileUserDetails implements UserDetails {
         this.password = password;
     }
 
-    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType) {
+    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, Collection<OrcidWebRole> grantedAuthorities) {
         this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
-        this.orcidType = orcidType;
-    }
-
-    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType, MemberType groupType) {
-        this.orcid = orcid;
-        this.primaryEmail = primaryEmail;
-        this.password = password;
-        this.orcidType = orcidType;
-        this.groupType = groupType;
+        this.grantedAuthorities = grantedAuthorities;
     }
 
     /**
@@ -73,33 +44,8 @@ public class OrcidProfileUserDetails implements UserDetails {
      * @return the authorities, sorted by natural key (never <code>null</code>)
      */
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<OrcidWebRole> result = null;
-        // If the orcid type is null, assume it is a normal user
-        if (orcidType == null)
-            result = Arrays.asList(OrcidWebRole.ROLE_USER);
-        else if (orcidType == OrcidType.ADMIN)
-            result = Arrays.asList(OrcidWebRole.ROLE_ADMIN, OrcidWebRole.ROLE_USER);
-        else if (orcidType.equals(OrcidType.GROUP)) {
-            switch (groupType) {
-            case BASIC:
-                result = Arrays.asList(OrcidWebRole.ROLE_BASIC, OrcidWebRole.ROLE_USER);
-                break;
-            case PREMIUM:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM, OrcidWebRole.ROLE_USER);
-                break;
-            case BASIC_INSTITUTION:
-                result = Arrays.asList(OrcidWebRole.ROLE_BASIC_INSTITUTION, OrcidWebRole.ROLE_USER);
-                break;
-            case PREMIUM_INSTITUTION:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION, OrcidWebRole.ROLE_USER);
-                break;
-            }
-        } else {
-            result = Arrays.asList(OrcidWebRole.ROLE_USER);
-        }
-
-        return result;
+    public Collection<OrcidWebRole> getAuthorities() {
+        return grantedAuthorities;
     }
 
     /**
@@ -180,32 +126,14 @@ public class OrcidProfileUserDetails implements UserDetails {
         return primaryEmail;
     }
 
-    public OrcidType getOrcidType() {
-        return orcidType;
-    }
-
-    public void setOrcidType(OrcidType orcidType) {
-        this.orcidType = orcidType;
-    }
-
-   
-
-    public MemberType getGroupType() {
-        return groupType;
-    }
-
-    public void setGroupType(MemberType groupType) {
-        this.groupType = groupType;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((grantedAuthorities == null) ? 0 : grantedAuthorities.hashCode());
         result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
-        result = prime * result + ((orcidType == null) ? 0 : orcidType.hashCode());
-        result = prime * result + ((groupType == null) ? 0 : groupType.hashCode());
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((primaryEmail == null) ? 0 : primaryEmail.hashCode());
         return result;
     }
 
@@ -218,27 +146,27 @@ public class OrcidProfileUserDetails implements UserDetails {
         if (getClass() != obj.getClass())
             return false;
         OrcidProfileUserDetails other = (OrcidProfileUserDetails) obj;
-        if (password == null) {
-            if (other.password != null)
+        if (grantedAuthorities == null) {
+            if (other.grantedAuthorities != null)
                 return false;
-        } else if (!password.equals(other.password))
+        } else if (!grantedAuthorities.equals(other.grantedAuthorities))
             return false;
         if (orcid == null) {
             if (other.orcid != null)
                 return false;
         } else if (!orcid.equals(other.orcid))
             return false;
-        if (orcidType == null) {
-            if (other.orcidType != null)
+        if (password == null) {
+            if (other.password != null)
                 return false;
-        } else if (!orcidType.equals(other.orcidType))
+        } else if (!password.equals(other.password))
             return false;
-
-        if (groupType == null) {
-            if (other.groupType != null)
+        if (primaryEmail == null) {
+            if (other.primaryEmail != null)
                 return false;
-        } else if (!groupType.equals(other.groupType))
+        } else if (!primaryEmail.equals(other.primaryEmail))
             return false;
         return true;
     }
+
 }
