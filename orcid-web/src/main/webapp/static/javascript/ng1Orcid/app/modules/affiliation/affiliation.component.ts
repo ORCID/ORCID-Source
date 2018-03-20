@@ -3,6 +3,7 @@ declare var ActSortState: any;
 declare var GroupedActivities: any;
 declare var groupedActivitiesUtil: any;
 declare var sortState: any;
+declare var scriptTmpl: any;
 declare var typeahead: any;
 
 //Import all the angular components
