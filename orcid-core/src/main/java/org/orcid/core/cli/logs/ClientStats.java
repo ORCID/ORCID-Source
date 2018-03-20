@@ -10,6 +10,8 @@ public class ClientStats implements Serializable {
 
     private String clientDetailsId;
     
+    private String clientName;
+    
     private long totalHits = 0;
     
     private List<String> versionsHit = new ArrayList<>();
@@ -41,6 +43,14 @@ public class ClientStats implements Serializable {
     
     public String getClientDetailsId() {
         return clientDetailsId;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
     
 }
