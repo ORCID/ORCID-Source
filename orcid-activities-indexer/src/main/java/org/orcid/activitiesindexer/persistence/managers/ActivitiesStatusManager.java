@@ -14,14 +14,14 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.persistence.managers;
+package org.orcid.activitiesindexer.persistence.managers;
 
 import java.util.List;
 
-import org.orcid.listener.persistence.dao.ActivitiesStatusDao;
-import org.orcid.listener.persistence.entities.ActivitiesStatusEntity;
-import org.orcid.listener.persistence.util.ActivityType;
-import org.orcid.listener.persistence.util.Constants;
+import org.orcid.activitiesindexer.listener.persistence.dao.ActivitiesStatusDao;
+import org.orcid.activitiesindexer.persistence.entities.ActivitiesStatusEntity;
+import org.orcid.activitiesindexer.persistence.util.ActivityType;
+import org.orcid.activitiesindexer.persistence.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

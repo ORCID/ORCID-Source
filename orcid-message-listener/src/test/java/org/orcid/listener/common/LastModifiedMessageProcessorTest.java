@@ -84,10 +84,6 @@ public class LastModifiedMessageProcessorTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        //TODO: Improve this unit test for new summary indexer and activities indexer
-        ReflectionTestUtils.setField(processor, "summaryIndexerEnabled", false);
-        ReflectionTestUtils.setField(processor, "activitiesIndexerEnabled", false);
-        //TODO
         TargetProxyHelper.injectIntoProxy(processor, "orcid12ApiClient", mock_orcid12ApiClient);
         TargetProxyHelper.injectIntoProxy(processor, "orcid20ApiClient", mock_orcid20ApiClient);
         TargetProxyHelper.injectIntoProxy(processor, "exceptionHandler", mock_exceptionHandler);
@@ -164,7 +160,7 @@ public class LastModifiedMessageProcessorTest {
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+        verify(mock_recordStatusManager, times(2)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
     }
 
@@ -177,7 +173,7 @@ public class LastModifiedMessageProcessorTest {
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+        verify(mock_recordStatusManager, times(2)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
     }
 
     @Test
@@ -200,7 +196,7 @@ public class LastModifiedMessageProcessorTest {
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+        verify(mock_recordStatusManager, times(2)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
     }
 
@@ -224,7 +220,7 @@ public class LastModifiedMessageProcessorTest {
         execute(orcid);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
-        verify(mock_recordStatusManager, times(1)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+        verify(mock_recordStatusManager, times(2)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
         verify(mock_recordStatusManager, times(0)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
     }
 

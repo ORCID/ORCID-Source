@@ -57,6 +57,7 @@ the software.
 		<module>orcid-internal-api</module>
 		<module>orcid-activemq</module>
 		<module>orcid-message-listener</module>
+		<module>orcid-activities-indexer</module>
     </modules>
 
 

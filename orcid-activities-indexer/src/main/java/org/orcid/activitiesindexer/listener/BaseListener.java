@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener;
+package org.orcid.activitiesindexer.listener;
 
 import java.util.HashMap;
 import java.util.Map;

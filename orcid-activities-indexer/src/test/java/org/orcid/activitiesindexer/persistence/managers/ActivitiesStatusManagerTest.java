@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.persistence.managers;
+package org.orcid.activitiesindexer.persistence.managers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,14 +25,15 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.listener.persistence.dao.ActivitiesStatusDao;
-import org.orcid.listener.persistence.entities.ActivitiesStatusEntity;
-import org.orcid.listener.persistence.util.ActivityType;
+import org.orcid.activitiesindexer.listener.persistence.dao.ActivitiesStatusDao;
+import org.orcid.activitiesindexer.persistence.entities.ActivitiesStatusEntity;
+import org.orcid.activitiesindexer.persistence.managers.ActivitiesStatusManager;
+import org.orcid.activitiesindexer.persistence.util.ActivityType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-activities-indexer-test-context.xml" })
 public class ActivitiesStatusManagerTest {
     @Resource
     private ActivitiesStatusManager activitiesStatusManager;

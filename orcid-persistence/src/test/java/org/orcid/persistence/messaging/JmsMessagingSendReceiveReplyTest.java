@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 
 /** Note, this test only works if you have ActiveMQ working in the background on the default port
@@ -39,13 +38,10 @@ public class JmsMessagingSendReceiveReplyTest {
     @Resource
     JmsMessageSender messageSender;
     
-    @Value("${org.orcid.persistence.messaging.topic.test}")
-    private static String testTopicName;
-    
     @Test
     public void testConfig() throws InterruptedException{
         Long time = System.currentTimeMillis();
-        messageSender.sendText("test "+time, testTopicName);        
+        messageSender.sendText("test "+time, "test");        
         Thread.sleep(1000);
         assertEquals(EchoTestMessageListener2.lastMessage, "test "+time);
         Thread.sleep(1000);
