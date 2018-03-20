@@ -25,13 +25,14 @@ public class ApiAccessLogsAnalyser {
 
     private static final int BEARER_TOKEN_LENGTH = 36;
 
-    static final String UNKNOWN_CLIENT = "Unknown";
-
     @Option(name = "-f", usage = "Path to directory containing logs and / or directories of logs")
     private File logsDir;
 
     @Option(name = "-o", usage = "Output file")
     private File outputFile;
+    
+    @Option(name = "-s", usage = "Summary file")
+    private File summaryFile;
 
     @Option(name = "-d", usage = "Debug", required = false)
     private boolean debug = false;
@@ -78,6 +79,12 @@ public class ApiAccessLogsAnalyser {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Error creating output stream to file " + outputFile.getAbsolutePath(), e);
         }
+        
+        try {
+            results.setSummaryOutputStream(new FileOutputStream(summaryFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error creating output stream to summary file " + summaryFile.getAbsolutePath(), e);
+        }
     }
 
     private void shutdown() {
@@ -93,7 +100,7 @@ public class ApiAccessLogsAnalyser {
         }
         LOGGER.info("Analysis complete");
         try {
-            results.outputClientStats();
+            results.outputResults();
         } catch (IOException e) {
             LOGGER.error("Error outputting results");
             System.exit(1);
@@ -129,7 +136,7 @@ public class ApiAccessLogsAnalyser {
                 if (debug) {
                     LOGGER.info("Couldn't find client for token {}", token);
                 }
-                tokenToClientDetails.put(token, UNKNOWN_CLIENT);
+                return null;
             }
         }
         return tokenToClientDetails.get(token);
