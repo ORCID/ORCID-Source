@@ -706,20 +706,22 @@ $(function() {
     
     function showLoginDeactivatedError() {
         if(orcidVar.features['ANGULAR2_QA']){
-            window.angularComponentReference.zone.run(() => { window.angularComponentReference.showDeactivationError(); });
+            window.angularComponentReference.zone.run(
+                window.angularComponentReference.showDeactivationError(); 
+            );
         } else {
           angular.element($("#login-deactivated-error")).scope().showDeactivationError();  
         }
         if ($('form#loginForm #login-error-mess').length == 0) {
             $('form#loginForm #login-deactivated-error').fadeIn('fast');
         } else {
-             $(
-             'form#loginForm #login-error-mess')
+             $('form#loginForm #login-error-mess')
              .fadeOut(
-                    'fast',
-                     function() {
-                        $('form#loginForm #login-deactivated-error').fadeIn('fast');
-                     });
+                'fast',
+                 function() {
+                    $('form#loginForm #login-deactivated-error').fadeIn('fast');
+                 }
+             );
         }
     }
 
