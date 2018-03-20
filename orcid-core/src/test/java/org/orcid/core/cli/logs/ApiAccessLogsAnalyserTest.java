@@ -3,7 +3,6 @@ package org.orcid.core.cli.logs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,14 +49,18 @@ public class ApiAccessLogsAnalyserTest {
     private LogReader logReader;
 
     private ByteArrayOutputStream output;
+    
+    private ByteArrayOutputStream summary;
 
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         
         output = new ByteArrayOutputStream();
+        summary = new ByteArrayOutputStream();
         AnalysisResults results = new AnalysisResults();
         results.setOutputStream(output);
+        results.setSummaryOutputStream(summary);
         results.setClientDetailsDao(clientDetailsDao);
 
         ReflectionTestUtils.setField(analyser, "tokenDao", tokenDao);
@@ -108,8 +111,8 @@ public class ApiAccessLogsAnalyserTest {
         assertNotNull(outputText);
         assertFalse(outputText.isEmpty());
         AnalysisResults output = JsonUtils.readObjectFromJsonString(outputText, AnalysisResults.class);
-        assertEquals(9, output.getHitsAnalysed());
-        assertEquals(3, output.getClientResults().size());
+        assertEquals(8, output.getHitsAnalysed());
+        assertEquals(2, output.getClientResults().size());
         
         for (ClientStats clientStats : output.getClientResults()) {
             if (CLIENT_DETAILS_1.equals(clientStats.getClientDetailsId())) {
@@ -122,12 +125,14 @@ public class ApiAccessLogsAnalyserTest {
                 assertEquals(4, clientStats.getTotalHits());
                 assertEquals(CLIENT_DETAILS_NAME_2, clientStats.getClientName());
             }
-            if (ApiAccessLogsAnalyser.UNKNOWN_CLIENT.equals(clientStats.getClientDetailsId())) {
-                assertEquals(1, clientStats.getVersionsHit().size());
-                assertEquals(1, clientStats.getTotalHits());
-                assertNull(clientStats.getClientName());
-            }
         }
+        
+        outputText = summary.toString();
+        AnalysisSummary summary = JsonUtils.readObjectFromJsonString(outputText, AnalysisSummary.class);
+        assertEquals(0, summary.getNumV1Clients());
+        assertEquals(2, summary.getNumV2Clients());
+        assertEquals(1, summary.getNumV3Clients());
+        assertEquals(1, summary.getNumClientsUsingMultipleVersions());
     }
 
     private OrcidOauth2TokenDetail getOrcidOauth2TokenDetailClientB() {
