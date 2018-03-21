@@ -24,6 +24,10 @@ export class WidgetService {
         this.locale = 'en';
     }
 
+    getLocale(): string {
+        return this.locale;
+    }
+
     
     setLocale(locale): void {
         this.locale = locale;

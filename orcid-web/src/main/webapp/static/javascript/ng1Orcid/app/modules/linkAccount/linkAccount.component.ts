@@ -25,6 +25,9 @@ import { DiscoService }
 import { OauthService } 
     from '../../shared/oauth.service.ts'; 
 
+import { WidgetService } 
+    from '../../shared/widget.service.ts'; 
+
 
 @Component({
     selector: 'link-account-ng2',
@@ -44,8 +47,9 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     requestInfoForm: any;
    
     constructor(
+        private discoService: DiscoService,
         private oauthService: OauthService,
-        private discoService: DiscoService
+        private widgetService: WidgetService
     ) {
         this.authorizationForm = {};
         this.entityId = orcidVar.providerId;
@@ -71,13 +75,13 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 console.log(data);
                 this.feed = data;
-                this.idpName = this.discoService.getIdpName(this.entityId, this.feed);
+                this.idpName = this.discoService.getIdpName(this.entityId, this.feed, this.widgetService.getLocale());
                 this.loadedFeed = true;
             },
             error => {
-                console.log('Error getting disco feed', error);
+                console.log('Error getting disco feed');
                 this.feed = [];
-                this.idpName = this.discoService.getIdpName(this.entityId, this.feed);
+                this.idpName = this.discoService.getIdpName(this.entityId, this.feed, this.widgetService.getLocale());
                 this.loadedFeed = true;
             } 
         );
