@@ -59,15 +59,6 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         this.requestInfoForm = {};
     }
 
-    /* Pending ***
-    $scope.$watch(function() { return discoSrvc.feed; }, function(){
-        $scope.idpName = discoSrvc.getIdPName($scope.entityId);
-        if(discoSrvc.feed != null) {
-            $scope.loadedFeed = true;
-        }
-    });
-    */
-
     loadDiscoFeed = function() {
         this.discoService.getDiscoFeed()
         .takeUntil(this.ngUnsubscribe)
