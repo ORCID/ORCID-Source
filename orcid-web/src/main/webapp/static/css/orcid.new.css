@@ -1204,8 +1204,12 @@ ul.privacyHelp li {
 }
 
 .visibilityDefault{
-    width: 85%;
+    width: 65%;
     float: left;
+}
+
+#register .visibilityDefault{
+    width: 85%;
 }
 
 .visibilityDefault span.public,
