@@ -10,6 +10,7 @@ import org.codehaus.jettison.json.JSONObject;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * 
@@ -19,9 +20,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonUtils {
 
     static ObjectMapper mapper = new ObjectMapper(); // thread safe!
+    static ObjectMapper prettyMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     static ObjectMapper mapperFromJSON = new ObjectMapper(); // thread safe!
     static {        
         mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    }
+    
+    public static String convertToJsonStringPrettyPrint(Object object) {
+        try {            
+            return prettyMapper.writeValueAsString(object);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String convertToJsonString(Object object) {
