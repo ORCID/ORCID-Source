@@ -42,7 +42,7 @@ export class LookUpIdOrEmailNg2Module {}
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 LookUpIdOrEmailModule.directive(
-    'ookUpIdOrEmailNg2', 
+    'lookUpIdOrEmailNg2', 
     <any>downgradeComponent(
         {
             component: LookUpIdOrEmailComponent,

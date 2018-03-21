@@ -32,7 +32,7 @@ var enableRightToLeft = function(){
     var rightToLeftLang = ["rl", "ar"];
     var currentLanguage = lang;
 
-    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the html tag, this was missing.
+    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the htmfl tag, this was missing.
 
     if( rightToLeftLang.indexOf( currentLanguage ) >= 0 ){
         document.body.className += " lang-rl"; //Add class that display right to left for selected languages
@@ -427,7 +427,6 @@ function addShibbolethGa(oauthGaString){
 $(function() {
     
     // Common
-    
     window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname;
 
@@ -525,8 +524,9 @@ $(function() {
         $('body').prepend(wHtml);
     }
 
-    $('form#loginForm')
-            .submit(
+    $(document)
+            .on('submit', 'form#loginForm',
+
                     function() {
                         var loginUrl = baseUrl + 'signin/auth.json';
                         var gaString = angular.element($("#loginForm")).scope().gaString;

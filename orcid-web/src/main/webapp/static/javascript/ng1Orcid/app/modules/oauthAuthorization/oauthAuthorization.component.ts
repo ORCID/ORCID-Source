@@ -3,6 +3,10 @@ declare var OrcidCookie: any;
 declare var orcidVar: any;
 declare var orcidGA: any;
 declare var addShibbolethGa: any;
+declare var getBaseUri: any;
+declare var getStaticCdnPath: any;
+declare var orcidGA: any;
+declare var orcidVar: any;
 
 import { NgFor, NgIf } 
     from '@angular/common'; 
@@ -141,10 +145,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.generalRegistrationError = null;
     }
 
-    addScript(url, onLoadFunction): void {        
+    addScript(url, onLoadFunction): void {      
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
-        script.src = getBaseUri() + url + '?v=' + orcidVar.version;
+        script.src = getStaticCdnPath() + url;
         script.onload =  onLoadFunction;
         head.appendChild(script); // Inject the script
     }; 
@@ -191,18 +195,21 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     showInstitutionLogin(): void  {
+
         this.personalLogin = false; // Hide Personal Login
         
         if(!this.scriptsInjected){ // If shibboleth scripts haven't been
                                         // loaded yet.
-            this.addScript('/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', function(){
-                this.addScript('/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', function(){
+
+            let scriptInjectedCallback = function () {
                     this.scriptsInjected = true;
                     addShibbolethGa(this.gaString);
-                });
-            });
+                };
+
+            this.addScript('/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', this.addScript.bind(this, '/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', scriptInjectedCallback.bind(this)));
         };
     };
+
 
     showPersonalLogin(): void {        
         this.personalLogin = true;
