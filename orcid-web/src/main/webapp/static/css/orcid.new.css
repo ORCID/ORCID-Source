@@ -1208,6 +1208,10 @@ ul.privacyHelp li {
     float: left;
 }
 
+#register .visibilityDefault{
+    width: 85%;
+}
+
 .visibilityDefault span.public,
 .visibilityDefault span.limited,
 .visibilityDefault span.private {
@@ -7015,7 +7019,7 @@ ul.comma li:last-child:after {
         display: none!important
     }
 
-    #RegistrationCtr input[type=password],#RegistrationCtr input[type=text] {
+    #RegistrationCtr input[type=password],#RegistrationCtr input[type=text],#RegistrationCtr .visibilityDefault {
         width: 83%
     }
 
