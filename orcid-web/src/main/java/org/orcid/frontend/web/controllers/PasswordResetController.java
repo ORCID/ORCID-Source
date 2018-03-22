@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.manager.EncryptionManager;
@@ -233,9 +234,8 @@ public class PasswordResetController extends BaseController {
         return (expiryDateOfOneHourFromIssueDate.getTime() < now.getTime());
     }
 
-    @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void sendReactivation(@RequestParam("email") String orcidOrEmail) {
+    @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)    
+    public ResponseEntity<?> sendReactivation(@RequestParam("email") String orcidOrEmail) {
         String orcid = null;
         String email = null;
         if(orcidOrEmail.contains("@")) {
@@ -251,6 +251,7 @@ public class PasswordResetController extends BaseController {
         }
         
         notificationManager.sendReactivationEmail(email, orcid);
+        return ResponseEntity.ok("{\"sent\":true}");
     }
 
     @RequestMapping(value = "/reactivation/{resetParams}", method = RequestMethod.GET)
