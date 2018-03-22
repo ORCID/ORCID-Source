@@ -71,7 +71,7 @@ public class AnalysisResults implements Serializable {
 
     public void outputResults() throws IOException {
         buildClientResultsListAndSummary();
-        outputStream.write(JsonUtils.convertToJsonString(this).getBytes());
+        outputStream.write(JsonUtils.convertToJsonStringPrettyPrint(this).getBytes());
         outputStream.close();
         summary.outputSummary();
     }

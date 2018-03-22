@@ -3,6 +3,7 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -11,10 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.NormalizationService;
 import org.orcid.core.utils.v3.identifiers.ResolverCache;
+import org.orcid.pojo.IdentifierType;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GenericURLResolver implements Resolver {
+public class ResolutionPrefixResolver implements Resolver {
 
     @Resource
     IdentifierTypeManager idman;
@@ -29,8 +31,17 @@ public class GenericURLResolver implements Resolver {
 
     @PostConstruct
     public void init() {
-        types = new ArrayList<String>(idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).keySet());
+        Map<String, IdentifierType> idTypes = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
+        types = new ArrayList<String>();
+        for (String id : idTypes.keySet()){
+            if (idTypes.get(id).getResolutionPrefix() != null){
+                types.add(id);
+            }
+        }
         types.remove("isbn");
+        //types that should normally be a URL.
+        types.add("uri");
+        types.add("handle");
     }
 
     @Override
@@ -44,31 +55,27 @@ public class GenericURLResolver implements Resolver {
      * creating a URL using the resolution prefix
      */
     @Override
-    public boolean canResolve(String apiTypeName, String value, String providedURL) {
+    public ResolutionResult resolve(String apiTypeName, String value) {
         if (StringUtils.isEmpty(value))
-            return false;
-
+            return new ResolutionResult(false,null);
+        
         // if value is a URL, try that
         if (value.startsWith("http")) {
-            if (cache.isHttp200(value))
-                return true;
-        }
-
-        // If the value is in the providedURL, try using that
-        if (!StringUtils.isEmpty(providedURL) && providedURL.toLowerCase().contains(value.toLowerCase()) && !providedURL.equals(value)) {
-            if (cache.isHttp200(providedURL))
-                return true;
+            if (cache.isHttp200(value)){
+                return new ResolutionResult(true,value);                
+            }
         }
 
         // Try normalizing the value and creating a URL using the resolution
         // prefix
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
-        if (!StringUtils.isEmpty(normUrl)) {
-            if (!normUrl.equals(providedURL) && cache.isHttp200(normUrl))
-                return true;
+        if (!StringUtils.isEmpty(normUrl) && !value.equals(normUrl)) {
+            if (cache.isHttp200(normUrl)){
+                return new ResolutionResult(true,normUrl);                
+            }
         }
 
-        return false;
+        return new ResolutionResult(true,null);
     }
 
 }
