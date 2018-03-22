@@ -208,7 +208,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
         } else if (ExceedMaxNumberOfElementsException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity(
-                    "The ORCID record doesn't support more than 10000 works.", null);
+                    "The maximum number of works that can be connected to an ORCID record is 10,000 and you have now exceeded this limit. Please remove some works and try again. For more information, see https://support.orcid.org/knowledgebase/articles/462032-add-works-to-your-orcid-record", null);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else if(DeactivatedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account deactivated : ", t);
