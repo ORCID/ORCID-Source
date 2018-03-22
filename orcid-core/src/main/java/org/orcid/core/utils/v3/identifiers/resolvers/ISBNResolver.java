@@ -27,22 +27,19 @@ public class ISBNResolver implements Resolver {
     }
 
     @Override
-    public boolean canResolve(String apiTypeName, String value, String providedURL) {
-        // If the value is in the providedURL, try using that
-        if (!StringUtils.isEmpty(providedURL) && providedURL.toLowerCase().contains(value.toLowerCase()) && !providedURL.equals(value)) {
-            if (cache.isHttp200(providedURL)) // assuming not worldcat!
-                return true;
-        }
+    public ResolutionResult resolve(String apiTypeName, String value) {
+        if (StringUtils.isEmpty(value))
+            return new ResolutionResult(false,null);
 
         // Try normalizing value & creating a URL using the resolution prefix
         // this assumes we're using worldcat - 303 on success, 200 on fail
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
         if (!StringUtils.isEmpty(normUrl)) {
-            if (!normUrl.equals(providedURL) && cache.isHttp303(normUrl))
-                return true;
+            if (cache.isHttp303(normUrl)){
+                return new ResolutionResult(true,normUrl);                
+            }
         }
-
-        return false;
+        return new ResolutionResult(true,null); 
     }
 
 }

@@ -77,8 +77,11 @@ public enum Features implements Feature {
     DISABLE_1_2_ON_PUB_API,
     
     @Label("Disable 1.2 API from the member API")
-    DISABLE_1_2_ON_MEMBER_API;
-    
+    DISABLE_1_2_ON_MEMBER_API,
+
+    @Label("Check external id resolution in UI")
+    EX_ID_RESOLVER;
+
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

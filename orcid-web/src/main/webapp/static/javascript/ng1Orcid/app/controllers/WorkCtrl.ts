@@ -32,12 +32,13 @@ export const WorkCtrl = angular.module('orcidApp').controller(
         '$q', 
         'actBulkSrvc', 
         'commonSrvc', 
-        'emailSrvc', 
+        'emailSrvc',
+        'featuresService', 
         'initialConfigService', 
         'utilsService', 
         'worksSrvc', 
         'workspaceSrvc',     
-        function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService, worksSrvc, workspaceSrvc ) {
+        function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, featuresService, initialConfigService, utilsService, worksSrvc, workspaceSrvc ) {
 
             var savingBibtex = false;
             var utilsService = utilsService;
@@ -65,6 +66,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.editSources = {};
             $scope.editTranslatedTitle = false;
             $scope.emailSrvc = emailSrvc;
+            $scope.exIdResolverFeatureEnabled = featuresService.isFeatureEnabled('EX_ID_RESOLVER');
             $scope.externalIDNamesToDescriptions = [];//caches name->description lookup so we can display the description not the name after selection
             $scope.externalIDTypeCache = [];//cache responses
             $scope.generatingBibtex = false;
@@ -87,6 +89,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.workspaceSrvc = workspaceSrvc;
             $scope.worksSrvc = worksSrvc;
             $scope.workType = ['All'];
+
 
             /////////////////////// Begin of verified email logic for work
             var configuration = initialConfigService.getInitialConfiguration();
@@ -355,22 +358,63 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 });        
             };
 
+            $scope.changeIdType = function(extId){
+                if ($scope.exIdResolverFeatureEnabled == true){
+                    if(extId.url == null) {
+                        extId.url = {value:""};
+                    }else{
+                        extId.url.value="";                        
+                    }
+                }
+                $scope.fillUrl(extId);
+            }
+            
             //--typeahead
             //populates the external id URL based on type and value.
             $scope.fillUrl = function(extId) {
-                var url;
-                if(extId != null) {
-                    url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
-                    /* Code to fetch from DB...
-                    if (extId.workExternalIdentifierType.value){
-                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
-                        if (url && extId.workExternalIdentifierId.value)
-                            url += extId.workExternalIdentifierId.value;
-                    }*/
-                    if(extId.url == null) {
-                        extId.url = {value:url};
-                    }else{
-                        extId.url.value=url;                        
+                //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
+                if ($scope.exIdResolverFeatureEnabled == true){
+                    if (extId && extId.workExternalIdentifierId.value && extId.workExternalIdentifierType.value){
+                        $timeout(function() {
+                            extId.resolvingId = true;
+                            $.ajax({
+                                url: getBaseUri() + '/works/id/'+extId.workExternalIdentifierType.value,
+                                type: 'GET',
+                                data:{value:extId.workExternalIdentifierId.value},
+                                success: function(data) {
+                                    if (data.resolved){
+                                        if(extId.url == null) {
+                                            extId.url = {value:data.resolvedUrl};
+                                        }else{
+                                            extId.url.value=data.resolvedUrl;                        
+                                        }
+                                        extId.workExternalIdentifierId.errors = [];
+                                    } else if (data.attemptedResolution){
+                                        if(extId.url == null) {
+                                            extId.url = {value:""};
+                                        }else{
+                                            extId.url.value="";                        
+                                        }
+                                        extId.workExternalIdentifierId.errors = [];
+                                        extId.workExternalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
+                                    }
+                                    extId.resolvingId = false;
+                                }
+                            }).fail(function() {
+                                console.log("id resolve error");
+                                extId.resolvingId = false;
+                            });
+                        });
+                    }
+                }else{
+                    var url;
+                    if(extId != null) {
+                        url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+                        if(extId.url == null) {
+                            extId.url = {value:url};
+                        }else{
+                            extId.url.value=url;                        
+                        }
                     }
                 }
             };
@@ -650,6 +694,13 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                     $scope.editWork = data;                    
                                     commonSrvc.copyErrorsLeft($scope.editWork, data);
                                     $scope.addingWork = false;
+                                    //re-populate any id resolution errors.
+                                    //do it here because they're by-passable
+                                    if ($scope.exIdResolverFeatureEnabled == true){
+                                        for (var extId in $scope.editWork.workExternalIdentifiers){
+                                            $scope.fillUrl($scope.editWork.workExternalIdentifiers[extId]);                                                                                    
+                                        }
+                                    }
                                 });
                                 // make sure colorbox is shown if there are errors
                                 if (!($("#colorbox").css("display")=="block")) {
@@ -722,6 +773,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             }
 
             $scope.serverValidate = function (relativePath) {
+                console.log(getBaseUri() + '/' + relativePath);
                 $.ajax({
                     url: getBaseUri() + '/' + relativePath,
                     type: 'POST',
