@@ -57,7 +57,7 @@ public class AnalysisSummary {
     }
     
     public void outputSummary() throws IOException {
-        outputStream.write(JsonUtils.convertToJsonString(this).getBytes());
+        outputStream.write(JsonUtils.convertToJsonStringPrettyPrint(this).getBytes());
         outputStream.close();
     }
     

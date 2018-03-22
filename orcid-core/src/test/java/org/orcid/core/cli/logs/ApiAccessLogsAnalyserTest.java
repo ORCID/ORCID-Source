@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.persistence.NoResultException;
 
@@ -66,7 +67,7 @@ public class ApiAccessLogsAnalyserTest {
         ReflectionTestUtils.setField(analyser, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(analyser, "results", results);
         ReflectionTestUtils.setField(analyser, "logReader", logReader);
-        ReflectionTestUtils.setField(analyser, "logsDir", new File("Not a real file"));
+        ReflectionTestUtils.setField(analyser, "logDirs", Arrays.asList(new File("Not a real file")));
 
         Mockito.when(logReader.getNextLine())
                 .thenReturn(
