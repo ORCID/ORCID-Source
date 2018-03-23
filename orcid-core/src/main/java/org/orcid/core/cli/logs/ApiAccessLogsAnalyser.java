@@ -86,7 +86,7 @@ public class ApiAccessLogsAnalyser {
         LOGGER.info("Initialising Api access logs analysis...");
         applicationContext = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
         tokenDao = (OrcidOauth2TokenDetailDao) applicationContext.getBean("orcidOauth2TokenDetailDao");
-        clientDetailsDao = (ClientDetailsDao) applicationContext.getBean("clientDetailsDao");
+        clientDetailsDao = (ClientDetailsDao) applicationContext.getBean("clientDetailsDaoReadOnly");
         LocalDate endDate = startDate.plusDays(numberOfDaysToAnalyse - 1);
         logReader = new LogReader();
         logReader.init(logDirs, startDate, endDate);
