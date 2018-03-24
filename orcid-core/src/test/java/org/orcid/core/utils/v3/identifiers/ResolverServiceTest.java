@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils.v3.identifiers;
 
 import static org.junit.Assert.*;
@@ -22,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.utils.v3.identifiers.resolvers.ResolutionResult;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -38,65 +23,181 @@ public class ResolverServiceTest {
     }
     
     //Commented out.  Only use locally.
-    //@Test
+    @Test
     public void workingTests(){
-        //GENERIC
-        //missing values always false;
-        assertFalse(resolver.canResolve("uri", "","http://doi.org/10.6084/m9.figshare.5479792.v1"));
-        assertFalse(resolver.canResolve("uri", null,"http://doi.org/10.6084/m9.figshare.5479792.v1"));
+        ResolutionResult r = null;
+        /*
+        //missing values always false, for any type
+        r = resolver.resolve("doi", "");
+        assertFalse(r.isResolved());
+        assertFalse(r.getAttemptedResolution());
+        r = resolver.resolve("uri", null);
+        assertFalse(r.isResolved());
+        assertFalse(r.getAttemptedResolution());
+        r = resolver.resolve("agr", null);
+        assertFalse(r.isResolved());
+        assertFalse(r.getAttemptedResolution());
         
-        //if the value is in the url, try the url
-        assertTrue(resolver.canResolve("uri", "orcid.org","https://orcid.org"));
-        assertFalse(resolver.canResolve("uri", "MISSING","https://orcid.org"));
-        
-        //if the value is a url, try that
-        assertTrue(resolver.canResolve("uri", "https://orcid.org",null));
+        //if the value does not have a resolution prefix, and is not a handle or uri, ignore it.
+        r = resolver.resolve("agr", "https://orcid.org"); 
+        assertFalse(r.isResolved());
+        assertFalse(r.getAttemptedResolution());
+        r = resolver.resolve("agr", null); 
+        assertFalse(r.isResolved());
+        assertFalse(r.getAttemptedResolution());
 
-        //DOI
-        assertTrue(resolver.canResolve("doi", "10.6084/m9.figshare.5479792.v1",null));
-        //this should actually be false, as that's not a valid DOI!
-        assertTrue(resolver.canResolve("doi", "m9.figshare.5479792.v1","https://doi.org/10.6084/m9.figshare.5479792.v1")); 
-        assertFalse(resolver.canResolve("doi", "10.1234/notarealdoi",null));
-        assertFalse(resolver.canResolve("doi", "junk",null));
-        //junk in the URL of valid ID
-        assertTrue(resolver.canResolve("doi", "10.6084/m9.figshare.5479792.v1","junk"));
-        //A bit of a trick, but this checks it can handle http->https redirection
-        assertTrue(resolver.canResolve("doi", "m9.figshare.5479792.v1","http://doi.org/10.6084/m9.figshare.5479792.v1")); 
+        //if the value is a url, use the url
+        r = resolver.resolve("uri", "https://orcid.org");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://orcid.org",r.getResolvedUrl());
+
+        r = resolver.resolve("handle", "https://orcid.org");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://orcid.org",r.getResolvedUrl());
+
+        r = resolver.resolve("uri", "https://orcid.org/content/DOES_NOT_EXIST_404");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+
+        r = resolver.resolve("uri", "MISSING");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
         
+        //if we have a URN, it will fail to resolve :(
+        r = resolver.resolve("uri", "urn:whatever");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());        
+        
+        //if the value has a resolution prefix, normalise if possible, then attempt to resolve
+        r = resolver.resolve("doi", "10.6084/m9.figshare.5479792.v1");
+        assertTrue(r.isResolved());
+        assertEquals("https://doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
+
+        //if the value is a URL, try that BEFORE normalization step (this may change)
+        r = resolver.resolve("doi", "https://dx.doi.org/10.6084/m9.figshare.5479792.v1");
+        assertTrue(r.isResolved());
+        assertEquals("https://dx.doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
+
+        //if the value is a URL but fails, try the normalizaed version
+        r = resolver.resolve("doi", "https://dkfsjaldksjfdaksjg.org/10.6084/m9.figshare.5479792.v1");
+        assertTrue(r.isResolved());
+        assertEquals("https://doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
+
+        //valid DOI, but does not exist
+        r = resolver.resolve("doi", "10.1234/DOES_NOT_EXIST_404");
+        assertFalse(r.isResolved());
+        assertNull(r.getResolvedUrl());
+        assertTrue(r.getAttemptedResolution());
+
+        //invalid DOI
+        r = resolver.resolve("doi", "XXXX");
+        assertFalse(r.isResolved());
+        assertNull(r.getResolvedUrl());
+        assertTrue(r.getAttemptedResolution());
+
         //ISBN
         //valid ISBN 10
-        assertTrue(resolver.canResolve("isbn", "009177909X",null));
+        r = resolver.resolve("isbn", "009177909X");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://www.worldcat.org/isbn/009177909X",r.getResolvedUrl());
         //valid ISBN 13
-        assertTrue(resolver.canResolve("isbn", "9780091779092",null));
+        r = resolver.resolve("isbn", "9780091779092");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://www.worldcat.org/isbn/9780091779092",r.getResolvedUrl());
         //valid ISBN 13 un-normalized
-        assertTrue(resolver.canResolve("isbn", "ISBN:978-0091779092",null));
+        r = resolver.resolve("isbn", "ISBN:978-0091779092");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://www.worldcat.org/isbn/9780091779092",r.getResolvedUrl());
+        //valid ISBN that doesn't exist
+        r = resolver.resolve("isbn", "9780091779093");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
         //invalid ISBN
-        assertFalse(resolver.canResolve("isbn", "9780091779093",null)); //invalid ISBN
-
+        r = resolver.resolve("isbn", "9780091779093XXXXX");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        
         //BIBCODE
-        assertTrue(resolver.canResolve("bibcode", "1974AJ.....79..819H",null));
-        assertTrue(resolver.canResolve("bibcode", "bibcode:1974AJ.....79..819H",null));
-        assertFalse(resolver.canResolve("bibcode", "junk",null));
+        r = resolver.resolve("bibcode", "1974AJ.....79..819H");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("http://adsabs.harvard.edu/abs/1974AJ.....79..819H",r.getResolvedUrl());
+
+        r = resolver.resolve("bibcode", "bibcode:1974AJ.....79..819H");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("http://adsabs.harvard.edu/abs/1974AJ.....79..819H",r.getResolvedUrl());
+
+        r = resolver.resolve("bibcode", "junk");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        
         //PMC
-        assertTrue(resolver.canResolve("pmc", "PMC3820882",null));
-        assertTrue(resolver.canResolve("pmc", "3820882",null));
-        assertTrue(resolver.canResolve("pmc", "3820882","https://europepmc.org/articles/3820882"));
-        assertFalse(resolver.canResolve("pmc", "junk",null));
-        //RRID - note they must start with RRID: (created a curie normalizer to ensure prefix exists)
-        assertTrue(resolver.canResolve("rrid", "RRID:AB_2203913","https://scicrunch.org/resolver/RRID:AB_2203913"));
-        assertTrue(resolver.canResolve("rrid", "RRID:AB_2203913","https://identifiers.org/rrid/RRID:AB_2203913"));
-        assertFalse(resolver.canResolve("rrid", "junk",null));
-        assertTrue(resolver.canResolve("rrid", "RRID:AB_2203913",null));
+        r = resolver.resolve("pmc", "PMC3820882");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://europepmc.org/articles/PMC3820882",r.getResolvedUrl());
+        
+        r = resolver.resolve("pmc", "3820882");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://europepmc.org/articles/PMC3820882",r.getResolvedUrl());
+
+        r = resolver.resolve("pmc", "junk");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+*/
+        //RRID
+        r = resolver.resolve("rrid", "RRID:AB_2203913");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://identifiers.org/rrid/RRID:AB_2203913",r.getResolvedUrl());
+
+        r = resolver.resolve("rrid", "AB_2203913");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://identifiers.org/rrid/RRID:AB_2203913",r.getResolvedUrl());
+
+        //using identifiers.org URL as value
+        r = resolver.resolve("rrid", "https://scicrunch.org/resolver/RRID:AB_2203913");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://scicrunch.org/resolver/RRID:AB_2203913",r.getResolvedUrl());
+
         //ARXIV
-        assertTrue(resolver.canResolve("arxiv", "1802.05783",null));
-        assertFalse(resolver.canResolve("arxiv", "junk","https://arxiv.org/abs/1802.05783"));
-        assertTrue(resolver.canResolve("arxiv", "1802","https://arxiv.org/abs/1802.05783"));
-        assertFalse(resolver.canResolve("arxiv", "junk",null));        
-        //PMID
-        assertTrue(resolver.canResolve("pmid", "22791631",null));
-        assertTrue(resolver.canResolve("pmid", "PMID:22791631",null));
-        assertTrue(resolver.canResolve("pmid", "22791631","https://www.ncbi.nlm.nih.gov/pubmed/22791631"));
-        assertFalse(resolver.canResolve("pmid", "junk",null));
+        r = resolver.resolve("arxiv", "1802.05783");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://arxiv.org/abs/1802.05783",r.getResolvedUrl());
+
+        r = resolver.resolve("arxiv", "https://arxiv.org/abs/1802.05783");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://arxiv.org/abs/1802.05783",r.getResolvedUrl());
+
+        r = resolver.resolve("arxiv", "junk");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+
+        //PMID:
+        r = resolver.resolve("pmid","22791631");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://www.ncbi.nlm.nih.gov/pubmed/22791631",r.getResolvedUrl());
+
+        r = resolver.resolve("pmid","PMID:22791631");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://www.ncbi.nlm.nih.gov/pubmed/22791631",r.getResolvedUrl());
+
+        r = resolver.resolve("pmid", "junk");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
     }
 
 }

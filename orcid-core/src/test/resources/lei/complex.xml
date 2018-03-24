@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <!-- Has transliterated legal name but does not include language codes -->
 <lei:LEIRecord xmlns:lei="http://www.gleif.org/data/schema/leidata/2016">
       <lei:LEI>213800ZH4VUOQOUVYX93</lei:LEI>

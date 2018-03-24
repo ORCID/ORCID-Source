@@ -159,7 +159,28 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.putWork();        
     };
 
-    addWorkModal(data): void {
+    addWorkModal(work): void {
+        this.emailService.getEmails()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.emails = data;
+                console.log('open add aff modal');
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.worksService.notifyOther({ work:work });
+                    if(work == undefined) {
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false});
+                    } else {
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: true});
+                    }                    
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
         /*
         if(emailVerified === true 
             || configuration.showModalManualEditVerificationEnabled == false

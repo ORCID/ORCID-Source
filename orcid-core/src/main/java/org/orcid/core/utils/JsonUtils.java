@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils;
 
 import java.io.File;
@@ -26,6 +10,7 @@ import org.codehaus.jettison.json.JSONObject;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * 
@@ -35,9 +20,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonUtils {
 
     static ObjectMapper mapper = new ObjectMapper(); // thread safe!
+    static ObjectMapper prettyMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     static ObjectMapper mapperFromJSON = new ObjectMapper(); // thread safe!
     static {        
         mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    }
+    
+    public static String convertToJsonStringPrettyPrint(Object object) {
+        try {            
+            return prettyMapper.writeValueAsString(object);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String convertToJsonString(Object object) {

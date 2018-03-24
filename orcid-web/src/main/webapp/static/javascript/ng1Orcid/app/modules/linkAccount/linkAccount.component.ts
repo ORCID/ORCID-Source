@@ -1,4 +1,6 @@
+declare var $: any
 declare var orcidGA: any;
+declare var orcidVar: any
 
 //Import all the angular components
 
@@ -17,8 +19,14 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
+import { DiscoService } 
+    from '../../shared/disco.service.ts'; 
+
 import { OauthService } 
     from '../../shared/oauth.service.ts'; 
+
+import { WidgetService } 
+    from '../../shared/widget.service.ts'; 
 
 
 @Component({
@@ -28,28 +36,47 @@ import { OauthService }
 export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    @Input() entityId: any;
+    //@Input() entityId: any;
 
-    //entityId: string;
+    authorizationForm: any;
+    entityId: any;
+    feed: any;
     gaString: string;
+    loadedFeed: boolean;
+    idpName: string;
     requestInfoForm: any;
    
     constructor(
-        private oauthService: OauthService
+        private discoService: DiscoService,
+        private oauthService: OauthService,
+        private widgetService: WidgetService
     ) {
-        //this.entityId = "";
+        this.authorizationForm = {};
+        this.entityId = orcidVar.providerId;
         this.gaString = "";
+        this.loadedFeed = false;
+        //this.idpName = "";
         this.requestInfoForm = {};
     }
 
-    /* Pending ***
-    $scope.$watch(function() { return discoSrvc.feed; }, function(){
-        $scope.idpName = discoSrvc.getIdPName($scope.entityId);
-        if(discoSrvc.feed != null) {
-            $scope.loadedFeed = true;
-        }
-    });
-    */
+    loadDiscoFeed = function() {
+        this.discoService.getDiscoFeed()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                console.log(data);
+                this.feed = data;
+                this.idpName = this.discoService.getIdpName(this.entityId, this.feed, this.widgetService.getLocale());
+                this.loadedFeed = true;
+            },
+            error => {
+                console.log('Error getting disco feed');
+                this.feed = [];
+                this.idpName = this.discoService.getIdpName(this.entityId, this.feed, this.widgetService.getLocale());
+                this.loadedFeed = true;
+            } 
+        );
+    };
 
     linkAccount(idp, linkType): boolean {
         let eventAction = linkType === 'shibboleth' ? 'Sign-In-Link-Federated' : 'Sign-In-Link-Social';
@@ -62,7 +89,7 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     loadRequestInfoForm = function() {
-        this.adminDelegatesService.getFormData()
+        this.oauthService.loadRequestInfoForm()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -77,6 +104,9 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
     
+    submit = function(){
+        console.log("hello");
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
@@ -90,6 +120,12 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.loadRequestInfoForm();
+        this.authorizationForm = {
+            userName:  {value: ""}
+        } 
         this.setEntityId(this.entityId);
+        this.loadDiscoFeed();
+        console.log(this.entityId);
+        
     }; 
 }

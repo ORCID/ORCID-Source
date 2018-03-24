@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected classes=['manage'] nav="settings">
 <div>
     <div class="row">        
@@ -42,8 +24,7 @@
                         <#if "shibboleth" == (RequestParameters['linkRequest']!)><a class="reg" href="<@orcid.rootPath '/shibboleth/signin'/>"><#else><a class="reg" href="<@orcid.rootPath '/social/access'/>"></#if>${springMacroRequestContext.getMessage("social.link.link_this_account")}</a> &nbsp;&#124;&nbsp; ${springMacroRequestContext.getMessage("login.registerOrcidId")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
                         <hr />
                     </div> 
-                </div>
-                     
+                </div>     
             <#else>
                 <h2>${springMacroRequestContext.getMessage("register.labelRegisterforanORCIDiD")}</h2>
                 <p>${springMacroRequestContext.getMessage("register.labelORCIDprovides")}</p>
@@ -57,13 +38,18 @@
                 <br /><br />
             </p>
             <#include "/common/browser-checks.ftl" />
-            <#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
-                <div ng-controller="OauthAuthorizationController" id="RegistrationForm" ng-init="oauth2ScreensLoadRegistrationForm('${RequestParameters.firstName?js_string}', '${RequestParameters.lastName?js_string}', '${RequestParameters.emailId?js_string}', '${RequestParameters.linkRequest?js_string}')">
-            <#else>
-                <div ng-controller="OauthAuthorizationController" id="RegistrationCtr" ng-init="oauth2ScreensLoadRegistrationForm()">
-            </#if>
-    		  <#include "/includes/register_inc.ftl" />
-            </div>
+            <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+                <oauth-authorization-ng2></oauth-authorization-ng2>
+            </@orcid.checkFeatureStatus>
+            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
+                <#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
+                    <div ng-controller="OauthAuthorizationController" id="RegistrationForm" ng-init="oauth2ScreensLoadRegistrationForm('${RequestParameters.firstName?js_string}', '${RequestParameters.lastName?js_string}', '${RequestParameters.emailId?js_string}', '${RequestParameters.linkRequest?js_string}')">
+                <#else>
+                    <div ng-controller="OauthAuthorizationController" id="RegistrationCtr" ng-init="oauth2ScreensLoadRegistrationForm()">
+                </#if>
+        		  <#include "/includes/register_inc.ftl" />
+                </div>
+            </@orcid.checkFeatureStatus>
         </div>
     </div>
 </div>

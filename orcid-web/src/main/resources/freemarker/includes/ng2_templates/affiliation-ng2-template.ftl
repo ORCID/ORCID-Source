@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="affiliation-ng2-template">
     <div>
         <!-- EMPLOYMENT -->
@@ -785,9 +766,9 @@
                             <#else>
                                 <strong>                                
                                 <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                                <a href="" (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
-                                <@orcid.msg 'common.or' />
                                 <a href="" (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
+                                <@orcid.msg 'common.or' />
+                                <a href="" (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
                                 <@orcid.msg 'common.now' /> 
                                 </strong>
                             </#if>

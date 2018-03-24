@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.common.writer.rdf;
 
 import static org.junit.Assert.assertFalse;
@@ -23,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.ws.rs.core.MediaType;
@@ -34,28 +19,29 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.jena.riot.RIOT;
 import org.junit.Before;
 import org.junit.Test;
-import org.orcid.jaxb.model.message.Address;
-import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.common_v2.Country;
+import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.LastModifiedDate;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.message.UrlName;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.FamilyName;
+import org.orcid.jaxb.model.record_v2.GivenNames;
+import org.orcid.jaxb.model.record_v2.History;
+import org.orcid.jaxb.model.record_v2.Name;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
+import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 
 //@RunWith(OrcidJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml" })
@@ -70,7 +56,7 @@ public class RDFWriterTest {
 	}
 	
     private static DatatypeFactory dataTypeFactory;
-    private RDFMessageBodyWriter rdfWriter = new RDFMessageBodyWriter();
+    private RDFMessageBodyWriterV2 rdfWriter = new RDFMessageBodyWriterV2();
 
     @Before
     public void makeDataTypeFactory() throws DatatypeConfigurationException {
@@ -85,55 +71,68 @@ public class RDFWriterTest {
     }
     
 
-    private OrcidMessage fakeBio() throws DatatypeConfigurationException {
-        OrcidMessage orcidMessage = new OrcidMessage();
-        OrcidProfile orcidProfile1 = new OrcidProfile();
-        OrcidIdentifier orcidIdentifier = new OrcidIdentifier();
-        orcidProfile1.setOrcidIdentifier(orcidIdentifier);
-        orcidIdentifier.setUri("http://orcid.example.com/000-1337");
-        orcidIdentifier.setPath("000-1337");
-        OrcidBio bio = new OrcidBio();
-        orcidProfile1.setOrcidBio(bio);
-        OrcidHistory history = new OrcidHistory();
+    private Record fakeBio() throws DatatypeConfigurationException {
+        Record r = new Record();
+        
+        r.setOrcidIdentifier(new OrcidIdentifier());
+        r.getOrcidIdentifier().setPath("000-1337");
+        r.getOrcidIdentifier().setUri("http://orcid.example.com/000-1337");
+        
+        r.setHistory(new History());
+        r.getHistory().setCreationMethod(CreationMethod.WEBSITE);
         XMLGregorianCalendar value = dataTypeFactory.newXMLGregorianCalendar(1980, 12, 31, 23, 29, 29, 999, 0);
-        history.setCreationMethod(CreationMethod.WEBSITE);
-        history.setLastModifiedDate(new LastModifiedDate(value));
-        orcidProfile1.setOrcidHistory(history);
-        PersonalDetails personal = new PersonalDetails();
-        bio.setPersonalDetails(personal);
-        personal.setFamilyName(new FamilyName("Doe"));
-        personal.setCreditName(new CreditName("John F Doe"));
-        personal.setGivenNames(new GivenNames("John"));
-        personal.setOtherNames(new OtherNames());
-        personal.getOtherNames().addOtherName("Johnny",Visibility.PUBLIC);
-        personal.getOtherNames().addOtherName("Mr Doe",Visibility.PUBLIC);
+        r.getHistory().setLastModifiedDate(new LastModifiedDate(value));
+        r.getHistory().setClaimed(true);
+        
+        r.setPerson(new Person());
+        r.getPerson().setBiography(new Biography());
+        
+        r.getPerson().setName(new Name());
+        r.getPerson().getName().setFamilyName(new FamilyName("Doe"));
+        r.getPerson().getName().setCreditName(new CreditName("John F Doe"));
+        r.getPerson().getName().setGivenNames(new GivenNames("John"));
+        r.getPerson().setOtherNames(new OtherNames());
+        r.getPerson().getOtherNames().setOtherNames(new ArrayList<OtherName>());
+        OtherName n = new OtherName();
+        n.setContent("Johnny");
+        n.setVisibility(Visibility.PUBLIC);
+        OtherName n1 = new OtherName();
+        n1.setContent("Mr Doe");
+        n1.setVisibility(Visibility.PUBLIC);
+        r.getPerson().getOtherNames().getOtherNames().add(n);
+        r.getPerson().getOtherNames().getOtherNames().add(n1);
+        
+        r.getPerson().setResearcherUrls(new ResearcherUrls());
+        r.getPerson().getResearcherUrls().setResearcherUrls(new ArrayList<ResearcherUrl>());
 
-        ResearcherUrls urls = new ResearcherUrls();
-        bio.setResearcherUrls(urls);
+        ResearcherUrl anonymous = new ResearcherUrl();
+        anonymous.setUrl(new Url("http://example.com/anon"));
+        anonymous.setVisibility(Visibility.PUBLIC);
+        r.getPerson().getResearcherUrls().getResearcherUrls().add(anonymous);
 
-        ResearcherUrl anonymous = new ResearcherUrl(new Url("http://example.com/anon"),Visibility.PUBLIC);
-        urls.getResearcherUrl().add(anonymous);
+        r.getPerson().getResearcherUrls().getResearcherUrls().add(buildRUrl("http://example.com/myPage","homePage"));
+        r.getPerson().getResearcherUrls().getResearcherUrls().add(buildRUrl("http://example.com/foaf#me","FOAF"));
+        r.getPerson().getResearcherUrls().getResearcherUrls().add(buildRUrl("http://example.com/webId","webID"));
+        r.getPerson().getResearcherUrls().getResearcherUrls().add(buildRUrl("http://example.com/other","other"));
 
-        // "home page" - with strange casing
-        ResearcherUrl homePage = new ResearcherUrl(new Url("http://example.com/myPage"), new UrlName("homePage"),Visibility.PUBLIC);
-        urls.getResearcherUrl().add(homePage);
-
-        ResearcherUrl foaf = new ResearcherUrl(new Url("http://example.com/foaf#me"), new UrlName("FOAF"),Visibility.PUBLIC);
-        urls.getResearcherUrl().add(foaf);
-
-        ResearcherUrl webId = new ResearcherUrl(new Url("http://example.com/webId"), new UrlName("webID"),Visibility.PUBLIC);
-        urls.getResearcherUrl().add(webId);
-
-        ResearcherUrl other = new ResearcherUrl(new Url("http://example.com/other"), new UrlName("other"),Visibility.PUBLIC);
-        urls.getResearcherUrl().add(other);
-
-        bio.setContactDetails(new ContactDetails());
-        bio.getContactDetails().setEmail(Arrays.asList(new Email("john@example.org"), new Email("doe@example.com")));
-        bio.getContactDetails().setAddress(new Address());
-        bio.getContactDetails().getAddress().setCountry(new Country(Iso3166Country.GB));
-        orcidMessage.setOrcidProfile(orcidProfile1);
-        return orcidMessage;
-
+        r.getPerson().setAddresses(new Addresses());
+        r.getPerson().getAddresses().setAddress(new ArrayList<Address>());
+        Address a = new Address();
+        a.setCountry(new Country());
+        a.getCountry().setValue(Iso3166Country.GB);
+        r.getPerson().getAddresses().getAddress().add(a);
+        
+        r.getPerson().setEmails(new Emails());
+        r.getPerson().getEmails().setEmails(new ArrayList<Email>());
+        Email e = new Email();
+        e.setEmail("john@example.org");
+        e.setCurrent(true);
+        Email e1 = new Email();
+        e1.setEmail("doe@example.com");
+        e1.setCurrent(true);
+        r.getPerson().getEmails().getEmails().add(e);
+        r.getPerson().getEmails().getEmails().add(e1);
+        return r;
     }
 
     @Test
@@ -141,7 +140,7 @@ public class RDFWriterTest {
 
         ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
 
-        rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("application", "rdf+xml"), null, entityStream);
+        rdfWriter.writeTo(fakeBio(), Record.class, null, null, new MediaType("application", "rdf+xml"), null, entityStream);
 
         String str = entityStream.toString("utf-8");
         System.out.println(str);
@@ -182,7 +181,7 @@ public class RDFWriterTest {
     public void writeTurte() throws Exception {
 
         ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
-        rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("text", "turtle"), null, entityStream);
+        rdfWriter.writeTo(fakeBio(), Record.class, null, null, new MediaType("text", "turtle"), null, entityStream);
 
         String str = entityStream.toString("utf-8");
         System.out.println(str);
@@ -215,7 +214,7 @@ public class RDFWriterTest {
     public void writeNtriples() throws Exception {
 
         ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
-        rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("application", "n-triples"), null, entityStream);
+        rdfWriter.writeTo(fakeBio(), Record.class, null, null, new MediaType("application", "n-triples"), null, entityStream);
 
         String str = entityStream.toString("utf-8");
         System.out.println(str);
@@ -245,7 +244,7 @@ public class RDFWriterTest {
     public void writeJsonLD() throws Exception {
 
         ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
-        rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("application", "ld+json"), null, entityStream);
+        rdfWriter.writeTo(fakeBio(), Record.class, null, null, new MediaType("application", "ld+json"), null, entityStream);
 
         String str = entityStream.toString("utf-8");
         System.out.println(str);
@@ -278,10 +277,11 @@ public class RDFWriterTest {
     public void missingCreditName() throws Exception {
 
         ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
-        OrcidMessage fakeBio = fakeBio();
+        Record fakeBio = fakeBio();
         // empty creditName
-        fakeBio.getOrcidProfile().getOrcidBio().getPersonalDetails().setCreditName(null);
-        rdfWriter.writeTo(fakeBio, OrcidMessage.class, null, null, new MediaType("text", "turtle"), null, entityStream);
+        fakeBio.getPerson().getName().setCreditName(null);
+        //fakeBio.getOrcidProfile().getOrcidBio().getPersonalDetails().setCreditName(null);
+        rdfWriter.writeTo(fakeBio, Record.class, null, null, new MediaType("text", "turtle"), null, entityStream);
 
         String str = entityStream.toString("utf-8");
         System.out.println(str);
@@ -295,6 +295,15 @@ public class RDFWriterTest {
         assertTrue(str.contains("\"Doe\""));
         assertTrue(str.contains("foaf:givenName"));
         assertTrue(str.contains("\"John\""));
+    }
+    
+    private ResearcherUrl buildRUrl(String url, String name){
+        ResearcherUrl foaf = new ResearcherUrl();
+        foaf.setUrl(new Url(url));
+        foaf.setUrlName(name);
+        foaf.setVisibility(Visibility.PUBLIC);
+        return foaf;
+
     }
 
 }

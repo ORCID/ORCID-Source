@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <head>
     <meta charset="utf-8" />
     <title>${title!"ORCID"}</title>
@@ -74,6 +56,7 @@
         orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
         orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
         orcidVar.features = JSON.parse("${featuresJson}");
+        orcidVar.providerId = '${(providerId)!}';
         
         <#if (oauth2Screens)??>
         orcidVar.oauth2Screens = true;
@@ -89,6 +72,10 @@
         </#if>     
       
         orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
+        orcidVar.firstName = "${(RequestParameters.firstName?js_string)!}";
+        orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
+        orcidVar.emailId = "${(RequestParameters.emailId?js_string)!}";
+        orcidVar.linkRequest = "${(RequestParameters.linkRequest?js_string)!}";
         orcidVar.memberSlug = "${(memberSlug?js_string)!}";
     </script>
 
@@ -146,7 +133,6 @@
 
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
     <!-- NG2: Under development -->
-    <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
     <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
     <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
     <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
@@ -166,8 +152,12 @@
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
+    <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
+    <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
     <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
-
+    <#if springMacroRequestContext.requestUri?contains("/social") >
+        <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
+    </#if>
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
         <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
         <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
@@ -177,9 +167,12 @@
         <#include "/includes/ng2_templates/websites-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/works-ng2-template.ftl">
         <#include "/includes/ng2_templates/workspace-summary-ng2-template.ftl">
         <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
     </#if>
+
     </@orcid.checkFeatureStatus> 
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 

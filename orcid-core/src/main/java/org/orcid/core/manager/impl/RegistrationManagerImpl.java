@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.security.NoSuchAlgorithmException;
@@ -251,6 +235,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         }
         newRecord.setCreationMethod(PojoUtil.isEmpty(registration.getCreationType()) ? CreationMethod.DIRECT.value() : registration.getCreationType().getValue());
         newRecord.setSendChangeNotifications(registration.getSendChangeNotifications().getValue());
+        newRecord.setSendAdministrativeChangeNotifications(true);
         newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());
         newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()));
         // Visibility defaults

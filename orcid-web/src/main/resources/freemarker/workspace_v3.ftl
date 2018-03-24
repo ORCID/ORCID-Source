@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected nav="record">
 <#escape x as x?html>
 
@@ -770,10 +752,14 @@
 
 <modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
     <websites-form-ng2></websites-form-ng2>
-</modalngcomponent><!-- Ng2 component -->  
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
+    <works-form-ng2></works-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
 </@orcid.checkFeatureStatus> 
 
-<modalngcomponent elementHeight="300" elementId="modalAffiliationDelete" elementWidth="300">
+<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 

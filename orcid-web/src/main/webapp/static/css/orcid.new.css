@@ -1,20 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
-
 a {
     color: #338caf;
     cursor: pointer;
@@ -1225,6 +1208,10 @@ ul.privacyHelp li {
     float: left;
 }
 
+#register .visibilityDefault{
+    width: 85%;
+}
+
 .visibilityDefault span.public,
 .visibilityDefault span.limited,
 .visibilityDefault span.private {
@@ -2415,6 +2402,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .workspace-top .popover.bottom .arrow {
     left: 252px
+}
+
+.workspace-top .left-aside .popover.bottom .arrow {
+    left: 50%
 }
 
 .popover-help-container ul {
@@ -4341,8 +4332,8 @@ ul.sources-edit-list>li {
     margin-left: 4px;
 }
 
-#bio-section .popover-help-container #bio-help {
-    left: -50px;
+#bio-section .popover.bottom .arrow {
+    left: 50%;
 }
 
 .id-banner .row .col-md-3 {
@@ -5585,10 +5576,6 @@ ul.oauth-scopes li {
     background: #a6ce39
 }
 
-.widget-container .popover-help-container .popover {
-    left: -30px
-}
-
 .widget-container .popover.bottom .arrow {
     left: 41px
 }
@@ -6609,11 +6596,6 @@ ul.comma li:last-child:after {
     float: left;
 }
 
-#settings .popover-help-container .popover{
-    left: -145px;
-    top: -200px;
-}
-
 #settings .section-heading{
     clear: both;
     margin-top: 1em;
@@ -7032,7 +7014,7 @@ ul.comma li:last-child:after {
         display: none!important
     }
 
-    #RegistrationCtr input[type=password],#RegistrationCtr input[type=text] {
+    #RegistrationCtr input[type=password],#RegistrationCtr input[type=text],#RegistrationCtr .visibilityDefault {
         width: 83%
     }
 
@@ -7053,7 +7035,7 @@ ul.comma li:last-child:after {
         line-height: 18px
     }
 
-    #password-reset-form #userEmailAddress {
+    #password-reset #userEmailAddress {
         width: 95%
     }
 
