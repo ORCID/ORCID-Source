@@ -91,7 +91,7 @@
 		   <update>true</update>
                 </configuration>
             </plugin>
-            <plugin>
+            <!-- plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <configuration>
@@ -100,7 +100,7 @@
                        <exclude>**/rebel.xml</exclude>
                     </excludes>
                 </configuration>
-            </plugin>
+            </plugin -->
         </plugins>
     </build>
     <profiles>

@@ -112,7 +112,10 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
                     window.location.reload();
                 },
                 error => {
-                    // something bad is happening!
+                    // reload page anyway
+                    // switchUser request is handled by OrcidSwitchUserFilter.java which redirects /switch-user to /my-orcid
+                    // in non-local environments neither request completes successfully, although the user has been successfully switched
+                    window.location.reload();
                     console.log("error switching users");
                 } 
             );

@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected classes=['manage'] nav="settings">
 	<div class="row">
 		<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
@@ -41,18 +23,18 @@
 			<table class="table table-bordered settings-table normal-width" ng-show="delegators.length > 0" ng-cloak>
 				<thead>
 					<tr>
-						<th width="35%" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-						<th width="35%" ng-click="changeSorting('receiverOrcid.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-						<th width="15%" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-						<th width="15%" ng-click="changeSorting('lastModifiedDate')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
+						<th class="width-30" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th ng-click="changeSorting('receiverOrcid.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+						<th class="width-15" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+						<th class="width-15" ng-click="changeSorting('lastModifiedDate')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="delegationDetails in delegators | orderBy:sort.column:sort.descending">
-						<td width="35%"><a href="<@orcid.rootPath '/switch-user?username='/>{{delegationDetails.giverOrcid.path}}" target="giverName.value">{{delegationDetails.giverName.value}}</a></td>
-						<td width="35%"><a href="{{delegationDetails.giverOrcid.uri}}" target="{{delegationDetails.giverOrcid.path}}">{{delegationDetails.giverOrcid.path}}</a></td>						
-						<td width="15%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
-						<td width="15%">{{delegationDetails.lastModifiedDate|date:'yyyy-MM-dd'}}</td>
+						<td><a href="<@orcid.rootPath '/switch-user?username='/>{{delegationDetails.giverOrcid.path}}" target="giverName.value">{{delegationDetails.giverName.value}}</a></td>
+						<td><a href="{{delegationDetails.giverOrcid.uri}}" target="{{delegationDetails.giverOrcid.path}}">{{delegationDetails.giverOrcid.uri}}</a></td>						
+						<td>{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
+						<td>{{delegationDetails.lastModifiedDate|date:'yyyy-MM-dd'}}</td>
 					</tr>
 				</tbody>
 			</table>

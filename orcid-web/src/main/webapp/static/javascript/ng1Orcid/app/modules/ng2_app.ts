@@ -182,6 +182,9 @@ import { WebsitesFormNg2Module }
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 
+import { WorksFormNg2Module } 
+    from './works/worksForm.ts';
+
 import { WorksNg2Module } 
     from './works/works.ts';
 
@@ -288,6 +291,7 @@ export class RootCmp {
         WebsitesFormNg2Module, //Approved
         WebsitesNg2Module, //Approved
         WidgetNg2Module, //Approved
+        WorksFormNg2Module,
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,
         WorksPrivacyPreferencesNg2Module

@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@public classes=['home'] nav="register">
     <div ng-controller="RequestResendClaimCtrl" id="RequestResendClaimCtr" ng-init="getRequestResendClaim()" class="row">
         <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-3 col-xs-12">

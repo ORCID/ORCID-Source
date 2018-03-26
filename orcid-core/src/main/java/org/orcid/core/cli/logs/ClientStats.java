@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli.logs;
 
 import java.io.Serializable;
@@ -25,6 +9,8 @@ public class ClientStats implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String clientDetailsId;
+    
+    private String clientName;
     
     private long totalHits = 0;
     
@@ -57,6 +43,14 @@ public class ClientStats implements Serializable {
     
     public String getClientDetailsId() {
         return clientDetailsId;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
     
 }

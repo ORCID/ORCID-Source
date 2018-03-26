@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <div class="more-info" ng-mouseleave="closeMoreInfo(group.getActive().putCode.value)" ng-class="{'more-info-show':moreInfo[group.getActive().putCode.value]==true}">
 	<a class="glyphicon glyphicon-plus-sign grey" ng-mouseenter="moreInfoMouseEnter(group.getActive().putCode.value,$event);" ng-click="toggleClickMoreInfo(group.getActive().putCode.value)"></a>	
 	<div class="popover bottom more-info-container">

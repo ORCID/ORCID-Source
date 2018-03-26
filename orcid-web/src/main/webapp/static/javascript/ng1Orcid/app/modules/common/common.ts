@@ -132,6 +132,9 @@ import { DelegatorsService }
 import { DeprecateProfileService }
     from '../../shared/deprecateProfile.service.ts';
 
+import { DiscoService }
+    from '../../shared/disco.service.ts';
+
 import { EmailService } 
     from '../../shared/email.service.ts';
 
@@ -271,6 +274,7 @@ import { WorksService }
             CountryService,
             DelegatorsService,
             DeprecateProfileService,
+            DiscoService,
             EmailService,
             ExternalIdentifiersService,
             FeaturesService,

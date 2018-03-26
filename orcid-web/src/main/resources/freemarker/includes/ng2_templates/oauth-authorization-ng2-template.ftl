@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="oauth-authorization-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/confirm-oauth-access.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/oauth/authorize")>
@@ -159,7 +140,7 @@
                                 </div>
                                 <div id="idpSelectContainer">
                                     <div id="idpSelectInner">
-                                        <div *ngIf="scriptsInjected == false;" class="text-center" >
+                                        <div *ngIf="!scriptsInjected" class="text-center" >
                                             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                                         </div>
                                         <!-- Where the widget is going to be injected -->
