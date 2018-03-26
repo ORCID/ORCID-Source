@@ -46,6 +46,9 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     @Value("${org.orcid.message-listener.api20ActivitiesEnabled:true}")
     private boolean is20ActivitiesIndexingEnabled;
 
+    @Value("${org.orcid.message-listener.index.summaries:true}")
+    private boolean isSummaryIndexerEnabled;
+    
     @Resource
     private Orcid12APIClient orcid12ApiClient;
     @Resource
@@ -80,6 +83,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                 update_1_2_API(orcid);
             } else if (AvailableBroker.DUMP_STATUS_2_0_API.equals(destinationBroker)) {
                 update_2_0_API(m);
+                update20Summary(m);
             }
         } catch(Exception e) {
             throw new RuntimeException(e);
@@ -196,6 +200,10 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     }
 
     private void update20Summary(BaseMessage message) throws Exception {
+        if(!isSummaryIndexerEnabled) {
+            return;
+        }
+        
         String orcid = message.getOrcid();
         LOG.info("Processing summary for record " + orcid);
         try {

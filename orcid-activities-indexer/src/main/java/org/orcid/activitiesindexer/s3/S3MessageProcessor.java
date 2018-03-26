@@ -30,12 +30,17 @@ import org.orcid.activitiesindexer.orcid.Orcid20APIClient;
 import org.orcid.activitiesindexer.persistence.managers.ActivitiesStatusManager;
 import org.orcid.activitiesindexer.persistence.util.ActivityType;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_v2.Educations;
+import org.orcid.jaxb.model.record.summary_v2.Employments;
 import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_v2.Fundings;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Activity;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.utils.DateUtils;
@@ -43,6 +48,7 @@ import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -61,6 +67,9 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 
     Logger LOG = LoggerFactory.getLogger(S3MessageProcessor.class);
 
+    @Value("${org.orcid.message-listener.index.activities:true}")
+    private boolean isActivitiesIndexerEnabled;
+    
     @Resource
     private Orcid20APIClient orcid20ApiClient;
     @Resource
@@ -74,83 +83,120 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
      * Populates the Amazon S3 buckets
      */
     public void accept(LastModifiedMessage m) {
-        update20Activities(m);
+        update20Activities(m);        
+    }
+    
+    public void retry(String orcid, List<ActivityType> types) {
+        if(!isActivitiesIndexerEnabled) {
+            return;
+        }
+        
+        ActivitiesSummary as = fetchPublicActivitiesSummary(orcid);        
+        if(as != null) {
+            Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
+            for(ActivityType type : types) {
+                switch(type) {
+                case EDUCATIONS:
+                    processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
+                    break;
+                case EMPLOYMENTS:
+                    processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
+                    break;
+                case FUNDINGS:
+                    processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
+                    break;
+                case PEER_REVIEWS:
+                    processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
+                    break;
+                case WORKS:
+                    processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));
+                    break;
+                }
+            }
+        }        
     }
 
     private void update20Activities(BaseMessage message) {
+        if(!isActivitiesIndexerEnabled) {
+            return;
+        }
+        
         String orcid = message.getOrcid();
         LOG.info("Processing activities for record " + orcid);
-        ActivitiesSummary as = null;
-
-        try {
-            as = orcid20ApiClient.fetchPublicActivitiesSummary(message);
-        } catch (LockedRecordException | DeprecatedRecordException e) {
-            // Remove all activities from this record
-            s3Manager.clearActivities(orcid);
-            // Mark all activities as ok
-            activitiesStatusManager.markAllAsSent(orcid);
-        } catch (Exception e) {
-            // Mark all activities as failed
-            activitiesStatusManager.markAllAsFailed(orcid);
-        }
+        ActivitiesSummary as = fetchPublicActivitiesSummary(orcid);
 
         if (as != null) {
             Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
-
-            if (as.getEducations() != null && !as.getEducations().getSummaries().isEmpty()) {
-                Map<String, S3ObjectSummary> existingEducations = existingActivities.get(ActivityType.EDUCATIONS);
-                processActivities(orcid, as.getEducations().getSummaries(), existingEducations, ActivityType.EDUCATIONS);
-            } else {
-                s3Manager.clearActivitiesByType(orcid, ActivityType.EDUCATIONS);
-                activitiesStatusManager.markAsSent(orcid, ActivityType.EDUCATIONS);
-            }
-
-            if (as.getEmployments() != null && !as.getEmployments().getSummaries().isEmpty()) {
-                Map<String, S3ObjectSummary> existingEmployments = existingActivities.get(ActivityType.EMPLOYMENTS);
-                processActivities(orcid, as.getEmployments().getSummaries(), existingEmployments, ActivityType.EMPLOYMENTS);
-            } else {
-                s3Manager.clearActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
-                activitiesStatusManager.markAsSent(orcid, ActivityType.EMPLOYMENTS);
-            }
-
-            if (as.getFundings() != null && !as.getFundings().getFundingGroup().isEmpty()) {
-                Map<String, S3ObjectSummary> existingFundings = existingActivities.get(ActivityType.FUNDINGS);
-                List<FundingSummary> fundings = new ArrayList<FundingSummary>();
-                for (FundingGroup g : as.getFundings().getFundingGroup()) {
-                    fundings.addAll(g.getFundingSummary());
-                }
-                processActivities(orcid, fundings, existingFundings, ActivityType.FUNDINGS);
-            } else {
-                s3Manager.clearActivitiesByType(orcid, ActivityType.FUNDINGS);
-                activitiesStatusManager.markAsSent(orcid, ActivityType.FUNDINGS);
-            }
-
-            if (as.getPeerReviews() != null && !as.getPeerReviews().getPeerReviewGroup().isEmpty()) {
-                Map<String, S3ObjectSummary> existingPeerReviews = existingActivities.get(ActivityType.PEER_REVIEWS);
-                List<PeerReviewSummary> peerReviews = new ArrayList<PeerReviewSummary>();
-                for (PeerReviewGroup g : as.getPeerReviews().getPeerReviewGroup()) {
-                    peerReviews.addAll(g.getPeerReviewSummary());
-                }
-                processActivities(orcid, peerReviews, existingPeerReviews, ActivityType.PEER_REVIEWS);
-            } else {
-                s3Manager.clearActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
-                activitiesStatusManager.markAsSent(orcid, ActivityType.PEER_REVIEWS);
-            }
-
-            if (as.getWorks() != null && !as.getWorks().getWorkGroup().isEmpty()) {
-                Map<String, S3ObjectSummary> existingWorks = existingActivities.get(ActivityType.WORKS);
-                List<WorkSummary> works = new ArrayList<WorkSummary>();
-                for (WorkGroup g : as.getWorks().getWorkGroup()) {
-                    works.addAll(g.getWorkSummary());
-                }
-                processActivities(orcid, works, existingWorks, ActivityType.WORKS);
-            } else {
-                s3Manager.clearActivitiesByType(orcid, ActivityType.WORKS);
-                activitiesStatusManager.markAsSent(orcid, ActivityType.WORKS);
-            }
+            processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
+            processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
+            processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
+            processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
+            processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));                        
         }
     }
 
+    private void processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
+        LOG.info("Processing Educations for record " + orcid);
+        if (educations != null && !educations.getSummaries().isEmpty()) {
+            processActivities(orcid, educations.getSummaries(), existingElements, ActivityType.EDUCATIONS);
+        } else {
+            s3Manager.clearActivitiesByType(orcid, ActivityType.EDUCATIONS);
+            activitiesStatusManager.markAsSent(orcid, ActivityType.EDUCATIONS);
+        }                
+    }
+    
+    private void processEmployments(String orcid, Employments employments, Map<String, S3ObjectSummary> existingElements) {
+        LOG.info("Processing Employments for record " + orcid);
+        if (employments != null && !employments.getSummaries().isEmpty()) {
+            processActivities(orcid, employments.getSummaries(), existingElements, ActivityType.EMPLOYMENTS);
+        } else {
+            s3Manager.clearActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
+            activitiesStatusManager.markAsSent(orcid, ActivityType.EMPLOYMENTS);
+        }
+    }
+    
+    private void processFundings(String orcid, Fundings fundingsElement, Map<String, S3ObjectSummary> existingElements) {
+        LOG.info("Processing Fundings for record " + orcid);
+        if (fundingsElement != null && !fundingsElement.getFundingGroup().isEmpty()) {
+            List<FundingSummary> fundings = new ArrayList<FundingSummary>();
+            for (FundingGroup g : fundingsElement.getFundingGroup()) {
+                fundings.addAll(g.getFundingSummary());
+            }
+            processActivities(orcid, fundings, existingElements, ActivityType.FUNDINGS);
+        } else {
+            s3Manager.clearActivitiesByType(orcid, ActivityType.FUNDINGS);
+            activitiesStatusManager.markAsSent(orcid, ActivityType.FUNDINGS);
+        }
+    }
+    
+    private void processPeerReviews(String orcid, PeerReviews peerReviewsElement, Map<String, S3ObjectSummary> existingElements) {
+        LOG.info("Processing PeerReviews for record " + orcid);
+        if (peerReviewsElement != null && !peerReviewsElement.getPeerReviewGroup().isEmpty()) {
+            List<PeerReviewSummary> peerReviews = new ArrayList<PeerReviewSummary>();
+            for (PeerReviewGroup g : peerReviewsElement.getPeerReviewGroup()) {
+                peerReviews.addAll(g.getPeerReviewSummary());
+            }
+            processActivities(orcid, peerReviews, existingElements, ActivityType.PEER_REVIEWS);
+        } else {
+            s3Manager.clearActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
+            activitiesStatusManager.markAsSent(orcid, ActivityType.PEER_REVIEWS);
+        }
+    }
+    
+    private void processWorks(String orcid, Works worksElement, Map<String, S3ObjectSummary> existingElements) {
+        LOG.info("Processing Works for record " + orcid);
+        if (worksElement != null && !worksElement.getWorkGroup().isEmpty()) {
+            List<WorkSummary> works = new ArrayList<WorkSummary>();
+            for (WorkGroup g : worksElement.getWorkGroup()) {
+                works.addAll(g.getWorkSummary());
+            }
+            processActivities(orcid, works, existingElements, ActivityType.WORKS);
+        } else {
+            s3Manager.clearActivitiesByType(orcid, ActivityType.WORKS);
+            activitiesStatusManager.markAsSent(orcid, ActivityType.WORKS);
+        }
+    }  
+    
     private void processActivities(String orcid, List<? extends Activity> activities, Map<String, S3ObjectSummary> existingElements, ActivityType type) {
         try {
             for (Activity x : activities) {
@@ -190,6 +236,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid);
             // Mark collection as failed
             activitiesStatusManager.markAsFailed(orcid, type);
+            throw new RuntimeException(e);
         }
 
     }
@@ -210,4 +257,21 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             throw new IllegalArgumentException("Invalid type! Imposible: " + type);
         }
     }
+    
+    private ActivitiesSummary fetchPublicActivitiesSummary(String orcid) {
+        try {            
+            return orcid20ApiClient.fetchPublicActivitiesSummary(orcid);
+        } catch (LockedRecordException | DeprecatedRecordException e) {
+            // Remove all activities from this record
+            s3Manager.clearActivities(orcid);
+            // Mark all activities as ok
+            activitiesStatusManager.markAllAsSent(orcid);
+        } catch (Exception e) {
+            // Mark all activities as failed
+            activitiesStatusManager.markAllAsFailed(orcid);
+            throw new RuntimeException(e);
+        }
+        
+        return null;
+    }             
 }
