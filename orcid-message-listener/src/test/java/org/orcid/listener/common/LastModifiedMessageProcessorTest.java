@@ -1,5 +1,6 @@
 package org.orcid.listener.common;
 
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -31,14 +32,13 @@ import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.listener.s3.ExceptionHandler;
-import org.orcid.listener.s3.S3MessageProcessor;
 import org.orcid.listener.s3.S3Manager;
+import org.orcid.listener.s3.S3MessageProcessor;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.util.IOUtils;
@@ -129,7 +129,12 @@ public class LastModifiedMessageProcessorTest {
         when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenThrow(new RuntimeException());
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(null);
         String orcid = "0000-0000-0000-0000";
-        execute(orcid);
+        try {
+            execute(orcid);
+            fail();
+        } catch(Exception e) {
+            //There should be a RuntimeException
+        }
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
@@ -153,11 +158,16 @@ public class LastModifiedMessageProcessorTest {
         when(mock_orcid12ApiClient.fetchPublicProfile(anyString(), anyString())).thenReturn(null);
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenThrow(new RuntimeException());
         String orcid = "0000-0000-0000-0000";
-        execute(orcid);
+        try {
+            execute(orcid);
+            fail();
+        } catch(Exception e) {
+            //There should be a RuntimeException
+        }
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
         verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-        verify(mock_recordStatusManager, times(2)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
     }
 
     @Test
