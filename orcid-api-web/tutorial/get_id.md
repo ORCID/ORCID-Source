@@ -10,9 +10,7 @@ This workflow can be used with Public or Member API credentials on sandbox or th
 |--------------------|--------------------------|
 | Base URL 				| https://sandbox.orcid.org/oauth/token|
 | Client\_id 		| *Your client ID* |
-| Client\_secret	| *Your client secret* |
-| Response       | code |
-| Grant\_type		| client\_credentials |
+| Response_type       | code |
 | Scope				| /authenticate |
 
 **Example authorization url:**
@@ -48,7 +46,7 @@ The authorization code can be exchanged for an access token and the user's ORCID
 
 ```curl -i -L -H "Accept: application/json" --data "client_id=[Your client ID]&client_secret=[Your client secret]&grant_type=authorization_code&code=eUeiz2" "https://sandbox.orcid.org/oauth/token"```
 
-The response will include an access_token and refresh_token and the scopes and expiration time of those tokens as well as the user's ORCID iD and the name recorded on their ORCID record if it is public.
+The response will include an access_token and refresh_token and the scopes and expiration time of those tokens as well as the user's ORCID iD and the name recorded on the ORCID record if it is public.
 
 Example response:
 
@@ -59,18 +57,20 @@ Example response:
   "scope":"/authenticate","orcid":"0000-0001-2345-6789","name":"Sofia Garcia "}
   ```
   
-Store the ORCID iD in your system
+You will need to store at least the ORCID iD and access token in your local system.
   
 ## Read the ORCID record
   
 You can read public information on the ORCID record using the access token. 
   
 Version is the the version of the API you are using, the latest stable release is v2.1.
-Endpoint is the section of the record you want to read 'record' returns the entire record. [List of 2.1 endpoints](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1#read-sections).
+Endpoint is the section of the record you want to read, 'record' returns the entire record. [List of 2.1 endpoints](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1#read-sections).
+
+### Member API
 
 | Option| Value        |
 |--------------------|--------------------------|
-| URL 				| https<i></i>://sandbox.orcid.org/[version]/[ORCID iD]/[endpoint]|
+| URL 				| https<i></i>://api.sandbox.orcid.org/[version]/[ORCID iD]/[endpoint]|
 | method    | GET |
 | header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
 | header    | Authorization: Bearer [Your access token]|
@@ -79,6 +79,21 @@ Endpoint is the section of the record you want to read 'record' returns the enti
 
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://api.sandbox.orcid.org/v2.1/0000-0001-2345-6789/record' -i
+```
+
+### Public API
+
+| Option| Value        |
+|--------------------|--------------------------|
+| URL 				| https<i></i>://pub.sandbox.orcid.org/[version]/[ORCID iD]/[endpoint]|
+| method    | GET |
+| header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
+| header    | Authorization: Bearer [Your access token]|
+
+**Curl example:**
+
+```
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v2.1/0000-0001-2345-6789/works' -i
 ```
 
   
