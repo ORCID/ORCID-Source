@@ -49,8 +49,8 @@
     <bean id="updatedOrcidListener" class="org.orcid.listener.UpdatedOrcidListener" />
 
 	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="topic">
-	       <jms:listener ref="reindexListener" destination="${org.orcid.persistence.messaging.topic.reindex}" subscription="${org.orcid.message-listener.subscription.reindex}" />
-	       <jms:listener ref="updatedOrcidListener" destination="${org.orcid.persistence.messaging.topic.updateOrcids}" subscription="${org.orcid.message-listener.subscription.updatedOrcids}" />
+	       <jms:listener ref="reindexListener" destination="${org.orcid.persistence.messaging.topic.reindex}" subscription="${org.orcid.message-listener.subscription.reindex}" concurrency="${org.orcid.listener.concurrency:5}" />
+	       <jms:listener ref="updatedOrcidListener" destination="${org.orcid.persistence.messaging.topic.updateOrcids}" subscription="${org.orcid.message-listener.subscription.updatedOrcids}" concurrency="${org.orcid.listener.concurrency:5}" />
 	</jms:listener-container>
 	
     <!-- Jersey client -->
