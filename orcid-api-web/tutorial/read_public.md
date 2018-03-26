@@ -18,7 +18,7 @@ Send a request to the ORCID API for a two step token
 | grant\_type		| client\_credentials|
 | scope				| /read-public|
 
-Example request in curl
+**Curl Example**
 
 ```
 curl -i -d 'client_id=APP-674MCQQR985VZZQ2' -d 'client_secret=d08b711e-9411-788d-a474-46efd3956652' -d 'scope=/read-public' -d 'grant_type=client_credentials' 'https://sandbox.orcid.org/oauth/token'
