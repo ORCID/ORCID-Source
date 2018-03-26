@@ -79,7 +79,7 @@ public enum Features implements Feature {
     DISABLE_1_2_ON_MEMBER_API,
 
     @Label("Download all my data")
-    GET_MY_DATA;
+    GET_MY_DATA,
 
     @Label("Check external id resolution in UI")
     EX_ID_RESOLVER;
