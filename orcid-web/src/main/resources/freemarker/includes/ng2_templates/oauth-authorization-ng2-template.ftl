@@ -140,7 +140,7 @@
                                 </div>
                                 <div id="idpSelectContainer">
                                     <div id="idpSelectInner">
-                                        <div *ngIf="scriptsInjected == false;" class="text-center" >
+                                        <div *ngIf="!scriptsInjected" class="text-center" >
                                             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                                         </div>
                                         <!-- Where the widget is going to be injected -->

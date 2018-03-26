@@ -1,4 +1,21 @@
 /*
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+
+/*
  * 1 - Utility functions 
  */
 function scriptTmpl(elemId) {
@@ -15,7 +32,7 @@ var enableRightToLeft = function(){
     var rightToLeftLang = ["rl", "ar"];
     var currentLanguage = lang;
 
-    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the html tag, this was missing.
+    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the htmfl tag, this was missing.
 
     if( rightToLeftLang.indexOf( currentLanguage ) >= 0 ){
         document.body.className += " lang-rl"; //Add class that display right to left for selected languages
@@ -410,7 +427,6 @@ function addShibbolethGa(oauthGaString){
 $(function() {
     
     // Common
-    
     window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname;
 
@@ -476,14 +492,11 @@ $(function() {
     // jquery browser is deprecated, when you upgrade
     // to 1.9 or higher you will need to use the pluggin
     var oldBrowserFlag = false;
-    console.log(navigator.userAgent.toLowerCase());
-    console.log(parseInt($.browser.version));
-    console.log($.browser.mozilla);
     //IE 11
-    if (/trident/.test(navigator.userAgent.toLowerCase())
-            && parseInt($.browser.version, 10) < 8) {
-        oldBrowserFlag = true;
-    } else if ($.browser.msie && parseInt($.browser.version, 10) < 10) {
+    if (!!navigator.userAgent.match(/Trident\/7\./)) {
+        // IE 11
+        oldBrowserFlag = false;
+    } else if ($.browser.msie && parseInt($.browser.version, 10) < 11) {
         oldBrowserFlag = true;
     } else if (/edge/.test(navigator.userAgent.toLowerCase())
             && parseInt($.browser.version, 10) < 14) {
@@ -511,8 +524,9 @@ $(function() {
         $('body').prepend(wHtml);
     }
 
-    $('form#loginForm')
-            .submit(
+    $(document)
+            .on('submit', 'form#loginForm',
+
                     function() {
                         var loginUrl = baseUrl + 'signin/auth.json';
                         var gaString = angular.element($("#loginForm")).scope().gaString;
@@ -689,20 +703,26 @@ $(function() {
     
     function showLoginDeactivatedError() {
         if(orcidVar.features['ANGULAR2_QA']){
-            window.angularComponentReference.zone.run(() => { window.angularComponentReference.showDeactivationError(); });
+            window.angularComponentReference.zone.run(
+                function(){
+                    window.angularComponentReference.showDeactivationError(); 
+                    
+                }
+
+            );
         } else {
           angular.element($("#login-deactivated-error")).scope().showDeactivationError();  
         }
         if ($('form#loginForm #login-error-mess').length == 0) {
             $('form#loginForm #login-deactivated-error').fadeIn('fast');
         } else {
-             $(
-             'form#loginForm #login-error-mess')
+             $('form#loginForm #login-error-mess')
              .fadeOut(
-                    'fast',
-                     function() {
-                        $('form#loginForm #login-deactivated-error').fadeIn('fast');
-                     });
+                'fast',
+                 function() {
+                    $('form#loginForm #login-deactivated-error').fadeIn('fast');
+                 }
+             );
         }
     }
 

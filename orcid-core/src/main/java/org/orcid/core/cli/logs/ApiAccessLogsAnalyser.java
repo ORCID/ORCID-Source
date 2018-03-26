@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.NoResultException;
@@ -12,6 +17,7 @@ import javax.persistence.NoResultException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
@@ -24,16 +30,27 @@ public class ApiAccessLogsAnalyser {
 
     private static final int BEARER_TOKEN_LENGTH = 36;
 
-    static final String UNKNOWN_CLIENT = "Unknown";
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    @Option(name = "-f", usage = "Path to directory containing logs and / or directories of logs")
-    private File logsDir;
+    @Option(name = "-l", usage = "Comma delimited list of directories of logs")
+    private String logDirsArg;
 
     @Option(name = "-o", usage = "Output file")
     private File outputFile;
 
+    @Option(name = "-z", usage = "Output summary")
+    private File summaryFile;
+
     @Option(name = "-d", usage = "Debug", required = false)
     private boolean debug = false;
+
+    @Option(name = "-n", usage = "Number of days to analyse")
+    private int numberOfDaysToAnalyse;
+
+    @Option(name = "-s", usage = "Start date (yyyy-MM-dd)")
+    private String startDateArg;
+
+    private List<File> logDirs;
 
     private OrcidOauth2TokenDetailDao tokenDao;
 
@@ -44,6 +61,10 @@ public class ApiAccessLogsAnalyser {
     private AnalysisResults results;
 
     private LogReader logReader;
+
+    private ClientDetailsDao clientDetailsDao;
+
+    private LocalDate startDate;
 
     public static void main(String[] args) {
         ApiAccessLogsAnalyser analyser = new ApiAccessLogsAnalyser();
@@ -65,13 +86,22 @@ public class ApiAccessLogsAnalyser {
         LOGGER.info("Initialising Api access logs analysis...");
         applicationContext = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
         tokenDao = (OrcidOauth2TokenDetailDao) applicationContext.getBean("orcidOauth2TokenDetailDao");
+        clientDetailsDao = (ClientDetailsDao) applicationContext.getBean("clientDetailsDaoReadOnly");
+        LocalDate endDate = startDate.plusDays(numberOfDaysToAnalyse - 1);
         logReader = new LogReader();
-        logReader.init(logsDir);
+        logReader.init(logDirs, startDate, endDate);
         results = new AnalysisResults();
+        results.setClientDetailsDao(clientDetailsDao);
         try {
             results.setOutputStream(new FileOutputStream(outputFile));
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Error creating output stream to file " + outputFile.getAbsolutePath(), e);
+        }
+
+        try {
+            results.setSummaryOutputStream(new FileOutputStream(summaryFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error creating output stream to summary file " + summaryFile.getAbsolutePath(), e);
         }
     }
 
@@ -80,7 +110,7 @@ public class ApiAccessLogsAnalyser {
     }
 
     void analyse() {
-        LOGGER.info("Analysing log files, base directory: " + logsDir.getAbsolutePath());
+        LOGGER.info("Analysing log files...");
         String line = logReader.getNextLine();
         while (line != null) {
             analyseLog(line);
@@ -88,7 +118,7 @@ public class ApiAccessLogsAnalyser {
         }
         LOGGER.info("Analysis complete");
         try {
-            results.outputClientStats();
+            results.outputResults();
         } catch (IOException e) {
             LOGGER.error("Error outputting results");
             System.exit(1);
@@ -124,25 +154,40 @@ public class ApiAccessLogsAnalyser {
                 if (debug) {
                     LOGGER.info("Couldn't find client for token {}", token);
                 }
-                tokenToClientDetails.put(token, UNKNOWN_CLIENT);
+                return null;
             }
         }
         return tokenToClientDetails.get(token);
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
-        if (logsDir == null) {
-            throw new CmdLineException(parser, "-f parameter must be specificed");
+        logDirs = new ArrayList<>();
+        for (String logsDir : logDirsArg.split(",")) {
+            if (logsDir == null) {
+                throw new CmdLineException(parser, "Invalid list of log dirs");
+            }
+            File dir = new File(logsDir);
+            if (!dir.exists()) {
+                throw new CmdLineException(parser, "Logs dir " + dir.getAbsolutePath() + " does not exist");
+            }
+            if (!dir.isDirectory()) {
+                throw new CmdLineException(parser, "Logs dir " + dir.getAbsolutePath() + " is not a directory");
+            }
+            logDirs.add(dir);
         }
-        if (!logsDir.exists()) {
-            throw new CmdLineException(parser, "Logs dir " + logsDir.getAbsolutePath() + " does not exist");
-        }
+
         if (!outputFile.exists()) {
             try {
                 outputFile.createNewFile();
             } catch (IOException e) {
                 throw new CmdLineException(parser, "Invalid output file " + outputFile.getAbsolutePath());
             }
+        }
+
+        try {
+            startDate = LocalDate.parse(startDateArg, FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new CmdLineException(parser, "Invalid startDate " + startDateArg);
         }
     }
 

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
@@ -45,6 +46,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
 
+    @Value("${org.orcid.core.activities.max:10000}")
+    private long maxNumOfActivities;
+    
     @Resource
     private SourceManager sourceManager;
 
@@ -127,8 +131,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
-                List<Work> existingWorks = this.findWorks(orcid);       
+                List<Work> existingWorks = this.findWorks(orcid); 
                 if (existingWorks != null) {
+                    if((existingWorks.size() + 1) > this.maxNumOfActivities) {
+                        throw new ExceedMaxNumberOfElementsException();
+                    }
                     for (Work existing : existingWorks) {
                         activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                                 sourceEntity);
@@ -178,10 +185,13 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public WorkBulk createWorks(String orcid, WorkBulk workBulk) {        
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(orcid, sourceEntity.getSourceId());
-        
+        List<Work> existingWorks = this.findWorks(orcid);
         if(workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
+            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, sourceEntity.getSourceId());
+            if((existingWorks.size() + bulk.size()) > this.maxNumOfActivities) {
+                throw new ExceedMaxNumberOfElementsException();
+            }
             
             //Check bulk size
             if(bulk.size() > maxBulkSize) {
@@ -250,15 +260,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     /**
      * Return the list of existing external identifiers for the given user where the source matches the given sourceId
      * 
-     * @param orcid
-     *          The user we want to add the works to
+     * @param existingWorks
+     *          The list of existing works for the current user
      * @param sourceId
      *          The client id we are evaluating
      * @return A set of all the existing external identifiers that belongs to the given user and to the given source id                  
      * */
-    private Set<ExternalID> buildExistingExternalIdsSet(String orcid, String sourceId) {
+    private Set<ExternalID> buildExistingExternalIdsSet(List<Work> existingWorks, String sourceId) {
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
-        List<Work> existingWorks = this.findWorks(orcid);    
         for(Work work : existingWorks) {
             //If it is the same source
             if(work.retrieveSourcePath().equals(sourceId)) {

@@ -42,7 +42,7 @@ export class LinkAccountNg2Module {}
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 LinkAccountModule.directive(
-    'inkAccountNg2', 
+    'linkAccountNg2', 
     <any>downgradeComponent(
         {
             component: LinkAccountComponent,

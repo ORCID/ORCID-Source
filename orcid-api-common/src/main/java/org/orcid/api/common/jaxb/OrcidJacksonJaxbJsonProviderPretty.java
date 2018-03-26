@@ -18,6 +18,9 @@ import javax.ws.rs.ext.Provider;
 
 import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.core.exception.InvalidJSONException;
+import org.orcid.core.web.filters.ApiVersionFilter;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -73,7 +76,13 @@ public class OrcidJacksonJaxbJsonProviderPretty extends JacksonJaxbJsonProvider 
             throw new InvalidJSONException(params);
         }
         if (jsonInputValidator.canValidate(o.getClass())){
-            jsonInputValidator.validateJSONInput(o);
+            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
+            if(apiVersion != null && apiVersion.equals("2.1")) {
+                jsonInputValidator.validate2_1APIJSONInput(o);
+            } else {
+                jsonInputValidator.validateJSONInput(o);
+            }            
         }
         return o;
     }

@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,13 +16,15 @@ import org.slf4j.LoggerFactory;
 public class LogReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogReader.class);
+    
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("'api_access_log'.yyyy-MM-dd.'txt'");
 
     private BufferedReader reader;
 
     private List<File> fileQueue = new ArrayList<>();
-
-    public void init(File logsDir) {
-        queueDir(logsDir);
+    
+    public void init(List<File> logDirs, LocalDate startDate, LocalDate endDate) {
+        queueDir(logDirs, startDate, endDate);
         File nextFile = getNextFile();
         if (nextFile != null) {
             initReaderWithFile(nextFile);
@@ -43,14 +47,20 @@ public class LogReader {
         }
     }
 
-    private void queueDir(File dir) {
-        LOGGER.info("Queueing directory {}", dir.getAbsolutePath());
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                queueDir(file);
-            } else {
+    private void queueDir(List<File> logDirs, LocalDate startDate, LocalDate endDate) {
+        for (File dir : logDirs) {
+            LocalDate localDate = startDate;
+            while (!localDate.isAfter(endDate)) {
+                String fileName = localDate.format(FORMAT);
+                File file = new File(dir, fileName);
+                if (!file.exists()) {
+                    LOGGER.error("Can't find log file {}", file.getAbsolutePath());
+                    throw new RuntimeException("Missing log file");
+                }
                 LOGGER.info("Queueing file {}", file.getAbsolutePath());
                 fileQueue.add(file);
+                
+                localDate = localDate.plusDays(1l);
             }
         }
     }
