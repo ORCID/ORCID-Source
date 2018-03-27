@@ -534,9 +534,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     ngOnInit() {
-        if( this.affiliationService.affiliation ){
-        } else {
+        if( !this.affiliationService.affiliation ){
             this.addAffType = this.affiliationService.type;     
-        }
+        } 
     }; 
 }
