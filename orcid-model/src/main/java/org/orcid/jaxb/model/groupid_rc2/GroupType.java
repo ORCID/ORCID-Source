@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 @XmlType(name = "group-type")
 @XmlEnum
 public enum GroupType {
@@ -32,6 +34,11 @@ public enum GroupType {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static GroupType fromValue(String v) {
         for (GroupType c: GroupType.values()) {
             if (c.value.equals(v)) {

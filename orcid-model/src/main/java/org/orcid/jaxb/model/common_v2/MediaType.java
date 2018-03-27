@@ -10,6 +10,9 @@ package org.orcid.jaxb.model.common_v2;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.Serializable;
 
 /**
@@ -37,6 +40,11 @@ public enum MediaType implements Serializable {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static MediaType fromValue(String v) {
         for (MediaType c : MediaType.values()) {
             if (c.value.equals(v)) {
