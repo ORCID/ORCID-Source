@@ -415,7 +415,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getPrivacyPreferences();
-        this.getformData();  
+        //this.getformData();  
     };
 
 }
