@@ -6,7 +6,7 @@ This feature is only available on the Member API and only for Premium ORCID Memb
 
 ## Generate a webhooks access token
 
-This process is completed using the 2 step token exchange. A single token can be used to register webhooks on any record.
+This process is completed using the [2 step token exchange](https://github.com/ORCID/ORCID-Source/tree/TechDocs/orcid-api-web#generate-a-two-step-read-public-access-token). A single token can be used to register webhooks multiple records.
 
 | Parameter | Value        |
 |--------------------|--------------------------|
@@ -17,7 +17,7 @@ This process is completed using the 2 step token exchange. A single token can be
 | Grant\_type		| client\_credentials |
 | Scope				| /webhook |
 
-**Example token request in curl:**
+**Curl example:**
 
 ```
 curl -i -L -H "Accept: application/json"
@@ -52,16 +52,13 @@ The call to register a webhook takes the following values.
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[ORCID iD]/webhook/[encoded url to call] |
 | Method    | PUT |
-| Header    | accept:application/json |
-| Authorization      | Bearer: [Your authorization code] |
+| header      | Authorication: Bearer [Your authorization code] |
 
 **Curl example:** 
 
 Registering the URL `https://nowhere2.com/0000-0002-7465-2162/updated` for the record at http://sandbox.orcid.org/0000-0002-7465-2162.
 
-```curl -v -H "Accept: application/json" 
-  -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee" 
-  -H "Content-Length: 0" 
+```curl -i -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee" 
   -X PUT "https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%2Fnowhere2.com%2F0000-0002-7465-2162%2Fupdated"
   ```
 
@@ -73,7 +70,7 @@ Example response:
 HTTP/1.1 201 Created
 Server: nginx/1.1.19
 Connection: keep-alive
-Location: https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%2Frequestb.in%2Fz57lzcz5
+Location: https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%2Fnowhere2.com%2F0000-0002-7465-2162%2Fupdated
   ```
   
 ## Unregister a webhook
@@ -82,8 +79,7 @@ Location: https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[ORCID iD]/webhook/[encoded url to call] |
 | Method    | DELETE |
-| Header    | accept:application/json |
-| Authorization      | Bearer: [Your authorization code] |
+| header      | Authorication: Bearer [Your authorization code] |
   
 The response should be 204 No Content.
 
