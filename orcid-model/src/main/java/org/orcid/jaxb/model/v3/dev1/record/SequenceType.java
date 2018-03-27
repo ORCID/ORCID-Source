@@ -1,9 +1,12 @@
 package org.orcid.jaxb.model.v3.dev1.record;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Declan Newman (declan)
@@ -27,6 +30,11 @@ public enum SequenceType implements Serializable {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static SequenceType fromValue(String v) {
         for (SequenceType c : SequenceType.values()) {
             if (c.value.equals(v)) {

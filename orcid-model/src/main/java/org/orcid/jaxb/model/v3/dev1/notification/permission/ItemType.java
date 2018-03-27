@@ -3,6 +3,8 @@ package org.orcid.jaxb.model.v3.dev1.notification.permission;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * 
  * @author Will Simpson
@@ -22,4 +24,10 @@ public enum ItemType {
     @XmlEnumValue("service") SERVICE,
     @XmlEnumValue("work") WORK;
     //@formatter:on
+    
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
 }

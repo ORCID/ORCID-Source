@@ -7,10 +7,13 @@
 
 package org.orcid.jaxb.model.v3.dev1.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * <p>
@@ -53,6 +56,11 @@ public enum OrcidType implements Serializable {
 
     public String value() {
         return value;
+    }
+
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
     }
     
     public static OrcidType fromValue(String v) {
