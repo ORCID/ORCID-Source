@@ -10,23 +10,18 @@ import org.orcid.core.utils.v3.identifiers.resolvers.ResolutionResult;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+//@RunWith(OrcidJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ResolverServiceTest {
     
-    @Resource
+    //@Resource
     ResolverService resolver;
     
-    @Test
-    public void testWithMocks(){
-        //create fake resolver cache, use that.
-    }
-    
     //Commented out.  Only use locally.
-    @Test
+    //@Test
     public void workingTests(){
         ResolutionResult r = null;
-        /*
+        
         //missing values always false, for any type
         r = resolver.resolve("doi", "");
         assertFalse(r.isResolved());
@@ -151,7 +146,7 @@ public class ResolverServiceTest {
         r = resolver.resolve("pmc", "junk");
         assertFalse(r.isResolved());
         assertTrue(r.getAttemptedResolution());
-*/
+
         //RRID
         r = resolver.resolve("rrid", "RRID:AB_2203913");
         assertTrue(r.isResolved());

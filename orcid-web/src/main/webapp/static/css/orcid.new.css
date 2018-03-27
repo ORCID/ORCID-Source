@@ -2404,6 +2404,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     left: 252px
 }
 
+.workspace-top .left-aside .popover.bottom .arrow {
+    left: 50%
+}
+
 .popover-help-container ul {
     list-style-type: disc;
     padding-left: 16px
@@ -4328,8 +4332,8 @@ ul.sources-edit-list>li {
     margin-left: 4px;
 }
 
-#bio-section .popover-help-container #bio-help {
-    left: -50px;
+#bio-section .popover.bottom .arrow {
+    left: 50%;
 }
 
 .id-banner .row .col-md-3 {
@@ -5572,10 +5576,6 @@ ul.oauth-scopes li {
     background: #a6ce39
 }
 
-.widget-container .popover-help-container .popover {
-    left: -30px
-}
-
 .widget-container .popover.bottom .arrow {
     left: 41px
 }
@@ -6594,11 +6594,6 @@ ul.comma li:last-child:after {
     display: block;
     margin: 30px 0 0 4px;
     float: left;
-}
-
-#settings .popover-help-container .popover{
-    left: -145px;
-    top: -200px;
 }
 
 #settings .section-heading{

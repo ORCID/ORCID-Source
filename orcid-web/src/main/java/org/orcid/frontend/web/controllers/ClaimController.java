@@ -22,19 +22,16 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Registration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,6 +69,12 @@ public class ClaimController extends BaseController {
 
     @Resource
     private TransactionTemplate transactionTemplate;
+    
+    @Value("${org.orcid.core.claimWaitPeriodDays:10}")
+    private int claimWaitPeriodDays;
+    
+    @Value("${org.orcid.core.claimReminderAfterDays:8}")
+    private int claimReminderAfterDays;
     
     @RequestMapping(value = "/claimActivitiesVisibilityDefaultValidate.json", method = RequestMethod.POST)
     public @ResponseBody Claim claimActivitiesVisibilityDefaultValidate(@RequestBody Claim claim) {
@@ -248,7 +251,7 @@ public class ClaimController extends BaseController {
             return resendClaimRequest;
         }
 
-        notificationManager.sendApiRecordCreationEmail(email, orcid);
+        notificationManager.sendClaimReminderEmail(orcid, (claimWaitPeriodDays - claimReminderAfterDays));
         resendClaimRequest.setSuccessMessage(getMessage("resend_claim.successful_resend"));
         return resendClaimRequest;
     }
