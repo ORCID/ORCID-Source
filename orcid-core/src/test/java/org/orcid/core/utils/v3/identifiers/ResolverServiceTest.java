@@ -17,16 +17,11 @@ public class ResolverServiceTest {
     @Resource
     ResolverService resolver;
     
-    @Test
-    public void testWithMocks(){
-        //create fake resolver cache, use that.
-    }
-    
     //Commented out.  Only use locally.
-    @Test
+    //@Test
     public void workingTests(){
         ResolutionResult r = null;
-        /*
+        
         //missing values always false, for any type
         r = resolver.resolve("doi", "");
         assertFalse(r.isResolved());
@@ -151,7 +146,7 @@ public class ResolverServiceTest {
         r = resolver.resolve("pmc", "junk");
         assertFalse(r.isResolved());
         assertTrue(r.getAttemptedResolution());
-*/
+
         //RRID
         r = resolver.resolve("rrid", "RRID:AB_2203913");
         assertTrue(r.isResolved());
