@@ -24,8 +24,6 @@ import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.frontend.web.util.NumberList;
-import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
@@ -174,50 +172,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
 
         return FunctionsOverCollections.sortMapsByValues(citationTypes);
-    }
-
-    @ModelAttribute("years")
-    public Map<String, String> retrieveYearsAsMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = YearsList.createList();
-        map.put("", getMessage("select.item.year"));
-        for (String year : list) {
-            map.put(year, year);
-        }
-        return map;
-    }
-
-    @ModelAttribute("fundingYears")
-    public Map<String, String> retrieveFundingYearsAsMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = YearsList.createList(10);
-        map.put("", getMessage("select.item.year"));
-        for (String year : list) {
-            map.put(year, year);
-        }
-        return map;
-    }
-
-    @ModelAttribute("months")
-    public Map<String, String> retrieveMonthsAsMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = NumberList.createList(12);
-        map.put("", getMessage("select.item.month"));
-        for (String month : list) {
-            map.put(month, month);
-        }
-        return map;
-    }
-
-    @ModelAttribute("days")
-    public Map<String, String> retrieveDaysAsMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = NumberList.createList(31);
-        map.put("", getMessage("select.item.day"));
-        for (String day : list) {
-            map.put(day, day);
-        }
-        return map;
     }
 
     /**
