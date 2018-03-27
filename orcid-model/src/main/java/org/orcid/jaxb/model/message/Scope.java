@@ -10,6 +10,9 @@ package org.orcid.jaxb.model.message;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.Serializable;
 
 /**
@@ -44,6 +47,11 @@ public enum Scope implements Serializable {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static Scope fromValue(String v) {
         for (Scope c : Scope.values()) {
             if (c.value.equals(v)) {

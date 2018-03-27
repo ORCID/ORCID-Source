@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum WorkType implements Serializable {
     @XmlEnumValue("artistic-performance")
     ARTISTIC_PERFORMANCE("artistic-performance"),
@@ -89,6 +91,11 @@ public enum WorkType implements Serializable {
     
     WorkType(String v) {
         value = v;
+    }
+    
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
     }
     
     public String value() {
