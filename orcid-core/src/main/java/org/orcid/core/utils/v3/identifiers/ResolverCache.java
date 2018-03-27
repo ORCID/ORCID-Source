@@ -15,6 +15,23 @@ import com.google.common.cache.LoadingCache;
 @Component
 public class ResolverCache {
 
+    //recursively follow up to 4 http->https or https->http redirects
+    public static int doProtocolRedirect(HttpURLConnection con, int count) throws IOException{
+        int code = con.getResponseCode();
+        if ((code == HttpURLConnection.HTTP_SEE_OTHER 
+                || code == HttpURLConnection.HTTP_MOVED_PERM 
+                || code == HttpURLConnection.HTTP_MOVED_TEMP) && count < 3){
+            count ++;
+            //need to manually follow 3xx from one protocol to another.
+            String loc = con.getHeaderField("Location");
+            HttpURLConnection conRedirect = (HttpURLConnection) new URL(loc).openConnection();
+            conRedirect.setRequestMethod("HEAD");
+            conRedirect.setInstanceFollowRedirects(true);
+            return doProtocolRedirect(conRedirect, count);
+        }
+        return code;
+    }
+    
     //these caches ensure we only attempt to resolve once if multiple requests to resolve are made.
     LoadingCache<String, Boolean> is200 = CacheBuilder.newBuilder().expireAfterWrite(20, TimeUnit.MINUTES).maximumSize(10000).build(
             new CacheLoader<String, Boolean>() {
@@ -23,17 +40,8 @@ public class ResolverCache {
                         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
                         con.setRequestMethod("HEAD");
                         con.setInstanceFollowRedirects(true);
-                        int code = con.getResponseCode();
-                        if (code == HttpURLConnection.HTTP_SEE_OTHER 
-                                || code == HttpURLConnection.HTTP_MOVED_PERM 
-                                || code == HttpURLConnection.HTTP_MOVED_TEMP){
-                            //need to manually follow 303 from one protocol to another.
-                            String loc = con.getHeaderField("Location");
-                            con = (HttpURLConnection) new URL(loc).openConnection();
-                            con.setRequestMethod("HEAD");
-                            con.setInstanceFollowRedirects(true);    
-                        }
-                        return (con.getResponseCode() == HttpURLConnection.HTTP_OK);            
+                        int code = doProtocolRedirect(con,0);
+                        return (code == HttpURLConnection.HTTP_OK);            
                     } catch (IOException e) {
                         //nothing
                     }  
