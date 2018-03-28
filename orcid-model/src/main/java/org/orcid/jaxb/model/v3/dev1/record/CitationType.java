@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * <p>Java class for citation-type.
  * 
@@ -40,7 +42,7 @@ public enum CitationType {
     public String value() {
         return value;
     }
-
+    
     public static CitationType fromValue(String v) {
         for (CitationType c : CitationType.values()) {
             if (c.value.equals(v)) {

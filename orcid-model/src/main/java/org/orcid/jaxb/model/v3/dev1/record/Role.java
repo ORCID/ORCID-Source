@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 @XmlType(name = "role")
 @XmlEnum
 public enum Role implements Serializable {

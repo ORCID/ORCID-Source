@@ -10,6 +10,9 @@ package org.orcid.jaxb.model.v3.dev1.common;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.Serializable;
 
 /**
@@ -82,7 +85,7 @@ public enum Locale implements Serializable {
     public String value() {
         return value;
     }
-
+    
     public static Locale fromValue(String v) {
         for (Locale c : Locale.values()) {
             if (v.startsWith(c.value)) {
