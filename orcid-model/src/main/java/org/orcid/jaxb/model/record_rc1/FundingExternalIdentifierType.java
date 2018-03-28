@@ -7,10 +7,13 @@
 
 package org.orcid.jaxb.model.record_rc1;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * <p>
@@ -36,6 +39,11 @@ public enum FundingExternalIdentifierType implements Serializable {
 
     public String value() {
         return value;
+    }
+
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
     }
     
     public static FundingExternalIdentifierType fromValue(String v) {

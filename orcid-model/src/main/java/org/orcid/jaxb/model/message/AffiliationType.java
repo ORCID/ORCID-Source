@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.Serializable;
 
 /**
@@ -29,6 +31,7 @@ public enum AffiliationType implements Serializable {
         return value;
     }
     
+    @JsonValue
     public String getName() {
         return this.name();
     }

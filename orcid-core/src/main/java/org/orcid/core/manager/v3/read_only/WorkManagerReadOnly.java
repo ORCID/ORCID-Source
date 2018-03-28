@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.jaxb.model.v3.dev1.record.Work;
 import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
 
@@ -75,4 +76,10 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      */
     Works getWorksAsGroups(String orcid);
 
+    /**
+     * Returns a list of works that matches the given list of WorkLastModifiedEntity entities
+     * @param elements
+     * @return a list of Work elements 
+     * */
+    List<Work> findWorks(String orcid, List<WorkLastModifiedEntity> elements);
 }

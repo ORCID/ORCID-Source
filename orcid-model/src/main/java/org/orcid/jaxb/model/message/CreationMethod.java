@@ -9,6 +9,9 @@ package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.Serializable;
 
 /**
@@ -78,6 +81,11 @@ public enum CreationMethod implements Serializable {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static CreationMethod fromValue(String v) {
         for (CreationMethod c : CreationMethod.values()) {
             if (c.value.equals(v)) {
