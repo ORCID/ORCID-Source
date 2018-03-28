@@ -164,21 +164,6 @@ public class ResolverServiceTest {
         assertTrue(r.getAttemptedResolution());
         assertEquals("https://scicrunch.org/resolver/RRID:AB_2203913",r.getResolvedUrl());
 
-        //ARXIV
-        r = resolver.resolve("arxiv", "1802.05783");
-        assertTrue(r.isResolved());
-        assertTrue(r.getAttemptedResolution());
-        assertEquals("https://arxiv.org/abs/1802.05783",r.getResolvedUrl());
-
-        r = resolver.resolve("arxiv", "https://arxiv.org/abs/1802.05783");
-        assertTrue(r.isResolved());
-        assertTrue(r.getAttemptedResolution());
-        assertEquals("https://arxiv.org/abs/1802.05783",r.getResolvedUrl());
-
-        r = resolver.resolve("arxiv", "junk");
-        assertFalse(r.isResolved());
-        assertTrue(r.getAttemptedResolution());
-
         //PMID:
         r = resolver.resolve("pmid","22791631");
         assertTrue(r.isResolved());
@@ -191,6 +176,32 @@ public class ResolverServiceTest {
         assertEquals("https://www.ncbi.nlm.nih.gov/pubmed/22791631",r.getResolvedUrl());
 
         r = resolver.resolve("pmid", "junk");
+        assertFalse(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        
+        
+        //ARXIV
+        r = resolver.resolve("arxiv", "1802.05783");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://arxiv.org/abs/1802.05783",r.getResolvedUrl());
+
+        r = resolver.resolve("arxiv", "https://arxiv.org/abs/1802.05783");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://arxiv.org/abs/1802.05783",r.getResolvedUrl());
+
+        r = resolver.resolve("arxiv", "arXiv:1802.05783");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://arxiv.org/abs/1802.05783",r.getResolvedUrl());
+        
+        r = resolver.resolve("arxiv", "arxiv:1802.05783");
+        assertTrue(r.isResolved());
+        assertTrue(r.getAttemptedResolution());
+        assertEquals("https://arxiv.org/abs/1802.05783",r.getResolvedUrl());
+
+        r = resolver.resolve("arxiv", "junk");
         assertFalse(r.isResolved());
         assertTrue(r.getAttemptedResolution());
     }
