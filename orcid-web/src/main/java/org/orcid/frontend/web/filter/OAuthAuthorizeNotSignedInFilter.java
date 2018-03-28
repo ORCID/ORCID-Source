@@ -53,8 +53,10 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
                 
                     HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
                     requestCache.saveRequest(request, response);
-                    SavedRequest savedRequest = requestCache.getRequest(request, response);                    
-                    session.setAttribute(OrcidOauth2Constants.ORIGINAL_OAUTH_URL, savedRequest.getRedirectUrl());                    
+                    SavedRequest savedRequest = requestCache.getRequest(request, response); 
+                    if(savedRequest != null) {
+                        session.setAttribute(OrcidOauth2Constants.ORIGINAL_OAUTH_URL, savedRequest.getRedirectUrl());                    
+                    }
                 }
                 response.sendRedirect(redirectUrl);                                             
                 return;
