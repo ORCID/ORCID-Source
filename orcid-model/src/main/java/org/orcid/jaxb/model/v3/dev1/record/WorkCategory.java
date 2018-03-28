@@ -33,11 +33,6 @@ public enum WorkCategory {
         return value;
     }
 
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
-    
     public List<WorkType> getSubTypes() {
         return Collections.unmodifiableList(types);
     }

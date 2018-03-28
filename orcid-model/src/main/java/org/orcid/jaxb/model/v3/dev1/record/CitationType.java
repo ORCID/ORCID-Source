@@ -42,11 +42,6 @@ public enum CitationType {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static CitationType fromValue(String v) {
         for (CitationType c : CitationType.values()) {

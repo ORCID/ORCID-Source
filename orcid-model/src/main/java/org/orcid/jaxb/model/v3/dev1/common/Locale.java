@@ -85,11 +85,6 @@ public enum Locale implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static Locale fromValue(String v) {
         for (Locale c : Locale.values()) {

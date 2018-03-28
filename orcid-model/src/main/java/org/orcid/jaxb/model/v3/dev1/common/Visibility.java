@@ -74,11 +74,6 @@ public enum Visibility implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static Visibility fromValue(String v) {
         for (Visibility c : Visibility.values()) {

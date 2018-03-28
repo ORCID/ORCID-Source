@@ -46,11 +46,6 @@ public enum AffiliationType implements Serializable {
         return value;
     }       
 
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
-    
     public static AffiliationType fromValue(String v) {
         for (AffiliationType c : AffiliationType.values()) {
             if (c.value.equals(v)) {

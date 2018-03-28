@@ -25,9 +25,4 @@ public enum ItemType {
     @XmlEnumValue("work") WORK;
     //@formatter:on
     
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
-    
 }

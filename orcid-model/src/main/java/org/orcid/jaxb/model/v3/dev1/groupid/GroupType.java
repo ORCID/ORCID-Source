@@ -33,11 +33,6 @@ public enum GroupType {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static GroupType fromValue(String v) {
         for (GroupType c: GroupType.values()) {

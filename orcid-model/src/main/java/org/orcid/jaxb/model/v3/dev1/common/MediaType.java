@@ -39,11 +39,6 @@ public enum MediaType implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static MediaType fromValue(String v) {
         for (MediaType c : MediaType.values()) {

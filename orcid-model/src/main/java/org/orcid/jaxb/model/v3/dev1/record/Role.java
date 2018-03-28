@@ -31,11 +31,6 @@ public enum Role implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static Role fromValue(String v) {
         for (Role c : Role.values()) {

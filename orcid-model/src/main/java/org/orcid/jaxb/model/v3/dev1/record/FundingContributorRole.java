@@ -31,11 +31,6 @@ public enum FundingContributorRole implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static FundingContributorRole fromValue(String v) {
         for (FundingContributorRole c : FundingContributorRole.values()) {

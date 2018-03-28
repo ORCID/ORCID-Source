@@ -32,11 +32,6 @@ public enum Relationship implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static Relationship fromValue(String v) {
         for (Relationship c : Relationship.values()) {

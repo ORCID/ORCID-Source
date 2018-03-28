@@ -41,10 +41,5 @@ public enum NotificationType {
     public static NotificationType fromValue(String v) {
         return valueOf(v);
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
 }

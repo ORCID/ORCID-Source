@@ -57,11 +57,6 @@ public enum OrcidType implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static OrcidType fromValue(String v) {
         for (OrcidType c : OrcidType.values()) {

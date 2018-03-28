@@ -44,11 +44,6 @@ public enum FundingType implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static FundingType fromValue(String v) {
         for (FundingType c : FundingType.values()) {

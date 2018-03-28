@@ -30,11 +30,6 @@ public enum SequenceType implements Serializable {
         return value;
     }
 
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
-    
     public static SequenceType fromValue(String v) {
         for (SequenceType c : SequenceType.values()) {
             if (c.value.equals(v)) {

@@ -25,11 +25,6 @@ public enum PeerReviewType implements Serializable {
     public String value() {
         return value;
     }
-
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
     
     public static PeerReviewType fromValue(String v) {
         for (PeerReviewType c : PeerReviewType.values()) {

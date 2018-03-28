@@ -97,11 +97,6 @@ public enum WorkType implements Serializable {
         return value;
     }
     
-    @JsonValue
-    public String jsonValue() {
-        return this.name();
-    }
-    
     public static WorkType fromValue(String v) {
         for (WorkType c : WorkType.values()) {
             if (c.value.equals(v)) {
