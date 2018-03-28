@@ -1,9 +1,12 @@
 package org.orcid.jaxb.model.record_rc4;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Angel Montenegro 
@@ -27,6 +30,11 @@ public enum FundingContributorRole implements Serializable {
     
     public String value() {
         return value;
+    }
+
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
     }
     
     public static FundingContributorRole fromValue(String v) {

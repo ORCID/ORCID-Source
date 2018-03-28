@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * <p>
  * Java class for client-type.
@@ -70,6 +72,11 @@ public enum RedirectUriType {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static RedirectUriType fromValue(String v) {
         for (RedirectUriType c : RedirectUriType.values()) {
             if (c.value.equals(v)) {

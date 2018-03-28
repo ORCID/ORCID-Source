@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * <p>
  * Java class for null.
@@ -38,6 +40,11 @@ public enum NotificationType {
 
     public static NotificationType fromValue(String v) {
         return valueOf(v);
+    }
+
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
     }
 
 }

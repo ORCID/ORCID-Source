@@ -1,9 +1,12 @@
 package org.orcid.jaxb.model.record_rc2;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Declan Newman (declan) Date: 31/07/2012
@@ -28,6 +31,11 @@ public enum AffiliationType implements Serializable {
         return value;
     }       
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static AffiliationType fromValue(String v) {
         for (AffiliationType c : AffiliationType.values()) {
             if (c.value.equals(v)) {

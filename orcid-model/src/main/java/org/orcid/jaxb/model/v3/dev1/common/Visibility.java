@@ -10,6 +10,9 @@ package org.orcid.jaxb.model.v3.dev1.common;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.Serializable;
 
 /**
@@ -71,7 +74,7 @@ public enum Visibility implements Serializable {
     public String value() {
         return value;
     }
-
+    
     public static Visibility fromValue(String v) {
         for (Visibility c : Visibility.values()) {
             if (c.value.equals(v.toLowerCase())) {
