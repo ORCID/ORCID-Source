@@ -192,6 +192,6 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //this.getData();
+        this.getData();
     };
 }
