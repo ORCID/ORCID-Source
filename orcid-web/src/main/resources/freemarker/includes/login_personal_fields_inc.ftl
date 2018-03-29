@@ -1,9 +1,4 @@
 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-<#if (oauthRequest)??>
-    <input type="hidden" name="oauthRequest" value="true"/>
-<#else>
-    <input type="hidden" name="oauthRequest" value="false"/>
-</#if>
 <div class="form-group">
     <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
     <input type="text" id="userId" name="userId" ng-model="authorizationForm.userName.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">

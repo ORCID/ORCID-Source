@@ -9,7 +9,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.orcid.core.constants.OrcidOauth2Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -215,14 +214,6 @@ public class OrcidUrlManager {
     }
 
     public String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {
-        boolean isOauthRequest = request.getParameter("oauthRequest") == null ? false : Boolean.valueOf(request.getParameter("oauthRequest"));
-        
-        if(isOauthRequest && request.getSession() != null && request.getSession().getAttribute(OrcidOauth2Constants.ORIGINAL_OAUTH_URL) != null) {
-            String originalOauth2Url = (String) request.getSession().getAttribute(OrcidOauth2Constants.ORIGINAL_OAUTH_URL);
-            request.getSession().removeAttribute(OrcidOauth2Constants.ORIGINAL_OAUTH_URL);
-            return originalOauth2Url;
-        }
-        
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String url = null;
         if (savedRequest != null) {

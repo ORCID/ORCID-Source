@@ -41,6 +41,4 @@ public class OrcidOauth2Constants {
     public static final String OAUTH_QUERY_STRING = "queryString";
     public static final String IMPLICIT_GRANT_TYPE = "implicit";
     public static final String IMPLICIT_TOKEN_RESPONSE_TYPE = "token";
-    
-    public static final String ORIGINAL_OAUTH_URL = "ORIGINAL_OAUTH_URL";
 }
