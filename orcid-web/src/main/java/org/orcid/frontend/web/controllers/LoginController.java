@@ -159,7 +159,6 @@ public class LoginController extends OauthControllerBase {
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("oauth2Screens", true);
-        mav.addObject("oauthRequest", true);
         return mav;
     }
 }
