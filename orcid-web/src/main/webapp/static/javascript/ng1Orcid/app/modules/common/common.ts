@@ -183,6 +183,9 @@ import { ReactivationService }
 import { RequestPasswordResetService }
     from '../../shared/requestPasswordReset.service.ts';
 
+import { SearchService } 
+    from '../../shared/search.service.ts';
+
 import { SocialNetworkService }
     from '../../shared/socialNetwork.service.ts';
 
@@ -291,6 +294,7 @@ import { WorksService }
             PreferencesService,
             ReactivationService,
             RequestPasswordResetService,
+            SearchService,
             SocialNetworkService,
             StaticsService,
             TwoFAStateService,
