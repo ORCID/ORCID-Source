@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -49,16 +50,25 @@ public class OrcidUrlManagerTest extends BaseTest {
         assertNull(determineTargetUrl("https://orcid.org/account/confirm-deactivate-orcid/AnYR4Nd0MStrIN6YVjZ6ZXV6ejX0Iu8jXklrv24PLoXfd/other/1"));
     }
 
+    @Test
+    public void checkOauthRequestFirst() throws URISyntaxException {
+        Pair<HttpServletRequest, HttpServletResponse> pair = setUpSavedRequest("https://orcid.org/my-orcid", true); 
+        String redirectUri = orcidUrlManager.determineFullTargetUrlFromSavedRequest(pair.getLeft(), pair.getRight());
+        assertEquals("https://orcid.org/originalOauthUrl", redirectUri);
+        redirectUri = orcidUrlManager.determineFullTargetUrlFromSavedRequest(pair.getLeft(), pair.getRight());
+        assertEquals("https://orcid.org/my-orcid", redirectUri);        
+    }
+    
     private void checkSame(String savedUrl) throws URISyntaxException {
         assertEquals(savedUrl, determineTargetUrl(savedUrl));
     }
 
     private String determineTargetUrl(String savedUrl) throws URISyntaxException {
-        Pair<HttpServletRequest, HttpServletResponse> pair = setUpSavedRequest(savedUrl);
+        Pair<HttpServletRequest, HttpServletResponse> pair = setUpSavedRequest(savedUrl, false);
         return orcidUrlManager.determineFullTargetUrlFromSavedRequest(pair.getLeft(), pair.getRight());
     }
 
-    private Pair<HttpServletRequest, HttpServletResponse> setUpSavedRequest(String savedUrl) throws URISyntaxException {
+    private Pair<HttpServletRequest, HttpServletResponse> setUpSavedRequest(String savedUrl, boolean setOauthRequest) throws URISyntaxException {
         URI uri = new URI(savedUrl);
         MockHttpServletRequest savedRequest = new MockHttpServletRequest("GET", uri.getPath());
         savedRequest.setScheme(uri.getScheme());
@@ -70,7 +80,11 @@ public class OrcidUrlManagerTest extends BaseTest {
 
         MockHttpServletRequest currentRequest = new MockHttpServletRequest();
         currentRequest.setSession(savedRequest.getSession());
+        if(setOauthRequest) {
+            currentRequest.setParameter("oauthRequest", String.valueOf(true));
+            currentRequest.getSession().setAttribute(OrcidOauth2Constants.ORIGINAL_OAUTH_URL, "https://orcid.org/originalOauthUrl");
+        }
         MockHttpServletResponse currentResponse = new MockHttpServletResponse();
         return new ImmutablePair<>(currentRequest, currentResponse);
-    }
+    }      
 }
