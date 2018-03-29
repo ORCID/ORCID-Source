@@ -20,6 +20,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.exception.SwitchUserAuthenticationException;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -58,6 +59,9 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
     
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private GivenPermissionToDao givenPermissionToDao;
     
     private OrcidUserDetailsService orcidUserDetailsService;
 
@@ -101,7 +105,9 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         if (isSwitchingBack(request)) {
             return switchUser(request);
         }
-        for (GivenPermissionByEntity gpbe : profileEntity.getGivenPermissionBy()) {
+        
+        List<GivenPermissionByEntity> givenPermissionBy = givenPermissionToDao.findByReceiver(profileEntity.getId());
+        for (GivenPermissionByEntity gpbe : givenPermissionBy) {
             if (gpbe.getGiver().getId().equals(targetUserOrcid)) {
                 return switchUser(request);
             }

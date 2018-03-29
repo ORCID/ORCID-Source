@@ -15,11 +15,10 @@ import javax.servlet.http.HttpSession;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 /**
  * 
@@ -48,10 +47,18 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
                 sci = (SecurityContext)session.getAttribute("SPRING_SECURITY_CONTEXT");
             if (baseControllerUtil.getCurrentUser(sci) == null) {
                 String queryString = request.getQueryString();
-                if (session != null)
-                    new HttpSessionRequestCache().saveRequest(request, response);
+                String redirectUrl = orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString;
+                if(session != null) {
+                    session.setAttribute("OAUTH_REDIRECT_URL", redirectUrl);
                 
-                response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);                                             
+                    HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+                    requestCache.saveRequest(request, response);
+                    SavedRequest savedRequest = requestCache.getRequest(request, response); 
+                    if(savedRequest != null) {
+                        session.setAttribute(OrcidOauth2Constants.ORIGINAL_OAUTH_URL, savedRequest.getRedirectUrl());                    
+                    }
+                }
+                response.sendRedirect(redirectUrl);                                             
                 return;
             }
         }

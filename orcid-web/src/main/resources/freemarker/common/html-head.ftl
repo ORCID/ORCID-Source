@@ -155,7 +155,7 @@
     <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
     <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
     <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
-    <#if springMacroRequestContext.requestUri?contains("/social") >
+    <#if springMacroRequestContext.requestUri?contains("/social") ||  springMacroRequestContext.requestUri?contains("/shibboleth/signin") || (RequestParameters['linkRequest'])??>
         <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
     </#if>
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
