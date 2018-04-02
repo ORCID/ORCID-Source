@@ -12,6 +12,7 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
@@ -89,6 +90,16 @@ public class LoginController extends OauthControllerBase {
         String queryString = request.getQueryString();
         String redirectUri = null;
 
+        // Check if user is already logged in, if so, redirect it to oauth/authorize
+        OrcidProfileUserDetails userDetails = getCurrentUser();
+        if(userDetails != null) {
+            redirectUri = orcidUrlManager.getBaseUrl() + "/oauth/authorize?";
+            queryString = queryString.replace("oauth&", "");
+            redirectUri = redirectUri + queryString;
+            RedirectView rView = new RedirectView(redirectUri);
+            return new ModelAndView(rView);
+        }
+        
         // Get and save the request information form
         RequestInfoForm requestInfoForm = generateRequestInfoForm(queryString);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
