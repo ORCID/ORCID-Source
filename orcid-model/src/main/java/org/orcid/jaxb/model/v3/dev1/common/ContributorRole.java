@@ -1,9 +1,10 @@
 package org.orcid.jaxb.model.v3.dev1.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 
 /**
  * @author Declan Newman (declan) Date: 07/08/2012
@@ -34,7 +35,7 @@ public enum ContributorRole implements Serializable {
     public String value() {
         return value;
     }
-
+    
     public static ContributorRole fromValue(String v) {
         for (ContributorRole c : ContributorRole.values()) {
             if (c.value.equals(v)) {

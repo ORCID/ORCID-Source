@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.Lists;
 
 public enum WorkType implements Serializable {
@@ -96,6 +97,11 @@ public enum WorkType implements Serializable {
     
     public String value() {
         return value;
+    }
+    
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
     }
     
     public static WorkType fromValue(String v) {

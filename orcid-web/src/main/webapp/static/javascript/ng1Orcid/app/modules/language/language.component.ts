@@ -151,22 +151,40 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         this.languages = {};
     }
 
+    getCookie(cname): any {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
     getCurrentLanguage(): void{
         let locale_v3: any;
 
         this.language = this.languages[0]; //Default
+        let cookie = this.getCookie('locale_v3');
+        
+        
+        typeof(cookie) !== 'undefined' ? locale_v3 = cookie : locale_v3 = "en"; //If cookie exists we get the language value from it        
+        
+        this.languages.forEach(function(value, key) {
+            if (value.value == locale_v3){
+                this.language = this.languages[key];
+                this.widgetSrvc.locale = this.language.value; 
+            }
+
+        });
 
         
-        /*
-        typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
-        
-        angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
-            if (value.value == locale_v3){
-                $scope.language = $scope.languages[key];
-                $scope.widgetSrvc.locale = $scope.language.value; 
-            }
-        });
-        */
     };
 
     selectedLanguage(): void {

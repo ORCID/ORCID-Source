@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.message.ScopePathType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * <p>
  * Java class for client-type.
@@ -64,6 +66,11 @@ public enum ClientType {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static ClientType fromValue(String v) {
         for (ClientType c : ClientType.values()) {
             if (c.value.equals(v)) {
