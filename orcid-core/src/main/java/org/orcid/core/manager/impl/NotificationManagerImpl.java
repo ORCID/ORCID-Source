@@ -73,6 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -110,6 +111,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource(name = "messageSource")
     private MessageSource messages;
+    
+    @Resource(name = "messageSourceNoFallback")
+    private MessageSource messageSourceNoFallback;
 
     @Resource
     private MailGunManager mailGunManager;
@@ -725,7 +729,15 @@ public class NotificationManagerImpl implements NotificationManager {
         String htmlBody;
         //https://trello.com/c/q2MpR3Ka/4727-update-claim-reminder-email-to-no-longer-text-saying-it-will-be-public-in-2-days
         //TODO: cleanup after translations are done
-        if(Locale.ENGLISH.equals(locale)) {
+        boolean useV2Template = false;
+        try {
+            messageSourceNoFallback.getMessage("email.new_claim_reminder.this_is_a_reminder.1", null, locale);
+            useV2Template = true;
+        } catch(NoSuchMessageException e) {
+            
+        }
+        
+        if(useV2Template) {
             body = templateManager.processTemplate("new_claim_reminder_email.ftl", templateParams);
             htmlBody = templateManager.processTemplate("new_claim_reminder_email_html.ftl", templateParams);
         } else {
