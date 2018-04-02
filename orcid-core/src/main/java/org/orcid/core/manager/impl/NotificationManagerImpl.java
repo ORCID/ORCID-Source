@@ -721,9 +721,18 @@ public class NotificationManagerImpl implements NotificationManager {
         addMessageParams(templateParams, locale);
 
         // Generate body from template
-        String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("claim_reminder_email_html.ftl", templateParams);
-
+        String body;
+        String htmlBody;
+        //https://trello.com/c/q2MpR3Ka/4727-update-claim-reminder-email-to-no-longer-text-saying-it-will-be-public-in-2-days
+        //TODO: cleanup after translations are done
+        if(Locale.ENGLISH.equals(locale)) {
+            body = templateManager.processTemplate("new_claim_reminder_email.ftl", templateParams);
+            htmlBody = templateManager.processTemplate("new_claim_reminder_email_html.ftl", templateParams);
+        } else {
+            body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
+            htmlBody = templateManager.processTemplate("claim_reminder_email_html.ftl", templateParams);
+        }
+        
         // Send message
         if (apiRecordCreationEmailEnabled) {
             mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.claim_reminder", locale), body, htmlBody);
