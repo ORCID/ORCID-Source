@@ -305,7 +305,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
                 },
                 error => {
-                    //console.log('getformDataError', error);
+                    console.log("Error getting affiliations");
                 } 
             );
         }
@@ -328,13 +328,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };  
 
     loadRequestInfoForm(): void{
-
         this.oauthService.loadRequestInfoForm( )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 if(data){
-                    data.scopes.forEach((scope) => {
+                    this.requestInfoForm = JSON.parse(data._body); 
+                    this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
                         } else if(scope.value.endsWith('/read-limited')) {
@@ -343,8 +343,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                             this.showBulletIcon = true;
                         }
                     });
-                                                                                   
-                    this.requestInfoForm = data;              
+          
                     this.gaString = orcidGA.buildClientString(this.requestInfoForm.memberName, this.requestInfoForm.clientName);
                 }
 
@@ -367,17 +366,15 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 if(givenName || familyName || email || linkFlag){
                     this.registrationForm.givenNames.value=givenName;
                     this.registrationForm.familyNames.value=familyName;
-                    this.registrationForm.email.value=email; 
+                    this.registrationForm.email.value=email;
+                    this.registrationForm.linkType=linkFlag; 
                 }
 
                 if (this.gdprUiFeatureEnabled == true){
                     this.registrationForm.activitiesVisibilityDefault.visibility = null;
                 }
 
-                console.log(this.registrationForm);
-
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
-                this.registrationForm.linkType=linkFlag;
                 
                 this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
                 this.showReactivationSent = false;
@@ -466,7 +463,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log(data)
                 if(data != null && data.errors != null && data.errors.length > 0) {
                     this.generalRegistrationError = data.errors[0];
                     this.showGeneralRegistrationError = true;
@@ -601,10 +597,14 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
-        this.loadRequestInfoForm();
         this.authorizationForm = {
-            userName:  {value: ""}
-        } 
+            userName:  {value: ""},
+            givenNames:  {value: ""},
+            familyNames:  {value: ""},
+            email:  {value: ""},
+            linkType:  {value: null},
+        }
+        this.loadRequestInfoForm();
         if(orcidVar.oauth2Screens) {
             if(orcidVar.oauthUserId && orcidVar.showLogin){
                 this.showRegisterForm = false;
@@ -634,11 +634,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             this.oauth2ScreensLoadRegistrationForm('', '', '', '');
         }
 
-        
-
         this.subscription = this.oauthService.notifyObservable$.subscribe(
             (res) => {
-                console.log(res);
                 if(res !== "undefined" && res.action === "confirm" && res.moduleId === "registerDuplicates"){
                     this.oauth2ScreensPostRegisterConfirm();
                 }
