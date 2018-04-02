@@ -5,7 +5,7 @@
 	version="1.0">
 	
 	<persistence-unit name="messageListener" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.ejb.HibernatePersistence</provider>	
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>org.orcid.listener.persistence.entities.RecordStatusEntity</class>	
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>		
 	</persistence-unit>

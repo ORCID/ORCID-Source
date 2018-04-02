@@ -25,7 +25,7 @@ public class JmsMessagingSendReceiveReplyTest {
     @Test
     public void testConfig() throws InterruptedException{
         Long time = System.currentTimeMillis();
-        messageSender.sendText("test "+time, JmsMessageSender.JmsDestination.TEST);        
+        messageSender.sendText("test "+time, "test");        
         Thread.sleep(1000);
         assertEquals(EchoTestMessageListener2.lastMessage, "test "+time);
         Thread.sleep(1000);
