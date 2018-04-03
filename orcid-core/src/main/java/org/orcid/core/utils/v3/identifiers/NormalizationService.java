@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
+import org.orcid.core.utils.v3.identifiers.normalizers.NormalizerWithURLTransform;
 import org.orcid.pojo.IdentifierType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
@@ -68,7 +69,7 @@ public class NormalizationService {
     }
     
     /** Creates a normalised URL if possible
-     * Uses normalised identifier and prefix (if available)
+     * Uses normalised identifier + prefix (if available)
      * 
      * Will return empty strings for values that cannot be normalised (because they're not recognised)
      * 
@@ -77,7 +78,19 @@ public class NormalizationService {
      * @return
      */
     public String generateNormalisedURL(String apiTypeName, String value){
-        String norm = this.normalise(apiTypeName, value);
+        if (apiTypeName == null)
+            return value;
+        String norm = value;
+        
+        //generate normalized value (some have additional transform here)
+        for (Normalizer n : normalizers) {
+            if (n instanceof NormalizerWithURLTransform)
+                norm = ((NormalizerWithURLTransform)n).normaliseURL(apiTypeName, norm);
+            else
+                norm = n.normalise(apiTypeName, norm);
+        }
+        
+        //add the prefix
         if (!norm.isEmpty()){
             IdentifierType type = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
             String prefix = type.getResolutionPrefix();

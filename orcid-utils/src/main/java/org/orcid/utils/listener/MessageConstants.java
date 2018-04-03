@@ -21,7 +21,7 @@ public enum MessageConstants {
         public static final String REINDEX = "reindex";
         public static final String RETRY = "retry";
     }
-        
+    
     public final String value;
     
     MessageConstants(String s){

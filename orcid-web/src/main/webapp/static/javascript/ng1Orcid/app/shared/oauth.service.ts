@@ -82,7 +82,7 @@ export class OauthService {
         return this.http.get(
             getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json'
         )
-        .map((res:Response) => res.json()).share();
+        .share();
     }
 
     oauth2ScreensLoadRegistrationForm( ): Observable<any> {

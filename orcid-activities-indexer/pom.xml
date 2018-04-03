@@ -1,0 +1,129 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>orcid-activities-indexer</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>ORCID - Activities Indexer</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+  	  <main.basedir>${project.parent.basedir}</main.basedir>
+  </properties>
+  
+  <dependencies>
+         <dependency>
+            <groupId>org.orcid</groupId>
+            <artifactId>orcid-utils</artifactId>
+            <version>1.1.5-SNAPSHOT</version>
+        </dependency>
+         <dependency>
+            <groupId>org.orcid</groupId>
+            <artifactId>orcid-model</artifactId>
+            <version>1.1.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orcid</groupId>
+            <artifactId>orcid-test</artifactId>
+            <version>1.1.5-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+       </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>            
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.13.3</version>
+        </dependency>
+  	  <dependency>
+	      <groupId>org.apache.activemq</groupId>
+	      <artifactId>activemq-spring</artifactId>
+	  	  <version>5.13.3</version>
+	  </dependency>
+	  
+	    <dependency>
+            <groupId>com.sun.jersey</groupId>              
+            <artifactId>jersey-client</artifactId>
+        </dependency> 
+        
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>   
+        
+	    <dependency>
+	      <groupId>junit</groupId>
+	      <artifactId>junit</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+    
+	    <!-- AWS -->
+	    <dependency>
+	    	<groupId>com.amazonaws</groupId>
+	    	<artifactId>aws-java-sdk-s3</artifactId>
+	  	</dependency>	 
+	  	
+	  	<!-- Database -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.1-api</artifactId>
+        </dependency>
+  </dependencies>
+  <parent>
+  	<groupId>org.orcid</groupId>
+  	<artifactId>orcid-parent</artifactId>
+  	<version>1.1.5-SNAPSHOT</version>
+  	<relativePath>../pom.xml</relativePath>
+  </parent>
+  
+    <build>
+     <finalName>orcid-activities-indexer</finalName>
+     <plugins>
+             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <configuration>
+                   <url>${tomcat.manager.url}</url>
+                   <server>${tomcat.server.id}</server>
+                   <path>${artifactID}</path>
+		   		   <update>true</update>
+                </configuration>
+            </plugin>
+        </plugins>        
+    </build>
+    
+</project>

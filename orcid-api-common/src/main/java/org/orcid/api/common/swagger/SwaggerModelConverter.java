@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record_v2.CitationType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JavaType;
 
 import io.swagger.converter.ModelConverter;
@@ -116,6 +117,11 @@ public class SwaggerModelConverter implements ModelConverter {
 
         public String value() {
             return value;
+        }
+        
+        @JsonValue
+        public String jsonValue() {
+            return this.name();
         }
 
     }

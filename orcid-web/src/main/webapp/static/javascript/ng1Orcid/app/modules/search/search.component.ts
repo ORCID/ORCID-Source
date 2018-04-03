@@ -17,14 +17,18 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
+import { CommonNg2Module }
+    from './../common/common.ts';
+
+import { FeaturesService }
+    from '../../shared/features.service.ts'
+
 import { SearchService } 
     from '../../shared/search.service.ts';
 
-
 @Component({
     selector: 'search-ng2',
-    template:  scriptTmpl("search-ng2-template"),
-    providers: [SearchService]
+    template:  scriptTmpl("search-ng2-template")
 })
 export class SearchComponent implements OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -37,6 +41,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     newResults: any;
     numFound: any;
     searchResults: any;
+    searchResultsAffiliationsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SEARCH_RESULTS_AFFILIATIONS');
     results: any;
     resultsWithNames: any;
     resultsObservable: any;
@@ -44,6 +49,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     url: string;
     constructor(
         private cdr:ChangeDetectorRef,
+        private featuresService: FeaturesService,
         private searchSrvc: SearchService,
        
     ) {

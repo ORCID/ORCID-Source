@@ -20,6 +20,8 @@ import { Subscription }
 import { AdminDelegatesService } 
     from '../../shared/adminDelegates.service.ts'; 
 
+import { FeaturesService }
+    from '../../shared/features.service.ts' 
 
 @Component({
     selector: 'edit-table-ng2',
@@ -48,8 +50,11 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     socialNetworksToggleText: string;
     showEdit2FA: boolean;
     twoFAToggleText: string;
-
+    showEditGetMyData: boolean;
+    getMyDataToggleText: string;
+    
     constructor(
+            private featuresService: FeaturesService,
         //private adminDelegatesService: AdminDelegatesService
     ) {
     	this.deactivateToggleText = "";
@@ -72,6 +77,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     	this.socialNetworksToggleText = "";
     	this.showEdit2FA = (window.location.hash === "#edit2FA");
     	this.twoFAToggleText = "";
+    	this.showEditGetMyData = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
     }
 
 	deactivateUpdateToggleText(): void {
@@ -171,6 +177,11 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         this.update2FAToggleText();
     };
 
+    toggleGetMyDataEdit(): void {
+        this.showEditGetMyData = !this.showEditGetMyData;        
+        this.getMyDataToggleText = (this.showEditGetMyData ? om.get("manage.editTable.hide") : om.get("manage.editTable.edit"));        
+    };
+    
     toggleDeactivateEdit(): void {
         this.showEditDeactivate = !this.showEditDeactivate;
         this.deactivateUpdateToggleText();

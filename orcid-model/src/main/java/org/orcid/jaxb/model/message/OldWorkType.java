@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum OldWorkType implements Serializable {
 
     @XmlEnumValue("advertisement")
@@ -80,6 +82,11 @@ public enum OldWorkType implements Serializable {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static OldWorkType fromValue(String v) {
         for (OldWorkType c : OldWorkType.values()) {
             if (c.value.equals(v)) {
