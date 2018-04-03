@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="MONGO-STATUS" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="record_status" columnName="mongo_status"/>
+            </not>            
+		</preConditions>
+		<!-- Indicates the number of times it have failed to be sent to S3 -->
+		<sql>ALTER TABLE record_status ADD mongo_status integer;</sql>		
+	</changeSet>
+			
+	<!-- Initial value of -1 indicates it have never been indexed -->
+	<changeSet id="SET-MONGO-STATUS-INITIAL-VALUE" author="Tom Demeranville">
+    	<sql>UPDATE record_status SET mongo_status=-1;</sql>
+	</changeSet>
+	
+	<changeSet id="MONGO-STATUS-INDEX" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="mongo_status_index" tableName="record_status" />
+			</not>
+		</preConditions>
+		<sql>create index mongo_status_index on record_status(mongo_status);</sql>
+	</changeSet>
+	
+	<changeSet id="ADD-LAST-INDEX-MONGO-COLUMN" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="record_status" columnName="mongo_last_indexed"/>
+            </not>            
+		</preConditions>		
+		<sql>ALTER TABLE record_status ADD mongo_last_indexed TIMESTAMP WITH TIME ZONE;</sql>
+	</changeSet>
+</databaseChangeLog>

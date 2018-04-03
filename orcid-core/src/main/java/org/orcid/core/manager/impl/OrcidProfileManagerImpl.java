@@ -111,7 +111,6 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
-import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -205,9 +204,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
 
-    @Resource
+    @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
-
+    
     private int claimReminderAfterDays = 8;
 
     @Value("${org.orcid.core.activities.max:10000}")
@@ -218,6 +217,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = null;
+    
+    @Value("${org.orcid.persistence.messaging.topic.reindex}")
+    private String reindexTopicName;
+    
+    @Value("${org.orcid.persistence.messaging.topic.updateOrcids}")
+    private String updateOrcidsTopicName;
     
     private ConcurrentMap<String, Object> addWorksLock = new ConcurrentHashMap<>();
     
@@ -1607,8 +1612,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * indexing flag to DONE (although there is no guarantee it will be done!)
      * 
      */
-    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, JmsDestination destination) {
-        LOG.info("processing profiles with " + status.name() + " flag. sending to " + destination.name());
+    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, String destination) {
+        LOG.info("processing profiles with " + status.name() + " flag. sending to " + destination);
         List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
         List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
         indexingStatuses.add(status);
@@ -1620,41 +1625,30 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 String orcid = p.getLeft();
                 Date last = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
-                if (messaging.send(mess, destination))
-                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
-                else
+                if (messaging.send(mess, destination)) {                	
+                	profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                } else {
                     connectionIssue = true;
+                }
             }
         } while (!connectionIssue && !orcidsForIndexing.isEmpty());
         if (connectionIssue)
-            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + destination.name());
+            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + destination);
     }
 
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
     @Override
     public void processProfilesWithPendingFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, JmsDestination.UPDATED_ORCIDS);
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, updateOrcidsTopicName);
     }
 
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
     @Override
     public void processProfilesWithReindexFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, reindexTopicName);
     }
 
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
     @Override
     public void processProfilesWithFailedFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, updateOrcidsTopicName);
     }
 
     public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus) {
@@ -1679,12 +1673,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 if (messaging.isEnabled()) {
                     Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
                     LastModifiedMessage mess = new LastModifiedMessage(orcid, lastModifiedFromDb);
-                    JmsDestination jmsDestination = JmsDestination.REINDEX;
+                    String jmsDestination = reindexTopicName;
                     if (IndexingStatus.PENDING.equals(indexingStatus)) {
-                        jmsDestination = JmsDestination.UPDATED_ORCIDS;
+                        jmsDestination = updateOrcidsTopicName;
                     }
-                    if (messaging.send(mess, jmsDestination)) {
-                        LOG.info("Record " + orcid + " was sent to the message queue");
+                    if (messaging.send(mess, jmsDestination)) {                    	
+                    	LOG.info("Record " + orcid + " was sent to the message queue");
                     } else {
                         LOG.error("Record " + orcid + " couldnt been sent to the message queue");
                         profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
