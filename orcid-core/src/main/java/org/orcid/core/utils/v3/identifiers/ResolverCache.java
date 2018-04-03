@@ -33,6 +33,7 @@ public class ResolverCache {
     }
     
     //these caches ensure we only attempt to resolve once if multiple requests to resolve are made.
+    //checks for a 200 at the end of a redirect chain (does not handle cookies!)
     LoadingCache<String, Boolean> is200 = CacheBuilder.newBuilder().expireAfterWrite(20, TimeUnit.MINUTES).maximumSize(10000).build(
             new CacheLoader<String, Boolean>() {
                 public Boolean load(String url){
@@ -49,11 +50,29 @@ public class ResolverCache {
                 }
               });
     
+    //checks the link resolves directly to a 303
     LoadingCache<String, Boolean> is303 = CacheBuilder.newBuilder().expireAfterWrite(20, TimeUnit.MINUTES).maximumSize(10000).build(
             new CacheLoader<String, Boolean>() {
                 public Boolean load(String url){
                     try {
                         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+                        con.setRequestMethod("HEAD");
+                        con.setInstanceFollowRedirects(false);
+                        return (con.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER);
+                    } catch (IOException e) {
+                        //nope.
+                    }  
+                    return false;
+                }
+            });
+    
+    //checks the link resolves directly to metadata via content negotiation.
+    LoadingCache<String, Boolean> isValidDOI = CacheBuilder.newBuilder().expireAfterWrite(20, TimeUnit.MINUTES).maximumSize(10000).build(
+            new CacheLoader<String, Boolean>() {
+                public Boolean load(String url){
+                    try {
+                        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+                        con.addRequestProperty("Accept", "application/vnd.citationstyles.csl+json");
                         con.setRequestMethod("HEAD");
                         con.setInstanceFollowRedirects(false);
                         return (con.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER);
@@ -75,6 +94,14 @@ public class ResolverCache {
     public boolean isHttp303(String url) {
         try {
             return is303.get(url);
+        } catch (ExecutionException e) {
+            return false;
+        }
+    }
+    
+    public boolean isValidDOI(String url) {
+        try {
+            return isValidDOI.get(url);
         } catch (ExecutionException e) {
             return false;
         }
