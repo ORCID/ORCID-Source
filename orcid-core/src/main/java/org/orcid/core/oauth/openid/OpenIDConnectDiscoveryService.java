@@ -14,7 +14,6 @@ public class OpenIDConnectDiscoveryService {
         @Value("${org.orcid.core.baseUri}")
         private String path;
         
-        private String issuer = "https://orcid.org";
         private List<String> token_endpoint_auth_signing_alg_values_supported = Lists.newArrayList("RS256");
         private List<String> id_token_signing_alg_values_supported = Lists.newArrayList("RS256");
         private String userinfo_endpoint = "/oauth/userinfo";
@@ -28,7 +27,7 @@ public class OpenIDConnectDiscoveryService {
         private String claims_parameter_supported = "false";
         private List<String> token_endpoint_auth_methods_supported = Lists.newArrayList("client_secret_basic");
         public String getIssuer() {
-            return issuer;
+            return path;
         }
         public List<String> getToken_endpoint_auth_signing_alg_values_supported() {
             return token_endpoint_auth_signing_alg_values_supported;
