@@ -17,10 +17,56 @@ public class ResolverServiceTest {
     //@Resource
     ResolverService resolver;
     
+    public void checkDOI(String value){
+        ResolutionResult r = resolver.resolve("doi", value);
+        assertTrue(r.isResolved());
+        assertEquals("https://doi.org/"+value.toLowerCase(),r.getResolvedUrl());
+    }
+    
     //Commented out.  Only use locally.
     //@Test
     public void workingTests(){
         ResolutionResult r = null;
+        
+        //if the value has a resolution prefix, normalise if possible, then attempt to resolve
+        r = resolver.resolve("doi", "10.6084/m9.figshare.5479792.v1");
+        assertTrue(r.isResolved());
+        assertEquals("https://doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
+
+        //if the value is a URL, try that BEFORE normalization step (this may change)
+        r = resolver.resolve("doi", "https://dx.doi.org/10.6084/m9.figshare.5479792.v1");
+        assertTrue(r.isResolved());
+        assertEquals("https://doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
+
+        //if the value is a URL but fails, try the normalizaed version
+        r = resolver.resolve("doi", "https://dkfsjaldksjfdaksjg.org/10.6084/m9.figshare.5479792.v1");
+        assertTrue(r.isResolved());
+        assertEquals("https://doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
+
+        //valid DOI, but does not exist
+        r = resolver.resolve("doi", "10.1234/DOES_NOT_EXIST_404");
+        assertFalse(r.isResolved());
+        assertNull(r.getResolvedUrl());
+        assertTrue(r.getAttemptedResolution());
+
+        //invalid DOI
+        r = resolver.resolve("doi", "XXXX");
+        assertFalse(r.isResolved());
+        assertNull(r.getResolvedUrl());
+        assertTrue(r.getAttemptedResolution());
+        
+        //DOI with cookie requirement
+        checkDOI("10.1002/anie.201705628");
+        checkDOI("10.1111/hojo.12119");
+        checkDOI("10.1111/sji.12101");
+        checkDOI("10.1002/kpm.1500");
+        checkDOI("10.1103/PhysRevD.83.052003");
+        checkDOI("10.3233/jpd-160823");
+        checkDOI("10.3945/ajcn.116.143925");
+        checkDOI("10.1088/1751-8121/aaa011");
+        checkDOI("10.2307/3502644");
+        checkDOI("10.1177/0143831X17745688");
+                
         
         //missing values always false, for any type
         r = resolver.resolve("doi", "");
@@ -64,33 +110,6 @@ public class ResolverServiceTest {
         r = resolver.resolve("uri", "urn:whatever");
         assertFalse(r.isResolved());
         assertTrue(r.getAttemptedResolution());        
-        
-        //if the value has a resolution prefix, normalise if possible, then attempt to resolve
-        r = resolver.resolve("doi", "10.6084/m9.figshare.5479792.v1");
-        assertTrue(r.isResolved());
-        assertEquals("https://doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
-
-        //if the value is a URL, try that BEFORE normalization step (this may change)
-        r = resolver.resolve("doi", "https://dx.doi.org/10.6084/m9.figshare.5479792.v1");
-        assertTrue(r.isResolved());
-        assertEquals("https://dx.doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
-
-        //if the value is a URL but fails, try the normalizaed version
-        r = resolver.resolve("doi", "https://dkfsjaldksjfdaksjg.org/10.6084/m9.figshare.5479792.v1");
-        assertTrue(r.isResolved());
-        assertEquals("https://doi.org/10.6084/m9.figshare.5479792.v1",r.getResolvedUrl());
-
-        //valid DOI, but does not exist
-        r = resolver.resolve("doi", "10.1234/DOES_NOT_EXIST_404");
-        assertFalse(r.isResolved());
-        assertNull(r.getResolvedUrl());
-        assertTrue(r.getAttemptedResolution());
-
-        //invalid DOI
-        r = resolver.resolve("doi", "XXXX");
-        assertFalse(r.isResolved());
-        assertNull(r.getResolvedUrl());
-        assertTrue(r.getAttemptedResolution());
 
         //ISBN
         //valid ISBN 10
@@ -193,6 +212,7 @@ public class ResolverServiceTest {
         r = resolver.resolve("pmid", "junk");
         assertFalse(r.isResolved());
         assertTrue(r.getAttemptedResolution());
+        
     }
 
 }

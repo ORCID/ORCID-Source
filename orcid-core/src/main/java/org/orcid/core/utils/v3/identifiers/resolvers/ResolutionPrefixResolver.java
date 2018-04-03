@@ -39,6 +39,7 @@ public class ResolutionPrefixResolver implements Resolver {
             }
         }
         types.remove("isbn");
+        types.remove("doi");
         //types that should normally be a URL.
         types.add("uri");
         types.add("handle");
