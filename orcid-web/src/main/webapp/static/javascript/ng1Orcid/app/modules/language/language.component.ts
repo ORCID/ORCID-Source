@@ -42,6 +42,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         private widgetSrvc: WidgetService
     ) {
         this.language = {};
+        this.languages = {};
         this.productionLangList =
             [
                 {
@@ -148,7 +149,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
                     "label": '繁體中文'
                 }
             ];
-        this.languages = {};
+        
     }
 
     getCookie(cname): any {
@@ -170,19 +171,23 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
     getCurrentLanguage(): void{
         let locale_v3: any;
 
-        this.language = this.languages[0]; //Default
-        let cookie = this.getCookie('locale_v3');
-        
-        
-        typeof(cookie) !== 'undefined' ? locale_v3 = cookie : locale_v3 = "en"; //If cookie exists we get the language value from it        
-        
-        this.languages.forEach(function(value, key) {
-            if (value.value == locale_v3){
-                this.language = this.languages[key];
-                this.widgetSrvc.locale = this.language.value; 
-            }
+        if(this.languages != undefined && this.languages.length > 0){
+            console.log('this.languages', this.languages);
+            this.language = this.languages[0]; //Default
+            let cookie = this.getCookie('locale_v3');
+            let tempLanguages = this.languages;
+            
+            typeof(cookie) !== 'undefined' ? locale_v3 = cookie : locale_v3 = "en"; //If cookie exists we get the language value from it        
+            
+            tempLanguages.forEach(function(value, key) {
+                if (value.value == locale_v3){
+                    this.language = this.languages[key];
+                    this.widgetSrvc.locale = this.language.value; 
+                }
 
-        });
+            });
+            
+        }
 
         
     };
@@ -264,8 +269,9 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             this.languages = this.productionLangList;
         }
+        console.log('languages', this.languages);
 
-        this.getCurrentLanguage();
+        //this.getCurrentLanguage();
         
         
     }; 
