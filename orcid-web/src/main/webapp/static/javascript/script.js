@@ -559,7 +559,7 @@ $(function() {
                                         {
                                             url : loginUrl,
                                             type : 'POST',
-                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()),
+                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()) + '&oauthRequest=' + encodeURIComponent($('input[name=oauthRequest]').val()),
                                             dataType : 'json',
                                             success : function(data) {
                                                 if (data.success) {
