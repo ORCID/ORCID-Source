@@ -651,7 +651,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             } else{
                 this.showRegisterForm = !orcidVar.showLogin;  
             }
-        }
+        } else {
+            if(orcidVar.showLogin){
+                this.showRegisterForm = false;
+            } else{
+                this.showRegisterForm = !orcidVar.showLogin;  
+            }
+        } 
 
         window.onkeydown = function(e) {
             if (e.keyCode == 13) {     
