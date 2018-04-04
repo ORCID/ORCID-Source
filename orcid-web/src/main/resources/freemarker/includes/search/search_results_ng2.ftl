@@ -7,7 +7,7 @@
                 <th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
                 <th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
                 <th>${springMacroRequestContext.getMessage("search_results.thOthernames")}</th>
-                <th>${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</th>
+                <th *ngIf="searchResultsAffiliationsFeatureEnabled">${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</th>
             </tr>
         </thead>
         <tbody>
@@ -16,7 +16,7 @@
                 <td>{{result['given-names']}}</td>
                 <td>{{result['family-name']}}</td>  
                 <td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
-                <td>{{result['affiliations']}}</td>
+                <td *ngIf="searchResultsAffiliationsFeatureEnabled" >{{result['affiliations']}}</td>
             </tr>
         </tbody>
     </table>

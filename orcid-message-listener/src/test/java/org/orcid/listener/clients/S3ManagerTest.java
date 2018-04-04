@@ -3,6 +3,8 @@ package org.orcid.listener.clients;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.io.IOException;
 
@@ -11,15 +13,14 @@ import javax.xml.bind.JAXBException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.listener.s3.S3Manager;
 import org.orcid.listener.s3.S3MessagingService;
-import org.orcid.listener.s3.S3Updater;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -27,7 +28,7 @@ import com.amazonaws.AmazonClientException;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
-public class S3UpdaterTest {
+public class S3ManagerTest {
 
     @Mock
     private S3MessagingService s3MessagingService;
@@ -39,7 +40,7 @@ public class S3UpdaterTest {
     
     @Test
     public void getBucketChecksumTest() throws JAXBException {
-        S3Updater s3 = new S3Updater("bucket-dev");
+        S3Manager s3 = new S3Manager("bucket-dev");
         assertEquals("bucket-dev-all", s3.getBucketName("api-1-2", "xml", "0000-0000-0000-0000"));
         assertEquals("bucket-dev-all", s3.getBucketName("api-1-2", "json", "0000-0000-0000-0000"));
         assertEquals("bucket-dev-all", s3.getBucketName("api-2-0", "xml", "0000-0000-0000-0000"));
@@ -85,7 +86,7 @@ public class S3UpdaterTest {
         assertEquals("bucket-dev-all", s3.getBucketName("api-2-0", "xml", "0000-0000-0000-000X"));
         assertEquals("bucket-dev-all", s3.getBucketName("api-2-0", "json", "0000-0000-0000-000X"));
         
-        s3 = new S3Updater("bucket-qa");
+        s3 = new S3Manager("bucket-qa");
         assertEquals("bucket-qa-all", s3.getBucketName("api-1-2", "xml", "0000-0000-0000-0000"));
         assertEquals("bucket-qa-all", s3.getBucketName("api-1-2", "json", "0000-0000-0000-0000"));
         assertEquals("bucket-qa-all", s3.getBucketName("api-2-0", "xml", "0000-0000-0000-0000"));
@@ -131,7 +132,7 @@ public class S3UpdaterTest {
         assertEquals("bucket-qa-all", s3.getBucketName("api-2-0", "xml", "0000-0000-0000-000X"));
         assertEquals("bucket-qa-all", s3.getBucketName("api-2-0", "json", "0000-0000-0000-000X"));
         
-        s3 = new S3Updater("bucket-sandbox");
+        s3 = new S3Manager("bucket-sandbox");
         assertEquals("bucket-sandbox-all", s3.getBucketName("api-1-2", "xml", "0000-0000-0000-0000"));
         assertEquals("bucket-sandbox-all", s3.getBucketName("api-1-2", "xml", "0000-0000-0000-0000"));
         assertEquals("bucket-sandbox-all", s3.getBucketName("api-1-2", "json", "0000-0000-0000-0000"));
@@ -178,7 +179,7 @@ public class S3UpdaterTest {
         assertEquals("bucket-sandbox-all", s3.getBucketName("api-2-0", "xml", "0000-0000-0000-000X"));
         assertEquals("bucket-sandbox-all", s3.getBucketName("api-2-0", "json", "0000-0000-0000-000X"));
         
-        s3 = new S3Updater("bucket-production");
+        s3 = new S3Manager("bucket-production");
         assertEquals("bucket-production-api-1-2-xml-0", s3.getBucketName("api-1-2", "xml", "0000-0000-0000-0000"));
         assertEquals("bucket-production-api-1-2-xml-1", s3.getBucketName("api-1-2", "xml", "0000-0000-0000-0001"));
         assertEquals("bucket-production-api-1-2-xml-2", s3.getBucketName("api-1-2", "xml", "0000-0000-0000-0002"));
@@ -261,13 +262,13 @@ public class S3UpdaterTest {
         op.setOrcidIdentifier(orcid);
         om.setOrcidProfile(op);
         
-        S3Updater s3 = new S3Updater(bucketPrefix);
+        S3Manager s3 = new S3Manager(bucketPrefix);
         s3.setS3MessagingService(s3MessagingService);
         s3.updateS3(orcid, om);
-        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-1-2-json-x"), Matchers.eq(orcid + ".json"), Matchers.any(), Matchers.any());
-        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-1-2-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
-        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-2-0-json-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
-        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-2-0-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
+        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-1-2-json-x"), eq(orcid + ".json"), any(), any());
+        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-1-2-xml-x"), eq(orcid + ".xml"), any(), any());
+        verify(s3MessagingService, times(0)).send(eq(bucketPrefix + "-api-2-0-json-x"), eq(orcid + ".xml"), any(), any());
+        verify(s3MessagingService, times(0)).send(eq(bucketPrefix + "-api-2-0-xml-x"), eq(orcid + ".xml"), any(), any());
     }
     
     @Test
@@ -277,12 +278,12 @@ public class S3UpdaterTest {
         Record record = new Record();
         record.setOrcidIdentifier(new OrcidIdentifier(orcid));
         
-        S3Updater s3 = new S3Updater(bucketPrefix);
+        S3Manager s3 = new S3Manager(bucketPrefix);
         s3.setS3MessagingService(s3MessagingService);
         s3.updateS3(orcid, record);
-        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-1-2-json-x"), Matchers.eq(orcid + ".json"), Matchers.any(), Matchers.any());
-        verify(s3MessagingService, times(0)).send(Matchers.eq(bucketPrefix + "-api-1-2-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
-        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-2-0-json-x"), Matchers.eq(orcid + ".json"), Matchers.any(), Matchers.any());
-        verify(s3MessagingService, times(1)).send(Matchers.eq(bucketPrefix + "-api-2-0-xml-x"), Matchers.eq(orcid + ".xml"), Matchers.any(), Matchers.any());
+        verify(s3MessagingService, times(0)).send(eq(bucketPrefix + "-api-1-2-json-x"), eq(orcid + ".json"), any(), any());
+        verify(s3MessagingService, times(0)).send(eq(bucketPrefix + "-api-1-2-xml-x"), eq(orcid + ".xml"), any(), any());
+        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-2-0-json-x"), eq(orcid + ".json"), any(), any());
+        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-2-0-xml-x"), eq(orcid + ".xml"), any(), any());
     }
 }

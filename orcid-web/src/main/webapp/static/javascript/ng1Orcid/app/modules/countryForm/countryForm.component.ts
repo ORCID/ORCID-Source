@@ -258,6 +258,6 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //this.getformData();
+        this.getformData();
     };
 }

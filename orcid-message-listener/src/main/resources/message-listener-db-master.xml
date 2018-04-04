@@ -19,5 +19,6 @@
     <include file="/db/add_column_for_2_0_activities_dump_status.xml"/>
     <include file="/db/add_last_indexed_date_column_for_every_broker.xml"/>
     <include file="/db/add_column_for_mongo_status.xml"/>
+    <include file="/db/create_activities_status_table.xml" />
         
 </databaseChangeLog>
