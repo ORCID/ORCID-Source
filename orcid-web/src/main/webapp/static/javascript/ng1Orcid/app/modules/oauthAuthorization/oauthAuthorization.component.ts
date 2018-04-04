@@ -62,6 +62,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     gaString: any;
     focusIndex: any;
     enablePersistentToken: any;
+    errorEmail: any;
+    errorEmailsAdditional: any;
     isOrcidPresent: any;
     oauthSignin: any;
     personalLogin: any;
@@ -115,6 +117,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.duplicates = {};
         this.gaString = null;
         this.enablePersistentToken = true;
+        this.errorEmail = null;
+        this.errorEmailsAdditional = [];
         this.focusIndex = null;
         this.isOrcidPresent = false;
         this.site_key = orcidVar.recaptchaKey;
@@ -216,9 +220,18 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     switchForm(): void {
-        this.showRegisterForm = !this.showRegisterForm;
-        if (!this.personalLogin) {
-            this.personalLogin = true;
+        var re = new RegExp("(/register)(.*)?$");
+        if (this.registrationForm.linkType=="social") {
+            window.location.href = getBaseUri() + "/social/access";
+        } else if (this.registrationForm.linkType=="shibboleth") {
+            window.location.href = getBaseUri() + "/shibboleth/signin";
+        } else if(re.test(window.location.pathname)){
+            window.location.href = getBaseUri() + "/signin";
+        } else {
+            this.showRegisterForm = !this.showRegisterForm;
+            if (!this.personalLogin) {
+                this.personalLogin = true;
+            }
         }
         this.cdr.detectChanges();
     };
@@ -511,23 +524,33 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.getDuplicates();
                 } else {
                     if(this.registrationForm.email.errors.length > 0) {
+                        this.errorEmail = data.email.value;
                         //deactivated error
-                            this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
-                            this.showReactivationSent = false;
-                            
-                            //duplicate email error
-                            if($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1){
-                                this.showDuplicateEmailError = true;
-                                this.authorizationForm.userName.value = this.registrationForm.email.value;
-                            }
+                        this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
+                        this.showReactivationSent = false;
+                        //duplicate email error
+                        if($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1){ 
+                            this.showDuplicateEmailError = true;
+                            this.authorizationForm.userName.value = this.registrationForm.email.value;
+                        } 
+                    } else {
+                        this.showDeactivatedError = false;
+                        this.showDuplicateEmailError = false;
                     }
 
                     for (var index in this.registrationForm.emailsAdditional) {
-                        //deactivated error
-                        this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
-                        this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
-                        //duplicate email error
-                        this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
+                            this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
+                            //deactivated error
+                            this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                            this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                            //duplicate email error
+                            this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                            this.authorizationForm.userName.value = this.registrationForm.emailsAdditional[index].value;
+                        } else {
+                            this.showEmailsAdditionalDeactivatedError[index] = false;
+                            this.showEmailsAdditionalDuplicateEmailError[index] = false;
+                        } 
                     }
 
                     if (this.registrationForm.grecaptcha.errors.length == 0) {
@@ -550,25 +573,39 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             data => {
                 this.commonSrvc.copyErrorsLeft(this.registrationForm, data);
                 if(field == 'Email') {
-                    //deactivated error
-                    this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
-                    this.showReactivationSent = false;
-                    //duplicate email error
-                    if($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1){
-                        this.showDuplicateEmailError = true;
-                        this.authorizationForm.userName.value = this.registrationForm.email.value;
-                    }
+                    if (this.registrationForm.email.errors.length > 0) {
+                        this.errorEmail = data.email.value;
+                        //deactivated error
+                        this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
+                        this.showReactivationSent = false;
+                        //duplicate email error
+                        if($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1){ 
+                            this.showDuplicateEmailError = true;
+                            this.authorizationForm.userName.value = this.registrationForm.email.value;
+                        } 
+                    } else {
+                        this.showDeactivatedError = false;
+                        this.showDuplicateEmailError = false;
+                    } 
                 }
                 if(field == 'EmailsAdditional') {
                     for (var index in this.registrationForm.emailsAdditional) {
-                        //deactivated error
-                        this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
-                        this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
-                        //duplicate email error
-                        this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
-                    }                              
+                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
+                            this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
+                            //deactivated error
+                            this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                            this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                            //duplicate email error
+                            this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                            this.authorizationForm.userName.value = this.registrationForm.emailsAdditional[index].value;
+                        } else {
+                            this.showEmailsAdditionalDeactivatedError[index] = false;
+                            this.showEmailsAdditionalDuplicateEmailError[index] = false;
+                        }
+                    }                          
                 }
                 this.cdr.detectChanges();
+                
             },
             error => {
                 // something bad is happening!
