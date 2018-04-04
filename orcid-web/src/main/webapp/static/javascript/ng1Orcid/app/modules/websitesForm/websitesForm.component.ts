@@ -98,6 +98,13 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }     
     };
 
+    setBulkGroupPrivacy(priv): void{
+        console.log('bulk privacy wf', priv);
+        for (var idx in this.formData.websites){
+            this.formData.websites[idx].visibility.visibility = priv;        
+        }
+    };
+
     getformData(): void {
         this.websitesService.getData()
         .takeUntil(this.ngUnsubscribe)

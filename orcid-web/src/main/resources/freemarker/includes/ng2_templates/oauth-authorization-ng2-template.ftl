@@ -33,7 +33,8 @@
                             <#include "/includes/oauth/scopes_ng2.ftl"/>
                         </div>
                         <div>
-                            <p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="public-layout.privacy_policy"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
+                            <p *ngIf="gdprUiFeatureEnabled"><@orcid.msg 'confirm-oauth-access.thisApplicationWillNot'/>&nbsp;<a href="${baseUri}/account#manage-permissions" target="confirm-oauth-access.accountSettings"><@orcid.msg 'confirm-oauth-access.accountSettings'/></a>.</p>
+                            <p *ngIf="!gdprUiFeatureEnabled"><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="public-layout.privacy_policy"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
                         </div>          
                         <div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
                             <div class="row">

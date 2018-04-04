@@ -166,7 +166,7 @@ public class DeveloperToolsControllerTest {
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
-        rUri.setValue(Text.valueOf("http://test.com"));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
         Client result = developerToolsController.createClient(client);
@@ -184,7 +184,7 @@ public class DeveloperToolsControllerTest {
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
-        rUri.setValue(Text.valueOf("http://test.com"));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
         Client result = developerToolsController.createClient(client);
@@ -202,7 +202,7 @@ public class DeveloperToolsControllerTest {
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
-        rUri.setValue(Text.valueOf("http://test.com"));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
         Client result = developerToolsController.createClient(client);
@@ -217,7 +217,7 @@ public class DeveloperToolsControllerTest {
         redirectUris = new ArrayList<RedirectUri>();
         rUri = new RedirectUri();
         rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
-        rUri.setValue(Text.valueOf("http://test.com"));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
         result = developerToolsController.createClient(client);
@@ -232,7 +232,7 @@ public class DeveloperToolsControllerTest {
         redirectUris = new ArrayList<RedirectUri>();
         rUri = new RedirectUri();
         rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
-        rUri.setValue(Text.valueOf("http://test.com"));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
         result = developerToolsController.createClient(client);
@@ -275,7 +275,7 @@ public class DeveloperToolsControllerTest {
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
-        rUri.setValue(Text.valueOf("http://test.com"));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
         Client result = developerToolsController.createClient(client);
@@ -288,12 +288,12 @@ public class DeveloperToolsControllerTest {
         Client client = new Client();
         client.setDisplayName(Text.valueOf("Updated client name"));
         client.setShortDescription(Text.valueOf("Updated client description"));
-        client.setWebsite(Text.valueOf("http://updated.com"));
+        client.setWebsite(Text.valueOf("https://orcid.org/updated"));
         client.setType(Text.valueOf(ClientType.PUBLIC_CLIENT.value()));
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
-        rUri.setValue(Text.valueOf("http://test.com"));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
         redirectUris.add(rUri);
         RedirectUri rUri2 = new RedirectUri();
         rUri2.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));

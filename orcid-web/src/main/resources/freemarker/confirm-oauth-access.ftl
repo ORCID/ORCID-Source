@@ -38,7 +38,12 @@
                         <#include "includes/oauth/scopes.ftl"/>
                     </div>
                     <div>
-                        <p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="public-layout.privacy_policy"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
+                        <@orcid.checkFeatureStatus 'GDPR_UI'> 
+                            <p><@orcid.msg 'confirm-oauth-access.thisApplicationWillNot'/>&nbsp;<a href="${baseUri}/account#manage-permissions" target="confirm-oauth-access.accountSettings"><@orcid.msg 'confirm-oauth-access.accountSettings'/></a>.</p>
+                        </@orcid.checkFeatureStatus>
+                        <@orcid.checkFeatureStatus featureName='GDPR_UI' enabled=false> 
+                            <p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="public-layout.privacy_policy"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
+                        </@orcid.checkFeatureStatus>
                     </div>          
                     <div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
                         <div class="row">
