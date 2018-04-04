@@ -400,13 +400,14 @@ public class RegistrationController extends BaseController {
     
     public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {    
         if (reg.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(reg.getEmailsAdditional().get(0)))  {
+            reg.getEmailsAdditional().get(0).setErrors(new ArrayList<String>()); 
             return reg;     
         } else {
             List<Text> emailsAdditionalList = new ArrayList<Text>();
             for(Text emailAdditional : reg.getEmailsAdditional()) {
+                emailAdditional.setErrors(new ArrayList<String>()); 
                 if(!PojoUtil.isEmpty(emailAdditional)){
-                    emailAdditional.setErrors(new ArrayList<String>());                           
-            
+                                              
                     String emailAddressAdditional = emailAdditional.getValue();
             
                     // Validate the email address is ok        

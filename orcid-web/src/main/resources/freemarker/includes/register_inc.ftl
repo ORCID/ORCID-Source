@@ -76,7 +76,7 @@
                 <span class="orcid-error" ng-show="registrationForm.emailsAdditional[$index].errors.length > 0 && !showEmailsAdditionalDeactivatedError[$index] && !showEmailsAdditionalReactivationSent[$index] && !showEmailsAdditionalDuplicateEmailError[$index]">
                     <div ng-repeat='error in registrationForm.emailsAdditional[$index].errors track by $index' ng-bind-html="error"></div>
                 </span>
-                <span class="orcid-error" ng-show="showEmailsAdditionalDuplicateEmailError[$index]">{{errorEmailsAdditional[$index]}}
+                <span class="orcid-error" ng-show="showEmailsAdditionalDuplicateEmailError[$index]" ng-cloak>{{errorEmailsAdditional[$index]}}
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a href="javascript:void(0);" ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[$index]}}${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" ng-show="showEmailsAdditionalDeactivatedError[$index]" ng-cloak>
@@ -98,7 +98,7 @@
                 <span class="required" ng-class="isValidClass(registrationForm.email)">*</span> <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
                     <div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
                 </span>
-                <span class="orcid-error" ng-show="showDuplicateEmailError" ng-cloak>{{registrationForm.email.value}} 
+                <span class="orcid-error" ng-show="showDuplicateEmailError" ng-cloak>{{errorEmail}} 
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a href="javascript:void(0);" ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{registrationForm.email.value}}
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
