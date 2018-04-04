@@ -19,14 +19,11 @@
 <script type="text/ng-template" id="register-duplicates-ng2-template">
     <div *ngIf="!showRegisterProcessing"  class="lightbox-container" id="duplicates-records">
         <div class="row margin-top-box">      
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <h4><@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
-                    <@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@orcid.rootPath "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <h4>
+                    <@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
                 </h4>
-            </div>
-            <div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
-                <button class="btn btn-primary" (click)="oauth2ScreensPostRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
-            </div>
+            </div>            
         </div>        
         <div class="row">
             <div class="col-sm-12">
@@ -42,7 +39,7 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let dup of duplicates">
-                            <td><a href="${baseUri}/{{dup.orcid}}" target="dup.orcid">${baseUri}/{{dup.orcid}}</a></td>
+                            <td><a href="${baseUri}/{{dup.orcid}}" target="_blank">${baseUri}/{{dup.orcid}}</a></td>
                             <td>{{dup.email}}</td>
                             <td>{{dup.givenNames}}</td>
                             <td>{{dup.familyNames}}</td>
@@ -51,12 +48,26 @@
                     </tbody>
                 </table>
             </div>
-        </div>  
+        </div>          
         <div class="row margin-top-box">
-            <div class="col-md-12 col-sm-12 col-xs-12 right">
-                <button class="btn btn-primary" (click)="oauth2ScreensPostRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+            <div class="col-md-12 col-sm-12 col-xs-12 left">
+                <span><@orcid.msg 'duplicate_researcher.notsure' /></span>
             </div>
         </div>
+        <div class="row margin-top-box">
+            <div class="col-md-12 col-sm-12 col-xs-12 right">
+                <ul class="inline-list margin-separator pull-right">
+                    <li>
+                        <a class="cancel-option" href="${baseUri}/signin" target="_self"><@orcid.msg 'duplicate_researcher.cancel' /></a>
+                    </li>
+                    <li>
+                        <button class="btn btn-primary" (click)="oauth2ScreensPostRegisterConfirm()">
+                            <@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/>
+                        </button>                            
+                    </li>
+                </ul>
+            </div>
+        </div>        
     </div>
     <div *ngIf="showRegisterProcessing"  class="lightbox-container" id="duplicates-records">
         <div style="font-size: 50px; line-height: 300px; text-align:center">
