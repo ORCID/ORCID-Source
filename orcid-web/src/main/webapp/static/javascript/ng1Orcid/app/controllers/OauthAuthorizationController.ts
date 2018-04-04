@@ -275,6 +275,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
+                        console.log(data);
                         commonSrvc.copyErrorsLeft($scope.registrationForm, data);
                         if(field == 'Email') {
                             if ($scope.registrationForm.email.errors.length > 0) {
@@ -367,9 +368,18 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             });
 
             $scope.switchForm = function() {
-                $scope.showRegisterForm = !$scope.showRegisterForm;
-                if (!$scope.personalLogin) {
-                    $scope.personalLogin = true;
+                var re = new RegExp("(/register)(.*)?$");
+                if ($scope.registrationForm.linkType=="social") {
+                    window.location.href = getBaseUri() + "/social/access";
+                } else if ($scope.registrationForm.linkType=="shibboleth") {
+                    window.location.href = getBaseUri() + "/shibboleth/signin";
+                } else if(re.test(window.location.pathname)){
+                    window.location.href = getBaseUri() + "/signin";
+                } else {
+                    $scope.showRegisterForm = !$scope.showRegisterForm;
+                    if (!$scope.personalLogin) {
+                        $scope.personalLogin = true;
+                    }
                 }
             };
 
@@ -437,6 +447,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                                 $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.emailsAdditional[index].errors) != -1));
                                 $scope.showEmailsAdditionalReactivationSent.splice(index, 1, false);
                                 $scope.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', $scope.registrationForm.emailsAdditional[index].errors) != -1));
+                                console.log($scope.showEmailsAdditionalDuplicateEmailError[index]);
                                 if($scope.showEmailsAdditionalDuplicateEmailError[index]==true){
                                     $scope.authorizationForm.userName.value = $scope.registrationForm.emailsAdditional[index].value;
                                 }
