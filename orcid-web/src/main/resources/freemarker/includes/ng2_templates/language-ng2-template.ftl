@@ -1,22 +1,21 @@
-<script type="text/ng-template" id="language-ng2-template">                              
-    <!--<p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>-->
+<script type="text/ng-template" id="language-ng2-template"> 
     <div class="row">
-        <form id="language-form" action="#" ng-controller="languageCtrl">
-
+        <form id="language-form" action="#">
             <select
+                *ngIf="languages"
                 name="language-codes" id="language-codes"
                 [(ngModel)]="language" 
                 (ngModelChange)="selectedLanguage()"
             >
                 <option 
-                    *ngFor="let language of languages"
-                    [value]="language.val"
+                    *ngFor="let languageOpt of languages"
+                    [value]="languageOpt.value"
+                    [selected]="languageOpt.value == language.value"
                 >
-                    {{language.label}}   
+                    {{languageOpt.label}}   
                 </option>             
                 
             </select>
-
         </form>
     </div>                      
 </script>

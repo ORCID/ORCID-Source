@@ -90,7 +90,7 @@
                                 <div class="relative">
                                     <input name="translatedTitle" type="text" class="form-control" [ngModel]="editWork.translatedTitle.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" (ngModelChange)="serverValidate('works/work/translatedTitleValidate.json')" />                                                     
                                 </div>                      
-                                <span class="orcid-error" *ngIf="editWork.translatedTitle.errors.length > 0">
+                                <span class="orcid-error" *ngIf="editWork?.translatedTitle?.errors.length > 0">
                                     <div *ngFor='let error of editWork.translatedTitle.errors' [innerHtml]="error"></div>
                                 </span>
                             </div>
@@ -113,7 +113,7 @@
                             <label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
                             <div class="relative">
                                 <input name="familyNames" type="text" class="form-control"  [ngModel]="editWork.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" (ngModelChange)="serverValidate('works/work/subtitleValidate.json')" />
-                                <span class="orcid-error" *ngIf="editWork.subtitle.errors.length > 0">
+                                <span class="orcid-error" *ngIf="editWork?.subtitle?.errors.length > 0">
                                     <div *ngFor='let error of editWork.subtitle.errors' [innerHtml]="error"></div>
                                 </span>
                             </div>
@@ -199,7 +199,7 @@
                     </div>
 
                     <!-- Right column -->
-                    <div class="col-md-6 col-sm-6 col-xs-12" *ngIf="editWork.contributors.length > 0">               
+                    <div class="col-md-6 col-sm-6 col-xs-12" *ngIf="editWork?.contributors?.length > 0">               
 
                         <div class="control-group" *ngFor="let contributor of editWork.contributors">
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
@@ -234,7 +234,7 @@
                         </div>                                              
                     </div>
                     
-                    <div class="col-md-6 col-sm-6 col-xs-12">                               
+                    <div class="col-md-6 col-sm-6 col-xs-12" *ngIf="editWork?.workExternalIdentifiers">                               
                         <div class="control-group">
                             <span><strong><@orcid.msg 'manual_work_form_contents.titleexternalidentifier'/></strong></span>
                         </div>
@@ -322,7 +322,7 @@
                             <label class="relative"><@orcid.msg 'common.url'/></label>
                             <div class="relative">
                                 <input name="url" type="text" class="form-control"  [ngModel]="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" (ngModelChange)="serverValidate('works/work/urlValidate.json')" />
-                                <span class="orcid-error" *ngIf="editWork.url.errors.length > 0">
+                                <span class="orcid-error" *ngIf="editWork?.url?.errors?.length > 0">
                                     <div *ngFor='let error of editWork.url.errors' [innerHtml]="error"></div>
                                 </span>
                             </div>
