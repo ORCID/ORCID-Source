@@ -226,7 +226,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
             "typeahead:selected", 
             (
                 function(obj, datum) {
-                    console.log('typeahead', obj, datum, this);
+                    //console.log('typeahead', obj, datum, this);
                     this.selectAffiliation(datum);
                 }
             ).bind(this)
@@ -242,8 +242,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
     
     removeFromArray(affArray, putCode): void {
-        console.log("putCode: " + putCode);
-        console.log(affArray);
+        //console.log("putCode: " + putCode);
+        //console.log(affArray);
         for(let idx in affArray) {
             if(affArray[idx].putCode.value == putCode) {
                 affArray.splice(idx, 1);

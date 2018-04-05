@@ -1,3 +1,4 @@
+//Migrated
 declare var $: any;
 declare var orcidSearchUrlJs;
 declare var orcidVar: any;

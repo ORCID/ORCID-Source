@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.utils.listener.LastModifiedMessage;
-import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.JmsException;
@@ -36,23 +35,12 @@ public class JmsMessageSender {
     private boolean enabled = false;    
     private boolean pauseForAWhile = false;
     
-    public enum JmsDestination{
-        TEST(MessageConstants.Queues.TEST),
-        TEST_REPLY(MessageConstants.Queues.TEST_REPLY), 
-        UPDATED_ORCIDS(MessageConstants.Queues.UPDATED_ORCIDS), 
-        REINDEX(MessageConstants.Queues.REINDEX);        
-        public final String value;
-        JmsDestination(String value){
-            this.value = value;
-        }
-    }
-    
     @Resource
     private JmsTemplate jmsTemplate;
     
-    protected boolean sendText(final String text, JmsDestination dest ) throws JmsException{
+    protected boolean sendText(final String text, String destination) throws JmsException{
         if (isEnabled() && !pauseForAWhile){
-            jmsTemplate.convertAndSend(dest.value, text);
+            jmsTemplate.convertAndSend(destination, text);
             return true;
         }
         LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile"+pauseForAWhile);
@@ -60,9 +48,9 @@ public class JmsMessageSender {
             
     }
     
-    protected boolean sendMap(final Map<String,String> map, JmsDestination dest) throws JmsException{
+    protected boolean sendMap(final Map<String,String> map, String destination) throws JmsException{
         if (isEnabled() && !pauseForAWhile){
-            jmsTemplate.convertAndSend(dest.value, map);
+            jmsTemplate.convertAndSend(destination, map);
             return true;
         }
         LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile="+pauseForAWhile);
@@ -75,9 +63,9 @@ public class JmsMessageSender {
      * @param d the destination queue
      * @return true if message sent successfully 
      */
-    public boolean send(LastModifiedMessage mess, JmsDestination d){
+    public boolean send(LastModifiedMessage mess, String destination){
         try{
-            return this.sendMap(mess.getMap(), d);                             
+            return this.sendMap(mess.getMap(), destination);                             
         } catch(JmsException e) {
             //TODO: How we unflag the problem?
             //flagConnectionProblem(e);

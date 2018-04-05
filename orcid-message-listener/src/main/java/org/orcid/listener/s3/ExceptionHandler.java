@@ -21,7 +21,7 @@ public class ExceptionHandler {
     private boolean is20IndexingEnabled;
 
     @Resource
-    private S3Updater s3Updater;
+    private S3Manager s3Updater;
 
     /**
      * If the record is locked: - blank it in 1.2 bucket
