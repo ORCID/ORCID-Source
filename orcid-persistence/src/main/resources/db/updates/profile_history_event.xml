@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="INSTALL-PROFILE-HISTORY-EVENT-TABLE" author="George Nash">
+         <createTable tableName="profile_history_event">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="profile_history_event_pkey" />
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false" />
+            </column>     
+            <column name="event_type" type="VARCHAR(50)"/>      
+        </createTable>           
+        <createSequence sequenceName="profile_history_event_seq"/>
+    </changeSet>
+</databaseChangeLog>                   
