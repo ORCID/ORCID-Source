@@ -16,7 +16,7 @@ public class ProfileHistoryEventDaoImpl extends GenericDaoImpl<ProfileHistoryEve
     @SuppressWarnings("unchecked")
     @Override
     public List<ProfileHistoryEventEntity> findByProfile(String orcid) {
-        Query query = entityManager.createQuery("FROM ProfileHistoryEventEntity WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("FROM ProfileHistoryEventEntity WHERE orcid = :orcid ORDER BY dateCreated DESC");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
