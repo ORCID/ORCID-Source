@@ -52,6 +52,22 @@ public class ProfileHistoryEventManagerTest {
     }
     
     @Test
+    public void testRecordEventWithComments() {
+        Mockito.doNothing().when(profileHistoryEventDao).persist(any(ProfileHistoryEventEntity.class));
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, "some-orcid", "deprecated/deactivated");
+        
+        ArgumentCaptor<ProfileHistoryEventEntity> captor = ArgumentCaptor.forClass(ProfileHistoryEventEntity.class);
+        Mockito.verify(profileHistoryEventDao).persist(captor.capture());
+        ProfileHistoryEventEntity entity = captor.getValue();
+
+        assertEquals("some-orcid", entity.getOrcid());
+        assertNotNull(entity.getDateCreated());
+        assertNotNull(entity.getLastModified());
+        assertEquals("deprecated/deactivated", entity.getComment());
+        assertEquals(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE.getLabel(), entity.getEventType());
+    }
+    
+    @Test
     public void testGetProfileHistoryForOrcid() {
         Mockito.when(profileHistoryEventDao.findByProfile(Mockito.eq("some-orcid"))).thenReturn(null);
         profileHistoryEventManager.getProfileHistoryForOrcid("some-orcid");
