@@ -3,8 +3,8 @@
         <form class="form-social-sign-in" id="social2FaCodeForm" (ngSubmit)="submitCode()" method="post">
             <div class="row">
                 <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
-                    <div class="orcid-error">
-                        <p>{{codes.errors[0]}}</p>
+                    <div class="orcid-error">                     
+                        <p *ngIf="codes?.errors && codes?.errors.length > 0">{{codes?.errors[0]}}</p>
                     </div>
                     <div class="form-group">
                         <div class="bold">${springMacroRequestContext.getMessage("2FA.orcid")} ${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}

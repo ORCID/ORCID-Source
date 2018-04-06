@@ -55,7 +55,7 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         this.entityId = orcidVar.providerId;
         this.gaString = "";
         this.loadedFeed = false;
-        //this.idpName = "";
+        this.idpName = "";
         this.requestInfoForm = {};
     }
 
@@ -64,7 +64,6 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                console.log(data);
                 this.feed = data;
                 this.idpName = this.discoService.getIdpName(this.entityId, this.feed, this.widgetService.getLocale());
                 this.loadedFeed = true;
@@ -99,13 +98,9 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                //console.log('getformDataError', error);
+                console.log('Error loading request info form');
             } 
         );
-    };
-    
-    submit = function(){
-        console.log("hello");
     };
 
     //Default init functions provided by Angular Core
@@ -125,7 +120,6 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         } 
         this.setEntityId(this.entityId);
         this.loadDiscoFeed();
-        console.log(this.entityId);
         
     }; 
 }
