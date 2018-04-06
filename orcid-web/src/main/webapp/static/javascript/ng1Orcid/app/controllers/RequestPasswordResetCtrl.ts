@@ -19,6 +19,7 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
             $timeout, 
             utilsService
         ) {
+            $scope.showDeactivatedError = false;
             $scope.showSendResetLinkError = false;
 
             $scope.getRequestResetPassword = function() {
@@ -37,6 +38,7 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
             $scope.postPasswordResetRequest = function() {
                 $scope.requestResetPassword.successMessage = null;
                 $scope.requestResetPassword.errors = null;
+                $scope.showDeactivatedError = false;
                 $scope.showSendResetLinkError = false;
                 $.ajax({
                     url: getBaseUri() + '/reset-password.json',
@@ -46,6 +48,8 @@ export const RequestPasswordResetCtrl = angular.module('orcidApp').controller(
                     contentType: 'application/json;charset=UTF-8',
                     success: function(data) {
                         $scope.requestResetPassword = data;
+                        $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.requestResetPassword.errors) != -1);
+                        console.log($scope.showDeactivatedError);
                         $scope.$apply();
                     }
                 }).fail(function(){
