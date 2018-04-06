@@ -63,7 +63,16 @@ public class LoginController extends OauthControllerBase {
             }
         }
         // in case have come via a link that requires them to be signed out        
-        return new ModelAndView("login");
+        ModelAndView mav = new ModelAndView("login");
+        boolean showLogin = true;
+        String queryString = request.getQueryString();
+        // Check show_login params to decide if the login form should be
+        // displayed by default
+        if (!PojoUtil.isEmpty(queryString) && queryString.toLowerCase().contains("show_login=false")) {
+            showLogin = false;
+        }   
+        mav.addObject("showLogin", String.valueOf(showLogin));
+        return mav;
     }
 
     // We should go back to regular spring sign out with CSRF protection
