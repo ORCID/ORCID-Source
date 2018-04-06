@@ -4,7 +4,7 @@
 
     <changeSet id="INSTALL-PROFILE-HISTORY-EVENT-TABLE" author="George Nash">
          <createTable tableName="profile_history_event">
-            <column name="profile_history_event_id" type="bigint">
+            <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true"
                     primaryKeyName="profile_history_event_pkey" />
             </column>

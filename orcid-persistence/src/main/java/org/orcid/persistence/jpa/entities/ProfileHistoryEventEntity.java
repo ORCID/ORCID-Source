@@ -24,10 +24,10 @@ public class ProfileHistoryEventEntity extends BaseEntity<Long> implements Seria
     
     private String orcid;
     
+    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_history_event_seq")
     @SequenceGenerator(name = "profile_history_event_seq", sequenceName = "profile_history_event_seq")
-    @Column(name = "profile_history_event_id")
     public Long getId() {
         return id;
     }
