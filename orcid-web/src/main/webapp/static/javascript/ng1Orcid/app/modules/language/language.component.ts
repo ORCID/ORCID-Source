@@ -42,7 +42,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         private widgetSrvc: WidgetService
     ) {
         this.language = {};
-        this.languages = {};
+        this.languages = [];
         this.productionLangList =
             [
                 {
@@ -171,6 +171,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
     getCurrentLanguage(): void{
         let locale_v3: any;
 
+        console.log(this.languages, this.languages != undefined, this.languages.length, this.languages.length > 0);
         if(this.languages != undefined && this.languages.length > 0){
             console.log('this.languages', this.languages);
             this.language = this.languages[0]; //Default
@@ -179,14 +180,19 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
             
             typeof(cookie) !== 'undefined' ? locale_v3 = cookie : locale_v3 = "en"; //If cookie exists we get the language value from it        
             
-            tempLanguages.forEach(function(value, key) {
-                if (value.value == locale_v3){
-                    this.language = this.languages[key];
-                    this.widgetSrvc.locale = this.language.value; 
-                }
+            console.log('locale_v3', locale_v3);
 
-            });
-            
+            tempLanguages.forEach(
+                function(value, key) {
+                    console.log('value', value, 'key', key);
+                    if (value.value == locale_v3){
+                        this.language = this.languages[key];
+                        //this.widgetSrvc.locale = this.language.value; 
+                    }
+
+                }.bind(this)
+            );
+        
         }
 
         
@@ -198,33 +204,35 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.languages.forEach(function(value, key){
-                    var params;
-                    if(value.value == data.locale){
-                        this.language = this.languages[key];                        
-                        this.widgetSrvc.setLocale(this.language.value);
-                        //In case some parameters were sent via URL
-                        params = window.location.href.split("?")[1];
-                        if (typeof params != 'undefined'){
-                            params = params.split("&");
-                            //Removing language parameter (lang=[code]) if it exists
-                            for ( var i = 0; i < params.length; i++ ){
-                                if(params[i].indexOf("lang=") > -1){
-                                    params.splice(i, 1);    
+                this.languages.forEach(
+                    function(value, key){
+                        var params;
+                        if(value.value == data.locale){
+                            this.language = this.languages[key];                        
+                            this.widgetSrvc.setLocale(this.language.value);
+                            //In case some parameters were sent via URL
+                            params = window.location.href.split("?")[1];
+                            if (typeof params != 'undefined'){
+                                params = params.split("&");
+                                //Removing language parameter (lang=[code]) if it exists
+                                for ( var i = 0; i < params.length; i++ ){
+                                    if(params[i].indexOf("lang=") > -1){
+                                        params.splice(i, 1);    
+                                    }
                                 }
+                                
+                                if ( params.length > 0 ) {                                
+                                    window.location.href = window.location.href.split("?")[0] + '?' + params.join("&");
+                                } else {
+                                    window.location.href = window.location.href.split("?")[0];
+                                }
+                                
+                            }else{
+                                window.location.reload(true);
                             }
-                            
-                            if ( params.length > 0 ) {                                
-                                window.location.href = window.location.href.split("?")[0] + '?' + params.join("&");
-                            } else {
-                                window.location.href = window.location.href.split("?")[0];
-                            }
-                            
-                        }else{
-                            window.location.reload(true);
                         }
-                    }
-                });
+                    }.bind(this)
+                );
             },
             error => {
                 //console.log('getWebsitesFormError', error);
@@ -269,9 +277,9 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             this.languages = this.productionLangList;
         }
-        console.log('languages', this.languages);
+        console.log('languages 3', this.languages);
 
-        //this.getCurrentLanguage();
+        this.getCurrentLanguage();
         
         
     }; 

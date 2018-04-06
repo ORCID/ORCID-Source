@@ -17,7 +17,7 @@ export class WidgetService {
     private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
-    locale: string;
+    public locale: string;
 
 
     constructor( private http: Http ){

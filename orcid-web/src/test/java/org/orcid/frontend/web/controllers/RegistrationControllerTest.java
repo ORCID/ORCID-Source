@@ -444,7 +444,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
             assertNotNull(emailAdditionalListItem.getErrors());
             assertEquals(1, emailAdditionalListItem.getErrors().size());
-            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system."));
+            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("orcid.frontend.verify.duplicate_email"));
         }     
     }
     
@@ -468,7 +468,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	assertNotNull(reg.getEmail());
     	assertNotNull(reg.getEmail().getErrors());
     	assertEquals(1, reg.getEmail().getErrors().size());
-    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system."));    	
+    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("orcid.frontend.verify.duplicate_email"));    	
     }             
     
     protected OrcidProfile createBasicProfile() {

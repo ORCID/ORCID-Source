@@ -177,8 +177,8 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 errors: {}, 
                 value: null
             },
-            workExternalIdentifiers: {
-            },
+            workExternalIdentifiers: []
+            ,
         };
         this.emails = {};
         this.formData = {
