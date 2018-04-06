@@ -127,7 +127,7 @@
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />     
 	</sec:http>
-
+	
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
     	<sec:csrf disabled="true"/>
@@ -392,6 +392,8 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/togglz/*" 
 			access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/profile-history/.*" 
+            access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
