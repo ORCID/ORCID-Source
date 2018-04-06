@@ -9,6 +9,8 @@ public interface ProfileHistoryEventManager {
 
     void recordEvent(ProfileHistoryEventType eventType, String orcid);
     
+    void recordEvent(ProfileHistoryEventType eventType, String orcid, String comments);
+    
     List<ProfileHistoryEventEntity> getProfileHistoryForOrcid(String orcid);
 
 }

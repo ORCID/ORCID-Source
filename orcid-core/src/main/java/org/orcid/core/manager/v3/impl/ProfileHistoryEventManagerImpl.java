@@ -25,6 +25,18 @@ public class ProfileHistoryEventManagerImpl implements ProfileHistoryEventManage
         profileHistoryEvent.setOrcid(orcid);
         profileHistoryDao.persist(profileHistoryEvent);
     }
+    
+    @Override
+    public void recordEvent(ProfileHistoryEventType eventType, String orcid, String comments) {
+        Date eventDate = new Date();
+        ProfileHistoryEventEntity profileHistoryEvent = new ProfileHistoryEventEntity();
+        profileHistoryEvent.setDateCreated(eventDate);
+        profileHistoryEvent.setLastModified(eventDate);
+        profileHistoryEvent.setEventType(eventType.getLabel());
+        profileHistoryEvent.setOrcid(orcid);
+        profileHistoryEvent.setComment(comments);
+        profileHistoryDao.persist(profileHistoryEvent);
+    }
 
     @Override
     public List<ProfileHistoryEventEntity> getProfileHistoryForOrcid(String orcid) {
