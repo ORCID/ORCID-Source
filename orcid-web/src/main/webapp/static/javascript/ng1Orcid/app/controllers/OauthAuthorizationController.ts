@@ -40,6 +40,8 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             $scope.gaString = null;
             $scope.emailTrustAsHtmlErrors = [];
             $scope.enablePersistentToken = true;
+            $scope.errorEmail = null;
+            $scope.errorEmailsAdditional = [];
             $scope.isOrcidPresent = false;
             $scope.model = {
                 key: orcidVar.recaptchaKey
@@ -55,7 +57,9 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             $scope.showClientDescription = false;
             $scope.showCreateIcon = false;
             $scope.showDeactivatedError = false;
+            $scope.showDuplicateEmailError = false;
             $scope.showEmailsAdditionalDeactivatedError = [false];
+            $scope.showEmailsAdditionalDuplicateEmailError = [false];
             $scope.showEmailsAdditionalReactivationSent = [false];
             $scope.showLimitedIcon = false;    
             $scope.showLongDescription = {};
@@ -271,9 +275,11 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
+                        console.log(data);
                         commonSrvc.copyErrorsLeft($scope.registrationForm, data);
                         if(field == 'Email') {
                             if ($scope.registrationForm.email.errors.length > 0) {
+                                $scope.errorEmail = data.email.value;
                                 for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
                                     $scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
                                 }
@@ -281,6 +287,14 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                                 $scope.emailTrustAsHtmlErrors = [];
                             }
                         }
+                        if(field == 'EmailsAdditional') {
+                            for (var index in $scope.registrationForm.emailsAdditional) {
+                                if ($scope.registrationForm.emailsAdditional[index].errors.length > 0) {
+                                    $scope.errorEmailsAdditional[index] = data.emailsAdditional[index].value;
+                                }
+                            }
+                        }
+                        
                         $scope.$apply();
                     }
                 }).fail(function() {
@@ -354,9 +368,18 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             });
 
             $scope.switchForm = function() {
-                $scope.showRegisterForm = !$scope.showRegisterForm;
-                if (!$scope.personalLogin) {
-                    $scope.personalLogin = true;
+                var re = new RegExp("(/register)(.*)?$");
+                if ($scope.registrationForm.linkType=="social") {
+                    window.location.href = getBaseUri() + "/social/access";
+                } else if ($scope.registrationForm.linkType=="shibboleth") {
+                    window.location.href = getBaseUri() + "/shibboleth/signin";
+                } else if(re.test(window.location.pathname)){
+                    window.location.href = getBaseUri() + "/signin";
+                } else {
+                    $scope.showRegisterForm = !$scope.showRegisterForm;
+                    if (!$scope.personalLogin) {
+                        $scope.personalLogin = true;
+                    }
                 }
             };
 
@@ -397,7 +420,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     dataType: 'json',
                     success: function(data) {
                         $scope.registrationForm = data;
-                        console.log(orcidVar.features);
                         if (orcidVar.features['GDPR_UI'] == true){
                             $scope.registrationForm.activitiesVisibilityDefault.visibility = null;
                         }
@@ -409,17 +431,26 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                         $scope.registrationForm.linkType=linkFlag;
                         $scope.$apply();
                                         
-                        // special handling of deactivation error for primary email
+                        // special handling of deactivate and duplicate errors for primary email
                         $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
                             $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
                             $scope.showReactivationSent = false;
+                            $scope.showDuplicateEmailError = ($.inArray('orcid.frontend.verify.duplicate_email', $scope.registrationForm.email.errors) != -1);
+                            if($scope.showDuplicateEmailError==true){
+                                $scope.authorizationForm.userName.value = $scope.registrationForm.email.value;
+                            }
                         }); // initialize the watch
 
-                        // special handling of deactivation error for additional emails
+                        // special handling of duplicate error for additional emails
                         $scope.$watch('registrationForm.emailsAdditional', function(newValue, oldValue) {
                             for (var index in $scope.registrationForm.emailsAdditional) {
                                 $scope.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.emailsAdditional[index].errors) != -1));
                                 $scope.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                                $scope.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', $scope.registrationForm.emailsAdditional[index].errors) != -1));
+                                console.log($scope.showEmailsAdditionalDuplicateEmailError[index]);
+                                if($scope.showEmailsAdditionalDuplicateEmailError[index]==true){
+                                    $scope.authorizationForm.userName.value = $scope.registrationForm.emailsAdditional[index].value;
+                                }
                             }                              
                         }, true); // initialize the watch
                     }
@@ -525,8 +556,20 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     } 
                 } else{
                     $scope.showRegisterForm = !orcidVar.showLogin;
+                    $scope.authorizationForm = {
+                        userName:  {value: ""}
+                    } 
                 }
-            }                 
+            } else {
+                if(orcidVar.showLogin){
+                    $scope.showRegisterForm = false;
+                } else{
+                    $scope.showRegisterForm = !orcidVar.showLogin;  
+                }
+                $scope.authorizationForm = {
+                    userName:  {value: ""}
+                } 
+            }               
         }
     ]
 );

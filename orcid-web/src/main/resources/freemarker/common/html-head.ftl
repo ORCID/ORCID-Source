@@ -42,7 +42,7 @@
         </#if>      
       
         <#if (showLogin)??>
-        orcidVar.showLogin = ${showLogin};
+            orcidVar.showLogin = ${showLogin};
         </#if>
 
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
