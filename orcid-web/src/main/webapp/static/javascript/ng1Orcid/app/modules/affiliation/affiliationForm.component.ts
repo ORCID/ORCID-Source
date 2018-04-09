@@ -6,7 +6,7 @@ declare var sortState: any;
 declare var typeahead: any;
 
 //Import all the angular components
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -53,6 +53,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     private viewSubscription: Subscription;
 
     addingAffiliation: boolean;
+    daysMonth: any;
     deleAff: any;
     disambiguatedAffiliation: any;
     displayAffiliationExtIdPopOver: any;
@@ -89,6 +90,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     ) {
  
         this.addingAffiliation = false;
+        this.daysMonth = [];
         this.deleAff = null;
         this.disambiguatedAffiliation = null;
         this.displayAffiliationExtIdPopOver = {};
@@ -345,6 +347,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {
             delete this.editAffiliation.orgDisambiguatedId;
         }
+
+        this.disambiguatedAffiliation = null;
     };
 
     selectAffiliation(datum): void {        
@@ -410,6 +414,13 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         $event.preventDefault();
         this.editAffiliation.visibility.visibility = priv;
     };
+
+    checkAvailableDays(day, month, year): boolean {
+        if( day > new Date(year, month, 0).getDate() ){
+            return true
+        }
+        return false;
+    }
 
     setPrivacy(aff, priv, $event): void {
         $event.preventDefault();

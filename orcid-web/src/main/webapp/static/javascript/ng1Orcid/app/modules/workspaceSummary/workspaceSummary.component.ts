@@ -3,7 +3,7 @@ declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 

@@ -201,7 +201,8 @@
                             </select>                   
                             <select id="startDay" name="startDay" [(ngModel)]="editAffiliation.startDate.day" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
                                 <#list days?keys as key>
-                                    <option value="${key}">${days[key]}</option>
+                                    <option [disabled]="checkAvailableDays(
+                                    ${key}, editAffiliation.startDate.month, editAffiliation.startDate.year)" value="${key}">${days[key]}</option>
                                 </#list>
                             </select>
                         </div>
@@ -227,9 +228,12 @@
                                 </#list>
                             </select>
                             <select id="endDay" name="endDay" [(ngModel)]="editAffiliation.endDate.day">
+                                
                                 <#list days?keys as key>
-                                    <option value="${key}">${days[key]}</option>
+                                    <option [disabled]="checkAvailableDays(
+                                    ${key}, editAffiliation.endDate.month, editAffiliation.endDate.year)" value="${key}">${days[key]}</option>
                                 </#list>
+                                
                             </select>
                         </div>
                         
