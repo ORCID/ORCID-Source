@@ -55,7 +55,7 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
 
             if (PojoUtil.isEmpty(version)) {
                 if (isLOD(request.getHeader("Accept"))) {
-                    String redirectUri = orcidUrlManager.getPubBaseUrl() + OrcidApiConstants.EXPERIMENTAL_RDF_V1 + "/" + path;
+                    String redirectUri = orcidUrlManager.getPubBaseUrl() + OrcidApiConstants.EXPERIMENTAL_RDF_V1 + path;
                     response.sendRedirect(redirectUri);
                 }
                 if (feature.isActive()) {
