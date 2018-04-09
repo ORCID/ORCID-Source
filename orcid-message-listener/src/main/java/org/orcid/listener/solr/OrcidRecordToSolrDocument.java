@@ -269,8 +269,7 @@ public class OrcidRecordToSolrDocument {
                 LOG.error("problem marshalling xml",e);
             }
         }
-        
-        LOG.debug(profileIndexDocument.toString());
+                
         return profileIndexDocument;
     }
     
