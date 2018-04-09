@@ -10,20 +10,19 @@ import org.orcid.core.utils.v3.identifiers.ResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.ISBNNormalizer;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
+
 @Component
-public class ISBNResolver implements Resolver {
+public class ISBNOCLCResolver implements Resolver {
 
     @Resource
     NormalizationService normalizationService;
 
     @Resource
-    ISBNNormalizer norm;
-
-    @Resource
     ResolverCache cache;
 
     public List<String> canHandle() {
-        return norm.canHandle();
+        return Lists.newArrayList("oclc","isbn");
     }
 
     @Override

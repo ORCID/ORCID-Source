@@ -10,11 +10,11 @@ import org.orcid.core.utils.v3.identifiers.resolvers.ResolutionResult;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
-//@RunWith(OrcidJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ResolverServiceTest {
     
-    //@Resource
+    @Resource
     ResolverService resolver;
     
     public void checkDOI(String value){
@@ -24,10 +24,11 @@ public class ResolverServiceTest {
     }
     
     //Commented out.  Only use locally.
-    //@Test
+    @Test
     public void workingTests(){
         ResolutionResult r = null;
         
+        /*
         //if the value has a resolution prefix, normalise if possible, then attempt to resolve
         r = resolver.resolve("doi", "10.6084/m9.figshare.5479792.v1");
         assertTrue(r.isResolved());
@@ -223,7 +224,48 @@ public class ResolverServiceTest {
         r = resolver.resolve("arxiv", "junk");
         assertFalse(r.isResolved());
         assertTrue(r.getAttemptedResolution());
+        */
         
+        
+        //FAILS---------
+        //HEAD fails, GET works
+        /*
+        r = resolver.resolve("cienciaiul", "ci-pub-42661");
+        assertTrue(r.isResolved());
+        assertEquals("https://ciencia.iscte-iul.pt/id/ci-pub-42661",r.getResolvedUrl());
+        r = resolver.resolve("lensid", "022-382-024-804-703");
+        assertTrue(r.isResolved());
+        assertEquals("https://www.lens.org/022-382-024-804-703",r.getResolvedUrl());
+        */
+        
+        //FAILS without fake useragent
+        //curl -sSLI -A "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5" -D - http://www.jstor.org/stable/41670578 -o /dev/null 
+        /*
+        r = resolver.resolve("jstor", "41670578");
+        assertTrue(r.isResolved());
+        assertEquals("http://www.jstor.org/stable/41670578",r.getResolvedUrl());
+        */
+        
+        //Works in curl, fails in Java
+        /*
+        r = resolver.resolve("ssrn", "2900690");
+        assertTrue(r.isResolved());
+        assertEquals("http://papers.ssrn.com/abstract_id=2900690",r.getResolvedUrl());
+        */
+        
+        //should be https://tools.ietf.org/html/0063
+        /*
+        r = resolver.resolve("RFC", "0063");
+        assertTrue(r.isResolved());
+        assertEquals("http://www.rfc-editor.org/rfc/0063",r.getResolvedUrl());
+        */
+        
+       /*And these identifiers don't mark any text as invalid even if it is gibberish:
+        ethos, jfm, kuid, lccn, mr, oclc, osti and zbl*/
+        
+        //----end fails
+        
+
     }
 
 }

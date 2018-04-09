@@ -38,11 +38,26 @@ public class ResolutionPrefixResolver implements Resolver {
                 types.add(id);
             }
         }
+        //have their own resolvers
         types.remove("isbn");
+        types.remove("oclc");
         types.remove("doi");
         //types that should normally be a URL.
         types.add("uri");
         types.add("handle");
+        //types with successful tests
+        
+        //types that fail due to the id implementations.
+        types.remove("cienciaiul");
+        types.remove("lensid");
+        types.remove("jstor");
+        types.remove("ssrn");
+        types.remove("ethos");
+        types.remove("jfm");
+        types.remove("kuid");
+        types.remove("lccn");
+        types.remove("mr");
+        types.remove("zbl");
     }
 
     @Override
