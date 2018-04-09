@@ -71,7 +71,7 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             Builder claims = new JWTClaimsSet.Builder();
             claims.audience(params.get(OrcidOauth2Constants.CLIENT_ID_PARAM));
             claims.issuer(path);
-            claims.subject("https://orcid.org"+"/"+orcid);
+            claims.subject(orcid);
             claims.claim("id_path", orcid);
             claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
             Date now = new Date();
