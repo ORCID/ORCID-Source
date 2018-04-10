@@ -28,11 +28,6 @@ export class OrderByPipe implements PipeTransform {
                 argsStringArray += '["' + temp[j] + '"]';
                 if( j == temp.length - 1 ){ //all sublevels added, lets concat with A and B
                     
-                    /*if( i == 0) { //yes, i, not j, because the first condition is different than the rest
-                        logicalOperation += 'b' + argsStringArray + ' - a' + argsStringArray;
-                    } else {
-                        logicalOperation += 'String(a' + argsStringArray + ').localeCompare(String(b' + argsStringArray + '))';
-                    }*/
                     if( ascending ) {
                         logicalOperation += 'String(a' + argsStringArray + ').localeCompare(String(b' + argsStringArray + '))';
                     } else {

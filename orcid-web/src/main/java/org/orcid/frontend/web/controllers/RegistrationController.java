@@ -380,24 +380,7 @@ public class RegistrationController extends BaseController {
             }
             
             if (profileEntityManager.isProfileClaimedByEmail(emailAddress)) {
-                if (isOauthRequest) {
-                    if(Features.ANGULAR2_QA.isActive()) {
-                        reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
-                    } else {
-                        String message = getMessage("oauth.registration.duplicate_email_1", emailAddress);
-                        message += "<a ng-click=\"showToLoginForm()\">";
-                        message += getMessage("oauth.registration.duplicate_email_2");
-                        message += "</a>";
-                        message += getMessage("oauth.registration.duplicate_email_3", emailAddress);
-                        reg.getEmail().getErrors().add(message);
-                    }
-                    return reg;
-                }
-                if(Features.ANGULAR2_QA.isActive()) {
-                    reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
-                } else {
-                    reg.getEmail().getErrors().add(getMessage("orcid.frontend.verify.duplicate_email", emailAddress));
-                }
+                reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
                 return reg;
             }
 
@@ -423,13 +406,14 @@ public class RegistrationController extends BaseController {
     
     public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {    
         if (reg.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(reg.getEmailsAdditional().get(0)))  {
+            reg.getEmailsAdditional().get(0).setErrors(new ArrayList<String>()); 
             return reg;     
         } else {
             List<Text> emailsAdditionalList = new ArrayList<Text>();
             for(Text emailAdditional : reg.getEmailsAdditional()) {
+                emailAdditional.setErrors(new ArrayList<String>()); 
                 if(!PojoUtil.isEmpty(emailAdditional)){
-                    emailAdditional.setErrors(new ArrayList<String>());                           
-            
+                                              
                     String emailAddressAdditional = emailAdditional.getValue();
             
                     // Validate the email address is ok        
@@ -446,36 +430,7 @@ public class RegistrationController extends BaseController {
                         if(profileEntityManager.isDeactivated(orcid)) {
                             emailAdditional.getErrors().add("orcid.frontend.verify.deactivated_email");
                         } else if(profileEntityManager.isProfileClaimedByEmail(emailAddressAdditional)) {                                                                        
-                            if (isOauthRequest) {
-                                if(Features.ANGULAR2_QA.isActive()) {
-                                    emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
-                                } else {
-                                    String message = getMessage("oauth.registration.duplicate_email_1", emailAddressAdditional);
-                                    message += "<a ng-click=\"showToLoginForm()\">";
-                                    message += getMessage("oauth.registration.duplicate_email_2");
-                                    message += "</a>";
-                                    message += getMessage("oauth.registration.duplicate_email_3", emailAddressAdditional);
-                                    emailAdditional.getErrors().add(message);
-                                }
-                            } else {
-                                if(Features.ANGULAR2_QA.isActive()) {
-                                    emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
-                                } else {
-                                    String link = "/signin";
-                                    String linkType = reg.getLinkType();
-                                    if ("social".equals(linkType)) {
-                                        link = "/social/access";
-                                    } else if ("shibboleth".equals(linkType)) {
-                                        link = "/shibboleth/signin";
-                                    }
-                                    String message = getMessage("oauth.registration.duplicate_email_1", emailAddressAdditional);
-                                    message += "<a href=\"" + orcidUrlManager.getBaseUrl() + link + "\">";
-                                    message += getMessage("oauth.registration.duplicate_email_2");
-                                    message += "</a>";
-                                    message += getMessage("oauth.registration.duplicate_email_3", emailAddressAdditional);
-                                    emailAdditional.getErrors().add(message);
-                                }
-                            }
+                            emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
                         } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
                             //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
                             String resendUrl = createResendClaimUrl(emailAddressAdditional, request);

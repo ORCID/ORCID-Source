@@ -12,6 +12,7 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
@@ -62,7 +63,16 @@ public class LoginController extends OauthControllerBase {
             }
         }
         // in case have come via a link that requires them to be signed out        
-        return new ModelAndView("login");
+        ModelAndView mav = new ModelAndView("login");
+        boolean showLogin = true;
+        String queryString = request.getQueryString();
+        // Check show_login params to decide if the login form should be
+        // displayed by default
+        if (!PojoUtil.isEmpty(queryString) && queryString.toLowerCase().contains("show_login=false")) {
+            showLogin = false;
+        }   
+        mav.addObject("showLogin", String.valueOf(showLogin));
+        return mav;
     }
 
     // We should go back to regular spring sign out with CSRF protection
@@ -89,6 +99,16 @@ public class LoginController extends OauthControllerBase {
         String queryString = request.getQueryString();
         String redirectUri = null;
 
+        // Check if user is already logged in, if so, redirect it to oauth/authorize
+        OrcidProfileUserDetails userDetails = getCurrentUser();
+        if(userDetails != null) {
+            redirectUri = orcidUrlManager.getBaseUrl() + "/oauth/authorize?";
+            queryString = queryString.replace("oauth&", "");
+            redirectUri = redirectUri + queryString;
+            RedirectView rView = new RedirectView(redirectUri);
+            return new ModelAndView(rView);
+        }
+        
         // Get and save the request information form
         RequestInfoForm requestInfoForm = generateRequestInfoForm(queryString);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
@@ -159,6 +179,7 @@ public class LoginController extends OauthControllerBase {
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("oauth2Screens", true);
+        mav.addObject("oauthRequest", true);
         return mav;
     }
 }
