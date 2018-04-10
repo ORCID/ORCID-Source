@@ -12,8 +12,10 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -53,6 +55,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     
     @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
+    
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
@@ -228,6 +233,10 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/enable-developer-tools.json", method = RequestMethod.POST)
     public @ResponseBody
     boolean enableDeveloperTools(HttpServletRequest request) {
-        return profileEntityManager.enableDeveloperTools(getCurrentUserOrcid());        
+        boolean enabled = profileEntityManager.enableDeveloperTools(getCurrentUserOrcid());     
+        if (enabled) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.ACCEPTED_PUBLIC_CLIENT_TERMS_CONDITIONS, getCurrentUserOrcid());
+        }
+        return enabled;
     }
 }

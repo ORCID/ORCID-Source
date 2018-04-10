@@ -8,7 +8,7 @@ declare var getStaticCdnPath: any;
 declare var orcidGA: any;
 declare var orcidVar: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
@@ -111,7 +111,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         };
 
         this.allowEmailAccess = true;
-        this.authorizationForm = {};
+        this.authorizationForm = {
+            userName: {
+                value: ""
+            }
+        };
         this.counter = 0;
         this.currentLanguage = OrcidCookie.getCookie('locale_v3');
         this.duplicates = {};

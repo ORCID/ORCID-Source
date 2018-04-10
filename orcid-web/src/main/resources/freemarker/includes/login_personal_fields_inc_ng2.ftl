@@ -24,16 +24,16 @@
 </#if>
 <div class="form-group">
     <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
-    <input type="text" id="userId" name="userId" [(ngModel)]="authorizationForm.userName.value" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">
+    <input type="text" id="userId" name="userId" [(ngModel)]="authorizationForm.userName.value"  class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}" />
 </div>
 <div class="form-group">
     <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>					
-    <input type="password" id="password" name="password" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.password")}">
+    <input type="password" id="password" name="password" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.password")}" />
 </div>
 <div class="form-group" id="verificationCodeFor2FA">
     <p class="bold">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}<p>
     <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                      
-    <input id="verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">  
+    <input id="verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}" />  
 </div>
 <div id="2FAInstructions" style="display:none">
     <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>

@@ -1,7 +1,7 @@
 declare var $: any; //delete
 declare var orcidVar: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -144,7 +144,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     
     privacyChange( obj ): any {
         this.formData.visibility.visibility = obj;
-        this.setForm( false );   
+        //this.setForm( false );   
     };
         
     swapDown(index): void{
