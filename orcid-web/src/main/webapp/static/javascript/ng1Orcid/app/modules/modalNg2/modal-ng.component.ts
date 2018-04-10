@@ -1,6 +1,6 @@
 declare var $: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
  
 import { AfterViewInit, Component, ElementRef, Input, OnInit, OnDestroy, Output } 

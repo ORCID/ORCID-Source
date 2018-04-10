@@ -3,7 +3,7 @@ declare var orcidVar: any;
 
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
