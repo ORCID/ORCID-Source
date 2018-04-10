@@ -18,4 +18,13 @@
         </createTable>           
         <createSequence sequenceName="profile_history_event_seq"/>
     </changeSet>
+    
+    <changeSet id="ADD-PROFILE-HISTORY-EVENT-INDEX" author="George Nash">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="group_id_record_group_type_idx" tableName="group_id_record" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX profile_history_event_orcid_idx on profile_history_event (orcid);</sql>
+    </changeSet>    
 </databaseChangeLog>                   
