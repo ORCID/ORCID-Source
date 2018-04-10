@@ -41,8 +41,11 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
@@ -100,6 +103,9 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Mock
     private EmailManagerReadOnly mockEmailManagerReadOnly;
+    
+    @Mock
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -194,6 +200,11 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Test
     public void deactivateAndReactivateProfileTest() throws Exception {
+        ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
+        ProfileEntityManager profileEntityManager = (ProfileEntityManager) ReflectionTestUtils.getField(adminController, "profileEntityManager");
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
+        
         // Test deactivate
         Map<String, Set<String>> result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
         assertEquals(1, result.get("deactivateSuccessfulList").size());
