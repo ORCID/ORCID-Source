@@ -2,12 +2,9 @@ package org.orcid.persistence.jpa.entities;
 
 import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,10 +15,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.WorkType;
-import org.orcid.jaxb.model.record_v2.PeerReviewType;
-import org.orcid.jaxb.model.record_v2.Role;
 import org.orcid.utils.OrcidStringUtils;
 
 @Entity
@@ -31,15 +24,15 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
     private static final long serialVersionUID = -172752706595347541L;
     private Long id;
     private ProfileEntity profile;
-    private Role role;
+    private String role;
     private OrgEntity org;
     private String externalIdentifiersJson;
     private String url;
-    private PeerReviewType type;
+    private String type;
     private CompletionDateEntity completionDate;        
-    private Visibility visibility;                
+    private String visibility;                
     private String subjectExternalIdentifiersJson;
-    private WorkType subjectType;
+    private String subjectType;
     private String subjectContainerName;
     private String subjectName;
     private String subjectTranslatedName;
@@ -56,14 +49,12 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
         return id;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "peer_review_role")
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
@@ -95,14 +86,12 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
         this.url = url;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)   
     @Column(name = "peer_review_type")
-    public PeerReviewType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(PeerReviewType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -114,13 +103,12 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
         this.completionDate = completionDate;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Visibility getVisibility() {
+    @Column
+    public String getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Visibility visibility) {
+    public void setVisibility(String visibility) {
         this.visibility = visibility;
     }
 
@@ -148,14 +136,12 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
         this.subjectExternalIdentifiersJson = subjectExternalIdentifiersJson;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)   
     @Column(name = "subject_type")
-    public WorkType getSubjectType() {
+    public String getSubjectType() {
         return subjectType;
     }
 
-    public void setSubjectType(WorkType subjectType) {
+    public void setSubjectType(String subjectType) {
         this.subjectType = subjectType;
     }
 
@@ -265,8 +251,8 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
             return compareOrgName;
         }
 
-        int compareOrgCountry = OrcidStringUtils.compareStrings(org.getCountry() == null ? null : org.getCountry().value(), other.getOrg().getCountry() == null ? null : other.getOrg()
-                .getCountry().value());
+        int compareOrgCountry = OrcidStringUtils.compareStrings(org.getCountry() == null ? null : org.getCountry(), other.getOrg().getCountry() == null ? null : other.getOrg()
+                .getCountry());
         if (compareOrgCountry != 0) {
             return compareOrgCountry;
         }

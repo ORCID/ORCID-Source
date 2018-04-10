@@ -1,10 +1,7 @@
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,8 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.common_v2.Visibility;
 
 /**
  * <p>
@@ -34,7 +29,7 @@ public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparab
     private Long id;
     private String displayName;
     private ProfileEntity profile;    
-    private Visibility visibility;
+    private String visibility;
     private Long displayIndex;
 
     /**
@@ -89,13 +84,12 @@ public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparab
         this.profile = profile;
     }
     
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Visibility getVisibility() {
+    @Column
+    public String getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Visibility visibility) {
+    public void setVisibility(String visibility) {
         this.visibility = visibility;
     }
 

@@ -2,12 +2,9 @@ package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,8 +17,6 @@ import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.notification_v2.NotificationType;
 
 /**
  * @author Will Simpson
@@ -65,7 +60,7 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
 
     private Long id;
     private ProfileEntity profile;
-    private NotificationType notificationType;
+    private String notificationType;
     private String notificationSubject;
     private String notificationIntro;
     private Date sentDate;
@@ -97,14 +92,12 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
         this.profile = profile;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "notification_type", insertable = false, updatable = false)
-    public NotificationType getNotificationType() {
+    public String getNotificationType() {
         return notificationType;
     }
 
-    public void setNotificationType(NotificationType notificationType) {
+    public void setNotificationType(String notificationType) {
         this.notificationType = notificationType;
     }
 

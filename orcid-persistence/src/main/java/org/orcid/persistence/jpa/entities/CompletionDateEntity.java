@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.orcid.jaxb.model.message.FuzzyDate;
-
 @Embeddable
 public class CompletionDateEntity extends FuzzyDateEntity implements Serializable {
 
@@ -14,10 +12,6 @@ public class CompletionDateEntity extends FuzzyDateEntity implements Serializabl
      * 
      */
     private static final long serialVersionUID = 1L;
-
-    public CompletionDateEntity(FuzzyDate fuzzyDate) {
-        super(fuzzyDate);
-    }
 
     public CompletionDateEntity() {
     }
