@@ -32,8 +32,8 @@ import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.utils.listener.BaseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,8 +71,8 @@ public class Orcid20APIClient {
      * @param orcid
      * @return Activities
      */
-    public ActivitiesSummary fetchPublicActivitiesSummary(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/activities");
+    public Record fetchPublicRecord(String orcid) throws LockedRecordException, DeprecatedRecordException {
+        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/record");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
         Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
         ClientResponse response = builder.get(ClientResponse.class);
@@ -90,7 +90,7 @@ public class Orcid20APIClient {
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
         }
-        return response.getEntity(ActivitiesSummary.class);        
+        return response.getEntity(Record.class);        
     }
     
     public Affiliation fetchAffiliation(String orcid, Long putCode, AffiliationType type){

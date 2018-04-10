@@ -164,8 +164,13 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             try {
                 Record record = orcid20ApiClient.fetchPublicRecord(message);
                 if (record != null) {
-                    s3Manager.updateS3(orcid, record);
-                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                    // Index only if it is claimed
+                    if(record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
+                        s3Manager.updateS3(orcid, record);
+                        recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                    } else if(record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == false) {
+                        LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
+                    }
                 }
             } catch (LockedRecordException | DeprecatedRecordException e) {
                 try {
@@ -209,8 +214,13 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         try {
             Record record = orcid20ApiClient.fetchPublicRecord(message);
             if (record != null) {
-                s3Manager.uploadRecordSummary(orcid, record);
-                recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                // Index only if it is claimed
+                if(record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
+                    s3Manager.uploadRecordSummary(orcid, record);                    
+                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                } else if(record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == false) {
+                    LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
+                }                
             }
         } catch (LockedRecordException | DeprecatedRecordException e) {
             try {
