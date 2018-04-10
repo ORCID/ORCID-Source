@@ -76,7 +76,6 @@ public class GroupIdRecord implements Serializable, SourceAware {
     @JsonIgnore
     protected Source source;
     @XmlAttribute(name = "put-code")
-    @JsonIgnore
     protected Long putCode;
     @JsonIgnore
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")    
