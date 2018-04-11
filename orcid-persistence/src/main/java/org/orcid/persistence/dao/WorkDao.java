@@ -3,7 +3,6 @@ package org.orcid.persistence.dao;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -27,7 +26,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility);
+    boolean updateVisibilities(String orcid, List<Long> workIds, String visibility);
     
     /**
      * Removes a work.

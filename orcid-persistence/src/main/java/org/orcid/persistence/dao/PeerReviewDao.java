@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
 public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
@@ -44,7 +43,7 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
     
     boolean updateToMaxDisplay(String orcid, Long peerReviewId);
     
-    boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility);
+    boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, String visibility);
     
     /**
      * Returns a list of  ids of peer reviews that still have old external identifiers

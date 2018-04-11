@@ -5,11 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -90,13 +85,13 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev);
 
-    OrcidType retrieveOrcidType(String orcid);
+    String retrieveOrcidType(String orcid);
 
     List<Object[]> findInfoForDecryptionAnalysis();
 
-    Locale retrieveLocale(String orcid);
+    String retrieveLocale(String orcid);
 
-    void updateLocale(String orcid, Locale locale);
+    void updateLocale(String orcid, String locale);
 
     boolean deprecateProfile(String toDeprecate, String primaryOrcid, String deprecatedMethod, String adminUser);
 
@@ -109,7 +104,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
 
     void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
-            boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
+            boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 
@@ -117,9 +112,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     
     public boolean getClaimedStatusByEmail(String email);
 
-    ClientType getClientType(String orcid);
+    String getClientType(String orcid);
 
-    MemberType getGroupType(String orcid);
+    String getGroupType(String orcid);
 
     public boolean removeProfile(String orcid);
 
@@ -142,7 +137,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean updateNotificationsPreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests);
     
-    boolean updateDefaultVisibility(String orcid, Visibility visibility);
+    boolean updateDefaultVisibility(String orcid, String visibility);
     
     boolean updateSendEmailFrequencyDays(String orcid, Float sendEmailFrequencyDays);
 

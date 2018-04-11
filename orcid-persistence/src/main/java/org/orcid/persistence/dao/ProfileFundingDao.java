@@ -3,7 +3,6 @@ package org.orcid.persistence.dao;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long> {
@@ -45,7 +44,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility);
+    boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, String visibility);
 
     /**
      * Creates a new profile funding relationship between an organization and a

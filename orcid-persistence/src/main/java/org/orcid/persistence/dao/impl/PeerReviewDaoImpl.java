@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -55,7 +54,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     
     @Override
     @Transactional
-    public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility) {
+    public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, String visibility) {
         Query query = entityManager
                 .createQuery("update PeerReviewEntity set visibility=:visibility, lastModified=now() where id in (:peerReviewIds) and  profile.id=:orcid");
         query.setParameter("peerReviewIds", peerReviewIds);

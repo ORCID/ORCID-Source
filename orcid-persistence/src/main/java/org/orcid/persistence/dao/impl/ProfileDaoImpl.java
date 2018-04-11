@@ -13,11 +13,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
@@ -30,6 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
+    private static final String PUBLIC_VISIBILITY = "PUBLIC";
+
+    private static final String PRIVATE_VISIBILITY = "PRIVATE";
+    
     public ProfileDaoImpl() {
         super(ProfileEntity.class);
     }
@@ -452,10 +451,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    public OrcidType retrieveOrcidType(String orcid) {
-        TypedQuery<OrcidType> query = entityManager.createQuery("select orcidType from ProfileEntity where orcid = :orcid", OrcidType.class);
+    public String retrieveOrcidType(String orcid) {
+        TypedQuery<String> query = entityManager.createQuery("select orcidType from ProfileEntity where orcid = :orcid", String.class);
         query.setParameter("orcid", orcid);
-        List<OrcidType> results = query.getResultList();
+        List<String> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
 
@@ -468,15 +467,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    public Locale retrieveLocale(String orcid) {
-        TypedQuery<Locale> query = entityManager.createQuery("select locale from ProfileEntity where orcid = :orcid", Locale.class);
+    public String retrieveLocale(String orcid) {
+        TypedQuery<String> query = entityManager.createQuery("select locale from ProfileEntity where orcid = :orcid", String.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
 
     @Override
     @Transactional
-    public void updateLocale(String orcid, Locale locale) {
+    public void updateLocale(String orcid, String locale) {
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), locale = :locale where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("locale", locale);
@@ -497,7 +496,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", toDeprecate);
         query.setParameter("indexing_status", IndexingStatus.PENDING);
         query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
-        query.setParameter("defaultVisibility", Visibility.PRIVATE);
+        query.setParameter("defaultVisibility", PRIVATE_VISIBILITY);
         query.setParameter("deprecatedMethod", deprecatedMethod);
         if (ProfileEntity.ADMIN_DEPRECATION.equals(deprecatedMethod) && adminUser != null) {
             query.setParameter("deprecatingAdmin", adminUser);
@@ -541,7 +540,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
-            boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
+            boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
         Query updateQuery = entityManager.createQuery(
                 "update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
@@ -591,10 +590,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @return the client type, null if it is not a client
      */
     @Override
-    public ClientType getClientType(String orcid) {
-        TypedQuery<ClientType> query = entityManager.createQuery("select clientType from ClientDetailsEntity where id = :orcid", ClientType.class);
+    public String getClientType(String orcid) {
+        TypedQuery<String> query = entityManager.createQuery("select clientType from ClientDetailsEntity where id = :orcid", String.class);
         query.setParameter("orcid", orcid);
-        List<ClientType> results = query.getResultList();
+        List<String> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
 
@@ -606,10 +605,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @return the group type, null if it is not a group
      */
     @Override
-    public MemberType getGroupType(String orcid) {
-        TypedQuery<MemberType> query = entityManager.createQuery("select groupType from ProfileEntity where orcid = :orcid", MemberType.class);
+    public String getGroupType(String orcid) {
+        TypedQuery<String> query = entityManager.createQuery("select groupType from ProfileEntity where orcid = :orcid", String.class);
         query.setParameter("orcid", orcid);
-        List<MemberType> results = query.getResultList();
+        List<String> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
 
@@ -747,7 +746,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public boolean updateDefaultVisibility(String orcid, Visibility visibility) {
+    public boolean updateDefaultVisibility(String orcid, String visibility) {
         Query updateQuery = entityManager
                 .createQuery("update ProfileEntity set lastModified = now(), activitiesVisibilityDefault = :activitiesVisibilityDefault where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);

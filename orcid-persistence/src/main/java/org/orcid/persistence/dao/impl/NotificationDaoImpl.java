@@ -7,8 +7,6 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long> implements NotificationDao {
 
+    private static final String NOTIFICATION_TYPE_PERMISSION = "PERMISSION";
+    
     public NotificationDaoImpl() {
         super(NotificationEntity.class);
     }
@@ -134,7 +134,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
                 "from NotificationEntity where orcid = :orcid and clientSourceId = :client and notificationType = :notificationType", NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("client", client);
-        query.setParameter("notificationType", NotificationType.PERMISSION);
+        query.setParameter("notificationType", NOTIFICATION_TYPE_PERMISSION);
         return query.getResultList();
     }
 
@@ -142,7 +142,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     public List<Object[]> findRecordsWithUnsentNotifications() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS);
-        query.setParameter("never", Float.valueOf(SendEmailFrequency.NEVER.value()));
+        query.setParameter("never", Float.MAX_VALUE);
         return query.getResultList();
     }
 

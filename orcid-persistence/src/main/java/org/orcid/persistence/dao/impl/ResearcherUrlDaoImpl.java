@@ -5,13 +5,14 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Long> implements ResearcherUrlDao {
+
+    private static final String PUBLIC_VISIBILITY = "PUBLIC";
 
     public ResearcherUrlDaoImpl() {
         super(ResearcherUrlEntity.class);
@@ -35,7 +36,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Override
     @Cacheable(value = "public-researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ResearcherUrlEntity> getPublicResearcherUrls(String orcid, long lastModified) {
-        return getResearcherUrls(orcid, Visibility.PUBLIC);
+        return getResearcherUrls(orcid, PUBLIC_VISIBILITY);
     }
 
     /**
@@ -47,7 +48,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @SuppressWarnings("unchecked")
-    public List<ResearcherUrlEntity> getResearcherUrls(String orcid, Visibility visibility) {
+    public List<ResearcherUrlEntity> getResearcherUrls(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid AND visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
