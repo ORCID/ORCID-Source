@@ -1,6 +1,7 @@
 package org.orcid.core.utils.v3;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 public class RecordNameUtils {
@@ -14,6 +15,26 @@ public class RecordNameUtils {
             }
         }
         return null;
+    }
+    
+    public static String getDisplayName(RecordNameEntity recordNameEntity) {
+        if(recordNameEntity == null) {
+            return null;
+        }
+        if (StringUtils.isNotBlank(recordNameEntity.getCreditName()) && Visibility.PUBLIC.name().equals(recordNameEntity.getVisibility())) {
+            return recordNameEntity.getCreditName();
+        }
+        StringBuilder builder = new StringBuilder();
+        if (StringUtils.isNotBlank(recordNameEntity.getGivenNames())) {
+            builder.append(recordNameEntity.getGivenNames());
+        }
+        if (StringUtils.isNotBlank(recordNameEntity.getFamilyName())) {
+            if (builder.length() > 0) {
+                builder.append(" ");
+            }
+            builder.append(recordNameEntity.getFamilyName());
+        }
+        return builder.length() > 0 ? builder.toString() : null;
     }
 
 }
