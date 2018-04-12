@@ -82,8 +82,11 @@ public enum Features implements Feature {
     GET_MY_DATA,
 
     @Label("Check external id resolution in UI")
-    EX_ID_RESOLVER;
+    EX_ID_RESOLVER,
 
+    @Label("Remove https://orcid.org from OpenID id_tokens")
+    OPENID_SIMPLE_SUBJECT;
+    
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

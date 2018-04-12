@@ -10,6 +10,7 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -70,7 +71,12 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             String orcid = authentication.getName();
             Builder claims = new JWTClaimsSet.Builder();
             claims.audience(params.get(OrcidOauth2Constants.CLIENT_ID_PARAM));
-            claims.issuer(path);
+            if (Features.OPENID_SIMPLE_SUBJECT.isActive()){
+                claims.subject(orcid);                
+            }else{
+                claims.subject("https://orcid.org"+"/"+orcid);
+                claims.claim("id_path", orcid);
+            }
             claims.subject(orcid);
             claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
             Date now = new Date();
