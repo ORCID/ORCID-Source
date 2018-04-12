@@ -24,6 +24,7 @@ import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.springframework.transaction.annotation.Transactional;
@@ -821,5 +822,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), profile_deactivation_date = now(), indexing_status = 'REINDEX' where orcid = :orcid");
         query.setParameter("orcid", orcid);        
         return query.executeUpdate() > 0;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid) {
+        Query query = entityManager.createQuery("from OrcidGrantedAuthority where profileEntity.id = :orcid");
+        query.setParameter("orcid", orcid);  
+        return query.getResultList();
     }
 }
