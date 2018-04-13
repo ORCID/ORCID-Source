@@ -12,6 +12,7 @@ import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 
@@ -159,4 +160,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void update2FASecret(String orcid, String secret);
     
     boolean deactivate(String orcid);
+
+    List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid);
 }
