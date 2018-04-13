@@ -20,6 +20,8 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -63,7 +65,16 @@ public class LoginController extends OauthControllerBase {
             }
         }
         // in case have come via a link that requires them to be signed out        
-        return new ModelAndView("login");
+        ModelAndView mav = new ModelAndView("login");
+        boolean showLogin = true;
+        String queryString = request.getQueryString();
+        // Check show_login params to decide if the login form should be
+        // displayed by default
+        if (!PojoUtil.isEmpty(queryString) && queryString.toLowerCase().contains("show_login=false")) {
+            showLogin = false;
+        }   
+        mav.addObject("showLogin", String.valueOf(showLogin));
+        return mav;
     }
 
     // We should go back to regular spring sign out with CSRF protection
@@ -101,7 +112,15 @@ public class LoginController extends OauthControllerBase {
         }
         
         // Get and save the request information form
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(queryString);
+        RequestInfoForm requestInfoForm;
+        try{
+            requestInfoForm = generateRequestInfoForm(queryString);
+        }catch (InvalidRequestException e){
+            //convert to a 400
+            ModelAndView mav = new ModelAndView("oauth-error");
+            mav.setStatus(HttpStatus.BAD_REQUEST);
+            return mav;
+        }
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
@@ -170,6 +189,7 @@ public class LoginController extends OauthControllerBase {
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("oauth2Screens", true);
+        mav.addObject("oauthRequest", true);
         return mav;
     }
 }

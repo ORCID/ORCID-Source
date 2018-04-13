@@ -22,7 +22,9 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
@@ -36,6 +38,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -120,6 +123,9 @@ public class RegistrationController extends BaseController {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -374,24 +380,7 @@ public class RegistrationController extends BaseController {
             }
             
             if (profileEntityManager.isProfileClaimedByEmail(emailAddress)) {
-                if (isOauthRequest) {
-                    if(Features.ANGULAR2_QA.isActive()) {
-                        reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
-                    } else {
-                        String message = getMessage("oauth.registration.duplicate_email_1", emailAddress);
-                        message += "<a ng-click=\"showToLoginForm()\">";
-                        message += getMessage("oauth.registration.duplicate_email_2");
-                        message += "</a>";
-                        message += getMessage("oauth.registration.duplicate_email_3", emailAddress);
-                        reg.getEmail().getErrors().add(message);
-                    }
-                    return reg;
-                }
-                if(Features.ANGULAR2_QA.isActive()) {
-                    reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
-                } else {
-                    reg.getEmail().getErrors().add(getMessage("orcid.frontend.verify.duplicate_email", emailAddress));
-                }
+                reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
                 return reg;
             }
 
@@ -417,13 +406,14 @@ public class RegistrationController extends BaseController {
     
     public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {    
         if (reg.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(reg.getEmailsAdditional().get(0)))  {
+            reg.getEmailsAdditional().get(0).setErrors(new ArrayList<String>()); 
             return reg;     
         } else {
             List<Text> emailsAdditionalList = new ArrayList<Text>();
             for(Text emailAdditional : reg.getEmailsAdditional()) {
+                emailAdditional.setErrors(new ArrayList<String>()); 
                 if(!PojoUtil.isEmpty(emailAdditional)){
-                    emailAdditional.setErrors(new ArrayList<String>());                           
-            
+                                              
                     String emailAddressAdditional = emailAdditional.getValue();
             
                     // Validate the email address is ok        
@@ -440,36 +430,7 @@ public class RegistrationController extends BaseController {
                         if(profileEntityManager.isDeactivated(orcid)) {
                             emailAdditional.getErrors().add("orcid.frontend.verify.deactivated_email");
                         } else if(profileEntityManager.isProfileClaimedByEmail(emailAddressAdditional)) {                                                                        
-                            if (isOauthRequest) {
-                                if(Features.ANGULAR2_QA.isActive()) {
-                                    emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
-                                } else {
-                                    String message = getMessage("oauth.registration.duplicate_email_1", emailAddressAdditional);
-                                    message += "<a ng-click=\"showToLoginForm()\">";
-                                    message += getMessage("oauth.registration.duplicate_email_2");
-                                    message += "</a>";
-                                    message += getMessage("oauth.registration.duplicate_email_3", emailAddressAdditional);
-                                    emailAdditional.getErrors().add(message);
-                                }
-                            } else {
-                                if(Features.ANGULAR2_QA.isActive()) {
-                                    emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
-                                } else {
-                                    String link = "/signin";
-                                    String linkType = reg.getLinkType();
-                                    if ("social".equals(linkType)) {
-                                        link = "/social/access";
-                                    } else if ("shibboleth".equals(linkType)) {
-                                        link = "/shibboleth/signin";
-                                    }
-                                    String message = getMessage("oauth.registration.duplicate_email_1", emailAddressAdditional);
-                                    message += "<a href=\"" + orcidUrlManager.getBaseUrl() + link + "\">";
-                                    message += getMessage("oauth.registration.duplicate_email_2");
-                                    message += "</a>";
-                                    message += getMessage("oauth.registration.duplicate_email_3", emailAddressAdditional);
-                                    emailAdditional.getErrors().add(message);
-                                }
-                            }
+                            emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
                         } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
                             //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
                             String resendUrl = createResendClaimUrl(emailAddressAdditional, request);
@@ -639,11 +600,30 @@ public class RegistrationController extends BaseController {
         
         LOGGER.debug("About to create profile from registration email={}, sessionid={}", email, sessionId);
         String newUserOrcid = registrationManager.createMinimalRegistration(registration, usedCaptcha, locale, ip);
+        
+        processProfileHistoryEvents(registration, newUserOrcid);
         notificationManager.sendWelcomeEmail(newUserOrcid, email);
         notificationManager.sendVerificationEmailToNonPrimaryEmails(newUserOrcid);
         request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
         LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
                 new Object[] { newUserOrcid, email, sessionId });
         return newUserOrcid;
-    }                
+    }
+
+    private void processProfileHistoryEvents(Registration registration, String newUserOrcid) {
+        // t&cs must be accepted but check just in case!
+        if (registration.getTermsOfUse().getValue()) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.ACCEPTED_TERMS_CONDITIONS, newUserOrcid);
+        }
+        if (Visibility.PRIVATE.equals(registration.getActivitiesVisibilityDefault().getVisibility())) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, newUserOrcid);
+        }
+        if (Visibility.LIMITED.equals(registration.getActivitiesVisibilityDefault().getVisibility())) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_LIMITED, newUserOrcid);
+        }
+        if (Visibility.PUBLIC.equals(registration.getActivitiesVisibilityDefault().getVisibility())) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PUBLIC, newUserOrcid);
+        }
+    }            
+    
 }

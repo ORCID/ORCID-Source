@@ -127,7 +127,7 @@
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />     
 	</sec:http>
-
+	
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
     	<sec:csrf disabled="true"/>
@@ -149,7 +149,7 @@
         <sec:custom-filter ref="revokeTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
-    
+
 	<sec:http use-expressions="false" pattern="/oauth/.*" 
 	    authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager" 
 	    create-session="ifRequired" request-matcher="regex" entry-point-ref="approveOauthAuthenticationEntryPoint">
@@ -189,7 +189,7 @@
 		<sec:session-management session-fixation-protection="migrateSession"/>
 		<sec:logout/>
 	</sec:http>
-	
+
 	<bean id="approveOauthAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
 	    <constructor-arg name="loginFormUrl" value="/oauth/signin" />
 	</bean>
@@ -367,7 +367,6 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools/.*" 
 			access="ROLE_USER"/>
-		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients" 
@@ -392,6 +391,8 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/togglz/*" 
 			access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/profile-history/.*" 
+            access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 

@@ -3,7 +3,7 @@ declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -177,8 +177,8 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 errors: {}, 
                 value: null
             },
-            workExternalIdentifiers: {
-            },
+            workExternalIdentifiers: []
+            ,
         };
         this.emails = {};
         this.formData = {

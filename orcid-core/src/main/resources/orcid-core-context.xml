@@ -608,7 +608,9 @@
         <property name="profileKeywordDao" ref="profileKeywordDaoReadOnly" />
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
     </bean> 
-        
+    
+    <bean id="profileHistoryEventManagerV3" class="org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl" />
+    
     <bean id="recordManagerV3" class="org.orcid.core.manager.v3.impl.RecordManagerImpl">
         <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="emailManager" ref="emailManagerV3" />

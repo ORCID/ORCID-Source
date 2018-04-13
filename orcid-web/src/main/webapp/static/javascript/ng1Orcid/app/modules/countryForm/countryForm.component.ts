@@ -1,6 +1,6 @@
 declare var $: any; //delete
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -258,6 +258,6 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //this.getformData();
+        this.getformData();
     };
 }
