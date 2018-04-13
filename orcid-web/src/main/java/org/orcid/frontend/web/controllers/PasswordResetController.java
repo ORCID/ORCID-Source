@@ -139,11 +139,12 @@ public class PasswordResetController extends BaseController {
             }
     
             if (profile.getDeactivationDate() != null) {
-                String message = getMessage("orcid.frontend.reset.password.disabled_account_1");
+                /*String message = getMessage("orcid.frontend.reset.password.disabled_account_1");
                 message += "<a href=\"/help/contact-us\">";
                 message += getMessage("orcid.frontend.reset.password.disabled_account_2");
                 message += "</a>";
-                errors.add(message);
+                errors.add(message);*/
+                errors.add("orcid.frontend.security.orcid_deactivated");
                 return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
             }
     

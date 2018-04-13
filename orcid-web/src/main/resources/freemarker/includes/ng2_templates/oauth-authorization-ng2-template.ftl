@@ -77,7 +77,7 @@
                                     </form>
                                 </div>
                                 <!-- RESET PASSWORD -->
-                                <request-password-reset-ng2 [authorizationForm]="authorizationForm"></request-password-reset-ng2>
+                                <request-password-reset-ng2 [authorizationForm]="authorizationForm" [showDeactivatedError]="showDeactivatedError" [showReactivationSent]="showReactivationSent" (sendReactivationEmail)="sendReactivationEmail($event)"></request-password-reset-ng2>
 
                                 <!-- SOCIAL LOGIN -->                               
                                 <div class="social-login">
