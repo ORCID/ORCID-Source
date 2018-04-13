@@ -2,7 +2,7 @@ declare var $: any;
 declare var orcidSearchUrlJs: any;
 declare var orcidVar: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef } 

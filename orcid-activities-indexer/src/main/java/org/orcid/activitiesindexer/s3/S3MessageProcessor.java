@@ -43,6 +43,7 @@ import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Activity;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -91,7 +92,9 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             return;
         }
         
-        ActivitiesSummary as = fetchPublicActivitiesSummary(orcid);        
+        LOG.info("Retrying activities for record " + orcid);
+        Record record = fetchPublicRecord(orcid);        
+        ActivitiesSummary as = getActivitiesSummaryFromRecord(record);
         if(as != null) {
             Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
             for(ActivityType type : types) {
@@ -113,7 +116,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
                     break;
                 }
             }
-        }        
+        }       
     }
 
     private void update20Activities(BaseMessage message) {
@@ -123,8 +126,8 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         
         String orcid = message.getOrcid();
         LOG.info("Processing activities for record " + orcid);
-        ActivitiesSummary as = fetchPublicActivitiesSummary(orcid);
-
+        Record record = fetchPublicRecord(orcid);        
+        ActivitiesSummary as = getActivitiesSummaryFromRecord(record);
         if (as != null) {
             Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
             processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
@@ -132,7 +135,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
             processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
             processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
             processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));                        
-        }
+        } 
     }
 
     private void processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
@@ -258,9 +261,9 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         }
     }
     
-    private ActivitiesSummary fetchPublicActivitiesSummary(String orcid) {
+    private Record fetchPublicRecord(String orcid) {
         try {            
-            return orcid20ApiClient.fetchPublicActivitiesSummary(orcid);
+            return orcid20ApiClient.fetchPublicRecord(orcid);
         } catch (LockedRecordException | DeprecatedRecordException e) {
             // Remove all activities from this record
             s3Manager.clearActivities(orcid);
@@ -273,5 +276,15 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
         }
         
         return null;
-    }             
+    }   
+    
+    private ActivitiesSummary getActivitiesSummaryFromRecord(Record record) {
+        if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
+            return record.getActivitiesSummary();
+        } else if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == false) {
+            LOG.warn(record.getOrcidIdentifier().getPath() + " is unclaimed, so, his activities would not be indexed");
+        }
+        
+        return null;
+    }
 }

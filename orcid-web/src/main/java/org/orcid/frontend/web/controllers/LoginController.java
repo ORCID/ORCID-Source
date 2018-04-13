@@ -20,6 +20,8 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -110,7 +112,15 @@ public class LoginController extends OauthControllerBase {
         }
         
         // Get and save the request information form
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(queryString);
+        RequestInfoForm requestInfoForm;
+        try{
+            requestInfoForm = generateRequestInfoForm(queryString);
+        }catch (InvalidRequestException e){
+            //convert to a 400
+            ModelAndView mav = new ModelAndView("oauth-error");
+            mav.setStatus(HttpStatus.BAD_REQUEST);
+            return mav;
+        }
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);

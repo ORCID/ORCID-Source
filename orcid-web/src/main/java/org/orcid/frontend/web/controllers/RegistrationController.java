@@ -22,7 +22,9 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
@@ -36,6 +38,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -120,6 +123,9 @@ public class RegistrationController extends BaseController {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -594,11 +600,30 @@ public class RegistrationController extends BaseController {
         
         LOGGER.debug("About to create profile from registration email={}, sessionid={}", email, sessionId);
         String newUserOrcid = registrationManager.createMinimalRegistration(registration, usedCaptcha, locale, ip);
+        
+        processProfileHistoryEvents(registration, newUserOrcid);
         notificationManager.sendWelcomeEmail(newUserOrcid, email);
         notificationManager.sendVerificationEmailToNonPrimaryEmails(newUserOrcid);
         request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
         LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
                 new Object[] { newUserOrcid, email, sessionId });
         return newUserOrcid;
-    }                
+    }
+
+    private void processProfileHistoryEvents(Registration registration, String newUserOrcid) {
+        // t&cs must be accepted but check just in case!
+        if (registration.getTermsOfUse().getValue()) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.ACCEPTED_TERMS_CONDITIONS, newUserOrcid);
+        }
+        if (Visibility.PRIVATE.equals(registration.getActivitiesVisibilityDefault().getVisibility())) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, newUserOrcid);
+        }
+        if (Visibility.LIMITED.equals(registration.getActivitiesVisibilityDefault().getVisibility())) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_LIMITED, newUserOrcid);
+        }
+        if (Visibility.PUBLIC.equals(registration.getActivitiesVisibilityDefault().getVisibility())) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PUBLIC, newUserOrcid);
+        }
+    }            
+    
 }
