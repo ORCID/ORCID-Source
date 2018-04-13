@@ -248,6 +248,7 @@
 	<include file="/db/updates/identifier-types/identifier-type-41-ark.xml" />
 	<include file="/db/updates/add_deprecation_method_fields.xml" />
 	<include file="/db/updates/identifier-types/update-to-https.xml" />
+
 	<include file="/db/updates/profile_history_event.xml" />
 	<include file="/db/updates/identifier-types/update-rfc-url.xml" />
 </databaseChangeLog>
