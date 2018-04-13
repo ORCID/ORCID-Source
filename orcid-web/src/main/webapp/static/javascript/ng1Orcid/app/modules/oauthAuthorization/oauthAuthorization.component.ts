@@ -440,7 +440,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.oauthService.sendReactivationEmail(email)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
-            (response: Response) => {
+            data => {
                 this.showDeactivatedError = false;
                 this.showReactivationSent = true;
                 this.cdr.detectChanges();

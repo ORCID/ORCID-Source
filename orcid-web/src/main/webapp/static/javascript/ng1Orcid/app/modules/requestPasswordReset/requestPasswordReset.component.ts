@@ -35,6 +35,9 @@ import { RequestPasswordResetService }
 export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, OnInit {
     
     @Input() authorizationForm : any;
+    @Input() showDeactivatedError: any;
+    @Input() showReactivationSent: any;
+    @Output() sendReactivationEmail: EventEmitter<any> = new EventEmitter<any>();
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     showResetPassword: any;
@@ -68,12 +71,14 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         this.requestResetPassword.successMessage = null;
         this.requestResetPassword.errors = null;
         this.showSendResetLinkError = false;
+        this.showDeactivatedError = false;
 
         this.requestPasswordResetService.postResetPasswordRequest( this.requestResetPassword )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.requestResetPassword = data;                
+                this.requestResetPassword = data; 
+                this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);               
                 this.cdr.detectChanges();
             },
             error => {
@@ -85,6 +90,11 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         );
 
     };
+
+    sendReactivation(email?): void {
+        let _email = email;
+        this.sendReactivationEmail.emit(_email);
+    }
 
     toggleResetPassword(): void {
         this.showResetPassword = !this.showResetPassword;
