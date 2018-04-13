@@ -638,6 +638,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
+
         this.authorizationForm = {
             userName:  {value: ""},
             givenNames:  {value: ""},
@@ -645,7 +646,12 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             email:  {value: ""},
             linkType:  {value: null},
         }
-        this.loadRequestInfoForm();
+
+        //if oauth request load request info form
+        if(orcidVar.oauth2Screens || orcidVar.originalOauth2Process){
+            this.loadRequestInfoForm();
+        }
+        
         if(orcidVar.oauth2Screens) {
             if(orcidVar.oauthUserId && orcidVar.showLogin){
                 this.showRegisterForm = false;
