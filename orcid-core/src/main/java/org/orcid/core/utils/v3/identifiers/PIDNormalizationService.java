@@ -62,7 +62,7 @@ public class PIDNormalizationService {
      * @return
      */
     public String normalise(String apiTypeName, String value) {
-        if (apiTypeName == null)
+        if (apiTypeName == null || value == null || !map.containsKey(apiTypeName))
             return value;
         String returnValue = value;
         for (Normalizer n : map.get(apiTypeName)) {
