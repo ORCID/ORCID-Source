@@ -58,6 +58,9 @@ public class PIDResolverService {
      */
     public PIDResolutionResult resolve(String apiTypeName, String value) {
         PIDResolutionResult result = PIDResolutionResult.NOT_ATTEMPTED;
+        if (apiTypeName == null || value == null)
+            return result;
+        
         for (Resolver r : map.get(apiTypeName)) {
             result = r.resolve(apiTypeName, value);
             if (result.isResolved())
