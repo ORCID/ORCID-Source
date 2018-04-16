@@ -454,6 +454,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     line-height: 32px;
     height: 75px;
     color: #494A4C;
+    vertical-align: top;
 }
 
 #home .step .step-detail {
@@ -463,6 +464,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     max-width: 350px;
     width: auto;
     color: #494A4C;
+    vertical-align: top;
 }
 
 #home-blog-list {
