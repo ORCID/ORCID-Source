@@ -21,9 +21,6 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
 @Provider
 public class ApiVersionCheckFilter implements ContainerRequestFilter {
 
-    @InjectParam("v1xDisabled")
-    private Boolean v1xDisabled;
-    
     @InjectParam("localeManager")
     private LocaleManager localeManager;
     
@@ -60,8 +57,8 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
                 Object params[] = {method};
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_missing_version.exception", params));    
             }
-        } else if (version != null && version.startsWith("1.1") && v1xDisabled) {
-            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_version_disabled.exception"));
+        } else if (version != null && version.startsWith("1.1")) {
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_version_disabled.1_1.exception"));
         } else if(version != null && (version.startsWith("2.") || version.startsWith("3."))) {
             if(!OrcidUrlManager.isSecure(httpRequest)) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_secure_only.exception"));
