@@ -427,15 +427,13 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     margin-top: 15px;
 }
 
-#home .step span {
-    float: left;
+#home .step div {
     display: inline-block;
-    text-align: left;
     margin: 0;
     padding: 0
 }
 
-#home .step span.step-headline {
+#home .step .step-headline {
     background: #a6ce39;
     text-align: center;
     -webkit-border-radius: 50%;
@@ -449,7 +447,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     line-height: 40px
 }
 
-#home .step span.step-subheadline {
+#home .step .step-subheadline {
     font-size: 24px;
     padding-top: 10px;
     padding-left: 15px;
@@ -458,12 +456,10 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     color: #494A4C;
 }
 
-#home .step span.step-detail {
+#home .step .step-detail {
     padding: 15px 0 0 15px;
     font-size: 14px;
     line-height: 22px;
-    float: left;
-    text-align: left;
     max-width: 350px;
     width: auto;
     color: #494A4C;
