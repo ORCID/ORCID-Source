@@ -8,23 +8,23 @@
 			<!-- Step 1 -->
 			<div class="row">
 				<div class="col-md-12 step">
-					<span class="step-headline"><@orcid.msg 'home.one'/></span> <span class="step-subheadline"><@orcid.msg 'home.register'/></span> <span class="step-detail"><@orcid.msg 'home.get_your'/> <a href="/register"><@orcid.msg 'home.register_now'/></a><br />
-					<@orcid.msg 'home.registration_takes'/></span>
+					<div class="step-headline"><@orcid.msg 'home.one'/></div> <div class="step-subheadline"><@orcid.msg 'home.register'/></div> <div class="step-detail"><@orcid.msg 'home.get_your'/> <a href="/register"><@orcid.msg 'home.register_now'/></a><br />
+					<@orcid.msg 'home.registration_takes'/></div>
 				</div>
 			</div>
 		</div><!--Closes headline col-md-offset-1-->
 		<!-- Step 2 -->
 		<div class="row">
 			<div class="col-md-12 step">
-				<span class="step-headline"><@orcid.msg 'home.two'/></span> <span class="step-subheadline"><@orcid.msg 'home.add_your'/><br />
-				<@orcid.msg 'home.info'/></span> <span class="step-detail"><@orcid.msg 'home.enhance_your'/> </span>
+				<div class="step-headline"><@orcid.msg 'home.two'/></div> <div class="step-subheadline"><@orcid.msg 'home.add_your'/><br />
+				<@orcid.msg 'home.info'/></div> <div class="step-detail"><@orcid.msg 'home.enhance_your'/> </div>
 			</div>
 		</div>
 		<!-- Step 3 -->
 		<div class="row">
 			<div class="col-md-10 col-md-offset-2 step">
-				<span class="step-headline"><@orcid.msg 'home.three'/></span> <span class="step-subheadline"><@orcid.msg 'home.user_your'/><br />
-				<@orcid.msg 'home.orcid_id'/></span> <span class="step-detail"><@orcid.msg 'home.include_your'/></span>
+				<div class="step-headline"><@orcid.msg 'home.three'/></div> <div class="step-subheadline"><@orcid.msg 'home.user_your'/><br />
+				<@orcid.msg 'home.orcid_id'/></div> <div class="step-detail"><@orcid.msg 'home.include_your'/></div>
 			</div>
 		</div>
 		<!-- Members Section -->

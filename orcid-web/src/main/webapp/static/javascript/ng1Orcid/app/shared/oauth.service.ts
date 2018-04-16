@@ -114,6 +114,7 @@ export class OauthService {
     }
 
     sendReactivationEmail( email ): Observable<any> {
+
         let data = 'email=' + email;
         
         return this.http.post( 
@@ -121,12 +122,11 @@ export class OauthService {
             data, 
             { headers: this.formHeaders}
         )
-        .share();
+        .map((res:Response) => res.json()).share();
     }
 
     sendEmailsAdditionalReactivationEmail( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
-        
         return this.http.post( 
             getBaseUri() + '/sendReactivation.json', 
             encoded_data, 
