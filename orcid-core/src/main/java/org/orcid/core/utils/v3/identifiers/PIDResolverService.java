@@ -12,13 +12,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.core.utils.v3.identifiers.resolvers.ResolutionResult;
 import org.orcid.core.utils.v3.identifiers.resolvers.Resolver;
+import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ResolverService {
+public class PIDResolverService {
 
     @Resource
     List<Resolver> Resolvers = new ArrayList<Resolver>();
@@ -56,8 +56,8 @@ public class ResolverService {
      * a flag indicating success and a flag indicating if resolution was attempted 
      * (i.e. there is a resolver that can handle the type)
      */
-    public ResolutionResult resolve(String apiTypeName, String value) {
-        ResolutionResult result = new ResolutionResult(false,null);
+    public PIDResolutionResult resolve(String apiTypeName, String value) {
+        PIDResolutionResult result = PIDResolutionResult.NOT_ATTEMPTED;
         for (Resolver r : map.get(apiTypeName)) {
             result = r.resolve(apiTypeName, value);
             if (result.isResolved())

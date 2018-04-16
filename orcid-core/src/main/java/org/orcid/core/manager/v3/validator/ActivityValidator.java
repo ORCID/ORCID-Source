@@ -19,7 +19,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.v3.dev1.common.Amount;
 import org.orcid.jaxb.model.v3.dev1.common.Contributor;
 import org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid;
@@ -58,7 +58,7 @@ public class ActivityValidator {
     private ExternalIDValidator externalIDValidator;
     
     @Resource
-    private NormalizationService norm;
+    private PIDNormalizationService norm;
     
     public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();

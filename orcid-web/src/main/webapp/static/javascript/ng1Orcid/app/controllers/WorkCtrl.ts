@@ -382,14 +382,16 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                 type: 'GET',
                                 data:{value:extId.workExternalIdentifierId.value},
                                 success: function(data) {
-                                    if (data.resolved){
+                                    console.log(data);
+                                    console.log(data);
+                                    if (data.generatedUrl){
                                         if(extId.url == null) {
-                                            extId.url = {value:data.resolvedUrl};
+                                            extId.url = {value:data.generatedUrl};
                                         }else{
-                                            extId.url.value=data.resolvedUrl;                        
+                                            extId.url.value=data.generatedUrl;                        
                                         }
                                         extId.workExternalIdentifierId.errors = [];
-                                    } else if (data.attemptedResolution){
+                                    } else if (!data.isValidFormat || (data.attemptedResolution && !data.resolved) ){
                                         if(extId.url == null) {
                                             extId.url = {value:""};
                                         }else{
