@@ -37,7 +37,7 @@ export class AlertBannerComponent implements OnInit {
         console.log("dismiss");
         this.showCookieNotification = false;
         if(this.cookiesEnabled){
-            OrcidCookie.setCookie("showCookiePolicyNotification", "dont show message", 365);
+            OrcidCookie.setCookie("orcidCookiePolicyAlert", "dont show message", 365);
         }
     };
 
