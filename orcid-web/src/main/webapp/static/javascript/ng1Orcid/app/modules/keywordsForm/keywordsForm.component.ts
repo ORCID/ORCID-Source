@@ -114,7 +114,9 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setBulkGroupPrivacy(priv): void{
-
+         for (var idx in this.formData.keywords){
+            this.formData.keywords[idx].visibility.visibility = priv;        
+        }
     };
 
     setForm( closeAfterAction ): void {
