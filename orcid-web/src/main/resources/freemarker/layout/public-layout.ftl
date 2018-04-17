@@ -18,7 +18,9 @@
 <!--<#if devSandboxUrl != ''>
     <div class="dev-watermark"></div>
 </#if>-->
-<alert-banner-ng2></alert-banner-ng2>
+<@orcid.checkFeatureStatus 'COOKIE_BANNER>
+    <alert-banner-ng2></alert-banner-ng2>
+</@orcid.checkFeatureStatus>
 <!--OAUTH SCREEN HEADER-->
 <#if (RequestParameters['oauth'])??>
     <div class="container">
