@@ -12,9 +12,40 @@
             </div>          
         </div>
         <div class="row bottomBuffer">
-            <!--                      
-            <div ng-include="'bulk-edit'"></div>
-            -->             
+            <span class="right">Edit all privacy settings</span>
+            <div class="bulk-privacy-bar">
+                <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
+                    <ul class="privacyToggle" ng-mouseenter="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" ng-mouseleave="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
+                        <li class="publicActive publicInActive" [ngClass]="{publicInActive: bioModel != 'PUBLIC'}"><a (click)="setBulkGroupPrivacy('PUBLIC')" name="privacy-toggle-3-public" id=""></a></li>
+                        <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: bioModel != 'LIMITED'}"><a (click)="setBulkGroupPrivacy('LIMITED')" name="privacy-toggle-3-limited" id=""></a></li>
+                        <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE')" name="privacy-toggle-3-private" id=""></a></li>
+                    </ul>
+                </div>
+                <div class="popover-help-container" style="top: -75px; left: 512px;">
+                    <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <strong>Who can see this? </strong>
+                            <ul class="privacyHelp">
+                                <li class="public" style="color: #009900;">everyone</li>
+                                <li class="limited" style="color: #ffb027;">trusted parties</li>
+                                <li class="private" style="color: #990000;">only me</li>
+                            </ul>
+                            <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">More information on privacy settings</a>
+                        </div>                
+                    </div>                              
+                </div>
+
+            </div>
+            <div class="bulk-help popover-help-container">
+                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <div id="bulk-help" class="popover bottom">
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <p>Use Edit all privacy settings to change the visibility level of all items, or Edit individual privacy settings to select different visibility levels for each item.</p>
+                    </div>
+               </div>
+            </div>        
         </div>              
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
