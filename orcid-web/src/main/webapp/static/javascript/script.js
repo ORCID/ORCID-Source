@@ -437,42 +437,6 @@ $(function() {
         setInterval(checkOrcidLoggedIn, 15000);
     }
 
-    // if not iframed check if not orcid.org
-    if (location == parent.location
-            && window.location.hostname.toLowerCase() != "orcid.org") {
-
-        var cookieName = "testWarningCookie";
-        var warnMessCookie = OrcidCookie.getCookie(cookieName);
-        if (!warnMessCookie) {
-            var wHtml = '<div class="alert" id="test-warn-div">';
-            wHtml = wHtml + '<strong>';
-            wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
-                    '{{curentDomian}}', window.location.hostname);
-            wHtml = wHtml + '<a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
-            wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
-            wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
-            wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
-            wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
-            wHtml = wHtml + '</strong> ';
-            // don't let the warning be disabled for test-warn-dismiss
-            if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
-                    && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
-                wHtml = wHtml
-                        + ' <div style="float: right" class="small"><a href="#" id="test-warn-dismiss">'
-                wHtml = wHtml + om.get('common.cookies.click_dismiss');
-                wHtml = wHtml + '</a></div>';
-            }
-            wHtml = wHtml + '</div>';
-            $(wHtml).insertBefore('body');
-            $("#test-warn-dismiss").click(function() {
-                $("#test-warn-div").remove();
-                OrcidCookie.setCookie(cookieName, "dont show message", 365);
-                return false;
-            });
-        }
-
-    }
-
     // track when deactived people are pushed to signin page
     if (window.location.href.endsWith("signin#deactivated")) {
         orcidGA.gaPush([ 'send', 'event', 'Disengagement', 'Deactivate_Complete',
@@ -480,18 +444,9 @@ $(function() {
         showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
     }
 
-    // if on signin or register do cookie check
-    if (basePath.startsWith(baseUrl + 'register')
-            || basePath.startsWith(baseUrl + 'signin')
-            || basePath.startsWith(baseUrl + 'oauth/signin')) {
-        if (!OrcidCookie.checkIfCookiesEnabled()) {
-            $('#cookie-check-msg').css("display", "inline");
-        }
-    }
-
     // jquery browser is deprecated, when you upgrade
     // to 1.9 or higher you will need to use the pluggin
-    var oldBrowserFlag = false;
+    var oldBrowserFlag = true;
     //IE 11
     if (!!navigator.userAgent.match(/Trident\/7\./)) {
         // IE 11
@@ -514,14 +469,62 @@ $(function() {
     }
 
     if (oldBrowserFlag && location == parent.location) {
-        var wHtml = '<div class="alert" id="browser-warn-div">';
-        wHtml = wHtml + '<strong>';
-        wHtml = wHtml + om.get('common.old.browser_1');
-        wHtml = wHtml + om.get('common.old_browser_2');
-        wHtml = wHtml + ' <a href="https://support.orcid.org/knowledgebase/articles/1804765-technical-requirements-for-using-the-orcid-site" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
-        wHtml = wHtml + '</strong>';
-        wHtml = wHtml + '</div>';
-        $('body').prepend(wHtml);
+        var cookieName = "oldBrowserAlert";
+        if (!OrcidCookie.getCookie(cookieName)) {
+            var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
+            wHtml = wHtml + '<p>';
+            wHtml = wHtml + om.get('common.old.browser_1');
+            wHtml = wHtml + om.get('common.old_browser_2');
+            wHtml = wHtml + ' <a href="https://support.orcid.org/knowledgebase/articles/1804765-technical-requirements-for-using-the-orcid-site" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
+            wHtml = wHtml + '</p>';
+            wHtml = wHtml
+                    + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
+            wHtml = wHtml + om.get('common.cookies.click_dismiss');
+            wHtml = wHtml + '</button>';
+            wHtml = wHtml + '</div>';
+            $('body').prepend(wHtml);
+            $("#browser-warn-dismiss").click(function() {
+                $("#browser-warn-div").remove();
+                OrcidCookie.setCookie(cookieName, "dont show message", 7);
+                return false;
+            });
+        }
+    }
+
+    // if not iframed check if not orcid.org
+    if (location == parent.location
+            && window.location.hostname.toLowerCase() != "orcid.org") {
+
+        var cookieName = "testWarningCookie";
+        var warnMessCookie = OrcidCookie.getCookie(cookieName);
+        if (!warnMessCookie) {
+            var wHtml = '<div class="alert alert-banner" id="test-warn-div">';
+            wHtml = wHtml + '<p><strong>';
+            wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
+                    '{{curentDomian}}', window.location.hostname);
+            wHtml = wHtml + '</strong> <a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
+            wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
+            wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
+            wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
+            wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
+            wHtml = wHtml + '</p> ';
+            // don't let the warning be disabled for test-warn-dismiss
+            if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
+                    && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
+                wHtml = wHtml
+                        + ' <button class="btn btn-primary" id="test-warn-dismiss">'
+                wHtml = wHtml + om.get('common.cookies.click_dismiss');
+                wHtml = wHtml + '</button>';
+            }
+            wHtml = wHtml + '</div>';
+            $('body').prepend(wHtml);
+            $("#test-warn-dismiss").click(function() {
+                $("#test-warn-div").remove();
+                OrcidCookie.setCookie(cookieName, "dont show message", 365);
+                return false;
+            });
+        }
+
     }
 
     $(document)

@@ -397,7 +397,8 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 
 .container {
     margin-bottom: 0;
-    min-height: 90%
+    min-height: 90%;
+    clear: both;
 }
 
 .container .content-wrapper {
@@ -2082,6 +2083,21 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     border-radius: 0;
     min-height: 50px;
     height: auto
+}
+
+.alert-banner {
+    float: left;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.alert-banner p{
+    width: 90%;
+    float: left;
+}
+
+.alert-banner button{
+    float: right;
 }
 
 .alert-icon-large {

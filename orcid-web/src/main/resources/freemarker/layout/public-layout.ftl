@@ -18,7 +18,7 @@
 <!--<#if devSandboxUrl != ''>
     <div class="dev-watermark"></div>
 </#if>-->
-
+<alert-banner-ng2></alert-banner-ng2>
 <!--OAUTH SCREEN HEADER-->
 <#if (RequestParameters['oauth'])??>
     <div class="container">

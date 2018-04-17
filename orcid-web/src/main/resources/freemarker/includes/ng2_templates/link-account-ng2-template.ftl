@@ -69,7 +69,6 @@
                         </div>                  
                         <@spring.bind "loginForm" />             
                         <@spring.showErrors "<br/>" "error" />             
-                        <#include "/common/browser-checks.ftl" />
                         <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
                             <#include "/includes/login_personal_fields_inc_ng2.ftl"/>
                         </div>
