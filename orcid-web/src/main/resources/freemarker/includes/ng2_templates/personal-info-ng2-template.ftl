@@ -85,13 +85,9 @@
         </div>
     </div>
 
-    <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/workspace_v3.ftl -->
-
     <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" >              
         <div class="workspace-accordion-content" *ngIf="displayInfo">
-            <!-- ***
-            include "workspace_personal_v3.ftl"
-            -->
+            <biography-ng2></biography-ng2>
         </div>
     </div>
 </script>
