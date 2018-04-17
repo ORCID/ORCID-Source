@@ -37,6 +37,5 @@ export class LanguageService {
 
     notifyOther(): void {
         this.notify.next();
-        console.log('notify');
     }
 }
