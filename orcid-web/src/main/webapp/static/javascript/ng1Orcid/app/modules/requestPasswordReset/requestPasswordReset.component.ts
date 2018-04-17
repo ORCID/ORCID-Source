@@ -48,8 +48,12 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     constructor(
         private cdr:ChangeDetectorRef,
         private commonService: CommonService,
+        private elementRef: ElementRef, 
         private requestPasswordResetService: RequestPasswordResetService,
     ) {
+        this.authorizationForm = elementRef.nativeElement.getAttribute('authorizationForm');
+        this.showDeactivatedError = elementRef.nativeElement.getAttribute('showDeactivatedError');
+        this.showReactivationSent = elementRef.nativeElement.getAttribute('showReactivationSent');
         this.showSendResetLinkError = false;
         this.requestResetPassword = {};
     }
