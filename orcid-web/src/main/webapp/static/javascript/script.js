@@ -446,7 +446,7 @@ $(function() {
 
     // jquery browser is deprecated, when you upgrade
     // to 1.9 or higher you will need to use the pluggin
-    var oldBrowserFlag = true;
+    var oldBrowserFlag = false;
     //IE 11
     if (!!navigator.userAgent.match(/Trident\/7\./)) {
         // IE 11
