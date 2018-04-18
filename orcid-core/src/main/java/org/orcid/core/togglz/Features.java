@@ -88,7 +88,10 @@ public enum Features implements Feature {
     EX_ID_RESOLVER,
 
     @Label("Remove https://orcid.org from OpenID id_tokens")
-    OPENID_SIMPLE_SUBJECT;
+    OPENID_SIMPLE_SUBJECT,
+    
+    @Label("Disable 1.1 version from any API")
+    DISABLE_1_1;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
