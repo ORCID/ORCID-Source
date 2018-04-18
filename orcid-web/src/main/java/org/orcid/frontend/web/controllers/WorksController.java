@@ -129,8 +129,9 @@ public class WorksController extends BaseWorkspaceController {
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
+            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = profile.getActivitiesVisibilityDefault() == null
-                    ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+                    ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(defaultVis);
             w.setVisibility(v);
         }
 

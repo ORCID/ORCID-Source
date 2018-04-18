@@ -10,6 +10,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.dev1.common.Url;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
@@ -127,7 +128,7 @@ public class PersonValidatorTest {
     
     private SourceEntity getSourceEntity() {
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         return source;
     }
 }

@@ -267,7 +267,7 @@ public class NotificationManagerTest extends DBUnitTest {
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
             assertTrue(latestNotification.getId() > minNotificationId);
-            assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED, latestNotification.getNotificationType());
+            assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED.name(), latestNotification.getNotificationType());
         }
     }
 
@@ -285,7 +285,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity();
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         profile.setSendAdministrativeChangeNotifications(true);
         profile.setSendChangeNotifications(true);
@@ -332,7 +332,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(delegateOrcid)).thenReturn(delegateEmail);
         
         for(org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", delegateOrcid);
         }
     }
@@ -346,7 +346,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         
         Email email = new Email();
@@ -356,7 +356,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
         
         for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendOrcidDeactivateEmail(orcid);
         }        
     }
@@ -378,12 +378,12 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(userOrcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
         String primaryEmail = "limited_0000-0000-0000-0003@test.orcid.org";
         for (Locale locale : Locale.values()) {
-            profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
+            profile.setLocale(locale.name());
             notificationManager.sendVerificationReminderEmail(userOrcid, primaryEmail);
         }
     }
@@ -407,7 +407,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         
         Email email = new Email();
@@ -417,7 +417,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
         
         for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {            
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendEmailAddressChangedNotification(orcid, "new@email.com", "original@email.com");
         }
     }

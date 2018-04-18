@@ -47,7 +47,7 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
         assertNotNull(oar);
         //General info
         assertEquals(Long.valueOf(0), oar.getId());
-        assertEquals(Visibility.PRIVATE.value(), oar.getVisibility().value());        
+        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
         assertEquals("department-name", oar.getDepartment());
         assertEquals("role-title", oar.getTitle());
         
@@ -126,14 +126,14 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
     private OrgAffiliationRelationEntity getEntity() {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
-        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US);
+        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
         orgEntity.setSource(new SourceEntity("APP-000000001"));
         
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
-        result.setAffiliationType(AffiliationType.SERVICE);
+        result.setAffiliationType(AffiliationType.SERVICE.name());
         result.setDepartment("service:department");
         result.setEndDate(new EndDateEntity(2020, 2, 2));
         result.setId(123456L);
@@ -141,7 +141,7 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("service:title");
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);   
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
         
         return result;

@@ -38,7 +38,7 @@ public class Member implements ErrorsInterface, Serializable {
     	} 
     	
     	group.setGroupOrcid(Text.valueOf(profile.getId()));
-    	group.setType(Text.valueOf(profile.getGroupType().value()));
+    	group.setType(Text.valueOf(profile.getGroupType()));
     	group.setSalesforceId(Text.valueOf(profile.getSalesforeId()));
     	return group;
     }

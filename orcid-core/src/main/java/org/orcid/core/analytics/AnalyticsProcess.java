@@ -170,7 +170,7 @@ public class AnalyticsProcess implements Runnable {
     private String getClientDetailsString() {
         if (clientDetailsId != null) {
             ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientDetailsId);
-            StringBuilder clientDetails = new StringBuilder(client.getClientType().value());
+            StringBuilder clientDetails = new StringBuilder(client.getClientType());
             clientDetails.append(" | ");
             clientDetails.append(client.getClientName());
             clientDetails.append(" - ");

@@ -69,7 +69,7 @@ public class ClientsController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("member_developer_tools");
         String memberId = getCurrentUserOrcid();
         ProfileEntity entity = profileEntityCacheManager.retrieve(memberId);
-        MemberType memberType = entity.getGroupType();
+        MemberType memberType = MemberType.valueOf(entity.getGroupType());
         mav.addObject("member_id", memberId);
         mav.addObject("member_type", memberType);
                 

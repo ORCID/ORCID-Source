@@ -52,7 +52,7 @@ public class AddressManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implemen
 
     @Override
     public Addresses getPublicAddresses(String orcid) {
-        List<AddressEntity> addresses = addressDao.getAddresses(orcid, Visibility.PUBLIC);
+        List<AddressEntity> addresses = addressDao.getAddresses(orcid, Visibility.PUBLIC.name());
         return adapter.toAddressList(addresses);        
     }
     

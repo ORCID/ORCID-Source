@@ -37,7 +37,7 @@ public class PreferenceManagerImpl implements PreferenceManager {
             throw new IllegalArgumentException();
         }
 
-        return profileDao.updateDefaultVisibility(orcid, newValue);
+        return profileDao.updateDefaultVisibility(orcid, newValue.name());
     }
 
 }

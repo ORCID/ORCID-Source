@@ -114,8 +114,8 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         OrcidProfileUserDetails userDetails = null;
 
         if (profile.getOrcidType() != null) {
-            OrcidType orcidType = OrcidType.fromValue(profile.getOrcidType().value());
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), buildAuthorities(orcidType, profile.getGroupType()));
+            OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
+            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), buildAuthorities(orcidType, profile.getGroupType() != null ? MemberType.valueOf(profile.getGroupType()) : null));
         } else {
             userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
         }

@@ -18,6 +18,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Amount;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.ContributorAttributes;
@@ -544,7 +545,7 @@ public class ActivityValidatorTest {
     @Test(expected = InvalidPutCodeException.class)
     public void validatePeerReview_invalidPutCodeTest() {   
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         PeerReview pr = getPeerReview();
         pr.setPutCode(1L);
         activityValidator.validatePeerReview(pr, source, true, true, Visibility.PUBLIC);
@@ -609,7 +610,7 @@ public class ActivityValidatorTest {
     @Test
     public void validateGroupId_validTest() {   
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         GroupIdRecord g = getGroupIdRecord();
         activityValidator.validateGroupIdRecord(g, true, source);
     }
@@ -617,7 +618,7 @@ public class ActivityValidatorTest {
     @Test(expected = InvalidPutCodeException.class)
     public void validateGroupId_invalidPutCodeTest() { 
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         GroupIdRecord g = getGroupIdRecord();
         g.setPutCode(1L);
         activityValidator.validateGroupIdRecord(g, true, source);
@@ -626,7 +627,7 @@ public class ActivityValidatorTest {
     @Test(expected = OrcidValidationException.class)
     public void validateGroupId_invalidGroupIdTest() {
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         GroupIdRecord g = getGroupIdRecord();
         g.setGroupId("invalid");
         activityValidator.validateGroupIdRecord(g, true, source);
@@ -648,8 +649,8 @@ public class ActivityValidatorTest {
     @Test
     public void validateDuplicatedExtIds_noDuplicatesTest() {                
         SourceEntity source1 = mock(SourceEntity.class);
-        when(source1.getSourceName()).thenReturn("source name");
-        when(source1.getSourceId()).thenReturn("APP-00000000000000");
+        when(source1.getCachedSourceName()).thenReturn("source name");
+        when(source1.getCachedSourceId()).thenReturn("APP-00000000000000");
         
         SourceOrcid sourceOrcid = new SourceOrcid();
         sourceOrcid.setPath("0000-0000-0000-0000");
@@ -666,8 +667,8 @@ public class ActivityValidatorTest {
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void validateDuplicatedExtIds_duplicatesFoundTest() {
         SourceEntity source1 = mock(SourceEntity.class);
-        when(source1.getSourceName()).thenReturn("source name");
-        when(source1.getSourceId()).thenReturn("APP-00000000000000");
+        when(source1.getCachedSourceName()).thenReturn("source name");
+        when(source1.getCachedSourceId()).thenReturn("APP-00000000000000");
         
         SourceClientId sourceClientId = new SourceClientId();
         sourceClientId.setPath("APP-00000000000000");

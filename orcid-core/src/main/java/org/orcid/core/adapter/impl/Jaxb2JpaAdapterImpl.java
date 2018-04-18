@@ -32,7 +32,9 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.UpdateOptions;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.FuzzyDateUtils;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.Triplet;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -81,8 +83,6 @@ import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
-import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -92,7 +92,6 @@ import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -106,7 +105,6 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
@@ -170,8 +168,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
 
         profileEntity.setId(orcidString);
-        profileEntity.setOrcidType(org.orcid.jaxb.model.common_v2.OrcidType.fromValue(profile.getType().value()));
-        profileEntity.setGroupType(profile.getGroupType());
+        profileEntity.setOrcidType(profile.getType().name());
+        profileEntity.setGroupType(profile.getGroupType() != null ? profile.getGroupType().name() : null);
         setBioDetails(profileEntity, profile.getOrcidBio());            
         setHistoryDetails(profileEntity, profile.getOrcidHistory());
         setActivityDetails(profileEntity, profile.getOrcidActivities(), updateOptions);
@@ -275,7 +273,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             Citation workCitation = orcidWork.getWorkCitation();
             if (workCitation != null && StringUtils.isNotBlank(workCitation.getCitation()) && workCitation.getWorkCitationType() != null) {
                 workEntity.setCitation(workCitation.getCitation());
-                workEntity.setCitationType(CitationType.fromValue(workCitation.getWorkCitationType().value()));
+                workEntity.setCitationType(workCitation.getWorkCitationType().value());
             }
             
             // New way of doing work contributors
@@ -297,17 +295,17 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
             workEntity.setLanguageCode(orcidWork.getLanguageCode() != null ? orcidWork.getLanguageCode() : null);
             if(orcidWork.getCountry() != null && orcidWork.getCountry().getValue() != null) {
-                workEntity.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.fromValue(orcidWork.getCountry().getValue().value()));
+                workEntity.setIso2Country(orcidWork.getCountry().getValue().value());
             }            
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
             if(orcidWork.getWorkType() != null) {
-                workEntity.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.fromValue(orcidWork.getWorkType().value()));   
+                workEntity.setWorkType(orcidWork.getWorkType().name());   
             }                        
             
             if(orcidWork.getVisibility() != null) {
-                workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(orcidWork.getVisibility().value()));
+                workEntity.setVisibility(orcidWork.getVisibility().name());
             } else {
-                workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+                workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
             }
             
             workEntity.setAddedToProfileDate(new Date());
@@ -468,10 +466,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                             //If the profile is not claimed, you can update the visibility
                             if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
                                 //Update the visibility of existing elements if the profile is not claimed
-                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
-                                String listVisibilityValue = researcherUrls.getVisibility() == null ? null : researcherUrls.getVisibility().value();                                                                
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility();                                 
+                                String listVisibilityValue = researcherUrls.getVisibility() == null ? null : researcherUrls.getVisibility().name();                                                                
                                 if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(listVisibilityValue));
+                                    existingEntity.setVisibility(listVisibilityValue);
                                 }                                                                
                             }
                             break;
@@ -581,10 +579,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                             //If the profile is not claimed, you can update the visibility
                             if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
                                 //Update the visibility of existing elements if the profile is not claimed
-                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
-                                String listVisibilityValue = otherNames.getVisibility() == null ? null : otherNames.getVisibility().value();                                                                
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility();                                 
+                                String listVisibilityValue = otherNames.getVisibility() == null ? null : otherNames.getVisibility().name();                                                                
                                 if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(listVisibilityValue));
+                                    existingEntity.setVisibility(listVisibilityValue);
                                 }                                                                
                             }
                             break;
@@ -645,9 +643,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             RecordNameEntity recordName = profileEntity.getRecordNameEntity();                        
             //Save the record name entity
             if(creditName.getVisibility() != null) {
-                recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(creditName.getVisibility().value()));
+                recordName.setVisibility(creditName.getVisibility().name());
             } else {
-                recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                recordName.setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().name());
             }            
             recordName.setCreditName(creditName.getContent());            
         }
@@ -702,10 +700,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                             //If the profile is not claimed, you can update the visibility
                             if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
                                 //Update the visibility of existing elements if the profile is not claimed
-                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
-                                String listVisibilityValue = keywords.getVisibility() == null ? null : keywords.getVisibility().value();                                                                
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility();                                 
+                                String listVisibilityValue = keywords.getVisibility() == null ? null : keywords.getVisibility().name();                                                                
                                 if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(listVisibilityValue));
+                                    existingEntity.setVisibility(listVisibilityValue);
                                 }                                                                
                             }
                             break;
@@ -791,10 +789,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                             if (profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
                                 // Update the visibility of existing elements if
                                 // the profile is not claimed
-                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();
-                                String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().value();
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility();
+                                String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().name();
                                 if (listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(listVisibilityValue));
+                                    existingEntity.setVisibility(listVisibilityValue);
                                 }
                             }
                             break;
@@ -873,7 +871,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                                    
             //If the address exists, don't add it
             for(AddressEntity address : addresses) {
-                if(Objects.equals(country.value(), address.getIso2Country().value())) {
+                if(Objects.equals(country.value(), address.getIso2Country())) {
                     addIt = false;                    
                 }
             }            
@@ -882,7 +880,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 AddressEntity newAddress = new AddressEntity();
                 newAddress.setDateCreated(new Date());
                 //The default country is the smallest one, so, lets add this one as the biggest display index possible for the record
-                newAddress.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.fromValue(country.value()));
+                newAddress.setIso2Country(country.value());
                 newAddress.setLastModified(new Date());
                 newAddress.setUser(profileEntity);
                 newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
@@ -927,9 +925,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             emailEntity.setCurrent(email.isCurrent());
             emailEntity.setVerified(email.isVerified());
             if (email.getVisibility() == null) {
-                emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+                emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
             } else {
-                emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(email.getVisibility().value()));
+                emailEntity.setVisibility(email.getVisibility().name());
             }
             emailEntities.add(emailEntity);
         }
@@ -967,7 +965,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setBiographyDetails(ProfileEntity profileEntity, Biography biography) {
         if (biography != null) {
-            Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility() : Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
+            Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility() : Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault());
             if(profileEntity.getBiographyEntity() == null) {
                 profileEntity.setBiographyEntity(new BiographyEntity());
                 profileEntity.getBiographyEntity().setProfile(profileEntity);                
@@ -976,15 +974,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.getBiographyEntity().setBiography(biography.getContent());
             if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {                
                 if (biography.getVisibility() != null) {
-                    profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(biography.getVisibility().value()));
+                    profileEntity.getBiographyEntity().setVisibility(biography.getVisibility().name());
                 } else {                    
-                    profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
+                    profileEntity.getBiographyEntity().setVisibility(defaultVisibility.name());
                 }                
             }  
             
             //Fill the visibility in case it is still null
             if(profileEntity.getBiographyEntity().getVisibility() == null) {
-                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
+                profileEntity.getBiographyEntity().setVisibility(defaultVisibility.value());
             }
         }
     }
@@ -1081,7 +1079,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         .getSendMemberUpdateRequests());
                 // ActivitiesVisibilityDefault default is WorkVisibilityDefault
                 if (preferences.getActivitiesVisibilityDefault() != null && preferences.getActivitiesVisibilityDefault().getValue() != null) {
-                    profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(preferences.getActivitiesVisibilityDefault().getValue().value()));
+                    profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue().name());
                 }
 
                 if (preferences.getDeveloperToolsEnabled() != null) {
@@ -1099,9 +1097,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setPreferencesDetails(ProfileEntity profileEntity, OrcidPreferences orcidPreferences) {
         if (orcidPreferences != null) {
             if (orcidPreferences.getLocale() != null)
-                profileEntity.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(orcidPreferences.getLocale().value()));
+                profileEntity.setLocale(orcidPreferences.getLocale().name());
             else
-                profileEntity.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN);
+                profileEntity.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
         }
     }    
 
@@ -1171,20 +1169,20 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             FuzzyDate startDate = affiliation.getStartDate();
             FuzzyDate endDate = affiliation.getEndDate();
             if(affiliation.getType() != null) {
-                orgRelationEntity.setAffiliationType(org.orcid.jaxb.model.v3.dev1.record.AffiliationType.fromValue(affiliation.getType().value()));    
+                orgRelationEntity.setAffiliationType(affiliation.getType().name());    
             }
             
             if(affiliation.getVisibility() != null) {
-                orgRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(affiliation.getVisibility().value()));
+                orgRelationEntity.setVisibility(affiliation.getVisibility().name());
             } else {
-                orgRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+                orgRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
             }
                         
             orgRelationEntity.setDepartment(affiliation.getDepartmentName());
-            orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
+            orgRelationEntity.setEndDate(endDate != null ? FuzzyDateUtils.getEndDateEntity(endDate) : null);
             orgRelationEntity.setOrg(orgEntity);
             orgRelationEntity.setTitle(affiliation.getRoleTitle());
-            orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
+            orgRelationEntity.setStartDate(startDate != null ? FuzzyDateUtils.getStartDateEntity(startDate) : null);
 
             if (affiliation.getCreatedDate() != null && affiliation.getCreatedDate().getValue() != null)
                 orgRelationEntity.setDateCreated(affiliation.getCreatedDate().getValue().toGregorianCalendar().getTime());
@@ -1242,13 +1240,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
-            profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
+            profileFundingEntity.setEndDate(endDate != null ? FuzzyDateUtils.getEndDateEntity(endDate) : null);
             
             JSONFundingExternalIdentifiersConverterV1 fundingExternalIDConverter = new JSONFundingExternalIdentifiersConverterV1();
             String fundingExternalIdentifiersJSONString = fundingExternalIDConverter.convertTo(funding.getFundingExternalIdentifiers());
 
             profileFundingEntity.setExternalIdentifiersJson(fundingExternalIdentifiersJSONString);
-            profileFundingEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
+            profileFundingEntity.setStartDate(startDate != null ? FuzzyDateUtils.getStartDateEntity(startDate) : null);
 
             FundingTitle fundingTitle = funding.getTitle();
             if (fundingTitle != null) {
@@ -1266,7 +1264,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
 
             if(funding.getType() != null) {
-                profileFundingEntity.setType(org.orcid.jaxb.model.record_v2.FundingType.fromValue(funding.getType().value()));
+                profileFundingEntity.setType(funding.getType().name());
             }            
             profileFundingEntity.setOrganizationDefinedType(funding.getOrganizationDefinedFundingType() != null ? funding.getOrganizationDefinedFundingType()
                     .getContent() : null);
@@ -1274,9 +1272,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileFundingEntity.setUrl(StringUtils.isNotBlank(funding.getUrl().getValue()) ? funding.getUrl().getValue() : null);
             
             if(funding.getVisibility() != null) {
-                profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(funding.getVisibility().value()));
+                profileFundingEntity.setVisibility(funding.getVisibility().name());
             } else {
-                profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value()));
+                profileFundingEntity.setVisibility(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().name());
             }
             
             if (funding.getCreatedDate() != null && funding.getCreatedDate().getValue() != null)
@@ -1328,7 +1326,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             OrganizationAddress address = organization.getAddress();
             orgEntity.setCity(address.getCity());
             orgEntity.setRegion(address.getRegion());
-            orgEntity.setCountry(address.getCountry());
+            orgEntity.setCountry(address.getCountry().name());
             if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
                 orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
                         .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
@@ -1352,7 +1350,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             OrganizationAddress address = organization.getAddress();
             orgEntity.setCity(address.getCity());
             orgEntity.setRegion(address.getRegion());
-            orgEntity.setCountry(address.getCountry());
+            orgEntity.setCountry(address.getCountry().name());
             if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
                 orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
                         .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
@@ -1386,12 +1384,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         String sourceId = null;
         //source mananger should never return null, but for some unit tests it does, so, we return the user id
         if(source != null) {
-            sourceId = source.getSourceId();
+            sourceId = SourceEntityUtils.getSourceId(source);
         }         
         return sourceId;        
     }
     
-    private org.orcid.jaxb.model.common_v2.Visibility getDefaultVisibility(ProfileEntity profile, Visibility listVisibility, OrcidVisibilityDefaults elementDefault) {
+    private String getDefaultVisibility(ProfileEntity profile, Visibility listVisibility, OrcidVisibilityDefaults elementDefault) {
         Visibility defaultVisibility = elementDefault.getVisibility();
         
         //If the profile is not claimed, set the list visibility
@@ -1406,6 +1404,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return profile.getActivitiesVisibilityDefault();             
         }
         
-        return org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value());
+        return defaultVisibility.name();
     }
 }

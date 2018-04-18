@@ -31,7 +31,7 @@ public class ResearcherUrlManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
      * */
     @Override
     public ResearcherUrls getPublicResearcherUrls(String orcid) {
-        List<ResearcherUrlEntity> researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, Visibility.PUBLIC);
+        List<ResearcherUrlEntity> researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, Visibility.PUBLIC.name());
         return jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
     }
     

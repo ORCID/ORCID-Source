@@ -12,6 +12,10 @@ public class PublicationDateEntity extends FuzzyDateEntity {
         super(year, month, day);
     }
 
+    public PublicationDateEntity() {
+        // TODO Auto-generated constructor stub
+    }
+
     @Override
     @Column(name = "publication_year")
     public Integer getYear() {

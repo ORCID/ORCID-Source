@@ -222,7 +222,7 @@ public class LoadLEIData {
             // update
             if (org.differentFrom(existingDO)) {
                 existingDO.setCity(org.hqAddres.city);
-                existingDO.setCountry(org.hqAddres.country);
+                existingDO.setCountry(org.hqAddres.country.name());
                 existingDO.setName(org.name);
                 existingDO.setOrgType(org.type);
                 existingDO.setRegion(org.hqAddres.region);
@@ -246,7 +246,7 @@ public class LoadLEIData {
             Iso3166Country country = org.hqAddres.country;
             OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
             orgDisambiguatedEntity.setName(org.name);
-            orgDisambiguatedEntity.setCountry(country);
+            orgDisambiguatedEntity.setCountry(country.name());
             orgDisambiguatedEntity.setCity(org.hqAddres.city);
             orgDisambiguatedEntity.setRegion(org.hqAddres.region);
             orgDisambiguatedEntity.setOrgType(org.type);
@@ -269,7 +269,7 @@ public class LoadLEIData {
 
         // Other names
         for (LEIOrganization otherOrg : org.toOtherOrgs()) {
-            OrgEntity existingOrg = orgDao.findByAddressAndDisambiguatedOrg(otherOrg.name, otherOrg.hqAddres.city, otherOrg.hqAddres.region, otherOrg.hqAddres.country,
+            OrgEntity existingOrg = orgDao.findByAddressAndDisambiguatedOrg(otherOrg.name, otherOrg.hqAddres.city, otherOrg.hqAddres.region, otherOrg.hqAddres.country.name(),
                     existingDO);
             if (existingOrg != null) {
                 // do nothing (nothing to update!)
@@ -278,7 +278,7 @@ public class LoadLEIData {
                 newOrg.setDateCreated(now);
                 newOrg.setLastModified(now);
                 newOrg.setCity(otherOrg.hqAddres.city);
-                newOrg.setCountry(otherOrg.hqAddres.country);
+                newOrg.setCountry(otherOrg.hqAddres.country.name());
                 newOrg.setRegion(otherOrg.hqAddres.region);
                 newOrg.setName(otherOrg.name);
                 newOrg.setOrgDisambiguated(existingDO);

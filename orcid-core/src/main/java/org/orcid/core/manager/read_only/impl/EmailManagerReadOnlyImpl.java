@@ -101,7 +101,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     
     @Override
     public Emails getPublicEmails(String orcid) {
-        List<EmailEntity> entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC.name());
         return toEmails(entities);
     }
     

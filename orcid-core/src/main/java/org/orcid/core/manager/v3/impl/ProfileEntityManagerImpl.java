@@ -245,7 +245,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      */
     @Override
     public MemberType getGroupType(String orcid) {
-        return profileDao.getGroupType(orcid);
+        String memberType = profileDao.getGroupType(orcid);
+        return MemberType.valueOf(memberType);
     }
 
     /**
@@ -365,7 +366,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             return recordName.getCreditName();
         }
 
-        Visibility namesVisibilty = Visibility.fromValue(recordName.getVisibility().value());
+        Visibility namesVisibilty = Visibility.fromValue(recordName.getVisibility());
         if (Visibility.PUBLIC.equals(namesVisibilty)) {
             if (!PojoUtil.isEmpty(recordName.getCreditName())) {
                 return recordName.getCreditName();
@@ -397,7 +398,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (profile != null) {
             RecordNameEntity recordName = profile.getRecordNameEntity();
             if (recordName != null) {
-                Visibility namesVisibility = (recordName.getVisibility() != null) ? Visibility.fromValue(recordName.getVisibility().value())
+                Visibility namesVisibility = (recordName.getVisibility() != null) ? Visibility.fromValue(recordName.getVisibility())
                         : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
                 if (Visibility.PUBLIC.equals(namesVisibility)) {
                     if (!PojoUtil.isEmpty(recordName.getCreditName())) {
@@ -429,12 +430,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profile.setCompletedDate(new Date());
         profile.setEncryptedPassword(encryptionManager.hashForInternalUse(claim.getPassword().getValue()));
         if (locale != null) {
-            profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
+            profile.setLocale(locale.name());
         }
         if (claim != null) {
             profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
             profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
-            profile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.valueOf(claim.getActivitiesVisibilityDefault().getVisibility().name()));
+            profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility().name());
         }
 
         // Update the visibility for every bio element to the visibility
@@ -443,40 +444,40 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = org.orcid.jaxb.model.common_v2.Visibility
                 .fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
         if (profile.getBiographyEntity() != null) {
-            profile.getBiographyEntity().setVisibility(defaultVisibility);
+            profile.getBiographyEntity().setVisibility(defaultVisibility.name());
         }
         // Update address
         if (profile.getAddresses() != null) {
             for (AddressEntity a : profile.getAddresses()) {
-                a.setVisibility(defaultVisibility);
+                a.setVisibility(defaultVisibility.name());
             }
         }
 
         // Update the keywords
         if (profile.getKeywords() != null) {
             for (ProfileKeywordEntity k : profile.getKeywords()) {
-                k.setVisibility(defaultVisibility);
+                k.setVisibility(defaultVisibility.name());
             }
         }
 
         // Update the other names
         if (profile.getOtherNames() != null) {
             for (OtherNameEntity o : profile.getOtherNames()) {
-                o.setVisibility(defaultVisibility);
+                o.setVisibility(defaultVisibility.name());
             }
         }
 
         // Update the researcher urls
         if (profile.getResearcherUrls() != null) {
             for (ResearcherUrlEntity r : profile.getResearcherUrls()) {
-                r.setVisibility(defaultVisibility);
+                r.setVisibility(defaultVisibility.name());
             }
         }
 
         // Update the external identifiers
         if (profile.getExternalIdentifiers() != null) {
             for (ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-                e.setVisibility(defaultVisibility);
+                e.setVisibility(defaultVisibility.name());
             }
         }
         profileDao.merge(profile);
@@ -499,7 +500,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public void updateLocale(String orcid, Locale locale) {
-        profileDao.updateLocale(orcid,  org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
+        profileDao.updateLocale(orcid, locale.name());
     }
 
     @Override
@@ -514,7 +515,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profileEntity.setDeactivationDate(null);
         profileEntity.setClaimed(true);
         profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
-        profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
+        profileEntity.setActivitiesVisibilityDefault(defaultVisibility.name());
         RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
         recordNameEntity.setGivenNames(givenNames);
         recordNameEntity.setFamilyName(familyName);
@@ -545,7 +546,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public Locale retrieveLocale(String orcid) {
-        return Locale.fromValue(profileDao.retrieveLocale(orcid).value());
+        return Locale.valueOf(profileDao.retrieveLocale(orcid));
     }
 
     /**
@@ -655,6 +656,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
         
         // Change default visibility to private
-        profileDao.updateDefaultVisibility(orcid, org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        profileDao.updateDefaultVisibility(orcid, org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
     }
 }

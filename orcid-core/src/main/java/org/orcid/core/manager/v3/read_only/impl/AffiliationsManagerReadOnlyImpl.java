@@ -183,28 +183,20 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                switch(affiliation.getAffiliationType()) {
-                case DISTINCTION:
+                if (AffiliationType.DISTINCTION.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbDistinctionAdapter.toDistinction(affiliation));
-                    break;
-                case EDUCATION:
+                } else if (AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
-                    break;
-                case EMPLOYMENT:
+                } else if (AffiliationType.EMPLOYMENT.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));
-                    break;
-                case INVITED_POSITION:
+                } else if (AffiliationType.INVITED_POSITION.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbInvitedPositionAdapter.toInvitedPosition(affiliation));                    
-                    break;
-                case MEMBERSHIP:
+                } else if (AffiliationType.MEMBERSHIP.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbMembershipAdapter.toMembership(affiliation));
-                    break;
-                case QUALIFICATION:
+                } else if (AffiliationType.QUALIFICATION.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbQualificationAdapter.toQualification(affiliation));
-                    break;
-                case SERVICE:
+                } else if (AffiliationType.SERVICE.equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbServiceAdapter.toService(affiliation));
-                    break;
                 }
             }
         }
@@ -348,7 +340,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     }
     
     private void checkType(OrgAffiliationRelationEntity entity, AffiliationType type) {
-        if(!entity.getAffiliationType().equals(type)) {
+        if(!entity.getAffiliationType().equals(type.name())) {
             throw new IllegalArgumentException("Given affiliation " + entity.getId() + " doesn't match the desired type " + type.value());
         }
     }

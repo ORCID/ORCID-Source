@@ -88,7 +88,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         entity.setExternalIdUrl("http://myurl.com");
         entity.setId(123L);        
         entity.setClientSourceId("APP-0000000000000000");
-        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         return entity;
     }
 }
