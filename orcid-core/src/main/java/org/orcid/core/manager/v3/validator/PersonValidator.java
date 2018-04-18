@@ -7,6 +7,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.common.VisibilityType;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
@@ -56,7 +57,7 @@ public class PersonValidator {
             if(researcherUrl.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
-                    params.put("clientName", sourceEntity.getSourceName());
+                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                 }
                 throw new InvalidPutCodeException(params);
             }                        
@@ -76,7 +77,7 @@ public class PersonValidator {
             if(otherName.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
-                    params.put("clientName", sourceEntity.getSourceName());
+                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                 }
                 throw new InvalidPutCodeException(params);
             }                        
@@ -144,7 +145,7 @@ public class PersonValidator {
             if(externalIdentifier.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
-                    params.put("clientName", sourceEntity.getSourceName());
+                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                 }
                 throw new InvalidPutCodeException(params);
             }                        
@@ -164,7 +165,7 @@ public class PersonValidator {
             if(keyword.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
-                    params.put("clientName", sourceEntity.getSourceName());
+                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                 }
                 throw new InvalidPutCodeException(params);
             }                        
@@ -190,7 +191,7 @@ public class PersonValidator {
             if(address.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
-                    params.put("clientName", sourceEntity.getSourceName());
+                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                 }
                 throw new InvalidPutCodeException(params);
             }                        

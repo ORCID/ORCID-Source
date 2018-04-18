@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
+import org.orcid.core.utils.v3.RecordNameUtils;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -34,7 +35,7 @@ public class GivenPermissionToManagerReadOnlyImpl implements GivenPermissionToMa
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getGiver()));
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getReceiver().getId()));
-            form.setReceiverName(Text.valueOf(element.getReceiver().getDisplayName()));
+            form.setReceiverName(Text.valueOf(RecordNameUtils.getDisplayName(element.getReceiver().getRecordNameEntity())));
             delegates.add(form);
         }
         
@@ -50,7 +51,7 @@ public class GivenPermissionToManagerReadOnlyImpl implements GivenPermissionToMa
             DelegateForm form = new DelegateForm();
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
             form.setLastModifiedDate(DateUtils.convertToXMLGregorianCalendar(element.getGiver().getLastModified()));
-            form.setGiverName(Text.valueOf(element.getGiver().getDisplayName()));
+            form.setGiverName(Text.valueOf(RecordNameUtils.getDisplayName(element.getGiver().getRecordNameEntity())));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getGiver().getId()));
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getReceiver()));            
             delegates.add(form);
@@ -66,7 +67,7 @@ public class GivenPermissionToManagerReadOnlyImpl implements GivenPermissionToMa
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(entity.getApprovalDate()));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(entity.getGiver()));
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(entity.getReceiver().getId()));
-            form.setReceiverName(Text.valueOf(entity.getReceiver().getDisplayName()));
+            form.setReceiverName(Text.valueOf(RecordNameUtils.getDisplayName(entity.getReceiver().getRecordNameEntity())));
             return form;
         }
         return null;

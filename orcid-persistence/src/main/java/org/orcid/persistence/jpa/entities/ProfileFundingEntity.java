@@ -8,8 +8,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,8 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.record_v2.FundingType;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
 
@@ -43,7 +39,7 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
     private String translatedTitle;
     private String translatedTitleLanguageCode;
     private String description;
-    private FundingType type;
+    private String type;
     private String organizationDefinedType;
     private String currencyCode;
     private String url;
@@ -51,7 +47,7 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
     private String externalIdentifiersJson;
     private StartDateEntity startDate;
     private EndDateEntity endDate;
-    private Visibility visibility;    
+    private String visibility;    
     private BigDecimal numericAmount;
     private Long displayIndex; 
 
@@ -124,14 +120,12 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
         this.description = description;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    public FundingType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(FundingType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -189,13 +183,12 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
         this.endDate = endDate;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Visibility getVisibility() {
+    @Column
+    public String getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Visibility visibility) {
+    public void setVisibility(String visibility) {
         this.visibility = visibility;
     }
 
@@ -278,8 +271,8 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
             return compareOrgName;
         }
 
-        int compareOrgCountry = OrcidStringUtils.compareStrings(org.getCountry() == null ? null : org.getCountry().value(), other.getOrg().getCountry() == null ? null : other.getOrg()
-                .getCountry().value());
+        int compareOrgCountry = OrcidStringUtils.compareStrings(org.getCountry() == null ? null : org.getCountry(), other.getOrg().getCountry() == null ? null : other.getOrg()
+                .getCountry());
         if (compareOrgCountry != 0) {
             return compareOrgCountry;
         }
@@ -301,7 +294,7 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
         return OrcidStringUtils.compareStrings(url, other.getUrl());
     }
 
-    private int compareTypes(FundingType type, FundingType otherType) {
+    private int compareTypes(String type, String otherType) {
         if (NullUtils.anyNull(type, otherType)) {
             return -NullUtils.compareNulls(type, otherType);
         }

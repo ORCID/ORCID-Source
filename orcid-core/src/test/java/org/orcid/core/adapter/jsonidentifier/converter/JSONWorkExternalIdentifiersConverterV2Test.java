@@ -59,15 +59,15 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         work.setDateCreated(date);
         work.setLastModified(date);
         work.setOrcid("0000-0000-0000-0001");
-        work.setVisibility(Visibility.LIMITED);
+        work.setVisibility(Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId("APP-5555555555555555");
         work.setCitation("work:citation");
-        work.setCitationType(CitationType.BIBTEX);
+        work.setCitationType(CitationType.BIBTEX.name());
         work.setDateCreated(date);
         work.setDescription("work:description");
         work.setId(12345L);
-        work.setIso2Country(Iso3166Country.CR);
+        work.setIso2Country(Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
         work.setLastModified(date);
@@ -76,7 +76,7 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         work.setTitle("work:title");
         work.setTranslatedTitle("work:translatedTitle");
         work.setTranslatedTitleLanguageCode("ES");
-        work.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        work.setWorkType(WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");
         work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");

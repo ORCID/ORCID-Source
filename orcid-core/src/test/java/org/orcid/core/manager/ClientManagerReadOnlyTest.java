@@ -167,7 +167,7 @@ public class ClientManagerReadOnlyTest {
         entity.setAuthenticationProviderId("authentication-provider-id " + randomString);
         entity.setClientDescription("description " + randomString);
         entity.setClientName("client-name " + randomString);
-        entity.setClientType(ClientType.CREATOR);
+        entity.setClientType(ClientType.CREATOR.name());
         entity.setClientWebsite("client-website " + randomString);
         entity.setDateCreated(now);
         entity.setEmailAccessReason("email-access-reason " + randomString);

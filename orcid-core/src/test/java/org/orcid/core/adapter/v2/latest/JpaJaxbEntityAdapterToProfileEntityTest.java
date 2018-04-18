@@ -125,7 +125,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
         EmailEntity primaryEmail = emailMap.get("josiah_carberry@brown.edu");
         assertNotNull(primaryEmail);
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, primaryEmail.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name(), primaryEmail.getVisibility());
         assertTrue(primaryEmail.getPrimary());
         assertTrue(primaryEmail.getCurrent());
         assertTrue(primaryEmail.getVerified());
@@ -133,7 +133,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
         EmailEntity nonPrimaryEmail1 = emailMap.get("josiah_carberry_1@brown.edu");
         assertNotNull(nonPrimaryEmail1);
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, nonPrimaryEmail1.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name(), nonPrimaryEmail1.getVisibility());
         assertFalse(nonPrimaryEmail1.getPrimary());
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());

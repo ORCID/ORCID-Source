@@ -52,7 +52,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
     private PeerReviewEntity getPeerReviewEntity() {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
-        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US);
+        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
@@ -64,8 +64,8 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
         result.setExternalIdentifiersJson(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:external-identifier-id\"}}]}");
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
-        result.setRole(org.orcid.jaxb.model.record_v2.Role.MEMBER);
-        result.setType(org.orcid.jaxb.model.record_v2.PeerReviewType.EVALUATION);
+        result.setRole(org.orcid.jaxb.model.record_v2.Role.MEMBER.name());
+        result.setType(org.orcid.jaxb.model.record_v2.PeerReviewType.EVALUATION.name());
         result.setUrl("peer-review:url");
         result.setSubjectExternalIdentifiersJson(
                 "{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}");
@@ -74,8 +74,8 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
         result.setSubjectTranslatedName("peer-review:subject-translated-name");
         result.setSubjectTranslatedNameLanguageCode("en");
         result.setSubjectUrl("peer-review:subject-url");
-        result.setSubjectType(org.orcid.jaxb.model.record_v2.WorkType.BOOK_REVIEW);
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        result.setSubjectType(org.orcid.jaxb.model.record_v2.WorkType.BOOK_REVIEW.name());
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         result.setClientSourceId("APP-000000001");
         result.setGroupId("orcid-generated:12345");
         result.setId(12345L);

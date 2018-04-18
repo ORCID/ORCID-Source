@@ -60,7 +60,7 @@ public class OrgManagerImpl implements OrgManager {
             chunk = getAmbiguousOrgs(firstResult, CHUNK_SIZE);
             for (AmbiguousOrgEntity orgEntity : chunk) {
                 String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceOrcid(), orgEntity.getName(), orgEntity.getCity(),
-                        orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
+                        orgEntity.getRegion(), orgEntity.getCountry(), String.valueOf(orgEntity.getUsedCount()) };
                 csvWriter.writeNext(line);
             }
             firstResult += chunk.size();
@@ -79,7 +79,7 @@ public class OrgManagerImpl implements OrgManager {
             chunk = orgDisambiguatedDao.getChunk(firstResult, CHUNK_SIZE);
             for (OrgDisambiguatedEntity orgEntity : chunk) {
                 String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceId(), orgEntity.getSourceType(), orgEntity.getOrgType(),
-                        orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getPopularity()) };
+                        orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(), orgEntity.getCountry(), String.valueOf(orgEntity.getPopularity()) };
                 csvWriter.writeNext(line);
             }
             firstResult += chunk.size();
@@ -151,7 +151,7 @@ public class OrgManagerImpl implements OrgManager {
         org.orcid.jaxb.model.common_v2.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
-        orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));
+        orgEntity.setCountry(address.getCountry().value());
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
             orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
                     .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
@@ -171,6 +171,6 @@ public class OrgManagerImpl implements OrgManager {
             country = org.getAddress().getCountry();
                     
         }
-        return orgDao.findByNameCityRegionAndCountry(name, city, region, country);        
+        return orgDao.findByNameCityRegionAndCountry(name, city, region, country.value());        
     }
 }

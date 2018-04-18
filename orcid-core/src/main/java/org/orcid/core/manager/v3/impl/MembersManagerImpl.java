@@ -13,21 +13,20 @@ import javax.annotation.Resource;
 
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.OrcidGenerationManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.MembersManager;
-import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.v3.dev1.client.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.v3.dev1.client.Client;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientScopeDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -99,7 +98,7 @@ public class MembersManagerImpl implements MembersManager {
         String orcid = orcidGenerationManager.createNewOrcid();
         ProfileEntity newRecord = new ProfileEntity();
         newRecord.setId(orcid);
-        newRecord.setOrcidType(org.orcid.jaxb.model.common_v2.OrcidType.GROUP);
+        newRecord.setOrcidType(org.orcid.jaxb.model.common_v2.OrcidType.GROUP.name());
         
         try {
             newRecord.setHashedOrcid(encryptionManager.sha256Hash(orcid));
@@ -107,16 +106,16 @@ public class MembersManagerImpl implements MembersManager {
             throw new RuntimeException(e);
         }
 
-        newRecord.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        newRecord.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         newRecord.setClaimed(true);
         newRecord.setCreationMethod(CreationMethod.DIRECT.value());
         newRecord.setDateCreated(now);
         newRecord.setEnableDeveloperTools(false);
         newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
         newRecord.setEncryptedPassword(null);
-        newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()));
+        newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()).name());
         newRecord.setLastModified(now);
-        newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN);
+        newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
         newRecord.setRecordLocked(false);
         newRecord.setReviewed(false);
         newRecord.setSalesforeId(PojoUtil.isEmpty(member.getSalesforceId()) ? null : member.getSalesforceId().getValue());
@@ -135,7 +134,7 @@ public class MembersManagerImpl implements MembersManager {
         emailEntity.setCurrent(true);
         emailEntity.setVerified(true);
         // Email is private by default
-        emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile().getId();
@@ -150,7 +149,7 @@ public class MembersManagerImpl implements MembersManager {
         recordNameEntity.setDateCreated(now);
         recordNameEntity.setLastModified(now);
         recordNameEntity.setProfile(newRecord);
-        recordNameEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordNameEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         recordNameEntity.setCreditName(member.getGroupName().getValue());
         newRecord.setRecordNameEntity(recordNameEntity);
 
@@ -186,7 +185,7 @@ public class MembersManagerImpl implements MembersManager {
                 memberEntity.setSalesforeId(salesForceId);
 
                 if (!memberType.equals(memberEntity.getGroupType())) {
-                    memberEntity.setGroupType(memberType);
+                    memberEntity.setGroupType(memberType.name());
                     memberChangedType = true;
                 }
 
@@ -203,7 +202,7 @@ public class MembersManagerImpl implements MembersManager {
                     newPrimaryEmail.setId(email);
                     newPrimaryEmail.setPrimary(true);
                     newPrimaryEmail.setVerified(true);
-                    newPrimaryEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+                    newPrimaryEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
                     memberEntity.setPrimaryEmail(newPrimaryEmail);
                 }
 
@@ -333,7 +332,7 @@ public class MembersManagerImpl implements MembersManager {
             }
 
             // Update client type
-            clientDetailsDao.updateClientType(clientType, client.getClientId());            
+            clientDetailsDao.updateClientType(clientType.name(), client.getClientId());            
         }
     }
 }

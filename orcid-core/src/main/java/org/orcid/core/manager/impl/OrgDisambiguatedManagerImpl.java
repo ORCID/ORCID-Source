@@ -95,7 +95,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         document.setOrgDisambiguatedCity(entity.getCity());
         document.setOrgDisambiguatedRegion(entity.getRegion());
         if (entity.getCountry() != null)
-            document.setOrgDisambiguatedCountry(entity.getCountry().value());
+            document.setOrgDisambiguatedCountry(entity.getCountry());
         document.setOrgDisambiguatedIdFromSource(entity.getSourceId());
         document.setOrgDisambiguatedIdSourceType(entity.getSourceType());
         document.setOrgDisambiguatedType(entity.getOrgType());
@@ -176,7 +176,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setValue(orgDisambiguatedEntity.getName());
         org.setCity(orgDisambiguatedEntity.getCity());
         org.setRegion(orgDisambiguatedEntity.getRegion());        
-        org.setCountry(orgDisambiguatedEntity.getCountry() != null ? orgDisambiguatedEntity.getCountry().value() : null);
+        org.setCountry(orgDisambiguatedEntity.getCountry() != null ? orgDisambiguatedEntity.getCountry() : null);
         org.setOrgType(orgDisambiguatedEntity.getOrgType());
         org.setSourceId(orgDisambiguatedEntity.getSourceId());
         org.setSourceType(orgDisambiguatedEntity.getSourceType()); 

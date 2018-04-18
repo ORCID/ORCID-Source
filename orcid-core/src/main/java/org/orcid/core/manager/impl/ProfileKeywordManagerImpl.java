@@ -17,6 +17,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ProfileKeywordManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.Keywords;
@@ -92,7 +93,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     public Keyword updateKeyword(String orcid, Long putCode, Keyword keyword, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
-        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
+        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility());
         
         //Save the original source
         String existingSourceId = updatedEntity.getSourceId();
@@ -156,7 +157,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                     for (ProfileKeywordEntity existingKeyword : existingKeywordsList) {
                         if (existingKeyword.getId().equals(updatedOrNew.getPutCode())) {
                             existingKeyword.setLastModified(new Date());
-                            existingKeyword.setVisibility(updatedOrNew.getVisibility());
+                            existingKeyword.setVisibility(updatedOrNew.getVisibility().name());
                             existingKeyword.setKeywordName(updatedOrNew.getContent());
                             existingKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                             profileKeywordDao.merge(existingKeyword);
@@ -176,7 +177,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                     if(sourceEntity.getSourceClient() != null) {
                         newKeyword.setClientSourceId(sourceEntity.getSourceClient().getId());
                     } 
-                    newKeyword.setVisibility(updatedOrNew.getVisibility());
+                    newKeyword.setVisibility(updatedOrNew.getVisibility().name());
                     newKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     profileKeywordDao.persist(newKeyword);
 
@@ -190,7 +191,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.record_v2.Keyword keyword, SourceEntity source) {
         if (!existing.getId().equals(keyword.getPutCode())) {
             String existingSourceId = existing.getElementSourceId();             
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
                 if (existing.getKeywordName() != null && existing.getKeywordName().equals(keyword.getContent())) {
                     return true;
                 }
@@ -200,12 +201,12 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     }
 
     private void setIncomingPrivacy(ProfileKeywordEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingKeywordVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        String incomingKeywordVisibility = entity.getVisibility();
+        String defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name() : profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultKeywordVisibility);
         } else if (incomingKeywordVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }
 

@@ -60,7 +60,7 @@ public class MockSourceNameCache {
                 recordName.setLastModified(new Date());
                 recordName.setCreditName("Credit name");
                 recordName.setProfile(new ProfileEntity(id));
-                recordName.setVisibility(Visibility.PUBLIC);
+                recordName.setVisibility(Visibility.PUBLIC.name());
                 return recordName;
             }
             

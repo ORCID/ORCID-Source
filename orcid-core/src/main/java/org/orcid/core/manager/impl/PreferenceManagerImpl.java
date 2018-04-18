@@ -42,7 +42,7 @@ public class PreferenceManagerImpl implements PreferenceManager {
             throw new IllegalArgumentException();
         }
 
-        boolean updated = profileDao.updateDefaultVisibility(orcid, newValue);
+        boolean updated = profileDao.updateDefaultVisibility(orcid, newValue.name());
         if (updated) {
             if (Visibility.LIMITED.equals(newValue)) {
                 profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_LIMITED, orcid);

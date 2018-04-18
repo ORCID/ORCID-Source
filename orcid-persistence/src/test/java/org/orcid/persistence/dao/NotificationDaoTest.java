@@ -21,9 +21,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.notification_v2.NotificationType;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
@@ -39,6 +36,18 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 @Transactional
 public class NotificationDaoTest extends DBUnitTest {
+    
+    private static final float FREQUENCY_IMMEDIATELY = 0.0f;
+    
+    private static final float FREQUENCY_DAILY = 1.0f;
+    
+    private static final float FREQUENCY_WEEKLY = 7.0f;
+    
+    private static final float FREQUENCY_QUARTERLY = 91.3105f;
+    
+    private static final String NOTIFICATION_TYPE_AMENDED = "AMENDED";
+    
+    private static final String AMENDED_SECTION_UNKNOWN = "UNKNOWN";
 
     @Resource
     private NotificationDao notificationDao;
@@ -67,7 +76,7 @@ public class NotificationDaoTest extends DBUnitTest {
         NotificationEntity notification = notificationDao.find(1L);
         assertNotNull(notification);
         assertTrue(notification instanceof NotificationCustomEntity);
-        assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
+        assertEquals("CUSTOM", notification.getNotificationType());
     }
     
     @Test
@@ -75,7 +84,7 @@ public class NotificationDaoTest extends DBUnitTest {
         NotificationEntity notification = notificationDao.find(5L);
         assertNotNull(notification);
         assertTrue(notification instanceof NotificationAddItemsEntity);
-        assertEquals(NotificationType.PERMISSION, notification.getNotificationType());
+        assertEquals("PERMISSION", notification.getNotificationType());
         NotificationAddItemsEntity addActsNotification = (NotificationAddItemsEntity) notification;
         Set<NotificationItemEntity> acts = addActsNotification.getNotificationItems();
         assertNotNull(acts);
@@ -116,28 +125,28 @@ public class NotificationDaoTest extends DBUnitTest {
         ids.add(createNotifiation(orcid1, null));
         ids.add(createNotifiation(orcid1, null));        
         
-        List<NotificationEntity> notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.IMMEDIATELY.value()), date);
+        List<NotificationEntity> notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_IMMEDIATELY, date);
         assertNotNull(notificationsToSend);
         assertEquals(3, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
             assertTrue(ids.contains(e.getId()));
         }
         
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.DAILY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_DAILY, date);
         assertNotNull(notificationsToSend);
         assertEquals(3, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
             assertTrue(ids.contains(e.getId()));
         }
         
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.WEEKLY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_WEEKLY, date);
         assertNotNull(notificationsToSend);
         assertEquals(3, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
             assertTrue(ids.contains(e.getId()));
         }
         
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.QUARTERLY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_QUARTERLY, date);
         assertNotNull(notificationsToSend);
         assertEquals(3, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
@@ -163,21 +172,21 @@ public class NotificationDaoTest extends DBUnitTest {
         ids.add(createNotifiation(orcid1, null));
         ids.add(createNotifiation(orcid1, null));
         
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.IMMEDIATELY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_IMMEDIATELY, date);
         assertNotNull(notificationsToSend);
         assertEquals(2, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
             assertTrue(ids.contains(e.getId()));
         }
         
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.DAILY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_DAILY, date);
         assertNotNull(notificationsToSend);
         assertEquals(2, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
             assertTrue(ids.contains(e.getId()));
         }
         
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.WEEKLY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_WEEKLY, date);
         assertNotNull(notificationsToSend);
         assertEquals(2, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
@@ -185,7 +194,7 @@ public class NotificationDaoTest extends DBUnitTest {
         }
         
         // Quarterly should be empty since the last time we sent was a month ago
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.QUARTERLY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_QUARTERLY, date);
         assertNotNull(notificationsToSend);
         assertTrue(notificationsToSend.isEmpty());
         
@@ -208,14 +217,14 @@ public class NotificationDaoTest extends DBUnitTest {
         ids.add(createNotifiation(orcid1, null));
         ids.add(createNotifiation(orcid1, null));
         
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.IMMEDIATELY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_IMMEDIATELY, date);
         assertNotNull(notificationsToSend);
         assertEquals(2, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
             assertTrue(ids.contains(e.getId()));
         }
         
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.DAILY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1,FREQUENCY_DAILY, date);
         assertNotNull(notificationsToSend);
         assertEquals(2, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
@@ -223,12 +232,12 @@ public class NotificationDaoTest extends DBUnitTest {
         }
         
         // Weekly should be empty since the last time we sent was 6 days ago
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.WEEKLY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_WEEKLY, date);
         assertNotNull(notificationsToSend);
         assertTrue(notificationsToSend.isEmpty());
         
         // Quarterly should be empty since the last time we sent was 6 days ago
-        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.QUARTERLY.value()), date);
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, FREQUENCY_QUARTERLY, date);
         assertNotNull(notificationsToSend);
         assertTrue(notificationsToSend.isEmpty());
         
@@ -248,7 +257,7 @@ public class NotificationDaoTest extends DBUnitTest {
         entity.setDateCreated(new Date());
         entity.setNotificationIntro("intro");
         entity.setNotificationSubject("subject");
-        entity.setNotificationType(NotificationType.AMENDED);
+        entity.setNotificationType(NOTIFICATION_TYPE_AMENDED);
         entity.setProfile(new ProfileEntity(orcid));
         if(sentDate != null){
             entity.setSentDate(sentDate);
@@ -286,13 +295,13 @@ public class NotificationDaoTest extends DBUnitTest {
         for(int i = 0; i < 5; i++) {
             Date now = new Date();
             NotificationAmendedEntity newEntity = new NotificationAmendedEntity();
-            newEntity.setAmendedSection(AmendedSection.UNKNOWN);
+            newEntity.setAmendedSection(AMENDED_SECTION_UNKNOWN);
             newEntity.setClientSourceId("APP-6666666666666666");
             newEntity.setDateCreated(now);
             newEntity.setLastModified(now);
             newEntity.setNotificationIntro("Intro");
             newEntity.setNotificationSubject("Subject");
-            newEntity.setNotificationType(NotificationType.AMENDED);
+            newEntity.setNotificationType(NOTIFICATION_TYPE_AMENDED);
             newEntity.setProfile(new ProfileEntity("0000-0000-0000-0004"));
             newEntity.setSendable(true);
             notificationDao.persist(newEntity);

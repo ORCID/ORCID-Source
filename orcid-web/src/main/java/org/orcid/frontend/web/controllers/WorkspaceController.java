@@ -23,6 +23,7 @@ import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContributorRole;
@@ -287,7 +288,9 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);
+            form.setVisibility(v);
         }
         
         return form;
@@ -334,7 +337,9 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);
+            form.setVisibility(v);
         }
         return form;
     }
@@ -384,7 +389,9 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);
+            form.setVisibility(v);
         }
         return form;
     }
@@ -488,10 +495,10 @@ public class WorkspaceController extends BaseWorkspaceController {
     ThirdPartyRedirect getSourceGrantReadWizard() {
         ThirdPartyRedirect tpr = new ThirdPartyRedirect();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());        
-        if(profile.getSource() == null || profile.getSource().getSourceId() == null) {
+        if(profile.getSource() == null || SourceEntityUtils.getSourceId(profile.getSource()) == null) {
             return tpr;
         }        
-        String sourcStr = profile.getSource().getSourceId();     
+        String sourcStr = SourceEntityUtils.getSourceId(profile.getSource());     
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients

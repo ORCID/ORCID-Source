@@ -53,7 +53,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         query.setParameter("creditName", recordName.getCreditName());
         query.setParameter("givenNames", recordName.getGivenNames());
         query.setParameter("familyName", recordName.getFamilyName());
-        query.setParameter("visibility", StringUtils.upperCase(recordName.getVisibility().value()));
+        query.setParameter("visibility", StringUtils.upperCase(recordName.getVisibility()));
         query.setParameter("orcid", recordName.getProfile().getId());
         return query.executeUpdate() > 0;
     }

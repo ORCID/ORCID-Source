@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -62,7 +63,7 @@ public class SourceManagerImpl implements SourceManager {
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
             SourceEntity sourceEntity = new SourceEntity();
             sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));
-            sourceEntity.getSourceName();
+            SourceEntityUtils.getSourceName(sourceEntity);
             return sourceEntity;
         }
         String userOrcid = retrieveEffectiveOrcid(authentication);

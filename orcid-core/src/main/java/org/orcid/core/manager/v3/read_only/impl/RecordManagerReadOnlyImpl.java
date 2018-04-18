@@ -8,6 +8,7 @@ import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.dev1.common.Locale;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
@@ -95,15 +96,15 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
 
     private OrcidType getOrcidType(String orcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        return OrcidType.fromValue(profile.getOrcidType().value());
+        return OrcidType.valueOf(profile.getOrcidType());
     }
     
     private Preferences getPreferences(String orcid) {
         Preferences preferences = new Preferences();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        org.orcid.jaxb.model.common_v2.Locale profileEntityLocale = profile.getLocale();
+        String profileEntityLocale = profile.getLocale();
         if (profileEntityLocale != null) {
-            preferences.setLocale(Locale.fromValue(profileEntityLocale.value()));
+            preferences.setLocale(Locale.fromValue(profileEntityLocale));
         }
         return preferences;
     }
@@ -133,7 +134,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         }                
         
         if(profile.getSource() != null) {
-            history.setSource(new Source(profile.getSource().getSourceId()));                
+            history.setSource(new Source(SourceEntityUtils.getSourceId(profile.getSource())));                
         }
         
         boolean verfiedEmail = false;

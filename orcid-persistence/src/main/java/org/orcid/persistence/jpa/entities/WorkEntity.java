@@ -3,15 +3,9 @@ package org.orcid.persistence.jpa.entities;
 import java.util.Comparator;
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.common_v2.Iso3166Country;
-import org.orcid.jaxb.model.record_v2.CitationType;
 
 @Entity
 @Table(name = "work")
@@ -23,8 +17,8 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
     private static final long serialVersionUID = 1938355431548785244L;
     protected String orcid;
     protected String citation;
-    protected Iso3166Country iso2Country;
-    protected CitationType citationType;
+    protected String iso2Country;
+    protected String citationType;
     protected String contributorsJson;
     protected Date addedToProfileDate;
     
@@ -46,14 +40,12 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
         this.citation = citation;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "citation_type", length = 100)
-    public CitationType getCitationType() {
+    public String getCitationType() {
         return citationType;
     }
 
-    public void setCitationType(CitationType citationType) {
+    public void setCitationType(String citationType) {
         this.citationType = citationType;
     }
 
@@ -66,14 +58,12 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
         this.contributorsJson = contributorsJson;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "iso2_country", length = 2)
-    public Iso3166Country getIso2Country() {
+    public String getIso2Country() {
         return iso2Country;
     }
 
-    public void setIso2Country(Iso3166Country iso2Country) {
+    public void setIso2Country(String iso2Country) {
         this.iso2Country = iso2Country;
     }
 

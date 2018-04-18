@@ -76,7 +76,7 @@ public class OrgManagerTest extends BaseTest {
         OrgEntity inputOrg = new OrgEntity();
         inputOrg.setName("An institution");
         inputOrg.setCity("London");
-        inputOrg.setCountry(Iso3166Country.GB);
+        inputOrg.setCountry(Iso3166Country.GB.name());
 
         OrgEntity resultOrg = orgManager.createUpdate(inputOrg);
 
@@ -94,7 +94,7 @@ public class OrgManagerTest extends BaseTest {
         OrgEntity inputOrg = new OrgEntity();
         inputOrg.setName("Le Institution");
         inputOrg.setCity("Paris");
-        inputOrg.setCountry(Iso3166Country.FR);
+        inputOrg.setCountry(Iso3166Country.FR.name());
 
         OrgEntity resultOrg = orgManager.createUpdate(inputOrg);
 

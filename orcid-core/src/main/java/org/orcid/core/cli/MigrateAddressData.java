@@ -62,9 +62,9 @@ public class MigrateAddressData {
                         address.setDateCreated(new Date());
                         address.setLastModified(new Date());                        
                         address.setUser(new ProfileEntity(orcid));
-                        address.setIso2Country(Iso3166Country.fromValue(countryCode));
+                        address.setIso2Country(countryCode);
                         address.setSourceId(orcid);
-                        address.setVisibility(visibility);
+                        address.setVisibility(visibility.name());
                         addressDao.persist(address);
                     }
                 });

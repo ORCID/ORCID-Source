@@ -44,8 +44,8 @@ public class JpaJaxbFundingAdapterTest {
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         // Enums
-        assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());
-        assertEquals(FundingType.GRANT.value(), pfe.getType().value());
+        assertEquals(Visibility.PRIVATE.name(), pfe.getVisibility());
+        assertEquals(FundingType.GRANT.name(), pfe.getType());
 
         // General info
         assertEquals(Long.valueOf(0), pfe.getId());
@@ -165,8 +165,8 @@ public class JpaJaxbFundingAdapterTest {
         result.setTitle("funding:title");
         result.setTranslatedTitle("funding:translatedTitle");
         result.setTranslatedTitleLanguageCode("ES");
-        result.setType(FundingType.SALARY_AWARD);
-        result.setVisibility(Visibility.PRIVATE);
+        result.setType(FundingType.SALARY_AWARD.name());
+        result.setVisibility(Visibility.PRIVATE.name());
         return result;
     }
 

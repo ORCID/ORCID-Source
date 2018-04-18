@@ -151,9 +151,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     }
 
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        String locale = profile.getLocale();
         if (locale != null) {
-            return LocaleUtils.toLocale(locale.value());
+            org.orcid.jaxb.model.common_v2.Locale loc = org.orcid.jaxb.model.common_v2.Locale.valueOf(locale);
+            return LocaleUtils.toLocale(loc.value());
         }
         
         return LocaleUtils.toLocale("en");
