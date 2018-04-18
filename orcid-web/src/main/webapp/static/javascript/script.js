@@ -631,6 +631,11 @@ $(function() {
                                                     } else if (data.badRecoveryCode) {
                                                         message = om
                                                         .get('orcid.frontend.security.2fa.bad_recovery_code');
+                                                    } else if(data.invalidUserType) {
+                                                        message = om.get('orcid.frontend.security.invalid_user_type_1');
+                                                        message = message + ' <a href="https://orcid.org/help/contact-us">';
+                                                        message = message + om.get('orcid.frontend.security.invalid_user_type_2');
+                                                        message = message + '</a>';
                                                     } else {
                                                         message = om
                                                                .get('orcid.frontend.security.bad_credentials');
