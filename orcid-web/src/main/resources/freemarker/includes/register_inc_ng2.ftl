@@ -65,9 +65,9 @@
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" *ngIf="showDeactivatedError">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="javascript:void(0);" (click)="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="javascript:void(0);" (click)="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
-                <span class="orcid-error" *ngIf="showReactivationSent" ng-cloak>
+                <span class="orcid-error" *ngIf="showReactivationSent">
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                 </span>
             </div>
@@ -97,7 +97,7 @@
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a href="javascript:void(0);" (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[i]}} ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" *ngIf="showEmailsAdditionalDeactivatedError[i]">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" (click)="sendEmailsAdditionalReactivationEmail(i)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="javascript:void(0);" (click)="sendEmailsAdditionalReactivationEmail(i)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" *ngIf="showEmailsAdditionalReactivationSent[i]">
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}

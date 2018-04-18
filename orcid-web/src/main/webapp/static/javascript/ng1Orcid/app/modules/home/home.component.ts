@@ -1,6 +1,6 @@
 declare var orcidVar: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, NgModule, OnInit, ChangeDetectorRef } 

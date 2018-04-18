@@ -1,4 +1,4 @@
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -99,7 +99,6 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setBulkGroupPrivacy(priv): void{
-        console.log('bulk privacy wf', priv);
         for (var idx in this.formData.websites){
             this.formData.websites[idx].visibility.visibility = priv;        
         }

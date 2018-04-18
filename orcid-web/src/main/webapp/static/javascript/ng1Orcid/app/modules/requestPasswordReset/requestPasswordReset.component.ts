@@ -6,7 +6,7 @@ declare var om: any;
 
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, ChangeDetectorRef, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
@@ -35,6 +35,9 @@ import { RequestPasswordResetService }
 export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, OnInit {
     
     @Input() authorizationForm : any;
+    @Input() showDeactivatedError: any;
+    @Input() showReactivationSent: any;
+    @Output() sendReactivationEmail: EventEmitter<any> = new EventEmitter<any>();
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     showResetPassword: any;
@@ -45,8 +48,12 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     constructor(
         private cdr:ChangeDetectorRef,
         private commonService: CommonService,
+        private elementRef: ElementRef, 
         private requestPasswordResetService: RequestPasswordResetService,
     ) {
+        this.authorizationForm = elementRef.nativeElement.getAttribute('authorizationForm');
+        this.showDeactivatedError = elementRef.nativeElement.getAttribute('showDeactivatedError');
+        this.showReactivationSent = elementRef.nativeElement.getAttribute('showReactivationSent');
         this.showSendResetLinkError = false;
         this.requestResetPassword = {};
     }
@@ -68,12 +75,14 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         this.requestResetPassword.successMessage = null;
         this.requestResetPassword.errors = null;
         this.showSendResetLinkError = false;
+        this.showDeactivatedError = false;
 
         this.requestPasswordResetService.postResetPasswordRequest( this.requestResetPassword )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.requestResetPassword = data;                
+                this.requestResetPassword = data; 
+                this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);               
                 this.cdr.detectChanges();
             },
             error => {
@@ -85,6 +94,11 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         );
 
     };
+
+    sendReactivation(email?): void {
+        let _email = email;
+        this.sendReactivationEmail.emit(_email);
+    }
 
     toggleResetPassword(): void {
         this.showResetPassword = !this.showResetPassword;

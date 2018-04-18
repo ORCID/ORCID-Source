@@ -4,7 +4,7 @@ declare var logAjaxError: any;
 declare var om: any;
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 

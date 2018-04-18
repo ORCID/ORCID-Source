@@ -1,4 +1,3 @@
-<#macro nav></#macro>
 <#macro headerng2 nav="" >
 <script type="text/ng-template" id="header-ng2-template">
     <div class="header center">
@@ -59,8 +58,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
         <div class="row flexbox-container">         
             <#if ((isPublicProfile)?? && isPublicProfile == true | (deprecated)?? && deprecated) && (!(RequestParameters['publicRecordMenu']??) | RequestParameters['publicRecordMenu'] != 'false')> 

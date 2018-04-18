@@ -25,7 +25,7 @@ import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
@@ -80,7 +80,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     private LocaleManager localeManager;
     
     @Resource
-    private NormalizationService norm;
+    private PIDNormalizationService norm;
     
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;

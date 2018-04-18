@@ -397,7 +397,8 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 
 .container {
     margin-bottom: 0;
-    min-height: 90%
+    min-height: 90%;
+    clear: both;
 }
 
 .container .content-wrapper {
@@ -427,15 +428,13 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     margin-top: 15px;
 }
 
-#home .step span {
-    float: left;
+#home .step div {
     display: inline-block;
-    text-align: left;
     margin: 0;
     padding: 0
 }
 
-#home .step span.step-headline {
+#home .step .step-headline {
     background: #a6ce39;
     text-align: center;
     -webkit-border-radius: 50%;
@@ -449,24 +448,24 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     line-height: 40px
 }
 
-#home .step span.step-subheadline {
+#home .step .step-subheadline {
     font-size: 24px;
     padding-top: 10px;
     padding-left: 15px;
     line-height: 32px;
     height: 75px;
     color: #494A4C;
+    vertical-align: top;
 }
 
-#home .step span.step-detail {
+#home .step .step-detail {
     padding: 15px 0 0 15px;
     font-size: 14px;
     line-height: 22px;
-    float: left;
-    text-align: left;
     max-width: 350px;
     width: auto;
     color: #494A4C;
+    vertical-align: top;
 }
 
 #home-blog-list {
@@ -2084,6 +2083,21 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     border-radius: 0;
     min-height: 50px;
     height: auto
+}
+
+.alert-banner {
+    float: left;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.alert-banner p{
+    width: 90%;
+    float: left;
+}
+
+.alert-banner button{
+    float: right;
 }
 
 .alert-icon-large {

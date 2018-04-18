@@ -16,7 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.v3.dev1.common.TransientError;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 public class JSONWorkExternalIdentifiersConverterV3Test {
 
     @Resource
-    NormalizationService norm;
+    PIDNormalizationService norm;
     @Resource
     LocaleManager localeManager;
     private JSONWorkExternalIdentifiersConverterV3 converter;

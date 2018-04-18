@@ -237,13 +237,15 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             };
 
             $scope.sendReactivationEmail = function (email) {
-                $scope.showDeactivatedError = false;
-                $scope.showReactivationSent = true;
                 $.ajax({
                     url: getBaseUri() + '/sendReactivation.json',
                     type: "POST",
                     data: { email: email },
                     dataType: 'json',
+                    success: function (data) {
+                        $scope.showDeactivatedError = false;
+                        $scope.showReactivationSent = true;
+                    }
                 }).fail(function(){
                 // something bad is happening!
                     console.log("error sending reactivation email");

@@ -8,7 +8,7 @@ declare var getStaticCdnPath: any;
 declare var orcidGA: any;
 declare var orcidVar: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
@@ -111,7 +111,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         };
 
         this.allowEmailAccess = true;
-        this.authorizationForm = {};
+        this.authorizationForm = {
+            userName: {
+                value: ""
+            }
+        };
         this.counter = 0;
         this.currentLanguage = OrcidCookie.getCookie('locale_v3');
         this.duplicates = {};
@@ -440,7 +444,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.oauthService.sendReactivationEmail(email)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
-            (response: Response) => {
+            data => {
                 this.showDeactivatedError = false;
                 this.showReactivationSent = true;
                 this.cdr.detectChanges();
@@ -634,6 +638,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
+
         this.authorizationForm = {
             userName:  {value: ""},
             givenNames:  {value: ""},
@@ -641,7 +646,12 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             email:  {value: ""},
             linkType:  {value: null},
         }
-        this.loadRequestInfoForm();
+
+        //if oauth request load request info form
+        if(orcidVar.oauth2Screens || orcidVar.originalOauth2Process){
+            this.loadRequestInfoForm();
+        }
+        
         if(orcidVar.oauth2Screens) {
             if(orcidVar.oauthUserId && orcidVar.showLogin){
                 this.showRegisterForm = false;

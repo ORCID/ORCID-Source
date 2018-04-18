@@ -59,7 +59,7 @@ public class AuthenticationManagerTest extends DBUnitTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Rollback(true)
     public void testSuccessfullAuthentication() {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("spike@milligan.com", "password");
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("public_0000-0000-0000-0002@test.orcid.org", "password");
         Authentication authentication = authenticationManager.authenticate(token);
         assertNotNull(authentication);
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

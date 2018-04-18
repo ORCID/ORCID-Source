@@ -30,8 +30,14 @@
                     <strong><span ng-bind="requestResetPassword.successMessage"></span></strong>
                 </div>
                 <!--Validation error-->
-                <span class="orcid-error" ng-show="requestResetPassword.errors.length > 0">
+                <span class="orcid-error" ng-show="requestResetPassword.errors.length > 0 && !$parent.showDeactivatedError && !showReactivationSent">
                     <div ng-repeat='error in requestResetPassword.errors' ng-bind-html="error"></div>
+                </span>
+                <span class="orcid-error" ng-show="$parent.showDeactivatedError" ng-cloak>
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="javascript:void(0);" ng-click="sendReactivationEmail(requestResetPassword.email)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                </span>
+                <span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                 </span>
                 <!--General error-->
                 <div style="margin-bottom: 15px;" ng-show="showSendResetLinkError">

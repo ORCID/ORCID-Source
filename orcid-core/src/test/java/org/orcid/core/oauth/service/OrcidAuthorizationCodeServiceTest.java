@@ -79,7 +79,7 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     @Transactional
     public void testCreateAuthorizationCodeWithValidClient() {
         AuthorizationRequest request = getAuthorizationRequest("4444-4444-4444-4441");
-        OAuth2Authentication oauth2Authentication = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication());
+        OAuth2Authentication oauth2Authentication = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication("0000-0000-0000-0002"));
         String authorizationCode = authorizationCodeServices.createAuthorizationCode(oauth2Authentication);
         assertNotNull(authorizationCode);
         oauth2Authentication  = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
@@ -98,7 +98,7 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     @Transactional
     public void testCreateAuthorizationCodeWithInvalidClient() {
         AuthorizationRequest request = getAuthorizationRequest("6444-4444-4444-4441");        
-        OAuth2Authentication auth = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication());
+        OAuth2Authentication auth = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication("0000-0000-0000-0002"));
         authorizationCodeServices.createAuthorizationCode(auth);
     }
 
@@ -118,8 +118,8 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
         return authorizationRequest;
     }
     
-    private Authentication getUserAuthentication() {
-        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername("4444-4444-4444-4445");
+    private Authentication getUserAuthentication(String orcid) {
+        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcid);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details.getOrcid(), "password");
         auth.setDetails(details);
         return auth;

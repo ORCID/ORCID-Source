@@ -1,4 +1,4 @@
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common';
 
 import { Component, Input, NgModule } 

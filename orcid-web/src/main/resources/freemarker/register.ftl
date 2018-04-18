@@ -42,7 +42,6 @@
                 ${springMacroRequestContext.getMessage("register.labelClause_3")}
                 <br /><br />
             </p>
-            <#include "/common/browser-checks.ftl" />
             <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                 <oauth-authorization-ng2></oauth-authorization-ng2>
             </@orcid.checkFeatureStatus>

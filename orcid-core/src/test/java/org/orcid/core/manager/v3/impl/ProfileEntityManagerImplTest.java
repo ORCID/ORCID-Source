@@ -21,8 +21,10 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.v3.dev1.common.Locale;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -43,6 +45,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -99,6 +102,10 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
+        ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
+        
         UserconnectionPK pk = new UserconnectionPK();
         pk.setProviderid("providerId");
         pk.setProvideruserid("provideruserid");

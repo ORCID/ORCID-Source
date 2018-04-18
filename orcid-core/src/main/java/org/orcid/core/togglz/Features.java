@@ -14,6 +14,9 @@ public enum Features implements Feature {
 
     @Label("Badges on member details")
     BADGES,
+    
+    @Label("Cookie policy banner")
+    COOKIE_BANNER,
 
     @Label("UI changes for GDPR compliance")
     GDPR_UI,
@@ -82,8 +85,14 @@ public enum Features implements Feature {
     GET_MY_DATA,
 
     @Label("Check external id resolution in UI")
-    EX_ID_RESOLVER;
+    EX_ID_RESOLVER,
 
+    @Label("Remove https://orcid.org from OpenID id_tokens")
+    OPENID_SIMPLE_SUBJECT,
+    
+    @Label("Disable 1.1 version from any API")
+    DISABLE_1_1;
+    
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }
