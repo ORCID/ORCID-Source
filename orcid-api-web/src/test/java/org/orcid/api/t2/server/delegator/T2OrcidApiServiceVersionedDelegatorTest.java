@@ -583,11 +583,11 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(orgEntity.getOrg());
         assertEquals("An institution", orgEntity.getOrg().getName());
         assertEquals("London", orgEntity.getOrg().getCity());
-        assertEquals(Iso3166Country.GB, orgEntity.getOrg().getCountry());
+        assertEquals(Iso3166Country.GB.name(), orgEntity.getOrg().getCountry());
         assertEquals(Long.valueOf(1), orgEntity.getOrg().getId());
         assertNotNull(orgEntity.getOrg().getOrgDisambiguated());
         assertEquals("London", orgEntity.getOrg().getOrgDisambiguated().getCity());
-        assertEquals(Iso3166Country.GB, orgEntity.getOrg().getOrgDisambiguated().getCountry());
+        assertEquals(Iso3166Country.GB.name(), orgEntity.getOrg().getOrgDisambiguated().getCountry());
         assertEquals(Long.valueOf(1), orgEntity.getOrg().getOrgDisambiguated().getId());
     }
     

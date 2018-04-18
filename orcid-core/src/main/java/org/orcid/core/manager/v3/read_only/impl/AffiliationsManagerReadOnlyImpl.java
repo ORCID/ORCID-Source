@@ -183,19 +183,19 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                if (AffiliationType.DISTINCTION.equals(affiliation.getAffiliationType())) {
+                if (AffiliationType.DISTINCTION.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbDistinctionAdapter.toDistinction(affiliation));
-                } else if (AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
+                } else if (AffiliationType.EDUCATION.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
-                } else if (AffiliationType.EMPLOYMENT.equals(affiliation.getAffiliationType())) {
+                } else if (AffiliationType.EMPLOYMENT.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));
-                } else if (AffiliationType.INVITED_POSITION.equals(affiliation.getAffiliationType())) {
+                } else if (AffiliationType.INVITED_POSITION.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbInvitedPositionAdapter.toInvitedPosition(affiliation));                    
-                } else if (AffiliationType.MEMBERSHIP.equals(affiliation.getAffiliationType())) {
+                } else if (AffiliationType.MEMBERSHIP.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbMembershipAdapter.toMembership(affiliation));
-                } else if (AffiliationType.QUALIFICATION.equals(affiliation.getAffiliationType())) {
+                } else if (AffiliationType.QUALIFICATION.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbQualificationAdapter.toQualification(affiliation));
-                } else if (AffiliationType.SERVICE.equals(affiliation.getAffiliationType())) {
+                } else if (AffiliationType.SERVICE.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbServiceAdapter.toService(affiliation));
                 }
             }

@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.dev1.groupid.GroupType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class Member implements ErrorsInterface, Serializable {
@@ -38,7 +40,9 @@ public class Member implements ErrorsInterface, Serializable {
     	} 
     	
     	group.setGroupOrcid(Text.valueOf(profile.getId()));
-    	group.setType(Text.valueOf(profile.getGroupType()));
+    	MemberType memberType = MemberType.valueOf(profile.getGroupType());
+    	group.setType(Text.valueOf(memberType.value()));
+
     	group.setSalesforceId(Text.valueOf(profile.getSalesforeId()));
     	return group;
     }

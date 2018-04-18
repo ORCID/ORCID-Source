@@ -273,7 +273,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             Citation workCitation = orcidWork.getWorkCitation();
             if (workCitation != null && StringUtils.isNotBlank(workCitation.getCitation()) && workCitation.getWorkCitationType() != null) {
                 workEntity.setCitation(workCitation.getCitation());
-                workEntity.setCitationType(workCitation.getWorkCitationType().value());
+                workEntity.setCitationType(workCitation.getWorkCitationType().name());
             }
             
             // New way of doing work contributors
