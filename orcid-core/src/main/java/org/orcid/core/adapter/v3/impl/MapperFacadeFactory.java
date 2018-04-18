@@ -26,7 +26,7 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.dev1.client.Client;
 import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
@@ -152,7 +152,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private EncryptionManager encryptionManager;
     
     @Resource
-    private NormalizationService norm;
+    private PIDNormalizationService norm;
     
     @Resource
     private LocaleManager localeManager;

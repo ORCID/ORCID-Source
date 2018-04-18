@@ -3,6 +3,7 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 import java.util.List;
 
 import org.apache.jena.ext.com.google.common.collect.Lists;
+import org.orcid.pojo.PIDResolutionResult;
 
 public interface Resolver {
 
@@ -22,6 +23,6 @@ public interface Resolver {
      * @param providedURL
      * @return
      */
-    public ResolutionResult resolve(String apiTypeName, String value);
+    public PIDResolutionResult resolve(String apiTypeName, String value);
 
 }

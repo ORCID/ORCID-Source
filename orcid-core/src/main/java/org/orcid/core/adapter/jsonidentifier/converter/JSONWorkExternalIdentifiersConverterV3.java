@@ -7,7 +7,7 @@ import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.dev1.common.TransientError;
 import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
@@ -22,10 +22,10 @@ import ma.glasnost.orika.metadata.Type;
 
 public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConverter<ExternalIDs, String> {
 
-    private NormalizationService norm;
+    private PIDNormalizationService norm;
     private LocaleManager localeManager;
     
-    public JSONWorkExternalIdentifiersConverterV3(NormalizationService norm, LocaleManager localeManager){
+    public JSONWorkExternalIdentifiersConverterV3(PIDNormalizationService norm, LocaleManager localeManager){
         this.norm=norm;
         this.localeManager=localeManager;
     }

@@ -1,0 +1,11 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="UPDATE-RFC" author="Tom Demeranville">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck expectedResult="1">select count(*) from identifier_type WHERE id_name = 'RFC';</sqlCheck>
+			</preConditions>
+			<sql>UPDATE identifier_type SET id_resolution_prefix = 'https://tools.ietf.org/html/' WHERE id_name = 'RFC';</sql>
+	</changeSet>
+
+</databaseChangeLog>
