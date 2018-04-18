@@ -96,6 +96,12 @@
     <bean id="researcherUrlDaoReadOnly" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl">
     	<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
+	
+	<bean id="emailFrequencyDao" class="org.orcid.persistence.dao.impl.EmailFrequencyDaoImpl" />
+	
+	<bean id="emailFrequencyDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailFrequencyDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
     
     <!-- Activities DAO's -->
 	<bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />

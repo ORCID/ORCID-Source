@@ -113,19 +113,13 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Set<AddressEntity> addresses;
     private SortedSet<PeerReviewEntity> peerReviews;
     private Locale locale = Locale.EN;
-    private Boolean sendChangeNotifications;
-    private Boolean sendAdministrativeChangeNotifications;
-    private Boolean sendOrcidNews;
-    private Boolean sendMemberUpdateRequests;
     private SortedSet<ClientDetailsEntity> clients;
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
     private boolean enableDeveloperTools;
     private Date developerToolsEnabledDate;
-    private float sendEmailFrequencyDays;
-    private Boolean enableNotifications = Boolean.TRUE;
-
+    
     // Salesfore ID
     private String salesforeId;
 
@@ -149,6 +143,19 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Boolean using2FA = Boolean.FALSE;
     private String secretFor2FA;
     
+    // Notifications
+    @Deprecated
+    private Boolean enableNotifications = Boolean.TRUE;
+    @Deprecated
+    private float sendEmailFrequencyDays;
+    @Deprecated
+    private Boolean sendChangeNotifications;
+    @Deprecated
+    private Boolean sendAdministrativeChangeNotifications;
+    @Deprecated
+    private Boolean sendOrcidNews;
+    @Deprecated
+    private Boolean sendMemberUpdateRequests;    
     
     @Id
     @Column(name = "orcid", length = 19)

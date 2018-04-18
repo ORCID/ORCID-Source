@@ -2280,5 +2280,27 @@
 		date_created="2016-04-01 15:31:00.00"
 		display_index="4"
     /> 
+    
+    <email_frequency 
+    	id="UUID1"
+		orcid="0000-0000-0000-0003"
+		send_administrative_change_notifications="0.0"
+		send_change_notifications="1.0"
+		send_orcid_news="7.0"
+		send_quarterly_tips="true"
+		last_modified="2016-04-01 15:00:00.00"
+		date_created="2016-04-01 15:00:00.00"		
+    />
+      
+	<email_frequency 
+    	id="UUID2"
+		orcid="0000-0000-0000-0004"
+		send_administrative_change_notifications="0.0"
+		send_change_notifications="0.0"
+		send_orcid_news="0.0"
+		send_quarterly_tips="true"
+		last_modified="2016-04-01 15:00:00.00"
+		date_created="2016-04-01 15:00:00.00"		
+    />
                            
 </dataset>
