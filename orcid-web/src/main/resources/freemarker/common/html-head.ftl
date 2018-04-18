@@ -129,7 +129,7 @@
 
     <!-- ***************************************************** -->
     <!-- Ng2 Templates - BEGIN -->
-
+    <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">
 
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
         <!-- NG2: Under development -->

@@ -513,7 +513,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4441", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION).size());
+        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4441", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.name()).size());
     }      
     
     @Test
@@ -524,14 +524,14 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
-        assertEquals(5, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION).size());        
+        assertEquals(5, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.name()).size());        
         
         orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4446");
         response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         
-        assertEquals(5, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION).size());               
+        assertEquals(5, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.name()).size());               
     }
     
     @Test
@@ -555,7 +555,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
-        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION).size());        
+        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.name()).size());        
         
         orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4499");
         
@@ -576,18 +576,18 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         
-        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION).size());    
+        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.name()).size());    
         
-        OrgAffiliationRelationEntity orgEntity = orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION).get(0);
+        OrgAffiliationRelationEntity orgEntity = orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.name()).get(0);
         assertNotNull(orgEntity);
         assertNotNull(orgEntity.getOrg());
         assertEquals("An institution", orgEntity.getOrg().getName());
         assertEquals("London", orgEntity.getOrg().getCity());
-        assertEquals(Iso3166Country.GB, orgEntity.getOrg().getCountry());
+        assertEquals(Iso3166Country.GB.name(), orgEntity.getOrg().getCountry());
         assertEquals(Long.valueOf(1), orgEntity.getOrg().getId());
         assertNotNull(orgEntity.getOrg().getOrgDisambiguated());
         assertEquals("London", orgEntity.getOrg().getOrgDisambiguated().getCity());
-        assertEquals(Iso3166Country.GB, orgEntity.getOrg().getOrgDisambiguated().getCountry());
+        assertEquals(Iso3166Country.GB.name(), orgEntity.getOrg().getOrgDisambiguated().getCountry());
         assertEquals(Long.valueOf(1), orgEntity.getOrg().getOrgDisambiguated().getId());
     }
     

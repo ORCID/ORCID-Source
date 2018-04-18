@@ -20,7 +20,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      * The list of other names related with the specified orcid profile
      * */
-    List<OtherNameEntity> getOtherNames(String orcid, org.orcid.jaxb.model.common_v2.Visibility visibility);
+    List<OtherNameEntity> getOtherNames(String orcid, String visibility);
 
     
     /**

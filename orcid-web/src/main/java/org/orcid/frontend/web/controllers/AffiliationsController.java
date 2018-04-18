@@ -161,9 +161,15 @@ public class AffiliationsController extends BaseWorkspaceController {
         AffiliationForm affiliationForm = new AffiliationForm();
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null
-                ? org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().value())
-                : profile.getActivitiesVisibilityDefault());
+        
+        Visibility v = null;
+        org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = null;
+        if (profile.getActivitiesVisibilityDefault() != null) {
+            defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+        } else {
+            defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().name());
+        }
+        v = Visibility.valueOf(defaultVis);
         affiliationForm.setVisibility(v);
 
         Text affiliationName = new Text();

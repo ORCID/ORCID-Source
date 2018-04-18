@@ -12,15 +12,17 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
 import org.orcid.core.utils.v3.identifiers.normalizers.NormalizerWithURLTransform;
+import org.orcid.core.utils.v3.identifiers.resolvers.Resolver;
 import org.orcid.pojo.IdentifierType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NormalizationService {
+public class PIDNormalizationService {
 
     @Resource
     List<Normalizer> normalizers = new ArrayList<Normalizer>();
@@ -53,16 +55,17 @@ public class NormalizationService {
      * Ensure this is the API type name, not the DB type name.
      * 
      * Will return empty strings for values that cannot be normalised (because they're not recognised)
+     * Will return the original value for things that do not have a registered normalizer
      * 
      * @param type
      * @param value
      * @return
      */
     public String normalise(String apiTypeName, String value) {
-        if (apiTypeName == null)
+        if (apiTypeName == null || value == null || !map.containsKey(apiTypeName))
             return value;
         String returnValue = value;
-        for (Normalizer n : normalizers) {
+        for (Normalizer n : map.get(apiTypeName)) {
             returnValue = n.normalise(apiTypeName, returnValue);
         }
         return returnValue;
@@ -70,8 +73,9 @@ public class NormalizationService {
     
     /** Creates a normalised URL if possible
      * Uses normalised identifier + prefix (if available)
+     * If value is a URL will use that if no normalised value available.
      * 
-     * Will return empty strings for values that cannot be normalised (because they're not recognised)
+     * Will return empty strings for valu, es that cannot be normalised or do not have a prefix
      * 
      * @param apiTypeName
      * @param value
@@ -83,7 +87,7 @@ public class NormalizationService {
         String norm = value;
         
         //generate normalized value (some have additional transform here)
-        for (Normalizer n : normalizers) {
+        for (Normalizer n : map.get(apiTypeName)) {
             if (n instanceof NormalizerWithURLTransform)
                 norm = ((NormalizerWithURLTransform)n).normaliseURL(apiTypeName, norm);
             else
@@ -97,6 +101,13 @@ public class NormalizationService {
             if (!StringUtils.isEmpty(prefix))
                 return prefix+norm;
         }
+        
+        //if the value is a valid URL, just return that.
+        UrlValidator urlValidator = new UrlValidator();
+        if (urlValidator.isValid(norm)){
+            return norm;
+        }
+        
         return "";
     }
 

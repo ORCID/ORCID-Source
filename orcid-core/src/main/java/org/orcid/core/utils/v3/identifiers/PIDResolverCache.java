@@ -13,7 +13,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 @Component
-public class ResolverCache {
+public class PIDResolverCache {
 
     //recursively follow up to 4 http->https or https->http redirects
     public static int doProtocolRedirect(HttpURLConnection con, int count) throws IOException{

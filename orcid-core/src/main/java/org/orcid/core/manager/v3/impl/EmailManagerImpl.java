@@ -126,7 +126,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 Email newPrimaryEmail = null;
                 if (emails != null && !emails.getEmails().isEmpty()) {
                     for (Email email : emails.getEmails()) {
-                        emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), org.orcid.jaxb.model.common_v2.Visibility.fromValue(email.getVisibility().value()));
+                        emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), email.getVisibility().value());
                         if (email.isPrimary()) {
                             if (primaryFound) {
                                 throw new IllegalArgumentException("More than one primary email specified");
@@ -160,7 +160,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         Email currentPrimaryEmail = findPrimaryEmail(orcid);
         
         // Create the new email
-        emailDao.addEmail(orcid, email.getEmail(), org.orcid.jaxb.model.common_v2.Visibility.fromValue(email.getVisibility().value()), sourceId, clientSourceId);
+        emailDao.addEmail(orcid, email.getEmail(), email.getVisibility().name(), sourceId, clientSourceId);
         
         // if primary email changed send notification.
         if (email.isPrimary() && !StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
@@ -179,7 +179,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     public boolean updateVisibility(String orcid, String email, Visibility visibility) {
-        return emailDao.updateVisibility(orcid, email, org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.value()));
+        return emailDao.updateVisibility(orcid, email, visibility.name());
     }
     
     @Override

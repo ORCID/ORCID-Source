@@ -2,8 +2,6 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRelationEntity, Long> {
@@ -34,7 +32,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, Visibility visibility);
+    boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, String visibility);
 
     /**
      * Get the affiliation associated with the client orcid and the orgAffiliationRelationId
@@ -64,7 +62,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * 
      * @return true if the profile orgAffilationRelation relationship was created
      * */
-    boolean addOrgAffiliationRelation(String clientOrcid, long orgAffiliationRelationId, Visibility visibility);
+    boolean addOrgAffiliationRelation(String clientOrcid, long orgAffiliationRelationId, String visibility);
 
     /**
      * Updates an existing OrgAffiliationRelationEntity
@@ -85,7 +83,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      *          The affiliation type
      * @return a list of all affiliations that belongs to the given user and matches the given type                 
      * */
-    List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, AffiliationType type);        
+    List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, String type);        
     
     /**
      * Get all affiliations that belongs to the given user

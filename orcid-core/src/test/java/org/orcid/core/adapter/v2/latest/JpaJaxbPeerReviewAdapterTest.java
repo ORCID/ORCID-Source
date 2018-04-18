@@ -50,10 +50,10 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNotNull(pe);
         //General info
         assertEquals(Long.valueOf(12345), pe.getId());
-        assertEquals(Visibility.PRIVATE.value(), pe.getVisibility().value());        
+        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());        
         assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
-        assertEquals("reviewer", pe.getRole().value());
-        assertEquals("review", pe.getType().value());
+        assertEquals("REVIEWER", pe.getRole());
+        assertEquals("REVIEW", pe.getType());
         assertEquals("peer-review:url", pe.getUrl());
         
         //Dates
@@ -70,7 +70,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("common:name", pe.getOrg().getName());
         assertEquals("common:city", pe.getOrg().getCity());
         assertEquals("common:region", pe.getOrg().getRegion());        
-        assertEquals(Iso3166Country.AF.value(), pe.getOrg().getCountry().value());
+        assertEquals(Iso3166Country.AF.name(), pe.getOrg().getCountry());
         assertEquals("common:disambiguated-organization-identifier", pe.getOrg().getOrgDisambiguated().getSourceId());
         assertEquals("common:disambiguation-source", pe.getOrg().getOrgDisambiguated().getSourceType()); 
         
@@ -81,7 +81,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("peer-review:subject-translated-name", pe.getSubjectTranslatedName());
         assertEquals("en", pe.getSubjectTranslatedNameLanguageCode());
         assertEquals("peer-review:subject-url", pe.getSubjectUrl());
-        assertEquals(WorkType.JOURNAL_ARTICLE, pe.getSubjectType());
+        assertEquals(WorkType.JOURNAL_ARTICLE.name(), pe.getSubjectType());
         
         //Check group id
         assertEquals("orcid-generated:12345", pe.getGroupId());
@@ -163,7 +163,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     private PeerReviewEntity getPeerReviewEntity() {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
-        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US);
+        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
@@ -174,8 +174,8 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setCompletionDate(new CompletionDateEntity(2015, 1, 1));
         result.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:external-identifier-id\"}}]}");
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
-        result.setRole(Role.MEMBER);
-        result.setType(PeerReviewType.EVALUATION);
+        result.setRole(Role.MEMBER.name());
+        result.setType(PeerReviewType.EVALUATION.name());
         result.setUrl("peer-review:url");        
         result.setSubjectExternalIdentifiersJson("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}");
         result.setSubjectContainerName("peer-review:subject-container-name");
@@ -183,8 +183,8 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setSubjectTranslatedName("peer-review:subject-translated-name");
         result.setSubjectTranslatedNameLanguageCode("en");
         result.setSubjectUrl("peer-review:subject-url");                
-        result.setSubjectType(WorkType.BOOK_REVIEW);        
-        result.setVisibility(Visibility.PRIVATE);   
+        result.setSubjectType(WorkType.BOOK_REVIEW.name());        
+        result.setVisibility(Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
         result.setGroupId("orcid-generated:12345");
         result.setId(12345L);

@@ -3,7 +3,6 @@ package org.orcid.persistence.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 
@@ -22,7 +21,7 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     
     void updateLastModified(String clientId);
     
-    void updateClientType(ClientType clientType, String clientId);
+    void updateClientType(String clientType, String clientId);
     
     boolean removeClientSecret(String clientId, String clientSecret);
     

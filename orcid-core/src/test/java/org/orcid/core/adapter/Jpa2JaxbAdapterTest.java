@@ -219,27 +219,27 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(userOrcid);
 
         // Set default visibility
-        profile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        profile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
 
         // Set name
         RecordNameEntity name = new RecordNameEntity();
         name.setCreditName("My credit name");
         name.setFamilyName("My family name");
         name.setGivenNames("My given names");
-        name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(name);
 
         // Set biography
         BiographyEntity bio = new BiographyEntity();
         bio.setBiography("This is my biography");
-        bio.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        bio.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setBiographyEntity(bio);
 
         // Set other names
         TreeSet<OtherNameEntity> otherNames = new TreeSet<OtherNameEntity>();
         OtherNameEntity otherName = new OtherNameEntity();
         otherName.setDisplayName("My other name");
-        otherName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        otherName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         otherName.setDisplayIndex(20000L);
         otherName.setClientSourceId(clientId);
         otherName.setId(24816L);
@@ -249,8 +249,8 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         // Set address
         Set<AddressEntity> addresses = new HashSet<AddressEntity>();
         AddressEntity address = new AddressEntity();
-        address.setIso2Country(Iso3166Country.US);
-        address.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        address.setIso2Country(Iso3166Country.US.name());
+        address.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         address.setDisplayIndex(20000L);
         address.setClientSourceId(clientId);
         address.setId(24816L);
@@ -261,7 +261,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         TreeSet<ProfileKeywordEntity> keywords = new TreeSet<ProfileKeywordEntity>();
         ProfileKeywordEntity keyword = new ProfileKeywordEntity();
         keyword.setKeywordName("My keyword");
-        keyword.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        keyword.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         keyword.setDisplayIndex(20000L);
         keyword.setClientSourceId(clientId);
         keyword.setId(24816L);
@@ -273,7 +273,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         ResearcherUrlEntity rUrl = new ResearcherUrlEntity();
         rUrl.setUrl("http://orcid.org");
         rUrl.setUrlName("My rUrl");
-        rUrl.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        rUrl.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         rUrl.setDisplayIndex(20000L);
         rUrl.setClientSourceId(clientId);
         rUrl.setId(24816L);
@@ -286,7 +286,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         extId.setExternalIdCommonName("My common name");
         extId.setExternalIdReference("My refrence");
         extId.setExternalIdUrl("http://orcid.org");
-        extId.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        extId.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         extId.setDisplayIndex(20000L);
         extId.setClientSourceId(clientId);
         extId.setId(24816L);
@@ -296,9 +296,9 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         // Set works
         TreeSet<WorkEntity> works = new TreeSet<WorkEntity>();
         WorkEntity work = new WorkEntity();
-        work.setWorkType(WorkType.OTHER);
+        work.setWorkType(WorkType.OTHER.name());
         work.setTitle("My work title");
-        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         work.setDisplayIndex(20000L);
         work.setClientSourceId(clientId);
         work.setId(24816L);
@@ -311,7 +311,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         OrgEntity newOrg = new OrgEntity();
         newOrg.setId(1234L);
         newOrg.setCity("San Jose");
-        newOrg.setCountry(org.orcid.jaxb.model.message.Iso3166Country.CR);
+        newOrg.setCountry(org.orcid.jaxb.model.message.Iso3166Country.CR.name());
         newOrg.setName("My org name");
 
         // Set funding
@@ -319,7 +319,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         ProfileFundingEntity funding = new ProfileFundingEntity();
         funding.setOrg(newOrg);
         funding.setTitle("My funding title");
-        funding.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        funding.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         funding.setDisplayIndex(20000L);
         funding.setClientSourceId(clientId);
         funding.setId(24816L);
@@ -329,9 +329,9 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         // Set affiliations
         TreeSet<OrgAffiliationRelationEntity> affiliations = new TreeSet<OrgAffiliationRelationEntity>();
         OrgAffiliationRelationEntity affiliation = new OrgAffiliationRelationEntity();
-        affiliation.setAffiliationType(org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION);
+        affiliation.setAffiliationType(org.orcid.jaxb.model.v3.dev1.record.AffiliationType.EDUCATION.name());
         affiliation.setOrg(newOrg);
-        affiliation.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        affiliation.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         affiliation.setClientSourceId(clientId);
         affiliation.setId(24816L);
         affiliations.add(affiliation);

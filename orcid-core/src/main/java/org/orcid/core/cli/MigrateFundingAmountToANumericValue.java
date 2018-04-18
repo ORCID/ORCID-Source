@@ -86,7 +86,7 @@ public class MigrateFundingAmountToANumericValue {
     }
     
     private Locale getLocaleFromProfile(ProfileEntity profile){
-        org.orcid.jaxb.model.common_v2.Locale orcidLocale = profile.getLocale();
+        org.orcid.jaxb.model.common_v2.Locale orcidLocale = org.orcid.jaxb.model.common_v2.Locale.valueOf(profile.getLocale());
         String value = orcidLocale.value();
         Locale locale = null;
         if(value!= null) {

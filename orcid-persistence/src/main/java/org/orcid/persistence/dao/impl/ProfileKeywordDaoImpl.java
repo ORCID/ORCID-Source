@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, Long> implements ProfileKeywordDao {
 
+    private static final String PUBLIC_VISIBILITY = "PUBLIC";
+
+    private static final String PRIVATE_VISIBILITY = "PRIVATE";
+    
     public ProfileKeywordDaoImpl() {
         super(ProfileKeywordEntity.class);
     }
@@ -35,12 +38,12 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Override
     @Cacheable(value = "public-keywords", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ProfileKeywordEntity> getPublicProfileKeywords(String orcid, long lastModified) {
-        return getProfileKeywords(orcid, Visibility.PUBLIC);
+        return getProfileKeywords(orcid, PUBLIC_VISIBILITY);
     }
     
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProfileKeywordEntity> getProfileKeywords(String orcid, org.orcid.jaxb.model.common_v2.Visibility visibility) {
+    public List<ProfileKeywordEntity> getProfileKeywords(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
@@ -70,14 +73,14 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
      * */
     @Override
     @Transactional
-    public boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId, org.orcid.jaxb.model.common_v2.Visibility visibility) {
+    public boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId, String visibility) {
         Query query = entityManager
                 .createNativeQuery("INSERT INTO profile_keyword (id, date_created, last_modified, profile_orcid, keywords_name, source_id, client_source_id, visibility) VALUES (nextval('keyword_seq'), now(), now(), :orcid, :keywords_name, :source_id, :client_source_id, :keywords_visibility)");
         query.setParameter("orcid", orcid);
         query.setParameter("keywords_name", keyword);
         query.setParameter("source_id", sourceId);
         query.setParameter("client_source_id", clientSourceId);
-        query.setParameter("keywords_visibility", StringUtils.upperCase(visibility.value()));
+        query.setParameter("keywords_visibility", StringUtils.upperCase(visibility));
         return query.executeUpdate() > 0 ? true : false;
     }
 

@@ -1,9 +1,8 @@
 package org.orcid.persistence.jpa.entities.keys;
 
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import java.io.Serializable;
 
 import javax.persistence.Embeddable;
-import java.io.Serializable;
 
 /**
  * @author Declan Newman (declan) Date: 07/08/2012
@@ -13,13 +12,13 @@ public class WorkExternalIdentifierEntityPk implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String identifier;
-    private WorkExternalIdentifierType identifierType;
+    private String identifierType;
     private Long work;
 
     public WorkExternalIdentifierEntityPk() {
     }
 
-    public WorkExternalIdentifierEntityPk(String identifier, WorkExternalIdentifierType identifierType, Long work) {
+    public WorkExternalIdentifierEntityPk(String identifier, String identifierType, Long work) {
         this.identifier = identifier;
         this.identifierType = identifierType;
         this.work = work;
@@ -33,11 +32,11 @@ public class WorkExternalIdentifierEntityPk implements Serializable {
         this.identifier = identifier;
     }
 
-    public WorkExternalIdentifierType getIdentifierType() {
+    public String getIdentifierType() {
         return identifierType;
     }
 
-    public void setIdentifierType(WorkExternalIdentifierType identifierType) {
+    public void setIdentifierType(String identifierType) {
         this.identifierType = identifierType;
     }
 

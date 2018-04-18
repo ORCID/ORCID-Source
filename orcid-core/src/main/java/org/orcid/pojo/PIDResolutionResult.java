@@ -14,26 +14,37 @@
  *
  * =============================================================================
  */
-package org.orcid.core.utils.v3.identifiers.resolvers;
+package org.orcid.pojo;
 
-public class ResolutionResult {
+public class PIDResolutionResult {
+    private Boolean resolved;
     private Boolean attemptedResolution;
-    private String resolvedUrl;
+    private Boolean isNormalizable;
+    private String generatedUrl;
     
-    public ResolutionResult(Boolean attemptedResolution, String resolvedUrl) {
+    public static PIDResolutionResult NOT_ATTEMPTED = new PIDResolutionResult(false,false,false,null);
+    
+    public PIDResolutionResult(Boolean resolved, Boolean attemptedResolution, Boolean validFormat, String generatedUrl) {
         super();
+        this.resolved=resolved;
         this.attemptedResolution = attemptedResolution;
-        this.resolvedUrl = resolvedUrl;
+        this.generatedUrl = generatedUrl;
+        this.isNormalizable = validFormat;
     }
     
     public Boolean isResolved() {
-        return (resolvedUrl != null) ;
+        return resolved;
     }
     public Boolean getAttemptedResolution() {
         return attemptedResolution;
     }
 
-    public String getResolvedUrl() {
-        return resolvedUrl;
+    public String getGeneratedUrl() {
+        return generatedUrl;
     }
+
+    public Boolean isValidFormat() {
+        return isNormalizable;
+    }
+
 }

@@ -104,7 +104,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
@@ -148,7 +148,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
@@ -184,7 +184,7 @@ public class LoadGridDataTest {
         verify(orgDisambiguatedDao).merge(captor.capture());
 
         OrgDisambiguatedEntity orgToBeUpdated = captor.getValue();
-        assertEquals(Iso3166Country.CR, orgToBeUpdated.getCountry());
+        assertEquals(Iso3166Country.CR.name(), orgToBeUpdated.getCountry());
         assertEquals(Long.valueOf(1), orgToBeUpdated.getId());
         assertEquals("City One Updated", orgToBeUpdated.getCity());
         assertEquals(IndexingStatus.PENDING, orgToBeUpdated.getIndexingStatus());
@@ -208,7 +208,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
@@ -378,7 +378,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
@@ -431,7 +431,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");

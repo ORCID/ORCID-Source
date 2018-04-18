@@ -2,15 +2,11 @@ package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.notification.permission_v2.ItemType;
 
 /**
  * 
@@ -24,7 +20,7 @@ public class NotificationItemEntity extends BaseEntity<Long> {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private ItemType itemType;
+    private String itemType;
     private String itemName;
     private String externalIdType;
     private String externalIdValue;
@@ -41,13 +37,12 @@ public class NotificationItemEntity extends BaseEntity<Long> {
         this.id = id;
     }
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "item_type")
-    public ItemType getItemType() {
+    public String getItemType() {
         return itemType;
     }
 
-    public void setItemType(ItemType itemType) {
+    public void setItemType(String itemType) {
         this.itemType = itemType;
     }
 

@@ -23,7 +23,7 @@ public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implement
         if (bio == null || bio.getVisibility() == null) {
             return false;
         }
-        return biographyDao.updateBiography(orcid, bio.getContent(), org.orcid.jaxb.model.common_v2.Visibility.fromValue(bio.getVisibility().value()));
+        return biographyDao.updateBiography(orcid, bio.getContent(), bio.getVisibility().name());
     }
 
     @Override
@@ -36,6 +36,6 @@ public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implement
             throw new IllegalArgumentException("The biography for " + orcid + " already exists");
         }
         
-        biographyDao.persistBiography(orcid, bio.getContent(), org.orcid.jaxb.model.common_v2.Visibility.fromValue(bio.getVisibility().value()));
+        biographyDao.persistBiography(orcid, bio.getContent(), bio.getVisibility().name());
     }
 }

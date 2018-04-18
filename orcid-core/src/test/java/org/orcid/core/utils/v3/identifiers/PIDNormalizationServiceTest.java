@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
 import org.orcid.jaxb.model.v3.dev1.record.Relationship;
@@ -15,10 +15,10 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class NormalizationServiceTest {
+public class PIDNormalizationServiceTest {
 
     @Resource
-    NormalizationService norm;
+    PIDNormalizationService norm;
     
     @Test
     public void checkCaseNormalized(){

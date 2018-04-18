@@ -16,7 +16,7 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
     
     List<ProfileKeywordEntity> getPublicProfileKeywords(String orcid, long lastModified);
     
-    List<ProfileKeywordEntity> getProfileKeywords(String orcid, org.orcid.jaxb.model.common_v2.Visibility visibility);
+    List<ProfileKeywordEntity> getProfileKeywords(String orcid, String visibility);
 
     /**
      * Deleted a keyword from database
@@ -32,7 +32,7 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
      * @param keyword
      * @return true if the keyword was successfully created on database
      * */
-    boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId, org.orcid.jaxb.model.common_v2.Visibility visibility);
+    boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId, String visibility);
     
     boolean deleteProfileKeyword(ProfileKeywordEntity entity);
     

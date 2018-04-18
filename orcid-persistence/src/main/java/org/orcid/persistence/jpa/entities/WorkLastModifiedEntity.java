@@ -1,17 +1,12 @@
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.message.Visibility;
 
 /**
  * 
@@ -27,7 +22,7 @@ public class WorkLastModifiedEntity extends BaseEntity<Long> {
     private Long id;
     private String orcid;
     private Long displayIndex;
-    protected Visibility visibility;
+    protected String visibility;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "work_seq")
@@ -59,13 +54,12 @@ public class WorkLastModifiedEntity extends BaseEntity<Long> {
         this.displayIndex = displayIndex;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Visibility getVisibility() {
+    @Column
+    public String getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Visibility visibility) {
+    public void setVisibility(String visibility) {
         this.visibility = visibility;
     }
 

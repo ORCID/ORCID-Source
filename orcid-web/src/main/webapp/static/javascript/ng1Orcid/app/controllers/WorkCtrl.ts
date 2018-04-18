@@ -382,20 +382,19 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                 type: 'GET',
                                 data:{value:extId.workExternalIdentifierId.value},
                                 success: function(data) {
-                                    if (data.resolved){
+                                    extId.workExternalIdentifierId.errors = [];
+                                    if (data.generatedUrl){
                                         if(extId.url == null) {
-                                            extId.url = {value:data.resolvedUrl};
+                                            extId.url = {value:data.generatedUrl};
                                         }else{
-                                            extId.url.value=data.resolvedUrl;                        
+                                            extId.url.value=data.generatedUrl;                        
                                         }
-                                        extId.workExternalIdentifierId.errors = [];
-                                    } else if (data.attemptedResolution){
+                                    } else if (!data.validFormat || (data.attemptedResolution && !data.resolved) ){
                                         if(extId.url == null) {
                                             extId.url = {value:""};
                                         }else{
                                             extId.url.value="";                        
                                         }
-                                        extId.workExternalIdentifierId.errors = [];
                                         extId.workExternalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
                                     }
                                     extId.resolvingId = false;

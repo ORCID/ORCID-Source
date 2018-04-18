@@ -161,7 +161,7 @@ public class JpaJaxbClientAdapterTest {
         entity.setAuthenticationProviderId("authentication-provider-id");
         entity.setClientDescription("description");
         entity.setClientName("client-name");
-        entity.setClientType(ClientType.CREATOR);
+        entity.setClientType(ClientType.CREATOR.name());
         entity.setClientWebsite("client-website");
         entity.setDateCreated(now);
         entity.setEmailAccessReason("email-access-reason");

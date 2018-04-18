@@ -10,6 +10,7 @@ import javax.ws.rs.ext.Provider;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,9 +22,6 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
 @Provider
 public class ApiVersionCheckFilter implements ContainerRequestFilter {
 
-    @InjectParam("v1xDisabled")
-    private Boolean v1xDisabled;
-    
     @InjectParam("localeManager")
     private LocaleManager localeManager;
     
@@ -60,8 +58,10 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
                 Object params[] = {method};
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_missing_version.exception", params));    
             }
-        } else if (version != null && version.startsWith("1.1") && v1xDisabled) {
-            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_version_disabled.exception"));
+        } else if (version != null && version.startsWith("1.1")) {
+            if(Features.DISABLE_1_1.isActive()) {
+                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_version_disabled.1_1.exception"));
+            }
         } else if(version != null && (version.startsWith("2.") || version.startsWith("3."))) {
             if(!OrcidUrlManager.isSecure(httpRequest)) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_secure_only.exception"));

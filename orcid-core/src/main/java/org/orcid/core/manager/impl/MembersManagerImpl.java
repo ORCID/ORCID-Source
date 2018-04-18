@@ -100,7 +100,7 @@ public class MembersManagerImpl implements MembersManager {
         String orcid = orcidGenerationManager.createNewOrcid();
         ProfileEntity newRecord = new ProfileEntity();
         newRecord.setId(orcid);
-        newRecord.setOrcidType(OrcidType.GROUP);
+        newRecord.setOrcidType(OrcidType.GROUP.name());
         
         try {
             newRecord.setHashedOrcid(encryptionManager.sha256Hash(orcid));
@@ -108,16 +108,16 @@ public class MembersManagerImpl implements MembersManager {
             throw new RuntimeException(e);
         }
 
-        newRecord.setActivitiesVisibilityDefault(Visibility.PRIVATE);
+        newRecord.setActivitiesVisibilityDefault(Visibility.PRIVATE.name());
         newRecord.setClaimed(true);
         newRecord.setCreationMethod(CreationMethod.DIRECT.value());
         newRecord.setDateCreated(now);
         newRecord.setEnableDeveloperTools(false);
         newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
         newRecord.setEncryptedPassword(null);
-        newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()));
+        newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()).name());
         newRecord.setLastModified(now);
-        newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN);
+        newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
         newRecord.setRecordLocked(false);
         newRecord.setReviewed(false);
         newRecord.setSalesforeId(PojoUtil.isEmpty(member.getSalesforceId()) ? null : member.getSalesforceId().getValue());
@@ -136,7 +136,7 @@ public class MembersManagerImpl implements MembersManager {
         emailEntity.setCurrent(true);
         emailEntity.setVerified(true);
         // Email is private by default
-        emailEntity.setVisibility(Visibility.PRIVATE);
+        emailEntity.setVisibility(Visibility.PRIVATE.name());
         
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile().getId();
@@ -151,7 +151,7 @@ public class MembersManagerImpl implements MembersManager {
         recordNameEntity.setDateCreated(now);
         recordNameEntity.setLastModified(now);
         recordNameEntity.setProfile(newRecord);
-        recordNameEntity.setVisibility(Visibility.PUBLIC);
+        recordNameEntity.setVisibility(Visibility.PUBLIC.name());
         recordNameEntity.setCreditName(member.getGroupName().getValue());
         newRecord.setRecordNameEntity(recordNameEntity);
 
@@ -187,7 +187,7 @@ public class MembersManagerImpl implements MembersManager {
                 memberEntity.setSalesforeId(salesForceId);
 
                 if (!memberType.equals(memberEntity.getGroupType())) {
-                    memberEntity.setGroupType(memberType);
+                    memberEntity.setGroupType(memberType.name());
                     memberChangedType = true;
                 }
 
@@ -204,7 +204,7 @@ public class MembersManagerImpl implements MembersManager {
                     newPrimaryEmail.setId(email);
                     newPrimaryEmail.setPrimary(true);
                     newPrimaryEmail.setVerified(true);
-                    newPrimaryEmail.setVisibility(Visibility.PRIVATE);
+                    newPrimaryEmail.setVisibility(Visibility.PRIVATE.name());
                     memberEntity.setPrimaryEmail(newPrimaryEmail);
                 }
 
@@ -334,7 +334,7 @@ public class MembersManagerImpl implements MembersManager {
             }
 
             // Update client type
-            clientDetailsDao.updateClientType(clientType, client.getClientId());            
+            clientDetailsDao.updateClientType(clientType.name(), client.getClientId());            
         }
     }
 }
