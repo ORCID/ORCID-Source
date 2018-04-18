@@ -1209,7 +1209,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getPath());
                     if (profile != null) {
                         if (profile.getRecordNameEntity() != null) {
-                            if (org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {
+                            if (org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name().equals(profile.getRecordNameEntity().getVisibility())) {
                                 contributor.setCreditName(new CreditName(profile.getRecordNameEntity().getCreditName()));
                             }
                         }
@@ -1224,7 +1224,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
                         if (profileEntity.getRecordNameEntity() != null
-                                && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(profileEntity.getRecordNameEntity().getVisibility())) {
+                                && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name().equals(profileEntity.getRecordNameEntity().getVisibility())) {
                             contributor.setCreditName(new CreditName(profileEntity.getRecordNameEntity().getCreditName()));
                         } else {
                             contributor.setCreditName(null);

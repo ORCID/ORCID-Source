@@ -89,14 +89,14 @@ public class OrcidUserDetailsServiceTest {
 
     @Test
     public void loadUserByUsername_ClientTest() {
-        profile.setOrcidType(OrcidType.CLIENT);
+        profile.setOrcidType(OrcidType.CLIENT.name());
         try {
             service.loadUserByUsername(ORCID);
             fail();
         } catch (InvalidUserTypeException e) {
 
         }
-        profile.setOrcidType(OrcidType.USER);
+        profile.setOrcidType(OrcidType.USER.name());
     }
 
     @Test
@@ -147,14 +147,14 @@ public class OrcidUserDetailsServiceTest {
 
     @Test
     public void loadUserByProfile_ClientTest() {
-        profile.setOrcidType(OrcidType.CLIENT);
+        profile.setOrcidType(OrcidType.CLIENT.name());
         try {
             service.loadUserByProfile(profile);
             fail();
         } catch (InvalidUserTypeException e) {
 
         }
-        profile.setOrcidType(OrcidType.USER);
+        profile.setOrcidType(OrcidType.USER.name());
     }
 
     @Test
@@ -211,7 +211,7 @@ public class OrcidUserDetailsServiceTest {
         }
         profile = new ProfileEntity();
         profile.setId(ORCID);
-        profile.setOrcidType(OrcidType.USER);
+        profile.setOrcidType(OrcidType.USER.name());
         profile.setClaimed(true);
         profile.setEncryptedPassword("PWD");
         return profile;

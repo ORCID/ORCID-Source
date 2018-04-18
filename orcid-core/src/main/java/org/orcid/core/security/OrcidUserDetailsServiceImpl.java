@@ -103,7 +103,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     public OrcidProfileUserDetails loadUserByProfile(ProfileEntity profile) {
         if (profile == null) {
             throw new UsernameNotFoundException("Bad username or password");
-        } else if(OrcidType.CLIENT.value().equals(profile.getOrcidType().value())) {
+        } else if(OrcidType.CLIENT.name().equals(profile.getOrcidType())) {
             throw new InvalidUserTypeException("Clients can't login");
         }
         checkStatuses(profile);
