@@ -86,7 +86,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
-                console.log('res.value',res, this.elementId);
+                //console.log('res.value',res, this.elementId);
                 if ( res.moduleId == this.elementId ) {
                     if ( res.action === "close") {
                         this.closeModal();

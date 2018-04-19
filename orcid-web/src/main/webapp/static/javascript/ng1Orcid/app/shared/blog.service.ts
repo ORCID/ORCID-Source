@@ -12,7 +12,7 @@ export class BlogService {
     notifyObservable$ = this.notify.asObservable();
 
     constructor(
-        private http: Http) {
+        private http: HttpClient) {
 
      }
 

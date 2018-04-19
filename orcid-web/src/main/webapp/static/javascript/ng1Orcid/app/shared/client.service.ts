@@ -1,6 +1,10 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient } 
+     from '@angular/common/http';
+
+
 import { Headers, Http, RequestOptions, Response } 
     from '@angular/http';
 
@@ -13,7 +17,7 @@ import 'rxjs/Rx';
 export class ClientService {
     private headers: Headers;
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 

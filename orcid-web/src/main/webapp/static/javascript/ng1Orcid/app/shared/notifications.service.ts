@@ -4,6 +4,10 @@ declare var $q: any;
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient } 
+     from '@angular/common/http';
+
+
 import { Headers, Http, RequestOptions, Response } 
     from '@angular/http';
 
@@ -31,7 +35,7 @@ export class NotificationsService {
     selectionActive: boolean;
     notificationAlerts: any;
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 

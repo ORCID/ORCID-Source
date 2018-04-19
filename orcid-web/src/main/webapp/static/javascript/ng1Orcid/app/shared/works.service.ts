@@ -1,6 +1,10 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient } 
+     from '@angular/common/http';
+
+
 import { Headers, Http, RequestOptions, Response } 
     from '@angular/http';
 
@@ -29,7 +33,7 @@ export class WorksService {
     
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
         this.bibtexJson = {};
         this.constants = { 
             'access_type': { 

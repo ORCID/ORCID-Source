@@ -1,6 +1,10 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient } 
+     from '@angular/common/http';
+
+
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
@@ -19,7 +23,7 @@ export class ExternalIdentifiersService {
 
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
 
         this.headers = new Headers(
             { 

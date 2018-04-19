@@ -17,7 +17,7 @@ export class SearchService {
     notifyObservable$ = this.notify.asObservable();
 
     constructor(
-        private http: Http,
+        private http: HttpClient,
         private jsonp: Jsonp) {
 
      }

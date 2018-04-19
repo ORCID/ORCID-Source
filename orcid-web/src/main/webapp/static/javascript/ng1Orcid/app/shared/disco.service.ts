@@ -28,7 +28,7 @@ export class DiscoService {
     notifyObservable$ = this.notify.asObservable();
 
     
-    constructor(private http: Http){
+    constructor(private http: HttpClient){
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 

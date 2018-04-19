@@ -4,6 +4,9 @@ import 'reflect-metadata';
 import { CommonModule } 
     from '@angular/common'; 
 
+import { HttpClientModule } 
+    from '@angular/common/http';
+
 import { Component, NgModule } 
     from '@angular/core';
 
@@ -235,7 +238,8 @@ export class RootCmp {
         BrowserModule,
         CommonModule, 
         FormsModule,
-        HttpModule,
+        HttpClientModule, //angular5
+        HttpModule, //Angular2
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
@@ -307,6 +311,6 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.9.1');
+        console.log('v0.9.13');
     }
 }

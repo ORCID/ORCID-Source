@@ -21,7 +21,7 @@ export class OauthService {
 
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
         this.formHeaders = new Headers({'Content-Type': 'application/x-www-form-urlencoded'});
         this.headers = new Headers(
             { 

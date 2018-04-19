@@ -1,6 +1,10 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
@@ -14,7 +18,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class AffiliationService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private urlAffiliation: string;
     private urlAffiliationId: string;
     private urlAffiliationById: string;
@@ -31,10 +35,11 @@ export class AffiliationService {
     
     notifyObservable$ = this.notify.asObservable();
 	
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
         this.affiliationsToAddIds = null,
-        this.headers = new Headers(
-            { 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
                 'Content-Type': 'application/json' 
             }
         );
@@ -48,11 +53,7 @@ export class AffiliationService {
         this.type = '';
     }
 
-    deleteAffiliation( data ) {     
-        let options = new RequestOptions(
-            { headers: this.headers }
-        );
-
+    deleteAffiliation( data ): Observable<any> {     
         return this.http.delete( 
             this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
@@ -70,48 +71,48 @@ export class AffiliationService {
 
     updateVisibility( affiliation ): Observable<any> {
         let encoded_data = JSON.stringify( affiliation );         
-        return this.http.put(
+        return this.http.post(
                 this.urlAffiliation,
                 encoded_data,
                 { headers: this.headers }
-            )
-            .map((res:Response) => res.json()).share();
+            );
+            //.map((res:Response) => res.json()).share();
     }
     
-    getAffiliationsId() {
+    getAffiliationsId(): Observable<any> {
         this.loading = true;
         this.affiliationsToAddIds = null;
         return this.http.get(
             this.urlAffiliationId
-        )
-        .map((res:Response) => res.json()).share();        
+        );
+        //.map((res:Response) => res.json()).share();        
     }
 
-    getAffiliationsById( idList ) {
+    getAffiliationsById( idList ): Observable<any> {
         return this.http.get(
             this.urlAffiliationById + idList
-        )
-        .map((res:Response) => res.json()).share();
+        );
+        //.map((res:Response) => res.json()).share();
     }
 
-    getPublicAffiliationsById( idList ) {
+    getPublicAffiliationsById( idList ): Observable<any> {
         return this.http.get(
                 getBaseUri() + '/' + orcidVar.orcidId + '/affiliations.json?affiliationIds=' + idList
-        ).map((res:Response) => res.json()).share();
+        );//.map((res:Response) => res.json()).share();
     }
     
     getData(): Observable<any> {
         return this.http.get(
             this.urlAffiliation
-        )
-        .map((res:Response) => res.json()).share();
+        );
+        //.map((res:Response) => res.json()).share();
     }
 
     getDisambiguatedAffiliation( id ): Observable<any> {
         return this.http.get(
             this.urlAffiliationDisambiguated + id
-        )
-        .map((res:Response) => res.json()).share();
+        );
+        //.map((res:Response) => res.json()).share();
     }
 
     serverValidate( obj, relativePath ): Observable<any> {
@@ -120,8 +121,8 @@ export class AffiliationService {
             getBaseUri() + '/' + relativePath, 
             encoded_data, 
             { headers: this.headers }
-        )
-        .map((res:Response) => res.json()).share();
+        );
+        //.map((res:Response) => res.json()).share();
     }
 
     setData( obj ): Observable<any> {
@@ -131,8 +132,8 @@ export class AffiliationService {
             this.urlAffiliation, 
             encoded_data, 
             { headers: this.headers }
-        )
-        .map((res:Response) => res.json()).share();
+        );
+        //.map((res:Response) => res.json()).share();
     }
 
     notifyOther(data: any): void {

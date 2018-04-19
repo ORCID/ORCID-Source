@@ -1,6 +1,10 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient } 
+     from '@angular/common/http';
+
+
 import { Headers, Http, RequestOptions, Response } 
     from '@angular/http';
 
@@ -18,7 +22,7 @@ export class FundingService {
     private urlFundingsById: string;
     private urlFundingsId: string;
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
         this.headers = new Headers(
             { 
                 'Content-Type': 'application/json' 

@@ -1,6 +1,10 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient } 
+     from '@angular/common/http';
+
+
 import { Headers, Http, RequestOptions, Response } 
     from '@angular/http';
 
@@ -20,7 +24,7 @@ export class WidgetService {
     public locale: string;
 
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
         this.locale = 'en';
     }
 
