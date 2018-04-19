@@ -1,4 +1,7 @@
 <@base>
+<@orcid.checkFeatureStatus 'COOKIE_BANNER'>
+    <alert-banner-ng2></alert-banner-ng2>
+</@orcid.checkFeatureStatus>
 <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
     <#include "/includes/ng2_templates/switch-user-ng2-template.ftl">
     <oauth-authorization-ng2></oauth-authorization-ng2>
