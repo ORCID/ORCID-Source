@@ -120,6 +120,7 @@ export class OauthService {
             data, 
             { headers: this.formHeaders}
         )
+        .map((res:Response) => res.json()).share();
     }
 
     sendEmailsAdditionalReactivationEmail( obj ): Observable<any> {
