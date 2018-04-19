@@ -2016,7 +2016,6 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
             fundingIds.add(i.propertyID);
         assertEquals(Sets.newHashSet("WDB","grant_number"),fundingIds);
         assertEquals("PUBLIC",doc.worksAndFunding.creator.iterator().next().name);
-        assertEquals("doi",doc.worksAndFunding.creator.iterator().next().identifier.iterator().next().propertyID);
         assertEquals("http://www.researcherurl.com?id=13",doc.url.get(0));
         assertEquals("public_type",doc.identifier.get(0).propertyID);
         assertEquals( "public_ref",doc.identifier.get(0).value);

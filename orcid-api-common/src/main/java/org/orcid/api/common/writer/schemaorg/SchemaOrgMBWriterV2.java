@@ -164,17 +164,20 @@ public class SchemaOrgMBWriterV2 implements MessageBodyWriter<Record> {
 
                     if (wg.getIdentifiers() != null && wg.getIdentifiers().getExternalIdentifier() != null)
                         for (ExternalID id : wg.getIdentifiers().getExternalIdentifier()) {
-                            // add all ids (inc doi non-url if available)
-                            sw.identifier.add(new SchemaOrgExternalID(id.getType(), norm.normalise(id.getType(), id.getValue())));
-                            // sameAs for id URLs.
-                            String url = norm.generateNormalisedURL(id.getType(), id.getValue());
-                            if (StringUtils.isEmpty(url) && id.getUrl() != null)
-                                url = id.getUrl().getValue();                            
-                            //add first DOI as @id
-                            if (id.getType().equals("doi") && !StringUtils.isEmpty(url) && sw.id == null)
-                                sw.id = url;
-                            else if (!StringUtils.isEmpty(url))
-                                sw.sameAs.add(url);
+                            String normed = norm.normalise(id.getType(), id.getValue());
+                            if (!StringUtils.isEmpty(normed)){
+                                // add all ids (inc doi non-url if available)
+                                sw.identifier.add(new SchemaOrgExternalID(id.getType(), normed));
+                                // sameAs for id URLs.
+                                String url = norm.generateNormalisedURL(id.getType(), id.getValue());
+                                if (StringUtils.isEmpty(url) && id.getUrl() != null)
+                                    url = id.getUrl().getValue();
+                                //add first DOI as @id
+                                if (id.getType().equals("doi") && !StringUtils.isEmpty(url) && sw.id == null)
+                                    sw.id = url;
+                                else if (!StringUtils.isEmpty(url))
+                                    sw.sameAs.add(url);
+                            }
                         }
                     doc.worksAndFunding.creator.add(sw);
                 }
