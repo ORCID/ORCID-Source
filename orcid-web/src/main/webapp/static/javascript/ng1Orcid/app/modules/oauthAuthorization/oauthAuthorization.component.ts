@@ -459,7 +459,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showEmailsAdditionalDeactivatedError.splice(index, 1, false);
         this.showEmailsAdditionalReactivationSent.splice(index, 1, true);
 
-        this.oauthService.sendEmailsAdditionalReactivationEmail(this.registrationForm.emailsAdditional[index].value)
+        this.oauthService.sendReactivationEmail(this.registrationForm.emailsAdditional[index].value)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

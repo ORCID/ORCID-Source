@@ -123,16 +123,6 @@ export class OauthService {
         .map((res:Response) => res.json()).share();
     }
 
-    sendEmailsAdditionalReactivationEmail( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        return this.http.post( 
-            getBaseUri() + '/sendReactivation.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        .map((res:Response) => res.json()).share();
-    }
-
     serverValidate( obj, field ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         
