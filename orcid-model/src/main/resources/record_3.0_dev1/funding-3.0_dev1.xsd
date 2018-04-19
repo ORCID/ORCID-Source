@@ -41,11 +41,11 @@
 			<xs:documentation>Funding received by the researcher or contributor.
 				* REQUIRED FIELDS: Funding-type, Funding-title, Funding Agency
 				(organization)
-				* The visibility attribute (private, limited or
-				public) can be set at
-				record creation, and indicates who can see this
-				section of
-				information.
+				* Funding-type definitions:
+				    Award: Peer-reviewed funding providing direct research costs through competitions.
+    				    Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria.
+   				    Grant: Peer-reviewed funding providing direct research costs through competitions.
+				    Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member.
 				* The put-code attribute is used only when
 				reading this element. When
 				updating the item, the put-code attribute

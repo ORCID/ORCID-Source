@@ -53,6 +53,9 @@ v3.0_dev1 is the current development release of the ORCID API and is only for in
 
 ## Changes from Version 2.1:
 
+### JSON
+- JSON enumerated types are now expressed in lowercase with dashes instead of underscores, matching the existing XML enums (ie *JOURNAL_ARTCILE* is now expressed as *journal-article*). This affects enums for visibility, locale, work types, contributor roles, citation types, external identifier relationship, funding types, peer review types, and peer review role
+
 ### Affiliations
 - Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections.
 - Summary information now available for each section including affiliation source, role-title, department-name, dates, and organization
@@ -66,7 +69,7 @@ v3.0_dev1 is the current development release of the ORCID API and is only for in
 - Addition of *work:journal-title* field
 
 ### Works
-- Addition of *common:external-id-normalized* for work identifiers. The common:external-id-normalized field is a transient, system generated field which expresses the identifier in a standard format that is used for grouping. In general, normalized identifiers trim extraneous text such as the identifier type or the expression of the identifier as a url. Additional normalization is done based on the rules of the identifier type and may include setting all alpha characters to lower case,  or transforming spaces, dashes, periods and other characters that can be treated as equivalent. [See the full normalization rules] (https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/java/org/orcid/core/utils/v3/identifiers)
+- Addition of *common:external-id-normalized* for work identifiers. The common:external-id-normalized field is a transient, system generated field which expresses the identifier in a standard format that is used for grouping. In general, normalized identifiers trim extraneous text such as the identifier type or the expression of the identifier as a url. Additional normalization is done based on the rules of the identifier type and may include setting all alpha characters to lower case,  or transforming spaces, dashes, periods and other characters that can be treated as equivalent. [See the full normalization rules] (https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/java/org/orcid/core/utils/v3/identifiers). Identifiers which can not be normalzied will return a error message when reading them.
 
 
 ## Sample files:
