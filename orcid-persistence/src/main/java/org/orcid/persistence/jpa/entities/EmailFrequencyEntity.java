@@ -8,11 +8,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "email_frequency")
 public class EmailFrequencyEntity extends BaseEntity<String> {
+    private static final long serialVersionUID = 7517492246345512743L;
     private String id;
     private String orcid;
     private Float sendChangeNotifications;
     private Float sendAdministrativeChangeNotifications;
-    private Float sendOrcidNews;
+    private Float sendMemberUpdateRequests;
     private Boolean sendQuarterlyTips = Boolean.FALSE;
 
     @Id
@@ -52,13 +53,13 @@ public class EmailFrequencyEntity extends BaseEntity<String> {
         this.sendAdministrativeChangeNotifications = sendAdministrativeChangeNotifications;
     }
 
-    @Column(name = "send_orcid_news")
-    public Float getSendOrcidNews() {
-        return sendOrcidNews;
+    @Column(name = "send_member_update_requests")
+    public Float getSendMemberUpdateRequests() {
+        return sendMemberUpdateRequests;
     }
 
-    public void setSendOrcidNews(Float sendOrcidNews) {
-        this.sendOrcidNews = sendOrcidNews;
+    public void setSendMemberUpdateRequests(Float sendMemberUpdateRequests) {
+        this.sendMemberUpdateRequests = sendMemberUpdateRequests;
     }
 
     @Column(name = "send_quarterly_tips")

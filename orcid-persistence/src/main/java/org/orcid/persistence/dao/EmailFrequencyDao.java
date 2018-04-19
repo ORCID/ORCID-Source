@@ -15,7 +15,7 @@ public interface EmailFrequencyDao extends GenericDao<EmailFrequencyEntity, Stri
     
     boolean updateSendAdministrativeChangeNotifications(String orcid, SendEmailFrequency frequency);
     
-    boolean updateSendOrcidNews(String orcid, SendEmailFrequency frequency);
+    boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency);
     
     boolean updateSendQuarterlyTips(String orcid, boolean enabled);
 }

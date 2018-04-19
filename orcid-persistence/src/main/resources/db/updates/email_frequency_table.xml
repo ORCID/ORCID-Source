@@ -24,7 +24,7 @@
             <column name="send_change_notifications" type="real" defaultValueNumeric="7">
                 <constraints nullable="false"/>
             </column>
-            <column name="send_orcid_news" type="real" defaultValueNumeric="7">
+            <column name="send_member_update_requests" type="real" defaultValueNumeric="7">
                 <constraints nullable="false"/>
             </column>            
             <column name="send_quarterly_tips" type="boolean" defaultValueBoolean="true">

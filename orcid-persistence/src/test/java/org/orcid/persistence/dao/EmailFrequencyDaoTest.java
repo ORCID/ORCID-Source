@@ -43,7 +43,7 @@ public class EmailFrequencyDaoTest extends DBUnitTest {
         assertEquals("0000-0000-0000-0003", e.getOrcid());
         assertEquals(Float.valueOf(0.0f), e.getSendAdministrativeChangeNotifications());
         assertEquals(Float.valueOf(1.0f), e.getSendChangeNotifications());
-        assertEquals(Float.valueOf(7.0f), e.getSendOrcidNews());
+        assertEquals(Float.valueOf(7.0f), e.getSendMemberUpdateRequests());
         assertTrue(e.getSendQuarterlyTips());
     }
 
@@ -54,7 +54,7 @@ public class EmailFrequencyDaoTest extends DBUnitTest {
         assertEquals("0000-0000-0000-0003", e.getOrcid());
         assertEquals(Float.valueOf(0.0f), e.getSendAdministrativeChangeNotifications());
         assertEquals(Float.valueOf(1.0f), e.getSendChangeNotifications());
-        assertEquals(Float.valueOf(7.0f), e.getSendOrcidNews());
+        assertEquals(Float.valueOf(7.0f), e.getSendMemberUpdateRequests());
         assertTrue(e.getSendQuarterlyTips());
     }
 
@@ -81,14 +81,14 @@ public class EmailFrequencyDaoTest extends DBUnitTest {
     }
 
     @Test
-    public void updateSendOrcidNewsTest() {
+    public void updateSendMemberUpdateRequestsTest() {
         EmailFrequencyEntity e = dao.findByOrcid("0000-0000-0000-0004");
         assertNotNull(e);
-        assertEquals(Float.valueOf(0.0f), e.getSendOrcidNews());
-        assertTrue(dao.updateSendOrcidNews("0000-0000-0000-0004", SendEmailFrequency.QUARTERLY));
+        assertEquals(Float.valueOf(0.0f), e.getSendMemberUpdateRequests());
+        assertTrue(dao.updateSendMemberUpdateRequests("0000-0000-0000-0004", SendEmailFrequency.QUARTERLY));
         e = dao.findByOrcid("0000-0000-0000-0004");
         assertNotNull(e);
-        assertEquals(Float.valueOf(SendEmailFrequency.QUARTERLY.value()), e.getSendOrcidNews());
+        assertEquals(Float.valueOf(SendEmailFrequency.QUARTERLY.value()), e.getSendMemberUpdateRequests());
     }
 
     @Test

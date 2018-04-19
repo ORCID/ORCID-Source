@@ -46,8 +46,8 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
 
     @Override
     @Transactional
-    public boolean updateSendOrcidNews(String orcid, SendEmailFrequency frequency) {
-        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity SET sendOrcidNews = :frequency WHERE orcid = :orcid");
+    public boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency) {
+        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity SET sendMemberUpdateRequests = :frequency WHERE orcid = :orcid");
         query.setParameter("frequency", Float.valueOf(frequency.value()));
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
