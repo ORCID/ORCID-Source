@@ -104,9 +104,10 @@ public class SchemaOrgMBWriterV3 implements MessageBodyWriter<Record> {
         // country
         if (r.getPerson().getAddresses() != null && r.getPerson().getAddresses().getAddress() != null)
             for (Address a : r.getPerson().getAddresses().getAddress()) {
-                doc.address.add(new SchemaOrgAddress(a.getCountry().toString()));
+                if (a.getCountry() != null && a.getCountry().getValue() !=null)
+                    doc.address.add(new SchemaOrgAddress(a.getCountry().getValue().toString()));
             }
-
+        
         // activities
         if (r.getActivitiesSummary() != null) {
 
