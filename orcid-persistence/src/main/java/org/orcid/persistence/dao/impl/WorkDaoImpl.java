@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
@@ -72,9 +71,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @Transactional
-    public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
+    public boolean updateVisibilities(String orcid, List<Long> workIds, String visibility) {
         Query query = entityManager.createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)");
-        query.setParameter("visibility", visibility.name());
+        query.setParameter("visibility", visibility);
         query.setParameter("workIds", workIds);
         return query.executeUpdate() > 0;
     }

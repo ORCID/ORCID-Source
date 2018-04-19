@@ -77,7 +77,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         result.setLastModified(new Date());
         result.setDisplayName("display-name");
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
-        result.setVisibility(Visibility.PUBLIC);
+        result.setVisibility(Visibility.PUBLIC.name());
         result.setClientSourceId("APP-000000001");
         return result;
     }

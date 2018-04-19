@@ -20,7 +20,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.orcid.jaxb.model.message.Iso3166Country;
 
 /**
  * 
@@ -46,7 +45,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     private String name;
     private String city;
     private String region;
-    private Iso3166Country country;
+    private String country;
     private String url;
     private String status;
     private Date lastIndexedDate;
@@ -136,13 +135,12 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.region = region;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Iso3166Country getCountry() {
+    @Column
+    public String getCountry() {
         return country;
     }
 
-    public void setCountry(Iso3166Country country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 

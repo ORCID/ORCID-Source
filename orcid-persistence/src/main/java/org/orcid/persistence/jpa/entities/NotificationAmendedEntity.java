@@ -6,14 +6,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity.ChronologicallyOrderedNotificationWorkEntityComparator;
 
 /**
@@ -25,17 +22,18 @@ import org.orcid.persistence.jpa.entities.NotificationWorkEntity.Chronologically
 @DiscriminatorValue("AMENDED")
 public class NotificationAmendedEntity extends NotificationEntity {
 
+    private static final String AMENDED_SECTION_DEFAULT = "UNKNOWN";
+    
     private static final long serialVersionUID = 1L;
-    private AmendedSection amendedSection = AmendedSection.UNKNOWN;
+    private String amendedSection = AMENDED_SECTION_DEFAULT;
     private SortedSet<NotificationWorkEntity> notificationWorks;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "amended_section")
-    public AmendedSection getAmendedSection() {
+    public String getAmendedSection() {
         return amendedSection;
     }
 
-    public void setAmendedSection(AmendedSection amendedSection) {
+    public void setAmendedSection(String amendedSection) {
         this.amendedSection = amendedSection;
     }
 

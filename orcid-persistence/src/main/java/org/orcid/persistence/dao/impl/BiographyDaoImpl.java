@@ -6,7 +6,6 @@ import java.util.Date;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -33,18 +32,18 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
 
     @Override
     @Transactional
-    public boolean updateBiography(String orcid, String biography, Visibility visibility) {
+    public boolean updateBiography(String orcid, String biography, String visibility) {
         Query query = entityManager.createNativeQuery(
                 "update biography set biography = :biography, visibility = :visibility, last_modified = now() where orcid = :orcid");
         query.setParameter("biography", biography);
-        query.setParameter("visibility", StringUtils.upperCase(visibility.value()));
+        query.setParameter("visibility", StringUtils.upperCase(visibility));
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
 
     @Override
     @Transactional
-    public void persistBiography(String orcid, String biography, Visibility visibility) {
+    public void persistBiography(String orcid, String biography, String visibility) {
         BiographyEntity bio = new BiographyEntity();
         bio.setVisibility(visibility);
         bio.setBiography(biography);

@@ -21,8 +21,7 @@ import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.utils.v3.identifiers.ResolverService;
-import org.orcid.core.utils.v3.identifiers.resolvers.ResolutionResult;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.frontend.web.pagination.WorksPage;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -33,6 +32,7 @@ import org.orcid.jaxb.model.v3.dev1.record.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
+import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -86,7 +86,7 @@ public class WorksController extends BaseWorkspaceController {
     private BibtexManager bibtexManager;
     
     @Resource
-    ResolverService resolverService;
+    PIDResolverService resolverService;
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody ArrayList<Long> removeWork(@PathVariable("workIdsStr") String workIdsStr) {
@@ -129,8 +129,9 @@ public class WorksController extends BaseWorkspaceController {
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
+            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = profile.getActivitiesVisibilityDefault() == null
-                    ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+                    ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(defaultVis);
             w.setVisibility(v);
         }
 
@@ -737,7 +738,7 @@ public class WorksController extends BaseWorkspaceController {
      * @return "resolved" if it can be resolved, "resolvableType" if we attempted to resolve it.
      */
     @RequestMapping(value = "/id/{type}", method = RequestMethod.GET)
-    public @ResponseBody ResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value){        
+    public @ResponseBody PIDResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value){        
         return resolverService.resolve(type, value);
     }
 

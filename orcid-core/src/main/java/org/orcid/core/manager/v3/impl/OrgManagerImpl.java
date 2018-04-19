@@ -5,13 +5,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
-import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
@@ -62,7 +61,7 @@ public class OrgManagerImpl implements OrgManager {
             chunk = getAmbiguousOrgs(firstResult, CHUNK_SIZE);
             for (AmbiguousOrgEntity orgEntity : chunk) {
                 String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceOrcid(), orgEntity.getName(), orgEntity.getCity(),
-                        orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
+                        orgEntity.getRegion(), orgEntity.getCountry(), String.valueOf(orgEntity.getUsedCount()) };
                 csvWriter.writeNext(line);
             }
             firstResult += chunk.size();
@@ -81,7 +80,7 @@ public class OrgManagerImpl implements OrgManager {
             chunk = orgDisambiguatedDao.getChunk(firstResult, CHUNK_SIZE);
             for (OrgDisambiguatedEntity orgEntity : chunk) {
                 String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceId(), orgEntity.getSourceType(), orgEntity.getOrgType(),
-                        orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getPopularity()) };
+                        orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(), orgEntity.getCountry(), String.valueOf(orgEntity.getPopularity()) };
                 csvWriter.writeNext(line);
             }
             firstResult += chunk.size();
@@ -132,7 +131,7 @@ public class OrgManagerImpl implements OrgManager {
         org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
-        orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));
+        orgEntity.setCountry(address.getCountry().name());
         
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
             // if disambiguated org is present (must be for v3 API, but not UI) it must be valid
@@ -158,7 +157,7 @@ public class OrgManagerImpl implements OrgManager {
             country = org.getAddress().getCountry();
                     
         }
-        return orgDao.findByNameCityRegionAndCountry(name, city, region, country);        
+        return orgDao.findByNameCityRegionAndCountry(name, city, region, country.name());        
     }
 
 }

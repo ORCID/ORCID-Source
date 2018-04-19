@@ -5,11 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.orcid.jaxb.model.message.Day;
-import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.Month;
-import org.orcid.jaxb.model.message.Year;
-
 @Embeddable
 public class FuzzyDateEntity implements Comparable<FuzzyDateEntity>, Serializable {
 
@@ -31,23 +26,6 @@ public class FuzzyDateEntity implements Comparable<FuzzyDateEntity>, Serializabl
         this.year = year;
         this.month = month;
         this.day = day;
-    }
-
-    public FuzzyDateEntity(FuzzyDate fuzzyDate) {
-        if (fuzzyDate != null) {
-            Year Year = fuzzyDate.getYear();
-            if (Year != null) {
-                setYear(Integer.valueOf(Year.getValue()));
-            }
-            Month month = fuzzyDate.getMonth();
-            if (month != null) {
-                setMonth(Integer.valueOf(month.getValue()));
-            }
-            Day day = fuzzyDate.getDay();
-            if (day != null) {
-                setDay(Integer.valueOf(day.getValue()));
-            }
-        }
     }
 
     @Column(name = "fuzzy_year")

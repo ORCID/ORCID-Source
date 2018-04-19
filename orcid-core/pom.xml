@@ -36,6 +36,12 @@
             <artifactId>orcid-persistence</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.orcid</groupId>
+            <artifactId>orcid-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!--
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
@@ -274,6 +280,12 @@
 			<artifactId>togglz-testing</artifactId>
 			<version>2.4.1.Final</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>commons-validator</groupId>
+		    <artifactId>commons-validator</artifactId>
+		    <version>1.6</version>
 		</dependency>
         <!-- Test dependencies -->
 

@@ -37,7 +37,7 @@ public class BiographyManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implem
         if(biographyEntity != null) {
             Biography bio = new Biography();
             bio.setContent(biographyEntity.getBiography());
-            bio.setVisibility(Visibility.fromValue(biographyEntity.getVisibility().value()));
+            bio.setVisibility(Visibility.fromValue(biographyEntity.getVisibility()));
             bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getLastModified())));
             bio.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getDateCreated())));
             return bio;

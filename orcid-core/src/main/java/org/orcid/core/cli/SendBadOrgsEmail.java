@@ -174,13 +174,13 @@ public class SendBadOrgsEmail {
     }
 
     private String createOrgDescription(OrgEntity org, Locale locale) {
-        String orgCountry = localeManager.resolveMessage(CountryIsoEntity.class.getName() + "." + org.getCountry().name(), locale);
+        String orgCountry = localeManager.resolveMessage(CountryIsoEntity.class.getName() + "." + org.getCountry(), locale);
         return Arrays.asList(new String[] { org.getName(), org.getCity(), org.getRegion(), orgCountry }).stream().filter(e -> e != null)
                 .collect(Collectors.joining(", "));
     }
 
     private Locale calculateLocale(ProfileEntity profile) {
-        Locale locale = (profile.getLocale() == null) ? null : Locale.fromValue(profile.getLocale().value());
+        Locale locale = (profile.getLocale() == null) ? null : Locale.valueOf(profile.getLocale());
         if (locale == null) {
             locale = Locale.EN;
         }

@@ -1204,7 +1204,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(profileEntity);
         assertNotNull(profileEntity.getAddresses());
         assertEquals(1, profileEntity.getAddresses().size());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US, profileEntity.getAddresses().iterator().next().getIso2Country());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), profileEntity.getAddresses().iterator().next().getIso2Country());
         
         //Update all values
         profile.getOrcidBio().getBiography().setContent("This is my biography # 2");        
@@ -1267,7 +1267,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(2, profileEntity.getAddresses().size());
         Iterator<AddressEntity> it = profileEntity.getAddresses().iterator();
         while(it.hasNext()) {
-            assertThat(it.next().getIso2Country(), anyOf(is(org.orcid.jaxb.model.common_v2.Iso3166Country.US), is(org.orcid.jaxb.model.common_v2.Iso3166Country.CR)));
+            assertThat(it.next().getIso2Country(), anyOf(is(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name()), is(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.name())));
         }        
         
         //Claim the record
@@ -1349,7 +1349,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(3, profileEntity.getAddresses().size());        
         it = profileEntity.getAddresses().iterator();
         while(it.hasNext()) {
-            assertThat(it.next().getIso2Country(), anyOf(is(org.orcid.jaxb.model.common_v2.Iso3166Country.US), is(org.orcid.jaxb.model.common_v2.Iso3166Country.CR), is(org.orcid.jaxb.model.common_v2.Iso3166Country.PE)));
+            assertThat(it.next().getIso2Country(), anyOf(is(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name()), is(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.name()), is(org.orcid.jaxb.model.common_v2.Iso3166Country.PE.name())));
         }  
         
         //Primary address should remain

@@ -8,7 +8,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
@@ -24,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, String> implements ClientDetailsDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsDaoImpl.class);
+    
+    private static final String PUBLIC_CLIENT = "PUBLIC_CLIENT";
 
     public ClientDetailsDaoImpl() {
         super(ClientDetailsEntity.class);
@@ -114,7 +115,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     @Override
     @Transactional
-    public void updateClientType(ClientType clientType, String clientId) {
+    public void updateClientType(String clientType, String clientId) {
         Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set clientType = :clientType, lastModified = now() where id = :clientId");
         updateQuery.setParameter("clientType", clientType);
         updateQuery.setParameter("clientId", clientId);
@@ -148,7 +149,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where groupProfileId = :ownerId and clientType = :clientType",
                 ClientDetailsEntity.class);
         query.setParameter("ownerId", ownerId);
-        query.setParameter("clientType", ClientType.PUBLIC_CLIENT);
+        query.setParameter("clientType", PUBLIC_CLIENT);
         try {
             return query.getSingleResult();
         } catch (NoResultException nre) {
@@ -183,7 +184,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     public Date getLastModifiedIfNotPublicClient(String clientId) {
         Query query = entityManager.createQuery("SELECT lastModified FROM ClientDetailsEntity WHERE id = :id AND clientType != :type");
         query.setParameter("id", clientId);        
-        query.setParameter("type", ClientType.PUBLIC_CLIENT);
+        query.setParameter("type", PUBLIC_CLIENT);
         Date result = (Date)query.getSingleResult();
         return result;
     }

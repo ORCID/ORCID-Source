@@ -112,7 +112,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("1. Name", entity.getName());
                 assertEquals("City#1", entity.getCity());
                 assertEquals("State#1", entity.getRegion());
-                assertEquals(Iso3166Country.US, entity.getCountry());
+                assertEquals(Iso3166Country.US.name(), entity.getCountry());
                 assertEquals("type/1", entity.getOrgType());                
                 found1 = true;
                 break;
@@ -121,7 +121,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("2. Name", entity.getName());
                 assertEquals("City#2", entity.getCity());
                 assertNull(entity.getRegion());
-                assertEquals(Iso3166Country.CR, entity.getCountry());
+                assertEquals(Iso3166Country.CR.name(), entity.getCountry());
                 assertEquals("type/2", entity.getOrgType());
                 found2 = true;
                 break;
@@ -130,7 +130,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("3. Name", entity.getName());
                 assertEquals("City#3", entity.getCity());
                 assertNull(entity.getRegion());
-                assertEquals(Iso3166Country.US, entity.getCountry());
+                assertEquals(Iso3166Country.US.name(), entity.getCountry());
                 assertEquals("type/3", entity.getOrgType());
                 found3 = true;
                 break;
@@ -139,7 +139,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("4. Name", entity.getName());
                 assertEquals("City#4", entity.getCity());
                 assertEquals("State#4", entity.getRegion());
-                assertEquals(Iso3166Country.CR, entity.getCountry());
+                assertEquals(Iso3166Country.CR.name(), entity.getCountry());
                 assertEquals("type/4", entity.getOrgType());
                 found4 = true;
                 break;
@@ -238,13 +238,13 @@ public class LoadRinggoldDataTest {
             case "1. Alt Name":
                 assertEquals("1", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("AltCity#1", entity.getCity());
-                assertEquals(Iso3166Country.MX, entity.getCountry());
+                assertEquals(Iso3166Country.MX.name(), entity.getCountry());
                 found1 = true;
                 break;
             case "2. Alt Name":
                 assertEquals("2", entity.getOrgDisambiguated().getSourceId());
                 assertEquals("AltCity#2", entity.getCity());
-                assertEquals(Iso3166Country.BR, entity.getCountry());
+                assertEquals(Iso3166Country.BR.name(), entity.getCountry());
                 found2 = true;
                 break;
             default:
@@ -283,7 +283,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("1. Name - updated", entity.getName());
                 assertEquals("City#1", entity.getCity());
                 assertEquals("State#1", entity.getRegion());
-                assertEquals(Iso3166Country.US, entity.getCountry());
+                assertEquals(Iso3166Country.US.name(), entity.getCountry());
                 assertEquals("type/1", entity.getOrgType());
                 found1 = true;
                 break;
@@ -293,7 +293,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("2. Name", entity.getName());
                 assertEquals("City#2 - updated", entity.getCity());
                 assertNull(entity.getRegion());
-                assertEquals(Iso3166Country.CR, entity.getCountry());
+                assertEquals(Iso3166Country.CR.name(), entity.getCountry());
                 assertEquals("type/2", entity.getOrgType());
                 found2 = true;
                 break;
@@ -303,7 +303,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("3. Name", entity.getName());
                 assertEquals("City#3", entity.getCity());
                 assertNull(entity.getRegion());
-                assertEquals(Iso3166Country.ZW, entity.getCountry());
+                assertEquals(Iso3166Country.ZW.name(), entity.getCountry());
                 assertEquals("type/3", entity.getOrgType());
                 found3 = true;
                 break;
@@ -313,7 +313,7 @@ public class LoadRinggoldDataTest {
                 assertEquals("4. Name", entity.getName());
                 assertEquals("City#4", entity.getCity());
                 assertEquals("State#4 - updated", entity.getRegion());
-                assertEquals(Iso3166Country.CR, entity.getCountry());
+                assertEquals(Iso3166Country.CR.name(), entity.getCountry());
                 assertEquals("type/4/updated", entity.getOrgType());
                 found4 = true;
                 break;
@@ -355,7 +355,7 @@ public class LoadRinggoldDataTest {
         assertEquals(1, list.size());
         OrgDisambiguatedEntity entity = list.get(0);
         assertEquals("City#5", entity.getCity());
-        assertEquals(Iso3166Country.US, entity.getCountry());
+        assertEquals(Iso3166Country.US.name(), entity.getCountry());
         assertEquals(IndexingStatus.PENDING, entity.getIndexingStatus());
         assertEquals("5. Name", entity.getName());
         assertEquals("type/5", entity.getOrgType());
@@ -398,7 +398,7 @@ public class LoadRinggoldDataTest {
         assertEquals(1, list.size());
         OrgEntity entity = list.get(0);
         assertEquals("AltCity#3", entity.getCity());
-        assertEquals(Iso3166Country.CA, entity.getCountry());
+        assertEquals(Iso3166Country.CA.name(), entity.getCountry());
         assertEquals("3. Alt Name", entity.getName());
         assertEquals(Long.valueOf(3000), entity.getOrgDisambiguated().getId());
         assertNull(entity.getRegion());        
@@ -452,7 +452,7 @@ public class LoadRinggoldDataTest {
         assertEquals(1, list.size());
         OrgDisambiguatedEntity entity = list.get(0);
         assertEquals("City#1", entity.getCity());
-        assertEquals(Iso3166Country.US, entity.getCountry());
+        assertEquals(Iso3166Country.US.name(), entity.getCountry());
         assertEquals(Long.valueOf(1000), entity.getId());
         assertEquals(IndexingStatus.REINDEX, entity.getIndexingStatus());
         assertEquals("1. Name", entity.getName());
@@ -496,7 +496,7 @@ public class LoadRinggoldDataTest {
         assertEquals(1, list.size());
         OrgEntity entity = list.get(0);
         assertEquals("AltCity#3", entity.getCity());
-        assertEquals(Iso3166Country.CR, entity.getCountry());
+        assertEquals(Iso3166Country.CR.name(), entity.getCountry());
         assertEquals("Testing Org", entity.getName());
         assertEquals(Long.valueOf(3000), entity.getOrgDisambiguated().getId());
         assertEquals(null, entity.getRegion());               
@@ -558,7 +558,7 @@ public class LoadRinggoldDataTest {
                 switch (String.valueOf(ringgoldId)) {
                 case "1":
                     entity.setName("1. Name");
-                    entity.setCountry(Iso3166Country.US);
+                    entity.setCountry(Iso3166Country.US.name());
                     entity.setCity("City#1");
                     entity.setRegion("State#1");
                     entity.setOrgType("type/1");
@@ -584,7 +584,7 @@ public class LoadRinggoldDataTest {
                     break;
                 case "2":
                     entity.setName("2. Name");
-                    entity.setCountry(Iso3166Country.CR);
+                    entity.setCountry(Iso3166Country.CR.name());
                     entity.setCity("City#2");
                     entity.setRegion(null);
                     entity.setOrgType("type/2");
@@ -610,7 +610,7 @@ public class LoadRinggoldDataTest {
                     break;
                 case "3":
                     entity.setName("3. Name");
-                    entity.setCountry(Iso3166Country.US);
+                    entity.setCountry(Iso3166Country.US.name());
                     entity.setCity("City#3");
                     entity.setRegion(null);
                     entity.setOrgType("type/3");
@@ -636,7 +636,7 @@ public class LoadRinggoldDataTest {
                     break;
                 case "4":
                     entity.setName("4. Name");
-                    entity.setCountry(Iso3166Country.CR);
+                    entity.setCountry(Iso3166Country.CR.name());
                     entity.setCity("City#4");
                     entity.setRegion("State#4");
                     entity.setOrgType("type/4");
@@ -674,13 +674,13 @@ public class LoadRinggoldDataTest {
                         String name = invocation.getArgument(0);
                         String city = invocation.getArgument(1);
                         String region = invocation.getArgument(2);
-                        Iso3166Country country = (Iso3166Country) invocation.getArgument(3);
+                        Iso3166Country country = Iso3166Country.valueOf((String) invocation.getArgument(3));
 
                         OrgEntity entity = new OrgEntity();
                         entity.setName(name);
                         entity.setCity(city);
                         entity.setRegion(region);
-                        entity.setCountry(country);
+                        entity.setCountry(country.name());
 
                         if ("1. Alt Name".equals(name) && "AltCity#1".equals(city) && region == null && Iso3166Country.MX.equals(country)) {
                             OrgDisambiguatedEntity od = new OrgDisambiguatedEntity();

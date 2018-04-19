@@ -41,6 +41,9 @@ import { AffiliationFormNg2Module }
 import { AlsoKnownAsNg2Module } 
     from './alsoKnownAs/alsoKnownAs.ts';
 
+import { AlertBannerNg2Module } 
+    from './alertBanner/alertBanner.ts';
+
 import { AlsoKnownAsFormNg2Module } 
     from './alsoKnownAsForm/alsoKnownAsForm.ts';
 
@@ -246,6 +249,7 @@ export class RootCmp {
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
+        AlertBannerNg2Module,
         AlsoKnownAsFormNg2Module,
         AlsoKnownAsNg2Module,
         BiographyNg2Module, //Approved

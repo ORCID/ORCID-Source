@@ -3,7 +3,6 @@
    <div class="row">        
         <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12"> 
 		<h2>${springMacroRequestContext.getMessage("claim.claimyourrecord")}</h2>
-				<#include "/common/browser-checks.ftl" />
 				<div ng-controller="ClaimCtrl">
 					<div>
 						<!-- span class="orcid-error" ng-show="register.errors.length > 0">

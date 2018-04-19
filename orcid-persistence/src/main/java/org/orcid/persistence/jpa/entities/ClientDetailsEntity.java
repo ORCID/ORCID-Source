@@ -11,12 +11,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -26,7 +23,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.util.StringUtils;
@@ -44,7 +40,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public static final int DEFAULT_TOKEN_VALIDITY = 631138519;
 
     private String clientId;
-    private ClientType clientType;
+    private String clientType;
     private String clientName;
     private String clientDescription;
     private String clientWebsite;
@@ -93,14 +89,12 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientId = clientId;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "client_type")
-    public ClientType getClientType() {
+    public String getClientType() {
         return clientType;
     }
 
-    public void setClientType(ClientType clientType) {
+    public void setClientType(String clientType) {
         this.clientType = clientType;
     }
 

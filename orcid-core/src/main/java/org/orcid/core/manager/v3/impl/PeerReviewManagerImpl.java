@@ -19,6 +19,7 @@ import org.orcid.core.manager.v3.read_only.impl.PeerReviewManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
@@ -72,7 +73,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid, getLastModified(orcid));
             // If it is the user adding the peer review, allow him to add
             // duplicates
-            if (!sourceEntity.getSourceId().equals(orcid)) {
+            if (!SourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
@@ -117,7 +118,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     @Override
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
-        Visibility originalVisibility = Visibility.fromValue(existingEntity.getVisibility().value());
+        Visibility originalVisibility = Visibility.valueOf(existingEntity.getVisibility());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
         //Save the original source
@@ -147,7 +148,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, updatedEntity);
         updatedEntity.setProfile(new ProfileEntity(orcid));
-        updatedEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(originalVisibility.value()));
+        updatedEntity.setVisibility(originalVisibility.name());
         
         //Be sure it doesn't overwrite the source
         updatedEntity.setSourceId(existingSourceId);
@@ -176,12 +177,12 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     }
 
     private void setIncomingPrivacy(PeerReviewEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = profile.getActivitiesVisibilityDefault();
+        String incomingVisibility = entity.getVisibility();
+        String defaultVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {            
             entity.setVisibility(defaultVisibility);            
         } else if (incomingVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }
 
@@ -197,7 +198,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
     @Override
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility) {
-        return peerReviewDao.updateVisibilities(orcid, peerReviewIds, org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.value()));
+        return peerReviewDao.updateVisibilities(orcid, peerReviewIds, visibility.name());
     }
 
     private void validateGroupId(PeerReview peerReview) {

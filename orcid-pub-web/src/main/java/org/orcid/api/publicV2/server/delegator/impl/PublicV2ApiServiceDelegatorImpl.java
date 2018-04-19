@@ -245,7 +245,7 @@ public class PublicV2ApiServiceDelegatorImpl
         String creditName = null;
         RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
         if (recordNameEntity != null) {
-            if (!recordNameEntity.getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
+            if (!Visibility.valueOf(recordNameEntity.getVisibility()).isMoreRestrictiveThan(Visibility.PUBLIC)) {
                 creditName = recordNameEntity.getCreditName();
                 if (StringUtils.isBlank(creditName)) {
                     creditName = recordNameEntity.getGivenNames();

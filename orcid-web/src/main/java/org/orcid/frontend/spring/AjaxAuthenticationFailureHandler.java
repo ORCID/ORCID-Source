@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.security.DeprecatedProfileException;
+import org.orcid.core.security.InvalidUserTypeException;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
@@ -54,6 +55,9 @@ public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         } else if (exception instanceof Bad2FARecoveryCodeException) {
             writer.println(",");
             writer.println("\"badRecoveryCode\": true");
+        } else if (exception.getCause() instanceof InvalidUserTypeException) {
+            writer.println(",");
+            writer.println("\"invalidUserType\": true");
         }
         writer.println("}");
     }
