@@ -54,7 +54,7 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
             }
 
             if (PojoUtil.isEmpty(version)) {
-                if (isLOD(request.getHeader("Accept"))) {
+                if (isLODButNotJSONLD(request.getHeader("Accept"))) {
                     String redirectUri = orcidUrlManager.getPubBaseUrl() + OrcidApiConstants.EXPERIMENTAL_RDF_V1 + path;
                     response.sendRedirect(redirectUri);
                 }
@@ -71,9 +71,9 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
         }
     }
     
-    private boolean isLOD(String accept) {
+    private boolean isLODButNotJSONLD(String accept) {
         if (accept == null)
             return false;
-        return (accept.contains("n3") || accept.contains("rdf") || accept.contains("n-triples") || accept.contains("turtle") || accept.contains("json-ld"));
+        return (accept.contains("n3") || accept.contains("rdf") || accept.contains("n-triples") || accept.contains("turtle"));
     }
 }
