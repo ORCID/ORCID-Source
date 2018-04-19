@@ -559,7 +559,7 @@ public class NotificationManagerImpl implements NotificationManager {
         boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
         if (notificationsEnabled) {
             NotificationCustom notification = new NotificationCustom();
-            notification.setNotificationType(NotificationType.CUSTOM);
+            notification.setNotificationType(NotificationType.ADMINISTRATIVE);
             notification.setSubject(subject);
             notification.setBodyHtml(html);
             createNotification(userReceivingPermission, notification);
@@ -841,7 +841,7 @@ public class NotificationManagerImpl implements NotificationManager {
             boolean notificationsEnabled = trustedEntity != null ? trustedEntity.getEnableNotifications() : false;
             if (notificationsEnabled) {
                 NotificationCustom notification = new NotificationCustom();
-                notification.setNotificationType(NotificationType.CUSTOM);
+                notification.setNotificationType(NotificationType.ADMINISTRATIVE);
                 notification.setSubject(subject);
                 notification.setBodyHtml(htmlBody);
                 createNotification(managedOrcid, notification);
@@ -1109,7 +1109,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String html = templateManager.processTemplate("auto_deprecated_account_html.ftl", templateParams);
 
         NotificationCustom notification = new NotificationCustom();
-        notification.setNotificationType(NotificationType.CUSTOM);
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
         notification.setSubject(subject);
         notification.setBodyHtml(html);
         createNotification(primaryOrcid, notification);

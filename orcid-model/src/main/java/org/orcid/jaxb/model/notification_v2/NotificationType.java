@@ -28,10 +28,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum NotificationType {
 
     //@formatter:off
+    @Deprecated
     @XmlEnumValue("custom") CUSTOM,
     @XmlEnumValue("institutional_connection") INSTITUTIONAL_CONNECTION,
     @XmlEnumValue("permission")PERMISSION,
-    @XmlEnumValue("amended") AMENDED;
+    @XmlEnumValue("amended") AMENDED,
+    @XmlEnumValue("service-anouncement") SERVICE_ANNOUNCEMENT,
+    @XmlEnumValue("administrative") ADMINISTRATIVE;
     //@formatter:on
 
     public String value() {
