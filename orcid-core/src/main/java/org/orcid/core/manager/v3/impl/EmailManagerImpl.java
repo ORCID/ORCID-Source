@@ -126,7 +126,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 Email newPrimaryEmail = null;
                 if (emails != null && !emails.getEmails().isEmpty()) {
                     for (Email email : emails.getEmails()) {
-                        emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), email.getVisibility().value());
+                        emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), email.getVisibility().name());
                         if (email.isPrimary()) {
                             if (primaryFound) {
                                 throw new IllegalArgumentException("More than one primary email specified");
