@@ -500,7 +500,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
     @Override
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
-        return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility.value());
+        return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility.name());
     }
 
     /**
