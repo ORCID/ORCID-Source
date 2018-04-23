@@ -1,8 +1,6 @@
 <@public classes=['home'] nav="register">
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-    <!-- ****
-    <request-password-reset-ng2></request-password-reset-ng2>
-    -->
+        <request-password-reset-ng2></request-password-reset-ng2>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getResetPasswordForm()" class="row">
