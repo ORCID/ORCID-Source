@@ -1,7 +1,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
+import org.orcid.persistence.constants.SendEmailFrequency;
 
 public interface PreferenceManager {
     boolean updateEmailFrequencyDays(String orcid, SendEmailFrequency newValue);

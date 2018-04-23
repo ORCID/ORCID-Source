@@ -1,7 +1,8 @@
 package org.orcid.persistence.dao.impl;
 
 import javax.persistence.Query;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
+
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.springframework.transaction.annotation.Transactional;

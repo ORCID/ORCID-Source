@@ -1,6 +1,6 @@
 package org.orcid.persistence.dao;
 
-import org.orcid.jaxb.model.message.SendEmailFrequency;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 
 /**

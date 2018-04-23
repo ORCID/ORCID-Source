@@ -6,7 +6,7 @@ import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ProfileDao;
 
 public class PreferenceManagerImpl implements PreferenceManager {

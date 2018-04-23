@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.message;
+package org.orcid.persistence.constants;
 
 /**
  * 
