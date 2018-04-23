@@ -17,11 +17,11 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.v3.dev1.client.Client;
-import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
-import org.orcid.jaxb.model.v3.dev1.client.ClientSummary;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.jaxb.model.v3.rc1.client.ClientRedirectUri;
+import org.orcid.jaxb.model.v3.rc1.client.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;

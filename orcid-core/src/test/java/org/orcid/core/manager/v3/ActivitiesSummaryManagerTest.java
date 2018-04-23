@@ -13,7 +13,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;

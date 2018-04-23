@@ -25,7 +25,7 @@ import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.jaxb.model.v3.dev1.common.Locale;
+import org.orcid.jaxb.model.v3.rc1.common.Locale;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;

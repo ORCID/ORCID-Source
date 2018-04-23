@@ -5,9 +5,9 @@ import java.util.List;
 
 import ma.glasnost.orika.MapperFacade;
 
-import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.core.adapter.v3.JpaJaxbServiceAdapter;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

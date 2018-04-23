@@ -19,7 +19,7 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.exception.SwitchUserAuthenticationException;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;

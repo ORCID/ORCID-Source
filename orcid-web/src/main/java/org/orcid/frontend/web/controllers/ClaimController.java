@@ -17,7 +17,7 @@ import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -170,8 +170,8 @@ public class ClaimController extends BaseController {
         }
 
         Locale requestLocale = RequestContextUtils.getLocale(request);
-        org.orcid.jaxb.model.v3.dev1.common.Locale userLocale = (requestLocale == null) ? null
-                : org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(requestLocale.toString());
+        org.orcid.jaxb.model.v3.rc1.common.Locale userLocale = (requestLocale == null) ? null
+                : org.orcid.jaxb.model.v3.rc1.common.Locale.fromValue(requestLocale.toString());
         
         boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
         if (!claimed) {

@@ -28,7 +28,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -193,7 +193,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setRole(Text.valueOf("reviewer"));
         form.setType(Text.valueOf("evaluation"));
         form.setUrl(Text.valueOf("http://orcid.org"));
-        form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED));
+        form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED));
 
         Date completionDate = new Date();
         completionDate.setDay("01");

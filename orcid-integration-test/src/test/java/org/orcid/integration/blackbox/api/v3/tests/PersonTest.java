@@ -17,12 +17,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV3ApiClientImpl;
 import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.api.v3.dev1.BlackBoxBaseV3_0_dev1;
-import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
+import org.orcid.integration.blackbox.api.v3.rc1.BlackBoxBaseV3_0_rc1;
+import org.orcid.integration.blackbox.api.v3.rc1.MemberV3Rc1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -35,12 +35,12 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
-public class PersonTest extends BlackBoxBaseV3_0_dev1 {
+public class PersonTest extends BlackBoxBaseV3_0_rc1 {
     
-    @Resource(name = "memberV3_0_dev1ApiClient")
-    private MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;
+    @Resource(name = "memberV3_0_rc1ApiClient")
+    private MemberV3Rc1ApiClientImpl memberV3Rc1ApiClient;
     
-    @Resource(name = "publicV3_0_dev1ApiClient")
+    @Resource(name = "publicV3_0_rc1ApiClient")
     private PublicV3ApiClientImpl publicV3ApiClient;
     
     private static final String limitedEmail = "limited@test.orcid.org";
@@ -55,13 +55,13 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
         signin();
         
         //Set the default visibility to public, so, all elements created are public by default
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name(), false);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.name(), false);
         
         showMyOrcidPage();
 
         openEditAddressModal();
         deleteAddresses();
-        createAddress(org.orcid.jaxb.model.v3.dev1.common.Iso3166Country.US.name());
+        createAddress(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US.name());
         saveEditAddressModal();
 
         openEditOtherNamesModal();
@@ -84,19 +84,19 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
                 
         // Set biography to public
         String bio = BBBUtil.getProperty("org.orcid.web.testUser1.bio");
-        changeBiography(bio, org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
+        changeBiography(bio, org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.name());
 
         // Set names to public
-        changeNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
+        changeNamesVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.name());
         
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updatePrimaryEmailVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.name());
         removePopOver();
         if (emailExists(limitedEmail)) {
-            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
+            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED.name());
         } else {
-            addEmail(limitedEmail, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
+            addEmail(limitedEmail, org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED.name());
         }                
     }
     
@@ -121,8 +121,8 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
         showMyOrcidPage();
         
         openEditExternalIdentifiersModal();
-        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
-        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED.name());
+        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.name());
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED.name());
         saveExternalIdentifiersModal();
         
         allSet = true;
@@ -162,49 +162,49 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
     public void testGetBioFromPublicAPI() {
         ClientResponse response = publicV3ApiClient.viewBiographyXML(getUser1OrcidId());
         assertNotNull(response);
-        org.orcid.jaxb.model.v3.dev1.record.Biography bio = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.Biography.class);
+        org.orcid.jaxb.model.v3.rc1.record.Biography bio = response.getEntity(org.orcid.jaxb.model.v3.rc1.record.Biography.class);
         assertNotNull(bio);
         assertEquals(getUser1Bio(), bio.getContent());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, bio.getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, bio.getVisibility());
     }
 
     @Test
     public void testGetBioFromMemberAPI() throws Exception {
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
-        ClientResponse response = memberV3Dev1ApiClient.viewBiography(getUser1OrcidId(), accessToken);
+        ClientResponse response = memberV3Rc1ApiClient.viewBiography(getUser1OrcidId(), accessToken);
         assertNotNull(response);
-        org.orcid.jaxb.model.v3.dev1.record.Biography bio = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.Biography.class);
+        org.orcid.jaxb.model.v3.rc1.record.Biography bio = response.getEntity(org.orcid.jaxb.model.v3.rc1.record.Biography.class);
         assertNotNull(bio);
         assertEquals(getUser1Bio(), bio.getContent());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, bio.getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, bio.getVisibility());
     }
 
     @Test
     public void testViewPersonFromMemberAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
-        ClientResponse response = memberV3Dev1ApiClient.viewPerson(getUser1OrcidId(), accessToken);
+        ClientResponse response = memberV3Rc1ApiClient.viewPerson(getUser1OrcidId(), accessToken);
         assertNotNull(response);
         assertEquals("invalid " + response, 200, response.getStatus());
         Thread.sleep(100);
-        org.orcid.jaxb.model.v3.dev1.record.Person person = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.Person.class);
+        org.orcid.jaxb.model.v3.rc1.record.Person person = response.getEntity(org.orcid.jaxb.model.v3.rc1.record.Person.class);
         assertNotNull(person);
         assertNotNull(person.getAddresses());
         assertNotNull(person.getAddresses().getAddress());
         assertEquals(1, person.getAddresses().getAddress().size());
         assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
         assertEquals(getUser1Bio(), person.getBiography().getContent());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getBiography().getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC,
+        EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC,
                 person.getEmails());
-        EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED, person.getEmails());
+        EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
@@ -213,12 +213,12 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
         boolean foundPublic = false;
         boolean foundLimited = false;
 
-        for (org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifiers()) {
+        for (org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifiers()) {
             if ("A-0001".equals(e.getValue())) {
-                assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, e.getVisibility());
+                assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, e.getVisibility());
                 foundPublic = true;
             } else if ("A-0002".equals(e.getValue())) {
-                assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED, e.getVisibility());
+                assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED, e.getVisibility());
                 foundLimited = true;
             }
         }
@@ -231,50 +231,50 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
         assertEquals(2, person.getKeywords().getKeywords().size());
         assertThat(person.getKeywords().getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
         assertThat(person.getKeywords().getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getKeywords().getKeywords().get(1).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getKeywords().getKeywords().get(1).getVisibility());
         assertNotNull(person.getOtherNames());
         assertNotNull(person.getOtherNames().getOtherNames());
         assertEquals(2, person.getOtherNames().getOtherNames().size());
         assertThat(person.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
         assertThat(person.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
         assertEquals(2, person.getResearcherUrls().getResearcherUrls().size());
         assertThat(person.getResearcherUrls().getResearcherUrls().get(0).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
         assertThat(person.getResearcherUrls().getResearcherUrls().get(1).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(0).getVisibility());        
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(1).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(0).getVisibility());        
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(1).getVisibility());
         assertNotNull(person.getName());
         assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
         assertEquals(getUser1FamilyNames(), person.getName().getFamilyName().getContent());
         assertNotNull(person.getName().getCreditName());
         assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getName().getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getName().getVisibility());
     }
 
     @Test
     public void testViewPersonFromPublicAPI() {
         ClientResponse response = publicV3ApiClient.viewPersonXML(getUser1OrcidId());
         assertNotNull(response);
-        org.orcid.jaxb.model.v3.dev1.record.Person person = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.Person.class);
+        org.orcid.jaxb.model.v3.rc1.record.Person person = response.getEntity(org.orcid.jaxb.model.v3.rc1.record.Person.class);
         assertNotNull(person);
         assertNotNull(person.getAddresses());
         assertNotNull(person.getAddresses().getAddress());
         assertEquals(1, person.getAddresses().getAddress().size());
         assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
         assertEquals(getUser1Bio(), person.getBiography().getContent());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getBiography().getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC,
+        EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC,
                 person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
@@ -282,36 +282,36 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
         assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
         assertEquals("test", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
         assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifiers().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifiers().get(0).getVisibility());
 
         assertNotNull(person.getKeywords());
         assertNotNull(person.getKeywords().getKeywords());
         assertEquals(2, person.getKeywords().getKeywords().size());
         assertThat(person.getKeywords().getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
         assertThat(person.getKeywords().getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getKeywords().getKeywords().get(1).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getKeywords().getKeywords().get(1).getVisibility());
         assertNotNull(person.getOtherNames());
         assertNotNull(person.getOtherNames().getOtherNames());
         assertEquals(2, person.getOtherNames().getOtherNames().size());
         assertThat(person.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
         assertThat(person.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
         assertEquals(2, person.getResearcherUrls().getResearcherUrls().size());
         assertThat(person.getResearcherUrls().getResearcherUrls().get(0).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
         assertThat(person.getResearcherUrls().getResearcherUrls().get(1).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(0).getVisibility());        
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(1).getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(0).getVisibility());        
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(1).getVisibility());
         assertNotNull(person.getName());
         assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
         assertEquals(getUser1FamilyNames(), person.getName().getFamilyName().getContent());
         assertNotNull(person.getName().getCreditName());
         assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, person.getName().getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, person.getName().getVisibility());
     }
     
     public String getAccessToken() throws InterruptedException, JSONException {
@@ -329,7 +329,7 @@ public class PersonTest extends BlackBoxBaseV3_0_dev1 {
         e.setType("test");
         e.setUrl(new Url("http://test.orcid.org"));
         e.setRelationship(Relationship.SELF);
-        ClientResponse response = memberV3Dev1ApiClientImpl.createExternalIdentifier(userOrcid, e, accessToken);
+        ClientResponse response = memberV3Rc1ApiClientImpl.createExternalIdentifier(userOrcid, e, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         return getPutCodeFromResponse(response);                       

@@ -3,8 +3,8 @@ package org.orcid.core.adapter.v3;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

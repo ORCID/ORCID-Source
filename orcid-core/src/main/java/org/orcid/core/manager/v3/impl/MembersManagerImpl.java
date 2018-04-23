@@ -26,7 +26,7 @@ import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.dev1.client.Client;
+import org.orcid.jaxb.model.v3.rc1.client.Client;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientScopeDao;
 import org.orcid.persistence.dao.ProfileDao;

@@ -63,7 +63,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.dao.WorkDao;

@@ -1,8 +1,8 @@
 package org.orcid.core.manager.v3;
 
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {

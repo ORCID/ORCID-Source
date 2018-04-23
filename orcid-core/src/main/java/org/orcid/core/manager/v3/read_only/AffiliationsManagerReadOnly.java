@@ -2,21 +2,21 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 
 public interface AffiliationsManagerReadOnly {
 

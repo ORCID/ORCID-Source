@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<client:client xmlns:client="http://www.orcid.org/ns/client"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/client ../client-3.0_dev1.xsd ">    
-    <client:name>Name</client:name>
-    <client:description>Description</client:description>
-</client:client>

@@ -95,20 +95,20 @@ public class DeveloperToolsControllerTest {
         TargetProxyHelper.injectIntoProxy(developerToolsController, "clientManagerReadOnly", mockClientManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(developerToolsController, "sourceManager", mockSourceManager);
         
-        when(mockClientManager.createPublicClient(Matchers.any(org.orcid.jaxb.model.v3.dev1.client.Client.class))).thenAnswer(new Answer<org.orcid.jaxb.model.v3.dev1.client.Client>() {
+        when(mockClientManager.createPublicClient(Matchers.any(org.orcid.jaxb.model.v3.rc1.client.Client.class))).thenAnswer(new Answer<org.orcid.jaxb.model.v3.rc1.client.Client>() {
             @Override
-            public org.orcid.jaxb.model.v3.dev1.client.Client answer(InvocationOnMock invocation) throws Throwable {
-                org.orcid.jaxb.model.v3.dev1.client.Client c = (org.orcid.jaxb.model.v3.dev1.client.Client) invocation.getArguments()[0];
+            public org.orcid.jaxb.model.v3.rc1.client.Client answer(InvocationOnMock invocation) throws Throwable {
+                org.orcid.jaxb.model.v3.rc1.client.Client c = (org.orcid.jaxb.model.v3.rc1.client.Client) invocation.getArguments()[0];
                 c.setId(CLIENT_1);
                 c.setClientType(ClientType.PUBLIC_CLIENT);
                 return c;
             }
         });
 
-        when(mockClientManager.edit(Matchers.any(org.orcid.jaxb.model.v3.dev1.client.Client.class), Matchers.eq(false))).thenAnswer(new Answer<org.orcid.jaxb.model.v3.dev1.client.Client>() {
+        when(mockClientManager.edit(Matchers.any(org.orcid.jaxb.model.v3.rc1.client.Client.class), Matchers.eq(false))).thenAnswer(new Answer<org.orcid.jaxb.model.v3.rc1.client.Client>() {
             @Override
-            public org.orcid.jaxb.model.v3.dev1.client.Client answer(InvocationOnMock invocation) throws Throwable {
-                org.orcid.jaxb.model.v3.dev1.client.Client c = (org.orcid.jaxb.model.v3.dev1.client.Client) invocation.getArguments()[0];
+            public org.orcid.jaxb.model.v3.rc1.client.Client answer(InvocationOnMock invocation) throws Throwable {
+                org.orcid.jaxb.model.v3.rc1.client.Client c = (org.orcid.jaxb.model.v3.rc1.client.Client) invocation.getArguments()[0];
                 c.setId(CLIENT_2);
                 c.setClientType(ClientType.PUBLIC_CLIENT);
                 return c;
@@ -116,12 +116,12 @@ public class DeveloperToolsControllerTest {
         });
 
         when(mockProfileEntityCacheManager.retrieve(USER_ORCID)).thenReturn(new ProfileEntity(USER_ORCID));
-        Set<org.orcid.jaxb.model.v3.dev1.client.Client> clients = new HashSet<>();
-        org.orcid.jaxb.model.v3.dev1.client.Client c = new org.orcid.jaxb.model.v3.dev1.client.Client();
+        Set<org.orcid.jaxb.model.v3.rc1.client.Client> clients = new HashSet<>();
+        org.orcid.jaxb.model.v3.rc1.client.Client c = new org.orcid.jaxb.model.v3.rc1.client.Client();
         c.setId(CLIENT_3);
         c.setGroupProfileId(USER_ORCID);
-        Set<org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri> rUris = new HashSet<>();
-        org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri rUri1 = new org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri();
+        Set<org.orcid.jaxb.model.v3.rc1.client.ClientRedirectUri> rUris = new HashSet<>();
+        org.orcid.jaxb.model.v3.rc1.client.ClientRedirectUri rUri1 = new org.orcid.jaxb.model.v3.rc1.client.ClientRedirectUri();
         rUri1.setRedirectUri("http://ruri1.com");
         rUri1.setRedirectUriType(RedirectUriType.SSO_AUTHENTICATION.value());
         rUris.add(rUri1);
@@ -133,11 +133,11 @@ public class DeveloperToolsControllerTest {
         c.setDecryptedSecret("client-secret");
         clients.add(c);
         when(mockClientManagerReadOnly.getClients(Matchers.anyString())).thenReturn(clients);
-        when(mockClientManagerReadOnly.get(Matchers.anyString())).thenAnswer(new Answer<org.orcid.jaxb.model.v3.dev1.client.Client>(){
+        when(mockClientManagerReadOnly.get(Matchers.anyString())).thenAnswer(new Answer<org.orcid.jaxb.model.v3.rc1.client.Client>(){
             @Override
-            public org.orcid.jaxb.model.v3.dev1.client.Client answer(InvocationOnMock invocation) throws Throwable {
+            public org.orcid.jaxb.model.v3.rc1.client.Client answer(InvocationOnMock invocation) throws Throwable {
                 String clientId = (String) invocation.getArguments()[0];
-                org.orcid.jaxb.model.v3.dev1.client.Client c = new org.orcid.jaxb.model.v3.dev1.client.Client();
+                org.orcid.jaxb.model.v3.rc1.client.Client c = new org.orcid.jaxb.model.v3.rc1.client.Client();
                 c.setId(clientId);
                 c.setGroupProfileId(USER_ORCID);
                 return c;
@@ -279,7 +279,7 @@ public class DeveloperToolsControllerTest {
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
         Client result = developerToolsController.createClient(client);
-        verify(mockClientManager, times(1)).createPublicClient(Matchers.any(org.orcid.jaxb.model.v3.dev1.client.Client.class));
+        verify(mockClientManager, times(1)).createPublicClient(Matchers.any(org.orcid.jaxb.model.v3.rc1.client.Client.class));
         assertEquals(CLIENT_1, result.getClientId().getValue());
     }
 
@@ -301,7 +301,7 @@ public class DeveloperToolsControllerTest {
         redirectUris.add(rUri2);
         client.setRedirectUris(redirectUris);
         Client updatedClient = developerToolsController.updateClient(client);
-        verify(mockClientManager, times(1)).edit(Matchers.any(org.orcid.jaxb.model.v3.dev1.client.Client.class), Matchers.eq(false));
+        verify(mockClientManager, times(1)).edit(Matchers.any(org.orcid.jaxb.model.v3.rc1.client.Client.class), Matchers.eq(false));
         assertEquals(CLIENT_2, updatedClient.getClientId().getValue());
     }
 

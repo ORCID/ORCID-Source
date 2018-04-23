@@ -8,9 +8,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.WorksCacheManager;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.pojo.WorkGroup;
 
 public class WorksPaginator {
@@ -28,13 +28,13 @@ public class WorksPaginator {
     
     public int getPublicWorksCount(String orcid) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> groups = filter(works, true);
+        List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> groups = filter(works, true);
         return groups.size();
     }
 
     public WorksPage getWorksPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
+        List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
         filteredGroups = sort(filteredGroups, sort, sortAsc);
         
         WorksPage worksPage = new WorksPage();
@@ -42,7 +42,7 @@ public class WorksPaginator {
 
         List<WorkGroup> workGroups = new ArrayList<>();
         for (int i = offset; i < Math.min(offset + PAGE_SIZE, filteredGroups.size()); i++) {
-            org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = filteredGroups.get(i);
+            org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup group = filteredGroups.get(i);
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
         worksPage.setWorkGroups(workGroups);
@@ -52,14 +52,14 @@ public class WorksPaginator {
 
     public WorksPage refreshWorks(String orcid, int limit, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
+        List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
 
         WorksPage worksPage = new WorksPage();
         worksPage.setTotalGroups(sortedGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
         for (int i = 0; i < limit && i < sortedGroups.size(); i++) {
-            org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = sortedGroups.get(i);
+            org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup group = sortedGroups.get(i);
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
@@ -70,14 +70,14 @@ public class WorksPaginator {
     
     public WorksPage getAllWorks(String orcid, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
+        List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
 
         WorksPage worksPage = new WorksPage();
         worksPage.setTotalGroups(sortedGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
         for (int i = 0; i < sortedGroups.size(); i++) {
-            org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup group = sortedGroups.get(i);
+            org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup group = sortedGroups.get(i);
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
@@ -86,7 +86,7 @@ public class WorksPaginator {
         return worksPage;
     }
 
-    private List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> sort(List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> list, String sort, boolean sortAsc) {
+    private List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> sort(List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> list, String sort, boolean sortAsc) {
         if (TITLE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new TitleComparator());
         } else if (DATE_SORT_KEY.equals(sort)) {
@@ -101,9 +101,9 @@ public class WorksPaginator {
         return list;
     }
 
-    private List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> filter(Works works, boolean justPublic) {
-        List<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> filteredGroups = new ArrayList<>();
-        for (org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup workGroup : works.getWorkGroup()) {
+    private List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> filter(Works works, boolean justPublic) {
+        List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> filteredGroups = new ArrayList<>();
+        for (org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup workGroup : works.getWorkGroup()) {
             if (!justPublic || Visibility.PUBLIC.equals(workGroup.getWorkSummary().get(0).getVisibility())) {
                 filteredGroups.add(workGroup);
             }
@@ -115,10 +115,10 @@ public class WorksPaginator {
         this.worksCacheManager = worksCacheManager;
     }
 
-    private class DateComparator implements Comparator<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> {
+    private class DateComparator implements Comparator<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> {
 
         @Override
-        public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
+        public int compare(org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup o2) {
             if (o1.getWorkSummary().get(0).getPublicationDate() == null && o2.getWorkSummary().get(0).getPublicationDate() == null) {
                 return new TitleComparator().compare(o1, o2) * -1; // reverse secondary order
             }
@@ -135,10 +135,10 @@ public class WorksPaginator {
         }
     }
     
-    private class TitleComparator implements Comparator<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> {
+    private class TitleComparator implements Comparator<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> {
 
         @Override
-        public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
+        public int compare(org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup o2) {
             String firstTitle = getTitle(o1.getWorkSummary().get(0));
             String secondTitle = getTitle(o2.getWorkSummary().get(0));
             
@@ -209,10 +209,10 @@ public class WorksPaginator {
         }
     }
     
-    private class TypeComparator implements Comparator<org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup> {
+    private class TypeComparator implements Comparator<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> {
 
         @Override
-        public int compare(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup o2) {
+        public int compare(org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup o2) {
             if (o1.getWorkSummary().get(0).getType() == null && o2.getWorkSummary().get(0).getType() == null) {
                 return 0;
             }

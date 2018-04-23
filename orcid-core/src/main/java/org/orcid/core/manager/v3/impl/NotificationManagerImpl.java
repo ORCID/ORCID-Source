@@ -40,19 +40,19 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.notification.Notification;
-import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.Items;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermissions;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc1.notification.Notification;
+import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.Items;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -289,7 +289,7 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendOrcidDeactivateEmail(String userOrcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        org.orcid.jaxb.model.v3.dev1.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
+        org.orcid.jaxb.model.v3.rc1.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String subject = getSubject("email.subject.deactivate", userLocale);
@@ -574,7 +574,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
         
-        org.orcid.jaxb.model.v3.dev1.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
+        org.orcid.jaxb.model.v3.rc1.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
         String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
         String email = emailManager.findPrimaryEmail(userReceivingPermission).getEmail();
@@ -870,7 +870,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = LocaleUtils.toLocale("en");
         
         if(locale != null) {
-            org.orcid.jaxb.model.v3.dev1.common.Locale loc = org.orcid.jaxb.model.v3.dev1.common.Locale.valueOf(managedEntity.getLocale());
+            org.orcid.jaxb.model.v3.rc1.common.Locale loc = org.orcid.jaxb.model.v3.rc1.common.Locale.valueOf(managedEntity.getLocale());
             userLocale = LocaleUtils.toLocale(loc.value());
         }        
 
@@ -1081,7 +1081,7 @@ public class NotificationManagerImpl implements NotificationManager {
             if (emails == null || emails.getEmails() == null) {
                 throw new IllegalArgumentException("Unable to find primary email for: " + userOrcid);
             }
-            for (org.orcid.jaxb.model.v3.dev1.record.Email email : emails.getEmails()) {
+            for (org.orcid.jaxb.model.v3.rc1.record.Email email : emails.getEmails()) {
                 if (email.isPrimary()) {
                     primaryEmail = email.getEmail();
                 }

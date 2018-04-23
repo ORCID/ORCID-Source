@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 
 public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -86,7 +86,7 @@ public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Seri
         }
 
         if (this.visibility != null && this.visibility.getVisibility() != null) {
-            researcherUrl.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
+            researcherUrl.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
 
         if (!PojoUtil.isEmpty(this.getPutCode())) {

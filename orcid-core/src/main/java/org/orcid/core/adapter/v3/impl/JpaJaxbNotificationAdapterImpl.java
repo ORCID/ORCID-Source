@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.dev1.notification.Notification;
-import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.rc1.notification.Notification;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
+import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;

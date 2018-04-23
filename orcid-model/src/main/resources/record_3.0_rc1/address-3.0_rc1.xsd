@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/address" xmlns:address="http://www.orcid.org/ns/address"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="address" uri="http://www.orcid.org/ns/address" />
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_3.0_rc1/common-3.0_rc1.xsd" />
+
+	<xs:element name="addresses">
+		<xs:annotation>
+			<xs:documentation>Addresses container</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+				<xs:element name="address" type="address:address" minOccurs="0"
+					maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute name="path" type="common:element-path" use="optional" />
+		</xs:complexType>
+	</xs:element>	
+
+	<xs:element name="address">
+		<xs:annotation>
+			<xs:documentation>Address element
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="address:address"></xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:complexType name="address">
+		<xs:complexContent>
+			<xs:extension base="common:element-summary">
+				<xs:sequence> 
+					<xs:element name="country" type="common:iso-3166-country-or-empty" />					
+				</xs:sequence>				
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>	
