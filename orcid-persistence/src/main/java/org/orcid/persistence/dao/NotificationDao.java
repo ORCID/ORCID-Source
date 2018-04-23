@@ -25,7 +25,9 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
     List<Object[]> findRecordsWithUnsentNotifications();
 
-    List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate);
+    List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Date recordActiveDate);
+    
+    List<NotificationEntity> findNotificationsToSendLegacy(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate);
 
     NotificationEntity findByOricdAndId(String orcid, Long id);
 

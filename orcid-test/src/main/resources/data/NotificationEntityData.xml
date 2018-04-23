@@ -186,20 +186,6 @@
          sent_date="2017-01-01 00:00:00.00"
      />
      
-     <notification
-         id="15"
-         orcid="0000-0000-0000-0003"
-         date_created="2014-07-17 13:27:14.00"
-         notification_type="PERMISSION"
-         subject="Your ORCID record was updated (Super Institution 2)"
-         body_text="Your ORCID record was updated by Super Institution 2.\n\nBest regards,\n\nORCID"
-         body_html="Your ORCID record was updated by Super Institution 2.\n\n&lt;em>Best&lt;/em> regards,\n\nORCID"
-         source_id="4444-4444-4444-4446"
-         client_source_id="4444-4444-4444-4445"
-         notification_subject="This is the subject"
-         notification_intro="This is the intro"
-     />
-     
      <notification_item
          id="1"
          notification_id="5"
@@ -216,6 +202,168 @@
          date_created="2014-10-03 02:56:23.00"
          item_type="EMPLOYMENT"
          item_name="Super Cool University"
+     />
+     
+     <notification
+         id="1000"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-01-01 00:00:00.00"
+         notification_type="SERVICE_ANNOUNCEMENT"
+         subject="1000 subject"
+         body_text="1000 text"
+         body_html="1000 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+         sent_date="2018-01-02 00:00:00.00"
+     />
+     
+     <notification
+         id="1001"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-02-01 00:00:00.00"
+         notification_type="SERVICE_ANNOUNCEMENT"
+         subject="1001 subject"
+         body_text="1001 text"
+         body_html="1001 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />          
+     
+     <notification
+         id="1002"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-01-01 00:00:00.00"
+         notification_type="INSTITUTIONAL_CONNECTION"
+         subject="1002 subject"
+         body_text="1002 text"
+         body_html="1002 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     	sent_date="2018-01-02 00:00:00.00"
+     />
+     
+     <notification
+         id="1003"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-02-01 00:00:00.00"
+         notification_type="INSTITUTIONAL_CONNECTION"
+         subject="1003 subject"
+         body_text="1003 text"
+         body_html="1003 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
+     <notification
+         id="1004"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-01-01 00:00:00.00"
+         notification_type="PERMISSION"
+         subject="1004 subject"
+         body_text="1004 text"
+         body_html="1004 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+         sent_date="2018-01-02 00:00:00.00"
+     />
+     
+     <notification
+         id="1005"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-02-01 00:00:00.00"
+         notification_type="PERMISSION"
+         subject="1005 subject"
+         body_text="1005 text"
+         body_html="1005 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
+     <notification
+         id="1006"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-01-01 00:00:00.00"
+         notification_type="AMENDED"
+         subject="1006 subject"
+         body_text="1006 text"
+         body_html="1006 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+         sent_date="2018-01-02 00:00:00.00"
+     />
+     
+     <notification
+         id="1007"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-02-01 00:00:00.00"
+         notification_type="AMENDED"
+         subject="1007 subject"
+         body_text="1007 text"
+         body_html="1007 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
+     <notification
+         id="1008"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-01-01 00:00:00.00"
+         notification_type="CUSTOM"
+         subject="1008 subject"
+         body_text="1008 text"
+         body_html="1008 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+         sent_date="2018-01-02 00:00:00.00"
+     />
+     
+     <notification
+         id="1009"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-02-01 00:00:00.00"
+         notification_type="CUSTOM"
+         subject="1009 subject"
+         body_text="1009 text"
+         body_html="1009 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
+     <notification
+         id="1010"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-01-01 00:00:00.00"
+         notification_type="ADMINISTRATIVE"
+         subject="1010 subject"
+         body_text="1010 text"
+         body_html="1010 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+         sent_date="2018-01-02 00:00:00.00"
+     />
+     
+     <notification
+         id="1011"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-02-01 00:00:00.00"
+         notification_type="ADMINISTRATIVE"
+         subject="1011 subject"
+         body_text="1011 text"
+         body_html="1011 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
      />
      
 </dataset>

@@ -154,19 +154,26 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
-    public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
-        
-        String unsentNotificationsQuery = notificationQueries.getProperty("notifications.unsent");
-        
-        
+    public List<NotificationEntity> findNotificationsToSendLegacy(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
         TypedQuery<NotificationEntity> query = entityManager.createNamedQuery(NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID, NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("effective_date", effectiveDate);
         query.setParameter("record_email_frequency", emailFrequency);
         query.setParameter("record_active_date", recordActiveDate);
+        return query.getResultList();        
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Date recordActiveDate) {
+        String unsentNotificationsQuery = notificationQueries.getProperty("notifications.unsent");
+        Query query = entityManager.createNativeQuery(unsentNotificationsQuery, NotificationEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("effective_date", effectiveDate);
+        query.setParameter("record_active_date", recordActiveDate);
         return query.getResultList();
     }
-
+        
     @Override
     @Transactional
     public int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize) {

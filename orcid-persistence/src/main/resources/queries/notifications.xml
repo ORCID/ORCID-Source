@@ -10,7 +10,7 @@ FROM notification n,
 (SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid AND notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION')) permission, (SELECT (send_member_update_requests * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) permission_freq 
 WHERE n.orcid = :orcid 
 AND (
-	(n.notification_type='SERVICE_ANOUNCEMENT' AND sent_date IS NULL)
+	(n.notification_type='SERVICE_ANNOUNCEMENT' AND sent_date IS NULL)
 	OR
 	(n.notification_type in ('ADMINISTRATIVE', 'CUSTOM')
 		AND (
