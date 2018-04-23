@@ -40,9 +40,11 @@ export class AffiliationService {
         this.headers = new HttpHeaders(
             {
                 'Access-Control-Allow-Origin':'*',
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
+        console.log('aff headers', this.headers);
         this.loading = true,
         this.urlAffiliation = getBaseUri() + '/affiliations/affiliation.json';
         this.urlAffiliationId = getBaseUri() + '/affiliations/affiliationIds.json';
@@ -69,8 +71,9 @@ export class AffiliationService {
         .share();
     }
 
-    updateVisibility( affiliation ): Observable<any> {
-        let encoded_data = JSON.stringify( affiliation );         
+    updateVisibility( obj ): Observable<any> {
+        let encoded_data = JSON.stringify( obj );         
+        
         return this.http.post(
                 this.urlAffiliation,
                 encoded_data,
