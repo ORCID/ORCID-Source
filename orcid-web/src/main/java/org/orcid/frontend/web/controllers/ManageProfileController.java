@@ -33,6 +33,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
@@ -684,10 +685,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+        Visibility v = Visibility.valueOf(defaultVis);
         
         // Set the default visibility
         if (profile.getActivitiesVisibilityDefault() != null) {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            form.setVisibility(v);
         }
 
         // Return an empty country in case we dont have any
@@ -698,7 +701,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (form.getAddresses().isEmpty()) {
             AddressForm address = new AddressForm();
             address.setDisplayIndex(1L);
-            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            address.setVisibility(v);
             form.getAddresses().add(address);
         }
 
@@ -788,8 +791,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         Biography bio = biographyManager.getBiography(getCurrentUserOrcid());
         BiographyForm form = BiographyForm.valueOf(bio);
         if(form.getVisibility() == null) {
-            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());            
-            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid()); 
+            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);          
+            form.setVisibility(v);
         }
         return form;
     }

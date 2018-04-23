@@ -66,8 +66,8 @@ public class EmailMessageSenderTest extends BaseTest {
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setGivenNames("John");
         recordName.setFamilyName("Watson");
-        recordName.setVisibility(Visibility.LIMITED);
-        entity.setLocale(Locale.EN);
+        recordName.setVisibility(Visibility.LIMITED.name());
+        entity.setLocale(Locale.EN.name());
         entity.setRecordNameEntity(recordName);
         when(profileEntityCacheManagerMock.retrieve(anyString())).thenReturn(entity);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManagerMock);

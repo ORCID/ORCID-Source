@@ -210,7 +210,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
             throw new RuntimeException(e);
         }
         
-        newRecord.setOrcidType(OrcidType.USER);
+        newRecord.setOrcidType(OrcidType.USER.name());
         newRecord.setDateCreated(now);
         newRecord.setLastModified(now);
         newRecord.setSubmissionDate(now);
@@ -237,9 +237,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setSendChangeNotifications(registration.getSendChangeNotifications().getValue());
         newRecord.setSendAdministrativeChangeNotifications(true);
         newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());
-        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()));
+        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN.name() : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()).name());
         // Visibility defaults
-        newRecord.setActivitiesVisibilityDefault(Visibility.fromValue(registration.getActivitiesVisibilityDefault().getVisibility().value()));
+        newRecord.setActivitiesVisibilityDefault(registration.getActivitiesVisibilityDefault().getVisibility().name());
 
         // Encrypt the password
         newRecord.setEncryptedPassword(encryptionManager.hashForInternalUse(registration.getPassword().getValue()));
@@ -252,7 +252,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         emailEntity.setCurrent(true);
         emailEntity.setVerified(false);
         // Email is private by default
-        emailEntity.setVisibility(Visibility.PRIVATE);
+        emailEntity.setVisibility(Visibility.PRIVATE.name());
         emailEntity.setSourceId(orcid);
         Set<EmailEntity> emails = new HashSet<>();
         emails.add(emailEntity);
@@ -267,7 +267,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                 emailAdditionalEntity.setCurrent(true);
                 emailAdditionalEntity.setVerified(false);
                 // Email is private by default
-                emailAdditionalEntity.setVisibility(Visibility.PRIVATE);
+                emailAdditionalEntity.setVisibility(Visibility.PRIVATE.name());
                 emailAdditionalEntity.setSourceId(orcid);
                 emails.add(emailAdditionalEntity);
             }
@@ -282,7 +282,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         recordNameEntity.setLastModified(now);
         recordNameEntity.setProfile(newRecord);
         // Name is public by default
-        recordNameEntity.setVisibility(Visibility.PUBLIC);
+        recordNameEntity.setVisibility(Visibility.PUBLIC.name());
         if (!PojoUtil.isEmpty(registration.getFamilyNames())) {
             recordNameEntity.setFamilyName(registration.getFamilyNames().getValue().trim());
         }

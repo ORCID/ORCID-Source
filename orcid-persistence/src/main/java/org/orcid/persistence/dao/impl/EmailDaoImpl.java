@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,7 +17,11 @@ import org.springframework.util.Assert;
  * 
  */
 public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements EmailDao {
+    
+    private static final String PUBLIC_VISIBILITY = "PUBLIC";
 
+    private static final String PRIVATE_VISIBILITY = "PRIVATE";
+    
     public EmailDaoImpl() {
         super(EmailEntity.class);
     }
@@ -50,7 +53,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
-    public void updateEmail(String orcid, String email, boolean isCurrent, Visibility visibility) {
+    public void updateEmail(String orcid, String email, boolean isCurrent, String visibility) {
         Query query = entityManager.createQuery("update EmailEntity set current = :current, visibility = :visibility where orcid = :orcid and email = :email");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
@@ -70,19 +73,19 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
-    public void addEmail(String orcid, String email, Visibility visibility, String sourceId, String clientSourceId) {
+    public void addEmail(String orcid, String email, String visibility, String sourceId, String clientSourceId) {
         addEmail(orcid, email, visibility, sourceId, clientSourceId, false, true);
     }
 
     @Override 
     @Transactional
-    public void addEmail(String orcid, String email, Visibility visibility, String sourceId, String clientSourceId, boolean isVerified, boolean isCurrent) {
+    public void addEmail(String orcid, String email, String visibility, String sourceId, String clientSourceId, boolean isVerified, boolean isCurrent) {
         try {
             Query query = entityManager
                     .createNativeQuery("INSERT INTO email (date_created, last_modified, orcid, email, is_primary, is_verified, is_current, visibility, source_id, client_source_id) VALUES (now(), now(), :orcid, :email, false, :isVerified, :isCurrent, :visibility, :sourceId, :clientSourceId)");
             query.setParameter("orcid", orcid);
             query.setParameter("email", email);
-            query.setParameter("visibility", visibility.name());
+            query.setParameter("visibility", visibility);
             query.setParameter("sourceId", sourceId);
             query.setParameter("clientSourceId", clientSourceId);
             query.setParameter("isVerified", isVerified);
@@ -188,11 +191,11 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Cacheable(value = "public-emails", key = "#orcid.concat('-').concat(#lastModified)")
     public List<EmailEntity> findPublicEmails(String orcid, long lastModified) {
-        return findByOrcid(orcid, Visibility.PUBLIC);
+        return findByOrcid(orcid, PUBLIC_VISIBILITY);
     }
     
     @Override
-    public List<EmailEntity> findByOrcid(String orcid, Visibility visibility) {
+    public List<EmailEntity> findByOrcid(String orcid, String visibility) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = :visibility", EmailEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
@@ -272,13 +275,13 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     public boolean hideAllEmails(String orcid) {
         Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, lastModified=now() where orcid = :orcid");
         query.setParameter("orcid", orcid);
-        query.setParameter("visibility", Visibility.PRIVATE);
+        query.setParameter("visibility", PRIVATE_VISIBILITY);
         return query.executeUpdate() > 0;
     }
 
     @Override
     @Transactional
-    public boolean updateVisibility(String orcid, String email, Visibility visibility) {
+    public boolean updateVisibility(String orcid, String email, String visibility) {
         Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, lastModified=now() where email = :email and orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);

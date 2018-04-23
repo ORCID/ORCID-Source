@@ -155,34 +155,34 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0001");
         assertNotNull(profile);
         assertNotNull(profile.getBiographyEntity());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, profile.getBiographyEntity().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), profile.getBiographyEntity().getVisibility());
         assertNotNull(profile.getAddresses());
         assertEquals(3, profile.getAddresses().size());
         for(AddressEntity a : profile.getAddresses()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, a.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), a.getVisibility());
         }
         
         assertNotNull(profile.getExternalIdentifiers());
         assertEquals(3, profile.getExternalIdentifiers().size());
         for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, e.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), e.getVisibility());
         }
         assertNotNull(profile.getKeywords());
         assertEquals(3, profile.getKeywords().size());
         for(ProfileKeywordEntity k : profile.getKeywords()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, k.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), k.getVisibility());
         }
         
         assertNotNull(profile.getOtherNames());
         assertEquals(3, profile.getOtherNames().size());
         for(OtherNameEntity o : profile.getOtherNames()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, o.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), o.getVisibility());
         }
         
         assertNotNull(profile.getResearcherUrls());
         assertEquals(3, profile.getResearcherUrls().size());
         for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, r.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), r.getVisibility());
         }        
     }
     

@@ -187,7 +187,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
-        clientDetailsEntity.setClientType(clientType);
+        clientDetailsEntity.setClientType(clientType.name());
         clientDetailsEntity.setClientName(name);
         clientDetailsEntity.setClientDescription(description);
         clientDetailsEntity.setAuthenticationProviderId(idp);

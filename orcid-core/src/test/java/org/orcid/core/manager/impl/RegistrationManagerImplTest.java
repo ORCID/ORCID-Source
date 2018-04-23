@@ -42,7 +42,9 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
@@ -76,6 +78,9 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Mock
     SourceManager mockSourceManager;
     
+    @Resource
+    ProfileDao profileDao;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
@@ -108,6 +113,9 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         Map<String, String> map = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map);
         assertEquals(userOrcid, map.get(email));
+        ProfileEntity entity = profileDao.find(userOrcid);
+        assertNotNull(entity);
+        assertEquals("EN", entity.getLocale());
     }
     
     @Test

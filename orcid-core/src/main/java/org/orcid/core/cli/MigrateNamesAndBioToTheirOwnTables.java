@@ -79,9 +79,9 @@ public class MigrateNamesAndBioToTheirOwnTables {
                             recordName.setFamilyName(familyName);
                             recordName.setGivenNames(givenNames);
                             if(PojoUtil.isEmpty(namesVisibility)) {
-                                recordName.setVisibility(Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                                recordName.setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().name());
                             } else {
-                                recordName.setVisibility(Visibility.fromValue(namesVisibility));
+                                recordName.setVisibility(namesVisibility);
                             }                            
                             recordNameDao.createRecordName(recordName);
                         }
@@ -95,7 +95,7 @@ public class MigrateNamesAndBioToTheirOwnTables {
                                 visibility = Visibility.fromValue(defaultVisibility);
                             }
                             
-                            biographyDao.persistBiography(orcid, biography, visibility);
+                            biographyDao.persistBiography(orcid, biography, visibility.name());
                         }
                     }
                 });

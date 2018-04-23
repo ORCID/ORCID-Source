@@ -18,6 +18,7 @@ import org.orcid.core.adapter.jsonidentifier.converter.JSONExternalIdentifiersCo
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
+import org.orcid.core.adapter.v3.converter.VisibilityConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -326,6 +327,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getExternalIdentifierMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+
         ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class, ExternalIdentifierEntity.class);        
         addV3DateFields(externalIdentifierClassMap);        
         externalIdentifierClassMap.field("putCode", "id");
@@ -333,6 +336,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         externalIdentifierClassMap.field("value", "externalIdReference");
         externalIdentifierClassMap.field("url.value", "externalIdUrl");
         externalIdentifierClassMap.fieldBToA("displayIndex", "displayIndex");
+        externalIdentifierClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         externalIdentifierClassMap.byDefault();
         registerSourceConverters(mapperFactory, externalIdentifierClassMap);
         
@@ -343,6 +347,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+
         ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);        
         addV3DateFields(researcherUrlClassMap);
         registerSourceConverters(mapperFactory, researcherUrlClassMap);
@@ -350,6 +356,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         researcherUrlClassMap.field("url.value", "url");
         researcherUrlClassMap.field("urlName", "urlName");
         researcherUrlClassMap.fieldBToA("displayIndex", "displayIndex");
+        researcherUrlClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         researcherUrlClassMap.byDefault();
         researcherUrlClassMap.register();
         return mapperFactory.getMapperFacade();
@@ -357,6 +364,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getOtherNameMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+
         ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);        
         addV3DateFields(otherNameClassMap);
         registerSourceConverters(mapperFactory, otherNameClassMap);
@@ -364,6 +373,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         otherNameClassMap.field("content", "displayName");
         otherNameClassMap.field("path", "profile.orcid");
         otherNameClassMap.fieldBToA("displayIndex", "displayIndex");
+        otherNameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         otherNameClassMap.byDefault();
         otherNameClassMap.register();
         return mapperFactory.getMapperFacade();
@@ -371,12 +381,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getKeywordMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+
         ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);        
         addV3DateFields(keywordClassMap);
         registerSourceConverters(mapperFactory, keywordClassMap);
         keywordClassMap.field("putCode", "id");
         keywordClassMap.field("content", "keywordName");
         keywordClassMap.fieldBToA("displayIndex", "displayIndex");
+        keywordClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         keywordClassMap.byDefault();
         keywordClassMap.register();        
         return mapperFactory.getMapperFacade();
@@ -384,6 +397,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getAddressMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+
         ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);        
         addV3DateFields(addressClassMap);
         registerSourceConverters(mapperFactory, addressClassMap);
@@ -391,6 +406,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addressClassMap.field("country.value", "iso2Country");
         addressClassMap.field("visibility", "visibility");
         addressClassMap.fieldBToA("displayIndex", "displayIndex");
+        addressClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         addressClassMap.byDefault();
         addressClassMap.register();        
         return mapperFactory.getMapperFacade();
@@ -398,11 +414,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getEmailMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
         emailClassMap.byDefault();
         emailClassMap.field("email", "id");
         emailClassMap.field("primary", "primary");
         emailClassMap.field("verified", "verified");
+        emailClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         addV3DateFields(emailClassMap);
         registerSourceConverters(mapperFactory, emailClassMap);
         emailClassMap.register();
@@ -415,6 +433,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm,localeManager));
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
+        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
         
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
         workClassMap.byDefault();
@@ -436,6 +455,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
         workClassMap.field("languageCode", "languageCode");
         workClassMap.field("country.value", "iso2Country");
+        workClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         workClassMap.register();
 
         ClassMapBuilder<WorkSummary, WorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, WorkEntity.class);
@@ -448,6 +468,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.field("type", "workType");
         workSummaryClassMap.field("publicationDate", "publicationDate");
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         workSummaryClassMap.byDefault();
         workSummaryClassMap.register();
 
@@ -462,6 +483,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
         workSummaryMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
         workSummaryMinimizedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workSummaryMinimizedClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         workSummaryMinimizedClassMap.byDefault();
         workSummaryMinimizedClassMap.register();
 
@@ -480,6 +502,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         minimizedWorkClassMap.field("publicationDate.month.value", "publicationMonth");
         minimizedWorkClassMap.field("publicationDate.day.value", "publicationDay");
         minimizedWorkClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        minimizedWorkClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         minimizedWorkClassMap.field("url.value", "workUrl");
         minimizedWorkClassMap.register();
 
@@ -494,6 +517,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV3());
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
+        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
         addV3CommonFields(fundingClassMap);
@@ -516,6 +540,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
         fundingClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
         fundingClassMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();
+        fundingClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         fundingClassMap.register();
 
         ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
@@ -534,7 +559,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-
+        fundingSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         fundingSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
@@ -626,7 +651,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             ClassMapBuilder<? extends AffiliationSummary, OrgAffiliationRelationEntity> summaryClassMap) {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("externalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3());
-    
+        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
+        
         // Configure element class map
         addV3CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);                
@@ -642,9 +668,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldBToA("url", "url.value");
         
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();        
+        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();        
         
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
+        
         classMap.register();
 
         // Configure element summary class map
@@ -659,6 +687,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         summaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
         summaryClassMap.field("departmentName", "department");
         summaryClassMap.field("roleTitle", "title");
+        summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
         summaryClassMap.register();
 
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
@@ -671,6 +700,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm,localeManager));
         converterFactory.registerConverter("workExternalIdentifierConverterId", new JSONPeerReviewWorkExternalIdentifierConverterV3());
+        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
+        
         //do same as work
         
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
@@ -692,7 +723,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("subjectContainerName.content", "subjectContainerName");
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
-
+        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
         classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
@@ -705,6 +736,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         peerReviewSummaryClassMap.field("organization.address.country", "org.country");
         peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");        
+        peerReviewSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         peerReviewSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
@@ -822,12 +854,16 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getNameMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        
         ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);        
         addV3DateFields(nameClassMap);        
         nameClassMap.field("creditName.content", "creditName");
         nameClassMap.field("givenNames.content", "givenNames");
         nameClassMap.field("familyName.content", "familyName");
         nameClassMap.field("path", "profile.id");
+        nameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        
         nameClassMap.byDefault();
         nameClassMap.register();
         return mapperFactory.getMapperFacade();

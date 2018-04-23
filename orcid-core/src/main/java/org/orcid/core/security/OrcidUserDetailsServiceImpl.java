@@ -103,7 +103,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     public OrcidProfileUserDetails loadUserByProfile(ProfileEntity profile) {
         if (profile == null) {
             throw new UsernameNotFoundException("Bad username or password");
-        } else if(OrcidType.CLIENT.value().equals(profile.getOrcidType().value())) {
+        } else if(OrcidType.CLIENT.name().equals(profile.getOrcidType())) {
             throw new InvalidUserTypeException("Clients can't login");
         }
         checkStatuses(profile);
@@ -116,8 +116,8 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         OrcidProfileUserDetails userDetails = null;
 
         if (profile.getOrcidType() != null) {
-            OrcidType orcidType = OrcidType.fromValue(profile.getOrcidType().value());
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), buildAuthorities(orcidType, profile.getGroupType()));
+            OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
+            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), buildAuthorities(orcidType, profile.getGroupType() != null ? MemberType.valueOf(profile.getGroupType()) : null));
         } else {
             userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
         }

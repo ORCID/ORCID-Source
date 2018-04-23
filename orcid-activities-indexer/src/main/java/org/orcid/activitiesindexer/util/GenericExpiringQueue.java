@@ -65,16 +65,18 @@ public class GenericExpiringQueue<T extends RemovalListener<String, LastModified
      * @param forceCleanup
      *            if true, register a thread that automatically scans for
      *            inactive entries and evicts them.
+     * @param executor
+     *          A preconfigured executor service 
      * @param removalListener
      *            the logic to be applied when items are evicted from the cache.
      */
-    public GenericExpiringQueue(int secondsToWait, Boolean forceCleanup, T removalListener) {
+    public GenericExpiringQueue(int secondsToWait, Boolean forceCleanup, ExecutorService executor, T removalListener) {
         LOG.info("Creating cacheQueue with " + secondsToWait + " seconds wait and forceCleanup = " + forceCleanup + " using "
                 + removalListener.getClass().getSimpleName());
 
         // create a thread that does the removal - we can fiddle with the
         // Executor if we need more threads
-        executor = Executors.newCachedThreadPool();
+        this.executor = executor;
 
         // create the expiring cache
         cacheQueue = CacheBuilder.newBuilder().expireAfterAccess(secondsToWait, TimeUnit.SECONDS)

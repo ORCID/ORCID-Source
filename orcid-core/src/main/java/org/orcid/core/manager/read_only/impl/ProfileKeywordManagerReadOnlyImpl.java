@@ -31,7 +31,7 @@ public class ProfileKeywordManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl i
 
     @Override
     public Keywords getPublicKeywords(String orcid) {
-        List<ProfileKeywordEntity> entities = profileKeywordDao.getProfileKeywords(orcid, Visibility.PUBLIC);
+        List<ProfileKeywordEntity> entities = profileKeywordDao.getProfileKeywords(orcid, Visibility.PUBLIC.name());
         return adapter.toKeywords(entities);        
     }
 

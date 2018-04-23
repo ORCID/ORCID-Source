@@ -31,7 +31,7 @@ public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implem
     
     @Override
     public OtherNames getPublicOtherNames(String orcid) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC.name());
         return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
     }
   

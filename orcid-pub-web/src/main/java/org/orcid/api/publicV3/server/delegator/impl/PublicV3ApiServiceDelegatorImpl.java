@@ -251,7 +251,7 @@ public class PublicV3ApiServiceDelegatorImpl
         String creditName = null;
         RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
         if (recordNameEntity != null) {
-            if (!recordNameEntity.getVisibility().isMoreRestrictiveThan(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
+            if (!Visibility.valueOf(recordNameEntity.getVisibility()).isMoreRestrictiveThan(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC)) {
                 creditName = recordNameEntity.getCreditName();
                 if (StringUtils.isBlank(creditName)) {
                     creditName = recordNameEntity.getGivenNames();

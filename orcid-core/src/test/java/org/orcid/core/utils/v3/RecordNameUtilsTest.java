@@ -13,7 +13,7 @@ public class RecordNameUtilsTest {
     @Test
     public void testGetPublicNamePublicVisibilityCreditName() {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         recordName.setCreditName("credit name");
         
         String publicName = RecordNameUtils.getPublicName(recordName);
@@ -24,7 +24,7 @@ public class RecordNameUtilsTest {
     @Test
     public void testGetPublicNamePublicVisibilityNoCreditName() {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         recordName.setGivenNames("given name");
         recordName.setFamilyName("family name");
         
@@ -36,7 +36,7 @@ public class RecordNameUtilsTest {
     @Test
     public void testGetPublicNamePublicVisibilityNoFamilyName() {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         recordName.setGivenNames("given name");
         
         String publicName = RecordNameUtils.getPublicName(recordName);
@@ -47,7 +47,7 @@ public class RecordNameUtilsTest {
     @Test
     public void testGetPublicNamePrivateVisibility() {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PRIVATE);
+        recordName.setVisibility(Visibility.PRIVATE.name());
         recordName.setCreditName("credit name");
         recordName.setGivenNames("given name");
         recordName.setFamilyName("family name");

@@ -4,18 +4,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.common_v2.Visibility;
 
 /**
  * @author Will Simpson
@@ -31,7 +26,7 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
     private Boolean primary;
     private Boolean current;
     private Boolean verified;
-    private Visibility visibility;    
+    private String visibility;    
 
     @Override
     @Id
@@ -81,13 +76,12 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
         this.verified = verified;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Visibility getVisibility() {
+    @Column
+    public String getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Visibility visibility) {
+    public void setVisibility(String visibility) {
         this.visibility = visibility;
     }
 

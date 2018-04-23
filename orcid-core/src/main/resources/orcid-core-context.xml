@@ -1149,7 +1149,7 @@
         <property name="cacheName" value="full-work-entity" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="30000" />
-        <property name="timeToLiveSeconds" value="7200" />
+        <property name="timeToLiveSeconds" value="86400" />
         <property name="timeToIdleSeconds" value="3600" />
         <property name="maxElementsOnDisk" value="60000" />
         <property name="strategy" value="LOCALTEMPSWAP" />

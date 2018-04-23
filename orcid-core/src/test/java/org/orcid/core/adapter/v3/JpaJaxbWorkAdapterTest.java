@@ -65,7 +65,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, workEntity.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), workEntity.getVisibility());
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
@@ -73,8 +73,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("common:translated-title", workEntity.getTranslatedTitle());
         assertEquals("en", workEntity.getTranslatedTitleLanguageCode());
         assertEquals("work:short-description", workEntity.getDescription());
-        assertEquals(org.orcid.jaxb.model.record_v2.CitationType.FORMATTED_UNSPECIFIED, workEntity.getCitationType());
-        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE, workEntity.getWorkType());
+        assertEquals(org.orcid.jaxb.model.record_v2.CitationType.FORMATTED_UNSPECIFIED.name(), workEntity.getCitationType());
+        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name(), workEntity.getWorkType());
         PublicationDateEntity publicationDateEntity = workEntity.getPublicationDate();
         assertNotNull(publicationDateEntity);
         assertEquals(1848, publicationDateEntity.getYear().intValue());
@@ -88,7 +88,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:credit-name\"},\"contributorEmail\":{\"value\":\"work@contributor.email\"},\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}}]}",
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF, workEntity.getIso2Country());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), workEntity.getIso2Country());
         
         // Source
         assertNull(workEntity.getSourceId());        
@@ -173,15 +173,15 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setDateCreated(date);
         work.setLastModified(date);
         work.setOrcid("0000-0000-0000-0001");
-        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId("APP-5555555555555555");        
         work.setCitation("work:citation");
-        work.setCitationType(org.orcid.jaxb.model.record_v2.CitationType.BIBTEX);
+        work.setCitationType(org.orcid.jaxb.model.record_v2.CitationType.BIBTEX.name());
         work.setDateCreated(date);
         work.setDescription("work:description");
         work.setId(12345L);
-        work.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.CR);
+        work.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
         work.setLastModified(date);
@@ -190,7 +190,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setTitle("work:title");
         work.setTranslatedTitle("work:translatedTitle");
         work.setTranslatedTitleLanguageCode("ES");
-        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE);
+        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");
         work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");

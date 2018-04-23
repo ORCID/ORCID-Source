@@ -36,13 +36,13 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     private S3MessageProcessor s3Processor;
 
     /**
-     * Fires when the queue evicts after an inactivity period.
-     * Populates the Amazon S3 buckets and updates solr index
+     * Fires when the queue evicts after an inactivity period. Populates the
+     * Amazon S3 buckets and updates solr index
      */
     public void onRemoval(RemovalNotification<String, LastModifiedMessage> removal) {
         if (removal.wasEvicted()) {
             LastModifiedMessage m = removal.getValue();
-            LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue '" + m.getLastUpdated() + "' Removal cause " + removal.getCause() );            
+            LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue '" + m.getLastUpdated() + "' Removal cause " + removal.getCause());
             s3Processor.accept(m);
         }
     }

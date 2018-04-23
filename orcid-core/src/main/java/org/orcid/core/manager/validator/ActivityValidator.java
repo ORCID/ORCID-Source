@@ -17,6 +17,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Amount;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.ContributorOrcid;
@@ -228,7 +229,7 @@ public class ActivityValidator {
         if (work.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
+                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             }
             throw new InvalidPutCodeException(params);
         }
@@ -281,7 +282,7 @@ public class ActivityValidator {
         if (funding.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
+                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             }
             throw new InvalidPutCodeException(params);
         }
@@ -300,7 +301,7 @@ public class ActivityValidator {
         if (employment.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
+                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             }
             throw new InvalidPutCodeException(params);
         }
@@ -317,7 +318,7 @@ public class ActivityValidator {
         if (education.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
+                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             }
             throw new InvalidPutCodeException(params);
         }
@@ -337,7 +338,7 @@ public class ActivityValidator {
 
         if (peerReview.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("clientName", sourceEntity.getSourceName());
+            params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             throw new InvalidPutCodeException(params);
         }
 
@@ -367,7 +368,7 @@ public class ActivityValidator {
             if (groupIdRecord.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
-                    params.put("clientName", sourceEntity.getSourceName());
+                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                 }
                 throw new InvalidPutCodeException(params);
             }
@@ -385,9 +386,9 @@ public class ActivityValidator {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
+                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", sourceEntity.getSourceName());
+                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
@@ -408,9 +409,9 @@ public class ActivityValidator {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
+                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", sourceEntity.getSourceName());
+                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }

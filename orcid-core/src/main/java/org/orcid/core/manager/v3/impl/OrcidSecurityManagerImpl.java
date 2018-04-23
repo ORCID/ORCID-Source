@@ -30,6 +30,7 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -181,8 +182,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             // not old enough
             SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
 
-            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
-            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
+            String profileSource = profile.getSource() == null ? null : SourceEntityUtils.getSourceId(profile.getSource());
+            String currentSource = currentSourceEntity == null ? null : SourceEntityUtils.getSourceId(currentSourceEntity);
 
             // If the profile doesn't have source or the current source is not
             // the profile source, throw an exception
@@ -708,7 +709,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private boolean clientIsProfileSource(String clientId, ProfileEntity profile) {
         Boolean claimed = profile.getClaimed();
         SourceEntity source = profile.getSource();
-        return source != null && (claimed == null || !claimed) && clientId.equals(source.getSourceId());
+        return source != null && (claimed == null || !claimed) && clientId.equals(SourceEntityUtils.getSourceId(source));
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
@@ -766,7 +767,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         String clientId = sourceManager.retrieveSourceOrcid();
         
         ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
-        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
+        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.name().equals(client.getClientType())) {
             throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
         }
     }

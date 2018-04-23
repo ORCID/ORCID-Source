@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,6 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliationRelationEntity, Long> implements OrgAffiliationRelationDao {
 
+    private static final String AFFILIATION_TYPE_DISTINCTION = "DISTINCTION";
+    
+    private static final String AFFILIATION_TYPE_EDUCATION = "EDUCATION";
+
+    private static final String AFFILIATION_TYPE_EMPLOYMENT = "EMPLOYMENT";
+    
+    private static final String AFFILIATION_TYPE_INVITED_POSITION = "INVITED_POSITION";
+    
+    private static final String AFFILIATION_TYPE_MEMBERSHIP = "MEMBERSHIP";
+    
+    private static final String AFFILIATION_TYPE_QUALIFICATION = "QUALIFICATION";
+    
+    private static final String AFFILIATION_TYPE_SERVICE = "SERVICE";
+    
     public OrgAffiliationRelationDaoImpl() {
         super(OrgAffiliationRelationEntity.class);
     }
@@ -54,7 +66,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * */
     @Override
     @Transactional
-    public boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, Visibility visibility) {
+    public boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, String visibility) {
         Query query = entityManager
                 .createQuery("update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:userOrcid and id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
@@ -100,12 +112,12 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * */
     @Override
     @Transactional
-    public boolean addOrgAffiliationRelation(String clientOrcid, long orgAffiliationRelationId, Visibility visibility) {
+    public boolean addOrgAffiliationRelation(String clientOrcid, long orgAffiliationRelationId, String visibility) {
         Query query = entityManager
                 .createNativeQuery("INSERT INTO org_affiliation_relation(orcid, id, date_created, last_modified, added_to_profile_date, visibility, source_id) values(:orcid, :orgAffiliationRelationId, now(), now(), now(), :visibility, :sourceId)");
         query.setParameter("orcid", clientOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
-        query.setParameter("visibility", visibility.name());
+        query.setParameter("visibility", visibility);
         query.setParameter("sourceId", clientOrcid);
 
         return query.executeUpdate() > 0 ? true : false;
@@ -150,43 +162,43 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Override
     @Cacheable(value = "distinctions-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getDistinctionSummaries(String userOrcid, long lastModified) {
-        return getByUserAndType(userOrcid, AffiliationType.DISTINCTION);
+        return getByUserAndType(userOrcid, AFFILIATION_TYPE_DISTINCTION);
     }
     
     @Override
     @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getEducationSummaries(String userOrcid, long lastModified) {
-        return getByUserAndType(userOrcid, AffiliationType.EDUCATION);
+        return getByUserAndType(userOrcid, AFFILIATION_TYPE_EDUCATION);
     }
     
     @Override
     @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getEmploymentSummaries(String userOrcid, long lastModified) {
-        return getByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
+        return getByUserAndType(userOrcid, AFFILIATION_TYPE_EMPLOYMENT);
     }
     
     @Override
     @Cacheable(value = "invited-positions-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getInvitedPositionSummaries(String userOrcid, long lastModified) {
-        return getByUserAndType(userOrcid, AffiliationType.INVITED_POSITION);
+        return getByUserAndType(userOrcid, AFFILIATION_TYPE_INVITED_POSITION);
     }
     
     @Override
     @Cacheable(value = "memberships-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getMembershipSummaries(String userOrcid, long lastModified) {
-        return getByUserAndType(userOrcid, AffiliationType.MEMBERSHIP);
+        return getByUserAndType(userOrcid, AFFILIATION_TYPE_MEMBERSHIP);
     }
     
     @Override
     @Cacheable(value = "qualifications-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getQualificationSummaries(String userOrcid, long lastModified) {
-        return getByUserAndType(userOrcid, AffiliationType.QUALIFICATION);
+        return getByUserAndType(userOrcid, AFFILIATION_TYPE_QUALIFICATION);
     }
     
     @Override
     @Cacheable(value = "services-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getServiceSummaries(String userOrcid, long lastModified) {
-        return getByUserAndType(userOrcid, AffiliationType.SERVICE);
+        return getByUserAndType(userOrcid, AFFILIATION_TYPE_SERVICE);
     }
     
     /**
@@ -198,7 +210,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * @return a list of all affiliations that belongs to the given user and matches the given type                 
      * */
     @Override
-    public List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, AffiliationType type) {
+    public List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, String type) {
         TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:userOrcid and affiliationType=:affiliationType", OrgAffiliationRelationEntity.class);
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("affiliationType", type);

@@ -5,15 +5,11 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.message.Iso3166Country;
 
 /**
  * 
@@ -31,7 +27,7 @@ public class AmbiguousOrgEntity extends BaseEntity<Long> implements Serializable
     private String name;
     private String city;
     private String region;
-    private Iso3166Country country;
+    private String country;
     private String url;
     private String sourceOrcid;
     private Integer usedCount;
@@ -73,12 +69,11 @@ public class AmbiguousOrgEntity extends BaseEntity<Long> implements Serializable
     }
 
     @Basic
-    @Enumerated(EnumType.STRING)
-    public Iso3166Country getCountry() {
+    public String getCountry() {
         return country;
     }
 
-    public void setCountry(Iso3166Country country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 

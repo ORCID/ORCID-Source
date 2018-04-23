@@ -17,7 +17,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.test.DBUnitTest;
@@ -86,7 +85,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         newRUrl.setUrl("www.4443.com");
         newRUrl.setUrlName("test");
         newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
-        newRUrl.setVisibility(Visibility.PUBLIC);
+        newRUrl.setVisibility("PUBLIC");
         newRUrl = dao.merge(newRUrl);
         assertNotNull(newRUrl);
         assertEquals(7, dao.getResearcherUrls("4444-4444-4444-4443", 0L).size());
@@ -122,7 +121,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
             newRUrl.setUrl("http://www.researcherurl2.com?id=1");
             newRUrl.setUrlName("test");
             newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
-            newRUrl.setVisibility(Visibility.PUBLIC);
+            newRUrl.setVisibility("PUBLIC");
             newRUrl = dao.merge(newRUrl);
             assertNotNull(newRUrl);
             fail();

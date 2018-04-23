@@ -1,5 +1,7 @@
 package org.orcid.listener;
 
+import java.util.concurrent.Executors;
+
 import org.orcid.util.GenericExpiringQueue;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,9 @@ public class UpdatedOrcidExpringQueue<T extends RemovalListener<String, LastModi
      */
     @Autowired
     public UpdatedOrcidExpringQueue(@Value("${org.orcid.listener.lastUpdateSecondsToWait}") int secondsToWait,
-            @Value("${org.orcid.listener.lastUpdateForceCleanup}") Boolean forceCleanup, T removalListener) {
-        super(secondsToWait, forceCleanup, removalListener);
+            @Value("${org.orcid.listener.lastUpdateForceCleanup}") Boolean forceCleanup,
+            @Value("${org.orcid.message-listener.updated_orcid.threads:5}") Integer maxThreads, T removalListener) {        
+        super(secondsToWait, forceCleanup, Executors.newFixedThreadPool(maxThreads), removalListener);
     }
 
 }

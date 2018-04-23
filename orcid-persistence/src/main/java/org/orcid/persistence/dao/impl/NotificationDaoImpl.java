@@ -3,14 +3,15 @@ package org.orcid.persistence.dao.impl;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -20,6 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long> implements NotificationDao {
 
+    private static final String NOTIFICATION_TYPE_PERMISSION = "PERMISSION";
+    
+    @Autowired
+    @Qualifier("notification_queries")
+    private Properties notificationQueries;
+    
     public NotificationDaoImpl() {
         super(NotificationEntity.class);
     }
@@ -134,7 +141,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
                 "from NotificationEntity where orcid = :orcid and clientSourceId = :client and notificationType = :notificationType", NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("client", client);
-        query.setParameter("notificationType", NotificationType.PERMISSION);
+        query.setParameter("notificationType", NOTIFICATION_TYPE_PERMISSION);
         return query.getResultList();
     }
 
@@ -142,12 +149,16 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     public List<Object[]> findRecordsWithUnsentNotifications() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS);
-        query.setParameter("never", Float.valueOf(SendEmailFrequency.NEVER.value()));
+        query.setParameter("never", Float.MAX_VALUE);
         return query.getResultList();
     }
 
     @Override
     public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
+        
+        String unsentNotificationsQuery = notificationQueries.getProperty("notifications.unsent");
+        
+        
         TypedQuery<NotificationEntity> query = entityManager.createNamedQuery(NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID, NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("effective_date", effectiveDate);

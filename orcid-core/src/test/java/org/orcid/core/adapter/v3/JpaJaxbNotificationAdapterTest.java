@@ -53,7 +53,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
         assertNotNull(notificationEntity);
-        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM, notificationEntity.getNotificationType());
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM.name(), notificationEntity.getNotificationType());
         assertEquals("Test subject", notification.getSubject());
     }
 
@@ -61,7 +61,7 @@ public class JpaJaxbNotificationAdapterTest {
     public void testCustomEntityToNotification() {
         NotificationCustomEntity notificationEntity = new NotificationCustomEntity();
         notificationEntity.setId(123L);
-        notificationEntity.setNotificationType(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM);
+        notificationEntity.setNotificationType(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM.name());
         notificationEntity.setSubject("Test subject");
         notificationEntity.setDateCreated(DateUtils.convertToDate("2014-01-01T09:17:56"));
         notificationEntity.setReadDate(DateUtils.convertToDate("2014-03-04T17:43:06"));
@@ -73,8 +73,8 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationCustom notificationCustom = (NotificationCustom) notification;
         assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Test subject", notificationCustom.getSubject());
-        assertEquals("2014-01-01T09:17:56.000Z", notification.getCreatedDate().toXMLFormat());
-        assertEquals("2014-03-04T17:43:06.000Z", notification.getReadDate().toXMLFormat());
+        assertTrue(notification.getCreatedDate().toXMLFormat().startsWith("2014-01-01T09:17:56.000"));
+        assertTrue(notification.getReadDate().toXMLFormat().startsWith("2014-03-04T17:43:06.000"));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAddItemsEntity addActivitiesEntity = (NotificationAddItemsEntity) notificationEntity;
         
         assertNotNull(notificationEntity);
-        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.PERMISSION, notificationEntity.getNotificationType());
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.PERMISSION.name(), notificationEntity.getNotificationType());
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
         assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
         assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());
@@ -122,7 +122,7 @@ public class JpaJaxbNotificationAdapterTest {
         assertNotNull(activityEntities);
         assertEquals(1, activityEntities.size());
         NotificationItemEntity activityEntity = activityEntities.iterator().next();
-        assertEquals(org.orcid.jaxb.model.notification.permission_v2.ItemType.WORK, activityEntity.getItemType());
+        assertEquals(org.orcid.jaxb.model.notification.permission_v2.ItemType.WORK.name(), activityEntity.getItemType());
         assertEquals("Latest Research Article", activityEntity.getItemName());
         assertEquals("DOI", activityEntity.getExternalIdType());
         assertEquals("1234/abc123", activityEntity.getExternalIdValue());        
@@ -154,7 +154,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAmendedEntity notificationAmendedEntity = (NotificationAmendedEntity) notificationEntity;
 
         assertNotNull(notificationEntity);
-        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED, notificationEntity.getNotificationType());   
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED.name(), notificationEntity.getNotificationType());   
         
         // Source
         assertNull(notificationAmendedEntity.getSourceId());        

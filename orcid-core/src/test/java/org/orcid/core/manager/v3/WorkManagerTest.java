@@ -1025,7 +1025,7 @@ public class WorkManagerTest extends BaseTest {
             MinimizedWorkEntity work = new MinimizedWorkEntity();
             work.setDateCreated(date);
             work.setLastModified(date);
-            work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+            work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
             work.setDisplayIndex(l);
             work.setDateCreated(date);
             work.setDescription("work:description");
@@ -1038,7 +1038,7 @@ public class WorkManagerTest extends BaseTest {
             work.setTitle("work:title");
             work.setTranslatedTitle("work:translatedTitle");
             work.setTranslatedTitleLanguageCode("ES");
-            work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE);
+            work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
             work.setWorkUrl("work:url");
             
             if (l == 4l) {

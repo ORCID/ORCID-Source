@@ -44,7 +44,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         //General info
         assertEquals(Long.valueOf(1248), entity.getId());
-        assertEquals(Visibility.PUBLIC.value(), entity.getVisibility().value());        
+        assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());        
         assertEquals("http://site1.com/", entity.getUrl());
         assertEquals("Site # 1", entity.getUrlName());                
         // Source
@@ -81,7 +81,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         entity.setClientSourceId("APP-0001");
         entity.setUrl("http://orcid.org");
         entity.setUrlName("Orcid URL");
-        entity.setVisibility(Visibility.LIMITED);
+        entity.setVisibility(Visibility.LIMITED.name());
         return entity;
     }
 }

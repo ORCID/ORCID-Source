@@ -100,7 +100,7 @@ public class OrgDisambiguatedManagerTest extends BaseTest {
     private OrgDisambiguatedEntity getOrgDisambiguatedEntity(Boolean withExtIds) {
         OrgDisambiguatedEntity org = new OrgDisambiguatedEntity();
         org.setCity("city");
-        org.setCountry(Iso3166Country.US);
+        org.setCountry(Iso3166Country.US.name());
         org.setName("name");
         org.setOrgType("orgType");
         org.setRegion("region");

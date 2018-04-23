@@ -3,20 +3,17 @@ package org.orcid.persistence.jpa.entities;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.orcid.jaxb.model.message.FuzzyDate;
-
 @Embeddable
 public class PublicationDateEntity extends FuzzyDateEntity {
 
-    public PublicationDateEntity(FuzzyDate fuzzyDate) {
-        super(fuzzyDate);
-    }
-
-    public PublicationDateEntity() {
-    }
+    private static final long serialVersionUID = 1L;
 
     public PublicationDateEntity(Integer year, Integer month, Integer day) {
         super(year, month, day);
+    }
+
+    public PublicationDateEntity() {
+        // TODO Auto-generated constructor stub
     }
 
     @Override

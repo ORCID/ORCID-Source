@@ -38,6 +38,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.jaxb.model.v3.dev1.notification.Notification;
@@ -257,8 +258,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         SourceEntity source = sourceManager.retrieveSourceEntity();
         if (source != null) {
-            String sourceId = source.getSourceId();
-            String sourceName = source.getSourceName();
+            String sourceId = SourceEntityUtils.getSourceId(source);
+            String sourceName = SourceEntityUtils.getSourceName(source);
             // If the source is not the user itself
             if (sourceId != null && !sourceId.equals(orcidId)) {
                 if (!PojoUtil.isEmpty(sourceName)) {
@@ -519,8 +520,8 @@ public class NotificationManagerImpl implements NotificationManager {
             LOGGER.debug("Not sending amend email, because option to send change notifications is disabled: {}", userOrcid);
             return;
         }
-        org.orcid.jaxb.model.common_v2.OrcidType amenderType = profileDao.retrieveOrcidType(amenderOrcid);
-        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.fromValue(amenderType.value()))) {
+        String amenderType = profileDao.retrieveOrcidType(amenderOrcid);
+        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.valueOf(amenderType))) {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, userOrcid);
             return;
         }
@@ -642,8 +643,8 @@ public class NotificationManagerImpl implements NotificationManager {
     @Transactional
     public void sendApiRecordCreationEmail(String toEmail, String orcid) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
-        String sourceId = record.getSource() == null ? null : record.getSource().getSourceId();
-        String creatorName = record.getSource() == null ? null : record.getSource().getSourceName();
+        String sourceId = record.getSource() == null ? null : SourceEntityUtils.getSourceId(record.getSource());
+        String creatorName = record.getSource() == null ? null : SourceEntityUtils.getSourceName(record.getSource());
         Locale userLocale = getUserLocaleFromProfileEntity(record);
         CustomEmailEntity customEmail = null;
         if (!PojoUtil.isEmpty(sourceId)) {
@@ -745,10 +746,10 @@ public class NotificationManagerImpl implements NotificationManager {
         SourceEntity source = record.getSource();
         String creatorName = "";
         if (source != null) {
-            if (!PojoUtil.isEmpty(source.getSourceName())) {
-                creatorName = source.getSourceName();
+            if (!PojoUtil.isEmpty(SourceEntityUtils.getSourceName(source))) {
+                creatorName = SourceEntityUtils.getSourceName(source);
             } else {
-                creatorName = source.getSourceId();
+                creatorName = SourceEntityUtils.getSourceId(source);
             }
         }
         templateParams.put("creatorName", creatorName);
@@ -865,11 +866,12 @@ public class NotificationManagerImpl implements NotificationManager {
             return;
         }
         
-        org.orcid.jaxb.model.common_v2.Locale locale = managedEntity.getLocale();
+        String locale = managedEntity.getLocale();
         Locale userLocale = LocaleUtils.toLocale("en");
         
         if(locale != null) {
-            userLocale = LocaleUtils.toLocale(locale.value());
+            org.orcid.jaxb.model.v3.dev1.common.Locale loc = org.orcid.jaxb.model.v3.dev1.common.Locale.valueOf(managedEntity.getLocale());
+            userLocale = LocaleUtils.toLocale(loc.value());
         }        
 
         addMessageParams(templateParams, userLocale);
@@ -1041,8 +1043,8 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale().value() == null) ? Locale.ENGLISH
-                : LocaleUtils.toLocale(profileEntity.getLocale().value());
+        Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale() == null) ? Locale.ENGLISH
+                : LocaleUtils.toLocale(profileEntity.getLocale().toLowerCase());
         String subject = getSubject("email.subject.institutional_sign_in", userLocale);
         String authorizationUrl = buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
 
@@ -1125,9 +1127,9 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendAutoDeprecateNotification(String primaryOrcid, String deprecatedOrcid) {
         ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve(primaryOrcid);
         ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(deprecatedProfileEntity.getSource().getSourceId());
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(SourceEntityUtils.getSourceId(deprecatedProfileEntity.getSource()));
         Locale userLocale = LocaleUtils
-                .toLocale(primaryProfileEntity.getLocale() == null ? org.orcid.jaxb.model.message.Locale.EN.value() : primaryProfileEntity.getLocale().value());
+                .toLocale(primaryProfileEntity.getLocale() == null ? org.orcid.jaxb.model.common_v2.Locale.EN.value() : org.orcid.jaxb.model.common_v2.Locale.valueOf(primaryProfileEntity.getLocale()).value());
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -1171,7 +1173,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        org.orcid.jaxb.model.common_v2.Locale locale = org.orcid.jaxb.model.common_v2.Locale.valueOf(profile.getLocale());
         if (locale != null) {
             return LocaleUtils.toLocale(locale.value());
         }

@@ -65,8 +65,8 @@ public class JSONFundingExternalIdentifiersConverterV2Test {
         result.setTitle("funding:title");
         result.setTranslatedTitle("funding:translatedTitle");
         result.setTranslatedTitleLanguageCode("ES");
-        result.setType(FundingType.SALARY_AWARD);
-        result.setVisibility(Visibility.PRIVATE);
+        result.setType(FundingType.SALARY_AWARD.name());
+        result.setVisibility(Visibility.PRIVATE.name());
         return result;
     }
 

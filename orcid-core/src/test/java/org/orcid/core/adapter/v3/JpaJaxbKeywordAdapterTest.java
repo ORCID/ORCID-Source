@@ -43,7 +43,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         assertNotNull(entity.getLastModified());
         assertEquals(Long.valueOf(1), entity.getId());
         assertEquals("keyword1", entity.getKeywordName());        
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, entity.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), entity.getVisibility());
         
         // Source
         assertNull(entity.getSourceId());        
@@ -83,7 +83,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         entity.setKeywordName("keyword-1");
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         entity.setClientSourceId("APP-000000000000");
-        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         return entity;
     }
 }
