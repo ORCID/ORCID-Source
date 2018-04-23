@@ -1,8 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -18,7 +19,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class WorksService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
     private offset: Number;
     private url: string;
@@ -44,9 +45,11 @@ export class WorksService {
         this.details = new Object();
         this.groups = new Array();
         this.groupsLabel = null;
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.offset = 0;
@@ -66,7 +69,7 @@ export class WorksService {
         return this.http.get(
             url
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     consistentVis(group): boolean {
@@ -160,7 +163,7 @@ export class WorksService {
         return this.http.get(
             url
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     makeDefault(group, putCode): any {
@@ -361,7 +364,7 @@ export class WorksService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }
 

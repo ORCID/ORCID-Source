@@ -1,8 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -18,16 +19,18 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class SocialNetworkService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private url: string;
     private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.url = window.location.href.split("?")[0]+".json";
@@ -37,7 +40,7 @@ export class SocialNetworkService {
         return this.http.get(
             getBaseUri() + '/manage/twitter/check-twitter-status'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     notifyOther(): void {
@@ -51,7 +54,7 @@ export class SocialNetworkService {
             getBaseUri() + '/manage/twitter',
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     disableTwitter(): Observable<any> {
@@ -60,6 +63,6 @@ export class SocialNetworkService {
             getBaseUri() + '/manage/disable-twitter',
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }

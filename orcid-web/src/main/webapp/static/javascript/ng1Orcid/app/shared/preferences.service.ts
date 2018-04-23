@@ -1,8 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -18,7 +19,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class PreferencesService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
     public prefs: any;
     public saved: boolean;
@@ -27,9 +28,11 @@ export class PreferencesService {
     notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.prefs = null;
@@ -41,7 +44,7 @@ export class PreferencesService {
         return this.http.get(
             this.url
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     updateEmailFrequency( prefs ): Observable<any> {
@@ -51,7 +54,7 @@ export class PreferencesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     updateNotificationPreferences(): Observable<any>  {
@@ -62,7 +65,7 @@ export class PreferencesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     updateDefaultVisibility(newPriv): Observable<any> {

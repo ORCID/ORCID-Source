@@ -1,8 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -15,12 +16,14 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ClientService {
-    private headers: Headers;
+    private headers: HttpHeaders;
 
     constructor( private http: HttpClient ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
     }
@@ -33,7 +36,7 @@ export class ClientService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     editClient( obj ): Observable<any> {
@@ -44,7 +47,7 @@ export class ClientService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     resetClientSecret( obj ): Observable<any> {
@@ -55,7 +58,7 @@ export class ClientService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     submitEditClient( obj ): Observable<any> {
@@ -66,27 +69,27 @@ export class ClientService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     getClients(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/developer-tools/get-clients.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     loadAvailableScopes(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/developer-tools/get-available-scopes.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     showAddClient(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/developer-tools/client.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }

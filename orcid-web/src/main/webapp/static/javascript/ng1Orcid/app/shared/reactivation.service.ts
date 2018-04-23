@@ -1,8 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -15,13 +16,15 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ReactivationService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private url: string;
 
     constructor( private http: HttpClient ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.url = getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json';
@@ -35,7 +38,7 @@ export class ReactivationService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     serverValidate( obj, field ): Observable<any> {
@@ -46,6 +49,6 @@ export class ReactivationService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }

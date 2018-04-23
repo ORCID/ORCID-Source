@@ -6,12 +6,15 @@ import { JsonpModule } from '@angular/http';
 import { Headers, Http, Response, RequestOptions, Jsonp } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
 import 'rxjs/Rx';
 
 //import { Preferences } from './preferences';
 
 @Injectable()
 export class SearchService {
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
@@ -19,6 +22,13 @@ export class SearchService {
     constructor(
         private http: HttpClient,
         private jsonp: Jsonp) {
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+            }
+        );
 
      }
 
@@ -37,24 +47,16 @@ export class SearchService {
 
     getAffiliations(orcid): Observable<any> {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
-        var options = new RequestOptions({
-          headers: new Headers({
-            'Accept': 'application/json'
-          })
-        });
 
-        return this.http.get(url, options).map(( res: Response ) => res.json()).catch(this.handleError);
+
+        return this.http.get(url).catch(this.handleError);
     }
 
     getNames(orcid): Observable<any> {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
-        var options = new RequestOptions({
-          headers: new Headers({
-            'Accept': 'application/json'
-          })
-        });
 
-        return this.http.get(url, options).map(( res: Response ) => res.json()).catch(this.handleError);
+
+        return this.http.get(url).catch(this.handleError);
     }
 
 
@@ -65,9 +67,20 @@ export class SearchService {
           })
         });
 
-        //return this.http.get(url, options).map(( res: Response ) => res.json()).catch(this.handleError);
-        return this.http.get(url, options).map((res:Response) => res.json()).share();
+        //return this.http.get(url, options).catch(this.handleError);
+        return this.http.get(url)
     }
+
+    /*
+    getAffiliationsId(): Observable<any> {
+        this.loading = true;
+        this.affiliationsToAddIds = null;
+        return this.http.get(
+            this.urlAffiliationId
+        );
+        //        
+    }
+    */
 
     notifyOther(): void {
         this.notify.next();

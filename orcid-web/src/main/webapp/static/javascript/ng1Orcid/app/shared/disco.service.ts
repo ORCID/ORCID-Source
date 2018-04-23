@@ -4,6 +4,9 @@ import { Injectable}
 import { Headers, Http, RequestOptions, Response } 
     from '@angular/http';
 
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
 import { Observable } 
     from 'rxjs/Observable';
 
@@ -21,7 +24,7 @@ import { WidgetService }
 @Injectable()
 export class DiscoService {
     
-    private headers: Headers;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
     private widgetService: WidgetService;
     
@@ -29,9 +32,11 @@ export class DiscoService {
 
     
     constructor(private http: HttpClient){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );  
     }
@@ -40,7 +45,7 @@ export class DiscoService {
         return this.http.get(
             getBaseUri() + '/Shibboleth.sso/DiscoFeed'
         )
-        .map((res:Response) => res.json()).share();
+        
     };
 
     getIdpName(entityId, feed, locale): any  {

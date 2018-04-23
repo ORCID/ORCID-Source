@@ -1,8 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -15,13 +16,15 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class PasswordService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private url: string;
 
     constructor( private http: HttpClient ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.url = getBaseUri() + '/account/nameForm.json';
@@ -31,7 +34,7 @@ export class PasswordService {
         return this.http.get(
             getBaseUri() + '/password-reset.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     postPasswordReset( obj ): Observable<any> {
@@ -42,7 +45,7 @@ export class PasswordService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     serverValidate( obj ): Observable<any> {
@@ -53,6 +56,6 @@ export class PasswordService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }

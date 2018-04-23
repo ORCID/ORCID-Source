@@ -1,9 +1,8 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
-
 
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
@@ -18,16 +17,18 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ExternalIdentifiersService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
 
     notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
 
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );     
     }

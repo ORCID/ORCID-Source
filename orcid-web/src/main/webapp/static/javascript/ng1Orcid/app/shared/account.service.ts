@@ -3,8 +3,9 @@ declare var orcidSearchUrlJs: any;
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -20,16 +21,18 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class AccountService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private url: string;
     private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
     }
@@ -38,21 +41,21 @@ export class AccountService {
         return this.http.get(
             getBaseUri() + '/account/change-password.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     getSecurityQuestion(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/security-question.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     sendDeactivateEmail(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/send-deactivate-account.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     notifyOther(): void {
@@ -68,7 +71,7 @@ export class AccountService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     submitModal( obj ): Observable<any> {
@@ -79,14 +82,14 @@ export class AccountService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     delayVerifyEmail(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/delayVerifyEmail.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     addDelegate( obj ): Observable<any> {
@@ -97,7 +100,7 @@ export class AccountService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     addDelegateByEmail( obj ): Observable<any> {
@@ -108,7 +111,7 @@ export class AccountService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     revoke( obj ): Observable<any> {
@@ -119,34 +122,34 @@ export class AccountService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     getDelegates(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/delegates.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     getDisplayName( orcid ): Observable<any> {
         return this.http.get(
             orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     getResults( input ): Observable<any> {
         return this.http.get(
             orcidSearchUrlJs.buildUrl(input)+'&callback=?'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     searchByEmail( input ): Observable<any> {
         return this.http.get(
             $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent(input) + '/',
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }

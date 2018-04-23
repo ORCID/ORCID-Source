@@ -1,8 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -17,15 +18,17 @@ import 'rxjs/Rx';
 export class FundingService {
     private fundingToAddIds: any;
     private groups: any;
-    private headers: Headers;
+    private headers: HttpHeaders;
     private loading: any;
     private urlFundingsById: string;
     private urlFundingsId: string;
 
     constructor( private http: HttpClient ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.fundingToAddIds = null;
@@ -41,7 +44,7 @@ export class FundingService {
         return this.http.get(
             this.urlFundingsById + idList
         )
-        .map((res:Response) => res.json()).share();
+        
         /*
         if( fundingSrvc.fundingToAddIds.length != 0 ) {
                 var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
@@ -80,7 +83,7 @@ export class FundingService {
         return this.http.get(
             this.urlFundingsId
         )
-        .map((res:Response) => res.json()).share();
+        
         /*
         getFundings: function(path) {
             //clear out current fundings

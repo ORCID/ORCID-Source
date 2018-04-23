@@ -1,8 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient } 
+import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
 
 
 import { Headers, Http, RequestOptions, Response } 
@@ -18,7 +19,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class TwoFAStateService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private url: string;
     private urlDisable: string;
     private urlRegister: string;
@@ -29,9 +30,11 @@ export class TwoFAStateService {
     notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.url = getBaseUri() + '/2FA/status.json';
@@ -45,7 +48,7 @@ export class TwoFAStateService {
         return this.http.get(
             this.url
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     disable(): Observable<any> {        
@@ -53,14 +56,14 @@ export class TwoFAStateService {
             this.urlDisable,  
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     register(): Observable<any> {
         return this.http.get(
             this.urlRegister
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     sendVerificationCode( obj ): Observable<any> {     
@@ -71,21 +74,21 @@ export class TwoFAStateService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     startSetup(): Observable<any> {
         return this.http.get(
             this.urlStartSetup
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     init(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/social/2FA/authenticationCode.json'
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     submitCode( obj ): Observable<any> {   
@@ -96,7 +99,7 @@ export class TwoFAStateService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     notifyOther(): void {
