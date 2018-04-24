@@ -119,23 +119,11 @@ export class OauthService {
     }
 
     sendReactivationEmail( email ): Observable<any> {
-
-        let data = 'email=' + email;
-        
+        let data = 'email=' + encodeURIComponent(email);
         return this.http.post( 
             getBaseUri() + '/sendReactivation.json', 
             data, 
             { headers: this.headers}
-        )
-        
-    }
-
-    sendEmailsAdditionalReactivationEmail( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        return this.http.post( 
-            getBaseUri() + '/sendReactivation.json', 
-            encoded_data, 
-            { headers: this.headers }
         )
         
     }

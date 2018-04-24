@@ -49,7 +49,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 //Record
 @Provider
-@Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, JSON_LD, N_TRIPLES })
+@Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, N_TRIPLES })
 public class RDFMessageBodyWriterV2 implements MessageBodyWriter<Record>{
     
     /**
