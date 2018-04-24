@@ -13,7 +13,7 @@
 				"value": "journal # 1"
 			},
 			"short-description": null,
-			"type": "JOURNAL_ARTICLE",
+			"type": "journal-article",
 			"external-ids": {
 				"external-id": [{
 					"external-id-type": "doi",
@@ -21,7 +21,7 @@
 					"external-id-url": {
 						"value": "http://dx.doi.org/ext-id-1"
 					},
-					"external-id-relationship": "SELF"
+					"external-id-relationship": "self"
 				}]
 			}
 		}
@@ -36,18 +36,15 @@
 				"translated-title": null
 			},
 			"journal-title": {
-				"value": "journal # 2"
+				"value": "book title"
 			},
 			"short-description": null,
-			"type": "JOURNAL_ARTICLE",
+			"type": "book-chapter",
 			"external-ids": {
 				"external-id": [{
-					"external-id-type": "doi",
+					"external-id-type": "isbn",
 					"external-id-value": "ext-id-2",
-					"external-id-url": {
-						"value": "http://dx.doi.org/ext-id-2"
-					},
-					"external-id-relationship": "SELF"
+					"external-id-relationship": "part-of"
 				}]
 			}
 		}

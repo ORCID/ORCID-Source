@@ -16,7 +16,7 @@
                 <td>{{result['given-names']}}</td>
                 <td>{{result['family-name']}}</td>  
                 <td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
-                <td *ngIf="searchResultsAffiliationsFeatureEnabled" >{{result['affiliations']}}</td>
+                <td *ngIf="searchResultsAffiliationsFeatureEnabled" >{{result['affiliations'].join(", ")}}</td>
             </tr>
         </tbody>
     </table>

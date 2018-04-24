@@ -98,7 +98,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
     protected Authentication attemptSwitchUser(HttpServletRequest request) throws AuthenticationException {
         String targetUserOrcid = request.getParameter(SPRING_SECURITY_SWITCH_USERNAME_KEY);
         ProfileEntity profileEntity = sourceManager.retrieveSourceProfileEntity();
-        if (OrcidType.ADMIN.name().equals(OrcidType.valueOf(profileEntity.getOrcidType()))) {
+        if (OrcidType.ADMIN.name().equals(profileEntity.getOrcidType())) {
             return switchUser(request);
         }
         // If we are switching back to me it is OK

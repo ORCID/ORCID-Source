@@ -237,7 +237,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setSendChangeNotifications(registration.getSendChangeNotifications().getValue());
         newRecord.setSendAdministrativeChangeNotifications(true);
         newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());
-        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN.name() : locale.toString());
+        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN.name() : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()).name());
         // Visibility defaults
         newRecord.setActivitiesVisibilityDefault(registration.getActivitiesVisibilityDefault().getVisibility().name());
 
