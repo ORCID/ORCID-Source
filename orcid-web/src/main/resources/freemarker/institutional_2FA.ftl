@@ -1,5 +1,4 @@
 <@public classes=['home'] nav="signin">
-    <#include "sandbox_warning.ftl"/>
     <div ng-controller="Institutional2FACtrl" ng-init="init()">
         <form class="form-social-sign-in" ng-submit="submitCode()" method="post">
             <div class="row">
