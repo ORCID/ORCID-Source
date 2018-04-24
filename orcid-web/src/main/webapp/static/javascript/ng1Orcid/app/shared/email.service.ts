@@ -99,7 +99,7 @@ export class EmailService {
                 this.emails = data;
                 
                 for (let i in data.emails){
-                    //console.log('data.emails[i]', data.emails[i]);
+                    console.log('data.emails[i]', data.emails[i]);
                     if (data.emails[i].primary == true){
                         this.primaryEmail = data.emails[i];
                     }
