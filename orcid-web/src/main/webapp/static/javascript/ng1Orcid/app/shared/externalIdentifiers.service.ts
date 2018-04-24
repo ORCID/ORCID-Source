@@ -75,16 +75,12 @@ export class ExternalIdentifiersService {
     }
 
      removeExternalIdentifier( data ) {
-        let options = new RequestOptions(
+        /*let options = new RequestOptions(
             { headers: this.headers }
-        );
+        );*/
         
         return this.http.delete( 
-            getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encodeURIComponent(data),             
-            options
-        )
-        .map(
-            (res:Response) => res.json()
+            getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encodeURIComponent(data)
         )
         .do(
             (data) => {                   
