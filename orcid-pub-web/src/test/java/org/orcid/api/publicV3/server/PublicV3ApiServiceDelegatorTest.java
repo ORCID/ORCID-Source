@@ -6,15 +6,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.AfterClass;
@@ -24,6 +28,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgMBWriterV2;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgMBWriterV3;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgExternalID;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl;
 import org.orcid.core.api.OrcidApiConstants;
@@ -107,6 +115,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
@@ -1975,5 +1987,37 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(record.getOrcidIdentifier());
         OrcidIdentifier id = record.getOrcidIdentifier();
         assertEquals("0000-0000-0000-0003", id.getPath());
+    }
+    
+    @Resource
+    SchemaOrgMBWriterV3 writerV3;
+    
+    @Test
+    public void testSchemaOrgMBWriterV3() throws WebApplicationException, IOException{
+        Response response = serviceDelegator.viewRecord(ORCID);
+        Record record = (Record) response.getEntity();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        writerV3.writeTo(record, record.getClass(), null, null, null, null, out);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        SchemaOrgDocument doc = objectMapper.readerFor(SchemaOrgDocument.class).readValue(out.toString());
+        assertTrue(doc.id.endsWith(ORCID));
+        assertEquals("Person",doc.type);
+        assertEquals("http://schema.org",doc.context);
+        assertEquals("Credit Name",doc.name);
+        assertEquals("Given Names",doc.givenName);
+        assertEquals("Family Name",doc.familyName);
+        assertEquals("Other Name PUBLIC",doc.alternateName.get(0));
+        assertEquals("WDB",doc.alumniOf.iterator().next().identifier.iterator().next().propertyID);
+        //they've been squashed into one because they're all the same Org.
+        assertEquals("WDB",doc.affiliation.iterator().next().identifier.iterator().next().propertyID);
+        Set<String> fundingIds = Sets.newHashSet();
+        for (SchemaOrgExternalID i: doc.worksAndFunding.funder.iterator().next().identifier)
+            fundingIds.add(i.propertyID);
+        assertEquals(Sets.newHashSet("WDB","grant_number"),fundingIds);
+        assertEquals("PUBLIC",doc.worksAndFunding.creator.iterator().next().name);
+        assertEquals("http://www.researcherurl.com?id=13",doc.url.get(0));
+        assertEquals("public_type",doc.identifier.get(0).propertyID);
+        assertEquals( "public_ref",doc.identifier.get(0).value);
     }
 }
