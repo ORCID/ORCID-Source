@@ -95,7 +95,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     regMultiEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('REG_MULTI_EMAIL');
     gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
     disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');
-
+    gdprEmailNotifications: boolean = this.featureService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
+    
     constructor(
         private zone:NgZone,
         private cdr:ChangeDetectorRef,

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
@@ -23,6 +24,7 @@ import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -73,6 +75,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Resource
     private OrcidGenerationManager orcidGenerationManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
     
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -301,6 +306,16 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
         profileDao.persist(newRecord);
         profileDao.flush();
+        
+        // Create email frequency entity
+        boolean sendQuarterlyTips = (registration.getSendOrcidNews() == null) ? false : registration.getSendOrcidNews().getValue();
+        if(PojoUtil.isEmpty(registration.getSendEmailFrequencyDays())) {
+            emailFrequencyManager.createEmailFrequency(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);
+        } else {
+            SendEmailFrequency f = SendEmailFrequency.fromValue(registration.getSendEmailFrequencyDays().getValue());
+            emailFrequencyManager.createEmailFrequency(orcid, f, f, f, sendQuarterlyTips);
+        }
+                        
         return newRecord.getId();
     }
 

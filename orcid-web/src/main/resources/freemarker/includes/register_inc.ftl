@@ -182,22 +182,48 @@
             <div ng-repeat='error in registrationForm.activitiesVisibilityDefault.errors' ng-bind-html="error"></div>
         </span>
         </div>
-        <!--Email frequency-->
-        <div class="form-group clear-fix">              
-            <div>   
-                <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
-                <p>
-                    ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
-                </p>
-                <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-                    class="input-xlarge"
-                    ng-model="registrationForm.sendEmailFrequencyDays.value">
-                    <#list sendEmailFrequencies?keys as key>
-                        <option value="${key}" ng-selected="registrationForm.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-                    </#list>
-                </select>        
+        
+        <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS'>
+            <!--Notifications settings -->
+            <div class="form-group clear-fix">
+                <div>   
+                    <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
+                    <p><@orcid.msg 'register.paragraph.1' /></p>
+                    <p><@orcid.msg 'register.paragraph.2' /></p>
+                    <p class="dark-label">
+                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" ng-model="registrationForm.sendOrcidNews.value" />
+                        <@orcid.msg 'register.checkbox.label' />
+                    </p>
+                    <p><@orcid.msg 'register.paragraph.3' /></p>
+                </div>
             </div>
-        </div>
+        </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS' enabled=false>
+            <!--Email frequency-->
+            <div class="form-group clear-fix">              
+                <div>   
+                    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
+                    <p>
+                        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+                    </p>
+                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+                        class="input-xlarge"
+                        ng-model="registrationForm.sendEmailFrequencyDays.value">
+                        <#list sendEmailFrequencies?keys as key>
+                            <option value="${key}" ng-selected="registrationForm.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+                        </#list>
+                    </select>        
+                </div>
+            </div>
+        </@orcid.checkFeatureStatus>
+        
+        
+        
+        
+        
+        
+        
+        
         <!--Terms and conditions-->
         <div class="bottomBuffer">
             <h4><@orcid.msg 'register.labelTermsofUse'/>

@@ -318,6 +318,8 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 	
+	<bean id="emailFrequencyManager" class="org.orcid.core.common.manager.impl.EmailFrequencyManagerImpl" />	
+	
 	<!-- Client Managers -->
 	<bean id="clientManager" class="org.orcid.core.manager.impl.ClientManagerImpl" />
 	
