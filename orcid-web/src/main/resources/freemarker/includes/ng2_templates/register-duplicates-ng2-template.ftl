@@ -43,7 +43,7 @@
                             <td>{{dup.email}}</td>
                             <td>{{dup.givenNames}}</td>
                             <td>{{dup.familyNames}}</td>
-                            <!--<td ng-bind="getAffiliations(dup)">{{dup['affiliations']}}</td>-->
+                            <td>{{dup['affiliations'].join(", ")}}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -41,6 +41,8 @@ import { ModalService }
 import { OauthService } 
     from '../../shared/oauth.service.ts';
 
+import { SearchService } 
+    from '../../shared/search.service.ts';
 
 @Component({
     selector: 'oauth-authorization-ng2',
@@ -102,7 +104,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         private commonSrvc: CommonService,
         private featuresService: FeaturesService,
         private modalService: ModalService,
-        private oauthService: OauthService
+        private oauthService: OauthService,
+        private searchSrvc: SearchService
     ) {
         window['angularComponentReference'] = {
             zone: this.zone,
@@ -294,39 +297,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         );
     };
 
-    getAffiliations( dup ): void{
-        if(!dup['affiliationsRequestSent']){
-            dup['affiliationsRequestSent'] = true;
-            dup['institution'] = [];
-            var orcid = dup.orcid;
-            var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
-
-            this.oauthService.getAffiliations( url )
-            .takeUntil(this.ngUnsubscribe)
-            .subscribe(
-                data => {
-                    if(data.employments){
-                        for(var i in data.employments['employment-summary']){
-                            if (dup['institution'].indexOf(data.employments['employment-summary'][i]['organization']['name']) < 0){
-                                dup['institution'].push(data.employments['employment-summary'][i]['organization']['name']);
-                            }
-                        }
-                    }
-                    if(data.educations){
-                        for(var i in data.educations['education-summary']){
-                            if (dup['institution'].indexOf(data.educations['education-summary'][i]['organization']['name']) < 0){
-                                dup['institution'].push(data.educations['education-summary'][i]['organization']['name']);
-                            }
-                        }
-                    }
-
-                },
-                error => {
-                    console.log("Error getting affiliations");
-                } 
-            );
-        }
-    };
 
     loadAndInitAuthorizationForm(): void{
 
@@ -423,6 +393,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     return;
                 }
                 if (this.duplicates.length > 0 ) {
+                    for(var i = 0; i < this.duplicates.length; i++){
+                        this.getAffiliations(this.duplicates[i]);
+                    }
+                    this.cdr.detectChanges();
                     this.showRegisterProcessing = false;
                     this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates', duplicates: this.duplicates});
                 } else {
@@ -438,6 +412,35 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         } 
         );
 
+    };
+
+    getAffiliations(dup: any){
+        if(!dup['affiliationsRequestSent']){
+            dup['affiliationsRequestSent'] = true;
+            dup['affiliations'] = [];
+            var orcid = dup.orcid;
+            this.searchSrvc.getAffiliations(orcid).subscribe(
+                affiliationsResult => {
+                    if(affiliationsResult.employments){
+                        for(var i in affiliationsResult.employments['employment-summary']){
+                            if (dup['affiliations'].indexOf(affiliationsResult.employments['employment-summary'][i]['organization']['name']) < 0){
+                                dup['affiliations'].push(affiliationsResult.employments['employment-summary'][i]['organization']['name']);
+                            }
+                        }
+                    }
+                    if(affiliationsResult.educations){
+                        for(var i in affiliationsResult.educations['education-summary']){
+                            if (dup['affiliations'].indexOf(affiliationsResult.educations['education-summary'][i]['organization']['name']) < 0){
+                                dup['affiliations'].push(affiliationsResult.educations['education-summary'][i]['organization']['name']);
+                            }
+                        }
+                    }
+                },
+                error => {
+                    console.log("error getting affiliations for " + orcid);
+                } 
+            ); 
+        }  
     };
 
     sendReactivationEmail(email): void {
@@ -459,7 +462,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showEmailsAdditionalDeactivatedError.splice(index, 1, false);
         this.showEmailsAdditionalReactivationSent.splice(index, 1, true);
 
-        this.oauthService.sendEmailsAdditionalReactivationEmail(this.registrationForm.emailsAdditional[index].value)
+        this.oauthService.sendReactivationEmail(this.registrationForm.emailsAdditional[index].value)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
