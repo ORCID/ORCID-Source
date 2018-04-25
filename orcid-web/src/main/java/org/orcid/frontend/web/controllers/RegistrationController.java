@@ -141,7 +141,11 @@ public class RegistrationController extends BaseController {
         reg.getFamilyNames().setRequired(false);
         reg.getGivenNames().setRequired(true);
         reg.getSendChangeNotifications().setValue(true);
-        reg.getSendOrcidNews().setValue(true);
+        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+            reg.getSendOrcidNews().setValue(false);           
+        } else {
+            reg.getSendOrcidNews().setValue(true);            
+        }
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
         reg.getTermsOfUse().setValue(false);   
