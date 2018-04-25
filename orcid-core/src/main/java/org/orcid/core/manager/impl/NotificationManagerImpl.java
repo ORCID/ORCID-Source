@@ -482,7 +482,7 @@ public class NotificationManagerImpl implements NotificationManager {
             return;
         }
         String amenderType = profileDao.retrieveOrcidType(amenderOrcid);
-        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.fromValue(amenderType))) {
+        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.valueOf(amenderType))) {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, userOrcid);
             return;
         }
