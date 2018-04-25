@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -317,8 +318,53 @@ public class NotificationController extends BaseController {
         return emailFrequencyManager.getEmailFrequency(getCurrentUserOrcid());        
     }
     
-    @RequestMapping(value = "/frequencies/update/", method = RequestMethod.POST)
-    public 
+    @RequestMapping(value = "/frequencies/update/amendUpdates", method = RequestMethod.POST)
+    public Response updateSendChangeNotifications(@RequestParam("frequency") String newFrequency) {
+        String orcid = getCurrentUserOrcid();
+        try {
+            SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
+            emailFrequencyManager.updateSendChangeNotifications(orcid, value);
+        } catch(IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid value " + newFrequency).build();
+        }
+        return Response.ok().build();
+    }
+    
+    @RequestMapping(value = "/frequencies/update/adminUpdates", method = RequestMethod.POST)
+    public Response updateSendAdministrativeChangeNotifications(@RequestParam("frequency") String newFrequency) {
+        String orcid = getCurrentUserOrcid();
+        try {
+            SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
+            emailFrequencyManager.updateSendAdministrativeChangeNotifications(orcid, value);
+        } catch(IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid value " + newFrequency).build();
+        }
+        return Response.ok().build();
+    }
+    
+    @RequestMapping(value = "/frequencies/update/memberUpdates", method = RequestMethod.POST)
+    public Response updateSendMemberUpdateRequests(@RequestParam("frequency") String newFrequency) {
+        String orcid = getCurrentUserOrcid();
+        try {
+            SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
+            emailFrequencyManager.updateSendMemberUpdateRequests(orcid, value);
+        } catch(IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid value " + newFrequency).build();
+        }
+        return Response.ok().build();
+    }
+    
+    @RequestMapping(value = "/frequencies/update/tipsUpdates", method = RequestMethod.POST)
+    public Response updateSendQuarterlyTips(@RequestParam("enabled") Boolean enabled) {
+        if(enabled == null){
+            return Response.status(Response.Status.BAD_REQUEST).entity("Parameter 'enabled' is required").build();
+        }        
+        
+        String orcid = getCurrentUserOrcid();
+        emailFrequencyManager.updateSendQuarterlyTips(orcid, enabled);
+        
+        return Response.ok().build();
+    }
     
     private void addSourceDescription(Notification notification) {
         Source source = notification.getSource();
