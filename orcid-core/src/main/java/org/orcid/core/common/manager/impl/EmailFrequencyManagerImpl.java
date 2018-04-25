@@ -60,10 +60,10 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
                 result.put("send_member_update_requests", SendEmailFrequency.NEVER.value());
             }
             
-            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews()) {
+            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && emailFrequencyDays < SendEmailFrequency.NEVER.floatValue()) {
                 result.put("send_quarterly_tips", String.valueOf(emailFrequencyDays));
             } else {
-                result.put("send_quarterly_tips", SendEmailFrequency.NEVER.value());
+                result.put("send_quarterly_tips", String.valueOf(Boolean.FALSE));
             }
         }
         return result;

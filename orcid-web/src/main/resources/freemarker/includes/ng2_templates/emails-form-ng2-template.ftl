@@ -179,19 +179,19 @@
                                     <div class="control-group">
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.header' /></p>
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></p>
-                                        <select name="amend-frequency">   
+                                        <select name="amend-frequency" [(ngModel)]="sendChangeNotifications" (ngModelChange)="updateChangeNotificationsFrequency()">   
                                             <#list sendEmailFrequencies?keys as key>
                                                 <option value="${key}">${sendEmailFrequencies[key]}</option>
                                             </#list>
                                         </select>
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></p>
-                                        <select name="administrative-frequency">   
+                                        <select name="administrative-frequency" [(ngModel)]="sendAdministrativeChangeNotifications" (ngModelChange)="updateAdministrativeChangeNotificationsFrequency()">   
                                             <#list sendEmailFrequencies?keys as key>
                                                 <option value="${key}">${sendEmailFrequencies[key]}</option>
                                             </#list>
                                         </select>
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></p>                                            
-                                        <select name="permission-frequency">   
+                                        <select name="permission-frequency" [(ngModel)]="sendMemberUpdateRequestsNotifications" (ngModelChange)="updateMemberUpdateRequestsFrequency()">   
                                             <#list sendEmailFrequencies?keys as key>
                                                 <option value="${key}">${sendEmailFrequencies[key]}</option>
                                             </#list>
@@ -201,7 +201,7 @@
                                         <strong class="green"><@orcid.msg 'manage.email.email_frequency.news.header' /></strong>
                                     </div> 
                                     <div class="control-group">
-                                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9"/>
+                                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips" (ngModelChange)="updateSendQuarterlyTips"/>
                                         <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' />
                                     </div>
                                     <div class="control-group">
