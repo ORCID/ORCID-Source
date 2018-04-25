@@ -222,7 +222,7 @@
                     <p><@orcid.msg 'register.paragraph.2' /></p>
                     <p class="dark-label">
                         <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" [(ng-model)]="registrationForm.sendOrcidNews.value" />
-                        <@orcid.msg 'register.checkbox.label' />
+                        <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' />
                     </p>
                     <p><@orcid.msg 'register.paragraph.3' /></p>
                 </div>

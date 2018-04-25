@@ -166,7 +166,50 @@
                                     </div>
                                 </div>
                                 
-                                <div>
+                                
+                                
+                                <div *ngIf="gdprEmailNotifications">
+                                    <div class="row bottomBuffer">
+                                        <strong class="green"><@orcid.msg 'manage.email.email_frequency.notifications.header' /></strong>
+                                    </div>              
+                                    <div class="control-group">
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.1' /></p>
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.2' /></p>                                            
+                                    </div>
+                                    <div class="control-group">
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.header' /></p>
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></p>
+                                        <select name="amend-frequency">   
+                                            <#list sendEmailFrequencies?keys as key>
+                                                <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                            </#list>
+                                        </select>
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></p>
+                                        <select name="administrative-frequency">   
+                                            <#list sendEmailFrequencies?keys as key>
+                                                <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                            </#list>
+                                        </select>
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></p>                                            
+                                        <select name="permission-frequency">   
+                                            <#list sendEmailFrequencies?keys as key>
+                                                <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                            </#list>
+                                        </select>
+                                    </div>
+                                    <div class="row bottomBuffer">
+                                        <strong class="green"><@orcid.msg 'manage.email.email_frequency.news.header' /></strong>
+                                    </div> 
+                                    <div class="control-group">
+                                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9"/>
+                                        <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' />
+                                    </div>
+                                    <div class="control-group">
+                                        <p><@orcid.msg 'manage.email.email_frequency.bottom' /> <a href="https://orcid.org/privacy-policy#How_we_use_information" target="_blank"><@orcid.msg 'public-layout.privacy_policy' /></a></p>
+                                    </div>    
+                                </div>
+                                
+                                <div *ngIf="!gdprEmailNotifications">
                                     <div class="row bottomBuffer">
                                         <strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
                                     </div>              
@@ -197,8 +240,7 @@
                                         <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
                                         </p>
                                     </div>
-                                </div>
-                                
+                                 </div>                                                                                                         
                             </div>
                         </td>
                     </tr>

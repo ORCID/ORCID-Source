@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -11,21 +12,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.helper.UserSession;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
+import org.orcid.jaxb.model.v3.dev1.notification.Notification;
+import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.dev1.notification.Notification;
-import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
 import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
@@ -67,6 +69,9 @@ public class NotificationController extends BaseController {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
     
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -307,6 +312,14 @@ public class NotificationController extends BaseController {
         return result;
     }
 
+    @RequestMapping(value = "/frequencies/view", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> getNotificationFrequencies() {
+        return emailFrequencyManager.getEmailFrequency(getCurrentUserOrcid());        
+    }
+    
+    @RequestMapping(value = "/frequencies/update/", method = RequestMethod.POST)
+    public 
+    
     private void addSourceDescription(Notification notification) {
         Source source = notification.getSource();
         if (source != null) {

@@ -25,6 +25,9 @@ import { CommonService }
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 
+import { FeaturesService }
+    from '../../shared/features.service.ts';
+
 @Component({
     selector: 'emails-form-ng2',
     template:  scriptTmpl("emails-form-ng2-template")
@@ -70,12 +73,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     inputEmail: any;
     prefs: any;
     email_frequency: any;
+    
+    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
 
     constructor( 
         private elementRef: ElementRef, 
         private emailService: EmailService,
         private commonSrvc: CommonService,
         private modalService: ModalService,
+        private featuresService: FeaturesService,
         private prefsSrvc: PreferencesService
     ) {
         this.verifyEmailObject = {};

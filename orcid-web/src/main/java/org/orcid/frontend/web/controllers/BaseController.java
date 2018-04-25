@@ -246,7 +246,15 @@ public class BaseController {
     public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (SendEmailFrequency freq : SendEmailFrequency.values()) {
-            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
+            if(freq.equals(SendEmailFrequency.NEVER)) {
+                if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+                    map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
+                } else{
+                    map.put(String.valueOf(freq.value()), getMessage("org.orcid.persistence.constants.SendEmailFrequency.NEVER_LEGACY"));
+                }
+            } else {
+                map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
+            }            
         }
         return map;
     }
