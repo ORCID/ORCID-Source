@@ -21,7 +21,7 @@ import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgAddress;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgAffiliation;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgExternalID;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgWork;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common_v2.DisambiguatedOrganizationExternalIdentifier;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
@@ -44,7 +44,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class SchemaOrgMBWriterV2 implements MessageBodyWriter<Record> {
 
     @Resource
-    NormalizationService norm;
+    PIDNormalizationService norm;
 
     private ObjectMapper objectMapper;
 

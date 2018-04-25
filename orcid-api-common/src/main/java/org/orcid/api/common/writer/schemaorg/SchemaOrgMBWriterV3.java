@@ -21,7 +21,7 @@ import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgAddress;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgAffiliation;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgExternalID;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgWork;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common_v2.DisambiguatedOrganizationExternalIdentifier;
 import org.orcid.jaxb.model.v3.dev1.record.Address;
 import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
@@ -46,7 +46,7 @@ import com.google.common.collect.Lists;
 public class SchemaOrgMBWriterV3 implements MessageBodyWriter<Record> {
 
     @Resource
-    NormalizationService norm;
+    PIDNormalizationService norm;
 
     private ObjectMapper objectMapper;
 
