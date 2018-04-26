@@ -60,9 +60,6 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
         .do(
             (data) => {
                 this.inputEmail = data;
@@ -91,17 +88,14 @@ export class EmailService {
         return this.http.get(
             window.location.href + '/email-frequencies.json'
         )
-        .map(
-            (res:Response) => res.json()
-        )
         .do(
             (data) => {
                 this.emails = data;
                 
-                for (let i in data.emails){
-                    console.log('data.emails[i]', data.emails[i]);
-                    if (data.emails[i].primary == true){
-                        this.primaryEmail = data.emails[i];
+                for (let i in data['emails']){
+                    console.log('data[i]', data['emails'][i]);
+                    if (data['emails'][i].primary == true){
+                        this.primaryEmail = data['emails'][i];
                     }
                 }                                                
             }
@@ -114,20 +108,18 @@ export class EmailService {
     }
 
     getEmails(): Observable<any> {
+        console.log('get emails service');
         return this.http.get(
             this.url
-        )
-        .map(
-            (res:Response) => res.json()
         )
         .do(
             (data) => {
                 this.emails = data;
-                
-                for (let i in data.emails){
+                console.log('this.emails', data);
+                for (let i in data['emails']){
                     //console.log('data.emails[i]', data.emails[i]);
-                    if (data.emails[i].primary == true){
-                        this.primaryEmail = data.emails[i];
+                    if (data['emails'][i].primary == true){
+                        this.primaryEmail = data['emails'][i];
                     }
                 }                                                
             }
@@ -160,9 +152,6 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
         .do(
             (data) => {
                 this.inputEmail = data;
@@ -182,9 +171,6 @@ export class EmailService {
             window.location.href + '/email-frequencies.json', 
             encoded_data, 
             { headers: this.headers }
-        )
-        .map(
-            (res:Response) => res.json()
         )
         .do(
             (data) => {
@@ -206,9 +192,6 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
         .do(
             (data) => {
                 this.inputEmail = data;
@@ -229,13 +212,6 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                       
-            }
-        )
         .share();
     }
 
@@ -246,9 +222,6 @@ export class EmailService {
             getBaseUri() + '/account/email/setPrimary', 
             encoded_data, 
             { headers: this.headers }
-        )
-        .map(
-            (res:Response) => res.json()
         )
         .do(
             (data) => {
@@ -295,11 +268,6 @@ export class EmailService {
         return this.http.get(
             getBaseUri() + '/account/verifyEmail.json?email=' + encodeURIComponent(_email.value)
         )
-        .do(
-            (data) => {
-                                             
-            }
-        )
         .share();
     }
 
@@ -310,13 +278,6 @@ export class EmailService {
             getBaseUri() + '/group/custom-emails/delete.json', 
             encoded_data, 
             { headers: this.headers }
-        )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                      
-            }
         )
         .share();
     }
@@ -329,13 +290,6 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                      
-            }
-        )
         .share();
     }
 
@@ -347,13 +301,6 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                      
-            }
-        )
         .share();
     }
 
@@ -361,26 +308,12 @@ export class EmailService {
         return this.http.get(
             getBaseUri() + '/group/custom-emails/get-empty.json?clientId=' + clientId
         )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                                              
-            }
-        )
         .share();
     }
 
     getCustomEmails( clientId ): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/custom-emails/get.json?clientId=' + clientId
-        )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                                              
-            }
         )
         .share();
     }

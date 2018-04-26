@@ -44,13 +44,6 @@ export class ManageMembersService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                      
-            }
-        )
         .share();
     }
 
@@ -58,13 +51,6 @@ export class ManageMembersService {
         let encoded_data = JSON.stringify( obj );
         return this.http.get(
             getBaseUri()+'/manage-members/find-consortium.json?id=' + encoded_data
-        )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                                              
-            }
         )
         .share();
     }

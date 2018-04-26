@@ -58,10 +58,7 @@ export class AffiliationService {
         return this.http.delete( 
             this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
-        )
-        .map(
-            (res:Response) => res.json()
-        )
+        )      
         .do(
             (data) => {
                 this.getData();                       

@@ -38,7 +38,7 @@ export class BlogService {
             'Accept': 'application/json'
           })
         });*/
-        return this.http.get(url).map(( res: Response ) => res.text()).catch(this.handleError);
+        return this.http.get(url).catch(this.handleError);
 
     }
 

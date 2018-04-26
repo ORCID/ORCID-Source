@@ -43,26 +43,12 @@ export class ShibbolethService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                      
-            }
-        )
         .share();
     }
 
     init(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/shibboleth/2FA/authenticationCode.json'
-        )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                                             
-            }
         )
         .share();
     }

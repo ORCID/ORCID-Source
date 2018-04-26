@@ -48,9 +48,6 @@ export class ExternalIdentifiersService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
         .do(
             (data) => {                      
             }
@@ -63,9 +60,6 @@ export class ExternalIdentifiersService {
     getExternalIdentifiersForm(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/my-orcid/externalIdentifiers.json'
-        )
-        .map(
-            (res:Response) => res.json()
         )
         .do(
             (data) => {                                              
