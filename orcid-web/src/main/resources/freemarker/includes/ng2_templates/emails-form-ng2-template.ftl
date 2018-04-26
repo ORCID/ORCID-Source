@@ -165,9 +165,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                
-                                
                                 <div *ngIf="gdprEmailNotifications">
                                     <div class="row bottomBuffer">
                                         <strong class="green"><@orcid.msg 'manage.email.email_frequency.notifications.header' /></strong>
@@ -201,7 +198,7 @@
                                         <strong class="green"><@orcid.msg 'manage.email.email_frequency.news.header' /></strong>
                                     </div> 
                                     <div class="control-group">
-                                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips" (ngModelChange)="updateSendQuarterlyTips"/>
+                                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips" (ngModelChange)="updateSendQuarterlyTips()"/>
                                         <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' />
                                     </div>
                                     <div class="control-group">

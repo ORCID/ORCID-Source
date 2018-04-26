@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -61,7 +62,7 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
             }
             
             if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && emailFrequencyDays < SendEmailFrequency.NEVER.floatValue()) {
-                result.put("send_quarterly_tips", String.valueOf(emailFrequencyDays));
+                result.put("send_quarterly_tips", String.valueOf(Boolean.TRUE));
             } else {
                 result.put("send_quarterly_tips", String.valueOf(Boolean.FALSE));
             }
@@ -88,21 +89,156 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
 
     @Override
     public boolean updateSendChangeNotifications(String orcid, SendEmailFrequency frequency) {
-        return emailFrequencyDao.updateSendChangeNotifications(orcid, frequency);        
+        if(emailFrequencyExists(orcid)) {
+            return emailFrequencyDao.updateSendChangeNotifications(orcid, frequency);
+        } else {
+            LOG.warn("Creating email_frequency based on profile_entity settings");
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
+            SendEmailFrequency defaultEmailFrequency = SendEmailFrequency.fromValue(emailFrequencyDays);
+            SendEmailFrequency sendChangeNotifications = frequency;
+            
+            SendEmailFrequency sendAdministrativeChangeNotifications;
+            if(profileEntity.getSendAdministrativeChangeNotifications() != null && profileEntity.getSendAdministrativeChangeNotifications()) {
+                sendAdministrativeChangeNotifications = defaultEmailFrequency;
+            } else {
+                sendAdministrativeChangeNotifications = SendEmailFrequency.NEVER;
+            }            
+            
+            SendEmailFrequency sendMemberUpdateRequests;
+            if(profileEntity.getSendMemberUpdateRequests() != null && profileEntity.getSendMemberUpdateRequests()) {
+                sendMemberUpdateRequests = defaultEmailFrequency;
+            } else {
+                sendMemberUpdateRequests = SendEmailFrequency.NEVER;
+            }
+            
+            Boolean sendQuarterlyTips;
+            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && SendEmailFrequency.NEVER.equals(defaultEmailFrequency)) {
+                sendQuarterlyTips = true;
+            } else {
+                sendQuarterlyTips = false;
+            }
+            
+            return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips);
+        }        
     }
 
     @Override
     public boolean updateSendAdministrativeChangeNotifications(String orcid, SendEmailFrequency frequency) {
-        return emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, frequency);
+        if(emailFrequencyExists(orcid)) {
+            return emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, frequency);
+        } else {
+            LOG.warn("Creating email_frequency based on profile_entity settings");
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
+            SendEmailFrequency defaultEmailFrequency = SendEmailFrequency.fromValue(emailFrequencyDays);
+            SendEmailFrequency sendAdministrativeChangeNotifications = frequency;
+            
+            SendEmailFrequency sendChangeNotifications;
+            if(profileEntity.getSendChangeNotifications() != null && profileEntity.getSendChangeNotifications()) {
+                sendChangeNotifications = defaultEmailFrequency;
+            } else {
+                sendChangeNotifications = SendEmailFrequency.NEVER;
+            }            
+            
+            SendEmailFrequency sendMemberUpdateRequests;
+            if(profileEntity.getSendMemberUpdateRequests() != null && profileEntity.getSendMemberUpdateRequests()) {
+                sendMemberUpdateRequests = defaultEmailFrequency;
+            } else {
+                sendMemberUpdateRequests = SendEmailFrequency.NEVER;
+            }
+            
+            Boolean sendQuarterlyTips;
+            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && SendEmailFrequency.NEVER.equals(defaultEmailFrequency)) {
+                sendQuarterlyTips = true;
+            } else {
+                sendQuarterlyTips = false;
+            }
+            
+            return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips);
+        }        
     }
 
     @Override
     public boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency) {
-        return emailFrequencyDao.updateSendMemberUpdateRequests(orcid, frequency);
+        if(emailFrequencyExists(orcid)) {
+            return emailFrequencyDao.updateSendMemberUpdateRequests(orcid, frequency);
+        } else {
+            LOG.warn("Creating email_frequency based on profile_entity settings");
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
+            SendEmailFrequency defaultEmailFrequency = SendEmailFrequency.fromValue(emailFrequencyDays);
+            SendEmailFrequency sendMemberUpdateRequests = frequency;
+            
+            SendEmailFrequency sendChangeNotifications;
+            if(profileEntity.getSendChangeNotifications() != null && profileEntity.getSendChangeNotifications()) {
+                sendChangeNotifications = defaultEmailFrequency;
+            } else {
+                sendChangeNotifications = SendEmailFrequency.NEVER;
+            }            
+            
+            SendEmailFrequency sendAdministrativeChangeNotifications;
+            if(profileEntity.getSendAdministrativeChangeNotifications() != null && profileEntity.getSendAdministrativeChangeNotifications()) {
+                sendAdministrativeChangeNotifications = defaultEmailFrequency;
+            } else {
+                sendAdministrativeChangeNotifications = SendEmailFrequency.NEVER;
+            }
+            
+            Boolean sendQuarterlyTips;
+            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && SendEmailFrequency.NEVER.equals(defaultEmailFrequency)) {
+                sendQuarterlyTips = true;
+            } else {
+                sendQuarterlyTips = false;
+            }
+            
+            return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips);
+        }        
     }
 
     @Override
     public boolean updateSendQuarterlyTips(String orcid, Boolean enabled) {
-        return emailFrequencyDao.updateSendQuarterlyTips(orcid, enabled);
-    }    
+        if(emailFrequencyExists(orcid)) {
+            return emailFrequencyDao.updateSendQuarterlyTips(orcid, enabled);
+        } else {
+            LOG.warn("Creating email_frequency based on profile_entity settings");
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
+            SendEmailFrequency defaultEmailFrequency = SendEmailFrequency.fromValue(emailFrequencyDays);
+            
+            SendEmailFrequency sendMemberUpdateRequests;
+            if(profileEntity.getSendMemberUpdateRequests() != null && profileEntity.getSendMemberUpdateRequests()) {
+                sendMemberUpdateRequests = defaultEmailFrequency;
+            } else {
+                sendMemberUpdateRequests = SendEmailFrequency.NEVER;
+            }
+            
+            SendEmailFrequency sendChangeNotifications;
+            if(profileEntity.getSendChangeNotifications() != null && profileEntity.getSendChangeNotifications()) {
+                sendChangeNotifications = defaultEmailFrequency;
+            } else {
+                sendChangeNotifications = SendEmailFrequency.NEVER;
+            }            
+            
+            SendEmailFrequency sendAdministrativeChangeNotifications;
+            if(profileEntity.getSendAdministrativeChangeNotifications() != null && profileEntity.getSendAdministrativeChangeNotifications()) {
+                sendAdministrativeChangeNotifications = defaultEmailFrequency;
+            } else {
+                sendAdministrativeChangeNotifications = SendEmailFrequency.NEVER;
+            }
+            
+            Boolean sendQuarterlyTips = enabled;
+            
+            return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips);
+        }        
+    }
+    
+    public boolean emailFrequencyExists(String orcid) {
+        try {
+            emailFrequencyDaoReadOnly.findByOrcid(orcid);            
+        } catch(NoResultException nre) {
+            return false;
+        }
+        return true;
+    }
+    
 }

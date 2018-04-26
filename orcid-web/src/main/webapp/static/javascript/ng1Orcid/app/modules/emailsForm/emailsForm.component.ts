@@ -235,12 +235,11 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emailFrequencyService.getEmailFrequencies()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
-            data => {
-                console.log(data)
+            data => {                
                 this.sendChangeNotifications = data['send_change_notifications']
                 this.sendAdministrativeChangeNotifications = data['send_administrative_change_notifications']
                 this.sendMemberUpdateRequestsNotifications = data['send_member_update_requests']
-                this.sendQuarterlyTips = data['send_quarterly_tips']  
+                this.sendQuarterlyTips = data['send_quarterly_tips']  == "true";                
             },
             error => {
                 ////console.log('getEmailsFormError', error);
