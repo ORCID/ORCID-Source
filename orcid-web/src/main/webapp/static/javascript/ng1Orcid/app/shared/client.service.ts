@@ -1,13 +1,8 @@
-import { Injectable } 
-    from '@angular/core';
-
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { Injectable } 
+    from '@angular/core';
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -50,28 +45,6 @@ export class ClientService {
         
     }
 
-    resetClientSecret( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        
-        return this.http.post( 
-            getBaseUri() + '/group/developer-tools/reset-client-secret.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        
-    }
-
-    submitEditClient( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        
-        return this.http.post( 
-            getBaseUri() + '/group/developer-tools/edit-client.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        
-    }
-
     getClients(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/developer-tools/get-clients.json'
@@ -86,10 +59,32 @@ export class ClientService {
         
     }
 
+    resetClientSecret( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/group/developer-tools/reset-client-secret.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+
     showAddClient(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/developer-tools/client.json'
         )
         
     }
+
+    submitEditClient( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/group/developer-tools/edit-client.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }    
 }

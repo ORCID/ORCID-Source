@@ -1,13 +1,8 @@
-import { Injectable } 
-    from '@angular/core';
-
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { Injectable } 
+    from '@angular/core';
 
 import { Observable } 
     from 'rxjs/Observable';

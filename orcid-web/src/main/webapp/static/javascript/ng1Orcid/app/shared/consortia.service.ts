@@ -1,13 +1,8 @@
-import { Injectable } 
-    from '@angular/core';
-
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { Injectable } 
+    from '@angular/core';
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -21,27 +16,27 @@ export class ConsortiaService {
     private notify = new Subject<any>();
     notifyObservable$ = this.notify.asObservable();
     
-    private headers: HttpHeaders;
-    private memberDetailsUrl: string;
-    private validateMemberDetailsUrl: string;
-    private validateMemberDetailsFieldUrl: string;
-    private updateMemberDetailsUrl: string;
-    private contactsUrl: string;
-    private validateContactsUrl: string;
-    private updateContactsUrl: string;
     private addContactUrl: string;
-    private removeContactUrl: string;
-    private searchByEmailUrl: string;
-    private orgIdsUrl: string;
-    private validateSubMemberUrl: string;
-    private validateSubMemberFieldUrl: string;
-    private checkExistingSubMemberUrl: string;
+    private addOrgIdUrl: string;
     private addSubMemberUrl: string;
     private cancelSubMemberAdditionUrl: string;
-    private removeSubMemberUrl: string;
+    private checkExistingSubMemberUrl: string;
+    private contactsUrl: string;
+    private headers: HttpHeaders;
+    private memberDetailsUrl: string;
+    private removeContactUrl: string;
+    private searchByEmailUrl: string;
+    private updateContactsUrl: string;
+    private updateMemberDetailsUrl: string;
+    private validateContactsUrl: string;
+    private validateMemberDetailsUrl: string;
+    private validateMemberDetailsFieldUrl: string;
+    private validateSubMemberFieldUrl: string;
+    private validateSubMemberUrl: string;
     private orgIdSearchUrl: string;
-    private addOrgIdUrl: string;
+    private orgIdsUrl: string;
     private removeOrgIdUrl: string;
+    private removeSubMemberUrl: string;
 
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(

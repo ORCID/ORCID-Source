@@ -4,8 +4,7 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Injectable, ChangeDetectorRef } 
     from '@angular/core';
 
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+
 
 import { Observable } 
     from 'rxjs/Observable';

@@ -6,8 +6,7 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 
 
 
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+
 
 import { Observable } 
     from 'rxjs/Observable';

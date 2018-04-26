@@ -1,13 +1,8 @@
-import { Injectable } 
-    from '@angular/core';
-
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { Injectable } 
+    from '@angular/core';
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -20,8 +15,8 @@ import 'rxjs/Rx';
 @Injectable()
 export class ClaimService {
     private headers: HttpHeaders;
-    private url: string;
     private notify = new Subject<any>();
+    private url: string;
     
     notifyObservable$ = this.notify.asObservable();
 
@@ -35,17 +30,16 @@ export class ClaimService {
         );
         this.url = window.location.href.split("?")[0]+".json";
     }
+    notifyOther(): void {
+        this.notify.next();
+        console.log('notify');
+    }
 
     getClaim(): Observable<any> {
         return this.http.get(
             this.url
         )
         
-    }
-
-    notifyOther(): void {
-        this.notify.next();
-        console.log('notify');
     }
 
     postClaim( obj ): Observable<any> {

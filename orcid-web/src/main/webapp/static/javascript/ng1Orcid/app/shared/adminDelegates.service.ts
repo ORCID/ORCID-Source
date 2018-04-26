@@ -1,26 +1,28 @@
-import { Injectable } 
-    from '@angular/core';
-
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { Injectable } 
+    from '@angular/core';
 
 import { Observable } 
     from 'rxjs/Observable';
 
+import { Subject }
+    from 'rxjs/Subject';
+
 import 'rxjs/Rx';
+
 
 @Injectable()
 export class AdminDelegatesService {
     private headers: HttpHeaders;
+    private notify = new Subject<any>();
     private url: string;
     private urlConfirmDelegate: string;
     private urlDeactivateProfile: string;
     private urlVerifyEmail: string;
+
+    notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -34,6 +36,11 @@ export class AdminDelegatesService {
         this.urlConfirmDelegate = getBaseUri()+'/admin-actions/admin-delegates';
         this.urlDeactivateProfile = getBaseUri()+'/admin-actions/deactivate-profiles.json';
         this.urlVerifyEmail = getBaseUri()+'/admin-actions/admin-verify-email.json';
+    }
+
+    notifyOther(): void {
+        this.notify.next();
+        console.log('notify');
     }
 
     deactivateOrcids( obj ): Observable<any> {
@@ -58,6 +65,13 @@ export class AdminDelegatesService {
         
     }
 
+    getFormData( id ): Observable<any> {
+        return this.http.get(
+            this.url + id
+        )
+        
+    }
+
     lookupIdOrEmails( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         
@@ -65,13 +79,6 @@ export class AdminDelegatesService {
             getBaseUri()+'/admin-actions/lookup-id-or-emails.json', 
             encoded_data, 
             { headers: this.headers }
-        )
-        
-    }
-
-    getFormData( id ): Observable<any> {
-        return this.http.get(
-            this.url + id
         )
         
     }

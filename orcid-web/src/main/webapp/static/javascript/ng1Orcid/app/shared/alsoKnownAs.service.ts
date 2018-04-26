@@ -1,13 +1,8 @@
-import { Injectable } 
-    from '@angular/core';
-
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { Injectable } 
+    from '@angular/core';
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -20,8 +15,8 @@ import 'rxjs/Rx';
 @Injectable()
 export class AlsoKnownAsService {
     private headers: HttpHeaders;
-    private url: string;
     private notify = new Subject<any>();
+    private url: string;
     
     notifyObservable$ = this.notify.asObservable();
 
@@ -36,16 +31,16 @@ export class AlsoKnownAsService {
         this.url = getBaseUri() + '/my-orcid/otherNamesForms.json';
     }
 
+    notifyOther(): void {
+        this.notify.next();
+        console.log('notify');
+    }
+
     getData(): Observable<any> {
         return this.http.get(
             this.url
         )
         
-    }
-
-    notifyOther(): void {
-        this.notify.next();
-        console.log('notify');
     }
 
     setData( obj ): Observable<any> {
