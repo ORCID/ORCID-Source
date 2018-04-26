@@ -41,7 +41,6 @@ import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -294,13 +293,10 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(toggle, webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         
-        String clickXPathStr = "//div[@id='privacy-settings' and contains(text(),'By default, who should')]//a[contains(@name,'" + Visibility.valueOf(visibility).value() + "')]";
-        String clickWorkedStr =  "//div[@id='privacy-settings' and contains(text(),'By default, who should ')]//li[@class='" + Visibility.valueOf(visibility).value() + "Active']//a[contains(@name,'" + Visibility.valueOf(visibility).value() + "')]";
-
+        String clickXPathStr = "(//div[@id='privacy-settings' and contains(text(),'By default, who should')]//input)[" + getPrivacyIndex(visibility) + "]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
     }
     
     

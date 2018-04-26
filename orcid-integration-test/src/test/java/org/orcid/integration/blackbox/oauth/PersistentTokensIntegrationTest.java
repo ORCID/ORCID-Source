@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -55,6 +56,7 @@ public class PersistentTokensIntegrationTest extends BlackBoxBaseV2Release {
     }
 
     @Test
+    @Ignore // Short live tokens no longer available on prod because toggle is off
     public void createShortLivedTokenTest() throws InterruptedException, JSONException {
         String clientId = getClient1ClientId();
         String clientRedirectUri = getClient1RedirectUri();
