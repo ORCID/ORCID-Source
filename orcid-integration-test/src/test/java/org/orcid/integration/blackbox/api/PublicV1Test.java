@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.utils.JsonUtils;
@@ -34,6 +35,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
+@Ignore // v1.x pub disabled
 public class PublicV1Test extends BlackBoxBaseRC2 {
     @Resource
     private PublicV1ApiClientImpl publicV1ApiClient;    
