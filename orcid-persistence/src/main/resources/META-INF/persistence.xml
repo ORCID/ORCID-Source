@@ -22,6 +22,7 @@
         <class>org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAmendedEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationTipEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationCustomEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity</class>

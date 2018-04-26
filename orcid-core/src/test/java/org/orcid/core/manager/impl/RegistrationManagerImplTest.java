@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
@@ -78,6 +79,9 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Mock
     SourceManager mockSourceManager;
     
+    @Mock
+    EmailFrequencyManager mockEmailFrequencyManager;
+    
     @Resource
     ProfileDao profileDao;
     
@@ -90,6 +94,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);        
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
     }
     

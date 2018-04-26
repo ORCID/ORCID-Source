@@ -16,7 +16,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.hsqldb.result.Result;
 import org.hsqldb.types.NumberType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,6 +27,7 @@ import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -97,11 +97,11 @@ public class NotificationDaoTest extends DBUnitTest {
     }
 
     @Test    
-    public void testFindRecordsWithUnsentNotifications() {
+    public void testFindRecordsWithUnsentNotificationsLegacy() {
         ProfileEntity p1 = profileDao.find("0000-0000-0000-0002");
         ProfileEntity p2 = profileDao.find("4444-4444-4444-4441");
         
-        List<Object[]> recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotifications();
+        List<Object[]> recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotificationsLegacy();
         assertEquals(2, recordsWithNotificationsToSend.size());
         Object[] e0 = recordsWithNotificationsToSend.get(0);
         Object[] e1 = recordsWithNotificationsToSend.get(1);        
@@ -118,7 +118,7 @@ public class NotificationDaoTest extends DBUnitTest {
     }
 
     @Test
-    public void testFindNotificationsToSend() {   
+    public void testFindNotificationsToSendLegacy() {   
         String orcid1 = "0000-0000-0000-0004";
         ProfileEntity p1 = profileDao.find("0000-0000-0000-0004");
         Date date = new Date(p1.getCompletedDate().getTime());
@@ -323,7 +323,7 @@ public class NotificationDaoTest extends DBUnitTest {
     }
     
     @Test
-    public void testfindNotificationsToSend() {
+    public void testFindNotificationsToSend() {
         String orcid = "0000-0000-0000-0003";
         
         Calendar c = Calendar.getInstance();
@@ -416,19 +416,45 @@ public class NotificationDaoTest extends DBUnitTest {
         assertEquals(Long.valueOf(1011), results.get(2).getId());
         assertEquals("ADMINISTRATIVE", results.get(2).getNotificationType());
     
-        // Test #4: Include them all
+        emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.NEVER);
+        
+        // Test #4: Include querterly tips (TIP)
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, true);
+        // With date1 it should fetch SERVICE_ANNOUNCEMENTS and TIP
+        results = notificationDao.findNotificationsToSend(date1, orcid, recordOldEnough);
+        assertEquals(2, results.size());
+        assertEquals(Long.valueOf(1001), results.get(0).getId());
+        assertEquals("SERVICE_ANNOUNCEMENT", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1013), results.get(1).getId());
+        assertEquals("TIP", results.get(1).getNotificationType());        
+        
+        // With date2 it should fetch SERVICE_ANNOUNCEMENTS and TIP
+        results = notificationDao.findNotificationsToSend(date2, orcid, recordOldEnough);
+        assertEquals(2, results.size());
+        assertEquals(Long.valueOf(1001), results.get(0).getId());
+        assertEquals("SERVICE_ANNOUNCEMENT", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1013), results.get(1).getId());
+        assertEquals("TIP", results.get(1).getNotificationType());        
+        
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
+        
+        // Test #5: Include them all
         emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.WEEKLY);
         emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.WEEKLY);
         emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.WEEKLY);
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, true);
         
-        // With date1 it should fetch only the SERVICE_ANNOUNCEMENTS
+        // With date1 it should fetch only the SERVICE_ANNOUNCEMENTS and TIP
         results = notificationDao.findNotificationsToSend(date1, orcid, recordOldEnough);
-        assertEquals(1, results.size());
-        assertEquals(Long.valueOf(1001), results.get(0).getId());       
+        assertEquals(2, results.size());
+        assertEquals(Long.valueOf(1001), results.get(0).getId());
+        assertEquals("SERVICE_ANNOUNCEMENT", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1013), results.get(1).getId());
+        assertEquals("TIP", results.get(1).getNotificationType());        
         
         // With date2 it should fetch one of each
         results = notificationDao.findNotificationsToSend(date2, orcid, recordOldEnough);
-        assertEquals(6, results.size());
+        assertEquals(7, results.size());
         assertEquals(Long.valueOf(1001), results.get(0).getId());
         assertEquals("SERVICE_ANNOUNCEMENT", results.get(0).getNotificationType());
         assertEquals(Long.valueOf(1003), results.get(1).getId());
@@ -441,11 +467,14 @@ public class NotificationDaoTest extends DBUnitTest {
         assertEquals("CUSTOM", results.get(4).getNotificationType());
         assertEquals(Long.valueOf(1011), results.get(5).getId());
         assertEquals("ADMINISTRATIVE", results.get(5).getNotificationType());    
+        assertEquals(Long.valueOf(1013), results.get(6).getId());
+        assertEquals("TIP", results.get(6).getNotificationType());        
         
-        // Test #4: Include them all but quarterly
+        // Test #6: Include them all but quarterly
         emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.QUARTERLY);
         emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.QUARTERLY);
         emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.QUARTERLY);
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
         
         // With date1 or date2 it should fetch only the SERVICE_ANNOUNCEMENTS 
         results = notificationDao.findNotificationsToSend(date1, orcid, recordOldEnough);
@@ -454,6 +483,24 @@ public class NotificationDaoTest extends DBUnitTest {
         
         results = notificationDao.findNotificationsToSend(date2, orcid, recordOldEnough);
         assertEquals(1, results.size());
-        assertEquals(Long.valueOf(1001), results.get(0).getId());                        
-    }
+        assertEquals(Long.valueOf(1001), results.get(0).getId());
+        
+        // Again but with TIPs enabled
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, true);
+        
+        // With date1 or date2 it should fetch only the SERVICE_ANNOUNCEMENTS 
+        results = notificationDao.findNotificationsToSend(date1, orcid, recordOldEnough);
+        assertEquals(2, results.size());
+        assertEquals(Long.valueOf(1001), results.get(0).getId());
+        assertEquals("SERVICE_ANNOUNCEMENT", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1013), results.get(1).getId());
+        assertEquals("TIP", results.get(1).getNotificationType());        
+        
+        results = notificationDao.findNotificationsToSend(date2, orcid, recordOldEnough);
+        assertEquals(2, results.size());
+        assertEquals(Long.valueOf(1001), results.get(0).getId());
+        assertEquals("SERVICE_ANNOUNCEMENT", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1013), results.get(1).getId());
+        assertEquals("TIP", results.get(1).getNotificationType());                
+    }    
 }

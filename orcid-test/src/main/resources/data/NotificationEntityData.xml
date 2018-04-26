@@ -366,4 +366,31 @@
          notification_intro="This is the intro"
      />
      
+     <notification
+         id="1012"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-01-01 00:00:00.00"
+         notification_type="TIP"
+         subject="1012 subject"
+         body_text="1012 text"
+         body_html="1012 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+         sent_date="2018-01-02 00:00:00.00"
+     />
+     
+     <notification
+         id="1013"
+         orcid="0000-0000-0000-0003"
+         date_created="2018-02-01 00:00:00.00"
+         notification_type="TIP"
+         subject="1013 subject"
+         body_text="1013 text"
+         body_html="1013 html"         
+         client_source_id="4444-4444-4444-4441"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
+     />
+     
 </dataset>

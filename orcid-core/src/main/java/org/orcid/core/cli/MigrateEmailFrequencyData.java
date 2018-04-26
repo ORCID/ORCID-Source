@@ -43,7 +43,6 @@ public class MigrateEmailFrequencyData {
             }            
         } catch (CmdLineException e) {
             LOG.error(e.getMessage(), e);
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.exit(1);            
         }
@@ -60,7 +59,6 @@ public class MigrateEmailFrequencyData {
         LOG.debug("Starting migration process");
         List<Object[]> elements = Collections.emptyList();
         do {
-            System.out.println("Batch size: " + this.batchSize);
             elements = emailFrequencyDao.findOrcidsToMigrate(this.batchSize);
             for (final Object[] element : elements) {                
                 String orcid = (String) element[0];

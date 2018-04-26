@@ -37,7 +37,7 @@ import javax.persistence.Table;
                 " AND p.primary_record IS NULL " +
                 " AND NOT p.record_locked ORDER BY n.orcid;"),
     @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE, 
-    query = "SELECT DISTINCT(n.orcid), f.send_administrative_change_notifications, f.send_change_notifications, f.send_member_update_requests, f.send_quarterly_tips, COALESCE(p.completed_date, p.date_created)" +
+    query = "SELECT DISTINCT(n.orcid), COALESCE(p.completed_date, p.date_created)" +
             " FROM notification n, email_frequency f, profile p " +
             " WHERE n.sent_date IS NULL " +
             " AND n.orcid = p.orcid " +
@@ -46,9 +46,13 @@ import javax.persistence.Table;
             " AND p.primary_record IS NULL " +  
             " AND NOT p.record_locked " +
             " AND p.orcid = f.orcid " +
-            " AND ((n.notification_type=:administrative AND send_administrative_change_notifications < :never) " + 
-            " OR (n.notification_type=:change AND send_change_notifications < :never) " +
-            " OR (n.notification_type=:member AND send_member_update_requests < :never)) ORDER BY n.orcid;"),
+            " AND (" +
+            " (n.notification_type = 'SERVICE_ANNOUNCEMENT') " +
+            " OR (n.notification_type = 'TIP' AND send_quarterly_tips = true)" +
+            " OR (n.notification_type in ('ADMINISTRATIVE', 'CUSTOM') AND send_administrative_change_notifications < :never) " + 
+            " OR (n.notification_type = 'AMENDED' AND send_change_notifications < :never) " +
+            " OR (n.notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND send_member_update_requests < :never)" + 
+            " ) ORDER BY n.orcid;"),
     @NamedNativeQuery(name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
         query = "SELECT * FROM notification " + 
         " WHERE id IN " +

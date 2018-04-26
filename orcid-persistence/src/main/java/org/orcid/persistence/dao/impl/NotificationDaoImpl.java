@@ -148,10 +148,18 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @SuppressWarnings("unchecked")
     @Override
     public List<Object[]> findRecordsWithUnsentNotifications() {
+        Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE);
+        query.setParameter("never", Float.MAX_VALUE);               
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Object[]> findRecordsWithUnsentNotificationsLegacy() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS);
         query.setParameter("never", Float.MAX_VALUE);
         return query.getResultList();
-    }
+    }            
 
     @Override
     public List<NotificationEntity> findNotificationsToSendLegacy(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {

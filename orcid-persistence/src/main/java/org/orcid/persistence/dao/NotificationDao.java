@@ -24,6 +24,8 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     int getUnreadCount(String orcid);
 
     List<Object[]> findRecordsWithUnsentNotifications();
+    
+    List<Object[]> findRecordsWithUnsentNotificationsLegacy();
 
     List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Date recordActiveDate);
     

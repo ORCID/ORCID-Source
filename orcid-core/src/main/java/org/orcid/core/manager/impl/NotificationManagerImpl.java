@@ -1143,7 +1143,13 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
-        return notificationAdapter.toNotification(notificationDaoReadOnly.findNotificationsToSendLegacy(new Date(), orcid, emailFrequencyDays, recordActiveDate));
+        List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
+        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+            notifications = notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, recordActiveDate);
+        } else {
+            notifications = notificationDaoReadOnly.findNotificationsToSendLegacy(new Date(), orcid, emailFrequencyDays, recordActiveDate);
+        }   
+        return notificationAdapter.toNotification(notifications);
     }
 
     @Override

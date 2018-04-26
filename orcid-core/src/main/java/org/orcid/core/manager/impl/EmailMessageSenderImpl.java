@@ -23,6 +23,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -172,12 +173,26 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         LOGGER.info("About to send email messages");
-        List<Object[]>orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+        
+        List<Object[]> orcidsWithUnsentNotifications = new ArrayList<Object[]>();
+        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+            orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+        } else {
+            orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotificationsLegacy();
+        }
+        
         for (final Object[] element : orcidsWithUnsentNotifications) {
             String orcid = (String) element[0];                        
             try {
-                Float emailFrequencyDays = Float.valueOf((float) element[1]);
-                Date recordActiveDate = (Date) element[2];
+                Float emailFrequencyDays = null;
+                Date recordActiveDate = null;
+                if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+                    recordActiveDate = (Date) element[1];
+                } else {
+                    emailFrequencyDays = Float.valueOf((float) element[1]);
+                    recordActiveDate = (Date) element[2];
+                }
+                    
                 LOGGER.info("Sending messages for orcid: {}", orcid);
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
                 if(!notifications.isEmpty()) {

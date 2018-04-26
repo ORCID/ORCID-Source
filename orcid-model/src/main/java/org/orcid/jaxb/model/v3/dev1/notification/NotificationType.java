@@ -32,7 +32,8 @@ public enum NotificationType {
     @XmlEnumValue("permission")PERMISSION,
     @XmlEnumValue("amended") AMENDED,
     @XmlEnumValue("service-anouncement") SERVICE_ANNOUNCEMENT,
-    @XmlEnumValue("administrative") ADMINISTRATIVE;
+    @XmlEnumValue("administrative") ADMINISTRATIVE,
+    @XmlEnumValue("tip") TIP;
     //@formatter:on
 
     public String value() {
