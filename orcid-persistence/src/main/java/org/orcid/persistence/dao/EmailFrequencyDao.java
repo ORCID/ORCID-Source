@@ -1,5 +1,7 @@
 package org.orcid.persistence.dao;
 
+import java.util.List;
+
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 
@@ -18,4 +20,6 @@ public interface EmailFrequencyDao extends GenericDao<EmailFrequencyEntity, Stri
     boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency);
     
     boolean updateSendQuarterlyTips(String orcid, boolean enabled);
+    
+    List<Object[]> findOrcidsToProfess(int batchSize);
 }

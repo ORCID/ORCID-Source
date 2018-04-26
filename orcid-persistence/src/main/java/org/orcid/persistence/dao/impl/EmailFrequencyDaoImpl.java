@@ -1,5 +1,7 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
 import org.orcid.persistence.constants.SendEmailFrequency;
@@ -61,6 +63,14 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
         query.setParameter("enabled", enabled);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Object[]> findOrcidsToProfess(int batchSize) {
+        Query query = entityManager.createNativeQuery("SELECT orcid, send_email_frequency_days, send_change_notifications, send_administrative_change_notifications, send_orcid_news, send_member_update_requests FROM profile WHERE orcid NOT IN (SELECT orcid FROM email_frequency) LIMIT :batchSize");
+        query.setParameter("batchSize", batchSize);
+        return query.getResultList();
     }
 
 }
