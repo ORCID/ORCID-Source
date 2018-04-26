@@ -38,6 +38,7 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
@@ -479,7 +480,12 @@ public class NotificationManagerImpl implements NotificationManager {
         if (sendChangeNotifications == null || !sendChangeNotifications) {
             LOGGER.debug("Not sending amend email, because option to send change notifications is disabled: {}", userOrcid);
             return;
-        }        
+        }
+        String amenderType = profileDao.retrieveOrcidType(amenderOrcid);
+        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.valueOf(amenderType))) {
+            LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, userOrcid);
+            return;
+        }
 
         String subject = getSubject("email.subject.amend", locale);
 
