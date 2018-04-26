@@ -2,10 +2,12 @@ package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,8 +28,10 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification_v2.Notification;
+import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -195,15 +199,34 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     
                 LOGGER.info("Sending messages for orcid: {}", orcid);
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
+                
+                // Look for any service announcement or tip notification to send it right away
+                List<Notification> serviceAnnouncementsOrTips = filterServiceAnnouncementsAndTips(notifications);
+                
+                EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+                if (primaryEmail == null) {
+                    LOGGER.info("No primary email for orcid: " + orcid);
+                    return;
+                }
+                
+                if(!serviceAnnouncementsOrTips.isEmpty()) {                                       
+                    for(Notification n : serviceAnnouncementsOrTips) {
+                        // They might be custom notifications to have the html/text ready to be sent
+                        if(n instanceof NotificationCustom) {
+                            NotificationCustom nc = (NotificationCustom) n;
+                            boolean successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(),
+                                    nc.getBodyText(), nc.getBodyHtml());
+                            if (successfullySent) {
+                                flagAsSent(Arrays.asList(nc));
+                            }
+                        }
+                    }
+                }
+                
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
-                    EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
-                    if (primaryEmail == null) {
-                        LOGGER.info("No primary email for orcid: " + orcid);
-                        return;
-                    }
                     digestMessage.setTo(primaryEmail.getId());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
@@ -231,5 +254,20 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
         notificationDao.flush();
     }
-
+    
+    private List<Notification> filterServiceAnnouncementsAndTips(List<Notification> notifications) {
+        List<Notification> filtered = new ArrayList<Notification>();
+        Iterator<Notification> it = notifications.iterator();
+        while(it.hasNext()) {
+            Notification n = it.next();
+            if(n.getNotificationType() != null) {
+                if(NotificationType.SERVICE_ANNOUNCEMENT.name().equals(n.getNotificationType().name()) || NotificationType.TIP.name().equals(n.getNotificationType().name())) {
+                    filtered.add(n);
+                    it.remove();
+                }
+            }
+        }
+        return filtered;
+    }
+        
 }

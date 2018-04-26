@@ -11,11 +11,11 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.converter.VisibilityConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV2;
-import org.orcid.core.adapter.converter.VisibilityConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -34,7 +34,6 @@ import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceName;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -83,6 +82,8 @@ import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
+import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -169,6 +170,18 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerSourceConverters(mapperFactory, notificationCustomClassMap);
         mapCommonFields(notificationCustomClassMap).register();
 
+        // ServiceAnnouncement notification
+        ClassMapBuilder<NotificationCustom, NotificationServiceAnnouncementEntity> notificationServiceAnnouncementClassMap = mapperFactory.classMap(NotificationCustom.class,
+                NotificationServiceAnnouncementEntity.class);
+        registerSourceConverters(mapperFactory, notificationServiceAnnouncementClassMap);
+        mapCommonFields(notificationServiceAnnouncementClassMap).register();
+        
+        // Tip notification
+        ClassMapBuilder<NotificationCustom, NotificationTipEntity> notificationTipClassMap = mapperFactory.classMap(NotificationCustom.class,
+                NotificationTipEntity.class);
+        registerSourceConverters(mapperFactory, notificationTipClassMap);
+        mapCommonFields(notificationTipClassMap).register();        
+        
         // Permission notification
         ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class,
                 NotificationAddItemsEntity.class);
