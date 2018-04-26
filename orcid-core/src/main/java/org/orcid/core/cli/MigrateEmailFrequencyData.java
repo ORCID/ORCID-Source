@@ -3,12 +3,14 @@ package org.orcid.core.cli;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +58,20 @@ public class MigrateEmailFrequencyData {
                 Boolean admin = (Boolean) element[3];
                 Boolean member = (Boolean) element[4];
                 Boolean news = (Boolean) element[5];
-                LOG.info("Migrating address for profile: {}", orcid);
+                LOG.info("Migrating email_frequencies for profile: {}", orcid);
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        //TODO
+                        Date now = new Date();                        
+                        EmailFrequencyEntity entity = new EmailFrequencyEntity();
+                        entity.setDateCreated(now);
+                        entity.setLastModified(now);
+                        entity.setOrcid(orcid);
+                        entity.setId(UUID.randomUUID().toString());
+                        entity.setSendAdministrativeChangeNotifications();
+                        entity.setSendChangeNotifications();
+                        entity.setSendMemberUpdateRequests();
+                        entity.setSendQuarterlyTips();
                     }
                 });
             }
