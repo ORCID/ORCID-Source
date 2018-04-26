@@ -15,6 +15,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -144,6 +145,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         assertFalse(PojoUtil.isEmpty(accessToken));
     }
 
+    @Ignore // Can't BB test this because short tokens disabled.
     @Test
     public void dontSkipAuthorizationScreenIfShortTokenAlreadyExists() throws InterruptedException, JSONException {
         

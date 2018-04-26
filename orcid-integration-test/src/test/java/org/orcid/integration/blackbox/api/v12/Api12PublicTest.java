@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import javax.annotation.Resource;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
@@ -21,6 +22,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
+@Ignore // 1.x public API disabled
 public class Api12PublicTest extends BlackBoxBaseV2Release {
     
     @Resource(name = "t1OAuthClient_1_2")
