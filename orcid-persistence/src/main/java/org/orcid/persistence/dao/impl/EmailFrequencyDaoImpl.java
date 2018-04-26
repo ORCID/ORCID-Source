@@ -67,8 +67,8 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Object[]> findOrcidsToProfess(int batchSize) {
-        Query query = entityManager.createNativeQuery("SELECT orcid, send_email_frequency_days, send_change_notifications, send_administrative_change_notifications, send_orcid_news, send_member_update_requests FROM profile WHERE orcid NOT IN (SELECT orcid FROM email_frequency) LIMIT :batchSize");
+    public List<Object[]> findOrcidsToMigrate(int batchSize) {
+        Query query = entityManager.createNativeQuery("SELECT orcid, send_email_frequency_days, send_change_notifications, send_administrative_change_notifications, send_member_update_requests, send_orcid_news FROM profile WHERE orcid_type='USER' AND orcid NOT IN (SELECT orcid FROM email_frequency) LIMIT :batchSize");
         query.setParameter("batchSize", batchSize);
         return query.getResultList();
     }

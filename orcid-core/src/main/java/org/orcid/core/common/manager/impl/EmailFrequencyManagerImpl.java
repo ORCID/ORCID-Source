@@ -10,6 +10,8 @@ import javax.persistence.NoResultException;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
@@ -29,6 +31,9 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @Override
     public Map<String, String> getEmailFrequency(String orcid) {
@@ -71,8 +76,14 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     }
     
     @Override
-    public boolean createEmailFrequency(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
+    public boolean createOnRegister(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
+        return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications,
+                sendMemberUpdateRequests, sendQuarterlyTips, true);
+    }
+    
+    private boolean createEmailFrequency(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
+            SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips, boolean trackEvent) {
         EmailFrequencyEntity entity = new EmailFrequencyEntity();
         Date now = new Date();
         entity.setId(UUID.randomUUID().toString());
@@ -84,13 +95,17 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         entity.setSendMemberUpdateRequests(sendMemberUpdateRequests.floatValue());
         entity.setSendQuarterlyTips(sendQuarterlyTips);
         emailFrequencyDao.persist(entity);
+        if(trackEvent) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.EMAIL_FREQUENCY_CREATED_ON_REGISTER, orcid, "send_quarterly_tips " + sendQuarterlyTips);
+        }
         return true;
     }
-
+    
     @Override
     public boolean updateSendChangeNotifications(String orcid, SendEmailFrequency frequency) {
+        boolean result = false;
         if(emailFrequencyExists(orcid)) {
-            return emailFrequencyDao.updateSendChangeNotifications(orcid, frequency);
+            result = emailFrequencyDao.updateSendChangeNotifications(orcid, frequency);
         } else {
             LOG.warn("Creating email_frequency based on profile_entity settings");
             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
@@ -119,14 +134,19 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
                 sendQuarterlyTips = false;
             }
             
-            return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips);
+            result = createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips, false);
         }        
+        
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.UPDATE_AMEND_NOTIF_FREQ, orcid, "New value: " + frequency.value());
+        
+        return result;
     }
 
     @Override
     public boolean updateSendAdministrativeChangeNotifications(String orcid, SendEmailFrequency frequency) {
+        boolean result = false;
         if(emailFrequencyExists(orcid)) {
-            return emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, frequency);
+            result = emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, frequency);
         } else {
             LOG.warn("Creating email_frequency based on profile_entity settings");
             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
@@ -155,14 +175,19 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
                 sendQuarterlyTips = false;
             }
             
-            return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips);
+            result = createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips, false);
         }        
+        
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.UPDATE_ADMINISTRATIVE_NOTIF_FREQ, orcid, "New value: " + frequency.value());
+        
+        return result;
     }
 
     @Override
     public boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency) {
+        boolean result = false;
         if(emailFrequencyExists(orcid)) {
-            return emailFrequencyDao.updateSendMemberUpdateRequests(orcid, frequency);
+            result = emailFrequencyDao.updateSendMemberUpdateRequests(orcid, frequency);
         } else {
             LOG.warn("Creating email_frequency based on profile_entity settings");
             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
@@ -191,14 +216,19 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
                 sendQuarterlyTips = false;
             }
             
-            return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips);
+            result = createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips, false);
         }        
+        
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.UPDATE_MEMBER_PERMISSION_NOTIF_FREQ, orcid, "New value: " + frequency.value());
+        
+        return result;
     }
 
     @Override
     public boolean updateSendQuarterlyTips(String orcid, Boolean enabled) {
+        boolean result = false;
         if(emailFrequencyExists(orcid)) {
-            return emailFrequencyDao.updateSendQuarterlyTips(orcid, enabled);
+            result = emailFrequencyDao.updateSendQuarterlyTips(orcid, enabled);
         } else {
             LOG.warn("Creating email_frequency based on profile_entity settings");
             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
@@ -228,13 +258,17 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
             
             Boolean sendQuarterlyTips = enabled;
             
-            return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips);
-        }        
+            result = createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips, false);
+        }
+
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.UPDATE_QUARTERLY_TIPS_NOTIF, orcid, "New value: " + enabled);
+        
+        return result;
     }
     
     public boolean emailFrequencyExists(String orcid) {
         try {
-            emailFrequencyDaoReadOnly.findByOrcid(orcid);            
+            emailFrequencyDao.findByOrcid(orcid);            
         } catch(NoResultException nre) {
             return false;
         }

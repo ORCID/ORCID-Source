@@ -8,7 +8,7 @@ public interface EmailFrequencyManager {
 
     Map<String, String> getEmailFrequency(String orcid);
     
-    boolean createEmailFrequency(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
+    boolean createOnRegister(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips);
 
     boolean updateSendChangeNotifications(String orcid, SendEmailFrequency frequency);
