@@ -64,45 +64,15 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.NEVER);
         emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.NEVER);
-        emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.NEVER);
-        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
+        emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.NEVER);        
 
         List<Object[]> recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotifications();
         assertTrue(recordsWithNotificationsToSend.isEmpty());
 
-        // Service announcement should always be sent
-        NotificationEntity n = new NotificationServiceAnnouncementEntity();
-        n.setProfile(profile);
-        n.setNotificationType("SERVICE_ANNOUNCEMENT");
-        notificationDao.persist(n);
-
-        recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotifications();
-        assertEquals(1, recordsWithNotificationsToSend.size());
-
-        notificationDao.remove(n.getId());
-
-        // Test tips, tips are disabled, so, should found nothing
-        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
-        n = new NotificationTipEntity();
-        n.setProfile(profile);
-        n.setNotificationType("TIP");
-        notificationDao.persist(n);
-
-        recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotifications();
-        assertEquals(0, recordsWithNotificationsToSend.size());
-
-        // Tips enabled, so, it should find this one
-        emailFrequencyDao.updateSendQuarterlyTips(orcid, true);
-
-        recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotifications();
-        assertEquals(1, recordsWithNotificationsToSend.size());
-
-        notificationDao.remove(n.getId());
-
         // Test administrative change notifications
         emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.NEVER);
 
-        n = new NotificationAdministrativeEntity();
+        NotificationEntity n = new NotificationAdministrativeEntity();
         n.setProfile(profile);
         n.setNotificationType("ADMINISTRATIVE");
         notificationDao.persist(n);
@@ -206,5 +176,45 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         // All removed, there should be nothing
         recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotifications();
         assertEquals(0, recordsWithNotificationsToSend.size());
+    }
+    
+    @Test
+    public void testServiceAnnouncementNotifications() {
+        String orcid = "0000-0000-0000-0003";
+        ProfileEntity profile = new ProfileEntity(orcid);
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);     
+
+        List<NotificationEntity> recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        assertTrue(recordsWithNotificationsToSend.isEmpty());
+
+        // Add one Service Announcement and one Tip
+        NotificationEntity sa = new NotificationServiceAnnouncementEntity();
+        sa.setProfile(profile);
+        sa.setNotificationType("SERVICE_ANNOUNCEMENT");
+        notificationDao.persist(sa);
+        
+        NotificationEntity tip = new NotificationTipEntity();
+        tip.setProfile(profile);
+        tip.setNotificationType("TIP");
+        notificationDao.persist(tip);
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        assertEquals(1, recordsWithNotificationsToSend.size());
+        assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());
+    
+        // Enable tips
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, true);
+    
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        assertEquals(2, recordsWithNotificationsToSend.size());
+        assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());
+        assertEquals(tip.getId(), recordsWithNotificationsToSend.get(1).getId());
+        
+        // Disable tips again
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        assertEquals(1, recordsWithNotificationsToSend.size());
+        assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());
+    
     }
 }

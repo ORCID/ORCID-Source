@@ -460,5 +460,12 @@ public class NotificationDaoTest extends DBUnitTest {
         assertEquals("SERVICE_ANNOUNCEMENT", results.get(0).getNotificationType());
         assertEquals(Long.valueOf(1013), results.get(1).getId());        
         assertEquals("TIP", results.get(1).getNotificationType());
+        
+        // Test #3: Disable Tips again
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
+        results = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        assertEquals(1, results.size());
+        assertEquals(Long.valueOf(1001), results.get(0).getId());
+        
     }
 }
