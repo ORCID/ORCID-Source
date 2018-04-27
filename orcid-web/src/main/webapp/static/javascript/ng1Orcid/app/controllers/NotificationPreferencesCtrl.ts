@@ -1,6 +1,7 @@
 //Migrated
 
 // Controller for notifications
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
