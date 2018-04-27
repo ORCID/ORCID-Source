@@ -47,9 +47,9 @@ import javax.persistence.Table;
             " AND NOT p.record_locked " +
             " AND p.orcid = f.orcid " +
             " AND (" +
-            " (n.notification_type in ('ADMINISTRATIVE', 'CUSTOM') AND send_administrative_change_notifications < :never) " + 
-            " OR (n.notification_type = 'AMENDED' AND send_change_notifications < :never) " +
-            " OR (n.notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND send_member_update_requests < :never)" + 
+            " (n.notification_type in ('ADMINISTRATIVE', 'CUSTOM') AND f.send_administrative_change_notifications < :never) " + 
+            " OR (n.notification_type = 'AMENDED' AND f.send_change_notifications < :never) " +
+            " OR (n.notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND f.send_member_update_requests < :never)" + 
             " ) ORDER BY n.orcid;"),
     @NamedNativeQuery(name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
         query = "SELECT * FROM notification " + 

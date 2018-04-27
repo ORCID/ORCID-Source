@@ -262,7 +262,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Override
     public void sendServiceAnnouncementsAndTipsMessages() throws InterruptedException {
-        LOGGER.info("About to send email messages");
+        LOGGER.info("About to send Service Announcements messages");
         if (sendingServiceAnnouncementInProgress) {            
             LOGGER.warn("Messages are being processed already");
             return;
