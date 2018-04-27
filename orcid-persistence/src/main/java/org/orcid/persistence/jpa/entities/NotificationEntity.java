@@ -47,9 +47,7 @@ import javax.persistence.Table;
             " AND NOT p.record_locked " +
             " AND p.orcid = f.orcid " +
             " AND (" +
-            " (n.notification_type = 'SERVICE_ANNOUNCEMENT') " +
-            " OR (n.notification_type = 'TIP' AND send_quarterly_tips = true)" +
-            " OR (n.notification_type in ('ADMINISTRATIVE', 'CUSTOM') AND send_administrative_change_notifications < :never) " + 
+            " (n.notification_type in ('ADMINISTRATIVE', 'CUSTOM') AND send_administrative_change_notifications < :never) " + 
             " OR (n.notification_type = 'AMENDED' AND send_change_notifications < :never) " +
             " OR (n.notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND send_member_update_requests < :never)" + 
             " ) ORDER BY n.orcid;"),

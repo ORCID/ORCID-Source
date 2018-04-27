@@ -50,5 +50,7 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize);
     
     List<NotificationEntity> findNotificationsCreatedBefore(Date createdBefore, int batchSize);
+    
+    List<NotificationEntity> findUnsentServiceAnnouncementsAndTips(int batchSize);
 
 }

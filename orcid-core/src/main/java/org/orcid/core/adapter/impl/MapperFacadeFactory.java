@@ -38,7 +38,10 @@ import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationAdministrative;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationServiceAnnouncement;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationTip;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -170,17 +173,23 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerSourceConverters(mapperFactory, notificationCustomClassMap);
         mapCommonFields(notificationCustomClassMap).register();
 
-        // ServiceAnnouncement notification
-        ClassMapBuilder<NotificationCustom, NotificationServiceAnnouncementEntity> notificationServiceAnnouncementClassMap = mapperFactory.classMap(NotificationCustom.class,
+        // Service Announcement notification
+        ClassMapBuilder<NotificationServiceAnnouncement, NotificationServiceAnnouncementEntity> notificationServiceAnnouncementClassMap = mapperFactory.classMap(NotificationServiceAnnouncement.class,
                 NotificationServiceAnnouncementEntity.class);
         registerSourceConverters(mapperFactory, notificationServiceAnnouncementClassMap);
         mapCommonFields(notificationServiceAnnouncementClassMap).register();
         
         // Tip notification
-        ClassMapBuilder<NotificationCustom, NotificationTipEntity> notificationTipClassMap = mapperFactory.classMap(NotificationCustom.class,
+        ClassMapBuilder<NotificationTip, NotificationTipEntity> notificationTipClassMap = mapperFactory.classMap(NotificationTip.class,
                 NotificationTipEntity.class);
         registerSourceConverters(mapperFactory, notificationTipClassMap);
-        mapCommonFields(notificationTipClassMap).register();        
+        mapCommonFields(notificationTipClassMap).register();
+        
+        // Administrative notification
+        ClassMapBuilder<NotificationAdministrative, NotificationTipEntity> notificationAdministrativeClassMap = mapperFactory.classMap(NotificationAdministrative.class,
+                NotificationTipEntity.class);
+        registerSourceConverters(mapperFactory, notificationAdministrativeClassMap);
+        mapCommonFields(notificationAdministrativeClassMap).register();
         
         // Permission notification
         ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class,

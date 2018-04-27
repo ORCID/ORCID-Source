@@ -2,12 +2,10 @@ package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -28,18 +26,20 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification_v2.Notification;
-import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
+import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.DigestEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -93,6 +93,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Value("${org.notifications.service_announcements.batchSize:60000}")
+    private Integer batchSize;
+    
+    private static Boolean sendingServiceAnnouncementInProgress = false;
     
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
@@ -199,28 +204,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     
                 LOGGER.info("Sending messages for orcid: {}", orcid);
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
-                
-                // Look for any service announcement or tip notification to send it right away
-                List<Notification> serviceAnnouncementsOrTips = filterServiceAnnouncementsAndTips(notifications);
-                
+                                
                 EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
                 if (primaryEmail == null) {
                     LOGGER.info("No primary email for orcid: " + orcid);
                     return;
-                }
-                
-                if(!serviceAnnouncementsOrTips.isEmpty()) {                                       
-                    for(Notification n : serviceAnnouncementsOrTips) {
-                        // They might be custom notifications to have the html/text ready to be sent
-                        if(n instanceof NotificationCustom) {
-                            NotificationCustom nc = (NotificationCustom) n;
-                            boolean successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(),
-                                    nc.getBodyText(), nc.getBodyHtml());
-                            if (successfullySent) {
-                                flagAsSent(Arrays.asList(nc));
-                            }
-                        }
-                    }
                 }
                 
                 if(!notifications.isEmpty()) {
@@ -255,19 +243,60 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         notificationDao.flush();
     }
     
-    private List<Notification> filterServiceAnnouncementsAndTips(List<Notification> notifications) {
-        List<Notification> filtered = new ArrayList<Notification>();
-        Iterator<Notification> it = notifications.iterator();
-        while(it.hasNext()) {
-            Notification n = it.next();
-            if(n.getNotificationType() != null) {
-                if(NotificationType.SERVICE_ANNOUNCEMENT.name().equals(n.getNotificationType().name()) || NotificationType.TIP.name().equals(n.getNotificationType().name())) {
-                    filtered.add(n);
-                    it.remove();
-                }
-            }
+    private void flagServiceAnnouncementsSent(List<Long> ids) {
+        List<List<Long>> batches = Lists.partition(ids, 30000);
+        for (List<Long> batch : batches) {
+            notificationDao.flagAsSent(batch);
         }
-        return filtered;
+        notificationDao.flush();
     }
-        
+    
+    @Override
+    public void sendServiceAnnouncementsAndTipsMessages() {
+        LOGGER.info("About to send email messages");
+        if (sendingServiceAnnouncementInProgress) {
+            LOGGER.warn("Messages are being processed already");
+            return;
+        }
+
+        try {
+            sendingServiceAnnouncementInProgress = true;
+            List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
+            do {
+                List<Long> ids = new ArrayList<Long>();
+                serviceAnnouncementsOrTips = notificationDaoReadOnly.findUnsentServiceAnnouncementsAndTips(batchSize);
+                for (NotificationEntity n : serviceAnnouncementsOrTips) {
+                    String orcid = n.getProfile().getId();
+                    EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+                    if (primaryEmail == null) {
+                        LOGGER.info("No primary email for orcid: " + orcid);
+                        return;
+                    }
+
+                    if (n instanceof NotificationServiceAnnouncementEntity) {
+                        NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
+                        // They might be custom notifications to have the
+                        // html/text ready to be sent
+                        boolean successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                                nc.getBodyHtml());
+                        if (successfullySent) {
+                            ids.add(n.getId());
+                        }
+                    } else if (n instanceof NotificationTipEntity) {
+                        NotificationTipEntity nc = (NotificationTipEntity) n;
+                        // They might be custom notifications to have the
+                        // html/text ready to be sent
+                        boolean successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                                nc.getBodyHtml());
+                        if (successfullySent) {
+                            ids.add(n.getId());
+                        }
+                    }
+                }
+                flagServiceAnnouncementsSent(ids);
+            } while (!serviceAnnouncementsOrTips.isEmpty());
+        } finally {
+            sendingServiceAnnouncementInProgress = false;
+        }
+    }        
 }

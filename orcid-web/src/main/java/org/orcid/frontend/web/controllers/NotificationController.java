@@ -26,7 +26,10 @@ import org.orcid.jaxb.model.v3.dev1.common.Source;
 import org.orcid.jaxb.model.v3.dev1.notification.Notification;
 import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationServiceAnnouncement;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationTip;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
 import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.constants.SendEmailFrequency;
@@ -198,6 +201,39 @@ public class NotificationController extends BaseController {
         mav.setViewName("notification/institutional_connection_notification");
         mav.addObject("noIndex", true);
         return mav;
+    }
+    
+    @RequestMapping(value = "/SERVICE_ANNOUNCEMENT/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
+    public @ResponseBody String getServiceAnnouncementNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        response.addHeader("X-Robots-Tag", "noindex");
+        if (notification instanceof NotificationServiceAnnouncement) {
+            return ((NotificationServiceAnnouncement) notification).getBodyHtml();
+        } else {
+            return "Notification is of wrong type";
+        }
+    }
+    
+    @RequestMapping(value = "/TIP/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
+    public @ResponseBody String getTipNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        response.addHeader("X-Robots-Tag", "noindex");
+        if (notification instanceof NotificationTip) {
+            return ((NotificationTip) notification).getBodyHtml();
+        } else {
+            return "Notification is of wrong type";
+        }
+    }
+    
+    @RequestMapping(value = "/ADMINISTRATIVE/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
+    public @ResponseBody String getAdministrativeNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        response.addHeader("X-Robots-Tag", "noindex");
+        if (notification instanceof NotificationAdministrative) {
+            return ((NotificationAdministrative) notification).getBodyHtml();
+        } else {
+            return "Notification is of wrong type";
+        }
     }
     
     @RequestMapping(value = "{id}/read.json")

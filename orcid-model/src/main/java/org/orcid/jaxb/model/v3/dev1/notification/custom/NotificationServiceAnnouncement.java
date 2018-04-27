@@ -3,7 +3,7 @@ package org.orcid.jaxb.model.v3.dev1.notification.custom;
 import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
 
 public class NotificationServiceAnnouncement extends NotificationCustom {
-    
+
     /**
      * 
      */
