@@ -206,9 +206,10 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<NotificationEntity> findUnsentServiceAnnouncementsAndTips(int batchSize) {
-        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where notificationType in ('SERVICE_ANNOUNCEMENT', 'TIP') and sentDate is NULL", NotificationEntity.class);
+        Query query = entityManager.createNativeQuery("select n.* from notification n, email_frequency ef where n.sent_date is NULL AND n.orcid = ef.orcid AND ((n.notification_type = 'SERVICE_ANNOUNCEMENT') OR (n.notification_type = 'TIP' AND ef.send_quarterly_tips IS true))", NotificationEntity.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
     }
