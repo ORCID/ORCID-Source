@@ -27,9 +27,9 @@
         <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
             <@emailMacros.msg "email.email_frequencies.5" />
         </p>
-        <p>
+        <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
             <@emailMacros.msg "email.email_frequencies.footer.1" /><br >
-            <@emailMacros.msg "email.email_frequencies.footer.2" /><br >
+            <@emailMacros.msg "email.email_frequencies.footer.2" /><br ><br >
             <@emailMacros.msg "email.email_frequencies.footer.3" /><br >
         </p>
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">

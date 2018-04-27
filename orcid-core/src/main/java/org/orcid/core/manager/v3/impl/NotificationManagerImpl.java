@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.v3.dev1.notification.Notification;
 import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
@@ -598,7 +599,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
         if (notificationsEnabled) {
-            NotificationCustom notification = new NotificationCustom();
+            NotificationAdministrative notification = new NotificationAdministrative();
             notification.setNotificationType(NotificationType.ADMINISTRATIVE);
             notification.setSubject(subject);
             notification.setBodyHtml(html);
@@ -883,7 +884,7 @@ public class NotificationManagerImpl implements NotificationManager {
             String subject = messages.getMessage("email.subject.admin_as_delegate", new Object[]{trustedOrcidName}, userLocale);
             boolean notificationsEnabled = trustedEntity != null ? trustedEntity.getEnableNotifications() : false;
             if (notificationsEnabled) {
-                NotificationCustom notification = new NotificationCustom();
+                NotificationAdministrative notification = new NotificationAdministrative();
                 notification.setNotificationType(NotificationType.ADMINISTRATIVE);
                 notification.setSubject(subject);
                 notification.setBodyHtml(htmlBody);
@@ -1151,7 +1152,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("auto_deprecated_account_html.ftl", templateParams);
 
-        NotificationCustom notification = new NotificationCustom();
+        NotificationAdministrative notification = new NotificationAdministrative();
         notification.setNotificationType(NotificationType.ADMINISTRATIVE);
         notification.setSubject(subject);
         notification.setBodyHtml(html);

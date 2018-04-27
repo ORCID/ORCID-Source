@@ -81,6 +81,7 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
@@ -186,8 +187,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapCommonFields(notificationTipClassMap).register();
         
         // Administrative notification
-        ClassMapBuilder<NotificationAdministrative, NotificationTipEntity> notificationAdministrativeClassMap = mapperFactory.classMap(NotificationAdministrative.class,
-                NotificationTipEntity.class);
+        ClassMapBuilder<NotificationAdministrative, NotificationAdministrativeEntity> notificationAdministrativeClassMap = mapperFactory.classMap(NotificationAdministrative.class,
+                NotificationAdministrativeEntity.class);
         registerSourceConverters(mapperFactory, notificationAdministrativeClassMap);
         mapCommonFields(notificationAdministrativeClassMap).register();
         

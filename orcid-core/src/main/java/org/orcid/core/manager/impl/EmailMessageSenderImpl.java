@@ -2,6 +2,7 @@ package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,11 +11,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
@@ -41,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.collect.Lists;
@@ -54,7 +61,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     private static final String DIGEST_FROM_ADDRESS = "update@notify.orcid.org";
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageSenderImpl.class);
-
+    
+    ExecutorService pool;
+    
     @Resource
     private NotificationDao notificationDao;
 
@@ -98,6 +107,14 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private Integer batchSize;
     
     private static Boolean sendingServiceAnnouncementInProgress = false;
+    
+    public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads) {
+        if(maxThreads == null || maxThreads > 64 || maxThreads < 1) {
+            pool = Executors.newFixedThreadPool(8);
+        } else {
+            pool = Executors.newFixedThreadPool(maxThreads);
+        } 
+    }
     
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
@@ -243,60 +260,81 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         notificationDao.flush();
     }
     
-    private void flagServiceAnnouncementsSent(List<Long> ids) {
-        List<List<Long>> batches = Lists.partition(ids, 30000);
-        for (List<Long> batch : batches) {
-            notificationDao.flagAsSent(batch);
-        }
-        notificationDao.flush();
-    }
-    
     @Override
-    public void sendServiceAnnouncementsAndTipsMessages() {
+    public void sendServiceAnnouncementsAndTipsMessages() throws InterruptedException {
         LOGGER.info("About to send email messages");
-        if (sendingServiceAnnouncementInProgress) {
+        if (sendingServiceAnnouncementInProgress) {            
             LOGGER.warn("Messages are being processed already");
             return;
         }
 
-        try {
+        try {            
             sendingServiceAnnouncementInProgress = true;
+            Integer doneCount = 0;
             List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
-            do {
-                List<Long> ids = new ArrayList<Long>();
+            do {         
+                long startTime = System.currentTimeMillis();
                 serviceAnnouncementsOrTips = notificationDaoReadOnly.findUnsentServiceAnnouncementsAndTips(batchSize);
+                Set<Callable<Boolean>> callables = new HashSet<Callable<Boolean>>();
                 for (NotificationEntity n : serviceAnnouncementsOrTips) {
-                    String orcid = n.getProfile().getId();
-                    EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
-                    if (primaryEmail == null) {
-                        LOGGER.info("No primary email for orcid: " + orcid);
-                        return;
-                    }
-
-                    if (n instanceof NotificationServiceAnnouncementEntity) {
-                        NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
-                        // They might be custom notifications to have the
-                        // html/text ready to be sent
-                        boolean successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
-                                nc.getBodyHtml());
-                        if (successfullySent) {
-                            ids.add(n.getId());
+                    callables.add(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            processServiceAnnouncementNotification(n);
+                            return true;
                         }
-                    } else if (n instanceof NotificationTipEntity) {
-                        NotificationTipEntity nc = (NotificationTipEntity) n;
-                        // They might be custom notifications to have the
-                        // html/text ready to be sent
-                        boolean successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
-                                nc.getBodyHtml());
-                        if (successfullySent) {
-                            ids.add(n.getId());
-                        }
-                    }
-                }
-                flagServiceAnnouncementsSent(ids);
+                        
+                    });
+                }    
+                // Runthem all 
+                pool.invokeAll(callables);
+                doneCount += callables.size();
+                long endTime = System.currentTimeMillis();
+                String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
+                LOGGER.info("DoneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
             } while (!serviceAnnouncementsOrTips.isEmpty());
         } finally {
             sendingServiceAnnouncementInProgress = false;
         }
-    }        
+    }     
+    
+    private void processServiceAnnouncementNotification(NotificationEntity n) {
+        String orcid = n.getProfile().getId();
+        EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+        if (primaryEmail == null) {
+            LOGGER.info("No primary email for orcid: " + orcid);
+            return;
+        }
+        try {
+            boolean successfullySent = false;
+            if (n instanceof NotificationServiceAnnouncementEntity) {
+                NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
+                // They might be custom notifications to have the
+                // html/text ready to be sent
+                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                        nc.getBodyHtml());            
+            } else if (n instanceof NotificationTipEntity) {
+                NotificationTipEntity nc = (NotificationTipEntity) n;
+                // They might be custom notifications to have the
+                // html/text ready to be sent
+                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                        nc.getBodyHtml());            
+            }
+            
+            if (successfullySent) {
+                flagAsSent(n.getId());
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Problem sending service announcement message to user: " + orcid, e);
+        }
+    }
+    
+    private void flagAsSent(Long id) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                notificationDao.flagAsSent(Arrays.asList(id));
+            }
+        });        
+    }
 }

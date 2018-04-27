@@ -14,6 +14,7 @@
 
 <@emailMacros.msg "email.email_frequencies.footer.1" />
 <@emailMacros.msg "email.email_frequencies.footer.2" />
+		
 <@emailMacros.msg "email.email_frequencies.footer.3" />
 
 ----
