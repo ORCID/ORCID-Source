@@ -43,18 +43,14 @@
                 <!-- Left Column -->
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="form-group" *ngIf="editAffiliation?.disambiguatedAffiliationSourceId">
-                        <span *ngIf="addAffType == 'education'">
-                           <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
-                        </span>
-                        <span *ngIf="addAffType == 'employment'">
-                           <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitutionemployer'/></label>
+                        <span >
+                           <label><@orcid.msg 'manual_affiliation_form_contents.labelorganization'/></label>
                         </span>
                         <span id="remove-disambiguated" class="pull-right">
-                            <a (click)="removeDisambiguatedAffiliation()">
+                            <a href="javascript:void(0)" (click)="removeDisambiguatedAffiliation()">
                                 <span class="glyphicon glyphicon-remove-sign"></span><@orcid.msg 'common.remove'/>
                             </a>
                         </span>
-
                         <div class="relative" style="font-weight: strong;" *ngIf="disambiguatedAffiliation">
                             <span>{{disambiguatedAffiliation.value}}</span> <br />
                             <div>
@@ -65,15 +61,10 @@
                     
                     <!-- Institution -->
                     <div class="form-group">
-                        <span *ngIf="addAffType == 'distinction' || addAffType == 'education' || addAffType == 'invited-position' || addAffType == 'membership' || addAffType == 'service' || addAffType == 'qualification'">
-                           <label *ngIf="!disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
-                           <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayinstitution'/></label>
+                        <span>
+                           <label *ngIf="!disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelorganization'/></label>
+                           <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayorganization'/></label>
                             <span class="required" [ngClass]="isValidClass(editAffiliation.affiliationName)">*</span>
-                        </span>
-                        <span *ngIf="addAffType == 'employment'">
-                           <label *ngIf="!disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelinstitutionemployer'/></label>
-                           <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayinstitutionemployer'/></label>
-                           <span class="required" [ngClass]="isValidClass(editAffiliation.affiliationName)">*</span>
                         </span>
                         <div *ngIf="editAffiliation?.affiliationName">           
                             <input 

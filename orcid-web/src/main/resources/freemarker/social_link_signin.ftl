@@ -1,7 +1,6 @@
 <@public classes=['home'] nav="signin">
-<#include "sandbox_warning.ftl"/>
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-    <link-account-ng2></link-account-ng2>
+        <link-account-ng2></link-account-ng2>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="LinkAccountController" ng-init="setEntityId('${providerId}')">
