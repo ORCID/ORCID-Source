@@ -77,12 +77,6 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    linkAccount(idp, linkType): boolean {
-        let eventAction = linkType === 'shibboleth' ? 'Sign-In-Link-Federated' : 'Sign-In-Link-Social';
-        orcidGA.gaPush(['send', 'event', 'Sign-In-Link', eventAction, idp]);
-        return false;
-    };
-
     setEntityId(entityId): void {
         this.entityId = entityId;
     };

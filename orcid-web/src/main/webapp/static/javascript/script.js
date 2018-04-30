@@ -404,25 +404,6 @@ function logOffReload(reload_param) {
     });
 };
 
-function addShibbolethGa(oauthGaString){
-    $('#idpSelectSelectButton').click(
-        function() {
-            if(typeof oauthGaString !== 'undefined') orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + oauthGaString]);
-            var entityId = $(this).prev()[0].value;
-            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Federated', entityId]);
-            return true;
-        }
-    );
-    $('#idpSelectPreferredIdPTile a').click(
-        function() {
-            if(typeof oauthGaString !== 'undefined') orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + oauthGaString]);
-            var encodedEntityId = this.href.substring(this.href.lastIndexOf('=') + 1);
-            var entityId = decodeURIComponent(encodedEntityId);
-            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Federated', entityId]);
-        }
-    );
-}
-
 // jquery ready
 $(function() {
     
@@ -439,8 +420,6 @@ $(function() {
 
     // track when deactived people are pushed to signin page
     if (window.location.href.endsWith("signin#deactivated")) {
-        orcidGA.gaPush([ 'send', 'event', 'Disengagement', 'Deactivate_Complete',
-                'Website' ]);
         showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
     }
 
@@ -537,17 +516,6 @@ $(function() {
                         if (signinLocked) return false;
                         disableSignin();
                         
-                        if (gaString) {
-                            orcidGA.gaPush([
-                                    'send',
-                                    'event',
-                                    'RegGrowth',
-                                    'Sign-In-Submit',
-                                    'OAuth '
-                                            + gaString ]);
-                        } else
-                            orcidGA.gaPush([ 'send', 'event', 'RegGrowth',
-                                    'Sign-In-Submit', 'Website' ]);
                         if (basePath.startsWith(baseUrl + 'shibboleth')) {
                             loginUrl = baseUrl + 'shibboleth/signin/auth.json';
                         }

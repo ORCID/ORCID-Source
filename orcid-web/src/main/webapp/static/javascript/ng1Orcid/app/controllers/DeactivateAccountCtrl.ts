@@ -24,7 +24,6 @@ export const DeactivateAccountCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.sendDeactivateEmail = function() {
-                orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
                 $.ajax({
                     url: getBaseUri() + '/account/send-deactivate-account.json',
                     dataType: 'text',
