@@ -39,10 +39,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class EmailFrequencyServiceAnnouncement2018 {
     private List<ProfileEventType> eventTypes = Collections.unmodifiableList(Arrays.asList(ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_FAIL,
-            ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_SENT, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_SKIPPED));
+            ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_NOTIFICATION_CREATED, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_SKIPPED));
 
     private static Logger LOG = LoggerFactory.getLogger(EmailFrequencyServiceAnnouncement2018.class);
 
+    private static final String NOTIFICATION_FAMILY = "GDPR_EMALI_FREQUENCY_UPDATES";
+    
     ExecutorService pool;
 
     private ProfileDao profileDaoReadOnly;
@@ -160,10 +162,11 @@ public class EmailFrequencyServiceAnnouncement2018 {
             entity.setDateCreated(now);
             entity.setLastModified(now);
             entity.setNotificationType(NotificationType.SERVICE_ANNOUNCEMENT.name());
+            entity.setNotificationFamily(NOTIFICATION_FAMILY);
             entity.setProfile(new ProfileEntity(orcid));
             entity.setSendable(true);
             notificationDao.persist(entity);
-            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_SENT));
+            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_NOTIFICATION_CREATED));
         } catch (Exception e) {
             LOG.error("Exception for: {}", orcid);
             LOG.error("Error", e);

@@ -85,6 +85,8 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
     private Date archivedDate;
     private Date actionedDate;    
     private boolean sendable;
+    private String notificationFamily;
+    private Long retryCount;
     
     @Override
     @Id
@@ -178,5 +180,23 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
 
     public void setNotificationIntro(String notificationIntro) {
         this.notificationIntro = notificationIntro;
-    }     
+    }
+
+    @Column(name = "notification_family")
+    public String getNotificationFamily() {
+        return notificationFamily;
+    }
+
+    public void setNotificationFamily(String notificationFamily) {
+        this.notificationFamily = notificationFamily;
+    }
+
+    @Column(name = "retry_count")
+    public Long getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(Long retryCount) {
+        this.retryCount = retryCount;
+    }           
 }
