@@ -89,7 +89,6 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-
     getData(): void{
         this.keywordsService.getData()
         .takeUntil(this.ngUnsubscribe)
