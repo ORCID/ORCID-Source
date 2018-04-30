@@ -338,6 +338,16 @@
 		<property name="profileEntityManager" ref="profileEntityManager" />
 	</bean>
 	
+	<bean id="profileEntityGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+        <property name="cache" ref="profileEntityCache" />
+         <property name="profileEntityManager" ref="profileEntityManagerV3" />
+        <property name="retriever" ref="profileEntityRetriever" />
+    </bean>
+    
+    <bean id="profileEntityRetriever" class="org.orcid.core.cache.impl.ProfileEntityRetriever">
+        <property name="profileEntityManager" ref="profileEntityManager" />
+    </bean>
+	
 	<bean id="profileEntityCacheManagerReadOnly" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl">
 		<property name="profileEntityManager" ref="profileEntityManagerReadOnly" />
 	</bean>
@@ -715,7 +725,7 @@
 	    <property name="orcidProfileManager" ref="orcidProfileManagerReadOnly" />
 	</bean>		
 			
-	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
+	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>
 	
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
@@ -927,6 +937,7 @@
     
     <bean id="salesForceConnectionEntityCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="salesForceConnectionCache" />
+        <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
         <property name="retriever">
             <bean class="org.orcid.core.cache.impl.SalesForceConnectionEntityRetriever" />
         </property>

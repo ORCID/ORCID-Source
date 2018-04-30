@@ -18,8 +18,6 @@ package org.orcid.core.cache.impl;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
-
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.Retriever;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
@@ -38,11 +36,14 @@ public class GenericCacheManagerImpl<K extends OrcidAware, V> implements Generic
     private Cache cache;
     private Retriever<K, V> retriever;
 
-    @Resource(name = "profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly profileEntityManager;
 
     public void setCache(Cache cache) {
         this.cache = cache;
+    }
+
+    public void setProfileEntityManager(ProfileEntityManagerReadOnly profileEntityManager) {
+        this.profileEntityManager = profileEntityManager;
     }
 
     public void setRetriever(Retriever<K, V> retriever) {
@@ -51,8 +52,10 @@ public class GenericCacheManagerImpl<K extends OrcidAware, V> implements Generic
 
     @Override
     public V retrieve(K key) {
-        Date dbDate = profileEntityManager.getLastModifiedDate(key.getOrcid());
-        GenericCacheKey<K> genericKey = new GenericCacheKey<K>(key, dbDate.getTime());
+        GenericCacheKey<K> genericKey = createGenericKey(key);
+        if(genericKey == null) {
+            return null;
+        }
         Element element = null;
         try {
             cache.acquireReadLockOnKey(genericKey);
@@ -82,9 +85,22 @@ public class GenericCacheManagerImpl<K extends OrcidAware, V> implements Generic
         }
     }
 
+    private GenericCacheKey<K> createGenericKey(K key) {
+        Date dbDate = profileEntityManager.getLastModifiedDate(key.getOrcid());
+        if(dbDate == null) {
+            return null;
+        }
+        return new GenericCacheKey<K>(key, dbDate.getTime());
+    }
+
     @SuppressWarnings("unchecked")
     private V extractObjectValue(Element element) {
         return (V) element.getObjectValue();
+    }
+
+    @Override
+    public void remove(K key) {
+        cache.remove(createGenericKey(key));
     }
 
 }
