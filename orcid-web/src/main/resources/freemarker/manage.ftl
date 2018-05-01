@@ -42,7 +42,10 @@
             <tbody>
                 <tr>
                     <!-- Email header -->
-                    <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
+                    <th><a name="editEmail"></a>
+                    <@orcid.checkFeatureStatus 'GDPR_EMAIL_NOTIFICATIONS'>${springMacroRequestContext.getMessage("manage.email_notification_preferences")}</@orcid.checkFeatureStatus>
+                    <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS' enabled=false>${springMacroRequestContext.getMessage("manage.thEmail")}</@orcid.checkFeatureStatus>
+                    </th>
                     <td><a href="" id="account-settings-toggle-email-edit" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a></td>
                 </tr>
                 <tr>

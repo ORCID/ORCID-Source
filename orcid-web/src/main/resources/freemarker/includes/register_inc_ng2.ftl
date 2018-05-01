@@ -197,35 +197,20 @@
                 </div>
             </div>
             <span class="orcid-error" *ngIf="registrationForm.activitiesVisibilityDefault.errors.length > 0">
-            <div *ngFor="let error of registrationForm.activitiesVisibilityDefault.errors" [innerHTML]="error"></div>
-        </span>
+                <div *ngFor="let error of registrationForm.activitiesVisibilityDefault.errors" [innerHTML]="error"></div>
+            </span>
         </div>
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         <div *ngIf="gdprEmailNotifications">
             <!--Notifications settings -->
-            <div class="form-group clear-fix">
-                <div>   
-                    <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
-                    <p><@orcid.msg 'register.paragraph.1' /></p>
-                    <p><@orcid.msg 'register.paragraph.2' /></p>
-                    <p class="dark-label">
-                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" [(ng-model)]="registrationForm.sendOrcidNews.value" />
-                        <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' />
-                    </p>
-                    <p><@orcid.msg 'register.paragraph.3' /></p>
+            <div id="notificationSettings" class="form-group clear-fix">  
+                <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
+                <p><@orcid.msg 'register.paragraph.1' /></p>
+                <p><@orcid.msg 'register.paragraph.2' /></p>
+                <div class="control-group">
+                    <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" [(ngModel)]="registrationForm.sendOrcidNews.value" />
+                    <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
                 </div>
+                <p><@orcid.msg 'register.paragraph.3' /></p>
             </div>
         </div>
         <div *ngIf="!gdprEmailNotifications">
@@ -246,19 +231,8 @@
                 </div>
             </div>
         </div>
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         <!--Terms and conditions-->
-        <div class="bottomBuffer">
+        <div class="clearfix bottomBuffer">
             <h4><@orcid.msg 'register.labelTermsofUse'/>
                 <span class="required" [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}"></span></h4>  
             <p>

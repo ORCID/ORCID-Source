@@ -185,15 +185,15 @@
         
         <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS'>
             <!--Notifications settings -->
-            <div class="form-group clear-fix">
+            <div id="notificationSettings" class="form-group clear-fix">
                 <div>   
                     <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
                     <p><@orcid.msg 'register.paragraph.1' /></p>
                     <p><@orcid.msg 'register.paragraph.2' /></p>
-                    <p class="dark-label">
+                    <div class="control-group">
                         <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" ng-model="registrationForm.sendOrcidNews.value" />
-                        <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' />
-                    </p>
+                        <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
+                    <div>
                     <p><@orcid.msg 'register.paragraph.3' /></p>
                 </div>
             </div>
@@ -216,14 +216,6 @@
                 </div>
             </div>
         </@orcid.checkFeatureStatus>
-        
-        
-        
-        
-        
-        
-        
-        
         <!--Terms and conditions-->
         <div class="bottomBuffer">
             <h4><@orcid.msg 'register.labelTermsofUse'/>

@@ -2255,6 +2255,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     margin-right: 0
 }
 
+.settings-table h2 {
+    font-size: 18px;
+}
+
 .settings-table,.settings-table td,.settings-table th {
     border-left: 0 none!important;
     border-right: 0 none!important;
@@ -2304,6 +2308,20 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .settings-table .popover {
     min-width: 270px
+}
+
+.settings-table #emailFrequency label{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.settings-table #emailFrequency input[type=checkbox], 
+#register input[type=checkbox]{
+    margin: 0 4px 0 0;
+}
+
+.settings-table small.italic {
+    line-height: 12px;
 }
 
 .oauth-login #login-authorize-button,.settings-table .table-responsive {
@@ -6366,6 +6384,12 @@ a#reset-password-toggle-text:hover:active {
 
 #register p{
     font-size: 12px;
+    line-height: normal;
+}
+
+#register #notificationSettings label {
+    font-weight: bold;
+    display: inline;
 }
 
 .peer-review-delete {
