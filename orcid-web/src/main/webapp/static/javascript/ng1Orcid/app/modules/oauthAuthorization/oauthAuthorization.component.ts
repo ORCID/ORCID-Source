@@ -2,7 +2,6 @@ declare var $: any; //delete
 declare var OrcidCookie: any;
 declare var orcidVar: any;
 declare var orcidGA: any;
-declare var addShibbolethGa: any;
 declare var getBaseUri: any;
 declare var getStaticCdnPath: any;
 declare var orcidGA: any;
@@ -190,16 +189,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         return valid ? '' : 'text-error';
     };
 
-    loginSocial(idp): void {
-        if(this.gaString){
-            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + this.gaString]);
-        } else {
-            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'Website']);
-        }
-        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
-    };
-
-
     showDeactivationError(): void {
         this.showDeactivatedError = true;
         this.showReactivationSent = false;
@@ -214,7 +203,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
             let scriptInjectedCallback = function () {
                     this.scriptsInjected = true;
-                    addShibbolethGa(this.gaString);
                 };
 
             this.addScript('/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', this.addScript.bind(this, '/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', scriptInjectedCallback.bind(this)));

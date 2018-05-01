@@ -53,7 +53,7 @@
 										<ul class="social-icons">
 											<!--FACEBOOK-->
 											<li>
-												<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST" ng-submit="loginSocial('facebook')">
+												<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
 													<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 													<button type="submit" class="btn btn-social-icon btn-facebook"></button>
 													<input type="hidden" name="scope" value="email" />
@@ -62,7 +62,7 @@
 											</li>
 											<!--TWITTER (NOT USED)
 											<li>
-												<form action="<@orcid.rootPath '/signin/twitter'/>" method="POST" ng-submit="loginSocial('twitter')">
+												<form action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
 													<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 													<button type="submit" class="btn btn-social-icon btn-twitter"></button>
 													<input type="hidden" name="scope" value="email" />
@@ -72,7 +72,7 @@
 											-->
 											<!--GOOGLE-->
 											<li>
-												<form action="<@orcid.rootPath '/signin/google'/>" method="POST" ng-submit="loginSocial('google')">
+												<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
 													<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 													<button type="submit" class="btn btn-social-icon btn-google"></button>
 													<input type="hidden" name="scope" value="email" />
