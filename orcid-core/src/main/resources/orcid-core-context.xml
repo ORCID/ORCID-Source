@@ -1289,8 +1289,8 @@
         <property name="cacheName" value="grouped-works" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="500" />
-        <property name="timeToLiveSeconds" value="86400" />
-        <property name="timeToIdleSeconds" value="7200" />
+        <property name="timeToLiveSeconds" value="3600" />
+        <property name="timeToIdleSeconds" value="3600" />
         <property name="maxElementsOnDisk" value="10000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
@@ -1601,6 +1601,14 @@
 	<bean id="orcidCacheEvictionUtil" class="org.orcid.core.utils.OrcidCacheEvictionUtil" />
 	
 	<bean id="worksCacheManager" class="org.orcid.core.manager.v3.impl.WorksCacheManagerImpl" />
+	
+	<bean id="groupedWorksGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+        <property name="cache" ref="groupedWorksCache" />
+        <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+        <property name="retriever" ref="groupedWorksRetriever" />
+    </bean>
+    
+    <bean id="groupedWorksRetriever" class="org.orcid.core.cache.impl.GroupedWorksRetriever" />
 	
 	<bean id="apiAnalyticsTaskExecutor"
         class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
