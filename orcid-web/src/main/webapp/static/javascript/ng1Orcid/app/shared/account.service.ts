@@ -1,10 +1,10 @@
 declare var orcidSearchUrlJs: any;
 
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
 import { Injectable } 
     from '@angular/core';
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -16,73 +16,25 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class AccountService {
-    private headers: Headers;
-    private url: string;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
+    private url: string;
     
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
-    }
-
-    getChangePassword(): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/account/change-password.json'
-        )
-        .map((res:Response) => res.json()).share();
-    }
-
-    getSecurityQuestion(): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/account/security-question.json'
-        )
-        .map((res:Response) => res.json()).share();
-    }
-
-    sendDeactivateEmail(): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/account/send-deactivate-account.json'
-        )
-        .map((res:Response) => res.json()).share();
     }
 
     notifyOther(): void {
         this.notify.next();
         console.log('notify');
-    }
-
-    saveChangePassword( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        
-        return this.http.post( 
-            getBaseUri() + '/account/change-password.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        .map((res:Response) => res.json()).share();
-    }
-
-    submitModal( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        
-        return this.http.post( 
-            getBaseUri() + '/account/security-question.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        .map((res:Response) => res.json()).share();
-    }
-
-    delayVerifyEmail(): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/account/delayVerifyEmail.json'
-        )
-        .map((res:Response) => res.json()).share();
     }
 
     addDelegate( obj ): Observable<any> {
@@ -93,7 +45,7 @@ export class AccountService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     addDelegateByEmail( obj ): Observable<any> {
@@ -104,9 +56,87 @@ export class AccountService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
+    delayVerifyEmail(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/delayVerifyEmail.json'
+        )
+        
+    }
+
+    getChangePassword(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/change-password.json'
+        )
+        
+    }
+
+    getDelegates(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/delegates.json'
+        )
+        
+    }
+
+    getDisplayName( orcid ): Observable<any> {
+        return this.http.get(
+            orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person'
+        )
+        
+    }
+
+    getResults( input ): Observable<any> {
+        return this.http.get(
+            orcidSearchUrlJs.buildUrl(input)+'&callback=?'
+        )
+        
+    }
+
+    getSecurityQuestion(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/security-question.json'
+        )
+        
+    }
+
+    saveChangePassword( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/account/change-password.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+
+    searchByEmail( input ): Observable<any> {
+        return this.http.get(
+            $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent(input) + '/',
+        )
+        
+    }
+
+    sendDeactivateEmail(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/send-deactivate-account.json'
+        )
+        
+    }
+
+    submitModal( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/account/security-question.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+    
     revoke( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         
@@ -115,34 +145,7 @@ export class AccountService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
-
-    getDelegates(): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/account/delegates.json'
-        )
-        .map((res:Response) => res.json()).share();
-    }
-
-    getDisplayName( orcid ): Observable<any> {
-        return this.http.get(
-            orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person'
-        )
-        .map((res:Response) => res.json()).share();
-    }
-
-    getResults( input ): Observable<any> {
-        return this.http.get(
-            orcidSearchUrlJs.buildUrl(input)+'&callback=?'
-        )
-        .map((res:Response) => res.json()).share();
-    }
-
-    searchByEmail( input ): Observable<any> {
-        return this.http.get(
-            $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent(input) + '/',
-        )
-        .map((res:Response) => res.json()).share();
-    }
+    
 }

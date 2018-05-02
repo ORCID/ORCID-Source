@@ -190,7 +190,7 @@
             <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
         </#if>
     </@orcid.checkFeatureStatus> 
-    
+ 
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
         <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
@@ -206,7 +206,9 @@
         <#include "/includes/ng2_templates/emails-ng2-template.ftl">
     </#if>
 
-    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >        
+    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
+        <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
+        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">       
         <#include "/includes/ng2_templates/biography-ng2-template.ftl">        
         <#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">

@@ -1,8 +1,8 @@
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
 import { Injectable } 
     from '@angular/core';
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -16,32 +16,34 @@ export class ConsortiaService {
     private notify = new Subject<any>();
     notifyObservable$ = this.notify.asObservable();
     
-    private headers: Headers;
-    private memberDetailsUrl: string;
-    private validateMemberDetailsUrl: string;
-    private validateMemberDetailsFieldUrl: string;
-    private updateMemberDetailsUrl: string;
-    private contactsUrl: string;
-    private validateContactsUrl: string;
-    private updateContactsUrl: string;
     private addContactUrl: string;
-    private removeContactUrl: string;
-    private searchByEmailUrl: string;
-    private orgIdsUrl: string;
-    private validateSubMemberUrl: string;
-    private validateSubMemberFieldUrl: string;
-    private checkExistingSubMemberUrl: string;
+    private addOrgIdUrl: string;
     private addSubMemberUrl: string;
     private cancelSubMemberAdditionUrl: string;
-    private removeSubMemberUrl: string;
+    private checkExistingSubMemberUrl: string;
+    private contactsUrl: string;
+    private headers: HttpHeaders;
+    private memberDetailsUrl: string;
+    private removeContactUrl: string;
+    private searchByEmailUrl: string;
+    private updateContactsUrl: string;
+    private updateMemberDetailsUrl: string;
+    private validateContactsUrl: string;
+    private validateMemberDetailsUrl: string;
+    private validateMemberDetailsFieldUrl: string;
+    private validateSubMemberFieldUrl: string;
+    private validateSubMemberUrl: string;
     private orgIdSearchUrl: string;
-    private addOrgIdUrl: string;
+    private orgIdsUrl: string;
     private removeOrgIdUrl: string;
+    private removeSubMemberUrl: string;
 
-    constructor( private http: Http ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json;charset=UTF-8' 
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.memberDetailsUrl = getBaseUri() + '/self-service/get-member-details.json?accountId=';
@@ -83,7 +85,7 @@ export class ConsortiaService {
     getMemberDetails(id: string): Observable<any> {
       const url = `${this.memberDetailsUrl}${id}`;
         return this.http.get(url)
-            .map((res:Response) => res.json()).share();
+            
     }
     
     validateMemberDetails(memberDetails: object) : Observable<any>{
@@ -93,7 +95,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
      validateMemberDetailsField(memberDetails: object, field: string) {
@@ -104,7 +106,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     updateMemberDetails(memberDetails: object) : Observable<any>{
@@ -114,13 +116,13 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     getContacts(id: string): Observable<any> {
         const url = `${this.contactsUrl}${id}`;
         return this.http.get(url)
-            .map((res:Response) => res.json()).share();
+            
     }
     
     validateContacts(contacts: object) : Observable<any>{
@@ -130,7 +132,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     updateContacts(contacts: object) : Observable<any>{
@@ -140,7 +142,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     addContact(contact: object) : Observable<any>{
@@ -150,7 +152,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     removeContact(contact: object) : Observable<any>{
@@ -160,25 +162,25 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     searchByEmail(email: string): Observable<any> {
         const url = `${this.searchByEmailUrl}/${encodeURIComponent(email)}/`;
         return this.http.get(url)
-            .map((res:Response) => res.json()).share();
+            
     }
     
     getOrgIds(id: string): Observable<any> {
         const url = `${this.orgIdsUrl}${id}`;
         return this.http.get(url)
-            .map((res:Response) => res.json()).share();
+            
     }
     
     searchOrgIds(input: string): Observable<any> {
         const url = `${this.orgIdSearchUrl}${encodeURIComponent(input)}&limit=10`;
         return this.http.get(url)
-            .map((res:Response) => res.json()).share();
+            
     }
     
     addOrgId(orgId: object) : Observable<any>{
@@ -188,7 +190,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     removeOrgId(orgId: object) : Observable<any>{
@@ -207,7 +209,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     validateSubMemberField(subMember: object, field: string) : Observable<any> {
@@ -218,7 +220,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     checkExistingSubMember(subMember: object) : Observable<any>{
@@ -228,7 +230,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     addSubMember(subMember: object) : Observable<any>{
@@ -238,7 +240,7 @@ export class ConsortiaService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
     
     removeSubMember(subMember: object) : Observable<any>{

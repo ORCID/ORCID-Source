@@ -4,6 +4,9 @@ import 'reflect-metadata';
 import { CommonModule } 
     from '@angular/common'; 
 
+import { HttpClientModule } 
+    from '@angular/common/http';
+
 import { Component, NgModule } 
     from '@angular/core';
 
@@ -216,6 +219,53 @@ export class MetaXSRFStrategy implements XSRFStrategy {
         }
     }
 }
+///////////////////
+import {Injectable} from '@angular/core';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor
+} from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
+
+@Injectable()
+export class TokenInterceptor implements HttpInterceptor {
+  constructor() {}
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+      let token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+      let header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+    
+    /*request = request.clone({
+      setHeaders: {
+        header: token
+      }
+    });
+    return next.handle(request);*/
+    let _request = request.clone();
+    //_request.headers.append(header, token);
+    console.log('headers', header, 'token', token);
+    _request.headers.set(header, token);
+
+
+    let headers2 = new HttpHeaders();
+    console.log('headers2a', headers2);
+    headers2 = headers2.append(header, token);
+    console.log('headers2b', headers2);
+
+    console.log('interceptor', _request, _request.headers, _request.headers.get(header));
+    return next.handle(_request);
+  }
+}
+/*
+let token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+let header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+if (token && header) {
+    req.headers.set(header, token);
+}
+*/
+///////////////////////////////
 
 @Component(
     {
@@ -238,7 +288,8 @@ export class RootCmp {
         BrowserModule,
         CommonModule, 
         FormsModule,
-        HttpModule,
+        HttpClientModule, //angular5
+        HttpModule, //Angular2
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
@@ -304,13 +355,19 @@ export class RootCmp {
         { 
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
-        }
+        },
+        /*{
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true
+        }*/
     ]
 
 })
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.9.1');
+        console.log('v0.9.18');
     }
 }
+
