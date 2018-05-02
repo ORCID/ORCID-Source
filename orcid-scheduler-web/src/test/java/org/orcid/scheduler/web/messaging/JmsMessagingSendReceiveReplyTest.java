@@ -1,4 +1,4 @@
-package org.orcid.persistence.messaging;
+package org.orcid.scheduler.web.messaging;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.scheduler.messaging.JmsMessageSender;
 import org.springframework.test.context.ContextConfiguration;
 
 /** Note, this test only works if you have ActiveMQ working in the background on the default port
@@ -15,7 +15,6 @@ import org.springframework.test.context.ContextConfiguration;
  * @author tom
  *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class JmsMessagingSendReceiveReplyTest {
 

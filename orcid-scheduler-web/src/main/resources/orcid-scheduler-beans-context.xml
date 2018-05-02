@@ -40,7 +40,7 @@
 	  <property name="defaultDestination" ref="defaultJmsDestination" />
 	</bean>
 	
-	<bean id="jmsMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">
+	<bean id="jmsMessageSender" class="org.orcid.scheduler.messaging.JmsMessageSender">
 		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
 	</bean>
 	
