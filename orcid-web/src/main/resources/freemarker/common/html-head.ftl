@@ -133,7 +133,6 @@
 
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
         <!-- NG2: Under development -->
-        <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
         <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
         <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
         
@@ -152,11 +151,16 @@
 
     <!-- NG2: QA -->
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+        
         <#include "/includes/ng2_templates/header-ng2-template.ftl">
         <#include "/includes/ng2_templates/language-ng2-template.ftl">
         <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
         <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
         <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
+
+        <#if springMacroRequestContext.requestUri?contains("/reset-password") >
+            <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
+        </#if>
         
         <#if springMacroRequestContext.requestUri?contains("/social") ||  springMacroRequestContext.requestUri?contains("/shibboleth/signin") || (RequestParameters['linkRequest'])??>
             <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
