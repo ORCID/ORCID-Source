@@ -9,9 +9,6 @@
     <import resource="classpath*:orcid-scheduler-beans-context.xml"/>
 
     <task:scheduled-tasks scheduler="scheduler">   
-	    <task:scheduled ref="orcidProfileManager" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:5}000"/>
-     	<task:scheduled ref="orcidProfileManager" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:61}000"/>
-        <task:scheduled ref="orcidProfileManager" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
 	    <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesToFlagForIndexing" cron="${org.orcid.scheduler.web.processUnclaimedProfilesToFlagForIndexingCron:25 25 * * * *}"/>
         <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
         <task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
@@ -26,6 +23,10 @@
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
         <task:scheduled ref="notificationManagerV3" method="processUnverifiedEmails7Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails7Days:0 10 * * * *}"/>
+
+		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:180}000"/>
+     	<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
+        <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
 
     </task:scheduled-tasks>
 
