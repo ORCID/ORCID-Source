@@ -12,7 +12,7 @@ In addition to the production environment at https://orcid.org, ORCID offers a d
 * Supports [OpenID Connect](http://openid.net/connect/)
 
 ## Getting Credentials
-To access the API you will use a member client and secret issued by ORCID.
+To access the API you will use a client ID and secret issued by ORCID.
 
 **Member Credentials**
 
