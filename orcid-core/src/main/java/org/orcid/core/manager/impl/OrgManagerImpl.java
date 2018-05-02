@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.common_v2.OrganizationHolder;
@@ -153,8 +154,12 @@ public class OrgManagerImpl implements OrgManager {
         orgEntity.setRegion(address.getRegion());
         orgEntity.setCountry(address.getCountry().value());
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
-            orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
-                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
+            OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
+                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource());
+            if (disambiguatedOrg == null) {
+                throw new InvalidDisambiguatedOrgException();
+            }
+            orgEntity.setOrgDisambiguated(disambiguatedOrg);
         }
         return createUpdate(orgEntity);        
     }
