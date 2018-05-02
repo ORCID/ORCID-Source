@@ -14,6 +14,9 @@ import { ReCaptchaModule }
     from 'angular2-recaptcha';
 
 //User generated filters
+import { AffiliationExternalIdentifierHtmlPipe }
+    from '../../pipes/affiliationExternalIdentifierHtmlNg2.ts';
+
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
 
@@ -228,6 +231,7 @@ import { WorksService }
             SwitchUserNg2Module
         ],
         declarations: [ 
+            AffiliationExternalIdentifierHtmlPipe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
@@ -244,6 +248,7 @@ import { WorksService }
             CommonModule,
             FormsModule,
             //User Pipes
+            AffiliationExternalIdentifierHtmlPipe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,

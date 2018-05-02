@@ -116,7 +116,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.membershipsAndServices = [];
         this.sectionOneElements = [];
         this.displayNewAffiliationTypesFeatureEnabled = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
-        this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
+        this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('AFFILIATION_ORG_ID');
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 
@@ -279,20 +279,20 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             if (data[i].affiliationType != null 
                 && data[i].affiliationType.value != null) {                            
                 if(data[i].affiliationType.value == 'distinction') {
-                    this.distinctionsAndInvitedPositions.push( data[i] );
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.distinctionsAndInvitedPositions);
                 } else if(data[i].affiliationType.value == 'education'){
-                    this.educations.push(data[i]);
-                    this.educationsAndQualifications.push( data[i] );
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.educations);
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.educationsAndQualifications);
                 } else if ( data[i].affiliationType.value == 'employment' ) {
-                    this.employments.push( data[i] );
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.employments);
                 } else if(data[i].affiliationType.value == 'invited-position') {
-                    this.distinctionsAndInvitedPositions.push( data[i] );
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.distinctionsAndInvitedPositions);
                 } else if(data[i].affiliationType.value == 'membership') {
-                    this.membershipsAndServices.push( data[i] );
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.membershipsAndServices);
                 } else if (data[i].affiliationType.value == 'qualification') {
-                    this.educationsAndQualifications.push(data[i]);                             
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.educationsAndQualifications);                            
                 } else if(data[i].affiliationType.value == 'service') {
-                    this.membershipsAndServices.push( data[i] );
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.membershipsAndServices);   
                 }
             }
         };
@@ -355,6 +355,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     showAffiliationExtIdPopOver(id): void{
+        console.log("show popover " + id);
         this.displayAffiliationExtIdPopOver[id] = true;
     };
 

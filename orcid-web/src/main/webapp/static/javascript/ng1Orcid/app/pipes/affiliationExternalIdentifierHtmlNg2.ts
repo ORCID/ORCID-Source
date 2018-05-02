@@ -18,6 +18,7 @@ export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
     }
 
     transform(externalIdentifier: any, putCode: any, index: any): string {
+        console.log(externalIdentifier);
         var isPartOf = false;
         var link = null;
         var ngclass = '';
@@ -57,10 +58,10 @@ export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
         
  
         if(link != null) {
-            link = null;//this.urlProtocol(link);
+            //link = null;//this.urlProtocol(link);
             
             if(value != null) {
-                output += "<a href='" + link + "' class='truncate-anchor inline' target='orcid.blank' ng-mouseenter='showAffiliationExtIdPopOver(" + putCode + index +")' ng-mouseleave='hideAffiliationExtIdPopOver(" + putCode + index +")'>" + value.escapeHtml() + "</a>";
+                output += "<a href='" + link + "' class='truncate-anchor inline' target='orcid.blank' (mouseenter)='showAffiliationExtIdPopOver(" + putCode + index +")' (mouseleave)='hideAffiliationExtIdPopOver(" + putCode + index +")'>" + value.escapeHtml() + "</a>";
             }
         } else if(value != null) {
             output = output + " " + value.escapeHtml();
@@ -69,7 +70,7 @@ export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
         if( link != null ) {            
             output += '<div class="popover-pos">\
                         <div class="popover-help-container">\
-                            <div class="popover bottom" ng-class="{'+"'block'"+' : displayAffiliationExtIdPopOver[' + putCode + index + '] == true}">\
+                            <div class="popover bottom" [ngClass]="{'+"'block'"+' : displayAffiliationExtIdPopOver[' + putCode + index + '] == true}">\
                                 <div class="arrow"></div>\
                                 <div class="popover-content">\
                                     <a href="'+link+'" target="orcid.blank" class="ng-binding">'+link.escapeHtml()+'</a>\
@@ -78,7 +79,7 @@ export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
                         </div>\
                   </div>';
         }
-        
+        console.log(output);
         return output;
     }
 }
