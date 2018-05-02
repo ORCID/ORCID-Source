@@ -35,7 +35,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         if (removal.wasEvicted()) {
             LastModifiedMessage m = removal.getValue();
             LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue '" + m.getLastUpdated() + "' Removal cause " + removal.getCause());
-            s3Processor.accept(m);
+            //s3Processor.accept(m);
             solrProcessor.accept(m);
             mongoProcessor.accept(m);
         }

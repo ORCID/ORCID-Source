@@ -32,6 +32,7 @@ import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
+import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -143,6 +144,38 @@ public class S3MessageProcessor {
             processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
             processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));                        
         } 
+    }
+    
+    public void retry(String orcid, List<ActivityType> types) {
+        if(!isActivitiesIndexerEnabled) {
+            return;
+        }
+        
+        LOG.info("Retrying activities for record " + orcid);
+        Record record = fetchPublicRecord(orcid);        
+        ActivitiesSummary as = getActivitiesSummaryFromRecord(record);
+        if(as != null) {
+            Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
+            for(ActivityType type : types) {
+                switch(type) {
+                case EDUCATIONS:
+                    processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
+                    break;
+                case EMPLOYMENTS:
+                    processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
+                    break;
+                case FUNDINGS:
+                    processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
+                    break;
+                case PEER_REVIEWS:
+                    processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
+                    break;
+                case WORKS:
+                    processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));
+                    break;
+                }
+            }
+        }       
     }
 
     private void processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
@@ -285,6 +318,23 @@ public class S3MessageProcessor {
         
         return null;
     }   
+    
+    private Record fetchPublicRecord(String orcid) {
+        try {            
+            return orcid20ApiClient.fetchPublicRecord(new LastModifiedMessage(orcid, null));
+        } catch (LockedRecordException | DeprecatedRecordException e) {
+            // Remove all activities from this record
+            s3Manager.clearActivities(orcid);
+            // Mark all activities as ok
+            activitiesStatusManager.markAllAsSent(orcid);
+        } catch (Exception e) {
+            // Mark all activities as failed
+            activitiesStatusManager.markAllAsFailed(orcid);
+            throw new RuntimeException(e);
+        }
+        
+        return null;
+    } 
     
     private ActivitiesSummary getActivitiesSummaryFromRecord(Record record) {
         if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {

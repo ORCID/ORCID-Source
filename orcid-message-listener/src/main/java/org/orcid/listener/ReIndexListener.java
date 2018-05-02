@@ -57,7 +57,7 @@ public class ReIndexListener extends BaseListener implements MessageListener {
             LastModifiedMessage lastModifiedMessage = new LastModifiedMessage(map);
             String orcid = lastModifiedMessage.getOrcid();
             LOG.info("Recieved " + reindexTopicName + " message for orcid " + orcid + " " + lastModifiedMessage.getLastUpdated());
-            s3Processor.accept(lastModifiedMessage);
+            //s3Processor.accept(lastModifiedMessage);
             solrProcessor.accept(lastModifiedMessage);
             mongoProcessor.accept(lastModifiedMessage);
         });

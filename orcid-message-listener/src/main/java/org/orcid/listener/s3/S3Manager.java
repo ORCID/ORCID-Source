@@ -273,7 +273,7 @@ public class S3Manager {
         // Upload XML
         String xmlElementName = getElementName(orcid);
         byte[] xmlElement = toXML(record);
-        s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified);
+        s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
     public void uploadActivity(String orcid, String putCode, Activity activity) throws JAXBException, JsonProcessingException {
@@ -281,7 +281,7 @@ public class S3Manager {
         // Upload XML
         String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
         byte[] xmlElement = toXML(activity);
-        s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified);
+        s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
     }
 
     public void uploadOrcidError(String orcid, OrcidError error) throws JAXBException, JsonProcessingException {
@@ -290,7 +290,7 @@ public class S3Manager {
         // Upload XML
         String xmlElementName = getElementName(orcid);
         byte[] xmlElement = toXML(error);
-        s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified);
+        s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
     public Map<ActivityType, Map<String, S3ObjectSummary>> searchActivities(String orcid) {
@@ -309,7 +309,7 @@ public class S3Manager {
         activitiesOnS3.put(ActivityType.PEER_REVIEWS, peerReviews);
 
         String prefix = buildPrefix(orcid);
-        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
             objects = s3MessagingService.listObjects(req);
@@ -339,18 +339,18 @@ public class S3Manager {
 
     public void removeActivity(String orcid, String putCode, ActivityType type) {
         // Delete the XML activity file
-        s3MessagingService.removeElement(getElementName(orcid, putCode, type));
+        s3MessagingService.removeActivity(getElementName(orcid, putCode, type));
     }
 
     public void clearActivities(String orcid) {
         String prefix = orcid.substring(16) + "/activities/" + orcid;
-        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
             objects = s3MessagingService.listObjects(req);
             for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
                 String elementName = objectSummary.getKey();
-                s3MessagingService.removeElement(elementName);
+                s3MessagingService.removeActivity(elementName);
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
@@ -358,18 +358,18 @@ public class S3Manager {
 
     public void clearActivitiesByType(String orcid, ActivityType type) {
         // Clear xml activities
-        removeElements(buildPrefix(orcid, type));
+        removeActivitiesByPrefix(buildPrefix(orcid, type));
     }
     
-    private void removeElements(String prefix) {
-        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+    private void removeActivitiesByPrefix(String prefix) {
+        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
 
         ListObjectsV2Result objects;
         do {
             objects = s3MessagingService.listObjects(req);
             for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
                 String elementName = objectSummary.getKey();
-                s3MessagingService.removeElement(elementName);
+                s3MessagingService.removeActivity(elementName);
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
@@ -388,7 +388,7 @@ public class S3Manager {
     }
 
     private String buildPrefix(String orcid) {
-        return orcid.substring(16) + "/";
+        return orcid.substring(16) + "/" + orcid;
     }
 
     private String buildPrefix(String orcid, ActivityType type) {
