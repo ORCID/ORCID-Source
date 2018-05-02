@@ -389,7 +389,7 @@ public class NotificationController extends BaseController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid value " + newFrequency);
         }        
-        return ResponseEntity.ok("{\"status\":ok}");
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
     }
     
     @RequestMapping(value = "/frequencies/update/adminUpdates", method = RequestMethod.POST)   
@@ -401,7 +401,7 @@ public class NotificationController extends BaseController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid value " + newFrequency);
         }        
-        return ResponseEntity.ok("{\"status\":ok}");
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
     }
     
     @RequestMapping(value = "/frequencies/update/memberUpdates", method = RequestMethod.POST)
@@ -413,7 +413,7 @@ public class NotificationController extends BaseController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid value " + newFrequency);
         }        
-        return ResponseEntity.ok("{\"status\":ok}");
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
     }
     
     @RequestMapping(value = "/frequencies/update/tipsUpdates", method = RequestMethod.POST)    
@@ -424,7 +424,7 @@ public class NotificationController extends BaseController {
         
         String orcid = getCurrentUserOrcid();
         emailFrequencyManager.updateSendQuarterlyTips(orcid, enabled);
-        return ResponseEntity.ok("{\"status\":ok}");
+        return ResponseEntity.ok("{\"status\":" + String.valueOf(enabled) + "}");
     }
     
     private void addSourceDescription(Notification notification) {
