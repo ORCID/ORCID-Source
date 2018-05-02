@@ -10,7 +10,9 @@ ORCID support for content negotiation is similar to that of DOIs - [Documentatio
 
 "Content negotiation refers to mechanisms defined as a part of HTTP that make it possible to serve different versions of a document (or more generally, representations of a resource) at the same URI, so that user agents can specify which version fits their capabilities the best. " - [Wikipedia](https://en.wikipedia.org/wiki/Content_negotiation)
 
-It is defined in [RFC2616, section 12](https://www.w3.org/Protocols/rfc2616/rfc2616-sec12.html).
+It is defined by
+[RFC7231 section 5.3.2](https://tools.ietf.org/html/rfc7231#section-5.3.2) and 
+[RFC7231 section 3.4](https://tools.ietf.org/html/rfc7231#section-3.4)
 
 # Supported content types
 
@@ -18,13 +20,16 @@ ORCID supports the following types:
 
 | Type  | Accept Header | 
 | ------------- | ------------- | 
-| ORCID XML  | application/xml  |
-| ORCID XML  | application/orcid+xml  |
-| ORCID XML  | application/vnd.orcid+xml  |
+| [ORCID XML](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/record-2.1.xsd)  | application/xml  |
+| [ORCID XML](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/record-2.1.xsd)  | application/orcid+xml  |
+| [ORCID XML](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/record-2.1.xsd)  | application/vnd.orcid+xml  |
 | ORCID JSON  | application/json  |
 | ORCID JSON  | application/json  |
 | ORCID JSON  | application/vnd.orcid+json  |
-| Schema.org JSON-LD | application/ld+json |
+| [Schema.org](https://schema.org) [JSON LD](https://json-ld.org/spec/latest/json-ld/) | application/ld+json |
+| [RDF Turtle](https://www.w3.org/TR/turtle/) | text/turtle |
+| [RDF N-Triples](https://www.w3.org/TR/n-triples/) | application/n-triples |
+| [RDF/XML](https://www.w3.org/TR/rdf-syntax-grammar/) | application/rdf+xml |
 
 # Example
 
