@@ -4,8 +4,6 @@
 <html>
 	<head>
 		<title>${subject}</title>
-		<!--  Do not remove -->
-		<script type="text/javascript" src="${assetsUrl}/javascript/iframeResizer.contentWindow.min.js"></script>
 	</head>
 	<body>
 		<div style="padding: 20px; padding-top: 0px;">

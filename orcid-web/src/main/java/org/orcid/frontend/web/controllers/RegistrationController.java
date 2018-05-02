@@ -37,8 +37,8 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -141,7 +141,11 @@ public class RegistrationController extends BaseController {
         reg.getFamilyNames().setRequired(false);
         reg.getGivenNames().setRequired(true);
         reg.getSendChangeNotifications().setValue(true);
-        reg.getSendOrcidNews().setValue(true);
+        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+            reg.getSendOrcidNews().setValue(false);           
+        } else {
+            reg.getSendOrcidNews().setValue(true);            
+        }
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
         reg.getTermsOfUse().setValue(false);   

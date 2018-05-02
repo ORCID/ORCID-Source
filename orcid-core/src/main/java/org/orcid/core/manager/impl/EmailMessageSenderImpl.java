@@ -2,6 +2,7 @@ package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,11 +11,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
@@ -23,6 +28,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -31,11 +37,17 @@ import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitu
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
+import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.DigestEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.collect.Lists;
@@ -49,7 +61,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     private static final String DIGEST_FROM_ADDRESS = "update@notify.orcid.org";
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageSenderImpl.class);
-
+    
+    ExecutorService pool;
+    
     @Resource
     private NotificationDao notificationDao;
 
@@ -88,6 +102,19 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Value("${org.notifications.service_announcements.batchSize:60000}")
+    private Integer batchSize;
+    
+    private static Boolean sendingServiceAnnouncementInProgress = false;
+    
+    public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads) {
+        if(maxThreads == null || maxThreads > 64 || maxThreads < 1) {
+            pool = Executors.newFixedThreadPool(8);
+        } else {
+            pool = Executors.newFixedThreadPool(maxThreads);
+        } 
+    }
     
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
@@ -172,23 +199,39 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         LOGGER.info("About to send email messages");
-        List<Object[]>orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+        
+        List<Object[]> orcidsWithUnsentNotifications = new ArrayList<Object[]>();
+        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+            orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+        } else {
+            orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotificationsLegacy();
+        }
+        
         for (final Object[] element : orcidsWithUnsentNotifications) {
             String orcid = (String) element[0];                        
             try {
-                Float emailFrequencyDays = Float.valueOf((float) element[1]);
-                Date recordActiveDate = (Date) element[2];
+                Float emailFrequencyDays = null;
+                Date recordActiveDate = null;
+                if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+                    recordActiveDate = (Date) element[1];
+                } else {
+                    emailFrequencyDays = Float.valueOf((float) element[1]);
+                    recordActiveDate = (Date) element[2];
+                }
+                    
                 LOGGER.info("Sending messages for orcid: {}", orcid);
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
+                                
+                EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+                if (primaryEmail == null) {
+                    LOGGER.info("No primary email for orcid: " + orcid);
+                    return;
+                }
+                
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
-                    EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
-                    if (primaryEmail == null) {
-                        LOGGER.info("No primary email for orcid: " + orcid);
-                        return;
-                    }
                     digestMessage.setTo(primaryEmail.getId());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
@@ -216,5 +259,82 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
         notificationDao.flush();
     }
+    
+    @Override
+    public void sendServiceAnnouncementsAndTipsMessages() throws InterruptedException {
+        LOGGER.info("About to send Service Announcements messages");
+        if (sendingServiceAnnouncementInProgress) {            
+            LOGGER.warn("Messages are being processed already");
+            return;
+        }
 
+        try {            
+            sendingServiceAnnouncementInProgress = true;
+            Integer doneCount = 0;
+            List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
+            do {         
+                long startTime = System.currentTimeMillis();
+                serviceAnnouncementsOrTips = notificationDaoReadOnly.findUnsentServiceAnnouncementsAndTips(batchSize);
+                Set<Callable<Boolean>> callables = new HashSet<Callable<Boolean>>();
+                for (NotificationEntity n : serviceAnnouncementsOrTips) {
+                    callables.add(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            processServiceAnnouncementNotification(n);
+                            return true;
+                        }
+                        
+                    });
+                }    
+                // Runthem all 
+                pool.invokeAll(callables);
+                doneCount += callables.size();
+                long endTime = System.currentTimeMillis();
+                String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
+                LOGGER.info("DoneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
+            } while (!serviceAnnouncementsOrTips.isEmpty());
+        } finally {
+            sendingServiceAnnouncementInProgress = false;
+        }
+    }     
+    
+    private void processServiceAnnouncementNotification(NotificationEntity n) {
+        String orcid = n.getProfile().getId();
+        EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+        if (primaryEmail == null) {
+            LOGGER.info("No primary email for orcid: " + orcid);
+            return;
+        }
+        try {
+            boolean successfullySent = false;
+            if (n instanceof NotificationServiceAnnouncementEntity) {
+                NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
+                // They might be custom notifications to have the
+                // html/text ready to be sent
+                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                        nc.getBodyHtml());            
+            } else if (n instanceof NotificationTipEntity) {
+                NotificationTipEntity nc = (NotificationTipEntity) n;
+                // They might be custom notifications to have the
+                // html/text ready to be sent
+                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                        nc.getBodyHtml());            
+            }
+            
+            if (successfullySent) {
+                flagAsSent(n.getId());
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Problem sending service announcement message to user: " + orcid, e);
+        }
+    }
+    
+    private void flagAsSent(Long id) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                notificationDao.flagAsSent(Arrays.asList(id));
+            }
+        });        
+    }
 }

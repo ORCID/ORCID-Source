@@ -36,6 +36,21 @@ import javax.persistence.Table;
                 " AND p.profile_deactivation_date IS NULL " +
                 " AND p.primary_record IS NULL " +
                 " AND NOT p.record_locked ORDER BY n.orcid;"),
+    @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE, 
+    query = "SELECT DISTINCT(n.orcid), COALESCE(p.completed_date, p.date_created)" +
+            " FROM notification n, email_frequency f, profile p " +
+            " WHERE n.sent_date IS NULL " +
+            " AND n.orcid = p.orcid " +
+            " AND p.claimed = true " +
+            " AND p.profile_deactivation_date IS NULL " +  
+            " AND p.primary_record IS NULL " +  
+            " AND NOT p.record_locked " +
+            " AND p.orcid = f.orcid " +
+            " AND (" +
+            " (n.notification_type in ('ADMINISTRATIVE', 'CUSTOM') AND f.send_administrative_change_notifications < :never) " + 
+            " OR (n.notification_type = 'AMENDED' AND f.send_change_notifications < :never) " +
+            " OR (n.notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND f.send_member_update_requests < :never)" + 
+            " ) ORDER BY n.orcid;"),
     @NamedNativeQuery(name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
         query = "SELECT * FROM notification " + 
         " WHERE id IN " +
@@ -53,6 +68,8 @@ import javax.persistence.Table;
 abstract public class NotificationEntity extends SourceAwareEntity<Long> implements ProfileAware {
 
     public static final String FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS = "findOrcidsWithUnsentNotifications";
+    
+    public static final String FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE = "findOrcidsWithUnsentNotificationsOnEmailFrequenciesTable";
     
     public static final String FIND_NOTIFICATIONS_TO_SEND_BY_ORCID = "findNotificationsToSendByOrcid";
     

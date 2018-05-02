@@ -111,6 +111,7 @@ public class DBUnitTest {
         dataSet.addTable("group_id_record");
         dataSet.addTable("address");
         dataSet.addTable("invalid_record_data_changes");
+        dataSet.addTable("email_frequency");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);

@@ -1,0 +1,53 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE-EMAIL-FREQUENCY-TABLE" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="email_frequency" />
+			</not>
+		</preConditions>	
+		<createTable tableName="email_frequency">
+			<column name="id" type="VARCHAR(255)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="email_frequency_pkey" />
+			</column>
+			<column name="orcid" type="VARCHAR(255)">
+				<constraints nullable="false" unique="true" uniqueConstraintName="email_frequency_orcid_unique" />
+			</column>			
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="send_administrative_change_notifications" type="real" defaultValueNumeric="7">
+                <constraints nullable="false"/>
+            </column>
+            <column name="send_change_notifications" type="real" defaultValueNumeric="7">
+                <constraints nullable="false"/>
+            </column>
+            <column name="send_member_update_requests" type="real" defaultValueNumeric="7">
+                <constraints nullable="false"/>
+            </column>            
+            <column name="send_quarterly_tips" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>                        
+		</createTable>
+		<addForeignKeyConstraint constraintName="email_frequency_orcid_fk" baseTableName="email_frequency" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+	</changeSet>		
+	
+	<changeSet id="ADD-ORCID-INDEX-ON-EMAIL-FREQUENCY" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="email_frequency_orcid_index" tableName="email_frequency" />
+			</not>
+		</preConditions>
+		<sql>create index email_frequency_orcid_index on email_frequency(orcid);</sql>
+	</changeSet>
+	
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-EMAIL-FREQUENCY" author="Angel Montenegro" dbms="postgresql">
+		<preConditions>
+			<sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+		</preConditions>
+		<sql>GRANT SELECT ON email_frequency to orcidro;</sql>
+	</changeSet>
+	
+</databaseChangeLog>		
