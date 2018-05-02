@@ -1,10 +1,11 @@
 import { Injectable, Pipe, PipeTransform } 
     from '@angular/core';
 
-/*
+import { CommonService }
+    from './../shared/common.service.ts';
+
 import { UrlProtocolPipe }
-    from '../urlProtocolNg2.ts';
-*/
+    from './urlProtocolNg2.ts';
 
 @Pipe({
     name: "affiliationExternalIdentifierHtml"
@@ -13,7 +14,7 @@ import { UrlProtocolPipe }
 @Injectable()
 export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
 
-    constructor( /*private urlProtocol: UrlProtocolPipe*/ ){
+    constructor(private commonService: CommonService){
 
     }
 
@@ -56,9 +57,8 @@ export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
             }
         }
         
- 
         if(link != null) {
-            //link = null;//this.urlProtocol(link);
+            link = this.commonService.addUrlProtocol(link);
             
             if(value != null) {
                 output += "<a href='" + link + "' class='truncate-anchor inline' target='orcid.blank' (mouseenter)='showAffiliationExtIdPopOver(" + putCode + index +")' (mouseleave)='hideAffiliationExtIdPopOver(" + putCode + index +")'>" + value.escapeHtml() + "</a>";
@@ -79,7 +79,6 @@ export class AffiliationExternalIdentifierHtmlPipe implements PipeTransform {
                         </div>\
                   </div>';
         }
-        console.log(output);
         return output;
     }
 }
