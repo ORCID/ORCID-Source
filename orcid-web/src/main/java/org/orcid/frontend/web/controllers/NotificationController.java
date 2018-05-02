@@ -38,6 +38,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -379,9 +380,8 @@ public class NotificationController extends BaseController {
         return emailFrequencyManager.getEmailFrequency(getCurrentUserOrcid());        
     }
     
-    @RequestMapping(value = "/frequencies/update/amendUpdates", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void updateSendChangeNotifications(@RequestBody String newFrequency) {
+    @RequestMapping(value = "/frequencies/update/amendUpdates", method = RequestMethod.POST)    
+    public ResponseEntity<?> updateSendChangeNotifications(@RequestBody String newFrequency) {
         String orcid = getCurrentUserOrcid();
         try {
             SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
@@ -389,11 +389,11 @@ public class NotificationController extends BaseController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid value " + newFrequency);
         }        
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
     }
     
-    @RequestMapping(value = "/frequencies/update/adminUpdates", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void updateSendAdministrativeChangeNotifications(@RequestBody String newFrequency) {
+    @RequestMapping(value = "/frequencies/update/adminUpdates", method = RequestMethod.POST)   
+    public ResponseEntity<?> updateSendAdministrativeChangeNotifications(@RequestBody String newFrequency) {
         String orcid = getCurrentUserOrcid();
         try {
             SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
@@ -401,11 +401,11 @@ public class NotificationController extends BaseController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid value " + newFrequency);
         }        
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
     }
     
     @RequestMapping(value = "/frequencies/update/memberUpdates", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void updateSendMemberUpdateRequests(@RequestBody String newFrequency) {
+    public ResponseEntity<?> updateSendMemberUpdateRequests(@RequestBody String newFrequency) {
         String orcid = getCurrentUserOrcid();
         try {
             SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
@@ -413,17 +413,18 @@ public class NotificationController extends BaseController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid value " + newFrequency);
         }        
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
     }
     
-    @RequestMapping(value = "/frequencies/update/tipsUpdates", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void updateSendQuarterlyTips(@RequestBody Boolean enabled) {
+    @RequestMapping(value = "/frequencies/update/tipsUpdates", method = RequestMethod.POST)    
+    public ResponseEntity<?> updateSendQuarterlyTips(@RequestBody Boolean enabled) {
         if(enabled == null){
             throw new IllegalArgumentException("Invalid value " + enabled);
         }        
         
         String orcid = getCurrentUserOrcid();
         emailFrequencyManager.updateSendQuarterlyTips(orcid, enabled);
+        return ResponseEntity.ok("{\"status\":" + String.valueOf(enabled) + "}");
     }
     
     private void addSourceDescription(Notification notification) {
