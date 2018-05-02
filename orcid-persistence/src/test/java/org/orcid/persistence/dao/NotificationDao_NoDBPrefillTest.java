@@ -191,11 +191,13 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         NotificationEntity sa = new NotificationServiceAnnouncementEntity();
         sa.setProfile(profile);
         sa.setNotificationType("SERVICE_ANNOUNCEMENT");
+        sa.setSendable(true);
         notificationDao.persist(sa);
         
         NotificationEntity tip = new NotificationTipEntity();
         tip.setProfile(profile);
         tip.setNotificationType("TIP");
+        tip.setSendable(true);
         notificationDao.persist(tip);
         
         recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
@@ -214,7 +216,27 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
         recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
         assertEquals(1, recordsWithNotificationsToSend.size());
-        assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());
+        assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());    
     
-    }
+        // Mark a SERVICE_ANNOUNCEMENT as non sendable
+        notificationDao.flagAsNonSendable(orcid, sa.getId());
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        assertEquals(0, recordsWithNotificationsToSend.size());  
+        
+        NotificationEntity sa2 = new NotificationServiceAnnouncementEntity();
+        sa2.setProfile(profile);
+        sa2.setNotificationType("SERVICE_ANNOUNCEMENT");
+        sa2.setSendable(true);
+        notificationDao.persist(sa2);
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        assertEquals(1, recordsWithNotificationsToSend.size());  
+        assertEquals(sa2.getId(), recordsWithNotificationsToSend.get(0).getId());
+        
+        notificationDao.flagAsNonSendable(orcid, sa2.getId());
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        assertEquals(0, recordsWithNotificationsToSend.size());         
+    }        
 }

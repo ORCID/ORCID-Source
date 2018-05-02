@@ -62,6 +62,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private static final String DIGEST_FROM_ADDRESS = "update@notify.orcid.org";
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageSenderImpl.class);
     
+    private final Integer MAX_RETRY_COUNT;
+    
     ExecutorService pool;
     
     @Resource
@@ -108,12 +110,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     private static Boolean sendingServiceAnnouncementInProgress = false;
     
-    public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads) {
-        if(maxThreads == null || maxThreads > 64 || maxThreads < 1) {
+    public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
+            @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
+        if (maxThreads == null || maxThreads > 64 || maxThreads < 1) {
             pool = Executors.newFixedThreadPool(8);
         } else {
             pool = Executors.newFixedThreadPool(maxThreads);
-        } 
+        }
+
+        MAX_RETRY_COUNT = maxRetry;
     }
     
     @Override
@@ -303,6 +308,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
         if (primaryEmail == null) {
             LOGGER.info("No primary email for orcid: " + orcid);
+            flagAsFailed(orcid, n);
             return;
         }
         try {
@@ -323,6 +329,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             
             if (successfullySent) {
                 flagAsSent(n.getId());
+            } else {
+                flagAsFailed(orcid, n);
             }
         } catch (Exception e) {
             LOGGER.warn("Problem sending service announcement message to user: " + orcid, e);
@@ -336,5 +344,22 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 notificationDao.flagAsSent(Arrays.asList(id));
             }
         });        
+    }
+    
+    private void flagAsFailed(String orcid, NotificationEntity n) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                if(n.getRetryCount() == null || n.getRetryCount() >= MAX_RETRY_COUNT) {
+                    notificationDao.flagAsNonSendable(orcid, n.getId());
+                } else {
+                    if(n.getRetryCount() == null) {
+                        notificationDao.updateRetryCount(orcid, n.getId(), 1L);
+                    } else {
+                        notificationDao.updateRetryCount(orcid, n.getId(), (n.getRetryCount() + 1));
+                    }
+                }                
+            }
+        }); 
     }
 }

@@ -18,13 +18,13 @@
 			</column>			
 			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
 			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
-			<column name="send_administrative_change_notifications" type="real" defaultValueNumeric="7">
+			<column name="send_administrative_change_notifications" type="float" defaultValueNumeric="7.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="send_change_notifications" type="real" defaultValueNumeric="7">
+            <column name="send_change_notifications" type="float" defaultValueNumeric="7.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="send_member_update_requests" type="real" defaultValueNumeric="7">
+            <column name="send_member_update_requests" type="float" defaultValueNumeric="7.0">
                 <constraints nullable="false"/>
             </column>            
             <column name="send_quarterly_tips" type="boolean" defaultValueBoolean="true">
