@@ -63,15 +63,14 @@
 
     <cache:annotation-driven cache-manager="springWebCacheManager"/>
 
-	<bean id="webCacheManager"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-		<property name="configLocation" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />
-		<property name="shared" value="true" />
-		<property name="cacheManagerName" value="webCacheManager" />
-	</bean>
+	<bean id="webCacheManager" class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean" />
 
-    <bean id="springWebCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="webCacheManager"/>
+    <bean id="springWebCacheManager" class="org.springframework.cache.jcache.JCacheCacheManager">
+	    <property name="cacheManager">
+	        <bean class="org.springframework.cache.jcache.JCacheManagerFactoryBean">
+	            <property name="cacheManagerUri" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />
+	        </bean>
+        </property>
     </bean>
 
 	<bean id="localeChangeInterceptor"
