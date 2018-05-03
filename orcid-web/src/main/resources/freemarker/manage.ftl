@@ -58,27 +58,16 @@
                     <th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
                     <td><a href="" id="" ng-click="toggleLanguageEdit()" ng-bind="languageToggleText"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                 <tr ng-show="showEditLanguage" ng-cloak>
-                    <td>
-                        
-                        <language-ng2></language-ng2>
-                    </td>
-                </tr>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="languageCtrl" ng-show="showEditLanguage" ng-cloak>                                
-                    <td colspan="2">
+                    <td  colspan="2">
                         <p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
                         <div class="row">
-                            <div class="col-md-12" ng-include="'edit-language'">
-                                
-                            </div>                          
-                            
-                        </div>                      
+                            <div class="col-md-12">
+                                <language-ng2></language-ng2>
+                            </div>
+                        </div>
                     </td>
                 </tr>
-                </@orcid.checkFeatureStatus>
                 <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS' enabled=false>
                     <!-- Notifications-->
                     <tr>
@@ -991,7 +980,5 @@
        <a href="" ng-click="closeModal()"><@spring.message "freemarker.btncancel"/></a>
     </div>
 </script>
-
-<language-ng2></language-ng2>
 
 </@protected>
