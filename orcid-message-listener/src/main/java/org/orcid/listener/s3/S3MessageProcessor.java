@@ -66,10 +66,7 @@ public class S3MessageProcessor {
     @Resource
     private S3Manager s3Manager;
     @Resource
-    private ExceptionHandler exceptionHandler;
-    @Resource
-    private RecordStatusManager recordStatusManager;
-    
+    private RecordStatusManager recordStatusManager;    
     @Resource
     private ActivitiesStatusManager activitiesStatusManager;
 
@@ -110,7 +107,7 @@ public class S3MessageProcessor {
             }
         } catch (AmazonClientException e) {
             LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-            recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+            recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
             throw e;
         } catch (Exception e) {
             // something else went wrong fetching record from ORCID and
@@ -278,8 +275,7 @@ public class S3MessageProcessor {
         } catch (Exception e) {
             LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid);
             // Mark collection as failed
-            activitiesStatusManager.markAsFailed(orcid, type);
-            throw new RuntimeException(e);
+            activitiesStatusManager.markAsFailed(orcid, type);            
         }
 
     }
