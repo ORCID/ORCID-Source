@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -30,21 +29,13 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
 
     private String cacheName;
 
-    private int maxElementsInMemory = 10000;
+    private int maxElementsInMemory = 100;
 
-    private int timeToLiveSeconds = 120;
+    private int timeToIdleSeconds = 60;
 
-    private int timeToIdleSeconds = 120;
+    private long maxMegaBytesOnDisk = 0;
 
-    private int maxElementsOnDisk = 0;
-
-    private String maxBytesLocalDisk = "5368709120";
-
-    private boolean copyOnRead = true;
-
-    private boolean copyOnWrite = true;
-
-    private String strategy = "NONE";
+    private boolean copyValues = true;
 
     private CacheLoaderWriter<Object, Serializable> cacheLoaderWriter;
 
@@ -74,14 +65,6 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
         this.maxElementsInMemory = maxElementsInMemory;
     }
 
-    public int getTimeToLiveSeconds() {
-        return timeToLiveSeconds;
-    }
-
-    public void setTimeToLiveSeconds(int timeToLiveSeconds) {
-        this.timeToLiveSeconds = timeToLiveSeconds;
-    }
-
     public int getTimeToIdleSeconds() {
         return timeToIdleSeconds;
     }
@@ -90,44 +73,20 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
         this.timeToIdleSeconds = timeToIdleSeconds;
     }
 
-    public String getStrategy() {
-        return strategy;
+    public long getMaxMegaBytesOnDisk() {
+        return maxMegaBytesOnDisk;
     }
 
-    public void setStrategy(String strategy) {
-        this.strategy = strategy;
+    public void setMaxMegaBytesOnDisk(long maxMegaBytesOnDisk) {
+        this.maxMegaBytesOnDisk = maxMegaBytesOnDisk;
     }
 
-    public int getMaxElementsOnDisk() {
-        return maxElementsOnDisk;
+    public boolean isCopyValues() {
+        return copyValues;
     }
 
-    public void setMaxElementsOnDisk(int maxElementsOnDisk) {
-        this.maxElementsOnDisk = maxElementsOnDisk;
-    }
-
-    public String getMaxBytesLocalDisk() {
-        return maxBytesLocalDisk;
-    }
-
-    public void setMaxBytesLocalDisk(String maxBytesLocalDisk) {
-        this.maxBytesLocalDisk = maxBytesLocalDisk;
-    }
-
-    public boolean isCopyOnRead() {
-        return copyOnRead;
-    }
-
-    public void setCopyOnRead(boolean copyOnRead) {
-        this.copyOnRead = copyOnRead;
-    }
-
-    public boolean isCopyOnWrite() {
-        return copyOnWrite;
-    }
-
-    public void setCopyOnWrite(boolean copyOnWrite) {
-        this.copyOnWrite = copyOnWrite;
+    public void setCopyValues(boolean copyValues) {
+        this.copyValues = copyValues;
     }
 
     public void setCacheLoaderWriter(CacheLoaderWriter<Object, Serializable> cacheLoaderWriter) {
@@ -154,13 +113,13 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
         Cache<?, ?> existingCache = cacheManager.getCache(cacheName, Object.class, Serializable.class);
         if (existingCache == null) {
             ResourcePoolsBuilder resourcePoolsBuilder = ResourcePoolsBuilder.heap(this.maxElementsInMemory);
-            if (StringUtils.isNotBlank(this.maxBytesLocalDisk)) {
-                resourcePoolsBuilder.disk(Long.valueOf(this.maxBytesLocalDisk).longValue(), MemoryUnit.B);
+            if (this.maxMegaBytesOnDisk > 0) {
+                resourcePoolsBuilder.disk(this.maxMegaBytesOnDisk, MemoryUnit.MB);
             }
             CacheConfigurationBuilder<Object, Serializable> cacheConfigurationBuilder = CacheConfigurationBuilder
                     .newCacheConfigurationBuilder(Object.class, Serializable.class, resourcePoolsBuilder)
-                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(this.timeToLiveSeconds, ChronoUnit.SECONDS)));
-            if (this.copyOnRead || this.copyOnWrite) {
+                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(this.timeToIdleSeconds, ChronoUnit.SECONDS)));
+            if (this.copyValues) {
                 cacheConfigurationBuilder = cacheConfigurationBuilder.withValueSerializingCopier();
             }
             if (this.cacheLoaderWriter != null) {
