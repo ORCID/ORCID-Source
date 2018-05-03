@@ -1013,29 +1013,22 @@
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
 	<bean id="coreCacheManager"
-		class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean">
-		<property name="configLocation" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />
-		<property name="shared" value="true" />
-		<property name="cacheManagerName" value="coreCacheManager" />
+		class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean" >
 	</bean>
 	
-	<!-- Exposing cache statistics through JMX. -->
-    <bean class="org.orcid.core.utils.OrcidEhcacheManagementService" init-method="init">
-        <constructor-arg ref="coreCacheManager"/>
-        <constructor-arg ref="mbeanServer"/>
-        <constructor-arg value="true"/>
-        <constructor-arg value="true"/>
-        <constructor-arg value="true"/>
-        <constructor-arg value="true"/>
-    </bean>   
+	<bean id="springCoreCacheManager" class="org.springframework.cache.jcache.JCacheCacheManager">
+	    <property name="cacheManager">
+	        <bean class="org.springframework.cache.jcache.JCacheManagerFactoryBean">
+	            <property name="cacheManagerUri" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />
+	        </bean>
+        </property>
+    </bean>
 	
-	<bean id="springCoreCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-		<property name="cacheManager" ref="coreCacheManager" />
-	</bean>
-	
-	<bean id="recentOrcidCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+	<bean id="recentOrcidCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="recent-orcid" />
 		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToLiveSeconds" value="60" />
+		<property name="maxElementsInMemory" value="20000" />
 	</bean>
 	
 	<bean id="profileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -1177,7 +1170,7 @@
         <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-        <property name="cacheEntryFactory">
+        <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.MembersListCacheEntryFactory" />
         </property>
     </bean>
@@ -1191,7 +1184,7 @@
         <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-        <property name="cacheEntryFactory">
+        <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.MemberCacheEntryFactory" />
         </property>
     </bean>
@@ -1205,7 +1198,7 @@
         <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="true" />
         <property name="copyOnWrite" value="true" />
-        <property name="cacheEntryFactory">
+        <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.MemberDetailsCacheEntryFactory" />
         </property>
     </bean>
@@ -1219,7 +1212,7 @@
         <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-        <property name="cacheEntryFactory">
+        <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.ConsortiaListCacheEntryFactory" />
         </property>
     </bean>
@@ -1233,7 +1226,7 @@
         <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-        <property name="cacheEntryFactory">
+        <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.ConsortiumCacheEntryFactory" />
         </property>
     </bean>
@@ -1247,12 +1240,12 @@
         <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-        <property name="cacheEntryFactory">
+        <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.ContactsCacheEntryFactory" />
         </property>
     </bean>
     
-    <bean id="salesForceConnectionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <bean id="salesForceConnectionCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="sales-force-connection" />
 		<property name="cacheManager" ref="coreCacheManager" />
 	</bean>
@@ -1266,7 +1259,7 @@
         <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-        <property name="cacheEntryFactory">
+        <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.manager.impl.IdentityProviderNameCacheEntryFactory" />
         </property>
     </bean>
@@ -1280,7 +1273,7 @@
         <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-        <property name="cacheEntryFactory">
+        <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.manager.impl.DoiBibtexCacheEntryFactory" />
         </property>
     </bean>
@@ -1598,8 +1591,6 @@
 	
 	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		
-	<bean id="orcidCacheEvictionUtil" class="org.orcid.core.utils.OrcidCacheEvictionUtil" />
-	
 	<bean id="worksCacheManager" class="org.orcid.core.manager.v3.impl.WorksCacheManagerImpl" />
 	
 	<bean id="groupedWorksGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">

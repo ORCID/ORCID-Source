@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ehcache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -26,20 +27,21 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
+import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactPermission;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
+import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.test.TargetProxyHelper;
-
-import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 /**
  * 
@@ -62,19 +64,19 @@ public class SalesForceManagerImplTest {
     private SalesForceConnectionDao salesForceConnectionDao;
 
     @Mock
-    private SelfPopulatingCache salesForceMembersListCache;
+    private Cache<String, List<Member>> salesForceMembersListCache;
 
     @Mock
-    private SelfPopulatingCache salesForceMemberDetailsCache;
+    private Cache<MemberDetailsCacheKey, MemberDetails> salesForceMemberDetailsCache;
+    
+    @Mock
+    private Cache<String, List<Member>> salesForceConsortiaListCache;
 
     @Mock
-    private SelfPopulatingCache salesForceConsortiaListCache;
+    private Cache<String, Consortium> salesForceConsortiumCache;
 
     @Mock
-    private SelfPopulatingCache salesForceConsortiumCache;
-
-    @Mock
-    private SelfPopulatingCache salesForceContactsCache;
+    private Cache<String, List<Contact>> salesForceContactsCache;
 
     @Mock
     private EmailManager emailManager;

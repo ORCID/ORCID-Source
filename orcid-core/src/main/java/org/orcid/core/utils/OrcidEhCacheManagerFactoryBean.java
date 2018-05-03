@@ -1,27 +1,47 @@
 package org.orcid.core.utils;
 
+import java.io.File;
+
+import javax.annotation.Resource;
+
+import org.ehcache.PersistentCacheManager;
+import org.ehcache.config.builders.CacheManagerBuilder;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.beans.factory.FactoryBean;
 
-import net.sf.ehcache.hibernate.management.impl.EhcacheHibernateMbeanNames;
+public class OrcidEhCacheManagerFactoryBean implements FactoryBean<PersistentCacheManager> {
 
-public class OrcidEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean {
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidEhCacheManagerFactoryBean.class);
 
-    /**
-     * Set the custom name of the EhCache CacheManager
-     * 
-     * @param cacheManagerName
-     *          The given name
-     */
-    @Override
-    public void setCacheManagerName(String cacheManagerName) {
-        int hashCode = OrcidEhcacheManagementService.class.getClassLoader().hashCode();
-        String suffix = "_" + hashCode;
-        String safeCacheManagerName = EhcacheHibernateMbeanNames.mbeanSafe(cacheManagerName + suffix);
-        LOGGER.info("Cache manager name = {}", safeCacheManagerName);  
-        super.setCacheManagerName(safeCacheManagerName);
+    private static PersistentCacheManager persistentCacheManager;
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+
+    private String getStoragePath() {
+        return System.getProperty("java.io.tmpdir") + "ehcache" + File.separator + orcidUrlManager.getAppName() + File.separator + "programmatic";
     }
+
+    @Override
+    public PersistentCacheManager getObject() throws Exception {
+        if (persistentCacheManager == null) {
+            String storagePath = getStoragePath();
+            LOGGER.info("Cache manager dir: {}", storagePath);
+            persistentCacheManager = CacheManagerBuilder.newCacheManagerBuilder().with(CacheManagerBuilder.persistence(storagePath)).build(true);
+        }
+        return persistentCacheManager;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return PersistentCacheManager.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
 }

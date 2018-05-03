@@ -2,6 +2,7 @@ package org.orcid.core.manager.impl;
 
 import javax.annotation.Resource;
 
+import org.ehcache.Cache;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -9,12 +10,10 @@ import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.sf.ehcache.Cache;
-
 public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager {
 
     @Resource(name = "profileEntityCache")
-    private Cache profileCache;
+    private Cache<?, ?> profileCache;
     
     @Resource(name = "profileEntityGenericCacheManager")
     private GenericCacheManager<OrcidString, ProfileEntity> profileEntityGenericCacheManager;
@@ -37,7 +36,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
 
     @Override
     public void removeAll() {
-        profileCache.removeAll();
+        profileCache.clear();;
     }
 
     @Override

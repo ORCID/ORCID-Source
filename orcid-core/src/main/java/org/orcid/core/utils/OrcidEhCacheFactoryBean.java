@@ -1,13 +1,17 @@
 package org.orcid.core.utils;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.PersistenceConfiguration;
-import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
-import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
+import java.io.Serializable;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
+import org.apache.commons.lang3.StringUtils;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.MemoryUnit;
+import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -18,7 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Will Simpson
  * 
  */
-public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, InitializingBean {
+public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidEhCacheFactoryBean.class);
 
@@ -34,7 +38,7 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
 
     private int maxElementsOnDisk = 0;
 
-    private String maxBytesLocalDisk = "5g";
+    private String maxBytesLocalDisk = "5368709120";
 
     private boolean copyOnRead = true;
 
@@ -42,9 +46,9 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
 
     private String strategy = "NONE";
 
-    private CacheEntryFactory cacheEntryFactory;
+    private CacheLoaderWriter<Object, Serializable> cacheLoaderWriter;
 
-    private Ehcache cache;
+    private Cache<?, ?> cache;
 
     public CacheManager getCacheManager() {
         return cacheManager;
@@ -126,22 +130,18 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         this.copyOnWrite = copyOnWrite;
     }
 
-    public CacheEntryFactory getCacheEntryFactory() {
-        return cacheEntryFactory;
-    }
-
-    public void setCacheEntryFactory(CacheEntryFactory cacheEntryFactory) {
-        this.cacheEntryFactory = cacheEntryFactory;
+    public void setCacheLoaderWriter(CacheLoaderWriter<Object, Serializable> cacheLoaderWriter) {
+        this.cacheLoaderWriter = cacheLoaderWriter;
     }
 
     @Override
-    public Ehcache getObject() {
+    public Cache<?, ?> getObject() {
         return this.cache;
     }
 
     @Override
-    public Class<? extends Ehcache> getObjectType() {
-        return (this.cache != null ? this.cache.getClass() : Ehcache.class);
+    public Class<?> getObjectType() {
+        return (this.cache != null ? this.cache.getClass() : Cache.class);
     }
 
     @Override
@@ -151,34 +151,25 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Ehcache existingCache = cacheManager.getEhcache(cacheName);
-        String diskStorePath = cacheManager.getConfiguration().getDiskStoreConfiguration().getPath();
-        LOGGER.debug("Cache manager disk store path = " + diskStorePath);
+        Cache<?, ?> existingCache = cacheManager.getCache(cacheName, Object.class, Serializable.class);
         if (existingCache == null) {
-            CacheConfiguration config = createConfig();
-            if (cacheEntryFactory != null) {
-                this.cache = new SelfPopulatingCache(new Cache(config), cacheEntryFactory);
-            } else {
-                this.cache = new Cache(config);
+            ResourcePoolsBuilder resourcePoolsBuilder = ResourcePoolsBuilder.heap(this.maxElementsInMemory);
+            if (StringUtils.isNotBlank(this.maxBytesLocalDisk)) {
+                resourcePoolsBuilder.disk(Long.valueOf(this.maxBytesLocalDisk).longValue(), MemoryUnit.B);
             }
-            cacheManager.addCache(this.cache);
+            CacheConfigurationBuilder<Object, Serializable> cacheConfigurationBuilder = CacheConfigurationBuilder
+                    .newCacheConfigurationBuilder(Object.class, Serializable.class, resourcePoolsBuilder)
+                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(this.timeToLiveSeconds, ChronoUnit.SECONDS)));
+            if (this.copyOnRead || this.copyOnWrite) {
+                cacheConfigurationBuilder = cacheConfigurationBuilder.withValueSerializingCopier();
+            }
+            if (this.cacheLoaderWriter != null) {
+                cacheConfigurationBuilder = cacheConfigurationBuilder.withLoaderWriter(this.cacheLoaderWriter);
+            }
+            this.cache = cacheManager.createCache(cacheName, cacheConfigurationBuilder.build());
         } else {
             this.cache = existingCache;
         }
-    }
-
-    private CacheConfiguration createConfig() {
-        CacheConfiguration config = new CacheConfiguration();
-        config.setName(this.cacheName);
-        config.setMaxEntriesLocalHeap(this.maxElementsInMemory);
-        config.setMaxElementsOnDisk(this.maxElementsOnDisk);
-        config.setMaxBytesLocalDisk(this.maxBytesLocalDisk);
-        config.setTimeToLiveSeconds(this.timeToLiveSeconds);
-        config.setTimeToIdleSeconds(this.timeToIdleSeconds);
-        config.setCopyOnRead(this.copyOnRead);
-        config.setCopyOnWrite(this.copyOnWrite);
-        config.persistence(new PersistenceConfiguration().strategy(this.strategy));
-        return config;
     }
 
 }
