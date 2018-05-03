@@ -50,8 +50,8 @@ import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
@@ -246,7 +246,15 @@ public class BaseController {
     public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (SendEmailFrequency freq : SendEmailFrequency.values()) {
-            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
+            if(freq.equals(SendEmailFrequency.NEVER)) {
+                if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+                    map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
+                } else{
+                    map.put(String.valueOf(freq.value()), getMessage("org.orcid.persistence.constants.SendEmailFrequency.NEVER_LEGACY"));
+                }
+            } else {
+                map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
+            }            
         }
         return map;
     }

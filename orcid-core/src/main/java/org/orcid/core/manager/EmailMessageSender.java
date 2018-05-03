@@ -13,6 +13,8 @@ public interface EmailMessageSender {
 
     EmailMessage createDigest(String orcid, Collection<Notification> notifications);        
 
+    void sendServiceAnnouncementsAndTipsMessages() throws InterruptedException;
+    
     void sendEmailMessages();
 
 }

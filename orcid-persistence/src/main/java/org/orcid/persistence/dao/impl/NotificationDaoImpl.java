@@ -3,12 +3,15 @@ package org.orcid.persistence.dao.impl;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -19,6 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long> implements NotificationDao {
 
     private static final String NOTIFICATION_TYPE_PERMISSION = "PERMISSION";
+    
+    @Autowired
+    @Qualifier("notification_queries")
+    private Properties notificationQueries;
     
     public NotificationDaoImpl() {
         super(NotificationEntity.class);
@@ -141,21 +148,40 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @SuppressWarnings("unchecked")
     @Override
     public List<Object[]> findRecordsWithUnsentNotifications() {
+        Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE);
+        query.setParameter("never", Float.MAX_VALUE);               
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Object[]> findRecordsWithUnsentNotificationsLegacy() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS);
         query.setParameter("never", Float.MAX_VALUE);
         return query.getResultList();
-    }
+    }            
 
     @Override
-    public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
+    public List<NotificationEntity> findNotificationsToSendLegacy(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
         TypedQuery<NotificationEntity> query = entityManager.createNamedQuery(NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID, NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("effective_date", effectiveDate);
         query.setParameter("record_email_frequency", emailFrequency);
         query.setParameter("record_active_date", recordActiveDate);
+        return query.getResultList();        
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Date recordActiveDate) {
+        String unsentNotificationsQuery = notificationQueries.getProperty("notifications.unsent");
+        Query query = entityManager.createNativeQuery(unsentNotificationsQuery, NotificationEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("effective_date", effectiveDate);
+        query.setParameter("record_active_date", recordActiveDate);
         return query.getResultList();
     }
-
+        
     @Override
     @Transactional
     public int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize) {
@@ -178,6 +204,32 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("createdBefore", createdBefore);
         query.setMaxResults(batchSize);
         return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<NotificationEntity> findUnsentServiceAnnouncementsAndTips(int batchSize) {
+        Query query = entityManager.createNativeQuery("select n.* from notification n, email_frequency ef where n.sent_date is NULL AND n.sendable != false AND n.orcid = ef.orcid AND ((n.notification_type = 'SERVICE_ANNOUNCEMENT') OR (n.notification_type = 'TIP' AND ef.send_quarterly_tips IS true))", NotificationEntity.class);
+        query.setMaxResults(batchSize);
+        return query.getResultList();
+    }
+
+    @Override
+    public void flagAsNonSendable(String orcid, Long id) {
+        Query query = entityManager.createQuery("update NotificationEntity set sendable=false where orcid = :orcid and id = :id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
+    
+    
+    @Override
+    public void updateRetryCount(String orcid, Long id, Long retryCount) {
+        Query query = entityManager.createQuery("update NotificationEntity set retryCount = :count where orcid = :orcid and id = :id");
+        query.setParameter("count", retryCount);
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        query.executeUpdate();
     }
 
 }

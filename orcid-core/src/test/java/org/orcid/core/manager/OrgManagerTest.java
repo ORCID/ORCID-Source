@@ -15,6 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -87,7 +88,7 @@ public class OrgManagerTest extends BaseTest {
         assertEquals(inputOrg.getCountry(), resultOrg.getCountry());
         assertEquals(1, resultOrg.getId().longValue());
     }
-
+    
     @Test
     @Transactional
     public void testCreateUpdateWhenDoesNotAlreadyExists() {

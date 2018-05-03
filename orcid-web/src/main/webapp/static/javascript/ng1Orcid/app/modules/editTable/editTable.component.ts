@@ -52,6 +52,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     twoFAToggleText: string;
     showEditGetMyData: boolean;
     getMyDataToggleText: string;
+    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
     
     constructor(
             private featuresService: FeaturesService,

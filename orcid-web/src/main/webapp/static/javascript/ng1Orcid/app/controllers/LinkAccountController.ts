@@ -29,12 +29,6 @@ export const LinkAccountController = angular.module('orcidApp').controller(
                 }
             });
 
-            $scope.linkAccount = function(idp, linkType) {
-                var eventAction = linkType === 'shibboleth' ? 'Sign-In-Link-Federated' : 'Sign-In-Link-Social';
-                orcidGA.gaPush(['send', 'event', 'Sign-In-Link', eventAction, idp]);
-                return false;
-            };
-
             $scope.loadRequestInfoForm = function() {
                 $.ajax({
                     url: getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json',
