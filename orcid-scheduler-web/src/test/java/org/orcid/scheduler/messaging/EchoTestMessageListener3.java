@@ -1,4 +1,4 @@
-package org.orcid.scheduler.web.messaging;
+package org.orcid.scheduler.messaging;
 
 import javax.annotation.Resource;
 

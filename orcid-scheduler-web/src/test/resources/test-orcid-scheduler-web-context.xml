@@ -12,22 +12,6 @@
 		location="classpath:${org.orcid.persistence.properties}"
 		ignore-resource-not-found="true" />
 
-	<bean id="solrDao" class="org.orcid.persistence.dao.impl.SolrDaoImpl" />
-	
-	<bean id="orgDisambiguatedSolrDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedSolrDaoImpl" />
-
-	<bean id="solrServer" class="org.orcid.persistence.dao.EmbeddedSolrFactory"
-		factory-method="createInstance">
-	</bean>
-	<bean id="orgDisambiguatedSolrServer" class="org.orcid.persistence.dao.EmbeddedSolrFactory"
-		factory-method="createInstance">
-		<constructor-arg value="org"/>
-	</bean>
-	
-	<alias name="solrServer" alias="solrServerReadOnly"/>
-	<alias name="solrServer" alias="solrServerForStreaming"/>
-	<alias name="orgDisambiguatedSolrServer" alias="orgDisambiguatedSolrServerReadOnly"/>
-
 	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
 	<jms:annotation-driven/>
@@ -61,7 +45,7 @@
 		<property name="enabled" value="true"/>
 	</bean>
 	
-	<bean id="echo2" class="org.orcid.scheduler.web.messaging.EchoTestMessageListener2"/>
-	<bean id="echo3" class="org.orcid.scheduler.web.messaging.EchoTestMessageListener3"/>
+	<bean id="echo2" class="org.orcid.scheduler.messaging.EchoTestMessageListener2"/>
+	<bean id="echo3" class="org.orcid.scheduler.messaging.EchoTestMessageListener3"/>
 
 </beans>
