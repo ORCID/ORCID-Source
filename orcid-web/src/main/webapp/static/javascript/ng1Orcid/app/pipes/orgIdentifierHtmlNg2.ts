@@ -8,6 +8,9 @@ import { Injectable, Pipe, PipeTransform }
 @Injectable()
 export class OrgIdentifierHtmlPipe implements PipeTransform {
     transform(value: any, type: any, putCode: any): any {
+        console.log(value);
+        console.log(type);
+        console.log(putCode);
         var GRID_BASE_URL = "https://www.grid.ac/institutes/";
         var TEST_BASE_URL = "https://orcid.org/";
         var link = null;
@@ -39,24 +42,10 @@ export class OrgIdentifierHtmlPipe implements PipeTransform {
         
         if(link != null) {
             if(value != null) {
-                output += '<a href=' + link + " class='truncate-anchor' target='orcid.blank' ng-mouseenter='showURLPopOver(" + putCode + ")' ng-mouseleave='hideURLPopOver(" + putCode + ")'>" + value.escapeHtml() + "</a>";
+                output += '<a href=' + link + " class='truncate-anchor' target='orcid.blank'>" + value.escapeHtml() + "</a>";
             }
         } else if(value != null) {
             output = output + ' ' + value.escapeHtml();
-        }
-        
-        if( link != null ) {            
-            output += '<div class="popover-pos">\
-                        <div class="popover-help-container">\
-                            <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[' + putCode + '] == true}">\
-                                <div class="arrow"></div>\
-                                <div class="popover-content">\
-                                    <a href="'+link+'" target="orcid.blank" class="ng-binding">'+link.escapeHtml()+'</a>\
-                                </div>\
-                            </div>\
-                        </div>\
-                        </div>\
-                  </div>';
         }
         
         return output;

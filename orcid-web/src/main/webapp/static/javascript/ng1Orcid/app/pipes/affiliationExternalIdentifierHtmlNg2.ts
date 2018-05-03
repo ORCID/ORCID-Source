@@ -4,9 +4,6 @@ import { Injectable, Pipe, PipeTransform }
 import { CommonService }
     from './../shared/common.service.ts';
 
-import { UrlProtocolPipe }
-    from './urlProtocolNg2.ts';
-
 @Pipe({
     name: "affiliationExternalIdentifierHtml"
 })
