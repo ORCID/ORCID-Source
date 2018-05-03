@@ -520,9 +520,6 @@
 	
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 	  <property name="connectionFactory" ref="jmsConnectionFactory" />
-	  
-	  <!-- set to topics rather than queues -->
-	  <property name="pubSubDomain" value="true"/>
 	</bean>
 	
 	<bean id="jmsMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">

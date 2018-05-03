@@ -10,7 +10,7 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid12APIClient;
-import org.orcid.listener.orcid.Orcid20APIClient;
+import org.orcid.listener.orcid.Orcid20Manager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.listener.BaseMessage;
@@ -52,7 +52,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
     @Resource
     private Orcid12APIClient orcid12ApiClient;
     @Resource
-    private Orcid20APIClient orcid20ApiClient;
+    private Orcid20Manager orcid20ApiClient;
     @Resource
     private S3Manager s3Manager;
     @Resource

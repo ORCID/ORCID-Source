@@ -44,13 +44,23 @@
 		<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL}" />
 	</bean>
 	
-	<bean id="reindexListener" class="org.orcid.listener.ReIndexListener" />
+	<!-- message processors -->
+	<bean id="solrMessageProcessor" class="org.orcid.listener.solr.SolrMessageProcessor"/>
 	
-    <bean id="updatedOrcidListener" class="org.orcid.listener.UpdatedOrcidListener" />
+	
+	<!-- message listeners -->
+    <bean id="reindexSOLRListener" class="org.orcid.listener.BaseListener">
+        <constructor-arg ref="solrMessageProcessor" />
+    </bean>
+    
+    <bean id="updateSOLRListener" class="org.orcid.listener.BaseListener">
+		<constructor-arg ref="solrMessageProcessor" />
+    </bean>
 
-	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="topic">
-	       <jms:listener ref="reindexListener" destination="${org.orcid.persistence.messaging.topic.reindex}" subscription="${org.orcid.message-listener.subscription.reindex}" concurrency="1" />
-	       <jms:listener ref="updatedOrcidListener" destination="${org.orcid.persistence.messaging.topic.updateOrcids}" subscription="${org.orcid.message-listener.subscription.updatedOrcids}" concurrency="1" />
+	<!-- listener container (routing info) -->
+	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="queue">
+	       <jms:listener ref="reindexSOLRListener" destination="${org.orcid.persistence.messaging.reindex.solr}" subscription="${org.orcid.persistence.messaging.reindex.solr}" concurrency="1" />
+	       <jms:listener ref="updateSOLRListener" destination="${org.orcid.persistence.messaging.updated.solr}" subscription="${org.orcid.persistence.messaging.updated.solr}" concurrency="1" />
 	</jms:listener-container>
 	
     <!-- Jersey client -->
