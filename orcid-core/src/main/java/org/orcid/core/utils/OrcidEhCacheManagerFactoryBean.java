@@ -21,7 +21,11 @@ public class OrcidEhCacheManagerFactoryBean implements FactoryBean<PersistentCac
     private OrcidUrlManager orcidUrlManager;
 
     private String getStoragePath() {
-        return System.getProperty("java.io.tmpdir") + "ehcache" + File.separator + orcidUrlManager.getAppName() + File.separator + "programmatic";
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        if (!tmpDir.endsWith(File.separator)) {
+            tmpDir += File.separator;
+        }
+        return tmpDir + "ehcache" + File.separator + orcidUrlManager.getAppName() + File.separator + "programmatic";
     }
 
     @Override
