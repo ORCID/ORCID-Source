@@ -188,6 +188,7 @@
             <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
             <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
             <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
+            <#include "/includes/ng2_templates/activities-external-identifier-ng2-template.ftl">
         </#if>
     </@orcid.checkFeatureStatus> 
     
