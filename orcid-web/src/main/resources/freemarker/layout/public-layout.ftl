@@ -103,8 +103,6 @@
     <form action="<@orcid.rootPath '/'/>">
         <input id="imageUrl" type="hidden" value="${staticCdn}/images">
     </form>
-
-    <language-ng2></language-ng2>
 </#if>
 
 </@base>
