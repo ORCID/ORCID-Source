@@ -46,8 +46,9 @@
 	
 	<!-- message processors -->
 	<bean id="solrMessageProcessor" class="org.orcid.listener.solr.SolrMessageProcessor"/>
-	
-	
+	<bean id="s3ActivitiesConsumer" class="org.orcid.listener.s3.S3ActivitiesConsumer"/>
+	<bean id="s3SummaryConsumer" class="org.orcid.listener.s3.S3SummaryConsumer"/>
+		
 	<!-- message listeners -->
     <bean id="reindexSOLRListener" class="org.orcid.listener.BaseListener">
         <constructor-arg ref="solrMessageProcessor" />
@@ -57,10 +58,30 @@
 		<constructor-arg ref="solrMessageProcessor" />
     </bean>
 
+    <bean id="reindexSummaryListener" class="org.orcid.listener.BaseListener">
+        <constructor-arg ref="s3SummaryConsumer" />
+    </bean>
+    
+    <bean id="updateSummaryListener" class="org.orcid.listener.BaseListener">
+		<constructor-arg ref="s3SummaryConsumer" />
+    </bean>
+    
+    <bean id="reindexActivitiesListener" class="org.orcid.listener.BaseListener">
+        <constructor-arg ref="s3ActivitiesConsumer" />
+    </bean>
+    
+    <bean id="updateActivitiesListener" class="org.orcid.listener.BaseListener">
+		<constructor-arg ref="s3ActivitiesConsumer" />
+    </bean>
+
 	<!-- listener container (routing info) -->
 	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="queue">
 	       <jms:listener ref="reindexSOLRListener" destination="${org.orcid.persistence.messaging.reindex.solr}" subscription="${org.orcid.persistence.messaging.reindex.solr}" concurrency="1" />
 	       <jms:listener ref="updateSOLRListener" destination="${org.orcid.persistence.messaging.updated.solr}" subscription="${org.orcid.persistence.messaging.updated.solr}" concurrency="1" />
+	       <jms:listener ref="reindexSummaryListener" destination="${org.orcid.persistence.messaging.reindex.summary}" subscription="${org.orcid.persistence.messaging.reindex.summary}" concurrency="1" />
+	       <jms:listener ref="updateSummaryListener" destination="${org.orcid.persistence.messaging.updated.summary}" subscription="${org.orcid.persistence.messaging.updated.summary}" concurrency="1" />
+	       <jms:listener ref="reindexActivitiesListener" destination="${org.orcid.persistence.messaging.reindex.activity}" subscription="${org.orcid.persistence.messaging.reindex.activity}" concurrency="1" />
+	       <jms:listener ref="updateActivitiesListener" destination="${org.orcid.persistence.messaging.updated.activity}" subscription="${org.orcid.persistence.messaging.updated.activity}" concurrency="1" />
 	</jms:listener-container>
 	
     <!-- Jersey client -->
