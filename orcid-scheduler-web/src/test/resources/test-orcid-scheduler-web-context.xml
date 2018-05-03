@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
+
+	<context:property-placeholder
+		location="classpath:${org.orcid.persistence.properties}"
+		ignore-resource-not-found="true" />
+
+	<bean id="solrDao" class="org.orcid.persistence.dao.impl.SolrDaoImpl" />
+	
+	<bean id="orgDisambiguatedSolrDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedSolrDaoImpl" />
+
+	<bean id="solrServer" class="org.orcid.persistence.dao.EmbeddedSolrFactory"
+		factory-method="createInstance">
+	</bean>
+	<bean id="orgDisambiguatedSolrServer" class="org.orcid.persistence.dao.EmbeddedSolrFactory"
+		factory-method="createInstance">
+		<constructor-arg value="org"/>
+	</bean>
+	
+	<alias name="solrServer" alias="solrServerReadOnly"/>
+	<alias name="solrServer" alias="solrServerForStreaming"/>
+	<alias name="orgDisambiguatedSolrServer" alias="orgDisambiguatedSolrServerReadOnly"/>
+
+	<!-- JMS Messaging -->
+	<!-- enable the configuration of jms on annotations -->
+	<jms:annotation-driven/>
+	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<!-- lets use an embedded broker for now (easier to test!) -->
+    	<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
+	</bean>
+	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+    	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
+	</bean>
+	
+	<!-- so we can listen to queues -->
+	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
+	    <property name="connectionFactory" ref="jmsConnectionFactory" />
+	    <property name="concurrency" value="1-10"/>
+	</bean>
+	
+	<!-- Default Destination Queue Definition -->
+	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
+	  <!-- name of the queue -->
+	  <constructor-arg index="0" value="test" />
+	</bean>
+	 
+	<!-- JmsTemplate Definition so we can send to queues -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+	  <property name="connectionFactory" ref="jmsConnectionFactory" />
+	  <property name="defaultDestination" ref="defaultJmsDestination" />
+	</bean>
+	
+	<bean id="jmsMessageSender" class="org.orcid.scheduler.messaging.JmsMessageSender">
+		<property name="enabled" value="true"/>
+	</bean>
+	
+	<bean id="echo2" class="org.orcid.scheduler.web.messaging.EchoTestMessageListener2"/>
+	<bean id="echo3" class="org.orcid.scheduler.web.messaging.EchoTestMessageListener3"/>
+
+</beans>
