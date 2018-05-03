@@ -9,8 +9,11 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.listener.persistence.entities.ActivitiesStatusEntity;
 import org.orcid.listener.persistence.entities.RecordStatusEntity;
+import org.orcid.listener.persistence.managers.ActivitiesStatusManager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
+import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.listener.s3.S3MessageProcessor;
 import org.orcid.listener.solr.SolrMessageProcessor;
@@ -20,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jms.JmsException;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -49,43 +51,43 @@ public class RetryFailedRecords {
     @Autowired
     private RecordStatusManager manager;
 
+    @Autowired
+    private ActivitiesStatusManager activitiesManager;
+    
     @Resource
     private S3MessageProcessor s3Processor;
 
     @Resource
     private SolrMessageProcessor solrProcessor;
-
+    
     public RetryFailedRecords() {
         client = Client.create();
         mapper = new ObjectMapper();
     }
 
     @Scheduled(cron = "${org.orcid.cron.reindex-failed:0 0 */12 * * *}")
-    public void resendFailedElements() {
+    public void resendFailedSummaries() {
+        // Process summaries first
         List<RecordStatusEntity> failedElements = manager.getFailedElements(BATCH_SIZE);
         List<RecordStatusEntity> elementsToNotify = new ArrayList<RecordStatusEntity>();
 
         for (RecordStatusEntity element : failedElements) {
             try {
-                // Send RetryMessage for 1.2 dump
-                if (element.getDumpStatus12Api() > 0) {
-                    RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.DUMP_STATUS_1_2_API.value());
-                    s3Processor.accept(message);
-                }
-                // Send RetryMessage for 2.0 dump
-                if (element.getDumpStatus20Api() > 0) {
-                    RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.DUMP_STATUS_2_0_API.value());
-                    s3Processor.accept(message);
-                }
                 // Send RetryMessage for solr indexing
                 if (element.getSolrStatus20Api() > 0) {
                     RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.SOLR.value());
                     solrProcessor.accept(message);
                 }
+                
+                // Send RetryMessage for summaries
+                if(element.getDumpStatus20Api() > 0) {
+                    RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.DUMP_STATUS_2_0_API.value());
+                    s3Processor.update20Summary(message);
+                }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
                 // Should we notify about this element?
-                if ((element.getDumpStatus12Api() > maxFailuresBeforeNotify) || (element.getDumpStatus20Api() > maxFailuresBeforeNotify)
+                if ((element.getDumpStatus20Api() > maxFailuresBeforeNotify)
                         || (element.getSolrStatus20Api() > maxFailuresBeforeNotify)) {
                     elementsToNotify.add(element);
                 }
@@ -99,6 +101,50 @@ public class RetryFailedRecords {
         }
     }
 
+    @Scheduled(cron = "${org.orcid.cron.reindex-failed:0 0 */12 * * *}")
+    public void resendFailedActivities() {
+        // Process activities second
+        List<ActivitiesStatusEntity> failedElements = activitiesManager.getFailedElements(BATCH_SIZE);
+        List<ActivitiesStatusEntity> elementsToNotify = new ArrayList<ActivitiesStatusEntity>();
+
+        for (ActivitiesStatusEntity element : failedElements) {
+            try {
+                List<ActivityType> retryTypes = new ArrayList<ActivityType>();
+
+                // Send RetryMessage for Educations
+                if (element.getEducationsStatus() > 0) {
+                    retryTypes.add(ActivityType.EDUCATIONS);
+                }
+                // Send RetryMessage for Employments
+                if (element.getEmploymentsStatus() > 0) {
+                    retryTypes.add(ActivityType.EMPLOYMENTS);
+                }
+                // Send RetryMessage for Fundings
+                if (element.getFundingsStatus() > 0) {
+                    retryTypes.add(ActivityType.FUNDINGS);
+                }
+                // Send RetryMessage for Peer Reviews
+                if (element.getPeerReviewsStatus() > 0) {
+                    retryTypes.add(ActivityType.PEER_REVIEWS);
+                }
+                // Send RetryMessage for Works
+                if (element.getWorksStatus() > 0) {
+                    retryTypes.add(ActivityType.WORKS);
+                }
+
+                s3Processor.retry(element.getId(), retryTypes);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                // Should we notify about this element?
+                if ((element.getEducationsStatus() > maxFailuresBeforeNotify) || (element.getEmploymentsStatus() > maxFailuresBeforeNotify)
+                        || (element.getFundingsStatus() > maxFailuresBeforeNotify) || element.getWorksStatus() > maxFailuresBeforeNotify
+                        || element.getPeerReviewsStatus() > maxFailuresBeforeNotify) {
+                    elementsToNotify.add(element);
+                }
+            }
+        }
+    }
+    
     private String buildNotificationMessage(List<RecordStatusEntity> elements) {
         StringBuilder sb = new StringBuilder("The following records failed to be processed in the message listener: ");
         sb.append(System.lineSeparator() + System.lineSeparator());

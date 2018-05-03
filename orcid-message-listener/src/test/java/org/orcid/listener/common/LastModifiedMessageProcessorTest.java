@@ -239,7 +239,11 @@ public class LastModifiedMessageProcessorTest {
         map.put(MessageConstants.DATE.value, date);
         map.put(MessageConstants.TYPE.value, MessageConstants.TYPE_LAST_UPDATED.value);
         LastModifiedMessage message = new LastModifiedMessage(map);
-        processor.accept(message);
+        try {
+            processor.update20Summary(message);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
     
     private Record getRecord() {
