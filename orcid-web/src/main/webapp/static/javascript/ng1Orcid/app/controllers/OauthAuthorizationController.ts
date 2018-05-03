@@ -3,7 +3,6 @@
 declare var $: any;
 declare var basePath: any;
 declare var baseUrl: any;
-declare var addShibbolethGa: any;
 declare var colorbox: any;
 declare var getBaseUri: any;
 declare var getStaticCdnPath: any;
@@ -226,16 +225,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                 });
             };
 
-            $scope.loginSocial = function(idp) {
-                if($scope.gaString){
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
-                } else {
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'Website']);
-                }
-                orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
-                return false;
-            };
-
             $scope.sendReactivationEmail = function (email) {
                 $.ajax({
                     url: getBaseUri() + '/sendReactivation.json',
@@ -341,7 +330,6 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                         $scope.addScript('/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', function(){
                             $scope.scriptsInjected = true;
                             $scope.$apply();
-                            addShibbolethGa($scope.gaString);
                         });
                     });
                 };
@@ -463,13 +451,10 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
             
             $scope.oauth2ScreensRegister = function(linkFlag) {
                 var baseUri = getBaseUri();
-
                 if ($scope.gaString) {
                     $scope.registrationForm.referredBy = $scope.requestInfoForm.clientId;
                     $scope.registrationForm.creationType.value = "Member-referred";
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + $scope.gaString]);
                 } else {
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit', 'Website']);
                     $scope.registrationForm.creationType.value = "Direct";
                 } 
 

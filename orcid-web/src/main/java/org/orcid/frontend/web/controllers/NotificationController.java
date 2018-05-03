@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -11,27 +12,33 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.helper.UserSession;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.dev1.notification.Notification;
 import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
+import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationAdministrative;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationServiceAnnouncement;
+import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationTip;
+import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
 import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -67,6 +75,9 @@ public class NotificationController extends BaseController {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
     
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -141,14 +152,20 @@ public class NotificationController extends BaseController {
     }
 
     @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public @ResponseBody String getCustomNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) {
+    public ModelAndView getCustomNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) {
+        ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        response.addHeader("X-Robots-Tag", "noindex");
         if (notification instanceof NotificationCustom) {
-            return ((NotificationCustom) notification).getBodyHtml();
-        } else {
-            return "Notification is of wrong type";
+            String html =  ((NotificationCustom) notification).getBodyHtml();
+            int start = html.indexOf("<body>")+"<body>".length();
+            int end = html.indexOf("</body>", start);
+            String body = html.substring(start, end);
+            mav.addObject("body", body);
         }
+        mav.addObject("notification", notification);
+        mav.setViewName("notification/custom_notification");
+        mav.addObject("noIndex", true);
+        return mav;
     }
 
     @RequestMapping(value = "/PERMISSION/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
@@ -189,6 +206,57 @@ public class NotificationController extends BaseController {
         mav.addObject("clientId", clientId);
         mav.addObject("authorizationUrl", authorizationUrl);
         mav.setViewName("notification/institutional_connection_notification");
+        mav.addObject("noIndex", true);
+        return mav;
+    }
+    
+    @RequestMapping(value = "/SERVICE_ANNOUNCEMENT/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
+    public ModelAndView getServiceAnnouncementNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
+        ModelAndView mav = new ModelAndView();
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        if (notification instanceof NotificationServiceAnnouncement) {
+            String html =  ((NotificationServiceAnnouncement) notification).getBodyHtml();
+            int start = html.indexOf("<body>")+"<body>".length();
+            int end = html.indexOf("</body>", start);
+            String body = html.substring(start, end);
+            mav.addObject("body", body);
+        }
+        mav.addObject("notification", notification);
+        mav.setViewName("notification/custom_notification");
+        mav.addObject("noIndex", true);
+        return mav;
+    }
+    
+    @RequestMapping(value = "/TIP/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
+    public ModelAndView getTipNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
+        ModelAndView mav = new ModelAndView();
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        if (notification instanceof NotificationTip) {
+            String html =  ((NotificationServiceAnnouncement) notification).getBodyHtml();
+            int start = html.indexOf("<body>")+"<body>".length();
+            int end = html.indexOf("</body>", start);
+            String body = html.substring(start, end);
+            mav.addObject("body", body);
+        }
+        mav.addObject("notification", notification);
+        mav.setViewName("notification/custom_notification");
+        mav.addObject("noIndex", true);
+        return mav;
+    }
+    
+    @RequestMapping(value = "/ADMINISTRATIVE/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
+    public ModelAndView getAdministrativeNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
+        ModelAndView mav = new ModelAndView();
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        if (notification instanceof NotificationAdministrative) {
+            String html =  ((NotificationServiceAnnouncement) notification).getBodyHtml();
+            int start = html.indexOf("<body>")+"<body>".length();
+            int end = html.indexOf("</body>", start);
+            String body = html.substring(start, end);
+            mav.addObject("body", body);
+        }
+        mav.addObject("notification", notification);
+        mav.setViewName("notification/custom_notification");
         mav.addObject("noIndex", true);
         return mav;
     }
@@ -307,6 +375,58 @@ public class NotificationController extends BaseController {
         return result;
     }
 
+    @RequestMapping(value = "/frequencies/view", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> getNotificationFrequencies() {
+        return emailFrequencyManager.getEmailFrequency(getCurrentUserOrcid());        
+    }
+    
+    @RequestMapping(value = "/frequencies/update/amendUpdates", method = RequestMethod.POST)    
+    public ResponseEntity<?> updateSendChangeNotifications(@RequestBody String newFrequency) {
+        String orcid = getCurrentUserOrcid();
+        try {
+            SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
+            emailFrequencyManager.updateSendChangeNotifications(orcid, value);
+        } catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid value " + newFrequency);
+        }        
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
+    }
+    
+    @RequestMapping(value = "/frequencies/update/adminUpdates", method = RequestMethod.POST)   
+    public ResponseEntity<?> updateSendAdministrativeChangeNotifications(@RequestBody String newFrequency) {
+        String orcid = getCurrentUserOrcid();
+        try {
+            SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
+            emailFrequencyManager.updateSendAdministrativeChangeNotifications(orcid, value);
+        } catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid value " + newFrequency);
+        }        
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
+    }
+    
+    @RequestMapping(value = "/frequencies/update/memberUpdates", method = RequestMethod.POST)
+    public ResponseEntity<?> updateSendMemberUpdateRequests(@RequestBody String newFrequency) {
+        String orcid = getCurrentUserOrcid();
+        try {
+            SendEmailFrequency value = SendEmailFrequency.fromValue(newFrequency);
+            emailFrequencyManager.updateSendMemberUpdateRequests(orcid, value);
+        } catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid value " + newFrequency);
+        }        
+        return ResponseEntity.ok("{\"status\":" + newFrequency + "}");
+    }
+    
+    @RequestMapping(value = "/frequencies/update/tipsUpdates", method = RequestMethod.POST)    
+    public ResponseEntity<?> updateSendQuarterlyTips(@RequestBody Boolean enabled) {
+        if(enabled == null){
+            throw new IllegalArgumentException("Invalid value " + enabled);
+        }        
+        
+        String orcid = getCurrentUserOrcid();
+        emailFrequencyManager.updateSendQuarterlyTips(orcid, enabled);
+        return ResponseEntity.ok("{\"status\":" + String.valueOf(enabled) + "}");
+    }
+    
     private void addSourceDescription(Notification notification) {
         Source source = notification.getSource();
         if (source != null) {

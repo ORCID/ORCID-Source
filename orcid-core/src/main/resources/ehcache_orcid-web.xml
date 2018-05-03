@@ -1,444 +1,401 @@
 <!--
 
-    =============================================================================
+        =============================================================================
 
-    ORCID (R) Open Source
-    http://orcid.org
+        ORCID (R) Open Source
+        http://orcid.org
 
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
+        Copyright (c) 2012-2014 ORCID, Inc.
+        Licensed under an MIT-Style License (MIT)
+        http://orcid.org/open-source-license
 
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
+        This copyright and license information (including a link to the full license)
+        shall be included in its entirety in all copies or substantial portion of
+        the software.
 
-    =============================================================================
+        =============================================================================
 
 -->
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="ehcache.xsd">
+<ehcache:config
+        xmlns:ehcache="http://www.ehcache.org/v3"
+        xmlns:jcache="http://www.ehcache.org/v3/jsr107"
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xsi:schemaLocation="
+            http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.1.xsd
+            http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.1.xsd">
+        
+    <ehcache:persistence directory="${java.io.tmpdir}/ehcache/orcid-web/annotations" />
 
-	<diskStore path="java.io.tmpdir/ehcache/orcid-web" />
+    <ehcache:cache alias="country-list" uses-template="defaultTemplate">
+        <ehcache:expiry>
+            <ehcache:none />
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">500</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="iso-countries" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:none />
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">500</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="security-questions" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:none />
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">200</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="import-works-clients" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:none />
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">200</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="import-funding-clients" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:none />
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">200</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="import-peer-review-clients" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:none />
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">200</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="read-access-clients" uses-template="defaultTemplate">
+         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:none />
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">200</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="locale-messages" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:heap unit="entries">2000</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="languages-map" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:heap unit="entries">2000</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="statistics" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:heap unit="entries">100</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="staticContent" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:heap unit="entries">100</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="orgs" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:heap unit="entries">20000</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="fundings" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">256</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="peer-reviews" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="client-details" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:heap unit="entries">2000</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="custom-email" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:heap unit="entries">2000</ehcache:heap>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="distinctions-summaries" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="educations-summaries" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="employments-summaries" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="invited-positions-summaries" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="memberships-summaries" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="qualifications-summaries" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="services-summaries" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="public-keywords" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="dao-keywords" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="public-other-names" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="dao-other-names" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="public-address" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="primary-address" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="dao-address" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="researcher-urls" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="public-researcher-urls" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">256</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="public-external-identifiers" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">512</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="dao-external-identifiers" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="record-name" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">1024</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="biography" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">1024</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="emails" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">256</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="public-emails" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="count-tokens" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="statistics-key" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">1000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">32</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="identifier-types" uses-template="defaultTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="identifier-types-map" uses-template="defaultTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="identifier-types-map-top" uses-template="defaultTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">50</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="identifier-types-map-prefix" uses-template="defaultTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="invalid-record-data-change-page-desc" uses-template="defaultTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">200</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="invalid-record-data-change-page-asc" uses-template="defaultTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">200</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+       
+    <ehcache:cache alias="delegates-by-giver" uses-template="defaultTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">10000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="delegates-by-receiver" uses-template="defaultTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">10000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache alias="sales-force-connection" uses-template="defaultTemplate">
+         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    
+    <ehcache:cache-template name="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.SerializingCopier"/>
+        <ehcache:expiry>
+            <ehcache:tti unit="minutes">1</ehcache:tti>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">100</ehcache:heap>
+        </ehcache:resources>
+    </ehcache:cache-template>
 
-	<defaultCache maxElementsInMemory="5" eternal="false"
-		timeToIdleSeconds="20" timeToLiveSeconds="20"
-		memoryStoreEvictionPolicy="LRU">
-		<persistence strategy="none" />
-	</defaultCache>
-
-	<cache name="country-list" maxElementsInMemory="500" eternal="true"
-		copyOnRead="true" copyOnWrite="true">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="iso-countries" maxElementsInMemory="500" eternal="true"
-		copyOnRead="false" copyOnWrite="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="pub-min-works-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="40000" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="pub-peer-reviews-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="pub-affiliation-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="pub-funding-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="security-questions" maxElementsInMemory="200"
-		eternal="true" copyOnRead="false" copyOnWrite="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="import-works-clients" maxElementsInMemory="200"
-		eternal="true" copyOnRead="false" copyOnWrite="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="import-funding-clients" maxElementsInMemory="200"
-		eternal="true" copyOnRead="false" copyOnWrite="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="import-peer-review-clients" maxElementsInMemory="200"
-		eternal="true" copyOnRead="false" copyOnWrite="false">
-		<persistence strategy="none" />
-	</cache>
-	
-	<cache name="read-access-clients" maxElementsInMemory="200"
-		eternal="true" copyOnRead="false" copyOnWrite="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="locale-messages" maxElementsInMemory="2000"
-		timeToLiveSeconds="1200" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="languages-map" maxElementsInMemory="2000"
-		timeToLiveSeconds="3600" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="recent-orcid" maxElementsInMemory="20000"
-		maxElementsOnDisk="50000" timeToLiveSeconds="60" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="statistics" maxElementsInMemory="100"
-		timeToLiveSeconds="600" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="staticContent" maxElementsInMemory="100"
-		timeToLiveSeconds="900" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="orgs" maxElementsInMemory="20000" timeToLiveSeconds="900"
-		copyOnRead="false" copyOnWrite="false" eternal="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="fundings" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="peer-reviews" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="credit-name" maxElementsInMemory="5000"
-		maxElementsOnDisk="50000" timeToLiveSeconds="86400" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="pub-credit-name" maxElementsInMemory="5000"
-		maxElementsOnDisk="50000" timeToLiveSeconds="86400" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
-	<cache name="client-details" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="none" />
-	</cache>
-
-	<cache name="custom-email" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="none" />
-	</cache>
-	
-	<cache name="distinctions-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="educations-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="employments-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>		
-	
-	<cache name="invited-positions-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="memberships-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="qualifications-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="services-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="fundings-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="peer-reviews-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="public-works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="single-work" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="single-work-summary" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>			
-	
-	<cache name="dao-works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>	
-	
-	<cache name="dao-public-works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="keywords" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-				
-	<cache name="public-keywords" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>			
-				
-	<cache name="dao-keywords" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>				
-															
-	<cache name="other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-				
-	<cache name="public-other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>		
-	
-	<cache name="minimized-other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-			
-	<cache name="dao-other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>		
-																		
-	<cache name="address" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-				
-	<cache name="public-address" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="primary-address" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="dao-address" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-		
-	<cache name="researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-				
-	<cache name="public-researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>			
-				
-	<cache name="dao-researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>	
-		
-	<cache name="external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-				
-	<cache name="public-external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>			
-				
-	<cache name="dao-external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>			
-			
-	<cache name="record-name" maxElementsInMemory="2000" timeToLiveSeconds="43200"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="biography" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-				
-	<cache name="public-biography" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="emails" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="public-emails" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-			
-	<cache name="any-verified-email" maxElementsInMemory="10000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="count-tokens" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>			
-									
-	<cache name="statistics-key" maxElementsInMemory="1000" timeToLiveSeconds="604800"
-		maxElementsOnDisk="5000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>	
-	
-	<cache name="identifier-types" maxElementsInMemory="10000" eternal="true"
-		copyOnRead="true" copyOnWrite="true">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	<cache name="identifier-types-map" maxElementsInMemory="50" eternal="true"
-		copyOnRead="true" copyOnWrite="true">
-		<persistence strategy="localTempSwap" />
-	</cache>
-		<cache name="identifier-types-map-top" maxElementsInMemory="50" eternal="true"
-		copyOnRead="true" copyOnWrite="true">
-		<persistence strategy="localTempSwap" />
-	</cache>							
-		<cache name="identifier-types-map-prefix" maxElementsInMemory="1000" eternal="true"
-		copyOnRead="true" copyOnWrite="true">
-		<persistence strategy="localTempSwap" />
-	</cache>	
-	
-	<cache name="invalid-record-data-change-page-desc" maxElementsInMemory="200" eternal="false"
-		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	<cache name="invalid-record-data-change-page-asc" maxElementsInMemory="200" eternal="false"
-		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
-		<persistence strategy="localTempSwap" />
-	</cache>			
-	<cache name="clients-per-member" maxElementsInMemory="500" eternal="false"
-		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	
-	<cache name="delegates-by-giver" maxElementsInMemory="10000" eternal="false"
-		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
-		<persistence strategy="localTempSwap" />
-	</cache>
-	<cache name="delegates-by-receiver" maxElementsInMemory="10000" eternal="false"
-		copyOnRead="true" copyOnWrite="true" timeToLiveSeconds="3600">
-		<persistence strategy="localTempSwap" />
-	</cache>	
-	
-	<cache name="sales-force-connection" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
-		eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>	
-</ehcache>
+</ehcache:config>

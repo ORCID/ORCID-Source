@@ -35,6 +35,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     bulkEditShow: any; ///
     formData: any;
     formDataAddresses: any;
+    formDataBeforeChange: any;
     formDataErrors: any;
     newElementDefaultVisibility: any; ///
     newInput: boolean;
@@ -47,6 +48,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService
     ) {
         this.bulkEditShow = false;
+        this.formDataBeforeChange = {};
         this.formData = {
         };
         this.formDataAddresses = [];
@@ -82,6 +84,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     closeEditModal(): void{
+        this.formData = this.formDataBeforeChange;
         this.modalService.notifyOther({action:'close', moduleId: 'modalCountryForm'});
     };
 
@@ -101,6 +104,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
+                this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
                 this.formData = data;
                 ////console.log('country data', this.formData);
                 this.formDataAddresses = this.formData.addresses;

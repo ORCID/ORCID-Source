@@ -5,14 +5,13 @@ import java.net.URL;
 
 import javax.annotation.Resource;
 
+import org.ehcache.Cache;
 import org.orcid.core.manager.DOIManager;
-
-import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 public class DOIManagerImpl implements DOIManager{
     
     @Resource(name = "doiBibtexCache")
-    private SelfPopulatingCache doiBibtexCache;
+    private Cache<URL, String> doiBibtexCache;
         
     @Override
     public String fetchDOIBibtex(String doi) {
@@ -24,7 +23,7 @@ public class DOIManagerImpl implements DOIManager{
                 doiURL = new URL("http://"+doi);
             else
                 doiURL = new URL("http://doi.org/"+doi);
-            return (String) doiBibtexCache.get(doiURL).getObjectValue();
+            return doiBibtexCache.get(doiURL);
         } catch (MalformedURLException e) {
             return null;
         }

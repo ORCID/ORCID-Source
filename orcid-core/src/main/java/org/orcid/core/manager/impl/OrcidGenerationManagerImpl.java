@@ -4,10 +4,8 @@ import java.util.Random;
 
 import javax.annotation.Resource;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang3.StringUtils;
+import org.ehcache.Cache;
 import org.orcid.core.crypto.OrcidCheckDigitGenerator;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -25,7 +23,7 @@ public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
     private ProfileEntityManager profileEntityManager;
 
     @Resource(name = "recentOrcidCache")
-    private Cache recentOrcidCache;
+    private Cache<String, String> recentOrcidCache;
 
     @Override
     public String createNewOrcid() {
@@ -33,7 +31,7 @@ public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
         while (isInRecentOrcidCache(orcid) || profileEntityManager.orcidExists(orcid)) {
             orcid = getNextOrcid();
         }
-        recentOrcidCache.put(new Element(orcid, orcid));
+        recentOrcidCache.put(orcid, orcid);
         return orcid;
     }
 
@@ -44,9 +42,7 @@ public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
     }
 
     private boolean isInRecentOrcidCache(String formattedOrcid) {
-        LOGGER.debug("Recent ORCID cache size: {}", recentOrcidCache.getSize());
-        Element alreadyUsed = recentOrcidCache.get(formattedOrcid);
-        if (alreadyUsed != null) {
+        if (recentOrcidCache.containsKey(formattedOrcid)) {
             LOGGER.debug("Same ORCID randomly generated a few moments ago: {}", formattedOrcid);
             return true;
         }

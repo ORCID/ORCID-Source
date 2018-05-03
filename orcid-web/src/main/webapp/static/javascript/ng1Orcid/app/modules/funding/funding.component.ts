@@ -189,10 +189,10 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                         fundingSrvc.addFundingToScope(path);
                     },50);
                 }
-                */
-
+                
                 let ids = data.splice(0,20).join();
                 this.getFundingsById( ids );
+                */
             },
             error => {
                 //console.log('getBiographyFormError', error);

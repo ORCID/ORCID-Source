@@ -212,6 +212,9 @@ import { WorkspaceService }
 
 import { WorksService } 
     from '../../shared/works.service.ts';
+    
+import { EmailFrequencyService }
+    from '../../shared/emailFrequency.service.ts';
 
 // This is the Angular 2 part of the module
 @NgModule(
@@ -283,6 +286,7 @@ import { WorksService }
             DelegatorsService,
             DeprecateProfileService,
             DiscoService,
+            EmailFrequencyService,
             EmailService,
             ExternalIdentifiersService,
             FeaturesService,

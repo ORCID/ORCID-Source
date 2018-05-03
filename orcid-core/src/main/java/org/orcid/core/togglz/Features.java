@@ -91,7 +91,10 @@ public enum Features implements Feature {
     OPENID_SIMPLE_SUBJECT,
     
     @Label("Disable 1.1 version from any API")
-    DISABLE_1_1;
+    DISABLE_1_1,
+    
+    @Label("GDPR Email notifications")
+    GDPR_EMAIL_NOTIFICATIONS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

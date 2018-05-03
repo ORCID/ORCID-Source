@@ -1,8 +1,8 @@
 import { Injectable } 
     from '@angular/core';
 
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -14,16 +14,18 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class CountryService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private url: string;
     private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.url = getBaseUri() + '/account/countryForm.json';
@@ -33,7 +35,7 @@ export class CountryService {
         return this.http.get(
             this.url
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     notifyOther(): void {
@@ -49,6 +51,6 @@ export class CountryService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }
