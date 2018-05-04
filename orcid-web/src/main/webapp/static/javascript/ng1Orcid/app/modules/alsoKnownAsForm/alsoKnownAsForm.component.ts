@@ -118,6 +118,12 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.setFormData( false );   
     };
 
+    setBulkGroupPrivacy(priv): void{
+        for (var idx in this.formData.otherNames){
+            this.formData.otherNames[idx].visibility.visibility = priv;        
+        }
+    };
+
     setFormData( closeAfterAction ): void {
         this.alsoKnownAsService.setData( this.formData )
         .takeUntil(this.ngUnsubscribe)
