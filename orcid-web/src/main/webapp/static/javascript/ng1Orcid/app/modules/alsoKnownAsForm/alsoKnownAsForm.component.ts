@@ -1,7 +1,7 @@
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -43,6 +43,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     constructor( 
         private alsoKnownAsService: AlsoKnownAsService,
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private modalService: ModalService
     ) {
@@ -90,6 +91,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
         while (len--) {            
             if (otherNames[len] == otherName){                
                 otherNames.splice(len,1);
+                this.cdr.detectChanges();
             }
         }        
     };
