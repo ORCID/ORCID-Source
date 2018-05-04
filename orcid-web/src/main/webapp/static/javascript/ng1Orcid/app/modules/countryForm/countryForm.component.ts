@@ -189,8 +189,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     privacyChange( obj ): any {
-        this.formData.visibility.visibility = obj;
-        this.setformData( false );   
+        this.formData.visibility.visibility = obj;  
     };
     
     ///

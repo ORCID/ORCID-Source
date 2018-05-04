@@ -151,8 +151,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     privacyChange( obj ): any {
-        this.formData.visibility.visibility = obj;
-        this.setFormData( false );   
+        this.formData.visibility.visibility = obj;  
     };
 
     setFormData( closeAfterAction ): void {
