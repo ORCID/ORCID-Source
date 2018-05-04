@@ -75,10 +75,18 @@ public class S3Manager {
     @Value("${org.orcid.message-listener.index.s3.search.max_elements:3000}")
     private Integer maxElements;
 
-    public void setS3MessagingService(S3MessagingService s3MessagingService) {
-        this.s3MessagingService = s3MessagingService;
+    public S3Manager() throws JAXBException {
+        mapper = new ObjectMapper();
+        JaxbAnnotationModule module = new JaxbAnnotationModule();
+        mapper.registerModule(module);
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        // Initialize JAXBContext
+        this.jaxbContext_1_2_api = JAXBContext.newInstance(OrcidMessage.class, OrcidDeprecated.class);
+        this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
+        this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
+        
+        this.bucketPrefix = "";
     }
-
     /**
      * Writes a profile to S3
      * 
@@ -102,6 +110,10 @@ public class S3Manager {
         this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
     }
 
+    public void setS3MessagingService(S3MessagingService s3MessagingService) {
+        this.s3MessagingService = s3MessagingService;
+    }
+    
     @Deprecated
     public void updateS3(String orcid, byte[] element, String mediaType) throws IOException {
         if (S3MessageProcessor.VND_ORCID_XML.equals(mediaType)) {

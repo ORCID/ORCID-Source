@@ -71,8 +71,7 @@ public class S3MessageProcessorTest {
 
     private final String orcid = "0000-0000-0000-0000";
 
-    private final Date dateNow = new Date(System.currentTimeMillis());
-    private final XMLGregorianCalendar now = DateUtils.convertToXMLGregorianCalendar(dateNow);
+    private final Date dateNow = new Date(System.currentTimeMillis());    
     private final Date dateAfter = new Date(System.currentTimeMillis() + 1000);
     private final XMLGregorianCalendar after = DateUtils.convertToXMLGregorianCalendar(dateAfter);
 
