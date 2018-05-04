@@ -32,7 +32,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-activities-indexer-test-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
 public class ActivitiesStatusManagerTest {
     @Resource
     private ActivitiesStatusManager activitiesStatusManager;

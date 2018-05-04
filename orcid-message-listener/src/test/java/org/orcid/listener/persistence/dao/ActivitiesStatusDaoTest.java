@@ -36,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-activities-indexer-test-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
 public class ActivitiesStatusDaoTest {
     @Resource
     private ActivitiesStatusDao activitiesStatusDao;
