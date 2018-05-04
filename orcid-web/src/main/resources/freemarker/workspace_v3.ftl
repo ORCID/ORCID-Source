@@ -696,7 +696,6 @@
     <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-
 <modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
     <websites-form-ng2></websites-form-ng2>
 </modalngcomponent><!-- Ng2 component -->

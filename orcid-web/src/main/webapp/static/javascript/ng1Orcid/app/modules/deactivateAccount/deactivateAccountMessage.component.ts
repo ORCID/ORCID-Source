@@ -18,43 +18,47 @@ import { Subscription }
 import { AccountService } 
     from '../../shared/account.service.ts';
 
-import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+import { EmailService }
+    from '../../shared/email.service.ts';
 
+import { ModalService } 
+    from '../../shared/modal.service.ts';
 
 @Component({
-    selector: 'deactivate-account-ng2',
-    template:  scriptTmpl("deactivate-account-ng2-template")
+    selector: 'deactivate-account-message-ng2',
+    template:  scriptTmpl("deactivate-account-message-ng2-template")
 })
-export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnInit {
+export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
    
     primaryEmail: string;
 
     constructor(
         private accountService: AccountService,
+        private emailService: EmailService,
         private modalService: ModalService
     ) {
         this.primaryEmail = "";
     }
 
-    sendDeactivateEmail(): void {
+    closeModal(): void {
+        this.modalService.notifyOther({action:'close', moduleId: 'modalDeactivateAccountMessage'});
+    };
 
-        this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});
-
-        
-        this.accountService.sendDeactivateEmail()
+    getEmails(): any {
+        this.emailService.getEmails()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});
+                this.primaryEmail = this.emailService.getEmailPrimary().value;
+                console.log('da this.primaryEmail', this.primaryEmail, data);
             },
             error => {
-                //console.log('setformDataError', error);
+                //console.log('getEmails', error);
             } 
         );
+    }
 
-    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
@@ -67,5 +71,6 @@ export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnI
     };
 
     ngOnInit() {
+        this.getEmails();
     }; 
 }

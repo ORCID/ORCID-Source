@@ -184,6 +184,7 @@
     <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
+    <#include "/includes/ng2_templates/modal-ng2-template.ftl">
     
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
@@ -210,7 +211,6 @@
         <#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
         <#include "/includes/ng2_templates/keywords-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/keywords-ng2-template.ftl">
-        <#include "/includes/ng2_templates/modal-ng2-template.ftl">
         <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
         <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
         <#include "/includes/ng2_templates/websites-ng2-template.ftl">
