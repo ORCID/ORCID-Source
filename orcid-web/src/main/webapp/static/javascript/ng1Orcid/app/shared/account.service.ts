@@ -27,6 +27,7 @@ export class AccountService {
             {
                 'Access-Control-Allow-Origin':'*',
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
@@ -82,7 +83,8 @@ export class AccountService {
 
     getDisplayName( orcid ): Observable<any> {
         return this.http.get(
-            orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person'
+            orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person',
+            {headers: this.headers}
         )
         
     }
