@@ -113,11 +113,11 @@
                                     <li>
                                         <div 
                                             (click)="deleteCountry(country)" 
-                                            (mouseenter)="commonSrvc.showTooltip('tooltip-country-delete-'+$index, $event, 37, 50, 39)" 
-                                            (mouseleave)="commonSrvc.hideTooltip('tooltip-country-delete-'+$index)"
+                                            (mouseenter)="commonSrvc.showTooltip('tooltip-country-delete-'+index, $event, 37, 50, 39)" 
+                                            (mouseleave)="commonSrvc.hideTooltip('tooltip-country-delete-'+index)"
                                             class="glyphicon glyphicon-trash" 
                                         ></div>
-                                        <@orcid.tooltipNg2 elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />                               
+                                        <@orcid.tooltipNg2 elementId="'tooltip-country-delete-'+index" message="common.modals.delete" />                               
                                     </li>
                                     <li>
                                         <privacy-toggle-ng2 

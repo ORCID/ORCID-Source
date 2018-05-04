@@ -4,7 +4,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -41,6 +41,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     orcidId: any;
  
     constructor(
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private keywordsService: KeywordsService,
         private modalService: ModalService
@@ -85,6 +86,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         while (len--) {
             if ( keywords[len] == entry ){
                 keywords.splice(len,1);
+                this.cdr.detectChanges();
             }
         }
     };
