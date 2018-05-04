@@ -658,12 +658,6 @@
         </div>
     </div>
 </div>
-
-<script type="text/ng-template" id="deactivate-account-modal">
-    <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
-    <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
-    </div>
-</script>
         
 <script type="text/ng-template" id="settings-verify-email-modal">
     <div style="padding: 20px;">
@@ -991,6 +985,10 @@
        <a href="" ng-click="closeModal()"><@spring.message "freemarker.btncancel"/></a>
     </div>
 </script>
+
+<modalngcomponent elementHeight="645" elementId="modalDeactivateAccountMessage" elementWidth="645">
+    <deactivate-account-message-ng2></deactivate-account-message-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
 <language-ng2></language-ng2>
 

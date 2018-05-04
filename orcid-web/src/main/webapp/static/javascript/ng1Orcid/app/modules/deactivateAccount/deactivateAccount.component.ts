@@ -16,7 +16,10 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service.ts';
+
+import { ModalService } 
+    from '../../shared/modal.service.ts'; 
 
 
 @Component({
@@ -29,32 +32,34 @@ export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnI
     primaryEmail: string;
 
     constructor(
-        private accountService: AccountService
+        private accountService: AccountService,
+        private modalService: ModalService
     ) {
         this.primaryEmail = "";
     }
 
-    closeModal(): void {
-        //$.colorbox.close();
-    };
-
     sendDeactivateEmail(): void {
+
+        this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});
+
+        /*
         this.accountService.sendDeactivateEmail()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.primaryEmail = data;
-                /*
+                this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});
+                / *
                 $.colorbox({
                     html : $compile($('#deactivate-account-modal').html())($scope)
                 });
                 $.colorbox.resize();
-                */
+                * /
             },
             error => {
                 //console.log('setformDataError', error);
             } 
         );
+        */
     };
 
     //Default init functions provided by Angular Core
