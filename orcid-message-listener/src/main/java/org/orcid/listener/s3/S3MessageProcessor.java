@@ -32,7 +32,6 @@ import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
-import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,7 +69,7 @@ public class S3MessageProcessor {
     @Resource
     private ActivitiesStatusManager activitiesStatusManager;
 
-    public void update20Summary(BaseMessage message) throws Exception {
+    public void update20Summary(BaseMessage message) {
         if(!isSummaryIndexerEnabled) {
             return;
         }
@@ -81,12 +80,14 @@ public class S3MessageProcessor {
             Record record = orcid20ApiClient.fetchPublicRecord(message);
             if (record != null) {
                 // Index only if it is claimed
-                if(record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
-                    s3Manager.uploadRecordSummary(orcid, record);                    
-                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-                } else if(record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == false) {
-                    LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
-                }                
+                if(record.getHistory() != null && record.getHistory().getClaimed() != null)  {
+                    if(record.getHistory().getClaimed() == true) {
+                        s3Manager.uploadRecordSummary(orcid, record);                                        
+                    } else {
+                        LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
+                    }                    
+                } 
+                recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
             }
         } catch (LockedRecordException | DeprecatedRecordException e) {
             try {
@@ -103,7 +104,7 @@ public class S3MessageProcessor {
             } catch (Exception e1) {
                 LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
                 recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-                throw e;
+                throw new RuntimeException(e1);
             }
         } catch (AmazonClientException e) {
             LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
@@ -115,7 +116,7 @@ public class S3MessageProcessor {
             // runtime exception
             LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
             recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 
@@ -132,48 +133,22 @@ public class S3MessageProcessor {
         String orcid = message.getOrcid();
         LOG.info("Processing activities for record " + orcid);
         Record record = fetchPublicRecord(message);        
-        ActivitiesSummary as = getActivitiesSummaryFromRecord(record);
-        if (as != null) {
-            Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
-            processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
-            processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
-            processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
-            processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
-            processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));                        
-        } 
-    }
-    
-    public void retry(String orcid, List<ActivityType> types) {
-        if(!isActivitiesIndexerEnabled) {
-            return;
-        }
         
-        LOG.info("Retrying activities for record " + orcid);
-        Record record = fetchPublicRecord(orcid);        
-        ActivitiesSummary as = getActivitiesSummaryFromRecord(record);
-        if(as != null) {
-            Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
-            for(ActivityType type : types) {
-                switch(type) {
-                case EDUCATIONS:
-                    processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
-                    break;
-                case EMPLOYMENTS:
-                    processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
-                    break;
-                case FUNDINGS:
-                    processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
-                    break;
-                case PEER_REVIEWS:
-                    processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
-                    break;
-                case WORKS:
-                    processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));
-                    break;
-                }
-            }
-        }       
-    }
+        if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
+            if (record.getActivitiesSummary() != null) {
+                ActivitiesSummary as = record.getActivitiesSummary();
+                Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
+                processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
+                processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
+                processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
+                processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
+                processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));                        
+            } 
+        } else if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == false) {
+            LOG.warn(record.getOrcidIdentifier().getPath() + " is unclaimed, so, his activities would not be indexed");
+            activitiesStatusManager.markAllAsSent(orcid);
+        }                
+    }        
 
     private void processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
         LOG.info("Processing Educations for record " + orcid);
@@ -313,32 +288,5 @@ public class S3MessageProcessor {
         }
         
         return null;
-    }   
-    
-    private Record fetchPublicRecord(String orcid) {
-        try {            
-            return orcid20ApiClient.fetchPublicRecord(new LastModifiedMessage(orcid, null));
-        } catch (LockedRecordException | DeprecatedRecordException e) {
-            // Remove all activities from this record
-            s3Manager.clearActivities(orcid);
-            // Mark all activities as ok
-            activitiesStatusManager.markAllAsSent(orcid);
-        } catch (Exception e) {
-            // Mark all activities as failed
-            activitiesStatusManager.markAllAsFailed(orcid);
-            throw new RuntimeException(e);
-        }
-        
-        return null;
-    } 
-    
-    private ActivitiesSummary getActivitiesSummaryFromRecord(Record record) {
-        if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
-            return record.getActivitiesSummary();
-        } else if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == false) {
-            LOG.warn(record.getOrcidIdentifier().getPath() + " is unclaimed, so, his activities would not be indexed");
-        }
-        
-        return null;
-    }
+    }           
 }

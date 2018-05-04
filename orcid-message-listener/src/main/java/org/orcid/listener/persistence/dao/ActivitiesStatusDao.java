@@ -78,6 +78,35 @@ public class ActivitiesStatusDao {
         entityManager.persist(entity);
     }
 
+    public void createAndPopulateAll(String orcid, boolean success) {
+        ActivitiesStatusEntity entity = new ActivitiesStatusEntity();
+        entity.setId(orcid);
+        Date now = new Date();
+        
+        if(success) {
+            entity.setEducationsStatus(0);
+            entity.setEducationsLastIndexed(now);
+            entity.setEmploymentsStatus(0);
+            entity.setEmploymentsLastIndexed(now);
+            entity.setFundingsStatus(0);
+            entity.setFundingsLastIndexed(now);
+            entity.setPeerReviewsStatus(0);
+            entity.setPeerReviewsLastIndexed(now);
+            entity.setWorksStatus(0);
+            entity.setWorksLastIndexed(now);
+        } else {
+            entity.setEducationsStatus(1);
+            entity.setEmploymentsStatus(1);
+            entity.setFundingsStatus(1);
+            entity.setPeerReviewsStatus(1);            
+            entity.setWorksStatus(1);            
+        }        
+        
+        entity.setDateCreated(now);
+        entity.setLastModified(now);
+        entityManager.persist(entity);
+    }
+    
     public boolean updateFailCount(String orcid, ActivityType type) {
         Query query = entityManager.createNativeQuery(
                 "UPDATE activities_status SET " + type.getStatusColumnName() + " = (" + type.getStatusColumnName() + " + 1), last_modified=now() WHERE orcid = :orcid");

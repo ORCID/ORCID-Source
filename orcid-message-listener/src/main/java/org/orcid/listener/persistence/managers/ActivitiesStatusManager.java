@@ -52,12 +52,20 @@ public class ActivitiesStatusManager {
 
     @Transactional
     public void markAllAsSent(String orcid) {
-        dao.successAll(orcid);
+        if(dao.exists(orcid)) {
+            dao.successAll(orcid);
+        } else {
+            dao.createAndPopulateAll(orcid, true);
+        }        
     }
 
     @Transactional
     public void markAllAsFailed(String orcid) {
-        dao.failAll(orcid);
+        if(dao.exists(orcid)) {
+            dao.failAll(orcid);   
+        } else {
+            dao.createAndPopulateAll(orcid, false);
+        }
     }
 
     public List<ActivitiesStatusEntity> getFailedElements(int batchSize) {
