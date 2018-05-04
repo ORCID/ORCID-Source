@@ -16,7 +16,10 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service.ts';
+
+import { EmailService }
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
     from '../../shared/modal.service.ts';
@@ -32,6 +35,7 @@ export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestr
 
     constructor(
         private accountService: AccountService,
+        private emailService: EmailService,
         private modalService: ModalService
     ) {
         this.primaryEmail = "";
@@ -40,6 +44,20 @@ export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestr
     closeModal(): void {
         this.modalService.notifyOther({action:'close', moduleId: 'modalDeactivateAccountMessage'});
     };
+
+    getEmails(): any {
+        this.emailService.getEmails()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.primaryEmail = this.emailService.getEmailPrimary().value;
+                console.log('da this.primaryEmail', this.primaryEmail, data);
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
+    }
 
 
     //Default init functions provided by Angular Core
@@ -53,5 +71,6 @@ export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestr
     };
 
     ngOnInit() {
+        this.getEmails();
     }; 
 }

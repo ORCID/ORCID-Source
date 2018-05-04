@@ -42,24 +42,18 @@ export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnI
 
         this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});
 
-        /*
+        
         this.accountService.sendDeactivateEmail()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});
-                / *
-                $.colorbox({
-                    html : $compile($('#deactivate-account-modal').html())($scope)
-                });
-                $.colorbox.resize();
-                * /
             },
             error => {
                 //console.log('setformDataError', error);
             } 
         );
-        */
+
     };
 
     //Default init functions provided by Angular Core

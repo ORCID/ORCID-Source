@@ -975,7 +975,7 @@
     </div>
 </script>
 
-<modalngcomponent elementHeight="645" elementId="modalDeactivateAccountMessage" elementWidth="645">
+<modalngcomponent elementHeight="200" elementId="modalDeactivateAccountMessage" elementWidth="645">
     <deactivate-account-message-ng2></deactivate-account-message-ng2>
 </modalngcomponent><!-- Ng2 component -->
 

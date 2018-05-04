@@ -108,14 +108,12 @@ export class EmailService {
     }
 
     getEmails(): Observable<any> {
-        console.log('get emails service');
         return this.http.get(
             this.url
         )
         .do(
             (data) => {
                 this.emails = data;
-                console.log('this.emails', data);
                 for (let i in data['emails']){
                     //console.log('data.emails[i]', data.emails[i]);
                     if (data['emails'][i].primary == true){
