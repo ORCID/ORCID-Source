@@ -658,17 +658,6 @@
 </script>
 
 <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
-<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645">
-    <also-known-as-form-ng2></also-known-as-form-ng2>
-</modalngcomponent><!-- Ng2 component --> 
-
-<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
-    <country-form-ng2></country-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
-
-<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
-    <websites-form-ng2></websites-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
 
 <modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
     <works-form-ng2></works-form-ng2>
@@ -683,22 +672,34 @@
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645">
+    <also-known-as-form-ng2></also-known-as-form-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
+    <country-form-ng2></country-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
     <emails-form-ng2 popUp="true"></emails-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
-    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
-</modalngcomponent><!-- Ng2 component --> 
-
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
+    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
     <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+
+<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
+    <websites-form-ng2></websites-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
