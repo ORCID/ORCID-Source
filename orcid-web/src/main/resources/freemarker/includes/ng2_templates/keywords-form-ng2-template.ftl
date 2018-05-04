@@ -17,7 +17,7 @@
                     <span class="right">Edit all privacy settings</span>
                     <div class="bulk-privacy-bar">
                         <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
-                            <ul class="privacyToggle" ng-mouseenter="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" ng-mouseleave="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
+                            <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
                                 <li class="publicActive publicInActive" [ngClass]="{publicInActive: bioModel != 'PUBLIC'}"><a (click)="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" name="privacy-toggle-3-public" id=""></a></li>
                                 <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: bioModel != 'LIMITED'}"><a (click)="setBulkGroupPrivacy('LIMITED', $event, bioModel)" name="privacy-toggle-3-limited" id=""></a></li>
                                 <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE', $event, bioModel)" name="privacy-toggle-3-private" id=""></a></li>

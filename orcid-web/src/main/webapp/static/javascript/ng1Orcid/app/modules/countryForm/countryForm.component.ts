@@ -3,7 +3,7 @@ declare var $: any; //delete
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -43,6 +43,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     primaryElementIndex: any;  
 
     constructor(
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private countryService: CountryService,
         private modalService: ModalService
@@ -95,6 +96,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
             if (countries[len] == country){
                 countries.splice(len,1);
                 this.formData.addresses = countries;
+                this.cdr.detectChanges();
             }       
         }
     };
@@ -189,8 +191,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     privacyChange( obj ): any {
-        this.formData.visibility.visibility = obj;
-        this.setformData( false );   
+        this.formData.visibility.visibility = obj;  
     };
     
     ///
