@@ -14,7 +14,11 @@ import { Observable }
 import { Subject } 
     from 'rxjs/Subject';
 
-import { Subscription }    from 'rxjs/Subscription';
+import { Subscription }
+    from 'rxjs/Subscription';
+
+import { NotificationsService } 
+    from '../../shared/notifications.service.ts'; 
 
 
 @Component({
@@ -26,6 +30,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     
     conditionsActive: boolean;
     filterActive: boolean;
+    getUnreadCount: any;
     menuVisible: boolean;
     searchFilterChanged: boolean;
     searchVisible: boolean;
@@ -34,9 +39,11 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     tertiaryMenuVisible: any;
 
     constructor(
+        private notificationsSrvc: NotificationsService
     ) {
         this.conditionsActive = false;
         this.filterActive = false;
+        this.getUnreadCount = 0;
         this.menuVisible = false;
         this.searchFilterChanged = false;
         this.searchVisible = false;
@@ -70,6 +77,10 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             }, 3000);
         }
+    };
+
+    isCurrentPage(path): any {
+        return window.location.href.startsWith(orcidVar.baseUri + '/' + path);
     };
 
     onResize(event?): void {
@@ -134,5 +145,21 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.onResize();
+
+        if(!(this.isCurrentPage('my-orcid') || this.isCurrentPage('inbox'))){
+            this.notificationsSrvc.retrieveUnreadCount();
+
+            this.notificationsSrvc.retrieveUnreadCount()
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    console.log('notificationData', data);
+                },
+                error => {
+                    //console.log('verifyEmail', error);
+                } 
+            );
+
+        }
     }; 
 }

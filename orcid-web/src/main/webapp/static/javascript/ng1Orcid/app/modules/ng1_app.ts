@@ -99,6 +99,9 @@ import { NameModule }
 import { NotificationsModule }
     from './notifications/notifications.ts';
 
+import { NotificationsCountModule }
+    from './notificationsCount/notificationsCount.ts';
+
 import { OauthAuthorizationModule } 
     from './oauthAuthorization/oauthAuthorization.ts';
 
