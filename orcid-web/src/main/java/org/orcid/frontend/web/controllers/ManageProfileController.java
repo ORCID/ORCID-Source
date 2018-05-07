@@ -695,18 +695,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             form.setVisibility(v);
         }
 
-        // Return an empty country in case we dont have any
-        /*if (form.getAddresses() == null) {
-            form.setAddresses(new ArrayList<AddressForm>());
-        }
-
-        if (form.getAddresses().isEmpty()) {
-            AddressForm address = new AddressForm();
-            address.setDisplayIndex(1L);
-            address.setVisibility(v);
-            form.getAddresses().add(address);
-        }*/
-
         return form;
     }
 
