@@ -184,7 +184,7 @@
     <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
-    
+
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
         <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">

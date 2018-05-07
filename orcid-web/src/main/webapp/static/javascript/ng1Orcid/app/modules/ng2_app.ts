@@ -113,6 +113,9 @@ import { NameNg2Module }
 import { NotificationsNg2Module }
     from './notifications/notifications.ts';
 
+import { NotificationsCountNg2Module }
+    from './notificationsCount/notificationsCount.ts';
+
 import { PasswordEditNg2Module } 
     from './passwordEdit/passwordEdit.ts';
 
