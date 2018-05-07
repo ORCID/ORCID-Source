@@ -363,7 +363,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             throw new IllegalArgumentException("Invalid visibility provided: " + defaultVisibility);
         }
         
-        return "{\"status\":" + defaultVisibility + "}";
+        return "{\"status\": \"" + defaultVisibility + "\"}";
     }
     
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
