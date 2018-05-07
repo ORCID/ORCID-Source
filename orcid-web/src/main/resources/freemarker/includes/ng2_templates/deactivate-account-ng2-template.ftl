@@ -27,3 +27,9 @@
         <button (click)="sendDeactivateEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</button>
     </div>
 </script>
+
+<script type="text/ng-template" id="deactivate-account-message-ng2-template">
+    <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
+    <button class="btn" (click)="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
+    </div>
+</script>
