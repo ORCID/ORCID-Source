@@ -193,7 +193,7 @@
                     <div class="control-group">
                         <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" ng-model="registrationForm.sendOrcidNews.value" />
                         <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
-                    <div>
+                    </div>
                     <p><@orcid.msg 'register.paragraph.3' /></p>
                 </div>
             </div>

@@ -48,6 +48,9 @@ import { CountryFormModule }
 import { DeactivateAccountModule }
     from './deactivateAccount/deactivateAccount.ts';
 
+import { DeactivateAccountMessageModule }
+    from './deactivateAccount/deactivateAccountMessage.ts';
+
 import { DeprecateAccountModule }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -95,6 +98,9 @@ import { NameModule }
 
 import { NotificationsModule }
     from './notifications/notifications.ts';
+
+import { NotificationsCountModule }
+    from './notificationsCount/notificationsCount.ts';
 
 import { OauthAuthorizationModule } 
     from './oauthAuthorization/oauthAuthorization.ts';
@@ -203,6 +209,7 @@ export const orcidApp = angular.module(
         CountryModule.name,
         CountryFormModule.name,
         DeactivateAccountModule.name,
+        DeactivateAccountMessageModule.name,
         DeprecateAccountModule.name,
         EmailsFormModule.name,
         EmailsModule.name,

@@ -1,7 +1,7 @@
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -43,9 +43,10 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
 
     constructor( 
-        private websitesService: WebsitesService,
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
-        private modalService: ModalService
+        private modalService: ModalService,
+        private websitesService: WebsitesService
     ) {
         this.defaultVisibility = null;
         this.emails = {};
@@ -94,6 +95,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
         while (len--) {
             if (websites[len] == website){
                 websites.splice(len,1);
+                this.cdr.detectChanges();
             }
         }     
     };
@@ -151,8 +153,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     privacyChange( obj ): any {
-        this.formData.visibility.visibility = obj;
-        this.setFormData( false );   
+        this.formData.visibility.visibility = obj;  
     };
 
     setFormData( closeAfterAction ): void {

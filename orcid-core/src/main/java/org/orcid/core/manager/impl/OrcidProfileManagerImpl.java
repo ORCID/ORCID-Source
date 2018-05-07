@@ -119,8 +119,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import net.sf.ehcache.Element;
-
 /**
  * The profile manager is responsible for passing onto the persistence layer
  * after performing any data manipulation necessary before doing so.
@@ -1692,10 +1690,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Deprecated
     public void updateLastModifiedDate(String orcid) {
         profileEntityManager.updateLastModifed(orcid);
-    }
-
-    static public OrcidProfile toOrcidProfile(Element element) {
-        return (OrcidProfile) (element != null ? element.getObjectValue() : null);
     }
 
     @Override

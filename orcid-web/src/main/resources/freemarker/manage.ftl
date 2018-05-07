@@ -58,27 +58,16 @@
                     <th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
                     <td><a href="" id="" ng-click="toggleLanguageEdit()" ng-bind="languageToggleText"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                 <tr ng-show="showEditLanguage" ng-cloak>
-                    <td>
-                        
-                        <language-ng2></language-ng2>
-                    </td>
-                </tr>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="languageCtrl" ng-show="showEditLanguage" ng-cloak>                                
-                    <td colspan="2">
+                    <td  colspan="2">
                         <p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
                         <div class="row">
-                            <div class="col-md-12" ng-include="'edit-language'">
-                                
-                            </div>                          
-                            
-                        </div>                      
+                            <div class="col-md-12">
+                                <language-ng2></language-ng2>
+                            </div>
+                        </div>
                     </td>
                 </tr>
-                </@orcid.checkFeatureStatus>
                 <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS' enabled=false>
                     <!-- Notifications-->
                     <tr>
@@ -255,47 +244,13 @@
                     <td><a href="" ng-click="toggleDeactivateEdit()"
                         ng-bind="deactivateToggleText"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+
                 <tr ng-show="showEditDeactivate" >
                     <td colspan="2">
                         <deactivate-account-ng2></deactivate-account-ng2>
                     </td>
                 </tr>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="DeactivateAccountCtrl"
-                    ng-show="showEditDeactivate" ng-cloak>
-                    <td colspan="2">
-                        <div class="editTablePadCell35 close-account-container">
-                            <p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
-                            
-                            <h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
-                            <p>
-                                ${springMacroRequestContext.getMessage("deactivate_orcid.once")} <a
-                                    href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
-                                    target="deactivate_orcid.close_an">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a>
-                            </p>
-                            
-                            <h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
-                            <p>
-                                ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")}&nbsp;<strong>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}</strong>
-                                <a
-                                        href="${knowledgeBaseUri}/articles/580410"
-                                        target="deprecate_orcid.learn_more_link" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
-                            </p>
-                            
-                                                            
-                            <h4>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</h4>
-                            <ol>
-                                <li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
-                                <li>${springMacroRequestContext.getMessage("deactivate_orcid.b2")}</li>
-                                <li>${springMacroRequestContext.getMessage("deactivate_orcid.b3")}</li>
-                            </ol>
-                            <button ng-click="sendDeactivateEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</button>
-                        </div>
-                    </td>
-                </tr>
-                </@orcid.checkFeatureStatus>
+
                 <!-- / Deactivate Account -->
                 <!-- Deprecate duplicate account -->
                 <tr>
@@ -692,12 +647,6 @@
         </div>
     </div>
 </div>
-
-<script type="text/ng-template" id="deactivate-account-modal">
-    <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
-    <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
-    </div>
-</script>
         
 <script type="text/ng-template" id="settings-verify-email-modal">
     <div style="padding: 20px;">
@@ -1026,6 +975,10 @@
     </div>
 </script>
 
-<#include "/includes/language_selector.ftl">
+<modalngcomponent elementHeight="200" elementId="modalDeactivateAccountMessage" elementWidth="645">
+    <deactivate-account-message-ng2></deactivate-account-message-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<language-ng2></language-ng2>
 
 </@protected>

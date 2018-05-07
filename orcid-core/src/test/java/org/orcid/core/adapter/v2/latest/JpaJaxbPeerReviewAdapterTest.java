@@ -71,8 +71,8 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("common:city", pe.getOrg().getCity());
         assertEquals("common:region", pe.getOrg().getRegion());        
         assertEquals(Iso3166Country.AF.name(), pe.getOrg().getCountry());
-        assertEquals("common:disambiguated-organization-identifier", pe.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("common:disambiguation-source", pe.getOrg().getOrgDisambiguated().getSourceType()); 
+        assertEquals("http://dx.doi.org/10.13039/100000001", pe.getOrg().getOrgDisambiguated().getSourceId());
+        assertEquals("FUNDREF", pe.getOrg().getOrgDisambiguated().getSourceType()); 
         
         //Check subject        
         assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}", pe.getSubjectExternalIdentifiersJson());

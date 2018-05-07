@@ -65,6 +65,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -361,7 +362,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid visibility provided: " + defaultVisibility);
         }
-        return defaultVisibility;
+        
+        return "{\"status\": \"" + defaultVisibility + "\"}";
     }
     
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)

@@ -129,8 +129,7 @@
 
     <!-- ***************************************************** -->
     <!-- Ng2 Templates - BEGIN -->
-    <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">
-
+    
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
         <!-- NG2: Under development -->
         <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
@@ -152,8 +151,7 @@
     <!-- NG2: QA -->
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
         
-        <#include "/includes/ng2_templates/header-ng2-template.ftl">
-        <#include "/includes/ng2_templates/language-ng2-template.ftl">
+        
         <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
         <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
         <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
@@ -167,16 +165,8 @@
         </#if>
         
         <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-            <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
-            <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
             <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
-            <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
-            <#include "/includes/ng2_templates/country-ng2-template.ftl">
             <#include "/includes/ng2_templates/funding-ng2-template.ftl">     
-            <#include "/includes/ng2_templates/websites-ng2-template.ftl">
-            <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
-            <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
-            
             <#include "/includes/ng2_templates/workspace-summary-ng2-template.ftl">
             <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
         </#if>
@@ -191,6 +181,11 @@
         </#if>
     </@orcid.checkFeatureStatus> 
  
+    <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">
+    <#include "/includes/ng2_templates/header-ng2-template.ftl">
+    <#include "/includes/ng2_templates/language-ng2-template.ftl">
+    <#include "/includes/ng2_templates/modal-ng2-template.ftl">
+
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
         <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
@@ -208,15 +203,19 @@
 
     <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
         <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
-        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">       
-        <#include "/includes/ng2_templates/biography-ng2-template.ftl">        
+        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">      
+        <#include "/includes/ng2_templates/biography-ng2-template.ftl">
+        <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/country-ng2-template.ftl">     
         <#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
         <#include "/includes/ng2_templates/keywords-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/keywords-ng2-template.ftl">
-        <#include "/includes/ng2_templates/modal-ng2-template.ftl">
         <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
         <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
     </#if>
 
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/developer-tools") || springMacroRequestContext.requestUri?contains("/inbox") || springMacroRequestContext.requestUri?contains("/my-orcid")>
