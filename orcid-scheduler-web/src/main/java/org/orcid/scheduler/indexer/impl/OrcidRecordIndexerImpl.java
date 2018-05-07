@@ -34,7 +34,9 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Value("${org.orcid.persistence.messaging.reindex.summary}")
     private String reindexSummaryQueueName;
     @Value("${org.orcid.persistence.messaging.reindex.activity}")
-    private String reindexActivitiesQueueName;   
+    private String reindexActivitiesQueueName;  
+    @Value("${org.orcid.persistence.indexing.delay:5}")
+    private Integer indexingDelay;
     
     @Resource
     private ProfileDao profileDao;
@@ -63,36 +65,18 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, String solrQueue, String summaryQueue, String activitiesQueue) {
         LOG.info("processing profiles with " + status.name() + " flag.");
         List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
-        List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
-        indexingStatuses.add(status);
         boolean connectionIssue = false;
         do {
-            orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
+            if(IndexingStatus.REINDEX.equals(status)) {
+                orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);                
+            } else {
+                orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);                
+            }
             LOG.info("processing batch of " + orcidsForIndexing.size());
+            
             for (Pair<String, IndexingStatus> p : orcidsForIndexing) {
                 String orcid = p.getLeft();
-                Date last = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
-                LastModifiedMessage mess = new LastModifiedMessage(orcid, last);                
-                // Send message to solr queue
-                if (!messaging.send(mess, solrQueue)) {
-                    connectionIssue = true;
-                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + solrQueue);
-                    continue;
-                }
-
-                // Send message to summary queue
-                if (!messaging.send(mess, summaryQueue)) {
-                    connectionIssue = true;
-                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + summaryQueue);
-                    continue;
-                }
-                // Send message to activities queue
-                if (!messaging.send(mess, activitiesQueue)) {
-                    connectionIssue = true;
-                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + activitiesQueue);
-                    continue;
-                }
-
+                
                 profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
 
             }
