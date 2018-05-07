@@ -82,7 +82,7 @@
                                         <@orcid.tooltipNg2 elementId="'tooltip-websites-move-down-'+index" message="common.modals.move_down" />
                                     </li>
                                     <li>                                        
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteEntry(website)" (mouseenter)="commonSrvc.showTooltip('tooltip-websites-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-websites-delete-'+index)"></div>
+                                        <div class="glyphicon glyphicon-trash" (click)="deleteEntry(website, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-websites-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-websites-delete-'+index)"></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-websites-delete-'+index" message="common.modals.delete" />
                                     </li>
                                     <li>
