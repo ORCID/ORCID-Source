@@ -82,10 +82,13 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     closeEditModal(): void{
         this.formData = this.formDataBeforeChange;
+        this.cdr.detectChanges();
+        this.alsoKnownAsService.notifyOther();
         this.modalService.notifyOther({action:'close', moduleId: 'modalAlsoKnownAsForm'});
     };
 
-    deleteOtherName(otherName): void{
+    deleteOtherName(otherName, index): void{
+        this.commonSrvc.hideTooltip('tooltip-aka-delete-'+index);
         let otherNames = this.formData.otherNames;
         let len = otherNames.length;
         while (len--) {            
@@ -184,6 +187,11 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
+        this.subscription = this.alsoKnownAsService.notifyObservable$.subscribe(
+            (res) => {
+                this.getformData();
+            }
+        );
     };
 
     ngOnDestroy() {

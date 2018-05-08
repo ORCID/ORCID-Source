@@ -86,10 +86,13 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     closeEditModal(): void{
         this.formData = this.formDataBeforeChange;
+        //this.cdr.detectChanges();
+        this.countryService.notifyOther();
         this.modalService.notifyOther({action:'close', moduleId: 'modalCountryForm'});
     };
 
-    deleteCountry(country): void{
+    deleteCountry(country, index): void{
+        this.commonSrvc.hideTooltip('tooltip-country-delete-'+index);
         var countries = this.formData.addresses;
         var len = countries.length;
         while (len--) {
@@ -108,7 +111,6 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
                 this.formData = data;
-                ////console.log('country data', this.formData);
                 this.formDataAddresses = this.formData.addresses;
                 this.newElementDefaultVisibility = this.formData.visibility.visibility;
 
@@ -116,11 +118,14 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.addNewCountry();
                 } else {
                     if ( this.formData.addresses.length == 1 ){
-                        if( this.formData.addresses[0].source == null ){
-                            //this.formData.addresses[0].source = this.orcidId;
-                            //this.formData.addresses[0].sourceName = "";
+                        /*if( this.formData.addresses[0].source == null ){
+                            this.formData.addresses[0].iso2Country= {"value": ""};
+                            this.formData.addresses[0].source = this.orcidId;
+                            this.formData.addresses[0].sourceName = "";
+                        }*/
+                        if(this.formData.addresses[0].putCode == null  ){
                             this.addNewCountry();
-                        }
+                        }  
                     }
                     this.updateDisplayIndex();
                 } 
@@ -166,7 +171,6 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setformData( closeAfterAction ): void {
-
         this.countryService.setCountryData( this.formData )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -253,7 +257,9 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.countryService.notifyObservable$.subscribe(
-            (res) => {}
+            (res) => {
+                this.getformData();
+            }
         );
     };
 

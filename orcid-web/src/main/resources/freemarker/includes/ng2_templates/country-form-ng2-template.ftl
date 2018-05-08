@@ -112,7 +112,7 @@
                                     </li>
                                     <li>
                                         <div 
-                                            (click)="deleteCountry(country)" 
+                                            (click)="deleteCountry(country, index)" 
                                             (mouseenter)="commonSrvc.showTooltip('tooltip-country-delete-'+index, $event, 37, 50, 39)" 
                                             (mouseleave)="commonSrvc.hideTooltip('tooltip-country-delete-'+index)"
                                             class="glyphicon glyphicon-trash" 

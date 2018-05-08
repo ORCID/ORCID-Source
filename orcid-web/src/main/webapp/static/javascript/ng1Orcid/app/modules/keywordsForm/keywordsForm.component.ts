@@ -77,10 +77,13 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     closeEditModal(): void {
         this.formData = this.formDataBeforeChange;
+        this.cdr.detectChanges();
+        this.keywordsService.notifyOther();
         this.modalService.notifyOther({action:'close', moduleId: 'modalKeywordsForm'});
     };
 
-    deleteKeyword( entry ): void{
+    deleteKeyword( entry, index ): void{
+        this.commonSrvc.hideTooltip('tooltip-keyword-delete-'+index);
         let keywords = this.formData.keywords;
         let len = keywords.length;
         while (len--) {
@@ -186,6 +189,11 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
+        this.subscription = this.keywordsService.notifyObservable$.subscribe(
+            (res) => {
+                this.getData();
+            }
+        );
     };
 
     ngOnDestroy() {

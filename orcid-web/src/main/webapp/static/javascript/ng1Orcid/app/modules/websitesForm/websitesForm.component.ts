@@ -86,10 +86,13 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     closeEditModal(): void{
         this.formData = this.formDataBeforeChange;
+        this.cdr.detectChanges();
+        this.websitesService.notifyOther();
         this.modalService.notifyOther({action:'close', moduleId: 'modalWebsitesForm'});
     };
 
-    deleteEntry( website ): void{
+    deleteEntry( website, index ): void{
+        this.commonSrvc.hideTooltip('tooltip-websites-delete-'+index)
         let websites = this.formData.websites;
         let len = websites.length;
         while (len--) {
@@ -215,6 +218,11 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
+        this.subscription = this.websitesService.notifyObservable$.subscribe(
+            (res) => {
+                this.getformData();
+            }
+        );
     };
 
     ngOnDestroy() {
