@@ -232,7 +232,7 @@ public class NotificationController extends BaseController {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         if (notification instanceof NotificationTip) {
-            String html =  ((NotificationServiceAnnouncement) notification).getBodyHtml();
+            String html =  ((NotificationTip) notification).getBodyHtml();
             int start = html.indexOf("<body>")+"<body>".length();
             int end = html.indexOf("</body>", start);
             String body = html.substring(start, end);
@@ -249,7 +249,7 @@ public class NotificationController extends BaseController {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         if (notification instanceof NotificationAdministrative) {
-            String html =  ((NotificationServiceAnnouncement) notification).getBodyHtml();
+            String html =  ((NotificationAdministrative) notification).getBodyHtml();
             int start = html.indexOf("<body>")+"<body>".length();
             int end = html.indexOf("</body>", start);
             String body = html.substring(start, end);
