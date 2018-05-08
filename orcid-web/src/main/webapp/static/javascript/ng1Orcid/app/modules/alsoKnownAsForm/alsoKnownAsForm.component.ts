@@ -1,7 +1,7 @@
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -29,6 +29,8 @@ import { ModalService }
 export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+
+    public newInput = new EventEmitter<boolean>();
 
     defaultVisibility: any;
     emails: any;
@@ -76,8 +78,10 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
             "sourceName":"", 
             "displayIndex": 1
         };        
-        this.formData.otherNames.push(tmpObj);        
-        this.updateDisplayIndex();    
+        this.formData.otherNames.push(tmpObj); 
+        this.cdr.detectChanges();       
+        this.updateDisplayIndex();
+        this.newInput.emit(true); 
     };
 
     closeEditModal(): void{
@@ -200,6 +204,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     ngOnInit() {
+        console.log("form oninit");
         this.getformData();
     };
 
