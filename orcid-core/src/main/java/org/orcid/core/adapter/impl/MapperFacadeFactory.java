@@ -305,9 +305,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             @Override
             public void mapBtoA(NotificationAmendedEntity b, NotificationAmended a, MappingContext context) {
                 if (b.getAmendedSection() != null) {
-                    if (AmendedSection.AFFILIATION.name().equals(b.getAmendedSection()) || AmendedSection.DISTINCTION.name().equals(b.getAmendedSection()) ||
-                            AmendedSection.INVITED_POSITION.name().equals(b.getAmendedSection()) || AmendedSection.MEMBERSHIP.name().equals(b.getAmendedSection()) ||
-                            AmendedSection.PREFERENCES.name().equals(b.getAmendedSection()) || AmendedSection.QUALIFICATION.name().equals(b.getAmendedSection())
+                    if (AmendedSection.AFFILIATION.name().equals(b.getAmendedSection()) 
+                            || AmendedSection.DISTINCTION.name().equals(b.getAmendedSection())
+                            || AmendedSection.INVITED_POSITION.name().equals(b.getAmendedSection()) 
+                            || AmendedSection.MEMBERSHIP.name().equals(b.getAmendedSection())
+                            || AmendedSection.QUALIFICATION.name().equals(b.getAmendedSection()) 
                             || AmendedSection.SERVICE.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.AFFILIATION);
                     } else if (AmendedSection.BIO.name().equals(b.getAmendedSection())) {
