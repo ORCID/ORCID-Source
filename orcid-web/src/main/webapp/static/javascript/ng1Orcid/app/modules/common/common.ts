@@ -13,6 +13,10 @@ import { FormsModule }
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
 
+//User generated attribute directives
+import { FocusMe }
+    from '../../directives/focusMe.directive.ts'; 
+
 //User generated filters
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
@@ -227,6 +231,7 @@ import { EmailFrequencyService }
             SwitchUserNg2Module
         ],
         declarations: [ 
+            FocusMe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
@@ -242,6 +247,8 @@ import { EmailFrequencyService }
             //Angular Libraries
             CommonModule,
             FormsModule,
+            //User directives
+            FocusMe,
             //User Pipes
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
