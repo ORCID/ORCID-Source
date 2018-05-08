@@ -59,10 +59,6 @@ import { HeaderNg2Module }
 import { LanguageNg2Module }
     from './../language/language.ts';
 
-
-import { NotificationsCountNg2Module }
-    from './../notificationsCount/notificationsCount.ts';
-
 import { NotificationPreferenceNg2Module }
     from './../notificationPreferences/notificationPreference.ts';
 
