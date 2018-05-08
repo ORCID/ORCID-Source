@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import javax.annotation.Resource;
 
 import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.listener.RetryMessage;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,4 +19,7 @@ public class S3SummaryConsumer implements Consumer<LastModifiedMessage> {
         proc.update20Summary(message);
     }
 
+    public void accept(RetryMessage message) {
+        proc.update20Summary(message);
+    }
 }

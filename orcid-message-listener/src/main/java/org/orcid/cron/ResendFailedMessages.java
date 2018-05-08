@@ -13,8 +13,10 @@ import org.orcid.listener.persistence.entities.ActivitiesStatusEntity;
 import org.orcid.listener.persistence.entities.RecordStatusEntity;
 import org.orcid.listener.persistence.managers.ActivitiesStatusManager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
+import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
-import org.orcid.listener.s3.S3MessageProcessor;
+import org.orcid.listener.s3.S3ActivitiesConsumer;
+import org.orcid.listener.s3.S3SummaryConsumer;
 import org.orcid.listener.solr.SolrMessageProcessor;
 import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
@@ -48,12 +50,15 @@ public class ResendFailedMessages {
 
     @Autowired
     private RecordStatusManager manager;
-
+    
     @Autowired
     private ActivitiesStatusManager activitiesManager;
 
+    @Autowired
+    private S3ActivitiesConsumer s3ActivitiesConsumer;
+
     @Resource
-    private S3MessageProcessor s3Processor;
+    private S3SummaryConsumer s3SummaryConsumer;
 
     @Resource
     private SolrMessageProcessor solrProcessor;
@@ -76,17 +81,17 @@ public class ResendFailedMessages {
             try {
                 // Send RetryMessage for solr indexing
                 if (element.getSolrStatus20Api() > 0) {
-                    // TODO: Send SOLR message
+                    RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.SOLR.value());
+                    solrProcessor.accept(message);
                 }
 
                 // Send RetryMessage for summaries
                 if (element.getDumpStatus20Api() > 0) {
                     RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.DUMP_STATUS_2_0_API.value());
-                    // TODO: Send Summary message
+                    s3SummaryConsumer.accept(message);
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
-                // Should we notify about this element?
             }
         }
 
@@ -104,19 +109,43 @@ public class ResendFailedMessages {
         List<ActivitiesStatusEntity> elementsToNotify = new ArrayList<ActivitiesStatusEntity>();
 
         for (ActivitiesStatusEntity element : failedElements) {
-            if ((element.getEducationsStatus() > maxFailuresBeforeNotify) || (element.getEmploymentsStatus() > maxFailuresBeforeNotify)
-                    || (element.getFundingsStatus() > maxFailuresBeforeNotify) || element.getWorksStatus() > maxFailuresBeforeNotify
-                    || element.getPeerReviewsStatus() > maxFailuresBeforeNotify) {
+            if ((element.getEducationsStatus() != null && element.getEducationsStatus() > maxFailuresBeforeNotify) 
+                    || (element.getEmploymentsStatus() != null && element.getEmploymentsStatus() > maxFailuresBeforeNotify)
+                    || (element.getFundingsStatus() != null && element.getFundingsStatus() > maxFailuresBeforeNotify) 
+                    || (element.getWorksStatus() != null && element.getWorksStatus() > maxFailuresBeforeNotify)
+                    || (element.getPeerReviewsStatus() != null && element.getPeerReviewsStatus() > maxFailuresBeforeNotify)) {
                 elementsToNotify.add(element);
-                try {
-                    // TODO Send activities message
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage());
-                    // Should we notify about this element?
-                }
+            }
+            Map<ActivityType, Boolean> retryMap = new HashMap<ActivityType, Boolean>();
+            if(element.getEducationsStatus() != null && element.getEducationsStatus() > 0) {
+                retryMap.put(ActivityType.EDUCATIONS, true);
+            } 
+            
+            if(element.getEmploymentsStatus() != null && element.getEmploymentsStatus() > 0) {
+                retryMap.put(ActivityType.EMPLOYMENTS, true);
+            } 
+
+            if(element.getFundingsStatus() != null && element.getFundingsStatus() > 0) {
+                retryMap.put(ActivityType.FUNDINGS, true);
+            } 
+
+            if(element.getWorksStatus() != null && element.getWorksStatus()> 0) {
+                retryMap.put(ActivityType.WORKS, true);
+            } 
+
+            if(element.getPeerReviewsStatus() != null && element.getPeerReviewsStatus() > 0) {
+                retryMap.put(ActivityType.PEER_REVIEWS, true);
+            }
+            
+            try {
+                RetryMessage message = new RetryMessage(element.getId(), "none");
+                message.setRetryTypes(retryMap);
+                s3ActivitiesConsumer.accept(message);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
             }
         }
-
+        
         // Send summary
         if (!elementsToNotify.isEmpty()) {
             String message = buildActivitiesAlertMessage(elementsToNotify);

@@ -32,6 +32,7 @@ import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
+import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -133,21 +134,45 @@ public class S3MessageProcessor {
         String orcid = message.getOrcid();
         LOG.info("Processing activities for record " + orcid);
         Record record = fetchPublicRecord(message);        
-        
         if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
             if (record.getActivitiesSummary() != null) {
                 ActivitiesSummary as = record.getActivitiesSummary();
                 Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
-                processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
-                processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
-                processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
-                processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
-                processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));                        
+                if(RetryMessage.class.isAssignableFrom(message.getClass())) {
+                    RetryMessage rm = (RetryMessage) message;
+                    @SuppressWarnings("unchecked")
+                    Map<ActivityType, Boolean> retryMap = (Map<ActivityType, Boolean>) rm.getRetryTypes();
+                    if(retryMap.containsKey(ActivityType.EDUCATIONS)) {
+                        processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
+                    } 
+
+                    if(retryMap.containsKey(ActivityType.EMPLOYMENTS)) {
+                        processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));    
+                    } 
+
+                    if(retryMap.containsKey(ActivityType.FUNDINGS)) {
+                        processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));    
+                    } 
+
+                    if(retryMap.containsKey(ActivityType.PEER_REVIEWS)) {
+                        processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));    
+                    } 
+
+                    if(retryMap.containsKey(ActivityType.WORKS)) {
+                        processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));    
+                    }
+                } else {
+                    processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
+                    processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
+                    processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
+                    processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
+                    processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));   
+                }                                                       
             } 
         } else if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == false) {
             LOG.warn(record.getOrcidIdentifier().getPath() + " is unclaimed, so, his activities would not be indexed");
             activitiesStatusManager.markAllAsSent(orcid);
-        }                
+        }                                      
     }        
 
     private void processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
