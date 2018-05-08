@@ -171,6 +171,12 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setformData( closeAfterAction ): void {
+        //Don't save countries with no value
+        for(let i = 0; i < this.formData.addresses.length; i ++) {
+            if( !this.formData.addresses[i].iso2Country.value) {
+                this.formData.addresses.splice(i, 1);
+            }                                                                
+        }
         this.countryService.setCountryData( this.formData )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
