@@ -97,6 +97,20 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    retrieveUnreadCount(): any {
+        this.notificationsSrvc.retrieveUnreadCount()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                //console.log('notificationData', data);
+                this.getUnreadCount = data;
+            },
+            error => {
+                //console.log('verifyEmail', error);
+            } 
+        );
+    }
+
     searchBlur(): void {     
         this.hideSearchFilter();
         this.conditionsActive = false;        
@@ -147,18 +161,8 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         this.onResize();
 
         if(!(this.isCurrentPage('my-orcid') || this.isCurrentPage('inbox'))){
-            this.notificationsSrvc.retrieveUnreadCount();
 
-            this.notificationsSrvc.retrieveUnreadCount()
-            .takeUntil(this.ngUnsubscribe)
-            .subscribe(
-                data => {
-                    console.log('notificationData', data);
-                },
-                error => {
-                    //console.log('verifyEmail', error);
-                } 
-            );
+            this.retrieveUnreadCount();
 
         }
     }; 

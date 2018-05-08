@@ -136,6 +136,30 @@ export class NotificationsService {
         if(this.showArchived){
             url += "&includeArchived=true";
         }
+
+        return this.http.get(
+            url
+        )
+        .do(
+            (data) => {
+                if(data.length === 0 || data.length < this.maxResults){
+                    this.areMoreFlag = false;
+                }
+                else{
+                    this.areMoreFlag = true;
+                }
+                for(var i = 0; i < data.length; i++){                       
+                    this.notifications.push(data[i]);
+                }
+                this.loading = false;
+                this.loadingMore = false;
+                this.resizeIframes();
+                this.retrieveUnreadCount();                                             
+            }
+        )
+        .share();
+
+        /*
         $.ajax({
             url: url,
             dataType: 'json',
@@ -160,6 +184,7 @@ export class NotificationsService {
             // something bad is happening!
             console.log("error with getting notifications");
         });
+        */
     }
 
     getNotificationAlerts(): any{
@@ -311,7 +336,27 @@ export class NotificationsService {
         */
     }
 
-    suppressAlert(notificationId): any {         
+    suppressAlert(notificationId): any {      
+        return this.http.get(
+            getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
+        )
+        .do(
+            (data) => {
+                for(var i = 0;  i < this.notifications.length; i++){
+                    var existing = this.notifications[i];
+                    if(existing.putCode === notificationId){
+                        this.notifications.splice(i, 1);
+                        if(this.firstResult > 0){
+                            this.firstResult--;
+                        }
+                        break;
+                    }
+                }                                            
+            }
+        )
+        .share();
+
+        /*
         $.ajax({
             url: getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
             type: 'POST',
@@ -333,13 +378,31 @@ export class NotificationsService {
             // something bad is happening!
             console.log("error flagging notification alert as suppressed");
         });
+        */
     }
 
     bulkArchive(): any {            
         var promises = [];
         var tmpNotifications = this.notifications;
         
-        function archive(notificationId){                
+        for (let putCode in this.bulkArchiveMap) {
+            if(this.bulkArchiveMap[putCode]) {
+                promises.push(archive(putCode));            
+            }
+        }
+        
+        function archive(notificationId){  
+            return this.http.get(
+                getBaseUri() + '/inbox/' + notificationId + '/archive.json'
+            )
+            .do(
+                (data) => {
+                                                             
+                }
+            )
+            .share();
+
+            /*
             var defer = $q.defer(notificationId);                
             $.ajax({
                 url: getBaseUri() + '/inbox/' + notificationId + '/archive.json',
@@ -353,13 +416,10 @@ export class NotificationsService {
                 console.log("error flagging notification as archived");
             });                
             return defer.promise;
+            */
         }
         
-        for (let putCode in this.bulkArchiveMap) {
-            if(this.bulkArchiveMap[putCode]) {
-                promises.push(archive(putCode));            
-            }
-        }
+        
         /*
         $q.all(promises).then(function(){
             this.bulkArchiveMap.length = 0;
