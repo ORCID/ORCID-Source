@@ -979,6 +979,4 @@
     <deactivate-account-message-ng2></deactivate-account-message-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<language-ng2></language-ng2>
-
 </@protected>
