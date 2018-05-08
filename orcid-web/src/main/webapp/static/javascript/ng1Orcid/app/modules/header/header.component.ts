@@ -102,7 +102,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                //console.log('notificationData', data);
                 this.getUnreadCount = data;
             },
             error => {
@@ -159,11 +158,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.onResize();
-
-        if(!(this.isCurrentPage('my-orcid') || this.isCurrentPage('inbox'))){
-
-            this.retrieveUnreadCount();
-
-        }
+        this.retrieveUnreadCount();
+        
     }; 
 }
