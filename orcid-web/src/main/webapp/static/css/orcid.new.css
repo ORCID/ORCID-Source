@@ -5974,7 +5974,6 @@ a#reset-password-toggle-text:hover:active {
 .edit-record-emails {
     width: 600px;
     padding: 15px 0 15px 15px;
-    min-height: 678px
 }
 
 .fixed-area .scroll-area input[type=text],.fixed-area .scroll-area input[type=textbox],.fixed-area .scroll-area select {
