@@ -672,12 +672,12 @@
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645">
+<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645" setFocus="true">
     <also-known-as-form-ng2></also-known-as-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
 <modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
-    <country-form-ng2></country-form-ng2>
+    <country-form-ng2 ></country-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
@@ -692,11 +692,11 @@
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
+<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645" setFocus="true">
     <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
+<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645" setFocus="true">
     <websites-form-ng2></websites-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 

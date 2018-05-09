@@ -28,6 +28,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() elementId: any;
     @Input() elementHeight: any;
     @Input() elementWidth: any;
+    @Input() setFocus?: any;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
@@ -42,6 +43,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         this.elementHeight = elementRef.nativeElement.getAttribute('elementHeight');
         this.elementId = elementRef.nativeElement.getAttribute('elementId');
         this.elementWidth = elementRef.nativeElement.getAttribute('elementWidth');
+        this.setFocus = elementRef.nativeElement.getAttribute('setFocus');
         this.showModal = false;
     }
 
@@ -79,6 +81,11 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     openModal(): void{
         //$('body').addClass('overflow-hidden');
         this.showModal = true;
+        if (this.setFocus == 'true') {
+            setTimeout(function(){ 
+                $('#cboxContent input.focusInput').focus();
+            },1000);
+        }
     };
 
     //Default init functions provided by Angular Core

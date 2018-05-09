@@ -1,7 +1,7 @@
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -30,6 +30,8 @@ import { ModalService }
 export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+
+    public newInput = new EventEmitter<boolean>();
 
     defaultVisibility: any;
     emails: any;
@@ -81,7 +83,9 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
             "displayIndex": 1
         };         
         this.formData.websites.push(tmpObj);        
-        this.updateDisplayIndex();    
+        this.cdr.detectChanges();       
+        this.updateDisplayIndex();
+        this.newInput.emit(true);     
     };
 
     closeEditModal(): void{

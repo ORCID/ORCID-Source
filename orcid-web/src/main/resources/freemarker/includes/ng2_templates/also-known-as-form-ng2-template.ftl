@@ -63,7 +63,7 @@
                        <div class="row aka-row" *ngFor="let otherName of formData.otherNames; let index = index; let first = first; let last = last;" >                                                            
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <div class="aka" *ngIf="otherName">   
-                                    <input type="text" [(ngModel)]="otherName.content" *ngIf="otherName.source == orcidId" focus-me="newInput" />  
+                                    <input type="text" [(ngModel)]="otherName.content" *ngIf="otherName.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !otherName.content}" />  
                                     <span *ngIf="otherName.source != orcidId && otherName.source != null">{{otherName.content}}</span>                                       
                                 </div>                                      
                                 <div class="source" *ngIf="otherName.sourceName || otherName.sourceName == null">
