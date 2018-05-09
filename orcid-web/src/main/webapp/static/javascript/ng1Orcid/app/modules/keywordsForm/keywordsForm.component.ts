@@ -4,7 +4,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -33,11 +33,12 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
+    public newInput = new EventEmitter<boolean>();
+
     bulkEditShow: any; ///
     formData: any;
     formDataBeforeChange: any;
     newElementDefaultVisibility: string;
-    newInput: boolean;
     orcidId: any;
  
     constructor(
@@ -50,7 +51,6 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.formData = {};
         this.formDataBeforeChange = {};
         this.newElementDefaultVisibility = 'PRIVATE';
-        this.newInput = false;
         this.orcidId = orcidVar.orcidId; //Do not remove
     }
 
@@ -71,8 +71,9 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         //console.log('add new keyword', tmpObj);  
         this.formData.keywords.push(tmpObj);
+        this.cdr.detectChanges();       
         this.updateDisplayIndex();
-        this.newInput = true;
+        this.newInput.emit(true); 
     };
 
     closeEditModal(): void {

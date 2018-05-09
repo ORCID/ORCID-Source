@@ -8,11 +8,9 @@ export class FocusMe {
  
   constructor(@Inject(ElementRef) private element: ElementRef, private renderer: Renderer) {
   }
- 
+
   ngOnInit() {
-    console.log("directive oninit");
     this.focusEvent.subscribe(event => {
-      console.log(event);
       this.renderer.invokeElementMethod(this.element.nativeElement, 'focus', []);
     });
   }
