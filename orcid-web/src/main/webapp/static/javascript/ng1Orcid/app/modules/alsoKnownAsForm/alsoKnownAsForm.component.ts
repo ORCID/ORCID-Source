@@ -204,7 +204,6 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     ngOnInit() {
-        console.log("form oninit");
         this.getformData();
     };
 
