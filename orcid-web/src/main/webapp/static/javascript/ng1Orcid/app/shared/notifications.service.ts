@@ -141,7 +141,7 @@ export class NotificationsService {
             url
         )
         .do(
-            (data) => {
+            (data: any) => {
                 if(data.length === 0 || data.length < this.maxResults){
                     this.areMoreFlag = false;
                 }
@@ -149,7 +149,7 @@ export class NotificationsService {
                     this.areMoreFlag = true;
                 }
                 for(var i = 0; i < data.length; i++){                       
-                    this.notifications.push(data[i]);
+                    this.notifications.push( data[i] );
                 }
                 this.loading = false;
                 this.loadingMore = false;
