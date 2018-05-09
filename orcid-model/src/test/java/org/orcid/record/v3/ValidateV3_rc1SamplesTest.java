@@ -19,8 +19,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.util.JAXBSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -56,6 +58,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Preferences;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
@@ -1537,7 +1540,13 @@ public class ValidateV3_rc1SamplesTest {
         Services object = (Services) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/services-3.0_rc1.xml", Services.class);
         marshall(object, "/record_3.0_rc1/activities-3.0_rc1.xsd");   
     }
-
+    
+    @Test
+    public void testMarshallResearchResource() throws JAXBException, SAXException, URISyntaxException {
+        ResearchResource object = (ResearchResource) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/research-resource-3.0_rc1.xml", ResearchResource.class);
+        marshall(object, "/record_3.0_rc1/research-resource-3.0_rc1.xsd");   
+    }
+    
     private void validateAffiliation(Affiliation object, boolean writeSample) {
         assertNotNull(object);
         if(!writeSample) {
@@ -1656,6 +1665,8 @@ public class ValidateV3_rc1SamplesTest {
                 result = (Service) obj;
             } else if (Services.class.equals(type)) {
                 result = (Services) obj;
+            } else if (ResearchResource.class.equals(type)) {
+                result = (ResearchResource) obj;
             }
             return result;
         } catch (IOException e) {

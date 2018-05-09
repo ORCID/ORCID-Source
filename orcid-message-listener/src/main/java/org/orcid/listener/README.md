@@ -1,7 +1,7 @@
 Package contents
 ================
 
-Listener = an @JMSListener
+Listeners configured in spring config.  You can point queues at Consumer<LastModifiedMessage> implementations.
 
 Testing S3
 ==========

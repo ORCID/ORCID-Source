@@ -170,6 +170,8 @@
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
+	
+	<xs:element name="organization" type="common:organization" />
 
 	<xs:complexType name="organization-address">
 		<xs:annotation>
@@ -748,6 +750,8 @@
 			<xs:extension base="xs:anyURI" />
 		</xs:simpleContent>
 	</xs:complexType>
+
+	<xs:element name="url" type="common:url" />
 
 	<xs:complexType name="address">
 		<xs:annotation>
