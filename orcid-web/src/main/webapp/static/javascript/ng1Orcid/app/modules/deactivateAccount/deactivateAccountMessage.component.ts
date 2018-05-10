@@ -51,7 +51,6 @@ export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestr
         .subscribe(
             data => {
                 this.primaryEmail = this.emailService.getEmailPrimary().value;
-                console.log('da this.primaryEmail', this.primaryEmail, data);
             },
             error => {
                 //console.log('getEmails', error);
