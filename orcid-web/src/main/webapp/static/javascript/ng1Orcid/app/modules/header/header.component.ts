@@ -98,16 +98,18 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     retrieveUnreadCount(): any {
-        this.notificationsSrvc.retrieveUnreadCount()
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.getUnreadCount = data;
-            },
-            error => {
-                //console.log('verifyEmail', error);
-            } 
-        );
+        if( this.notificationsSrvc.retrieveCountCalled == false ) {
+            this.notificationsSrvc.retrieveUnreadCount()
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    this.getUnreadCount = data;
+                },
+                error => {
+                    //console.log('verifyEmail', error);
+                } 
+            );
+        }
     }
 
     searchBlur(): void {     
@@ -157,8 +159,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.onResize();
-        this.retrieveUnreadCount();
-        
+        this.onResize();   
     }; 
 }

@@ -18,8 +18,10 @@ import 'rxjs/Rx';
 @Injectable()
 export class NotificationsService {
     private headers: HttpHeaders;
-
     private notify = new Subject<any>();
+
+    public retrieveCountCalled: boolean;
+
     
     notifyObservable$ = this.notify.asObservable();
 
@@ -34,6 +36,7 @@ export class NotificationsService {
     maxResults: any;
     notificationAlerts: any;
     notifications: any;
+    
     selectionActive: boolean;
     showArchived: boolean;
     unreadCount: any;
@@ -55,8 +58,10 @@ export class NotificationsService {
         this.loading = true;
         this.loadingMore = false;
         this.maxResults = this.defaultMaxResults = 10;
+        this.retrieveCountCalled = false;
         this.notificationAlerts = [];
         this.notifications = [];
+        this.retrieveCountCalled = false;
         this.selectionActive = false;
         this.showArchived = false;
         this.unreadCount = 0;
@@ -215,6 +220,8 @@ export class NotificationsService {
     }
 
     retrieveUnreadCount(): any {
+        this.retrieveCountCalled = true;
+
         return this.http.get(
             getBaseUri() + '/inbox/unreadCount.json'
         )
