@@ -7,7 +7,7 @@
                 <indexExists indexName="oauth2_token_detail_authorization_code_idx" tableName="oauth2_token_detail" />
             </not>
         </preConditions>
-        <sql>CREATE UNIQUE INDEX oauth2_token_detail_authorization_code_idx on oauth2_token_detail(authorization_code);</sql>
+        <sql>CREATE INDEX oauth2_token_detail_authorization_code_idx on oauth2_token_detail(authorization_code);</sql>
     </changeSet>
     
 </databaseChangeLog>
