@@ -266,7 +266,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendServiceAnnouncements(Integer customBatchSize) {
         LOGGER.info("About to send Service Announcements messages");
-        Integer doneCount = 0;
         List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
         try {
             long startTime = System.currentTimeMillis();
@@ -276,7 +275,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 callables.add(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        processServiceAnnouncementNotification(n);
+                        processServiceAnnouncementOrNotification(n);
                         return true;
                     }
 
@@ -285,10 +284,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
             // Runthem all
             pool.invokeAll(callables);
-            doneCount += callables.size();
             long endTime = System.currentTimeMillis();
             String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
-            LOGGER.info("DoneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
+            LOGGER.info("TimeTaken={} (H:m:s.S)", timeTaken);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -297,10 +295,36 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Override
     public void sendTips(Integer customBatchSize) {
+        LOGGER.info("About to send Service Announcements messages");
         
+        List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
+        try {
+            long startTime = System.currentTimeMillis();
+            serviceAnnouncementsOrTips = notificationDaoReadOnly.findUnsentTips(customBatchSize);
+            Set<Callable<Boolean>> callables = new HashSet<Callable<Boolean>>();
+            for (NotificationEntity n : serviceAnnouncementsOrTips) {
+                callables.add(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        processServiceAnnouncementOrNotification(n);
+                        return true;
+                    }
+
+                });
+            }
+
+            // Runthem all
+            pool.invokeAll(callables);
+            long endTime = System.currentTimeMillis();
+            String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
+            LOGGER.info("TimeTaken={} (H:m:s.S)", timeTaken);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
-    private void processServiceAnnouncementNotification(NotificationEntity n) {
+    private void processServiceAnnouncementOrNotification(NotificationEntity n) {
         String orcid = n.getProfile().getId();
         EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
         if (primaryEmail == null) {
