@@ -211,7 +211,7 @@
                                     <div class="col-md-12">
                                         <div class="bottomBuffer">
                                             <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                            <span>{{group.createdDate}}</span>
+                                            <span>{{group.createdDate | ajaxFormDateToISO8601}}</span>
                                         </div>
                                     </div>  
                                 </div>
@@ -884,7 +884,7 @@
                                         <div class="col-md-12">
                                             <div class="bottomBuffer">
                                                 <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                                <span>{{group.createdDate}}</span>
+                                                <span>{{group.createdDate | ajaxFormDateToISO8601}}</span>
                                             </div>
                                         </div>  
                                     </div>
@@ -1175,7 +1175,7 @@
                                         <div class="col-md-12">
                                             <div class="bottomBuffer">
                                                 <strong><@orcid.msg 'groups.common.created'/></strong><br> 
-                                                <span>{{group.createdDate}}</span>
+                                                <span>{{group.createdDate | ajaxFormDateToISO8601}}</span>
                                             </div>
                                         </div>  
                                     </div>
