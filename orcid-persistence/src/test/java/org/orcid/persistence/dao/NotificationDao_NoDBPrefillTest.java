@@ -184,7 +184,7 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         emailFrequencyDao.updateSendQuarterlyTips(orcid, false);     
 
-        List<NotificationEntity> recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        List<NotificationEntity> recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
         assertTrue(recordsWithNotificationsToSend.isEmpty());
 
         // Add one Service Announcement and one Tip
@@ -200,28 +200,27 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         tip.setSendable(true);
         notificationDao.persist(tip);
         
-        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
         assertEquals(1, recordsWithNotificationsToSend.size());
         assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());
     
         // Enable tips
         emailFrequencyDao.updateSendQuarterlyTips(orcid, true);
     
-        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
-        assertEquals(2, recordsWithNotificationsToSend.size());
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
+        assertEquals(1, recordsWithNotificationsToSend.size());
         assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());
-        assertEquals(tip.getId(), recordsWithNotificationsToSend.get(1).getId());
         
         // Disable tips again
         emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
-        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
         assertEquals(1, recordsWithNotificationsToSend.size());
         assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());    
     
         // Mark a SERVICE_ANNOUNCEMENT as non sendable
         notificationDao.flagAsNonSendable(orcid, sa.getId());
         
-        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
         assertEquals(0, recordsWithNotificationsToSend.size());  
         
         NotificationEntity sa2 = new NotificationServiceAnnouncementEntity();
@@ -230,13 +229,94 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         sa2.setSendable(true);
         notificationDao.persist(sa2);
         
-        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
         assertEquals(1, recordsWithNotificationsToSend.size());  
         assertEquals(sa2.getId(), recordsWithNotificationsToSend.get(0).getId());
         
         notificationDao.flagAsNonSendable(orcid, sa2.getId());
         
-        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncementsAndTips(100);
-        assertEquals(0, recordsWithNotificationsToSend.size());         
-    }        
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
+        assertEquals(0, recordsWithNotificationsToSend.size());
+        
+        // Mark both SERVICE_ANNOUNCEMENT as sendable
+        notificationDao.flagAsSendable(orcid, sa.getId());
+        notificationDao.flagAsSendable(orcid, sa2.getId());
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
+        assertEquals(2, recordsWithNotificationsToSend.size());  
+        assertEquals(sa.getId(), recordsWithNotificationsToSend.get(0).getId());
+        assertEquals(sa2.getId(), recordsWithNotificationsToSend.get(1).getId());        
+    } 
+    
+    @Test
+    public void testTipsNotifications() {
+        String orcid = "0000-0000-0000-0003";
+        ProfileEntity profile = new ProfileEntity(orcid);
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);     
+
+        List<NotificationEntity> recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        assertTrue(recordsWithNotificationsToSend.isEmpty());
+
+        // Add one one Tip
+        NotificationEntity tip = new NotificationTipEntity();
+        tip.setProfile(profile);
+        tip.setNotificationType("TIP");
+        tip.setSendable(true);
+        notificationDao.persist(tip);
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        assertEquals(0, recordsWithNotificationsToSend.size());
+        
+        // Enable tips
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, true);
+    
+        recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        assertEquals(1, recordsWithNotificationsToSend.size());
+        assertEquals(tip.getId(), recordsWithNotificationsToSend.get(0).getId());
+        
+        // Disable tips again
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
+        recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        assertEquals(0, recordsWithNotificationsToSend.size());
+        
+        // Mark as non sendable and enable tips
+        notificationDao.flagAsNonSendable(orcid, tip.getId());
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, true);
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        assertEquals(0, recordsWithNotificationsToSend.size());  
+        
+        NotificationEntity tip2 = new NotificationTipEntity();
+        tip2.setProfile(profile);
+        tip2.setNotificationType("TIP");
+        tip2.setSendable(true);
+        notificationDao.persist(tip2);
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        assertEquals(1, recordsWithNotificationsToSend.size());  
+        assertEquals(tip2.getId(), recordsWithNotificationsToSend.get(0).getId());
+        
+        notificationDao.flagAsNonSendable(orcid, tip2.getId());
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        assertEquals(0, recordsWithNotificationsToSend.size());    
+        
+        // Flag both as sendable
+        notificationDao.flagAsSendable(orcid, tip.getId());
+        notificationDao.flagAsSendable(orcid, tip2.getId());
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        
+        assertEquals(2, recordsWithNotificationsToSend.size());
+        assertEquals(tip.getId(), recordsWithNotificationsToSend.get(0).getId());
+        assertEquals(tip2.getId(), recordsWithNotificationsToSend.get(1).getId());
+        
+        // Disable tips
+        emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
+        
+        recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
+        
+        assertEquals(0, recordsWithNotificationsToSend.size());
+        
+    }
 }

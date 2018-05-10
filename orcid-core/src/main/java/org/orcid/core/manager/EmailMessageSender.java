@@ -13,7 +13,9 @@ public interface EmailMessageSender {
 
     EmailMessage createDigest(String orcid, Collection<Notification> notifications);        
 
-    void sendServiceAnnouncementsAndTipsMessages() throws InterruptedException;
+    void sendServiceAnnouncements(Integer customBatchSize);
+    
+    void sendTips(Integer customBatchSize);
     
     void sendEmailMessages();
 

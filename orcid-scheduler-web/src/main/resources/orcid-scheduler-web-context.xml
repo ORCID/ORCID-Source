@@ -21,7 +21,6 @@
         <task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />
         <task:scheduled ref="clientDetailsManager" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />        
         <task:scheduled ref="emailMessageSender" method="sendEmailMessages" cron="${org.orcid.scheduler.web.sendEmailMessages:35 */5 * * * *}" />
-        <task:scheduled ref="emailMessageSender" method="sendServiceAnnouncementsAndTipsMessages" cron="${org.orcid.scheduler.web.sendServiceAnnouncementsMessages:0 0 0 * * *}" />
         <task:scheduled ref="identityProviderManager" method="loadIdentityProviders" cron="${org.orcid.scheduler.web.loadIdentityProviders:05 05 0-2 * * *}"/>
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
