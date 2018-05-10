@@ -27,9 +27,14 @@ ${baseUri}/${orcid} <@emailMacros.msg "email.deactivate.gdpr_at_any_point" />
 <#else>
 
 <@emailMacros.msg "email.deactivate.you_have_requested.1" />
-${baseUri}/${orcid}?lang=${locale}<@emailMacros.msg "email.deactivate.you_have_requested.2" />
+${baseUri}/${orcid}?lang=${locale}
+
+<@emailMacros.msg "email.deactivate.you_have_requested.2" />
+
 ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
+
 <@emailMacros.msg "email.deactivate.once_an_account" />
+
 <@emailMacros.msg "email.deactivate.if_you_did" />
 <@emailMacros.msg "email.deactivate.support_email" />
 
