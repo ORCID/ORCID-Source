@@ -82,9 +82,12 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         //$('body').addClass('overflow-hidden');
         this.showModal = true;
         if (this.setFocus == 'true') {
-            setTimeout(function(){ 
-                $('#cboxContent input.focusInput').focus();
-            },1000);
+            setTimeout(
+                function(){ 
+                    $('#cboxContent input.focusInput').focus();
+                },
+                1000
+            );
         }
     };
 

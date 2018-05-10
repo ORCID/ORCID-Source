@@ -78,7 +78,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.formData = data;
-                console.log('this.formData', this.formData);
 
                 if( this.formData.biography == null  ) {
                     this.formData.biography = {
