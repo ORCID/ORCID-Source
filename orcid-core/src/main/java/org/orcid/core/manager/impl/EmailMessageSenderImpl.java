@@ -295,7 +295,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Override
     public void sendTips(Integer customBatchSize) {
-        LOGGER.info("About to send Service Announcements messages");
+        LOGGER.info("About to send Tips messages");
         
         List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
         try {
