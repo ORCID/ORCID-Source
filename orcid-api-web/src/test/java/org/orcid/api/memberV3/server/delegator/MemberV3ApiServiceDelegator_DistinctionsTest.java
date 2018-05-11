@@ -54,6 +54,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
 import org.orcid.test.DBUnitTest;
@@ -121,7 +122,12 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Distinctions element = (Distinctions) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/distinctions", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        
+        for (AffiliationGroup<DistinctionSummary> group : element.getDistinctionGroups()) {
+            for (DistinctionSummary summary : group.getActivities()) {
+                Utils.assertIsPublicOrSource(summary, "APP-5555555555555555");
+            }
+        }
     }
 
     @Test
@@ -200,25 +206,28 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(distinctions);
         assertEquals("/0000-0000-0000-0003/distinctions", distinctions.getPath());
         Utils.verifyLastModified(distinctions.getLastModifiedDate());
-        assertNotNull(distinctions.getSummaries());
-        assertEquals(4, distinctions.getSummaries().size());
+        assertNotNull(distinctions.retrieveGroups());
+        assertEquals(4, distinctions.retrieveGroups().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
-        for (DistinctionSummary summary : distinctions.getSummaries()) {
-            Utils.verifyLastModified(summary.getLastModifiedDate());
-            if (Long.valueOf(27).equals(summary.getPutCode())) {
-                assertEquals("PUBLIC Department", summary.getDepartmentName());
-                found1 = true;
-            } else if (Long.valueOf(28).equals(summary.getPutCode())) {
-                assertEquals("LIMITED Department", summary.getDepartmentName());
-                found2 = true;
-            } else if (Long.valueOf(29).equals(summary.getPutCode())) {
-                assertEquals("PRIVATE Department", summary.getDepartmentName());
-                found3 = true;
-            } else if (Long.valueOf(30).equals(summary.getPutCode())) {
-                assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                found4 = true;
-            } else {
-                fail("Invalid distinction found: " + summary.getPutCode());
+        
+        for (AffiliationGroup<DistinctionSummary> group : distinctions.retrieveGroups()) {
+            for (DistinctionSummary summary : group.getActivities()) {
+                Utils.verifyLastModified(summary.getLastModifiedDate());
+                if (Long.valueOf(27).equals(summary.getPutCode())) {
+                    assertEquals("PUBLIC Department", summary.getDepartmentName());
+                    found1 = true;
+                } else if (Long.valueOf(28).equals(summary.getPutCode())) {
+                    assertEquals("LIMITED Department", summary.getDepartmentName());
+                    found2 = true;
+                } else if (Long.valueOf(29).equals(summary.getPutCode())) {
+                    assertEquals("PRIVATE Department", summary.getDepartmentName());
+                    found3 = true;
+                } else if (Long.valueOf(30).equals(summary.getPutCode())) {
+                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
+                    found4 = true;
+                } else {
+                    fail("Invalid distinction found: " + summary.getPutCode());
+                }
             }
         }
         assertTrue(found1);
@@ -293,10 +302,10 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Utils.verifyLastModified(originalSummary.getLastModifiedDate());
         assertNotNull(originalSummary.getDistinctions());
         Utils.verifyLastModified(originalSummary.getDistinctions().getLastModifiedDate());
-        assertNotNull(originalSummary.getDistinctions().getSummaries());
-        assertNotNull(originalSummary.getDistinctions().getSummaries().get(0));
-        Utils.verifyLastModified(originalSummary.getDistinctions().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(4, originalSummary.getDistinctions().getSummaries().size());
+        assertNotNull(originalSummary.getDistinctions().retrieveGroups());
+        assertNotNull(originalSummary.getDistinctions().retrieveGroups().iterator().next());
+        Utils.verifyLastModified(originalSummary.getDistinctions().retrieveGroups().iterator().next().getLastModifiedDate());
+        assertEquals(4, originalSummary.getDistinctions().retrieveGroups().size());
 
         response = serviceDelegator.createDistinction(ORCID, (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION));
         assertNotNull(response);
@@ -314,19 +323,29 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getDistinctions());
         Utils.verifyLastModified(summaryWithNewElement.getDistinctions().getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getDistinctions().getSummaries());
-        assertEquals(5, summaryWithNewElement.getDistinctions().getSummaries().size());
+        assertNotNull(summaryWithNewElement.getDistinctions().retrieveGroups());
+        assertEquals(5, summaryWithNewElement.getDistinctions().retrieveGroups().size());
         
         boolean haveNew = false;
 
-        for (DistinctionSummary distinctionSummary : summaryWithNewElement.getDistinctions().getSummaries()) {
-            assertNotNull(distinctionSummary.getPutCode());
-            Utils.verifyLastModified(distinctionSummary.getLastModifiedDate());
-            if (distinctionSummary.getPutCode().equals(putCode)) {
-                assertEquals("My department name", distinctionSummary.getDepartmentName());
-                haveNew = true;
-            } else {
-                assertTrue(originalSummary.getDistinctions().getSummaries().contains(distinctionSummary));
+        for (AffiliationGroup<DistinctionSummary> group : summaryWithNewElement.getDistinctions().retrieveGroups()) {
+            for (DistinctionSummary distinctionSummary : group.getActivities()) {
+                assertNotNull(distinctionSummary.getPutCode());
+                Utils.verifyLastModified(distinctionSummary.getLastModifiedDate());
+                if (distinctionSummary.getPutCode().equals(putCode)) {
+                    assertEquals("My department name", distinctionSummary.getDepartmentName());
+                    haveNew = true;
+                } else {
+                    boolean originalContainsDistinctionSummary = false;
+                    for (AffiliationGroup<DistinctionSummary> originalGroup : originalSummary.getDistinctions().retrieveGroups()) {
+                        for (DistinctionSummary s : originalGroup.getActivities()) {
+                            if (s.equals(distinctionSummary)) {
+                                originalContainsDistinctionSummary = true;
+                            }
+                        }
+                    }
+                    assertTrue(originalContainsDistinctionSummary);
+                }
             }
         }
         

@@ -2,6 +2,7 @@ package org.orcid.api.publicV3.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -321,17 +322,19 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewEducations(String orcid) {
         List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid);
-        Educations publicEducations = new Educations();
+        List<EducationSummary> publicEducations = new ArrayList<>();
         for (EducationSummary summary : educations) {
             if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                 ActivityUtils.setPathToActivity(summary, orcid);
                 sourceUtilsReadOnly.setSourceName(summary);
-                publicEducations.getSummaries().add(summary);
+                publicEducations.add(summary);
             }
         }
-        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(publicEducations);
-        ActivityUtils.setPathToAffiliations(publicEducations, orcid);
-        return Response.ok(publicEducations).build();
+        
+        Educations groupedEducations = new Educations(affiliationsManagerReadOnly.groupAffiliations(publicEducations, true));
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedEducations);
+        ActivityUtils.setPathToAffiliations(groupedEducations, orcid);
+        return Response.ok(groupedEducations).build();
     }
 
     @Override
@@ -355,17 +358,18 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewEmployments(String orcid) {
         List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
-        Employments publicEmployments = new Employments();
+        List<EmploymentSummary>  publicEmployments = new ArrayList<>();
         for (EmploymentSummary summary : employments) {
             if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                 ActivityUtils.setPathToActivity(summary, orcid);
                 sourceUtilsReadOnly.setSourceName(summary);
-                publicEmployments.getSummaries().add(summary);
+                publicEmployments.add(summary);
             }
         }
-        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(publicEmployments);
-        ActivityUtils.setPathToAffiliations(publicEmployments, orcid);
-        return Response.ok(publicEmployments).build();
+        Employments groupedEmployments = new Employments(affiliationsManagerReadOnly.groupAffiliations(publicEmployments, true));
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedEmployments);
+        ActivityUtils.setPathToAffiliations(groupedEmployments, orcid);
+        return Response.ok(groupedEmployments).build();
     }
 
     @Override
@@ -653,17 +657,19 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewDistinctions(String orcid) {
         List<DistinctionSummary> distinctions = affiliationsManagerReadOnly.getDistinctionSummaryList(orcid);
-        Distinctions publicDistinctions = new Distinctions();
+        List<DistinctionSummary> publicDistinctions = new ArrayList<>();
         for (DistinctionSummary summary : distinctions) {
             if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                 ActivityUtils.setPathToActivity(summary, orcid);
                 sourceUtilsReadOnly.setSourceName(summary);
-                publicDistinctions.getSummaries().add(summary);
+                publicDistinctions.add(summary);
             }
         }
-        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(publicDistinctions);
-        ActivityUtils.setPathToAffiliations(publicDistinctions, orcid);
-        return Response.ok(publicDistinctions).build();
+        
+        Distinctions groupedDistinctions = new Distinctions(affiliationsManagerReadOnly.groupAffiliations(publicDistinctions, true));
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedDistinctions);
+        ActivityUtils.setPathToAffiliations(groupedDistinctions, orcid);
+        return Response.ok(groupedDistinctions).build();
     }
 
     @Override
@@ -687,17 +693,19 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewInvitedPositions(String orcid) {
         List<InvitedPositionSummary> invitedPositions = affiliationsManagerReadOnly.getInvitedPositionSummaryList(orcid);
-        InvitedPositions publicInvitedPositions = new InvitedPositions();
+        List<InvitedPositionSummary>  publicInvitedPositions = new ArrayList<>();
         for (InvitedPositionSummary summary : invitedPositions) {
                 if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                         ActivityUtils.setPathToActivity(summary, orcid);
                         sourceUtilsReadOnly.setSourceName(summary);
-                        publicInvitedPositions.getSummaries().add(summary);
+                        publicInvitedPositions.add(summary);
                 }
         }
-        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(publicInvitedPositions);
-        ActivityUtils.setPathToAffiliations(publicInvitedPositions, orcid);
-        return Response.ok(publicInvitedPositions).build();
+        
+        InvitedPositions groupedInvitedPositions = new InvitedPositions(affiliationsManagerReadOnly.groupAffiliations(publicInvitedPositions, true));
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedInvitedPositions);
+        ActivityUtils.setPathToAffiliations(groupedInvitedPositions, orcid);
+        return Response.ok(groupedInvitedPositions).build();
     }
 
     @Override
@@ -721,17 +729,19 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewMemberships(String orcid) {
         List<MembershipSummary> memberships = affiliationsManagerReadOnly.getMembershipSummaryList(orcid);
-        Memberships publicMemberships = new Memberships();
+        List<MembershipSummary> publicMemberships = new ArrayList<>();
         for (MembershipSummary summary : memberships) {
                 if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                         ActivityUtils.setPathToActivity(summary, orcid);
                         sourceUtilsReadOnly.setSourceName(summary);
-                        publicMemberships.getSummaries().add(summary);
+                        publicMemberships.add(summary);
                 }
         }
-        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(publicMemberships);
-        ActivityUtils.setPathToAffiliations(publicMemberships, orcid);
-        return Response.ok(publicMemberships).build();
+        
+        Memberships groupedMemberships = new Memberships(affiliationsManagerReadOnly.groupAffiliations(publicMemberships, true));
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedMemberships);
+        ActivityUtils.setPathToAffiliations(groupedMemberships, orcid);
+        return Response.ok(groupedMemberships).build();
     }
 
     @Override
@@ -755,17 +765,18 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewQualifications(String orcid) {
         List<QualificationSummary> qualifications = affiliationsManagerReadOnly.getQualificationSummaryList(orcid);
-        Qualifications publicQualifications = new Qualifications();
+        List<QualificationSummary>  publicQualifications = new ArrayList<>();
         for (QualificationSummary summary : qualifications) {
                 if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                         ActivityUtils.setPathToActivity(summary, orcid);
                         sourceUtilsReadOnly.setSourceName(summary);
-                        publicQualifications.getSummaries().add(summary);
+                        publicQualifications.add(summary);
                 }
         }
-        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(publicQualifications);
-        ActivityUtils.setPathToAffiliations(publicQualifications, orcid);
-        return Response.ok(publicQualifications).build();
+        Qualifications groupedQualifications = new Qualifications(affiliationsManagerReadOnly.groupAffiliations(publicQualifications, true));
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedQualifications);
+        ActivityUtils.setPathToAffiliations(groupedQualifications, orcid);
+        return Response.ok(groupedQualifications).build();
     }
 
     @Override
@@ -789,17 +800,18 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewServices(String orcid) {
         List<ServiceSummary> services = affiliationsManagerReadOnly.getServiceSummaryList(orcid);
-        Services publicServices = new Services();
+        List<ServiceSummary> publicServices = new ArrayList<>();
         for (ServiceSummary summary : services) {
                 if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                         ActivityUtils.setPathToActivity(summary, orcid);
                         sourceUtilsReadOnly.setSourceName(summary);
-                        publicServices.getSummaries().add(summary);
+                        publicServices.add(summary);
                 }
         }
-        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(publicServices);
-        ActivityUtils.setPathToAffiliations(publicServices, orcid);
-        return Response.ok(publicServices).build();
+        Services groupedServices = new Services(affiliationsManagerReadOnly.groupAffiliations(publicServices, true));
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedServices);
+        ActivityUtils.setPathToAffiliations(groupedServices, orcid);
+        return Response.ok(groupedServices).build();
     }
 
     @Override

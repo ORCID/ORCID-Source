@@ -17,6 +17,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Affiliations;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
@@ -113,9 +114,11 @@ public class ActivityUtils {
                 affiliations.setPath(OrcidApiConstants.SERVICES.replace("{orcid}", orcid));
             }
             
-            for(AffiliationSummary summary : affiliations.getSummaries()) {
-                setPathToActivity(summary, orcid);
-            }            
+            for (AffiliationGroup<? extends AffiliationSummary> group : affiliations.retrieveGroups()) {
+                for(AffiliationSummary summary : group.getActivities()) {
+                    setPathToActivity(summary, orcid);
+                }            
+            }
         }
     }
     

@@ -2,7 +2,7 @@ package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,17 +17,21 @@ public class Memberships extends Affiliations<MembershipSummary> implements Seri
     public Memberships() {
 
     }
-
-    public Memberships(List<MembershipSummary> summaries) {
+    
+    public Memberships(Collection<AffiliationGroup<MembershipSummary>> groups) {
         super();
-        this.summaries = summaries;
+        this.groups = groups;
+    }
+
+    public Collection<AffiliationGroup<MembershipSummary>> getMembershipGroups() {
+        if (this.groups == null) {
+            this.groups = new ArrayList<AffiliationGroup<MembershipSummary>>();
+        }
+        return (Collection<AffiliationGroup<MembershipSummary>>) this.groups;
     }
 
     @Override
-    public List<MembershipSummary> getSummaries() {
-        if (this.summaries == null) {
-            this.summaries = new ArrayList<MembershipSummary>();
-        }
-        return this.summaries;
+    public Collection<AffiliationGroup<MembershipSummary>> retrieveGroups() {
+        return getMembershipGroups();
     }
 }

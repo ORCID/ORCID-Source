@@ -93,12 +93,12 @@ public class RecordManagerTest extends DBUnitTest {
         ActivitiesSummary activities = record.getActivitiesSummary();
         assertNotNull(activities);
         assertNotNull(activities.getEducations());
-        assertNotNull(activities.getEducations().getSummaries());
-        assertEquals(5, activities.getEducations().getSummaries().size());        
+        assertNotNull(activities.getEducations().retrieveGroups());
+        assertEquals(5, activities.getEducations().retrieveGroups().size());        
         
         assertNotNull(activities.getEmployments());
-        assertNotNull(activities.getEmployments().getSummaries());
-        assertEquals(5, activities.getEmployments().getSummaries().size());
+        assertNotNull(activities.getEmployments().retrieveGroups());
+        assertEquals(5, activities.getEmployments().retrieveGroups().size());
         
         assertNotNull(activities.getFundings());
         assertNotNull(activities.getFundings().getFundingGroup());
@@ -168,14 +168,14 @@ public class RecordManagerTest extends DBUnitTest {
         
         ActivitiesSummary activities = record.getActivitiesSummary();
         assertNotNull(activities.getEducations());
-        assertNotNull(activities.getEducations().getSummaries());
-        assertEquals(1, activities.getEducations().getSummaries().size());
-        assertEquals(Long.valueOf(20), activities.getEducations().getSummaries().get(0).getPutCode());
+        assertNotNull(activities.getEducations().retrieveGroups());
+        assertEquals(1, activities.getEducations().retrieveGroups().size());
+        assertEquals(Long.valueOf(20), activities.getEducations().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
         
         assertNotNull(activities.getEmployments());
-        assertNotNull(activities.getEmployments().getSummaries());
-        assertEquals(1, activities.getEmployments().getSummaries().size());
-        assertEquals(Long.valueOf(17), activities.getEmployments().getSummaries().get(0).getPutCode());
+        assertNotNull(activities.getEmployments().retrieveGroups());
+        assertEquals(1, activities.getEmployments().retrieveGroups().size());
+        assertEquals(Long.valueOf(17), activities.getEmployments().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
         
         assertNotNull(activities.getFundings());
         assertNotNull(activities.getFundings().getFundingGroup());
