@@ -151,7 +151,7 @@ public class EmailFrequencyServiceAnnouncement2018 {
             templateParams.put("locale", locale);
             templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
             
-            String subject = messages.getMessage("email.email_frequencies.subject", null, locale);
+            String subject = "ORCID and Your Data Privacy";
             String text = templateManager.processTemplate("gdpr_email_frequencies_service_announcement.ftl", templateParams);
             String html = templateManager.processTemplate("gdpr_email_frequencies_service_announcement_html.ftl", templateParams);
 
