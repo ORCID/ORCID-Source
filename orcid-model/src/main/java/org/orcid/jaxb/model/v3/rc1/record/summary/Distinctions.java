@@ -2,7 +2,7 @@ package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -18,17 +18,21 @@ public class Distinctions extends Affiliations<DistinctionSummary> implements Se
 
     }
 
-    public Distinctions(List<DistinctionSummary> summaries) {
+    public Distinctions(Collection<AffiliationGroup<DistinctionSummary>> groups) {
         super();
-        this.summaries = summaries;
+        this.groups = groups;
+    }
+    
+    public Collection<AffiliationGroup<DistinctionSummary>> getDistinctionGroups() {
+        if (this.groups == null) {
+            this.groups = new ArrayList<AffiliationGroup<DistinctionSummary>>();
+        }
+        return (Collection<AffiliationGroup<DistinctionSummary>>) this.groups;
     }
 
     @Override
-    public List<DistinctionSummary> getSummaries() {
-        if (this.summaries == null) {
-            this.summaries = new ArrayList<DistinctionSummary>();
-        }
-        return this.summaries;
+    public Collection<AffiliationGroup<DistinctionSummary>> retrieveGroups() {
+        return getDistinctionGroups();
     }
 
 }

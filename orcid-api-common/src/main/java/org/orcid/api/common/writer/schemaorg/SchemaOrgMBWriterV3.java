@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
@@ -112,30 +113,30 @@ public class SchemaOrgMBWriterV3 implements MessageBodyWriter<Record> {
         if (r.getActivitiesSummary() != null) {
 
             //education & qualification
-            List<AffiliationSummary> alumniOf = Lists.newArrayList();
-            if (r.getActivitiesSummary().getEducations() != null && r.getActivitiesSummary().getEducations().getSummaries() != null)
-                alumniOf.addAll(r.getActivitiesSummary().getEducations().getSummaries());
-            if (r.getActivitiesSummary().getQualifications() != null && r.getActivitiesSummary().getQualifications().getSummaries() != null)
-                alumniOf.addAll(r.getActivitiesSummary().getQualifications().getSummaries());            
-            for (AffiliationSummary e : alumniOf) {
-                if (e.getOrganization() != null && e.getOrganization().getDisambiguatedOrganization() != null)
+            List<AffiliationGroup<? extends AffiliationSummary>> alumniOf = Lists.newArrayList();
+            if (r.getActivitiesSummary().getEducations() != null && r.getActivitiesSummary().getEducations().retrieveGroups() != null)
+                alumniOf.addAll(r.getActivitiesSummary().getEducations().retrieveGroups());
+            if (r.getActivitiesSummary().getQualifications() != null && r.getActivitiesSummary().getQualifications().retrieveGroups() != null)
+                alumniOf.addAll(r.getActivitiesSummary().getQualifications().retrieveGroups());            
+            for (AffiliationGroup<? extends AffiliationSummary> e : alumniOf) {
+                if (e.getActivities().get(0).getOrganization() != null && e.getActivities().get(0).getOrganization().getDisambiguatedOrganization() != null)
                     doc.alumniOf.add(createOrg(e));
             }
 
             //affiliations
-            List<AffiliationSummary> affiliations = Lists.newArrayList();
-            if (r.getActivitiesSummary().getEmployments() != null && r.getActivitiesSummary().getEmployments().getSummaries() != null)
-                affiliations.addAll(r.getActivitiesSummary().getEmployments().getSummaries());
-            if (r.getActivitiesSummary().getDistinctions() != null && r.getActivitiesSummary().getDistinctions().getSummaries() != null)
-                affiliations.addAll(r.getActivitiesSummary().getDistinctions().getSummaries());
-            if (r.getActivitiesSummary().getInvitedPositions() != null && r.getActivitiesSummary().getInvitedPositions().getSummaries() != null)
-                affiliations.addAll(r.getActivitiesSummary().getInvitedPositions().getSummaries());
-            if (r.getActivitiesSummary().getMemberships() != null && r.getActivitiesSummary().getMemberships().getSummaries() != null)
-                affiliations.addAll(r.getActivitiesSummary().getMemberships().getSummaries());
-            if (r.getActivitiesSummary().getServices() != null && r.getActivitiesSummary().getServices().getSummaries() != null)
-                affiliations.addAll(r.getActivitiesSummary().getServices().getSummaries());                        
-            for (AffiliationSummary a: affiliations){
-                if (a.getOrganization() != null && a.getOrganization().getDisambiguatedOrganization() != null)
+            List<AffiliationGroup<? extends AffiliationSummary>> affiliationGroups = Lists.newArrayList();
+            if (r.getActivitiesSummary().getEmployments() != null && r.getActivitiesSummary().getEmployments().retrieveGroups() != null)
+                affiliationGroups.addAll(r.getActivitiesSummary().getEmployments().retrieveGroups());
+            if (r.getActivitiesSummary().getDistinctions() != null && r.getActivitiesSummary().getDistinctions().retrieveGroups() != null)
+                affiliationGroups.addAll(r.getActivitiesSummary().getDistinctions().retrieveGroups());
+            if (r.getActivitiesSummary().getInvitedPositions() != null && r.getActivitiesSummary().getInvitedPositions().retrieveGroups() != null)
+                affiliationGroups.addAll(r.getActivitiesSummary().getInvitedPositions().retrieveGroups());
+            if (r.getActivitiesSummary().getMemberships() != null && r.getActivitiesSummary().getMemberships().retrieveGroups() != null)
+                affiliationGroups.addAll(r.getActivitiesSummary().getMemberships().retrieveGroups());
+            if (r.getActivitiesSummary().getServices() != null && r.getActivitiesSummary().getServices().retrieveGroups() != null)
+                affiliationGroups.addAll(r.getActivitiesSummary().getServices().retrieveGroups());                        
+            for (AffiliationGroup<? extends AffiliationSummary> a: affiliationGroups) {
+                if (a.getActivities().get(0).getOrganization() != null && a.getActivities().get(0).getOrganization().getDisambiguatedOrganization() != null)
                     doc.affiliation.add(createOrg(a));
             }
 
@@ -215,17 +216,20 @@ public class SchemaOrgMBWriterV3 implements MessageBodyWriter<Record> {
         return a;
     }
 
-    private SchemaOrgAffiliation createOrg(AffiliationSummary e) {
+    private SchemaOrgAffiliation createOrg(AffiliationGroup<? extends AffiliationSummary> e) {
         SchemaOrgAffiliation a = new SchemaOrgAffiliation();
-        a.name = e.getOrganization().getName();
-        a.alternateName = e.getDepartmentName();
-        if (e.getOrganization().getDisambiguatedOrganization() !=null){
-            if (!StringUtils.isEmpty(e.getOrganization().getDisambiguatedOrganization().getDisambiguationSource()) && !StringUtils.isEmpty(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier())){
-                addIdToAffiliation(e.getOrganization().getDisambiguatedOrganization().getDisambiguationSource(),e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier(), a);
-            }   
-            if (e.getOrganization().getDisambiguatedOrganization().getExternalIdentifiers() != null)
-                for (DisambiguatedOrganizationExternalIdentifier i : e.getOrganization().getDisambiguatedOrganization().getExternalIdentifiers()) {
-                    addIdToAffiliation(i.getIdentifierType(),i.getIdentifier(), a);
+        a.name = e.getActivities().get(0).getOrganization().getName();
+        a.alternateName = e.getActivities().get(0).getDepartmentName();
+        
+        for (AffiliationSummary summary : e.getActivities()) {
+            if (summary.getOrganization().getDisambiguatedOrganization() !=null){
+                if (!StringUtils.isEmpty(summary.getOrganization().getDisambiguatedOrganization().getDisambiguationSource()) && !StringUtils.isEmpty(summary.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier())){
+                    addIdToAffiliation(summary.getOrganization().getDisambiguatedOrganization().getDisambiguationSource(), summary.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier(), a);
+                }   
+                if (summary.getOrganization().getDisambiguatedOrganization().getExternalIdentifiers() != null)
+                    for (DisambiguatedOrganizationExternalIdentifier i : summary.getOrganization().getDisambiguatedOrganization().getExternalIdentifiers()) {
+                        addIdToAffiliation(i.getIdentifierType(),i.getIdentifier(), a);
+                }
             }
         }
         return a;

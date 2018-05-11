@@ -10,6 +10,8 @@ import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.rc1.record.Membership;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
@@ -244,4 +246,16 @@ public interface AffiliationsManagerReadOnly {
      * @return the list of all affiliations that belongs to this user
      */
     List<Affiliation> getAffiliations(String orcid);
+
+    /**
+     * Generate a grouped list of affiliations with the given list of AffiliationSummary objects
+     * 
+     * @param affiliations
+     *          The list of AffiliationSummary objects to group
+     * @param justPublic
+     *          Specify if we want to group only the public elements in the given list
+     * @return Affiliations element with the AffiliationSummary elements grouped                  
+     * */
+    <T extends AffiliationSummary> List<AffiliationGroup<T>> groupAffiliations(List<T> affiliations, boolean justPublic);
+
 }

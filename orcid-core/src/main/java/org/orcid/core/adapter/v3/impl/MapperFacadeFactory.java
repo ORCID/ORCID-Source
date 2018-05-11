@@ -687,6 +687,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         summaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
         summaryClassMap.field("departmentName", "department");
         summaryClassMap.field("roleTitle", "title");
+        summaryClassMap.field("displayIndex", "displayIndex");
         summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
         summaryClassMap.register();
 

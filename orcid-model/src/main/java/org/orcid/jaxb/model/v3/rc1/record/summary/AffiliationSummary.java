@@ -14,11 +14,13 @@ import org.orcid.jaxb.model.v3.rc1.common.Source;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
 import org.orcid.jaxb.model.v3.rc1.record.Activity;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "departmentName", "roleTitle", "startDate", "endDate", "organization" })
-public abstract class AffiliationSummary implements VisibilityType, Activity, SourceAware {
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "departmentName", "roleTitle", "startDate", "endDate", "organization", "externalIdentifiers", "displayIndex" })
+public abstract class AffiliationSummary implements VisibilityType, Activity, SourceAware, GroupableActivity {
 
     @XmlElement(name = "department-name", namespace = "http://www.orcid.org/ns/common")
     protected String departmentName;
@@ -42,6 +44,11 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs externalIdentifiers;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
+
 
     public String getDepartmentName() {
         return departmentName;
@@ -135,6 +142,31 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
+    
+    public ExternalIDs getExternalIdentifiers() {
+        return externalIdentifiers;
+    }
+
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
+    }
+
+    public ExternalIDs getExternalIDs() {
+        return externalIdentifiers;
+    }
+
+    public void setExternalIDs(ExternalIDs externalIDs) {
+        this.externalIdentifiers = externalIDs;
+    }
+    
+    @Override
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+    
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
+    }
 
     @Override
     public String retrieveSourcePath() {
@@ -158,6 +190,7 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
+        result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
         return result;
     }
 
@@ -217,6 +250,11 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
                 return false;
         } else if (!organization.equals(other.organization))
             return false;
+        if (externalIdentifiers == null) {
+            if (other.externalIdentifiers != null)
+                return false;
+        } else if (!externalIdentifiers.equals(other.externalIdentifiers))
+            return false;
         return true;
     }
 
@@ -226,5 +264,27 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
 
     public void setOrganization(Organization organization) {
         this.organization = organization;
+    }
+    
+    @Override
+    public int compareTo(GroupableActivity activity) {
+        Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
+        Long otherIndex = Long.valueOf(activity.getDisplayIndex() == null ? "0" : activity.getDisplayIndex());
+        if (index == null) {
+            if (otherIndex == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            if (otherIndex == null) {
+                return 1;
+            } else if (index instanceof Comparable) {
+                // Return opposite, since higher index goes first
+                return index.compareTo(otherIndex) * -1;
+            } else {
+                return 0;
+            }
+        }
     }
 }
