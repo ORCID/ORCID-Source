@@ -17,7 +17,7 @@ import { EmailService }
     from '../../shared/email.service.ts';
 
 import { PreferencesService }
-    from '../../shared/preferences.service.ts'
+    from '../../shared/preferences.service.ts';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -25,6 +25,12 @@ import { CommonService }
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 
+import { FeaturesService }
+    from '../../shared/features.service.ts';
+
+import { EmailFrequencyService }
+    from '../../shared/emailFrequency.service.ts';    
+    
 @Component({
     selector: 'emails-form-ng2',
     template:  scriptTmpl("emails-form-ng2-template")
@@ -52,31 +58,34 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     showEditEmail: boolean;
     emailsEditText: string;
-    //popUp: boolean;
     showUnverifiedEmailSetPrimaryBox: boolean;
     primaryEmail: string;
     verifyEmailObject: any;
     showEmailVerifBox: boolean;
     isPassConfReq: any;
     baseUri: any;
-    curPrivToggle: any;
-    
+    curPrivToggle: any; 
     password: any;
-  
     showConfirmationBox: any;
     showDeleteBox: any;
-
     position: any;
     inputEmail: any;
     prefs: any;
-    email_frequency: any;
-
+    
+    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');    
+    sendChangeNotifications: string;
+    sendAdministrativeChangeNotifications: string;
+    sendMemberUpdateRequestsNotifications: string;
+    sendQuarterlyTips: boolean;
+    
     constructor( 
         private elementRef: ElementRef, 
         private emailService: EmailService,
         private commonSrvc: CommonService,
         private modalService: ModalService,
-        private prefsSrvc: PreferencesService
+        private featuresService: FeaturesService,
+        private prefsSrvc: PreferencesService,
+        private emailFrequencyService: EmailFrequencyService
     ) {
         this.verifyEmailObject = {};
         this.showEmailVerifBox = false;
@@ -135,8 +144,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.prefs = {};
         this.popUp = elementRef.nativeElement.getAttribute('popUp');
-        //this.email_frequency = null;
-
     }
 
     addNew(): void {
@@ -219,6 +226,42 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
+    getEmailFrequencies(): void {
+        this.emailFrequencyService.getEmailFrequencies()
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {                
+                this.sendChangeNotifications = data['send_change_notifications']
+                this.sendAdministrativeChangeNotifications = data['send_administrative_change_notifications']
+                this.sendMemberUpdateRequestsNotifications = data['send_member_update_requests']
+                this.sendQuarterlyTips = data['send_quarterly_tips']  == "true";                
+            },
+            error => {
+                ////console.log('getEmailsFormError', error);
+            } 
+        );
+    }
+    
+    updateChangeNotificationsFrequency(): void {
+        this.emailFrequencyService.updateFrequency('send_change_notifications', this.sendChangeNotifications)
+        .takeUntil(this.ngUnsubscribe).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
+    }
+    
+    updateAdministrativeChangeNotificationsFrequency(): void {
+        this.emailFrequencyService.updateFrequency('send_administrative_change_notifications', this.sendAdministrativeChangeNotifications)
+        .takeUntil(this.ngUnsubscribe).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
+    }
+    
+    updateMemberUpdateRequestsFrequency(): void {
+        this.emailFrequencyService.updateFrequency('send_member_update_requests', this.sendMemberUpdateRequestsNotifications)
+        .takeUntil(this.ngUnsubscribe).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
+    }
+    
+    updateSendQuarterlyTips(): void {
+        this.emailFrequencyService.updateFrequency('send_quarterly_tips', this.sendQuarterlyTips)
+        .takeUntil(this.ngUnsubscribe).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
+    }
+    
     updateEmailFrequency(): void {
         this.prefsSrvc.updateEmailFrequency( this.prefs )
         .takeUntil(this.ngUnsubscribe)
@@ -390,7 +433,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showEmailVerifBox = true;
 
         if( !popup ){
-            this.modalService.notifyOther({action:'open', moduleId: 'emailSentConfirmation'});   
+            this.modalService.notifyOther(
+                {
+                    action:'open', 
+                    moduleId: 'emailSentConfirmation', 
+                    data: {
+                        email: email
+                    }
+                }
+            );   
         }
         
     };
@@ -416,6 +467,10 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getPrivacyPreferences();
         this.getformData();  
+        
+        if(this.gdprEmailNotifications) {
+            this.getEmailFrequencies();
+        }
     };
 
 }

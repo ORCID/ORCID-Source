@@ -1,8 +1,8 @@
 package orcid.pojo.ajaxForm;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
-
-import net.sf.ehcache.util.MemoryEfficientByteArrayOutputStream;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
@@ -49,7 +49,9 @@ public class WorkFormTest extends XMLTestCase {
     public void testSerializeWork() throws Exception {
         Work work = getWork();
         WorkForm workForm =  WorkForm.valueOf(work);
-        MemoryEfficientByteArrayOutputStream.serialize(workForm);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(workForm);
     }
     
     @Test

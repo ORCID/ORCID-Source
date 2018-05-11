@@ -129,15 +129,12 @@
                                         <#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
                                     </a></li>
                                     <@security.authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">
-                                    
-                                    <!--
-                                    <notifications-count-ng2></notifications-count-ng2>
-                                    -->
-                                    <!--
-                                    <li ng-controller="NotificationsCountCtrl">
-                                        <a ${(nav=="notifications")?then('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span  ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
+                           
+                                    <li>
+                                        {{retrieveUnreadCount()}}
+                                        <a ${(nav=="notifications")?then('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span></a>
                                     </li>
-                                    -->
+                                 
                                     
                                     </@security.authorize>
                                 

@@ -3,7 +3,7 @@ declare var $: any; //delete
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -35,6 +35,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     bulkEditShow: any; ///
     formData: any;
     formDataAddresses: any;
+    formDataBeforeChange: any;
     formDataErrors: any;
     newElementDefaultVisibility: any; ///
     newInput: boolean;
@@ -42,11 +43,13 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     primaryElementIndex: any;  
 
     constructor(
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private countryService: CountryService,
         private modalService: ModalService
     ) {
         this.bulkEditShow = false;
+        this.formDataBeforeChange = {};
         this.formData = {
         };
         this.formDataAddresses = [];
@@ -82,16 +85,21 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     closeEditModal(): void{
+        this.formData = this.formDataBeforeChange;
+        //this.cdr.detectChanges();
+        this.countryService.notifyOther();
         this.modalService.notifyOther({action:'close', moduleId: 'modalCountryForm'});
     };
 
-    deleteCountry(country): void{
+    deleteCountry(country, index): void{
+        this.commonSrvc.hideTooltip('tooltip-country-delete-'+index);
         var countries = this.formData.addresses;
         var len = countries.length;
         while (len--) {
             if (countries[len] == country){
                 countries.splice(len,1);
                 this.formData.addresses = countries;
+                this.cdr.detectChanges();
             }       
         }
     };
@@ -101,8 +109,8 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
+                this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
                 this.formData = data;
-                ////console.log('country data', this.formData);
                 this.formDataAddresses = this.formData.addresses;
                 this.newElementDefaultVisibility = this.formData.visibility.visibility;
 
@@ -110,11 +118,14 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.addNewCountry();
                 } else {
                     if ( this.formData.addresses.length == 1 ){
-                        if( this.formData.addresses[0].source == null ){
-                            //this.formData.addresses[0].source = this.orcidId;
-                            //this.formData.addresses[0].sourceName = "";
+                        /*if( this.formData.addresses[0].source == null ){
+                            this.formData.addresses[0].iso2Country= {"value": ""};
+                            this.formData.addresses[0].source = this.orcidId;
+                            this.formData.addresses[0].sourceName = "";
+                        }*/
+                        if(this.formData.addresses[0].putCode == null  ){
                             this.addNewCountry();
-                        }
+                        }  
                     }
                     this.updateDisplayIndex();
                 } 
@@ -160,7 +171,12 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setformData( closeAfterAction ): void {
-
+        //Don't save countries with no value
+        for(let i = 0; i < this.formData.addresses.length; i ++) {
+            if( !this.formData.addresses[i].iso2Country.value) {
+                this.formData.addresses.splice(i, 1);
+            }                                                                
+        }
         this.countryService.setCountryData( this.formData )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -185,8 +201,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     privacyChange( obj ): any {
-        this.formData.visibility.visibility = obj;
-        this.setformData( false );   
+        this.formData.visibility.visibility = obj;  
     };
     
     ///
@@ -248,7 +263,9 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.countryService.notifyObservable$.subscribe(
-            (res) => {}
+            (res) => {
+                this.getformData();
+            }
         );
     };
 

@@ -19,6 +19,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ehcache.Cache;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.utils.NamespaceMap;
@@ -40,8 +41,6 @@ import org.w3c.dom.NodeList;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-
-import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 /**
  * 
@@ -65,7 +64,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     private LocaleManager localeManager;
 
     @Resource(name = "identityProviderNameCache")
-    private SelfPopulatingCache identityProviderNameCache;
+    private Cache<IdentityProviderNameCacheKey, String> identityProviderNameCache;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -78,7 +77,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
 
     @Override
     public String retrieveIdentitifyProviderName(String providerid, Locale locale) {
-        return (String) identityProviderNameCache.get(new IdentityProviderNameCacheKey(providerid, locale, releaseName)).getObjectValue();
+        return identityProviderNameCache.get(new IdentityProviderNameCacheKey(providerid, locale, releaseName));
     }
 
     @Override

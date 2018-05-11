@@ -19,7 +19,10 @@
         <class>org.orcid.persistence.jpa.entities.MinimizedWorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationItemEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAddItemsEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAmendedEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationTipEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationCustomEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity</class>
@@ -52,7 +55,8 @@
         <class>org.orcid.persistence.jpa.entities.RecordNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.BiographyEntity</class>  
         <class>org.orcid.persistence.jpa.entities.IdentifierTypeEntity</class>
-        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>        
+        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>   
+        <class>org.orcid.persistence.jpa.entities.EmailFrequencyEntity</class>     
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>

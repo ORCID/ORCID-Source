@@ -33,4 +33,6 @@ public interface GenericCacheManager<K extends OrcidAware, V> {
 
     V retrieve(K key);
 
+    void remove(K key);
+
 }

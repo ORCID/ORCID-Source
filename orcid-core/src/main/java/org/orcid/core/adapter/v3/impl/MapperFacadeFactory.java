@@ -43,7 +43,10 @@ import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationServiceAnnouncement;
+import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationTip;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
@@ -94,10 +97,13 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
+import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -174,6 +180,24 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ClassMapBuilder<NotificationCustom, NotificationCustomEntity> notificationCustomClassMap = mapperFactory.classMap(NotificationCustom.class, NotificationCustomEntity.class); 
         registerSourceConverters(mapperFactory, notificationCustomClassMap);
         mapCommonFields(notificationCustomClassMap).register();        
+        
+        // Service Announcement notification
+        ClassMapBuilder<NotificationServiceAnnouncement, NotificationServiceAnnouncementEntity> notificationServiceAnnouncementClassMap = mapperFactory.classMap(NotificationServiceAnnouncement.class,
+                NotificationServiceAnnouncementEntity.class);
+        registerSourceConverters(mapperFactory, notificationServiceAnnouncementClassMap);
+        mapCommonFields(notificationServiceAnnouncementClassMap).register();
+        
+        // Tip notification
+        ClassMapBuilder<NotificationTip, NotificationTipEntity> notificationTipClassMap = mapperFactory.classMap(NotificationTip.class,
+                NotificationTipEntity.class);
+        registerSourceConverters(mapperFactory, notificationTipClassMap);
+        mapCommonFields(notificationTipClassMap).register();
+        
+        // Administrative notification
+        ClassMapBuilder<NotificationAdministrative, NotificationAdministrativeEntity> notificationAdministrativeClassMap = mapperFactory.classMap(NotificationAdministrative.class,
+                NotificationAdministrativeEntity.class);
+        registerSourceConverters(mapperFactory, notificationAdministrativeClassMap);
+        mapCommonFields(notificationAdministrativeClassMap).register();
         
         // Permission notification
         ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class, NotificationAddItemsEntity.class);

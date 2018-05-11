@@ -1,6 +1,11 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+
+
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
@@ -14,15 +19,17 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ShibbolethService {
-    private headers: Headers;          
+    private headers: HttpHeaders;          
     private notify = new Subject<any>();
 
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );     
 
@@ -36,26 +43,12 @@ export class ShibbolethService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                      
-            }
-        )
         .share();
     }
 
     init(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/shibboleth/2FA/authenticationCode.json'
-        )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                                             
-            }
         )
         .share();
     }

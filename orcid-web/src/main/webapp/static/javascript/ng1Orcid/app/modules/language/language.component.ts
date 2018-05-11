@@ -172,7 +172,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         let locale_v3: any;
 
         if(this.languages != undefined && this.languages.length > 0){
-            this.language = this.languages[0].value; //Default
+            this.language = "en"; //Default
             let cookie = this.getCookie('locale_v3');
             let tempLanguages = this.languages;
             

@@ -15,7 +15,7 @@
                     <span class="right">Edit all privacy settings</span>
                     <div class="bulk-privacy-bar">
                         <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
-                            <ul class="privacyToggle" ng-mouseenter="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" ng-mouseleave="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
+                            <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
                                 <li class="publicActive publicInActive" [ngClass]="{publicInActive: bioModel != 'PUBLIC'}"><a (click)="setBulkGroupPrivacy('PUBLIC')" name="privacy-toggle-3-public" id=""></a></li>
                                 <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: bioModel != 'LIMITED'}"><a (click)="setBulkGroupPrivacy('LIMITED')" name="privacy-toggle-3-limited" id=""></a></li>
                                 <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE')" name="privacy-toggle-3-private" id=""></a></li>
@@ -62,7 +62,7 @@
                         <div class="row aka-row websites" *ngFor="let website of formData.websites; let index = index; let first = first; let last = last;">
                             <div class="col-md-6">
                                 <div class="aka">                                       
-                                    <input type="text" [(ngModel)]="website.urlName" *ngIf="website.source == orcidId" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}" />
+                                    <input type="text" [(ngModel)]="website.urlName" *ngIf="website.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !website.urlName}"placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}" />
                                     <input type="text" [(ngModel)]="website.url.value" *ngIf="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}" />
                                     <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow" *ngIf="website.source != orcidId" >{{website.urlName != null? website.urlName : website.url.value}}</a>
                                 </div>
@@ -82,7 +82,7 @@
                                         <@orcid.tooltipNg2 elementId="'tooltip-websites-move-down-'+index" message="common.modals.move_down" />
                                     </li>
                                     <li>                                        
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteEntry(website)" (mouseenter)="commonSrvc.showTooltip('tooltip-websites-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-websites-delete-'+index)"></div>
+                                        <div class="glyphicon glyphicon-trash" (click)="deleteEntry(website, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-websites-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-websites-delete-'+index)"></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-websites-delete-'+index" message="common.modals.delete" />
                                     </li>
                                     <li>
