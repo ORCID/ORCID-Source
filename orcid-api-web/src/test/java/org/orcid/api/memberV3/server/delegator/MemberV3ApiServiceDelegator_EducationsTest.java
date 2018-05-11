@@ -54,6 +54,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
 import org.orcid.test.DBUnitTest;
@@ -121,7 +122,12 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Educations element = (Educations) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/educations", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        
+        for (AffiliationGroup<EducationSummary> group : element.getEducationGroups()) {
+            for (EducationSummary summary : group.getActivities()) {
+                Utils.assertIsPublicOrSource(summary, "APP-5555555555555555");
+            }
+        }
     }
 
     @Test
@@ -200,25 +206,28 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(educations);
         assertEquals("/0000-0000-0000-0003/educations", educations.getPath());
         Utils.verifyLastModified(educations.getLastModifiedDate());
-        assertNotNull(educations.getSummaries());
-        assertEquals(4, educations.getSummaries().size());
+        assertNotNull(educations.retrieveGroups());
+        assertEquals(4, educations.retrieveGroups().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
-        for (EducationSummary summary : educations.getSummaries()) {
-            Utils.verifyLastModified(summary.getLastModifiedDate());
-            if (Long.valueOf(20).equals(summary.getPutCode())) {
-                assertEquals("PUBLIC Department", summary.getDepartmentName());
-                found1 = true;
-            } else if (Long.valueOf(21).equals(summary.getPutCode())) {
-                assertEquals("LIMITED Department", summary.getDepartmentName());
-                found2 = true;
-            } else if (Long.valueOf(22).equals(summary.getPutCode())) {
-                assertEquals("PRIVATE Department", summary.getDepartmentName());
-                found3 = true;
-            } else if (Long.valueOf(25).equals(summary.getPutCode())) {
-                assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                found4 = true;
-            } else {
-                fail("Invalid education found: " + summary.getPutCode());
+        
+        for (AffiliationGroup<EducationSummary> group : educations.retrieveGroups()) {
+            for (EducationSummary summary : group.getActivities()) {
+                Utils.verifyLastModified(summary.getLastModifiedDate());
+                if (Long.valueOf(20).equals(summary.getPutCode())) {
+                    assertEquals("PUBLIC Department", summary.getDepartmentName());
+                    found1 = true;
+                } else if (Long.valueOf(21).equals(summary.getPutCode())) {
+                    assertEquals("LIMITED Department", summary.getDepartmentName());
+                    found2 = true;
+                } else if (Long.valueOf(22).equals(summary.getPutCode())) {
+                    assertEquals("PRIVATE Department", summary.getDepartmentName());
+                    found3 = true;
+                } else if (Long.valueOf(25).equals(summary.getPutCode())) {
+                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
+                    found4 = true;
+                } else {
+                    fail("Invalid education found: " + summary.getPutCode());
+                }
             }
         }
         assertTrue(found1);
@@ -293,10 +302,12 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Utils.verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getEducations());
         Utils.verifyLastModified(summary.getEducations().getLastModifiedDate());
-        assertNotNull(summary.getEducations().getSummaries());
-        assertNotNull(summary.getEducations().getSummaries().get(0));
-        Utils.verifyLastModified(summary.getEducations().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(4, summary.getEducations().getSummaries().size());
+        assertNotNull(summary.getEducations().retrieveGroups());
+        assertEquals(4, summary.getEducations().retrieveGroups().size());
+        
+        EducationSummary educationSummary = summary.getEducations().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(educationSummary);
+        Utils.verifyLastModified(educationSummary.getLastModifiedDate());
 
         response = serviceDelegator.createEducation(ORCID, (Education) Utils.getAffiliation(AffiliationType.EDUCATION));
         assertNotNull(response);
@@ -314,19 +325,28 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getEducations());
         Utils.verifyLastModified(summaryWithNewElement.getEducations().getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getEducations().getSummaries());
-        assertEquals(5, summaryWithNewElement.getEducations().getSummaries().size());
+        assertNotNull(summaryWithNewElement.getEducations().retrieveGroups());
+        assertEquals(5, summaryWithNewElement.getEducations().retrieveGroups().size());
 
         boolean haveNew = true;
         
-        for (EducationSummary educationSummary : summary.getEducations().getSummaries()) {
-            assertNotNull(educationSummary.getPutCode());
-            Utils.verifyLastModified(educationSummary.getLastModifiedDate());
-            if (educationSummary.getPutCode().equals(putCode)) {
-                assertEquals("My department name", educationSummary.getDepartmentName());
-                haveNew = true;
-            } else {
-                assertTrue(summary.getEducations().getSummaries().contains(educationSummary));
+        for (AffiliationGroup<EducationSummary> group : summary.getEducations().retrieveGroups()) {
+            for (EducationSummary edSummary : group.getActivities()) {
+                assertNotNull(edSummary.getPutCode());
+                Utils.verifyLastModified(edSummary.getLastModifiedDate());
+                if (edSummary.getPutCode().equals(putCode)) {
+                    assertEquals("My department name", edSummary.getDepartmentName());
+                    haveNew = true;
+                } else {
+                    boolean found = false;
+                    for (AffiliationGroup<EducationSummary> g : summary.getEducations().retrieveGroups()) {
+                        if (g.getActivities().contains(educationSummary)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    assertTrue(found);
+                }
             }
         }
 

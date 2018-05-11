@@ -1,7 +1,6 @@
 <@public classes=['home'] nav="signin">
-<#include "sandbox_warning.ftl"/>
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-    <link-account-ng2></link-account-ng2>
+        <link-account-ng2></link-account-ng2>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="LinkAccountController" ng-init="setEntityId('${providerId}')">
@@ -27,7 +26,7 @@
                     <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                 <![endif]-->
             </div>
-            <form class="form-social-sign-in shibboleth ng-hide" id="loginForm" ng-enter-submit ng-show="loadedFeed" ng-submit="linkAccount('${providerId}', '${linkType}')" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">
+            <form class="form-social-sign-in shibboleth ng-hide" id="loginForm" ng-enter-submit ng-show="loadedFeed" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">
                 <div class="row">
                 	<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12 bottomBuffer">
         	            <div>

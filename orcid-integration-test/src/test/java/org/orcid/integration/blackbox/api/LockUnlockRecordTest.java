@@ -13,9 +13,10 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.helper.APIRequestType;
-import org.orcid.integration.blackbox.api.v12.T1OAuthOrcidApiClientImpl;
+import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,8 +29,8 @@ import com.sun.jersey.api.client.ClientResponse;
 public class LockUnlockRecordTest extends BlackBoxBaseV2Release {
     @Resource(name = "t2OAuthClient_1_2")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient_1_2; 
-    @Resource(name = "t1OAuthClient_1_2")
-    protected T1OAuthOrcidApiClientImpl t1OAuthClient;
+    @Resource(name = "publicV2ApiClient")
+    private PublicV2ApiClientImpl publicV2ApiClient;    
     
     private String accessToken = null;
 
@@ -82,11 +83,11 @@ public class LockUnlockRecordTest extends BlackBoxBaseV2Release {
     }
 
     public boolean checkIfLockedPub() {
-        ClientResponse response = t1OAuthClient.viewFullDetailsXml(getUser1OrcidId());
+        ClientResponse response = publicV2ApiClient.viewRecordXML(getUser1OrcidId());
         assertNotNull(response);
-        OrcidMessage message = response.getEntity(OrcidMessage.class);
-        if (message.getOrcidProfile() == null && message.getErrorDesc() != null) {
-            assertEquals("Account locked : The given account " + getUser1OrcidId() + " is locked", message.getErrorDesc().getContent());
+        if (response.getStatus() == 409) {
+            OrcidError error = response.getEntity(OrcidError.class);
+            assertEquals("The ORCID record is locked.", error.getUserMessage());
             return true;
         }
         return false;

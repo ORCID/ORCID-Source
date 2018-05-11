@@ -73,13 +73,14 @@ public class OauthAuthorizationPageHelper {
         waitForAngular();
 
         if (longLife == false) {
-            // disablePersistentToken
-            WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
-            if (persistentElement.isDisplayed()) {
-                if (persistentElement.isSelected()) {
-                    persistentElement.click();
-                }
-            }
+            // No longer an option!
+            // WebElement persistentElement =
+            // webDriver.findElement(By.id("enablePersistentToken"));
+            // if (persistentElement.isDisplayed()) {
+            // if (persistentElement.isSelected()) {
+            // persistentElement.click();
+            // }
+            // }
         }
         waitForAngular();
 

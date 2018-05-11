@@ -2,7 +2,7 @@ package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,16 +17,20 @@ public class Educations extends Affiliations<EducationSummary> implements Serial
 
     }
 
-    public Educations(List<EducationSummary> summaries) {
+    public Educations(Collection<AffiliationGroup<EducationSummary>> groups) {
         super();
-        this.summaries = summaries;
+        this.groups = groups;
+    }
+
+    public Collection<AffiliationGroup<EducationSummary>> getEducationGroups() {
+        if (this.groups == null) {
+            this.groups = new ArrayList<AffiliationGroup<EducationSummary>>();
+        }
+        return (Collection<AffiliationGroup<EducationSummary>>) this.groups;
     }
 
     @Override
-    public List<EducationSummary> getSummaries() {
-        if (this.summaries == null) {
-            this.summaries = new ArrayList<EducationSummary>();
-        }
-        return this.summaries;
+    public Collection<AffiliationGroup<EducationSummary>> retrieveGroups() {
+        return getEducationGroups();
     }
 }

@@ -2,7 +2,7 @@ package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,17 +17,21 @@ public class Qualifications extends Affiliations<QualificationSummary> implement
     public Qualifications() {
 
     }
-
-    public Qualifications(List<QualificationSummary> summaries) {
+    
+    public Qualifications(Collection<AffiliationGroup<QualificationSummary>> groups) {
         super();
-        this.summaries = summaries;
+        this.groups = groups;
+    }
+
+    public Collection<AffiliationGroup<QualificationSummary>> getQualificationGroups() {
+        if (this.groups == null) {
+            this.groups = new ArrayList<AffiliationGroup<QualificationSummary>>();
+        }
+        return (Collection<AffiliationGroup<QualificationSummary>>) this.groups;
     }
 
     @Override
-    public List<QualificationSummary> getSummaries() {
-        if (this.summaries == null) {
-            this.summaries = new ArrayList<QualificationSummary>();
-        }
-        return this.summaries;
+    public Collection<AffiliationGroup<QualificationSummary>> retrieveGroups() {
+        return getQualificationGroups();
     }
 }
