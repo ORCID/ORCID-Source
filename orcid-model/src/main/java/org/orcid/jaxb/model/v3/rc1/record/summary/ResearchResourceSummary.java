@@ -1,26 +1,29 @@
-package org.orcid.jaxb.model.v3.rc1.record;
+package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
-import org.orcid.jaxb.model.v3.rc1.common.Filterable;
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.common.Source;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
+import org.orcid.jaxb.model.v3.rc1.record.Activity;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIdentifiersContainer;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceProposal;
+import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "proposal", "resourceItems" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "proposal" })
 @XmlRootElement(name = "research-resource", namespace = "http://www.orcid.org/ns/research-resource")
-public class ResearchResource implements Filterable, Activity, Serializable, SourceAware {
+public class ResearchResourceSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
 
     private final static long serialVersionUID = 1L;
 
@@ -32,9 +35,6 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
     protected CreatedDate createdDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "proposal")
     protected ResearchResourceProposal proposal;
-    @XmlElementWrapper(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-items")
-    @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-item")
-    protected List<ResearchResourceItem> resourceItems;
 
     @XmlAttribute(name = "put-code")
     protected Long putCode;
@@ -42,6 +42,20 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
+
+    public ResearchResourceProposal getProposal() {
+        return proposal;
+    }
+
+    public void setProposal(ResearchResourceProposal proposal) {
+        this.proposal = proposal;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
+    }
 
     public Source getSource() {
         return source;
@@ -104,7 +118,6 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
         final int prime = 31;
         int result = 1;
         result = prime * result + ((proposal == null) ? 0 : proposal.hashCode());
-        result = prime * result + ((resourceItems == null) ? 0 : resourceItems.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
@@ -118,16 +131,11 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ResearchResource other = (ResearchResource) obj;
+        ResearchResourceSummary other = (ResearchResourceSummary) obj;
         if (proposal == null) {
             if (other.proposal != null)
                 return false;
         } else if (!proposal.equals(other.proposal))
-            return false;
-        if (resourceItems == null) {
-            if (other.resourceItems != null)
-                return false;
-        } else if (!resourceItems.equals(other.resourceItems))
             return false;
         if (source == null) {
             if (other.source != null)
@@ -137,6 +145,38 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
         if (visibility != other.visibility)
             return false;
         return true;
+    }
+
+    @Override
+    public ExternalIdentifiersContainer getExternalIdentifiers() {
+        return proposal.getExternalIdentifiers();
+    }
+
+    @Override
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    @Override
+    public int compareTo(GroupableActivity activity) {
+        Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
+        Long otherIndex = Long.valueOf(activity.getDisplayIndex() == null ? "0" : activity.getDisplayIndex());
+        if (index == null) {
+            if (otherIndex == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            if (otherIndex == null) {
+                return 1;
+            } else if (index instanceof Comparable) {
+                // Return opposite, since higher index goes first
+                return index.compareTo(otherIndex) * -1;
+            } else {
+                return 0;
+            }
+        }
     }
 
 }

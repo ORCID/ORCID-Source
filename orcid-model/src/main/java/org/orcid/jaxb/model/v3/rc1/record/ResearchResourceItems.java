@@ -13,17 +13,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "resourceItems" })
 @XmlRootElement(name = "resource-items", namespace = "http://www.orcid.org/ns/research-resource")
 public class ResearchResourceItems {
-    
+
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-item")
     List<ResearchResourceItem> resourceItems;
-    
+
     public List<ResearchResourceItem> getResourceItems() {
         if (resourceItems == null) {
             resourceItems = new ArrayList<ResearchResourceItem>();
         }
         return this.resourceItems;
-    }  
-    
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Activity;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews", "qualifications", "services", "works" })
+@XmlType(propOrder = { "lastModifiedDate", "researchResources","distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews", "qualifications", "services", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
@@ -63,6 +63,8 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     protected Works works;
     @XmlElement(name = "services", namespace = "http://www.orcid.org/ns/activities")
     protected Services services;
+    @XmlElement(name = "research-resources", namespace = "http://www.orcid.org/ns/activities")
+    protected ResearchResources researchResources;
 
     @XmlAttribute
     protected String path;
@@ -152,6 +154,16 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     public void setFundings(Fundings fundings) {
         this.fundings = fundings;
     }
+    
+    public ResearchResources getResearchResources() {
+        if (researchResources == null)
+            researchResources = new ResearchResources();
+        return researchResources;
+    }
+
+    public void setResearchResources(ResearchResources researchResources) {
+        this.researchResources = researchResources;
+    }
 
     @Override
     public int hashCode() {
@@ -167,6 +179,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
         result = prime * result + ((qualifications == null) ? 0 : qualifications.hashCode());
         result = prime * result + ((services == null) ? 0 : services.hashCode());
         result = prime * result + ((works == null) ? 0 : works.hashCode());
+        result = prime * result + ((researchResources == null) ? 0 : researchResources.hashCode());
         return result;
     }
 
@@ -229,6 +242,11 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                 return false;
         } else if (!works.equals(other.works))
             return false;
+        if (researchResources == null) {
+            if (other.researchResources != null)
+                return false;
+        } else if (!researchResources.equals(other.researchResources))
+            return false;
         return true;
     }
 
@@ -278,6 +296,20 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                 }
             }
         }
+        
+        // Set researchResource
+        if (researchResources != null) {
+            List<ResearchResourceGroup> groups = researchResources.getResearchResourceGroup();
+            for (ResearchResourceGroup researchResourceGroup : groups) {
+                if (researchResourceGroup != null) {
+                    List<ResearchResourceSummary> researchResources = researchResourceGroup.getResearchResourceSummary();
+                    for (ResearchResourceSummary summary : researchResources) {
+                        activities.put(summary.getPutCode(), summary);
+                    }
+                }
+            }
+        }
+        
         // Set education
         if (educations != null) {
             for (EducationSummary education : educations.getSummaries()) {

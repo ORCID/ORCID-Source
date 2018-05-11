@@ -1,70 +1,77 @@
 package org.orcid.jaxb.model.v3.rc1.record;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "resourceName","resourceType","hosts","externalIdentifiers","url" })
+@XmlType(propOrder = { "resourceName", "resourceType", "hosts", "externalIdentifiers", "url" })
 @XmlRootElement(name = "resource-item", namespace = "http://www.orcid.org/ns/research-resource")
 public class ResearchResourceItem {
 
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-name")
     protected String resourceName;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-type")
-    protected String resourceType;    
+    protected String resourceType;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "hosts")
     protected ResearchResourceHosts hosts;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "external-ids")
     protected ExternalIDs externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Url url;
-    
+
     public String getName() {
         return resourceName;
     }
+
     public void setName(String resourceName) {
         this.resourceName = resourceName;
     }
+
     public String getResourceType() {
         return resourceType;
     }
+
     public void setResourceType(String resourceType) {
         this.resourceType = resourceType;
     }
-    
+
     public String getResourceName() {
         return resourceName;
     }
+
     public void setResourceName(String resourceName) {
         this.resourceName = resourceName;
     }
+
     public ResearchResourceHosts getHosts() {
         return hosts;
     }
+
     public void setHosts(ResearchResourceHosts hosts) {
         this.hosts = hosts;
     }
+
     public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
     }
+
     public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
+
     public Url getUrl() {
         return url;
     }
+
     public void setUrl(Url url) {
         this.url = url;
     }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -76,6 +83,7 @@ public class ResearchResourceItem {
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -112,5 +120,5 @@ public class ResearchResourceItem {
             return false;
         return true;
     }
-    
+
 }
