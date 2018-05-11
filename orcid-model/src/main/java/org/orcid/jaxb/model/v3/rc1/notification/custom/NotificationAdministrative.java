@@ -1,6 +1,6 @@
 package org.orcid.jaxb.model.v3.rc1.notification.custom;
 
-import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
+import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
 
 public class NotificationAdministrative extends NotificationCustom {
 
