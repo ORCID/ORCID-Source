@@ -39,8 +39,10 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
     void flagAsArchived(String orcid, Long id);
     
+    void flagAsSendable(String orcid, Long id);
+    
     void flagAsNonSendable(String orcid, Long id);
-
+    
     void deleteNotificationById(Long notificationId);
 
     void deleteNotificationItemByNotificationId(Long notificationId);
@@ -53,7 +55,9 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     
     List<NotificationEntity> findNotificationsCreatedBefore(Date createdBefore, int batchSize);
     
-    List<NotificationEntity> findUnsentServiceAnnouncementsAndTips(int batchSize);
+    List<NotificationEntity> findUnsentServiceAnnouncements(int batchSize);
+    
+    List<NotificationEntity> findUnsentTips(int batchSize);
     
     void updateRetryCount(String orcid, Long id, Long retryCount);
 

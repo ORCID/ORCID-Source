@@ -18,6 +18,7 @@ import 'rxjs/Rx';
 @Injectable()
 export class EmailService {
     public delEmail: any;
+    private deleteEmailHeaders: HttpHeaders;
     private emails: any;
     private headers: HttpHeaders;          
     public inputEmail: any;
@@ -37,7 +38,13 @@ export class EmailService {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
-        );     
+        );  
+        this.deleteEmailHeaders = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+            }
+        );    
         this.inputEmail = null;
         this.primaryEmail = null;
         this.unverifiedSetPrimary = false;
@@ -74,7 +81,7 @@ export class EmailService {
 
     deleteEmail() {        
         return this.http.delete( 
-            getBaseUri() + '/account/deleteEmail.json?email=' + encodeURIComponent(this.delEmail.value)
+            getBaseUri() + '/account/deleteEmail.json?email=' + encodeURIComponent(this.delEmail.value), { headers: this.deleteEmailHeaders }
         )
         .do(
             (data) => {
@@ -108,14 +115,12 @@ export class EmailService {
     }
 
     getEmails(): Observable<any> {
-        console.log('get emails service');
         return this.http.get(
             this.url
         )
         .do(
             (data) => {
                 this.emails = data;
-                console.log('this.emails', data);
                 for (let i in data['emails']){
                     //console.log('data.emails[i]', data.emails[i]);
                     if (data['emails'][i].primary == true){

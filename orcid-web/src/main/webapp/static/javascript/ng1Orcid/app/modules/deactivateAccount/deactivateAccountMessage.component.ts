@@ -1,3 +1,5 @@
+//Import all the angular components
+
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
@@ -13,46 +15,49 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { EmailService } 
+import { AccountService } 
+    from '../../shared/account.service.ts';
+
+import { EmailService }
     from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service.ts';
 
 @Component({
-    selector: 'email-verification-sent-messsage-ng2',
-    template:  scriptTmpl("email-verification-sent-messsage-ng2-template")
+    selector: 'deactivate-account-message-ng2',
+    template:  scriptTmpl("deactivate-account-message-ng2-template")
 })
-export class EmailVerificationSentMesssageComponent implements AfterViewInit, OnDestroy, OnInit {
-
+export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    private subscription: Subscription;
-
-    emailPrimary: string;
+   
+    primaryEmail: string;
 
     constructor(
+        private accountService: AccountService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
-        this.emailPrimary = '';
+        this.primaryEmail = "";
     }
 
-    close(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'emailSentConfirmation'});
-    }
+    closeModal(): void {
+        this.modalService.notifyOther({action:'close', moduleId: 'modalDeactivateAccountMessage'});
+    };
 
     getEmails(): any {
         this.emailService.getEmails()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.emailPrimary = this.emailService.getEmailPrimary().value;
+                this.primaryEmail = this.emailService.getEmailPrimary().value;
             },
             error => {
                 //console.log('getEmails', error);
             } 
         );
     }
+
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
@@ -65,20 +70,6 @@ export class EmailVerificationSentMesssageComponent implements AfterViewInit, On
     };
 
     ngOnInit() {
-
-        this.subscription = this.modalService.notifyObservable$.subscribe(
-            (res: any) => {
-                console.log('res.value',res);
-                if ( res.moduleId == "emailSentConfirmation" ) {
-                    if ( res.data != undefined) {
-                        this.emailPrimary = res.data.email;
-                    }
-                    else {
-                        this.getEmails();
-                    }
-
-                }
-            }
-        );
-    };
+        this.getEmails();
+    }; 
 }

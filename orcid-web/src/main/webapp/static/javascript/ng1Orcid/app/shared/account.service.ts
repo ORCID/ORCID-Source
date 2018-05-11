@@ -17,6 +17,7 @@ import 'rxjs/Rx';
 @Injectable()
 export class AccountService {
     private headers: HttpHeaders;
+    private publicApiHeaders: HttpHeaders;
     private notify = new Subject<any>();
     private url: string;
     
@@ -27,6 +28,13 @@ export class AccountService {
             {
                 'Access-Control-Allow-Origin':'*',
                 'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+            }
+        );
+        this.publicApiHeaders = new HttpHeaders(
+            {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
@@ -82,7 +90,8 @@ export class AccountService {
 
     getDisplayName( orcid ): Observable<any> {
         return this.http.get(
-            orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person'
+            orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person',
+            {headers: this.publicApiHeaders}
         )
         
     }

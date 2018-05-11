@@ -94,7 +94,10 @@ public enum Features implements Feature {
     DISABLE_1_1,
     
     @Label("GDPR Email notifications")
-    GDPR_EMAIL_NOTIFICATIONS;
+    GDPR_EMAIL_NOTIFICATIONS,
+    
+    @Label("GDPR deactivate")
+    GDPR_DEACTIVATE;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

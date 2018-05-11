@@ -58,20 +58,16 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     showEditEmail: boolean;
     emailsEditText: string;
-    //popUp: boolean;
     showUnverifiedEmailSetPrimaryBox: boolean;
     primaryEmail: string;
     verifyEmailObject: any;
     showEmailVerifBox: boolean;
     isPassConfReq: any;
     baseUri: any;
-    curPrivToggle: any;
-    
+    curPrivToggle: any; 
     password: any;
-  
     showConfirmationBox: any;
     showDeleteBox: any;
-
     position: any;
     inputEmail: any;
     prefs: any;
@@ -148,7 +144,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.prefs = {};
         this.popUp = elementRef.nativeElement.getAttribute('popUp');
-        //this.email_frequency = null;
     }
 
     addNew(): void {
@@ -438,7 +433,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showEmailVerifBox = true;
 
         if( !popup ){
-            this.modalService.notifyOther({action:'open', moduleId: 'emailSentConfirmation'});   
+            this.modalService.notifyOther(
+                {
+                    action:'open', 
+                    moduleId: 'emailSentConfirmation', 
+                    data: {
+                        email: email
+                    }
+                }
+            );   
         }
         
     };
@@ -464,6 +467,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getPrivacyPreferences();
         this.getformData();  
+        
         if(this.gdprEmailNotifications) {
             this.getEmailFrequencies();
         }

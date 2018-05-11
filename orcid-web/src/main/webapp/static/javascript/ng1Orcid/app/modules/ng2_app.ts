@@ -68,6 +68,9 @@ import { CountryFormNg2Module }
 import { DeactivateAccountNg2Module }
     from './deactivateAccount/deactivateAccount.ts';
 
+import { DeactivateAccountMessageNg2Module }
+    from './deactivateAccount/deactivateAccountMessage.ts';
+
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -309,6 +312,7 @@ export class RootCmp {
         CountryFormNg2Module,//Approved
         CountryNg2Module,//Approved
         DeactivateAccountNg2Module,
+        DeactivateAccountMessageNg2Module,
         DeprecateAccountNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
@@ -371,7 +375,7 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.9.18');
+        console.log('v0.9.20');
     }
 }
 

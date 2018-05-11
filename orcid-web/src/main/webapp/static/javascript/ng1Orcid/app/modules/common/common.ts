@@ -13,6 +13,10 @@ import { FormsModule }
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
 
+//User generated attribute directives
+import { FocusMe }
+    from '../../directives/focusMe.directive.ts'; 
+
 //User generated filters
 import { AffiliationExternalIdentifierHtmlPipe }
     from '../../pipes/affiliationExternalIdentifierHtmlNg2.ts';
@@ -61,10 +65,6 @@ import { HeaderNg2Module }
 
 import { LanguageNg2Module }
     from './../language/language.ts';
-
-
-import { NotificationsCountNg2Module }
-    from './../notificationsCount/notificationsCount.ts';
 
 import { NotificationPreferenceNg2Module }
     from './../notificationPreferences/notificationPreference.ts';
@@ -235,6 +235,7 @@ import { EmailFrequencyService }
         ],
         declarations: [ 
             AffiliationExternalIdentifierHtmlPipe,
+            FocusMe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
@@ -250,6 +251,8 @@ import { EmailFrequencyService }
             //Angular Libraries
             CommonModule,
             FormsModule,
+            //User directives
+            FocusMe,
             //User Pipes
             AffiliationExternalIdentifierHtmlPipe,
             AjaxFormDateToISO8601Pipe,

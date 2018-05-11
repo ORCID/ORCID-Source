@@ -65,23 +65,23 @@
 47. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
 48. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “0000” click through warning about the identifier validation.
 49. Set the work you just added to private
-50. Visit public page (https://qa.orcid.org/[orcid-id])
+50. Visit public page (https://qa.orcid.org/[orcid id])
     * Verify information added in the steps above is visible, but not the private work or email addresses
 51. Visit https://qa.orcid.org/signout
 
 ## Public API & Revoke Access check
 
-52. Go to https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&email=pub_ma_test_[DD][month][YYYY]@mailinator.com&given_names=ma_pub_test&family_names=[DD][month][YYYY]
+52. Go to https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&email=pub_ma_test_[DD][month][YYYY]@mailinator.com&given_names=ma_test&family_names=[DD][month][YYYY]
 
 53. Check that the registration screen displays and first and last names and the email address are prepopulated
 
-54. Complete the registration form
+54. Complete the registration form & authorize the connection
     * Leave additional email blank
     * Password: [DD][month][YYYY]
     * Default privacy for new activities: Private
     * Email frequency: Never
     
-55. Authorize the connection
+55. Check you are prompted with a window asking if the record you created earlier is you. Click Continue to registration
 
 56. In a terminal window use curl to exchange the authorization code (the 6 digit code returned with the URI, you do not need to do anything on the Google Playground page). If using Windows you will need to install curl and replace single quotes with double quotes in steps 52, 53 and 55: 
 

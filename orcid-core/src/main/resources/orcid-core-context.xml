@@ -1018,7 +1018,7 @@
 		class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean" >
 	</bean>
 	
-	<bean id="springCoreCacheManager" class="org.springframework.cache.jcache.JCacheCacheManager">
+	<bean id="springCoreCacheManager" class="org.springframework.cache.jcache.JCacheCacheManager" depends-on="coreCacheManager">
 	    <property name="cacheManager">
 	        <bean class="org.springframework.cache.jcache.JCacheManagerFactoryBean">
 	            <property name="cacheManagerUri" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />

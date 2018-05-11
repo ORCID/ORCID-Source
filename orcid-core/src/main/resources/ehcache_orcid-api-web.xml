@@ -24,7 +24,7 @@
             http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.1.xsd
             http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.1.xsd">
         
-    <ehcache:persistence directory="${java.io.tmpdir}/ehcache/orcid-api-web/annotations" />
+    <ehcache:persistence directory="${org.orcid.ehcache.dir}/orcid-api-web/annotations" />
 
     <ehcache:cache alias="country-list" uses-template="defaultTemplate">
         <ehcache:expiry>

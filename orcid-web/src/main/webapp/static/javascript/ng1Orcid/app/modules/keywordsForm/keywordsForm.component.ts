@@ -4,7 +4,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -33,14 +33,16 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
+    public newInput = new EventEmitter<boolean>();
+
     bulkEditShow: any; ///
     formData: any;
     formDataBeforeChange: any;
     newElementDefaultVisibility: string;
-    newInput: boolean;
     orcidId: any;
  
     constructor(
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private keywordsService: KeywordsService,
         private modalService: ModalService
@@ -49,7 +51,6 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.formData = {};
         this.formDataBeforeChange = {};
         this.newElementDefaultVisibility = 'PRIVATE';
-        this.newInput = false;
         this.orcidId = orcidVar.orcidId; //Do not remove
     }
 
@@ -70,21 +71,26 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         //console.log('add new keyword', tmpObj);  
         this.formData.keywords.push(tmpObj);
+        this.cdr.detectChanges();       
         this.updateDisplayIndex();
-        this.newInput = true;
+        this.newInput.emit(true); 
     };
 
     closeEditModal(): void {
         this.formData = this.formDataBeforeChange;
+        this.cdr.detectChanges();
+        this.keywordsService.notifyOther();
         this.modalService.notifyOther({action:'close', moduleId: 'modalKeywordsForm'});
     };
 
-    deleteKeyword( entry ): void{
+    deleteKeyword( entry, index ): void{
+        this.commonSrvc.hideTooltip('tooltip-keyword-delete-'+index);
         let keywords = this.formData.keywords;
         let len = keywords.length;
         while (len--) {
             if ( keywords[len] == entry ){
                 keywords.splice(len,1);
+                this.cdr.detectChanges();
             }
         }
     };
@@ -144,8 +150,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     privacyChange( obj ): any {
-        this.formData.visibility.visibility = obj;
-        //this.setForm( false );   
+        this.formData.visibility.visibility = obj;  
     };
         
     swapDown(index): void{
@@ -185,6 +190,11 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
+        this.subscription = this.keywordsService.notifyObservable$.subscribe(
+            (res) => {
+                this.getData();
+            }
+        );
     };
 
     ngOnDestroy() {

@@ -65,6 +65,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -361,7 +362,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid visibility provided: " + defaultVisibility);
         }
-        return defaultVisibility;
+        
+        return "{\"status\": \"" + defaultVisibility + "\"}";
     }
     
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
@@ -691,18 +693,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         // Set the default visibility
         if (profile.getActivitiesVisibilityDefault() != null) {
             form.setVisibility(v);
-        }
-
-        // Return an empty country in case we dont have any
-        if (form.getAddresses() == null) {
-            form.setAddresses(new ArrayList<AddressForm>());
-        }
-
-        if (form.getAddresses().isEmpty()) {
-            AddressForm address = new AddressForm();
-            address.setDisplayIndex(1L);
-            address.setVisibility(v);
-            form.getAddresses().add(address);
         }
 
         return form;

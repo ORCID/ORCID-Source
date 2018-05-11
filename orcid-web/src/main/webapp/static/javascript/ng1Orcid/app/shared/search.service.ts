@@ -14,7 +14,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class SearchService {
-    private headers: HttpHeaders;
+    private publicApiHeaders: HttpHeaders;
     private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
@@ -22,10 +22,10 @@ export class SearchService {
     constructor(
         private http: HttpClient,
         private jsonp: Jsonp) {
-        this.headers = new HttpHeaders(
+        this.publicApiHeaders = new HttpHeaders(
             {
-                'Access-Control-Allow-Origin':'*',
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
@@ -49,38 +49,21 @@ export class SearchService {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
 
 
-        return this.http.get(url).catch(this.handleError);
+        return this.http.get(url, {headers: this.publicApiHeaders}).catch(this.handleError);
     }
 
     getNames(orcid): Observable<any> {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
 
 
-        return this.http.get(url).catch(this.handleError);
+        return this.http.get(url, {headers: this.publicApiHeaders}).catch(this.handleError);
     }
 
 
     getResults(url): Observable<any> {
-        var options = new RequestOptions({
-          headers: new Headers({
-            'Accept': 'application/json'
-          })
-        });
-
-        //return this.http.get(url, options).catch(this.handleError);
-        return this.http.get(url)
+        return this.http.get(url, {headers: this.publicApiHeaders})
     }
 
-    /*
-    getAffiliationsId(): Observable<any> {
-        this.loading = true;
-        this.affiliationsToAddIds = null;
-        return this.http.get(
-            this.urlAffiliationId
-        );
-        //        
-    }
-    */
 
     notifyOther(): void {
         this.notify.next();
