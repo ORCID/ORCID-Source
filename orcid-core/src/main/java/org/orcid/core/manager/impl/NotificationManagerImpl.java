@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationAdministrative;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -482,7 +483,7 @@ public class NotificationManagerImpl implements NotificationManager {
             return;
         }
         String amenderType = profileDao.retrieveOrcidType(amenderOrcid);
-        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.fromValue(amenderType))) {
+        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.valueOf(amenderType))) {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, userOrcid);
             return;
         }
@@ -559,8 +560,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
         if (notificationsEnabled) {
-            NotificationCustom notification = new NotificationCustom();
-            notification.setNotificationType(NotificationType.CUSTOM);
+            NotificationAdministrative notification = new NotificationAdministrative();
+            notification.setNotificationType(NotificationType.ADMINISTRATIVE);
             notification.setSubject(subject);
             notification.setBodyHtml(html);
             createNotification(userReceivingPermission, notification);
@@ -842,8 +843,8 @@ public class NotificationManagerImpl implements NotificationManager {
             String subject = messages.getMessage("email.subject.admin_as_delegate", new Object[] { trustedOrcidName }, userLocale);
             boolean notificationsEnabled = trustedEntity != null ? trustedEntity.getEnableNotifications() : false;
             if (notificationsEnabled) {
-                NotificationCustom notification = new NotificationCustom();
-                notification.setNotificationType(NotificationType.CUSTOM);
+                NotificationAdministrative notification = new NotificationAdministrative();
+                notification.setNotificationType(NotificationType.ADMINISTRATIVE);
                 notification.setSubject(subject);
                 notification.setBodyHtml(htmlBody);
                 createNotification(managedOrcid, notification);
@@ -1110,8 +1111,8 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("auto_deprecated_account_html.ftl", templateParams);
 
-        NotificationCustom notification = new NotificationCustom();
-        notification.setNotificationType(NotificationType.CUSTOM);
+        NotificationAdministrative notification = new NotificationAdministrative();
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
         notification.setSubject(subject);
         notification.setBodyHtml(html);
         createNotification(primaryOrcid, notification);
@@ -1143,7 +1144,13 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
-        return notificationAdapter.toNotification(notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, emailFrequencyDays, recordActiveDate));
+        List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
+        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+            notifications = notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, recordActiveDate);
+        } else {
+            notifications = notificationDaoReadOnly.findNotificationsToSendLegacy(new Date(), orcid, emailFrequencyDays, recordActiveDate);
+        }   
+        return notificationAdapter.toNotification(notifications);
     }
 
     @Override

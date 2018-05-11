@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
@@ -665,104 +666,119 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
         assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(activities);
-        assertFalse(activities.getEducations().getSummaries().isEmpty());
+        assertFalse(activities.getEducations().retrieveGroups().isEmpty());
         
         boolean found = false;
         Long distinctionPutCode = null;
-        for(DistinctionSummary summary : activities.getDistinctions().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
-                assertEquals("department-name", summary.getDepartmentName());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
-                distinctionPutCode = summary.getPutCode();
-                found = true;
-                break;
+        for (AffiliationGroup<DistinctionSummary> group : activities.getDistinctions().retrieveGroups()) {
+            for(DistinctionSummary summary : group.getActivities()) {
+                if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
+                    assertEquals("department-name", summary.getDepartmentName());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    distinctionPutCode = summary.getPutCode();
+                    found = true;
+                    break;
+                }
             }
         }
         
         assertTrue("Distinction not found", found);
         
         Long educationPutCode = null;
-        for(EducationSummary summary : activities.getEducations().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
-                assertEquals("department-name", summary.getDepartmentName());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
-                educationPutCode = summary.getPutCode();
-                found = true;
-                break;
+        for (AffiliationGroup<EducationSummary> group : activities.getEducations().retrieveGroups()) {
+            for(EducationSummary summary : group.getActivities()) {
+                if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
+                    assertEquals("department-name", summary.getDepartmentName());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    educationPutCode = summary.getPutCode();
+                    found = true;
+                    break;
+                }
             }
         }
         
         assertTrue("Education not found", found);
                 
-        assertFalse(activities.getEmployments().getSummaries().isEmpty());        
+        assertFalse(activities.getEmployments().retrieveGroups().isEmpty());        
         found = false;
         Long employmentPutCode = null;
-        for(EmploymentSummary summary : activities.getEmployments().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {
-                assertEquals("department-name", summary.getDepartmentName());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
-                employmentPutCode = summary.getPutCode();
-                found = true;
-                break;
+        
+        for (AffiliationGroup<EmploymentSummary> group : activities.getEmployments().retrieveGroups()) {
+            for(EmploymentSummary summary : group.getActivities()) {
+                if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {
+                    assertEquals("department-name", summary.getDepartmentName());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    employmentPutCode = summary.getPutCode();
+                    found = true;
+                    break;
+                }
             }
         }
         
         assertTrue("Employment not found", found);        
         
         Long invitedPositionPutCode = null;
-        for(InvitedPositionSummary summary : activities.getInvitedPositions().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
-                assertEquals("department-name", summary.getDepartmentName());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
-                invitedPositionPutCode = summary.getPutCode();
-                found = true;
-                break;
+        for (AffiliationGroup<InvitedPositionSummary> group : activities.getInvitedPositions().retrieveGroups()) {
+            for(InvitedPositionSummary summary : group.getActivities()) {
+                if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
+                    assertEquals("department-name", summary.getDepartmentName());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    invitedPositionPutCode = summary.getPutCode();
+                    found = true;
+                    break;
+                }
             }
         }
         
         assertTrue("Invited position not found", found);        
         
         Long membershipPutCode = null;
-        for(MembershipSummary summary : activities.getMemberships().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
-                assertEquals("department-name", summary.getDepartmentName());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
-                membershipPutCode = summary.getPutCode();
-                found = true;
-                break;
+        for (AffiliationGroup<MembershipSummary> group : activities.getMemberships().retrieveGroups()) {
+            for(MembershipSummary summary : group.getActivities()) {
+                if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
+                    assertEquals("department-name", summary.getDepartmentName());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    membershipPutCode = summary.getPutCode();
+                    found = true;
+                    break;
+                }
             }
         }
         
         assertTrue("Membership not found", found);        
         
         Long qualificationPutCode = null;
-        for(QualificationSummary summary : activities.getQualifications().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
-                assertEquals("department-name", summary.getDepartmentName());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
-                qualificationPutCode = summary.getPutCode();
-                found = true;
-                break;
+        for (AffiliationGroup<QualificationSummary> group : activities.getQualifications().retrieveGroups()) {
+            for(QualificationSummary summary : group.getActivities()) {
+                if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
+                    assertEquals("department-name", summary.getDepartmentName());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    qualificationPutCode = summary.getPutCode();
+                    found = true;
+                    break;
+                }
             }
         }
         
         assertTrue("Qualification not found", found);        
         
         Long servicePutCode = null;
-        for(ServiceSummary summary : activities.getServices().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
-                assertEquals("department-name", summary.getDepartmentName());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
-                servicePutCode = summary.getPutCode();
-                found = true;
-                break;
+        for (AffiliationGroup<ServiceSummary> group : activities.getServices().retrieveGroups()) {
+            for(ServiceSummary summary : group.getActivities()) {
+                if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
+                    assertEquals("department-name", summary.getDepartmentName());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    servicePutCode = summary.getPutCode();
+                    found = true;
+                    break;
+                }
             }
         }
         

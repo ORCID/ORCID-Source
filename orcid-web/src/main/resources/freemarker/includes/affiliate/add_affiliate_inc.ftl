@@ -160,9 +160,15 @@
                         	</#list>
                     	</select>					
                     	<select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
-	                        <#list days?keys as key>
+	                        <!--
+                            <#list days?keys as key>
                            		<option value="${key}">${days[key]}</option>
                       		</#list>
+                            -->
+                            <#list days?keys as key>
+                                <option disabled="checkAvailableDays(
+                                '${days[key]}', editAffiliation.endDate.month, editAffiliation.endDate.year)" value="${key}">${days[key]}</option>
+                            </#list>
                     	</select>
 					</div>
 					<span class="orcid-error" ng-show="editAffiliation.startDate.errors.length > 0">
@@ -185,7 +191,8 @@
                         </select>
                         <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
                             <#list days?keys as key>
-                                <option value="${key}">${days[key]}</option>
+                                <option disabled="checkAvailableDays(
+                                '${days[key]}', editAffiliation.endDate.month, editAffiliation.endDate.year)" value="${key}">${days[key]}</option>
                             </#list>
                         </select>
                     </div>

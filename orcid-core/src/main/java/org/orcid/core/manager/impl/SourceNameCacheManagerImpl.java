@@ -3,6 +3,7 @@ package org.orcid.core.manager.impl;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.ehcache.Cache;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.utils.RecordNameUtils;
@@ -16,9 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
 /**
  * 
  * @author Angel Montenegro
@@ -30,7 +28,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     private static String REQUEST_PROFILE_NAME = "REQUEST_PROFILE_NAME";
 
     @Resource(name = "sourceNameCache")
-    private Cache sourceNameCache;
+    private Cache<String, String> sourceNameCache;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -55,32 +53,17 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     @Override
     public String retrieve(String sourceId) throws IllegalArgumentException {
         String key = getCacheKey(sourceId);
-        String sourceName = null;
-        try {
-            sourceNameCache.acquireReadLockOnKey(key);
-            sourceName = getSourceNameFromCache(sourceNameCache.get(key));
-        } finally {
-            sourceNameCache.releaseReadLockOnKey(key);
-        }
-
+        String sourceName = sourceNameCache.get(key);
         if (sourceName == null) {
-            try {
-                sourceNameCache.acquireWriteLockOnKey(key);
-                sourceName = getSourceNameFromCache(sourceNameCache.get(key));
-                if (sourceName == null) {
-                    LOGGER.debug("Fetching source name for: " + sourceId);
-                    sourceName = getProfileSourceNameFromRequest(sourceId);
-                    if (sourceName == null) {
-                        sourceName = getClientSourceName(sourceId);
-                        if (sourceName != null) {
-                            sourceNameCache.put(new Element(key, sourceName));
-                        } else {
-                            sourceName = getProfileSourceNameFromDb(sourceId);
-                        }
-                    }
+            LOGGER.debug("Fetching source name for: " + sourceId);
+            sourceName = getProfileSourceNameFromRequest(sourceId);
+            if (sourceName == null) {
+                sourceName = getClientSourceName(sourceId);
+                if (sourceName != null) {
+                    sourceNameCache.put(key, sourceName);
+                } else {
+                    sourceName = getProfileSourceNameFromDb(sourceId);
                 }
-            } finally {
-                sourceNameCache.releaseWriteLockOnKey(key);
             }
         }
         // If source name is empty, it means the name is not public, so, return
@@ -93,16 +76,12 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
 
     @Override
     public void removeAll() {
-        sourceNameCache.removeAll();
+        sourceNameCache.clear();
     }
 
     @Override
     public void remove(String sourceId) {
         sourceNameCache.remove(getCacheKey(sourceId));
-    }
-
-    private String getSourceNameFromCache(Element element) {
-        return (String) (element != null ? element.getObjectValue() : null);
     }
 
     private String getCacheKey(String sourceId) {

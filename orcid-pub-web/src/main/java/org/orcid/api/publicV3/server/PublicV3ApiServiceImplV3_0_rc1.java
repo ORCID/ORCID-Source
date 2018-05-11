@@ -49,6 +49,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 
 import java.util.List;
 import java.util.Map;
@@ -413,7 +414,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     
     //Record 
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, JSON_LD })
     @Path(OrcidApiConstants.RECORD_SIMPLE)
     @ApiOperation( nickname="viewRecordV3dev", value = "Fetch record details")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")

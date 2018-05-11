@@ -1,6 +1,9 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
@@ -14,16 +17,18 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ExternalIdentifiersService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
 
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
 
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );     
     }
@@ -43,9 +48,6 @@ export class ExternalIdentifiersService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
         .do(
             (data) => {                      
             }
@@ -59,9 +61,6 @@ export class ExternalIdentifiersService {
         return this.http.get(
             getBaseUri() + '/my-orcid/externalIdentifiers.json'
         )
-        .map(
-            (res:Response) => res.json()
-        )
         .do(
             (data) => {                                              
             }
@@ -70,16 +69,12 @@ export class ExternalIdentifiersService {
     }
 
      removeExternalIdentifier( data ) {
-        let options = new RequestOptions(
+        /*let options = new RequestOptions(
             { headers: this.headers }
-        );
+        );*/
         
         return this.http.delete( 
-            getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encodeURIComponent(data),             
-            options
-        )
-        .map(
-            (res:Response) => res.json()
+            getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encodeURIComponent(data)
         )
         .do(
             (data) => {                   

@@ -982,7 +982,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             
             //Fill the visibility in case it is still null
             if(profileEntity.getBiographyEntity().getVisibility() == null) {
-                profileEntity.getBiographyEntity().setVisibility(defaultVisibility.value());
+                profileEntity.getBiographyEntity().setVisibility(defaultVisibility.name());
             }
         }
     }

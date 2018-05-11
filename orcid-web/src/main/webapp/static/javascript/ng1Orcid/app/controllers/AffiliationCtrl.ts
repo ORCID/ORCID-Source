@@ -199,6 +199,13 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                 $scope.moreInfo[key]=false;
             };
 
+            $scope.checkAvailableDays = function(day, month, year){
+                if( day > new Date(year, month, 0).getDate() ){
+                    return true
+                }
+                return false;
+            };
+
             $scope.deleteAff = function(delAff) {
                 affiliationsSrvc.deleteAffiliation(delAff);
                 $.colorbox.close();

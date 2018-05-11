@@ -96,7 +96,7 @@
                                     <ul class="social-icons">
                                         <!--FACEBOOK-->
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/facebook'/>" method="POST" (submit)="loginSocial('facebook')">
+                                            <form ngNoForm action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-facebook"></button>
                                                 <input type="hidden" name="scope" value="email"/>
@@ -104,7 +104,7 @@
                                         </li>
                                         <!--TWITTER (NOT USED)
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/twitter'/>" method="POST" (submit)="loginSocial('twitter')">
+                                            <form ngNoForm action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-twitter"></button>
                                             </form>
@@ -112,7 +112,7 @@
                                         -->
                                         <!--GOOGLE-->
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/google'/>" method="POST" (submit)="loginSocial('google')">
+                                            <form ngNoForm action="<@orcid.rootPath '/signin/google'/>" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-google" ></button>
                                                 <input type="hidden" name="scope" value="email" />

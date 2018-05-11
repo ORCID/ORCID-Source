@@ -519,6 +519,9 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                 this.addAffType = res.type;
                 if( res.affiliation != undefined ) {
                     this.editAffiliation = res.affiliation;
+                    if(this.editAffiliation.orgDisambiguatedId != null){
+                        this.getDisambiguatedAffiliation(this.editAffiliation.orgDisambiguatedId.value);
+                    }
                 } else {
                     this.editAffiliation = this.getEmptyAffiliation();
                     this.editAffiliation.affiliationType.value = this.addAffType;

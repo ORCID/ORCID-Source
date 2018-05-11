@@ -34,6 +34,8 @@ v2.1 is a current stable release of the ORCID API.
 **stable**
 - [personal-details-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/personal-details-2.1.xsd)
 **stable**
+- [record-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/record-2.1.xsd)
+**stable**
 - [researcher-url-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/researcher-url-2.1.xsd)
 **stable**
 - [search-2.1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/search-2.1.xsd)

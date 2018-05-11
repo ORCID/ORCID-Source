@@ -12,7 +12,7 @@ In addition to the production environment at https://orcid.org, ORCID offers a d
 * Supports [OpenID Connect](http://openid.net/connect/)
 
 ## Getting Credentials
-To access the API you will use a member client and secret issued by ORCID.
+To access the API you will use a client ID and secret issued by ORCID.
 
 **Member Credentials**
 
@@ -24,7 +24,7 @@ To access the API you will use a member client and secret issued by ORCID.
 
 **Locally**
 
-To create a client locally see [OAUTH_DEV.md](OAUTH_DEV.md).
+To create a client locally you will need to create an admin user by updating the database to set _orcid_type_ in _profile_ to 'ADMIN' then use the Manage Members section available on admin records.
 
 ## Endpoints
 

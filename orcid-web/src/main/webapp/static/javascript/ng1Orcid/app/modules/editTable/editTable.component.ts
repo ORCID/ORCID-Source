@@ -52,6 +52,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     twoFAToggleText: string;
     showEditGetMyData: boolean;
     getMyDataToggleText: string;
+    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
     
     constructor(
             private featuresService: FeaturesService,
@@ -77,7 +78,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     	this.socialNetworksToggleText = "";
     	this.showEdit2FA = (window.location.hash === "#edit2FA");
     	this.twoFAToggleText = "";
-    	this.showEditGetMyData = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
+    	this.showEditGetMyData = this.featuresService.isFeatureEnabled('GET_MY_DATA');
     }
 
 	deactivateUpdateToggleText(): void {
@@ -116,6 +117,14 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         else {
             this.emailToggleText = om.get("manage.editTable.edit");
         } 
+    };
+
+    getMyDataUpdateToggleText(): void {
+        if (this.showEditGetMyData){
+            this.getMyDataToggleText=om.get("manage.editTable.hide");    
+        } else {
+            this.getMyDataToggleText=om.get("manage.editTable.show"); 
+        }       
     };
 
     languageUpdateToggleText(): void {
@@ -179,7 +188,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleGetMyDataEdit(): void {
         this.showEditGetMyData = !this.showEditGetMyData;        
-        this.getMyDataToggleText = (this.showEditGetMyData ? om.get("manage.editTable.hide") : om.get("manage.editTable.edit"));        
+        this.getMyDataUpdateToggleText();      
     };
     
     toggleDeactivateEdit(): void {
@@ -250,6 +259,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
     	this.languageUpdateToggleText();
         this.emailUpdateToggleText(); 
+        this.getMyDataUpdateToggleText();
         this.passwordUpdateToggleText();
         this.deactivateUpdateToggleText();
         this.deprecateUpdateToggleText();

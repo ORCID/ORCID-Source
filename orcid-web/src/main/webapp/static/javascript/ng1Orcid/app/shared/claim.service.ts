@@ -1,8 +1,8 @@
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
 import { Injectable } 
     from '@angular/core';
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -14,31 +14,32 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ClaimService {
-    private headers: Headers;
-    private url: string;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
+    private url: string;
     
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.url = window.location.href.split("?")[0]+".json";
+    }
+    notifyOther(): void {
+        this.notify.next();
+        console.log('notify');
     }
 
     getClaim(): Observable<any> {
         return this.http.get(
             this.url
         )
-        .map((res:Response) => res.json()).share();
-    }
-
-    notifyOther(): void {
-        this.notify.next();
-        console.log('notify');
+        
     }
 
     postClaim( obj ): Observable<any> {
@@ -49,7 +50,7 @@ export class ClaimService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     serverValidate( obj, field ): Observable<any> {
@@ -60,6 +61,6 @@ export class ClaimService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }

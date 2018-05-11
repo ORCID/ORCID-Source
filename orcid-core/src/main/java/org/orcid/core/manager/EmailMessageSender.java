@@ -13,6 +13,10 @@ public interface EmailMessageSender {
 
     EmailMessage createDigest(String orcid, Collection<Notification> notifications);        
 
+    void sendServiceAnnouncements(Integer customBatchSize);
+    
+    void sendTips(Integer customBatchSize);
+    
     void sendEmailMessages();
 
 }

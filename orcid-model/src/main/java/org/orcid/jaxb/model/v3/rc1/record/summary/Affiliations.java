@@ -1,43 +1,35 @@
 package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc1.record.ActivitiesContainer;
-import org.orcid.jaxb.model.v3.rc1.record.Activity;
+import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "summaries" })
-public abstract class Affiliations<T extends AffiliationSummary> implements ActivitiesContainer {
+@XmlType(propOrder = { "lastModifiedDate", "groups" })
+public abstract class Affiliations<T extends AffiliationSummary> implements GroupsContainer {
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElements({ @XmlElement(namespace = "http://www.orcid.org/ns/distinction", name = "distinction-summary", type = DistinctionSummary.class),
-            @XmlElement(namespace = "http://www.orcid.org/ns/invited-position", name = "invited-position-summary", type = InvitedPositionSummary.class),
-            @XmlElement(namespace = "http://www.orcid.org/ns/education", name = "education-summary", type = EducationSummary.class),
-            @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "employment-summary", type = EmploymentSummary.class),
-            @XmlElement(namespace = "http://www.orcid.org/ns/membership", name = "membership-summary", type = MembershipSummary.class),
-            @XmlElement(namespace = "http://www.orcid.org/ns/qualification", name = "qualification-summary", type = QualificationSummary.class),
-            @XmlElement(namespace = "http://www.orcid.org/ns/service", name = "service-summary", type = ServiceSummary.class) })
-    protected List<T> summaries;
+    
+    @XmlElement(name = "affiliation-group", namespace = "http://www.orcid.org/ns/activities")
+    protected Collection<AffiliationGroup<T>> groups;
+   
     @XmlAttribute
     protected String path;
 
-    public abstract List<T> getSummaries();
+    public abstract Collection<AffiliationGroup<T>> retrieveGroups();
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((summaries == null) ? 0 : summaries.hashCode());
+        result = prime * result + ((groups == null) ? 0 : groups.hashCode());
         return result;
     }
 
@@ -51,10 +43,10 @@ public abstract class Affiliations<T extends AffiliationSummary> implements Acti
         if (getClass() != obj.getClass())
             return false;
         Affiliations other = (Affiliations) obj;
-        if (summaries == null) {
-            if (other.summaries != null)
+        if (groups == null) {
+            if (other.groups != null)
                 return false;
-        } else if (!summaries.equals(other.summaries))
+        } else if (!groups.equals(other.groups))
             return false;
         return true;
     }
@@ -65,16 +57,6 @@ public abstract class Affiliations<T extends AffiliationSummary> implements Acti
 
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
-    }
-
-    @Override
-    public Map<Long, ? extends Activity> retrieveActivitiesAsMap() {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    @Override
-    public Collection<? extends Activity> retrieveActivities() {
-        return (Collection<? extends Activity>) summaries;
     }
 
     public String getPath() {

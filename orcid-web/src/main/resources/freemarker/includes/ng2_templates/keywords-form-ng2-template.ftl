@@ -17,7 +17,7 @@
                     <span class="right">Edit all privacy settings</span>
                     <div class="bulk-privacy-bar">
                         <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
-                            <ul class="privacyToggle" ng-mouseenter="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" ng-mouseleave="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
+                            <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
                                 <li class="publicActive publicInActive" [ngClass]="{publicInActive: bioModel != 'PUBLIC'}"><a (click)="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" name="privacy-toggle-3-public" id=""></a></li>
                                 <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: bioModel != 'LIMITED'}"><a (click)="setBulkGroupPrivacy('LIMITED', $event, bioModel)" name="privacy-toggle-3-limited" id=""></a></li>
                                 <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE', $event, bioModel)" name="privacy-toggle-3-private" id=""></a></li>
@@ -63,7 +63,7 @@
                         <div class="row aka-row" *ngFor="let keyword of formData.keywords; let index = index; let first = first; let last = last;">      
                             <div class="col-md-6">
                                 <div class="aka" *ngIf="keyword">                                       
-                                    <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" focus-me="newInput" />
+                                    <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !keyword.content}" />
                                     <span *ngIf="keyword.source != orcidId">{{keyword.content}}</span>                                     
                                 </div>
                                 <div class="source" *ngIf="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="keyword.sourceName">{{keyword.sourceName}}</span><span *ngIf="keyword.sourceName == null">{{orcidId}}</span></div>      
@@ -80,7 +80,7 @@
                                         <@orcid.tooltipNg2 elementId="'tooltip-keyword-move-down-'+index" message="common.modals.move_down" />                                            
                                     </li>
                                     <li>                                        
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteKeyword(keyword)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-delete-'+index)"></div>
+                                        <div class="glyphicon glyphicon-trash" (click)="deleteKeyword(keyword, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-delete-'+index)"></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-keyword-delete-'+index" message="common.modals.delete" />                                          
                                     </li>
                                     <li>

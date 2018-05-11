@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Affiliations;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
@@ -83,19 +84,23 @@ public class SourceUtils {
         }
         if (as.getEducations() != null) {
             Educations educations = as.getEducations();
-            List<EducationSummary> list = educations.getSummaries();
-            if (list != null) {
-                for (EducationSummary summary : list) {
-                    setSourceName(summary);
+            for (AffiliationGroup<EducationSummary> group : educations.retrieveGroups()) {
+                List<EducationSummary> list = group.getActivities();
+                if (list != null) {
+                    for (EducationSummary summary : list) {
+                        setSourceName(summary);
+                    }
                 }
             }
         }
         if (as.getEmployments() != null) {
             Employments employments = as.getEmployments();
-            List<EmploymentSummary> list = employments.getSummaries();
-            if (list != null) {
-                for (EmploymentSummary summary : list) {
-                    setSourceName(summary);
+            for (AffiliationGroup<EmploymentSummary> group : employments.retrieveGroups()) {
+                List<EmploymentSummary> list = group.getActivities();
+                if (list != null) {
+                    for (EmploymentSummary summary : list) {
+                        setSourceName(summary);
+                    }
                 }
             }
         }
@@ -243,11 +248,13 @@ public class SourceUtils {
             }
         }
     }
-    
+
     public void setSourceName(Affiliations<? extends AffiliationSummary> affiliations) {
         if (affiliations != null) {
-            for (AffiliationSummary summary : affiliations.getSummaries()) {
-                setSourceName(summary);
+            for (AffiliationGroup<? extends AffiliationSummary> group : affiliations.retrieveGroups()) {
+                for (AffiliationSummary summary : group.getActivities()) {
+                    setSourceName(summary);
+                }
             }
         }
     }

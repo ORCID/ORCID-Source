@@ -19,7 +19,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.jaxb.model.common_v2.Day;
+import org.orcid.jaxb.model.common_v2.DisambiguatedOrganization;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Month;
@@ -170,6 +172,22 @@ public class AffiliationsManagerTest extends BaseTest {
         assertTrue(found5);
     }
     
+    @Test(expected = InvalidDisambiguatedOrgException.class)
+    public void testEducationWithInvalidDisambiguatedOrg() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        Education education = getEducation();
+        education.getOrganization().setDisambiguatedOrganization(getDisambiguatedOrganization());
+        education = affiliationsManager.createEducationAffiliation(claimedOrcid, education, true);
+    }
+    
+    @Test(expected = InvalidDisambiguatedOrgException.class)
+    public void testEmploymentWithInvalidDisambiguatedOrg() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        Employment employment = getEmployment();
+        employment.getOrganization().setDisambiguatedOrganization(getDisambiguatedOrganization());
+        employment = affiliationsManager.createEmploymentAffiliation(claimedOrcid, employment, true);
+    }
+    
     private Education getEducation() {
         Education education = new Education();
         Organization org = new Organization();
@@ -196,5 +214,12 @@ public class AffiliationsManagerTest extends BaseTest {
         employment.setStartDate(new FuzzyDate(new Year(2016), new Month(3), new Day(29)));
         employment.setVisibility(Visibility.PUBLIC);
         return employment;
+    }
+    
+    private DisambiguatedOrganization getDisambiguatedOrganization() {
+        DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
+        disambiguatedOrganization.setDisambiguatedOrganizationIdentifier("some-identifier");
+        disambiguatedOrganization.setDisambiguationSource("FUNDREF");
+        return disambiguatedOrganization;
     }
 }

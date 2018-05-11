@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.ehcache.Cache;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -43,8 +44,6 @@ import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
 
-import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
-
 /**
  * 
  * @author Will Simpson
@@ -65,22 +64,22 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private static final Pattern SUBDOMAIN_PATTERN = Pattern.compile("^www\\.");
 
     @Resource(name = "salesForceMembersListCache")
-    private SelfPopulatingCache salesForceMembersListCache;
+    private Cache<String, List<Member>> salesForceMembersListCache;
 
     @Resource(name = "salesForceMemberCache")
-    private SelfPopulatingCache salesForceMemberCache;
+    private Cache<String, Member> salesForceMemberCache;
 
     @Resource(name = "salesForceMemberDetailsCache")
-    private SelfPopulatingCache salesForceMemberDetailsCache;
+    private Cache<MemberDetailsCacheKey, MemberDetails> salesForceMemberDetailsCache;
 
     @Resource(name = "salesForceConsortiaListCache")
-    private SelfPopulatingCache salesForceConsortiaListCache;
+    private Cache<String, List<Member>> salesForceConsortiaListCache;
 
     @Resource(name = "salesForceConsortiumCache")
-    private SelfPopulatingCache salesForceConsortiumCache;
+    private Cache<String, Consortium> salesForceConsortiumCache;
 
     @Resource(name = "salesForceContactsCache")
-    private SelfPopulatingCache salesForceContactsCache;
+    private Cache<String, List<Contact>> salesForceContactsCache;
 
     @Resource
     private SalesForceDao salesForceDao;
@@ -106,23 +105,23 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @SuppressWarnings("unchecked")
     @Override
     public List<Member> retrieveMembers() {
-        return (List<Member>) salesForceMembersListCache.get(releaseName).getObjectValue();
+        return salesForceMembersListCache.get(releaseName);
     }
 
     @Override
     public Member retrieveMember(String accountId) {
-        return (Member) salesForceMemberCache.get(accountId).getObjectValue();
+        return salesForceMemberCache.get(accountId);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<Member> retrieveConsortia() {
-        return (List<Member>) salesForceConsortiaListCache.get(releaseName).getObjectValue();
+        return salesForceConsortiaListCache.get(releaseName);
     }
 
     @Override
     public Consortium retrieveConsortium(String consortiumId) {
-        return (Consortium) salesForceConsortiumCache.get(consortiumId).getObjectValue();
+        return salesForceConsortiumCache.get(consortiumId);
     }
 
     @Override
@@ -145,8 +144,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public MemberDetails retrieveDetails(String memberId, boolean publicOnly) {
         Member salesForceMember = retrieveMember(memberId);
         if (salesForceMember != null) {
-            MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
-                    .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
+            MemberDetails details = salesForceMemberDetailsCache
+                    .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName));
             details.setMember(salesForceMember);
             List<SubMember> allSubMembers = findSubMembers(memberId);
             if (publicOnly) {
@@ -170,7 +169,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @SuppressWarnings("unchecked")
     @Override
     public List<Contact> retrieveContactsByAccountId(String accountId) {
-        return (List<Contact>) salesForceContactsCache.get(accountId).getObjectValue();
+        return salesForceContactsCache.get(accountId);
     }
 
     @Override
@@ -440,7 +439,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         updatedOpportunity.setRemovalRequested(true);
         updatedOpportunity.setNextStep("Removal requested by " + userOrcid);
         salesForceDao.updateOpportunity(updatedOpportunity);
-        salesForceMembersListCache.removeAll();
+        salesForceMembersListCache.clear();;
         removeMemberDetailsFromCache(consortiumLeadId);
         salesForceConsortiumCache.remove(consortiumLeadId);
     }
@@ -454,7 +453,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         updatedOpportunity.setRemovalRequested(false);
         updatedOpportunity.setNextStep("Removal request cancelled by " + userOrcid);
         salesForceDao.updateOpportunity(updatedOpportunity);
-        salesForceMembersListCache.removeAll();
+        salesForceMembersListCache.clear();;
         String consortiumLeadId = opportunity.getConsortiumLeadId();
         removeMemberDetailsFromCache(consortiumLeadId);
         salesForceConsortiumCache.remove(consortiumLeadId);
@@ -673,17 +672,17 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public void evictAll() {
         evictLists();
-        salesForceMemberCache.removeAll();
-        salesForceMemberDetailsCache.removeAll();
-        salesForceConsortiumCache.removeAll();
-        salesForceContactsCache.removeAll();
+        salesForceMemberCache.clear();
+        salesForceMemberDetailsCache.clear();
+        salesForceConsortiumCache.clear();
+        salesForceContactsCache.clear();
         premiumConsortiumMemberTypeId = null;
         consortiumMemberRecordTypeId = null;
     }
 
     private void evictLists() {
-        salesForceMembersListCache.removeAll();
-        salesForceConsortiaListCache.removeAll();
+        salesForceMembersListCache.clear();
+        salesForceConsortiaListCache.clear();
     }
 
     private void removeMemberDetailsFromCache(String memberId) {

@@ -466,7 +466,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         educationsList = filteredList;
 
         orcidSecurityManager.checkAndFilter(orcid, educationsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
-        Educations educations = new Educations(educationsList);
+        Educations educations = new Educations(affiliationsManagerReadOnly.groupAffiliations(educationsList, false));
         ActivityUtils.setPathToAffiliations(educations, orcid);
         sourceUtils.setSourceName(educations);
         Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(educations);
@@ -531,7 +531,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         employmentsList = filteredList;
 
         orcidSecurityManager.checkAndFilter(orcid, employmentsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
-        Employments employments = new Employments(employmentsList);
+        Employments employments = new Employments(affiliationsManagerReadOnly.groupAffiliations(employmentsList, false));
         ActivityUtils.setPathToAffiliations(employments, orcid);
         sourceUtils.setSourceName(employments);
         Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(employments);
@@ -1157,7 +1157,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         distinctionsList = filteredList;
 
         orcidSecurityManager.checkAndFilter(orcid, distinctionsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
-        Distinctions distinctions = new Distinctions(distinctionsList);
+        Distinctions distinctions = new Distinctions(affiliationsManagerReadOnly.groupAffiliations(distinctionsList, false));
         ActivityUtils.setPathToAffiliations(distinctions, orcid);
         sourceUtils.setSourceName(distinctions);
         Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(distinctions);
@@ -1222,7 +1222,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         inivitedPositionsList = filteredList;
 
         orcidSecurityManager.checkAndFilter(orcid, inivitedPositionsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
-        InvitedPositions inivitedPositions = new InvitedPositions(inivitedPositionsList);
+        InvitedPositions inivitedPositions = new InvitedPositions(affiliationsManagerReadOnly.groupAffiliations(inivitedPositionsList, false));
         ActivityUtils.setPathToAffiliations(inivitedPositions, orcid);
         sourceUtils.setSourceName(inivitedPositions);
         Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(inivitedPositions);
@@ -1287,7 +1287,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         membershipsList = filteredList;
 
         orcidSecurityManager.checkAndFilter(orcid, membershipsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
-        Memberships memberships = new Memberships(membershipsList);
+        Memberships memberships = new Memberships(affiliationsManagerReadOnly.groupAffiliations(membershipsList, false));
         ActivityUtils.setPathToAffiliations(memberships, orcid);
         sourceUtils.setSourceName(memberships);
         Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(memberships);
@@ -1352,7 +1352,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         qualificationsList = filteredList;
 
         orcidSecurityManager.checkAndFilter(orcid, qualificationsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
-        Qualifications qualifications = new Qualifications(qualificationsList);
+        Qualifications qualifications = new Qualifications(affiliationsManagerReadOnly.groupAffiliations(qualificationsList, false));
         ActivityUtils.setPathToAffiliations(qualifications, orcid);
         sourceUtils.setSourceName(qualifications);
         Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(qualifications);
@@ -1417,7 +1417,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         servicesList = filteredList;
 
         orcidSecurityManager.checkAndFilter(orcid, servicesList, ScopePathType.AFFILIATIONS_READ_LIMITED);
-        Services services = new Services(servicesList);
+        Services services = new Services(affiliationsManagerReadOnly.groupAffiliations(servicesList, false));
         ActivityUtils.setPathToAffiliations(services, orcid);
         sourceUtils.setSourceName(services);
         Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(services);

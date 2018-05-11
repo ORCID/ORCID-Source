@@ -10,12 +10,8 @@
                 <table class="settings-table" style="position: static">
                     <tr>
                         <td colspan="2" [ngClass]="{'email-pop-up' : popUp}" style="border-top:0">
-                            <div class="editTablePadCell35" style="position: static">
-
-                                <!-- Start -->
-                                <div class="row">
-                                    <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
-                                </div>
+                            <h2>${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</h2>
+                            <div class="editTablePadCell35">
                                 <!-- Unverified set primary -->
                                 <div class="grey-box" *ngIf="showUnverifiedEmailSetPrimaryBox">
                                     <h4><@orcid.msg 'workspace.your_primary_email_new' /></h4>
@@ -122,53 +118,87 @@
                                 <div id="addEmailNotAllowed" *ngIf="isPassConfReq" >
                                     ${springMacroRequestContext.getMessage("manage.add_another_email.not_allowed")}
                                 </div>          
-                                <div class="row bottom-row" *ngIf="!isPassConfReq" >
-                                    <div class="col-md-12 add-email">
-                                        
+                                <div *ngIf="!isPassConfReq">
+                                    <div class="add-email">
                                         <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
                                         (keyup.enter)="checkCredentials(popUp)" class="input-xlarge inline-input" [(ngModel)]="inputEmail.value"
                                         required />
-                                        
-                                        <span (click)="checkCredentials(popUp)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-                                                    
+                                        <span (click)="checkCredentials(popUp)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>       
                                         <span class="orcid-error"
                                             *ngIf="inputEmail?.errors?.length > 0"> <span
                                             *ngFor='let error of inputEmail.errors'
                                             [innerHTML]="error"></span>
-                                        </span>
-                                        
+                                        </span>  
                                     </div>              
-                                    <div class="col-md-12">
-                                        <p style="line-height: 12px;">
-                                            <small class="italic">
-                                            ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="manage.verificationEmail.2">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
-                                            </small>
-                                        </p>
-                                    </div>              
+                                    <p>
+                                        <small class="italic">
+                                        ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="manage.verificationEmail.2">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
+                                        </small>
+                                    </p>             
                                 </div>
-                                <div class="row">
-                                    <div  class="confirm-password-box grey-box" *ngIf="popUp && showConfirmationBox">
-                                        <div style="margin-bottom: 10px;">
-                                            <@orcid.msg 'check_password_modal.confirm_password' />  
-                                        </div>
-                                        <div>
-                                            <label for=""><@orcid.msg 'check_password_modal.password' /></label>:   
-                                                           
-                                            <input id="check_password_modal.password" type="password" name="check_password_modal.password" [(ngModel)]="password" (keyup.enter)="submitModal()"/>
-                                            
-                                        </div>                  
-                                        <div>
-                                            <ul class="pull-right inline-list">
-                                                <li><a (click)="closeModal()"><@orcid.msg 'check_password_modal.close'/></a></li>
-                                                <li><button id="bottom-submit" class="btn btn-primary" (click)="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button></li>
-                                            </ul>   
-                                        </div>
+                                <div  class="confirm-password-box grey-box" *ngIf="popUp && showConfirmationBox">
+                                    <div style="margin-bottom: 10px;">
+                                        <@orcid.msg 'check_password_modal.confirm_password' />  
+                                    </div>
+                                    <div>
+                                        <label for=""><@orcid.msg 'check_password_modal.password' /></label>:   
+                                                       
+                                        <input id="check_password_modal.password" type="password" name="check_password_modal.password" [(ngModel)]="password" (keyup.enter)="submitModal()"/>
+                                        
+                                    </div>                  
+                                    <div>
+                                        <ul class="pull-right inline-list">
+                                            <li><a (click)="closeModal()"><@orcid.msg 'check_password_modal.close'/></a></li>
+                                            <li><button id="bottom-submit" class="btn btn-primary" (click)="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button></li>
+                                        </ul>   
                                     </div>
                                 </div>
-                                
-                                <div>
+                            </div>
+                            <#if springMacroRequestContext.requestUri?contains("/account") >
+                                <div id="emailFrequency" class="bottomBuffer" *ngIf="gdprEmailNotifications">
+                                    <h2><@orcid.msg 'manage.email.email_frequency.notifications.header' /></h2>
+                                    <div class="editTablePadCell35">
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.1' /></p>
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.2' /></p>
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.header' /></p>                                            
+                                        <div class="control-group">
+                                            <label for="amend-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></label>
+                                            <select id="amend-frequency" name="amend-frequency" [(ngModel)]="sendChangeNotifications" (ngModelChange)="updateChangeNotificationsFrequency()">   
+                                                <#list sendEmailFrequencies?keys as key>
+                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                        <div class="control-group">
+                                            <label for="administrative-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></label>
+                                            <select id="administrative-frequency" name="administrative-frequency" [(ngModel)]="sendAdministrativeChangeNotifications" (ngModelChange)="updateAdministrativeChangeNotificationsFrequency()">   
+                                                <#list sendEmailFrequencies?keys as key>
+                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                        <div class="control-group">
+                                            <label for="permission-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></label>                  
+                                            <select id="permission-frequency" name="permission-frequency" [(ngModel)]="sendMemberUpdateRequestsNotifications" (ngModelChange)="updateMemberUpdateRequestsFrequency()">   
+                                                <#list sendEmailFrequencies?keys as key>
+                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                    </div> 
+                                    <h2><@orcid.msg 'manage.email.email_frequency.news.header' /></h2>
+                                    <div class="editTablePadCell35">
+                                        <div class="control-group">
+                                            <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips" (ngModelChange)="updateSendQuarterlyTips()"/>
+                                            <label for="send-orcid-news">
+                                            <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
+                                        </div>
+                                    </div>
+                                    <p><small class="italic"><@orcid.msg 'manage.email.email_frequency.bottom' /> <a href="https://orcid.org/privacy-policy#How_we_use_information" target="_blank"><@orcid.msg 'public-layout.privacy_policy' /></a></small></p>  
+                                </div>
+                                <div *ngIf="!gdprEmailNotifications">
                                     <div class="row bottomBuffer">
-                                        <strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
+                                        <h2>${springMacroRequestContext.getMessage("manage.email.email_frequency")}</h2>
                                     </div>              
                                     <div class="control-group">
                                         <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="manage.send_email_to_primary_2">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
@@ -183,7 +213,7 @@
                                                         <#list sendEmailFrequencies?keys as key>
                                                             <option value="${key}">${sendEmailFrequencies[key]}</option>
                                                         </#list>
-    
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -198,8 +228,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                
-                            </div>
+                            </#if>                                                            
                         </td>
                     </tr>
                 </table>
