@@ -1,0 +1,108 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE-RESEARCH-RESOURCE-TABLE" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="research_resource" />
+			</not>
+		</preConditions>	
+		<createTable tableName="research_resource">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="research_resource_pkey" />
+			</column>
+			<column name="orcid" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>			
+			<column name="source_id" type="VARCHAR(255)" />
+			<column name="client_source_id" type="VARCHAR(20)"/>
+			<column name="proposal_type" type="VARCHAR(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="external_identifiers_json" type="text">
+				<constraints nullable="false" />
+			</column>			
+			<column name="title" type="VARCHAR(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="translated_title" type="VARCHAR(1000)" />
+			<column name="translated_title_language_code" type="VARCHAR(10)" />			
+			<column name="url" type="VARCHAR(350)" />					
+			<column name="display_index" type="int" />
+			<column name="start_date" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="end_date" type="TIMESTAMP WITH TIME ZONE" />
+						
+			<column name="visibility" type="VARCHAR(20)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />				
+		</createTable>
+		
+		<createTable tableName="research_resource_item">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="research_resource_item_pkey" />
+			</column>
+			<column name="research_resource_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="proposal_name" type="VARCHAR(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="proposal_type" type="VARCHAR(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="external_identifiers_json" type="text">
+				<constraints nullable="false" />
+			</column>			
+			<column name="url" type="VARCHAR(350)" />								
+		</createTable>
+		
+		<addForeignKeyConstraint constraintName="research_resource_orcid_fk" baseTableName="research_resource" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+		<addForeignKeyConstraint constraintName="research_resource_item_fk" baseTableName="research_resource_item" baseColumnNames="research_resource_id" referencedTableName="research_resource" referencedColumnNames="id" />
+	</changeSet>
+	
+	<changeSet id="CREATE-RESEARCH-RESOURCE-SEQUENCES" author="Tom Demeranville" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="research_resource_seq"/>
+				<sequenceExists sequenceName="research_resource_item_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="research_resource_seq" startValue="1000" />
+        <createSequence sequenceName="research_resource_item_seq" startValue="1000"/>
+    </changeSet>
+    
+    <changeSet id="CREATE-RESEARCH-RESOURCE-AUTOCOLS" author="Tom Demeranville" dbms="hsqldb">    	
+        <addAutoIncrement tableName="research_resource" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="research_resource_item" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+    
+    <changeSet id="RESEARCH-RESOURCE-ORCID-INDEX" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="research_resource_orcid_index" tableName="research_resource" />
+			</not>
+		</preConditions>
+		<sql>create index research_resource_orcid_index on research_resource(orcid);</sql>
+	</changeSet>
+	
+	<changeSet id="RESEARCH-RESOURCE-ITEM-INDEX" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="research_resource_item_index" tableName="research_resource_item" />
+			</not>
+		</preConditions>
+		<sql>create index research_resource_item_index on research_resource_item(research_resource_id);</sql>
+	</changeSet>
+	
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-RESEARCH-RESOURCE" author="Tom Demeranville" dbms="postgresql">
+		<preConditions>
+			<sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+		</preConditions>
+		<sql>GRANT SELECT ON research_resource to orcidro;</sql>
+		<sql>GRANT SELECT ON research_resource_item to orcidro;</sql>
+	</changeSet>
+	
+</databaseChangeLog>
